@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 --%>
 <html>
 <head>
-  <%@page errorPage="/jsp/error.jsp" %>
+  <%@page errorPage="/WEB-INF/jsp/error.jsp" %>
   <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
   <%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
   <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
@@ -40,7 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   <div id="hideprint">
   <form action="Wiki" method="GET">
   <input type="hidden" name="topic" value="<c:out value="${topic}"/>">
-  <input type="hidden" name="action" value="<c:out value="${env.actionPrint}"/>">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_PRINT %>">
   <f:message key="print.depth"/> <input type="text" name="depth" value="<c:out value="${depth}"/>">
   <input type="submit">
   <input type="hidden" name="hideform" value="true"/>

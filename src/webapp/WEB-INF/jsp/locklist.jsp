@@ -82,7 +82,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                       />
                     </td>
                     <td>
-                      <a href='<c:out value="Wiki?topic=${encodedTopic}&action=${env.actionUnlock}"/>'>
+                      <a href='Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_UNLOCK %>'>
                         <f:message key="locklist.unlock"/>
 
                       </a>

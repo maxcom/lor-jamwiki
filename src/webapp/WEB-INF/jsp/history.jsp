@@ -71,41 +71,24 @@ function inactive(element) {
 			      | <span class="menuinactive"><f:message key="menu.editpage"/></span>
 			      | <span class="menuinactive"><f:message key="menu.attach"/></span>
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?RecentChanges'><f:message key="generalmenu.recentchanges"/></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?<c:out value="${env.defaultTopicEncoded}"/>'><c:out value="${env.defaultTopic}"/></a>
+			      | <a href='<c:out value="${pathRoot}"/>Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>'><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a>
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?WikiSearch'><f:message key="generalmenu.search"/></a>
 			      | <span class="menuinactive"><f:message key="menu.printablepage"/></span>
 			      | <a href='Wiki?<c:out value="${param.topic}"/>'><f:message key="history.current"/></a>
 			      <c:if test="${param.type=='version'}">
-			        <c:url value="Wiki" var="nextVersionUrl">
-			          <c:param name="action" value="${env.actionHistory}"/>
-			          <c:param name="type" value="version"/>
-			          <c:param name="versionNumber" value="${topicVersion.versionNumber-1}"/>
-			          <c:param name="topic" value="${topicVersion.topicName}"/>
-			        </c:url>
-			        <c:url value="Wiki" var="previousVersionUrl">
-			          <c:param name="action" value="${env.actionHistory}"/>
-			          <c:param name="type" value="version"/>
-			          <c:param name="versionNumber" value="${topicVersion.versionNumber+1}"/>
-			          <c:param name="topic" value="${topicVersion.topicName}"/>
-			        </c:url>
-			        <c:url value="Wiki" var="historyUrl">
-			          <c:param name="action" value="${env.actionHistory}"/>
-			          <c:param name="type" value="all"/>
-			          <c:param name="topic" value="${topicVersion.topicName}"/>
-			        </c:url>
 			        <c:if test="${param.versionNumber < (numberOfVersions-1)}">
-			          | <a href='<c:out value="${previousVersionUrl}"/>'><f:message key="history.prev"/></a>
+			          | <a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=version&versionNumber=<c:out value="${topicVersion.versionNumber+1}" />&topic=<c:out value="${topicVersion.topicName}" />'><f:message key="history.prev"/></a>
 			        </c:if>
 			        <c:if test="${!(param.versionNumber < (numberOfVersions-1))}">
 			          | <span class="menuinactive"><f:message key="history.prev"/></span>
 			        </c:if>
 			        <c:if test="${param.versionNumber > 0}">
-			          | <a href='<c:out value="${nextVersionUrl}"/>'><f:message key="history.next"/></a> 
+			          | <a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=version&versionNumber=<c:out value="${topicVersion.versionNumber-1}" />&topic=<c:out value="${topicVersion.topicName}" />'><f:message key="history.next"/></a> 
 			        </c:if>
 			        <c:if test="${!(param.versionNumber > 0)}">
 			          | <span class="menuinactive"><f:message key="history.next"/></span> 
 			        </c:if>
-			        | <a href='<c:out value="${historyUrl}"/>'><f:message key="menu.history"/></a>
+			        | <a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=all&topic=<c:out value="${topicVersion.topicName}" />'><f:message key="menu.history"/></a>
 			      </c:if>
 			      |
 	      		</td>
@@ -120,7 +103,7 @@ function inactive(element) {
       <c:choose>
         <c:when test="${param.type=='all'}">
           <form action="Wiki" method="post" name="historyForm">
-          <input type="hidden" name="action" value="<c:out value="${env.actionDiff}"/>"/>
+          <input type="hidden" name="action" value="<%= WikiServlet.ACTION_DIFF %>"/>
           <input type="hidden" name="type" value="arbitrary"/>
           <input type="hidden" name="topic" value='<c:out value="${param.topic}"/>'/>
           <table>
@@ -132,14 +115,8 @@ function inactive(element) {
               timeStyle="MEDIUM"
               var="revisionDate"
             />
-            <c:url value="Wiki" var="versionURL">
-              <c:param name="action" value="${env.actionHistory}"/>
-              <c:param name="type" value="version"/>
-              <c:param name="versionNumber" value="${version.versionNumber}"/>
-              <c:param name="topic" value="${version.topicName}"/>
-            </c:url>
             <tr>
-            <td><a href='<c:out value="${versionURL}"/>'><c:out value="${revisionDate}"/></a></td>
+            <td><a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=version&versionNumber=<c:out value="${version.versionNumber}" />&topic=<c:out value="${topic.topicName}" />'><c:out value="${revisionDate}"/></a></td>
             <td><input type="checkbox" name='<c:out value="diff:${version.versionNumber}"/>' onclick="inactive(this)" /></td>
             </tr>
           </c:forEach>
@@ -164,24 +141,24 @@ function inactive(element) {
 			      | <span class="menuinactive"><f:message key="menu.editpage"/></span>
 			      | <span class="menuinactive"><f:message key="menu.attach"/></span>
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?RecentChanges'><f:message key="generalmenu.recentchanges"/></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?<c:out value="${env.defaultTopicEncoded}"/>'><c:out value="${env.defaultTopic}"/></a>
+			      | <a href='<c:out value="${pathRoot}"/>Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>'><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a>
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?WikiSearch'><f:message key="generalmenu.search"/></a>
 			      | <span class="menuinactive"><f:message key="menu.printablepage"/></span>
 			      | <a href='Wiki?<c:out value="${param.topic}"/>'><f:message key="history.current"/></a>
 			      <c:if test="${param.type=='version'}">
 			        <c:if test="${param.versionNumber < (numberOfVersions-1)}">
-			          | <a href='<c:out value="${previousVersionUrl}"/>'><f:message key="history.prev"/></a>
+			          | <a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=version&versionNumber=<c:out value="${topicVersion.versionNumber+1}" />&topic=<c:out value="${topicVersion.topicName}" />'><f:message key="history.prev"/></a>
 			        </c:if>
 			        <c:if test="${!(param.versionNumber < (numberOfVersions-1))}">
 			          | <span class="menuinactive"><f:message key="history.prev"/></span>
 			        </c:if>
 			        <c:if test="${param.versionNumber > 0}">
-			          | <a href='<c:out value="${nextVersionUrl}"/>'><f:message key="history.next"/></a> 
+			          | <a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=version&versionNumber=<c:out value="${topicVersion.versionNumber-1}" />&topic=<c:out value="${topicVersion.topicName}" />'><f:message key="history.next"/></a> 
 			        </c:if>
 			        <c:if test="${!(param.versionNumber > 0)}">
 			          | <span class="menuinactive"><f:message key="history.next"/></span> 
 			        </c:if>
-			        | <a href='<c:out value="${historyUrl}"/>'><f:message key="menu.history"/></a>
+			        | <a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=all&topic=<c:out value="${topicVersion.topicName}" />'><f:message key="menu.history"/></a>
 			      </c:if>
 			      |
 	      		</td>

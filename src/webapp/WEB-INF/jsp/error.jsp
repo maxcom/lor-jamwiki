@@ -15,8 +15,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 --%>
-<%@ page import="vqwiki.WikiException, vqwiki.servlets.WikiServletException" isErrorPage="true"%>
-<%--@ include file="top.jsp"--%>
+
+<%@ page import="
+        org.vqwiki.WikiException,
+        org.vqwiki.servlets.WikiServlet,
+        org.vqwiki.servlets.WikiServletException
+    "
+    isErrorPage="true"
+%>
 <c:out value="${topArea}" escapeXml="false"/>
 <script language="JavaScript">
   function cancel(){

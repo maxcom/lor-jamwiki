@@ -64,7 +64,7 @@ public class EditServlet extends VQWikiServlet {
                         "redirect",
                         buffer.toString()
                     );
-                    dispatch("/jsp/login.jsp", request, response);
+                    dispatch("/WEB-INF/jsp/login.jsp", request, response);
                     return;
                 }
             }
@@ -119,7 +119,7 @@ public class EditServlet extends VQWikiServlet {
         request.setAttribute("contents", contents);
         request.setAttribute("preview", preview);
         request.setAttribute("topic", topic);
-        dispatch("/jsp/edit.jsp", request, response);
+        dispatch("/WEB-INF/jsp/edit.jsp", request, response);
     }
 
     /**

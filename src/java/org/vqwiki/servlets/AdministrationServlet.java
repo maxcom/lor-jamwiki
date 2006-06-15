@@ -41,7 +41,7 @@ public class AdministrationServlet extends VQWikiServlet {
             buffer.append(rootPath);
             buffer.append("Wiki?action=" + WikiServlet.ACTION_ADMIN + "&username=admin");
             request.setAttribute("redirect", buffer.toString());
-            dispatch("/jsp/login.jsp", request, httpServletResponse);
+            dispatch("/WEB-INF/jsp/login.jsp", request, httpServletResponse);
             return;
         }
         if (request.getParameter("function") != null) {
@@ -54,7 +54,7 @@ public class AdministrationServlet extends VQWikiServlet {
                 return;
             }
         }
-        dispatch("/jsp/admin.jsp", request, httpServletResponse);
+        dispatch("/WEB-INF/jsp/admin.jsp", request, httpServletResponse);
     }
 
     /**

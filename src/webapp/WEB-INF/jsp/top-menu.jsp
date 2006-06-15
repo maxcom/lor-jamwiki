@@ -23,21 +23,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<tr>
 			<td class="menu" align=left>
 			  <c:if test="${!readOnly}">
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<c:out value="${env.actionEdit}"/>'><f:message key="menu.editpage"/></a>
-		          | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<c:out value="${env.actionAttach}"/>'><f:message key="menu.attach"/></a>
+			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_EDIT %>'><f:message key="menu.editpage"/></a>
+		          | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_ATTACH %>'><f:message key="menu.attach"/></a>
 			  </c:if>
 			  <c:if test="${readOnly}">
 			      | <span class="menuinactive"><f:message key="menu.editpage"/></span>
 		          | <span class="menuinactive"><f:message key="menu.attach"/></span>
 			  </c:if>
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?RecentChanges'><f:message key="generalmenu.recentchanges"/></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?<c:out value="${env.defaultTopicEncoded}"/>'><c:out value="${env.defaultTopic}"/></a>
+			      | <a href='<c:out value="${pathRoot}"/>Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>'><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a>
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?WikiSearch'><f:message key="generalmenu.search"/></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<c:out value="${env.actionPrint}"/>' target="_blank"><f:message key="menu.printablepage"/></a>
+			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_PRINT %>' target="_blank"><f:message key="menu.printablepage"/></a>
 				  |
 			</td>
 			<td class="menu" align=right>
-			    <input type="hidden" name="action" value="<c:out value="${env.actionMenuJump}"/>"/>
+			    <input type="hidden" name="action" value="<%= WikiServlet.ACTION_MENU_JUMP %>"/>
 			    <input name="text" size="20"/>
 			    <input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
 			    <input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>

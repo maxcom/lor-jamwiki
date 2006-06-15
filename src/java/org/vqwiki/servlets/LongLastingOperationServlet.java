@@ -107,7 +107,7 @@ public abstract class LongLastingOperationServlet extends VQWikiServlet implemen
                 error(httpRequest, response, new WikiException("Operation lost in /dev/null"));
                 return;
             }
-            dispatch("/jsp/longlastingoperation.jsp", httpRequest, response);
+            dispatch("/WEB-INF/jsp/longlastingoperation.jsp", httpRequest, response);
         }
     }
 

@@ -596,4 +596,43 @@ public class Utilities {
     public static String dir() {
         return Environment.getValue(Environment.PROP_FILE_HOME_DIR) + System.getProperty("file.separator");
     }
+
+    /**
+     *
+     */
+    public static boolean emailAvailable() {
+        String smtpHost = Environment.getValue(Environment.PROP_EMAIL_SMTP_HOST);
+        return (smtpHost != null && smtpHost.length() > 0);
+    }
+
+    /**
+     *
+     */
+    public static boolean isFirstUse() {
+        if (Environment.getBooleanValue(Environment.PROP_BASE_FIRST_USE)) {
+            logger.info("First use of VQWiki, creating admin password");
+            try {
+                Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, generateNewAdminPassword());
+                Environment.setBooleanValue(Environment.PROP_BASE_FIRST_USE, false);
+                Environment.saveProperties();
+            } catch (Exception e) {
+                logger.error(e);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     *
+     */
+    private static String generateNewAdminPassword() {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < 5; i++) {
+            int n = (int) (Math.random() * 26 + 65);
+            buffer.append((char) n);
+        }
+        String value = buffer.toString();
+        return value;
+    }
 }

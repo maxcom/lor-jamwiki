@@ -36,7 +36,7 @@ public class HistoryServlet extends VQWikiServlet {
             try {
                 Collection versions = manager.getAllVersions(virtualWiki, topicName);
                 request.setAttribute("versions", versions);
-                dispatch("/jsp/history.jsp", request, response);
+                dispatch("/WEB-INF/jsp/history.jsp", request, response);
             } catch (Exception e) {
                 error(request, response, e);
                 return;
@@ -57,7 +57,7 @@ public class HistoryServlet extends VQWikiServlet {
                 error(request, response, e);
                 return;
             }
-            dispatch("/jsp/history.jsp", request, response);
+            dispatch("/WEB-INF/jsp/history.jsp", request, response);
         }
     }
 }

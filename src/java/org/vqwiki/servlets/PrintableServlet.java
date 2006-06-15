@@ -76,7 +76,7 @@ public class PrintableServlet extends VQWikiServlet {
         }
         // put the result in the request
         request.setAttribute("contentList", result);
-        dispatch("/jsp/printable.jsp", request, response);
+        dispatch("/WEB-INF/jsp/printable.jsp", request, response);
     }
 
     /**

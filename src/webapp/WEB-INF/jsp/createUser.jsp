@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
 <%@ include file="top.jsp"%>
-<%@ page import="vqwiki.*"%>
+<%@ page import="org.vqwiki.*"%>
 <c:out value="${topArea}" escapeXml="false"/>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -49,19 +49,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
           <p>
             <f:message key="createuser.info.text1"/>
           </p>
-          <form name="form1" method="post" action="Wiki?action=<c:out value="${env.actionSaveUser}"/>">
+          <form name="form1" method="post" action="Wiki?action=<%= WikiServlet.ACTION_SAVE_USER %>">
             <f:message key="createuser.form.name"/>
-	          <c:choose>
-	            <c:when test="${env.usergroupType == 0}">
+<%
+if (Environment.getIntValue(Environment.PROP_USERGROUP_TYPE) == 0) {
+%>
 	            <input type="text" name="username">
-	            </c:when>
-	            <c:otherwise>
+<%
+} else {
+%>
 	               <select name="username">
 					 <c:forEach items="${userList}" var="listItem"><option value="<c:out value="${listItem.key}"/>"><c:out value="${listItem.label}"/></option>
 					 </c:forEach>
 	 			  </select>
-	            </c:otherwise>
-	          </c:choose>
+<%
+}
+%>
             <input type="submit" name="Submit" value="<f:message key="createuser.form.save"/>">
             <input type="hidden" name="saved" value="true">
             <c:if test="${!empty param.topic}">

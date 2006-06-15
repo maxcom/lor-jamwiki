@@ -19,11 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <div class="menu" align="right">
   <vqwiki:encode var="encodedTopic" value="${topic}"/>
   <c:if test="${!readOnly}">
-        <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<c:out value="${env.actionEdit}"/>'><f:message key="menu.editpage"/></a>
+        <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_EDIT %>'><f:message key="menu.editpage"/></a>
   </c:if>
-      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<c:out value="${env.actionHistory}"/>&type=all'><f:message key="menu.history"/></a>
+      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_HISTORY %>&type=all'><f:message key="menu.history"/></a>
   <c:if test="${!empty lastRevisionDate}">
-      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<c:out value="${env.actionDiff}"/>'>
+      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_DIFF %>'>
         <f:formatDate value="${lastRevisionDate}" type="BOTH" dateStyle="SHORT" timeStyle="DEFAULT" var="formattedDate"/>
           <f:message key="menu.lastedit">
             <f:param value="${formattedDate}"/>

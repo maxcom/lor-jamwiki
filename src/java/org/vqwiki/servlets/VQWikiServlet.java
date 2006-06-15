@@ -28,7 +28,7 @@ public class VQWikiServlet extends HttpServlet {
         if (err instanceof WikiServletException) {
             request.setAttribute("javax.servlet.jsp.jspException", err);
         }
-        dispatch("/jsp/servlet-error.jsp", request, response);
+        dispatch("/WEB-INF/jsp/servlet-error.jsp", request, response);
     }
 
     /**
@@ -49,7 +49,7 @@ public class VQWikiServlet extends HttpServlet {
             e.printStackTrace();
             logger.error("dispatch error", e);
             try {
-                dispatcher = request.getRequestDispatcher("/jsp/servlet-error.jsp");
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
                 dispatcher.forward(request, response);
             } catch (Exception e1) {
                 log("Error within dispatch error" + e1);
@@ -74,7 +74,7 @@ public class VQWikiServlet extends HttpServlet {
             e.printStackTrace();
             logger.error(e);
             try {
-                dispatcher = request.getRequestDispatcher("/jsp/servlet-error.jsp");
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
                 dispatcher.forward(request, response);
             } catch (Exception e1) {
                 log("Error within dispatch error" + e1);

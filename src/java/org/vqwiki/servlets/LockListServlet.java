@@ -42,6 +42,6 @@ public class LockListServlet extends VQWikiServlet {
         }
         request.setAttribute("locks", locks);
         request.setAttribute("title", messages.getString("locklist.title"));
-        dispatch("/jsp/locklist.jsp", request, response);
+        dispatch("/WEB-INF/jsp/locklist.jsp", request, response);
     }
 }

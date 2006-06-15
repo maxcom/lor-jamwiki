@@ -1,17 +1,21 @@
 <%@ page import="
-    vqwiki.Environment,
-    vqwiki.servlets.WikiServlet
+    org.vqwiki.Environment,
+    org.vqwiki.WikiBase,
+    org.vqwiki.servlets.WikiServlet,
+    org.vqwiki.utils.Encryption,
+    org.vqwiki.utils.Utilities
 " %>
-<%@ page errorPage="/jsp/error.jsp" %>
+<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
 <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
 <%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
 <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
 <vqwiki:setPageEncoding />
-<vqwiki:environment var="env"/>
 <html>
 <head>
   <f:setBundle basename="ApplicationResources"/>
-   <c:if test="${env.firstUse}">
+<%
+if (Utilities.isFirstUse()) {
+%>
      <f:message key="firstuse.title" var="res"/>
      <c:set var="title" scope="request" value="${res}"/>
      <%
@@ -19,7 +23,9 @@
      String firstUseUrl = "Wiki?action=" + WikiServlet.ACTION_FIRST_USE;
      %>
      <jsp:forward page="<%= firstUseUrl %>" /> 
-   </c:if>
+<%
+}
+%>
 
   <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/vqwiki.css' type="text/css" />
   <title><c:out value="${title}"/></title>
@@ -31,14 +37,8 @@
     <tr>
       <td rowspan="2">
         <a class="logo" href='<c:out value="${pageContext.request.contextPath}"/>/jsp/Wiki?<f:message key="specialpages.startingpoints"/>'>
-        <c:choose>
-          <c:when test="${env.logoImageAbsoluteUrl}">
-             <img class="logo" src='<c:out value="${env.logoImageName}"/>' alt="<f:message key="specialpages.startingpoints"/>"/>
-          </c:when>
-          <c:otherwise>
-             <img class="logo" src='<c:out value="${pageContext.request.contextPath}"/>/<c:out value="${env.logoImageName}"/>' alt="<f:message key="specialpages.startingpoints"/>"/>
-          </c:otherwise>
-        </c:choose>
+        <%-- FIXME - this used to switch based on context --%>
+        <img class="logo" src="images/logo.jpg" alt="<f:message key="specialpages.startingpoints"/>"/>
         </a>
       </td>
       <td width=10>&nbsp;</td>

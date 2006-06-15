@@ -86,7 +86,7 @@ public class SaveTopicServlet extends VQWikiServlet {
                 request.setAttribute("title", title);
                 request.setAttribute("templateNames", templateNames);
                 request.setAttribute("topic", topic);
-                dispatch("/jsp/edit.jsp", request, response);
+                dispatch("/WEB-INF/jsp/edit.jsp", request, response);
                 return;
             } else {
                 Collection templateNames = null;
@@ -103,7 +103,7 @@ public class SaveTopicServlet extends VQWikiServlet {
                 request.setAttribute("title", title);
                 request.setAttribute("templateNames", templateNames);
                 request.setAttribute("topic", topic);
-                dispatch("/jsp/edit.jsp", request, response);
+                dispatch("/WEB-INF/jsp/edit.jsp", request, response);
                 return;
             }
         }
@@ -149,7 +149,7 @@ public class SaveTopicServlet extends VQWikiServlet {
                 request.setAttribute("exception", new WikiServletException(err.toString()));
             }
             err.printStackTrace();
-            RequestDispatcher dispatch = request.getRequestDispatcher("/jsp/servlet-error.jsp");
+            RequestDispatcher dispatch = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
             dispatch.forward(request, response);
         }
         try {
@@ -157,7 +157,7 @@ public class SaveTopicServlet extends VQWikiServlet {
         } catch (Exception err) {
             request.setAttribute("exception", new WikiServletException(err.toString()));
             err.printStackTrace();
-            RequestDispatcher dispatch = request.getRequestDispatcher("/jsp/servlet-error.jsp");
+            RequestDispatcher dispatch = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
             dispatch.forward(request, response);
             return;
         }

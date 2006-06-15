@@ -51,22 +51,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
               <f:message key="member.newmember.text1">
                 <f:param value="${user}"/>
               </f:message><br/>
-              <input type="hidden" name="action" value="<c:out value="${env.actionMember}"/>"/>
-	          <c:choose>
-	            <c:when test="${env.usergroupType == 0}">
+              <input type="hidden" name="action" value="<%= WikiServlet.ACTION_MEMBER %>"/>
+<%
+if (Environment.getBooleanValue(Environment.PROP_USERGROUP_TYPE)) {
+%>
                   <input type="text" name="email" size="30" />
-	            </c:when>
-	            <c:otherwise>
+<%
+} else {
+%>
 	               <tt><c:out value="${knownEmail}"/></tt><br/><input type="hidden" name="email" value="<c:out value="${knownEmail}"/>" />
-	            </c:otherwise>
-	          </c:choose>
+<%
+}
+%>
               <input type="submit" value="<f:message key="member.registeraction"/>" />
               </form>
             </c:when>
             <c:when test="${type=='pendingMember'}">
               <f:message key="member.pending.text1"/>
               <form action="Wiki" method="POST">
-              <input type="hidden" name="action" value="<c:out value="${env.actionMember}"/>"/>
+              <input type="hidden" name="action" value="<%= WikiServlet.ACTION_MEMBER %>"/>
               <input type="text" name="email" size="30" />
               <input type="submit" value="<f:message key="member.registeraction"/>" />
               </form>
@@ -80,7 +83,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                   <f:message key="member.confirm"/>
                 </c:when>
                 <c:otherwise>
-                  <f:message key="member.error.text1"/><a href="Wiki?action=<c:out value="${env.actionMember}"/>"><f:message key="member.error.text2"/></a><f:message key="member.error.text3"/>
+                  <f:message key="member.error.text1"/><a href="Wiki?action=<%= WikiServlet.ACTION_MEMBER %>"><f:message key="member.error.text2"/></a><f:message key="member.error.text3"/>
                 </c:otherwise>
               </c:choose>
             </c:when>

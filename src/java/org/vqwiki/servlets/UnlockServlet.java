@@ -24,7 +24,7 @@ public class UnlockServlet extends VQWikiServlet {
         String topic = request.getParameter("topic");
         if (!Utilities.isAdmin(request)) {
             request.setAttribute("redirect", "Wiki?WikiLockList");
-            dispatch("/jsp/login.jsp", request, response);
+            dispatch("/WEB-INF/jsp/login.jsp", request, response);
             return;
         }
         String virtualWiki = (String) request.getAttribute("virtualWiki");

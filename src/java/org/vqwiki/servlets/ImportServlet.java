@@ -41,7 +41,7 @@ public class ImportServlet extends VQWikiServlet {
             error(request, response, e);
             return;
         }
-        dispatch("/jsp/afterImport.jsp", request, response);
+        dispatch("/WEB-INF/jsp/afterImport.jsp", request, response);
     }
 
     /**

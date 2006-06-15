@@ -16,8 +16,8 @@ along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page import="vqwiki.Environment,
-                 vqwiki.WikiBase"%>
+<%@ page import="org.vqwiki.Environment,
+                 org.vqwiki.WikiBase"%>
 <%@ include file="top.jsp"%>
 <c:out value="${topArea}" escapeXml="false"/>
 
@@ -44,11 +44,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
       <div class="contents">
         <form name="searchForm" method="post" action="Wiki">
           <f:message key="search.for"/><input type="text" name="text">  <input type="submit" name="Submit" value="<f:message key="search.search"/>">
-          <vqwiki:environment var="env"/>
         <p>&nbsp;</p>
         <f:message key="search.hints"/>
 
-          <input type="hidden" name="action" value="<c:out value="${env.actionSearch}"/>"/>
+          <input type="hidden" name="action" value="<%= WikiServlet.ACTION_SEARCH %>"/>
         </form>
         <p>&nbsp;</p>
         <font size="-1"><i>search powered by</i></font> <a href="http://jakarta.apache.org/lucene"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>

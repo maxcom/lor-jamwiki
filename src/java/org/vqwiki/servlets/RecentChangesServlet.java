@@ -47,7 +47,7 @@ public class RecentChangesServlet extends VQWikiServlet {
                                                            request.getLocale());
         request.setAttribute("title", messages.getString("recentchanges.title"));
         request.setAttribute("changes", all);
-        dispatch("/jsp/recentChanges.jsp", request, response);
+        dispatch("/WEB-INF/jsp/recentChanges.jsp", request, response);
     }
 
     /**

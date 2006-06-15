@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <%@ include file="top.jsp"%>
 <c:out value="${topArea}" escapeXml="false"/>
 <%@include file="generalmenu.jsp"%>
-  <form method="post" action="Wiki?action=<c:out value="${env.actionLogin}"/>">
+  <form method="post" action="Wiki?action=<%= WikiServlet.ACTION_LOGIN %>">
     <input type="hidden" name="redirect" value='<c:out value="${redirect}"/>'/>
     <table>
       <c:if test="${loginFailure}">

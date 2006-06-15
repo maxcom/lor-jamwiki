@@ -143,7 +143,7 @@ public class SitemapServlet extends LongLastingOperationServlet {
      */
     protected void dispatchDone(HttpServletRequest request, HttpServletResponse response) {
         request.setAttribute("virtualwikis", vwikis);
-        dispatch("/jsp/sitemap.jsp", request, response);
+        dispatch("/WEB-INF/jsp/sitemap.jsp", request, response);
     }
 
     /**

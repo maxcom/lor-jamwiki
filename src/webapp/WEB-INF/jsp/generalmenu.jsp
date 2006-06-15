@@ -1,6 +1,9 @@
 <%@page import="
     org.vqwiki.Environment,
-    org.vqwiki.servlets.WikiServlet
+    org.vqwiki.WikiBase,
+    org.vqwiki.servlets.WikiServlet,
+    org.vqwiki.utils.Encryption,
+    org.vqwiki.utils.Utilities
 " %>
 
 <div class="menu">

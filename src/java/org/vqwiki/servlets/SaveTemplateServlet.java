@@ -44,7 +44,7 @@ public class SaveTemplateServlet extends HttpServlet {
         } catch (Exception err) {
             logger.error("error unlocking topic: " + err);
             request.setAttribute("exception", new WikiServletException(err.toString()));
-            RequestDispatcher dispatch = request.getRequestDispatcher("/jsp/servlet-error.jsp");
+            RequestDispatcher dispatch = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
             dispatch.forward(request, response);
         }
         try {
@@ -56,7 +56,7 @@ public class SaveTemplateServlet extends HttpServlet {
         } catch (Exception err) {
             request.setAttribute("exception", new WikiServletException(err.toString()));
             err.printStackTrace();
-            RequestDispatcher dispatch = request.getRequestDispatcher("/jsp/servlet-error.jsp");
+            RequestDispatcher dispatch = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
             dispatch.forward(request, response);
         }
     }

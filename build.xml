@@ -108,6 +108,9 @@
             <classes dir="${dir.src.properties}" />
             <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar" />
             <webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml" />
+            <zipfileset dir="${dir.src.resources}/images" prefix="images" />
+            <zipfileset dir="${dir.src.resources}/js" prefix="js" />
+            <zipfileset dir="${dir.src.resources}/css" prefix="css" />
         </war>
     </target>
 

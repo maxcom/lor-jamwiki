@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <f:message key="firstuse.message.welcome"/>
 </p>
 <p>
-<f:message key="firstuse.newpassword"/> <c:out value="${env.adminPassword}"/>
+<f:message key="firstuse.newpassword"/> <%= Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD) %>
 </p>
 <p>
 <f:message key="firstuse.message.warning"/>

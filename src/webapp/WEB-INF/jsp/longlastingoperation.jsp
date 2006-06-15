@@ -1,6 +1,6 @@
 <html>
 <head>
-  <%@page errorPage="/jsp/error.jsp" %>
+  <%@page errorPage="/WEB-INF/jsp/error.jsp" %>
   <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
   <%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
   <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>

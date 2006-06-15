@@ -43,7 +43,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
       <%@ include file="top-menu.jsp"%>
       <div class="contents" >
         <div class="contents" >
-          <c:if test="${env.usergroupType != 0}">
+<%
+if (Environment.getIntValue(Environment.PROP_USERGROUP_TYPE) != 0) {
+%>
 		    <c:choose>
 			  <c:when test="${!empty lastAuthorDetails}">
 			    <div class="authordetails">
@@ -58,17 +60,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			    </c:if>
 			  </c:otherwise>
 			</c:choose>
-          </c:if>
+<%
+}
+%>
           <span class="pageHeader">
-            <a href='<vqwiki:path-root/>/Wiki?action=<c:out value="${env.actionSearch}"/>&text=<c:out value="${encodedTitle}"/>'>
-              <c:choose>
-                <c:when test="${env.separateWikiTitleWords}">
+            <a href='<vqwiki:path-root/>/Wiki?action=<%= WikiServlet.ACTION_SEARCH %>&text=<c:out value="${encodedTitle}"/>'>
+<%
+if (Environment.getBooleanValue(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS)) {
+%>
                   <vqwiki:separate-words value="${title}" />
-                </c:when>
-                <c:otherwise>
+<%
+} else {
+%>
                   <c:out value="${title}"/>
-                </c:otherwise>
-              </c:choose>
+<%
+}
+%>
             </a>
           </span><p/>
           <c:out value="${contents}" escapeXml="false"/>
@@ -78,8 +85,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </td>
   </tr>
 </table>
-<c:if test="${env.emailAvailable}">
+<%
+if (Utilities.emailAvailable()) {
+%>
   <%@ include file="member-contents.jsp"%>
-</c:if>
+<%
+}
+%>
 <hr/>
 <%@ include file="close-document.jsp"%>

@@ -1,5 +1,5 @@
-<%@ page import="vqwiki.Environment,
-                 vqwiki.WikiBase"%>
+<%@ page import="org.vqwiki.Environment,
+                 org.vqwiki.WikiBase"%>
  <%--
 Very Quick Wiki - WikiWikiWeb clone
 Copyright (C) 2001-2003 Gareth Cronin

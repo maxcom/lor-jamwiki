@@ -122,7 +122,7 @@ public class MemberServlet extends VQWikiServlet {
             }
         }
         request.setAttribute("knownEmail", usergroup.getKnownEmailById(user));
-        dispatch("/jsp/member.jsp", request, response);
+        dispatch("/WEB-INF/jsp/member.jsp", request, response);
     }
 
     /**

@@ -60,7 +60,7 @@ public class LoginServlet extends VQWikiServlet {
             // should this return a specific message instead?
             request.setAttribute("loginFailure", "true");
             request.setAttribute("redirect", redirect);
-            dispatch("/jsp/login.jsp", request, response);
+            dispatch("/WEB-INF/jsp/login.jsp", request, response);
             return;
         }
         redirect(redirect, response);

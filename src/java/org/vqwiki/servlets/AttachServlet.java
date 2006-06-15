@@ -47,6 +47,6 @@ public class AttachServlet extends VQWikiServlet {
             error(request, response, e);
             return;
         }
-        dispatch("/jsp/attach.jsp", request, response);
+        dispatch("/WEB-INF/jsp/attach.jsp", request, response);
     }
 }

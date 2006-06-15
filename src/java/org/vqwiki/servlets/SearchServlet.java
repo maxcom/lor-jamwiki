@@ -92,7 +92,7 @@ public class SearchServlet extends VQWikiServlet {
             }
             request.setAttribute("results", contents.toString());
             request.setAttribute("titlelink", "Wiki?WikiSearch");
-            dispatch("/jsp/searchResults.jsp", request, response);
+            dispatch("/WEB-INF/jsp/searchResults.jsp", request, response);
         } catch (Exception err) {
             logger.error(err);
             err.printStackTrace();

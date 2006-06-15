@@ -261,7 +261,7 @@ public class StatisticServlet extends LongLastingOperationServlet {
     protected void dispatchDone(HttpServletRequest request, HttpServletResponse response) {
         request.setAttribute("virtualwikis", vwikis);
         request.setAttribute("title", Utilities.resource("statistics.title", request.getLocale()));
-        dispatch("/jsp/statistics.jsp", request, response);
+        dispatch("/WEB-INF/jsp/statistics.jsp", request, response);
     }
 
     /**

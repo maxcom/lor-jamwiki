@@ -67,6 +67,6 @@ public class DiffServlet extends VQWikiServlet {
             error(request, response, e);
             return;
         }
-        dispatch("/jsp/diff.jsp", request, response);
+        dispatch("/WEB-INF/jsp/diff.jsp", request, response);
     }
 }

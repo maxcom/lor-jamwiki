@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  * Pseudotopics can also have permanent parameters associated with them by making appropriate entries in
  * pseudotopics.properties. E.g. the entries for ToDoWikiTopics looks like this:
  * <pre>
- * ToDoWikiTopics=/jsp/allTopics.jsp
+ * ToDoWikiTopics=/WEB-INF/jsp/allTopics.jsp
  * ToDoWikiTopics.param.0=todo=true
  * </pre>
  * this means that when ToDoWikiTopics is redirected to the allTopics.jsp a parameter named "todo" with

@@ -200,7 +200,7 @@ public class WikiServlet extends VQWikiServlet {
                     if (e instanceof WikiServletException) {
                         request.setAttribute("javax.servlet.jsp.jspException", e);
                     }
-                    dispatch("/jsp/servlet-error.jsp", request, response);
+                    dispatch("/WEB-INF/jsp/servlet-error.jsp", request, response);
                     return;
                 }
             }
@@ -282,7 +282,7 @@ public class WikiServlet extends VQWikiServlet {
                         "redirect",
                         buffer.toString()
                     );
-                    dispatch("/jsp/login.jsp", request, response);
+                    dispatch("/WEB-INF/jsp/login.jsp", request, response);
                     return;
                 }
             }
@@ -450,7 +450,7 @@ public class WikiServlet extends VQWikiServlet {
             logger.warn(e.getMessage(), e);
         }
         request.setAttribute("readOnly", new Boolean(readOnly));
-        dispatch("/jsp/wiki.jsp", request, response);
+        dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
     }
 
     /**
@@ -584,7 +584,6 @@ public class WikiServlet extends VQWikiServlet {
         //  TODO virtual-wiki and virtualWiki request params should be unified.
         request.setAttribute("virtual-wiki", virtualWiki);
         request.setAttribute("virtualWiki", virtualWiki);
-        request.setAttribute("env", Environment.getInstance());
         buildLayout(request, virtualWiki);
         // make decision based on action
         String action = request.getParameter("action");
@@ -722,7 +721,7 @@ public class WikiServlet extends VQWikiServlet {
             }
             // in case, no action can be dispatched, go to a normal wiki page
         }
-        dispatch = request.getRequestDispatcher("/jsp/wiki.jsp");
+        dispatch = request.getRequestDispatcher("/WEB-INF/jsp/wiki.jsp");
         dispatch.forward(request, response);
     }
 

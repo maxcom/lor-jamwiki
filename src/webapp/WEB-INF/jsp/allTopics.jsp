@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
 <%@ include file="top.jsp"%>
-<%@ page import="java.util.*,vqwiki.*"%>
+<%@ page import="java.util.*,org.vqwiki.*"%>
 <%
   String virtualWiki = (String)request.getAttribute("virtual-wiki");
   Collection all = null;

@@ -1,19 +1,238 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app version="2.4"
-         xmlns="http://java.sun.com/xml/ns/j2ee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
+<web-app version="2.3">
+
+    <!-- old ApplicationResources file -->
+    <context-param>
+        <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+        <param-value>ApplicationResources</param-value>
+    </context-param>
+    
+    <!-- old filters -->
+    <!--
+    <filter>
+        <filter-name>SetCharacterEncodingFilter</filter-name>
+        <filter-class>org.vqwiki.servlets.SetCharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SetCharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    -->
 
     <servlet>
         <servlet-name>vqwiki</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <!-- old style servlets -->
+    <servlet>
+        <servlet-name>SaveTopic</servlet-name>
+        <servlet-class>org.vqwiki.servlets.SaveTopicServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Wiki</servlet-name>
+        <servlet-class>org.vqwiki.servlets.WikiServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Search</servlet-name>
+        <servlet-class>org.vqwiki.servlets.SearchServlet</servlet-class>
+    </servlet>
+    <!--
+    <servlet>
+        <servlet-name>Admin</servlet-name>
+        <servlet-class>org.vqwiki.servlets.AdministrationServlet</servlet-class>
+    </servlet>
+    -->
+    <servlet>
+        <servlet-name>SaveAttachment</servlet-name>
+        <servlet-class>org.vqwiki.servlets.SaveAttachmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SaveTemplate</servlet-name>
+        <servlet-class>org.vqwiki.servlets.SaveTemplateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Notify</servlet-name>
+        <servlet-class>org.vqwiki.servlets.NotifyServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MenuJump</servlet-name>
+        <servlet-class>org.vqwiki.servlets.MenuJumpServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewAttachment</servlet-name>
+        <servlet-class>org.vqwiki.servlets.ViewAttachmentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Diff</servlet-name>
+        <servlet-class>org.vqwiki.servlets.DiffServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Attach</servlet-name>
+        <servlet-class>org.vqwiki.servlets.AttachServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Member</servlet-name>
+        <servlet-class>org.vqwiki.servlets.MemberServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Printable</servlet-name>
+        <servlet-class>org.vqwiki.servlets.PrintableServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Edit</servlet-name>
+        <servlet-class>org.vqwiki.servlets.EditServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>History</servlet-name>
+        <servlet-class>org.vqwiki.servlets.HistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LockList</servlet-name>
+        <servlet-class>org.vqwiki.servlets.LockListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Unlock</servlet-name>
+        <servlet-class>org.vqwiki.servlets.UnlockServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>org.vqwiki.servlets.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RecentChanges</servlet-name>
+        <servlet-class>org.vqwiki.servlets.RecentChangesServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RSS</servlet-name>
+        <servlet-class>org.vqwiki.servlets.RSSServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Statistics</servlet-name>
+        <servlet-class>org.vqwiki.servlets.StatisticServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Sitemap</servlet-name>
+        <servlet-class>org.vqwiki.servlets.SitemapServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Export2HTML</servlet-name>
+        <servlet-class>org.vqwiki.servlets.ExportHTMLServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Import</servlet-name>
+        <servlet-class>org.vqwiki.servlets.ImportServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>vqwiki</servlet-name>
         <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
+    
+    <!-- old style mappings -->
+    <servlet-mapping>
+        <servlet-name>Wiki</servlet-name>
+        <url-pattern>/jsp/Wiki</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Wiki</servlet-name>
+        <url-pattern>/test/Wiki</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Search</servlet-name>
+        <url-pattern>/SearchServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaveTopic</servlet-name>
+        <url-pattern>/SaveTopicServlet</url-pattern>
+    </servlet-mapping>
+    <!--
+    <servlet-mapping>
+        <servlet-name>Admin</servlet-name>
+        <url-pattern>/AdministrationServlet</url-pattern>
+    </servlet-mapping>
+    -->
+    <servlet-mapping>
+        <servlet-name>SaveAttachment</servlet-name>
+        <url-pattern>/SaveAttachmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaveTemplate</servlet-name>
+        <url-pattern>/SaveTemplateServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Notify</servlet-name>
+        <url-pattern>/NotifyServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MenuJump</servlet-name>
+        <url-pattern>/MenuJumpServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewAttachment</servlet-name>
+        <url-pattern>/ViewAttachmentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Diff</servlet-name>
+        <url-pattern>/DiffServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Attach</servlet-name>
+        <url-pattern>/AttachServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Member</servlet-name>
+        <url-pattern>/MemberServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Printable</servlet-name>
+        <url-pattern>/PrintableServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Edit</servlet-name>
+        <url-pattern>/EditServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>History</servlet-name>
+        <url-pattern>/HistoryServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LockList</servlet-name>
+        <url-pattern>/LockListServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Unlock</servlet-name>
+        <url-pattern>/UnlockServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RecentChanges</servlet-name>
+        <url-pattern>/RecentChangesServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RSS</servlet-name>
+        <url-pattern>/RSS</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Statistics</servlet-name>
+        <url-pattern>/Statistics</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Sitemap</servlet-name>
+        <url-pattern>/Sitemap</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Export2HTML</servlet-name>
+        <url-pattern>/Export2HTML</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Import</servlet-name>
+        <url-pattern>/ImportServlet</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>
