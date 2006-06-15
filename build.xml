@@ -1,18 +1,6 @@
-<project name="vqwiki" basedir="." default="noop">
+<project name="vqwiki" basedir="." default="help">
 
     <property file="build.properties"/>
-
-    <target name="noop">
-        <echo>This build file is not yet usuable... (being worked on)</echo>
-    </target>
-
-    <target name="initeclipse" if="eclipse.running">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-    </target>
-
-    <target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">
-        <delete dir="${dir.build}" />
-    </target>
 
     <target name="cleanLexers" description="Cleans up after lexer generation">
         <!-- delete old generated lexer source files -->
@@ -28,7 +16,11 @@
         <delete file="${dir.src.java}/org/vqwiki/lex/alt/FritzLex.java"/>
     </target>
 
-    <target name="init" depends="clean,initeclipse" description="Initialize for build sequence">
+    <target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">
+        <delete dir="${dir.build}" />
+    </target>
+
+    <target name="init" depends="clean" description="Initialize for build sequence">
         <mkdir dir="${dir.build}" />
         <mkdir dir="${dir.build}/classes" />
         <mkdir dir="${dir.build}/applet"/>
@@ -47,30 +39,11 @@
         <jflex file="${dir.src.lex}/layout.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/links.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/HTMLLinks.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/alt/exformat.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/alt/exlayout.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/mediawiki-syntax.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/mediawiki-html.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/alt/FritzLex" destdir="${dir.src.java}" />
-    </target>
-    
-    <target name="buildLexers" depends="jflex" description="Generate the Lexers">
     </target>
 
-
-    <!-- COMPILATION targets -->
-    <target name="buildApplet" depends="compile" description="Compile and build applet">
-	    <!-- create jar file -->
-        <delete file="${dir.build}/applet/vqapplets.jar"/>
-	    <jar destfile="${dir.build}/applet/vqapplets.jar">
-	        <fileset dir="${dir.build}/classes/org/vqwiki/applets" includes="*.class" />
-	        <fileset dir="${dir.build}/classes"
-                includes="org/vqwiki/AbstractSearchEngine.class,org/vqwiki/SearchResultEntry.class,org/vqwiki/SearchEngine.class,org/vqwiki/utils/lucene/*"
-	        />
-	    </jar>
-    </target>
-
-    <target name="compile" depends="buildLexers" description="Compile source code">
+    <target name="compile" depends="jflex" description="Compile source code">
         <javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="1.4" source="1.4">
             <src path="${dir.src.java}"/>
             <include name="org/vqwiki/**"/>
@@ -114,114 +87,23 @@
         </war>
     </target>
 
-<target name="convert">
-    <native2ascii encoding="iso-8859-2" src="${dir.src.properties}" dest="${dir.build}" includes="*.iso-8859-2" ext=".properties" />
-</target>
-
-    
-    <!--target name="war" depends="compile" description="Construct the war file.">
-        <native2ascii encoding="iso-8859-2" src="${build_dir}/classes" dest="${build_dir}/classes" includes="*.iso-8859-2" ext=".properties" />
-        <war warfile="${build_dir}/${war_name}-${wiki-version}.war" webxml="${basedir}/WEB-INF/web.xml">
-            <fileset dir="${basedir}">
-                <include name="CUSTOMLOGO_README"/>
-                <include name="index.jsp"/>
-                <include name="INSTALL"/>
-                <include name="MYSQL_README"/>
-                <include name="ORACLE_README"/>
-                <include name="CONNECTIONPOOL_README"/>
-                <include name="DATASOURCE_README"/>
-                <include name="README"/>
-                <include name="WHATSNEW"/>
-                <include name="UPGRADE"/>
-                <include name="VIRTUALWIKI_README"/>
-                <include name="vqwiki.css"/>
-                <include name="jsp/*.jsp"/>
-                <include name="js/*.js"/>
-                <include name="images/*.jpg"/>
-                <include name="images/*.gif"/>
-                <include name="images/*.png"/>
-            </fileset>
-            <zipfileset dir="${basedir}" prefix="">
-                <include name="doc/vqwiki_book.xml"/>
-                <include name="doc/vqwiki_book.html"/>
-                <include name="doc/images/*.*"/>
-            </zipfileset>
-            <zipfileset dir="${src_dir}" prefix="WEB-INF/src/">
-                <include name="**/*.*"/>
-            </zipfileset>
-            <classes dir="${build_dir}/classes" includes="vqwiki/**,export2html/*,*"/>
-            <lib dir="${lib_dir}" includes="*.jar,*.txt" excludes="servlet.jar"/>
-        </war>
-    </target-->
-
-
-    <target name="upload-release" depends="war" description="Uploads war file for release to SourceForge.net">
-        <ftp server="upload.sourceforge.net"
-             port="21"
-             remotedir="/incoming"
-             userid="anonymous"
-             password="vqwiki@veryquick.org"
-             depends="yes"
-             binary="yes">
-            <fileset dir="${build_dir}" includes="${war_name}-${wiki-version}.war"/>
-        </ftp>
-    </target>
-
     <target name="help" description="Displays a list of possible targets for the project.">
         <echo>
  ##################################################################
    Help - Overview of available targets and their descriptions.
 
-   The default target is "generateRelease".
+   The default target is "war".
 
 
-
-   generateLexers     - Generates Java source code files based
-                        on JFlex input files.
-                               
-   buildApplet        - Compiles the source, then creates a JAR
-                        file containing the applet used for the
-                        "export to html" functionality.
-
-   buildBinaryPackage - Compiles the sorce and creates a binary
-                        only package, i.e. the WAR file.
-                           
-   buildSourcePackage - Creates a source package in the form of
-                        a ZIP file.
-                           
-   generateRelease    - Generates a release. A complete release
+   war                - Generates a release. A complete release
                         consists of a source code package, binary
                         package and documentation package.
-                           
-   uploadRelease      - Uploads the generated release to
-                        Sourceforge.net
                            
    clean              - Removes any build artifacts from the tree
      
    help               - Displays this text.
  ##################################################################
         </echo>
-    </target>
-    
-    <target name="buildBinaryPackage" depends="compile" description="Creates a so-called binary release package, i.e. the war file">
-    
-        <war warfile="${dir.build}/${app.name.short}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml">
-            <fileset dir="${dir.src.resources}">
-                <include name="css/*"/>
-            </fileset>
-            <fileset dir="${dir.src.webapp}">
-                <include name="src/webapp/WEB-INF"/>
-            </fileset>
-            <classes dir="${dir.build.classes}"/>
-            <classes dir="${dir.src.properties}" />
-            <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar"/>
-            <webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml" />
-            <metainf dir="${dir.src.webapp}/META-INF"/>
-        </war>
-    </target>
-    
-    <target name="buildSourcePackage" depends="init, clean" description="Creates a so-called source-only release package.">
-        <zip destfile="${dir.build}/${app.name.short}-${app.version}-src.zip" basedir="${basedir}" excludes="build/**" />
     </target>
 </project>
         
