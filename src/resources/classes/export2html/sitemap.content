@@ -1,0 +1,12 @@
+<script language="JavaScript">
+<!--
+if (navigator.userAgent.indexOf("MSIE")==-1){
+	location.href="WikiSiteMapNS.html";
+} else {
+	location.href="WikiSiteMapIE.html";
+}
+//-->
+</script>
+<noscript>
+@@NSVIEW@@
+</noscript>

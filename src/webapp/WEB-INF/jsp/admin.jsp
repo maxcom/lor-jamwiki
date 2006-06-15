@@ -1,0 +1,779 @@
+<%--
+Very Quick Wiki - WikiWikiWeb clone
+Copyright (C) 2001-2003 Gareth Cronin
+Copyright (C) 2003-2006 Others
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program (gpl.txt); if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+--%>
+
+<html>
+<head>
+<%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
+<%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
+<%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
+<%@page import="
+    org.vqwiki.Environment,
+    org.vqwiki.WikiBase,
+    org.vqwiki.servlets.WikiServlet,
+    org.vqwiki.utils.Encryption,
+    org.vqwiki.utils.JSPUtils,
+    org.vqwiki.users.Usergroup,
+    java.util.*,
+    org.apache.commons.pool.impl.*,
+    java.sql.SQLException
+" errorPage="error.jsp"%>
+<f:setBundle basename="ApplicationResources"/>
+<vqwiki:is-admin var="admin"/>
+
+<title><f:message key="admin.title"/></title>
+<META HTTP-EQUIV="Expires" CONTENT="Mon, 06 Jan 1990 00:00:01 GMT">
+<link rel="stylesheet" href="../vqwiki.css" type="text/css">
+
+<%
+  String message = "";
+
+  if( request.getParameter("message") != null ){
+    message = request.getParameter("message");
+  }
+  Collection readOnlyTopics = new ArrayList();
+  try{
+    WikiBase wb = WikiBase.getInstance();
+    readOnlyTopics = wb.getReadOnlyTopics( (String)request.getAttribute("virtualWiki") );
+  } catch( Exception err ){
+    // Ignore database error - probably just an invalid setting, the
+    // user may not have config'd yet
+  }
+//  boolean attachmentsToDatabase = Environment.isAttachmentsToDatabase();
+  int maximumFileSize = (int)((float)Environment.getIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE)/1000);
+%>
+
+<script type="text/javascript">
+function onPersistenceType() {
+	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.FILE %>") {
+		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_MAX_ACTIVE %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_MAX_IDLE %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_BORROW %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_RETURN %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_VALIDATION_QUERY %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_LOG_ABANDONED %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=true
+	} else {
+		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_MAX_ACTIVE %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_MAX_IDLE %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_BORROW %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_RETURN %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_VALIDATION_QUERY %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_LOG_ABANDONED %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=false
+	}
+}
+
+function onUserGroupType() {
+	if (document.getElementById("<%= Environment.PROP_USERGROUP_TYPE %>").options[document.getElementById("<%= Environment.PROP_USERGROUP_TYPE %>").selectedIndex].value == "0") {
+		document.getElementById("<%= Environment.PROP_USERGROUP_FACTORY %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_URL %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_USERNAME %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_PASSWORD %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_USERID_FIELD %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_MAIL_FIELD %>").disabled=true
+		document.getElementById("<%= Environment.PROP_USERGROUP_DETAILVIEW %>").disabled=true
+	} else {
+		document.getElementById("<%= Environment.PROP_USERGROUP_FACTORY %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_URL %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_USERNAME %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_PASSWORD %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_USERID_FIELD %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_MAIL_FIELD %>").disabled=false
+		document.getElementById("<%= Environment.PROP_USERGROUP_DETAILVIEW %>").disabled=false
+	}
+}
+</script>
+
+</head>
+
+<body text="#000000">
+<p class="pageHeader">
+<img class="logo" width="147" height="35" src="../images/logo.jpg" alt="StartingPoints"/><f:message key="admin.title"/></p>
+<%@include file="generalmenu.jsp"%>
+<form action="admin.html" method="get">
+  <input type="hidden" name="function" value="logout"/>
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+  <table>
+    <tr>
+      <td><input type="submit" value="<f:message key="admin.action.logout"/>"/></td>
+    </tr>
+  </table>
+</form>
+<form name="form1" method="post" action="admin.html">
+<% if( !message.equals("") ){%>
+<p class="red"><%=message%></p>
+<%}%>
+  <p class="subHeader"><f:message key="admin.title.settings"/></p>
+  <table border="0" class="contents">
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.generalsettingsheader"/></td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.defaulttopic"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) == null ? "" : Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.useversioning"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_TOPIC_VERSIONING_ON %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.forceusername"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.allowvirtualwikilist"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_TOPIC_ALLOW_VWIKI_LIST %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.maxbacklinks"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_TOPIC_MAXIMUM_BACKLINKS %>" size="3" maxlength="3" value="<%= Environment.getIntValue(Environment.PROP_TOPIC_MAXIMUM_BACKLINKS) %>">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.encodepasswords"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_BASE_ENCODE_PASSWORDS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.wikiserverhostname"/></td>
+      <td class="normal"><input type="text" name="<%= Environment.PROP_BASE_SERVER_HOSTNAME %>" value='<%= Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME) == null ? "" : Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME) %>' size="10"></td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.recentchangesheader"/></td>
+    </tr>
+
+    <tr>
+      <td class="normal"><f:message key="admin.caption.recentchangesdays"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_RECENT_CHANGES_DAYS %>" size="3" maxlength="3" value="<%= Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS) %>">
+      </td>
+    </tr>
+    <tr>
+	  <td class="normal"><f:message key="admin.caption.recentchangesinterval"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL %>" size="5" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL) %>">
+	  </td>    
+    </tr>    
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.indexsettingsheader"/></td>
+    </tr>
+
+    <tr>
+      <td class="normal"><f:message key="admin.caption.indexattachments"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.indexextlinks"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.indexinterval"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL %>" size="5" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL) %>">
+      </td>
+    </tr>
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.editorheader"/></td>
+    </tr>
+
+    <tr>
+      <td class="normal"><f:message key="admin.caption.edittimeout"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_TOPIC_EDIT_TIME_OUT %>" size="3" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT) %>">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.usetemplates"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_TOPIC_ALLOW_TEMPLATES %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_TEMPLATES) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.usepreview"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.converttabs"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_TOPIC_CONVERT_TABS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_CONVERT_TABS) ? " checked" : "" %>>
+      </td>
+    </tr>
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.lexerheader"/></td>
+    </tr>
+
+    <%-- FIXME (FIXME (PARSER_TEMP) - temporary property until conversion is complete --%>
+    <tr>
+      <td class="normal">Use new parser</td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_PARSER_NEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_NEW) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.parser"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= Environment.getValue(Environment.PROP_PARSER_CLASS) %>" size="15">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.formatlexer"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_PARSER_FORMAT_LEXER %>" value="<%= Environment.getValue(Environment.PROP_PARSER_FORMAT_LEXER) %>" size="15">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.layoutlexer"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_PARSER_LAYOUT_LEXER %>" value="<%= Environment.getValue(Environment.PROP_PARSER_LAYOUT_LEXER) %>" size="15"> <f:message key="admin.caption.nulllex"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.linklexer"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_PARSER_LINK_LEXER %>" value="<%= Environment.getValue(Environment.PROP_PARSER_LINK_LEXER) %>" size="15"> <f:message key="admin.caption.nulllex"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.separatewikititlewords"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.allowhtml"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.allowbacktick"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_BACK_TICK %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_BACK_TICK) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.newlinebreaks"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_PARSER_NEW_LINE_BREAKS %>" size="2" maxlength="2" value="<%= Environment.getIntValue(Environment.PROP_PARSER_NEW_LINE_BREAKS) %>">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.franznewtopicstyle"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_PARSER_FRANZ_NEWTOPIC %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_FRANZ_NEWTOPIC) ? " checked" : "" %>>
+      </td>
+    </tr>
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.smtp"/></td>
+    </tr>
+
+	<tr>
+      <td class="normal"><f:message key="admin.caption.smtp.host"/></td>
+      <td class="normal"><input type="text" name="<%= Environment.PROP_EMAIL_SMTP_HOST %>" value="<%= Environment.getValue(Environment.PROP_EMAIL_SMTP_HOST) %>" size="30"></td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.smtp.user"/></td>
+      <td class="normal"><input type="text" name="<%= Environment.PROP_EMAIL_SMTP_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_EMAIL_SMTP_USERNAME) %>" size="10"></td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.smtp.pass"/></td>
+      <td class="normal"><input type="password" name="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD) %>" size="10"></td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.reply"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>" value="<%= Environment.getValue(Environment.PROP_EMAIL_REPLY_ADDRESS) %>" size="50">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.suppressnotifywithinsameday"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY) ? " checked" : "" %>>
+      </td>
+    </tr>
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.persistenceheader"/></td>
+    </tr>
+
+    <tr>
+      <td class="normal"><f:message key="admin.caption.uploaddir"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_ATTACH_UPLOAD_DIR %>" value="<%= Environment.getValue(Environment.PROP_ATTACH_UPLOAD_DIR) %>" size="50">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.maxfilesize"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_ATTACH_MAX_FILE_SIZE %>" value="<%= maximumFileSize %>" size="10">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.attachment"/></td>
+      <td class="normal">
+        <select name="<%= Environment.PROP_ATTACH_TYPE %>">
+           <option value="inline"<%= Environment.getValue(Environment.PROP_ATTACH_TYPE).equals("inline") ? " selected" : "" %>><f:message key="admin.caption.attachment.inline"/></option>
+           <option value="attachment"<%= Environment.getValue(Environment.PROP_ATTACH_TYPE).equals("attachment") ? " selected" : "" %>><f:message key="admin.caption.attachment.attachment"/></option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.attachmenttimestamp"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_ATTACH_TIMESTAMP %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_ATTACH_TIMESTAMP) ? " checked" : "" %>>
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.filedir"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_FILE_HOME_DIR %>" value="<%= Environment.getValue(Environment.PROP_FILE_HOME_DIR) %>" size="50">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.fileEncoding"/></td>
+      <td class="normal">
+      
+        <select name="<%= Environment.PROP_FILE_ENCODING %>">
+           <option value="utf-8"<%= Environment.getValue(Environment.PROP_FILE_ENCODING).equals("utf-8") ? " selected" : "" %>>utf-8</option>
+           <option value="iso-8859-1"<%= Environment.getValue(Environment.PROP_FILE_ENCODING).equals("iso-8859-1") ? " selected" : "" %>>iso-8859-1</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.persistence"/></td>
+      <td class="normal">
+        <select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
+           <option value="<%=WikiBase.FILE%>"<%= WikiBase.getPersistenceType() == WikiBase.FILE ? " selected" : "" %>><f:message key="admin.persistencetype.flatfile"/></option>
+           <option value="<%=WikiBase.DATABASE%>"<%= WikiBase.getPersistenceType() == WikiBase.DATABASE ? " selected" : "" %>><f:message key="admin.persistencetype.database"/></option>
+        </select>
+      </td>
+    </tr>
+<!-- BEGIN DATABASE-PERSISTENCE -->
+    <tr>
+      <td class="normal"><f:message key="admin.caption.databasedriver"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.databasetype"/></td>
+      <td class="normal">
+        <select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
+           <option value="mysql"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql") ? " selected" : "" %>>mysql</option>
+           <option value="ansi"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi") ? " selected" : "" %>>ansi</option>
+           <option value="oracle"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("oracle") ? " selected" : "" %>>oracle</option>
+           <option value="db2"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("db2") ? " selected" : "" %>>db2</option>
+           <option value="postgres"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("postgres") ? " selected" : "" %>>postgres</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.databaseurl"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_DB_URL %>" id="<%= Environment.PROP_DB_URL %>" value="<%= Environment.getValue(Environment.PROP_DB_URL) %>" size="50">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.databaseuser"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15">
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.databasepass"/></td>
+      <td class="normal">
+        <input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="15">
+      </td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="bold" colspan="2" align="left"><f:message key="admin.caption.dbcp.header"/></td>
+    </tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.maxactive"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" id="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" value="<%= Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE) %>" size="5"/>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.maxidle"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_MAX_IDLE %>" id="<%= Environment.PROP_DBCP_MAX_IDLE %>" value="<%= Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE) %>" size="5"/>
+	  </td>
+	</tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.dbcp.testonborrow"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>" id="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_BORROW) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.dbcp.testonreturn"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>" id="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_RETURN) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.dbcp.testwhileidle"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>" id="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_TEST_WHILE_IDLE) ? " checked" : "" %>>
+      </td>
+    </tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.minevictableidletime"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>" id="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>" value="<%= Environment.getIntValue(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) %>" size="5"/>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.timebetweenevictionruns"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>" id="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>" value="<%= Environment.getIntValue(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) %>" size="5"/>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.numtestsperevictionrun"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>" id="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>" value="<%= Environment.getIntValue(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN) %>" size="5"/>
+	  </td>
+	</tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.dbcp.whenexhaustedaction"/></td>
+      <td class="normal">
+        <select name="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>" id="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>">
+           <option value="<%=GenericObjectPool.WHEN_EXHAUSTED_FAIL%>"<%= Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION) == GenericObjectPool.WHEN_EXHAUSTED_FAIL ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.fail"/></option>
+           <option value="<%=GenericObjectPool.WHEN_EXHAUSTED_BLOCK%>"<%= Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION) == GenericObjectPool.WHEN_EXHAUSTED_BLOCK ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.block"/></option>
+           <option value="<%=GenericObjectPool.WHEN_EXHAUSTED_GROW%>"<%=Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION) == GenericObjectPool.WHEN_EXHAUSTED_GROW ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.grow"/></option>
+        </select>
+      </td>
+    </tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.validationquery"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" id="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" value="<%= Environment.getValue(Environment.PROP_DBCP_VALIDATION_QUERY) %>" size="30"/>
+	  </td>
+	</tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.dbcp.removeabandoned"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_REMOVE_ABANDONED) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.dbcp.logabandoned"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_DBCP_LOG_ABANDONED %>" id="<%= Environment.PROP_DBCP_LOG_ABANDONED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_LOG_ABANDONED) ? " checked" : "" %>>
+      </td>
+    </tr>
+	<tr>
+	  <td class="normal"><f:message key="admin.caption.dbcp.removeabandonedtimeout"/></td>
+	  <td class="normal">
+	    <input type="text" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>" value="<%= Environment.getIntValue(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT) %>" size="5"/>
+	  </td>
+	</tr>
+<!-- END DATABASE-PERSISTENCE -->
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.dbcp.usergroupheader"/></td>
+    </tr>
+
+    <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup"/></td>
+      <td class="normal">
+        <select name="<%= Environment.PROP_USERGROUP_TYPE %>" id="<%= Environment.PROP_USERGROUP_TYPE %>" onchange="onUserGroupType()">
+           <option value="0"<%= Usergroup.getUsergroupType() == 0 ? " selected" : "" %>><f:message key="admin.usergrouptype.none"/></option>
+           <option value="<%=WikiBase.LDAP%>"<%= Usergroup.getUsergroupType() == WikiBase.LDAP ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap"/></option>
+        </select>
+      </td>
+    </tr>
+
+<!-- BEGIN USERGROUP-TYPE -->
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.factory"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_FACTORY %>" id="<%= Environment.PROP_USERGROUP_FACTORY %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_FACTORY) %>" size="50">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.url"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_URL %>" id="<%= Environment.PROP_USERGROUP_URL %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_URL) %>" size="50">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.username"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_USERNAME %>" id="<%= Environment.PROP_USERGROUP_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_USERNAME) %>" size="20">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.password"/></td>
+      <td class="normal">
+        <input type="password" name="<%= Environment.PROP_USERGROUP_PASSWORD %>" id="<%= Environment.PROP_USERGROUP_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD) %>" size="10">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.basicSearch"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>" id="<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_BASIC_SEARCH) %>" size="50">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.searchRestrictions"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>" id="<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS) %>" size="50">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.userfidield"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_USERID_FIELD %>" id="<%= Environment.PROP_USERGROUP_USERID_FIELD %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_USERID_FIELD) %>" size="20">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.fullnamefield"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>" id="<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_FULLNAME_FIELD) %>" size="20">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.usergroup.mailfield"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_USERGROUP_MAIL_FIELD %>" id="<%= Environment.PROP_USERGROUP_MAIL_FIELD %>" value="<%= Environment.getValue(Environment.PROP_USERGROUP_MAIL_FIELD) %>" size="20">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal" valign="top"><f:message key="admin.caption.usergroup.detailview"/></td>
+      <td class="normal">
+        <textarea cols="40" rows="5" name="<%= Environment.PROP_USERGROUP_DETAILVIEW %>" id="<%= Environment.PROP_USERGROUP_DETAILVIEW %>"><%= Environment.getValue(Environment.PROP_USERGROUP_DETAILVIEW) %></textarea>
+      </td>
+    </tr>
+<!-- END USERGROUP-TYPE -->
+<script>
+	<!-- call it initially -->
+	onPersistenceType()
+	onUserGroupType()
+</script>
+    <tr>
+      <td class="normal">
+        <input type="submit" name="Submit" value="<f:message key="admin.action.save"/>">
+      </td>
+      <td class="normal">&nbsp;</td>
+    </tr>
+  </table>
+  <input type="hidden" name="function" value="properties">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+  <%--
+  Include a hidden (display:none) password field to prevent Firefox from trying to change the
+  admin password.  There is currently (version 1.5 and before) an issue with Firefox where
+  anytime two or more password fields are in a form it assumes the password is being
+  changed if the last password is different from the saved password.
+  --%>
+  <input type="password" name="<%= Environment.PROP_BASE_ADMIN_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD) %>" style="display:none" />
+</form>
+<hr/>
+<p class="subHeader"><f:message key="admin.title.refresh"/></p>
+<form name="refreshform" method="post" action="admin.html">
+  <input type="submit" name="submit" value="<f:message key="admin.action.refresh"/>"/>
+  <f:message key="admin.message.filemodeonly"/>
+  <input type="hidden" name="function" value="refreshIndex"/>
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+</form>
+<hr/>
+<p class="subHeader"><f:message key="admin.title.purge"/></p>
+<form name="purgeform" method="post" action="admin.html">
+<f:message key="admin.caption.virtualwiki"/>
+<select name="virtual-wiki">
+<option value="jsp"><f:message key="common.default"/></option>
+<%
+  Collection virtualWikis = null;
+  try {
+    virtualWikis = WikiBase.getInstance().getVirtualWikiList();
+  } catch (Exception e) {
+    virtualWikis = new ArrayList();
+  }
+  for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+    String wikiName = (String) iterator.next();
+%>
+  <option value='<%=wikiName%>'><%=wikiName%></option>
+<%
+  }
+%>
+  </select>
+  <input type="submit" name="submit" value="<f:message key="admin.action.purge"/>"/>
+  <input type="hidden" name="function" value="purge"/>
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+</form>
+<hr/>
+<%-- FIXME - restore virtual wiki --%>
+<p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
+<form name="readOnlyTopics" method="post" action="admin.html" class="contents">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+  <table border="0">
+    <tr>
+      <td>
+        <input type="text" name="readOnlyTopic">
+      </td>
+      <td>
+        <input type="submit" name="addReadOnly" value="<f:message key="admin.action.add"/>">
+      </td>
+    </tr>
+  </table>
+  <table border="0">
+    <tr>
+      <td><f:message key="common.topic"/></td>
+      <td><f:message key="admin.caption.mark"/></td>
+    </tr>
+    <%
+	if( readOnlyTopics != null ){
+      Iterator it = readOnlyTopics.iterator();
+      while( it.hasNext() ){
+          String topic = (String)it.next();
+%>
+    <tr>
+      <td><%=topic%></td>
+      <td>
+        <input type="checkbox" name="markRemove" value="<%=topic%>">
+      </td>
+    </tr>
+    <%}
+    }%>
+    <tr>
+      <td>
+        <input type="submit" name="removeReadOnly" value="<f:message key="admin.action.remove"/>">
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+</form>
+<hr/>
+<p class="subHeader"><f:message key="admin.title.virtualwiki"/></p>
+<form action="admin.html" method="post">
+  <table class="contents">
+    <tr>
+      <td><p><f:message key="common.name"/></p></td><td><input type="textfield" name="newVirtualWiki"/></td>
+      <td><input type="submit" value='<f:message key="common.add"/>'/></td>
+    </tr>
+  </table>
+  <input type="hidden" name="function" value="addVirtualWiki">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+</form>
+<hr/>
+<p class="subHeader"><f:message key="admin.title.changepassword"/></p>
+<form action="admin.html" method="post">
+  <table class="contents">
+    <tr>
+      <td><f:message key="admin.caption.oldpassword"/></td>
+      <td><input type="password" name="oldPassword"/></td>
+    </tr>
+    <tr>
+      <td><f:message key="admin.caption.newpassword"/></td>
+      <td><input type="password" name="newPassword"/></td>
+    </tr>
+    <tr>
+      <td><f:message key="admin.caption.confirmpassword"/></td>
+      <td><input type="password" name="confirmPassword"/></td>
+    </tr>
+    <tr>
+    <td><input type="submit" value='<f:message key="common.change"/>'/></td>
+    </tr>
+  </table>
+  <input type="hidden" name="function" value="changePassword">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+</form>
+<hr/>
+<p class="subHeader"><f:message key="admin.title.import"/></p>
+<a href="Wiki?action=<%= WikiServlet.ACTION_IMPORT %>"><f:message key="admin.caption.startimport"/></a>
+<hr/>
+<p class="subHeader"><f:message key="admin.title.panic"/></p>
+<form action="admin.html" method="post">
+  <table class="contents">
+    <tr>
+      <td><f:message key="admin.caption.panic"/></td>
+    </tr>
+    <tr>
+      <td><input type="submit" value='<f:message key="admin.caption.reset"/>'/></td>
+    </tr>
+  </table>
+  <input type="hidden" name="function" value="panic">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+</form>
+<hr/>
+
+<%@include file="generalmenu.jsp"%>
+</body>
+</html>

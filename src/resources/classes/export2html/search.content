@@ -1,0 +1,24 @@
+<script language="JavaScript">
+<!--
+function dosearch(searchterm)
+{
+	var hits = "";
+	hits = document.searchapplet.doSearch(searchterm, "<p><div class=\"searchresult\"><a href=\"##TOPICHREF##.html\">##TOPIC##</a></div><br>... ##TEXTBEFORE##<a style=\"background:yellow\" href=\"##TOPICHREF##.html\">##FOUNDWORD##</a>##TEXTAFTER##</p>\n");
+	document.getElementById('content').innerHTML = hits;
+}
+//-->
+</script>
+<div id="content">
+<form name="searchForm" method="post" action="javascript:dosearch(document.searchForm.text.value)" onsubmit="document.forms['searchForm'].elements['Submit'].value='Suche wird durchgeführt...';document.forms['searchForm'].elements['Submit'].disabled=true;">
+Suche nach:<input type="text" name="text">  <input type="submit" name="Submit" value="Suchen">
+
+<p>&nbsp;</p>
+Hinweise:<br>Die Zeichen * und ? sind Platzhalter.<br>Wenn ~ an ein Wort angefügt wird, wird die Suche ungenauer.<br>AND, OR können benutzt werden. Gruppierungen sind mit ( ) möglich<br>Worte werden betont mit +, mit - sollte ein Wort nicht gesucht werden.<br><a href="http://jakarta.apache.org/lucene/docs/queryparsersyntax.html" target="_blank">mehr über die Suchausdrücke (engl.)</a><br>
+
+<input type="hidden" name="action" value="action_search"/>
+</form><script language="JavaScript">document.searchForm.text.focus();</script>
+</div>
+<p>&nbsp;<applet code="SearchApplet.class" WIDTH="1" HEIGHT="1" name="searchapplet" archive="applets/vqapplets.jar,applets/lucene-1.2a.jar,applets/log4j.jar,applets/index.jar,applets/commons-httpclient-2.0.jar" mayscript><param name="directory" value="lucene">
+</applet></p>
+<font size="-1"><i>search powered by</i></font> <a href="http://jakarta.apache.org/lucene"><img src="images/lucene_green_100.gif" alt="Lucene" border="0" /></a>
+

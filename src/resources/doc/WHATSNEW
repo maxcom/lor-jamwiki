@@ -1,0 +1,744 @@
+---WHAT'S NEW for Very Quick Wiki V2.7.x---
+
+2.7.8
+
+    Fixes
+    
+    - Fixed: 'mentioned on' behavior changes when attachments are indexed
+    - Fixed: Wrong special chars handling in RSSServlet
+    - Fixed: Wrong special chars handling in search box
+    - Fixed: Non localized messages in top navigation bar History page
+    - Fixed: vqwiki.PluginManager cannot find file
+    - Fixed: Lists break without spaces-to-tabs enabled
+    - Fixed: System claims lock is taken by someone else even when it is not
+    - Fixed: When I use [[UC 0002]] as an internal link it does not recognize it as a link.
+    - Fixed: Search engine index setConnectionTimeout (instead of setTimeout) causes deadlock
+    - Fixed: set username accepts empty username
+    - Fixed: Notifications: not possible in Oracle
+    - Fixed: create_postgres.sql file missing in 2.7.7
+    - Fixed: Export2HTML seems to be failing us
+    - Fixed: Purge Deleted Topics not working with Oracle DB
+    - Fixed: Purge Deleted Topics not working when using MySQL
+    - Fixed: redirect: doesn't work with topic names surrounded by brackets ([[...]]) or backticks (`...`)
+    - Fixed: Problem with function Export2HTML
+    - Fixed: Diff.java license appears incompatible with LGPL
+    - Fixed: Search in ExportHTML doesn't work.
+    - Fixed: Issue with generating membership confirmation email
+    - Fixed: VQWiki crashes on first use on WebSphere 5 (used to work)
+    - Fixed: Deleted topic remains on recent changes
+
+    Improvement / Patch
+
+    - Added: Full support of Lucene Query Syntax
+    - Added: Adding prettylink in the form [http://www.vqwiki.org | the quicky wiki]
+    - Added: Add style class to tables produced by ####
+    - Added: Unsubscribe link in mail
+    - Added: Spanish translation
+    - Added: Passwords should be encrypted in property files
+    - Added: Add topic name to emailed "topic changed" alert
+    - Added: Add option to disable prepending numbers to attached file names
+    - Patch: Patch to add possibility of basic authentication support instead of cookie
+    - Patch: Lexer to implement MediaWiki Syntax
+    - Patch: Change "Jump to" - "Search" Buttons to "Search" - "Jump to"
+    - Patch: Clean up top menu
+    - Patch: Fix (?) database connection handling
+    - Patch: Standardize coding style
+    - Patch: org.apache.log4j.Category is deprecated
+    
+    Special Notes on version 2.7.8:
+    
+    1. A new security contraint was added to the web.xml file. This will implement basic authentication for VQWiki.
+       It is turned off by default. To turn it on, uncomment the security-constraint section in web.xml and restart the application.
+       Functionality: Shows a basic authentication pop-up so users can be authenticated against third party system.
+                      (with auth-ldap for example) If it is turned off, the normal cookie method will be used.
+    2. A new diff function was introduced. It uses stylesheet based layout, please also see the UPGRADE document.
+    3. It is now possible to redirect to topics with spaces. If the first word in the content is redirect, the rest will be used
+       as the destination topic.
+    4. Passwords in the vqwiki.properties file can be encrypted now, see the admin screen.
+
+2.7.7
+    - Fixed bug in RSS feed where partial html codes in the description broke the feed
+    - Fixed URL and i8n problem due to URL being encoded in UTF-8 and Tomcat trying to decode as ISO-8859-1
+    - Fixed bug where a lock file is not deleted for topics with spaces (or other characters outside ASCII) in them
+    - Added Norwegian translation
+    - Added Polish translation
+    - Added Swedish translation
+    - Updated German translation
+    - Updated Dutch translation
+    - Added new documentation: the VQWiki Book, supplied in DocBook and HTML formats with the WAR file
+      and downloadable as a PDF from the site. This new document replaces the old admin guide.
+
+2.7.6
+    - Improvements to the admin screen for quicker deployment.
+    - Some fixes with regards to internationalization.
+
+2.7.5
+    - Addition of a basic preview option, including admin screen setting.
+      Default behaviour is not to use it.
+
+Bugfixes:
+    [ 1029961 ] - edit.js missing
+    [ 1205764 ] - Ordered list trouble
+    [  814653 ] - admin-guide: wrong path for linking.properties
+    [ 1060306 ] - RSS plugin: Rss plugin's keep setting produces nullpointer?
+    [  837452 ] - Export2HTML Problem - worked 1 time
+    [  998848 ] - External link shows up in ToDo
+
+2.7.2
+
+Added support for spaces in display-name for link extender, e.g.:
+[c2:StartingPoints|C2 Starting Points]
+Will render the HTML: <a href="http://c2.com/cgi/wiki?StartingPoints>C2 Starting Points</a>
+
+2.7.1
+
+Added support for actions to the plugin manager. Classes that implement vqwiki.WikiAction can be implemented and
+placed in plugin zips. The WikiAction.doAction() method supplies the servlet request and response so there is now
+no need to write new servlets and add mappings to web.xml to extend VQWiki functionality, they can be created as
+plugins rather than in the main code stream.
+
+Altered menu so that it picks up the "StartingPoints" link from the default topic setting in the admin console. If
+you choose another default topic it will link to that instead of StartingPoints.
+
+Added display-name behaviour to the link extender. A pipe after the section following the colon separates the
+display-name, e.g.:
+c2:StartingPoints|C2
+Will render the HTML: <a href="http://c2.com/cgi/wiki?StartingPoints>C2</a>
+
+Added Amazon default link extension that uses the ISBN number, e.g.:
+amazon:0201485672|Refactoring
+...will produce a link with the text "Refactoring" to the Amazon book details for "Refactoring" by Martin Fowler
+
+Added Internet Movie Database default link extension that uses the IMDB id number, e.g.:
+imdb:0246578|DonnieDarko
+...will produce a link with the text "DonnieDarko" to the IMDB details for Donnie Darko :-)
+
+Bug fixes:
+ -Fixed the plugin manager so that it does not require a context restart immediately after installing
+  a plugin
+ -Fixed Resin-specific bug where redirect from logout link was redirecting to root context instead of
+  virtual wiki context
+
+2.7.0
+
+Field on menu that can be used to jump straight to a topic by name, or to search for the given text
+using the usual search engine.
+
+Added "logout" link at bottom of topics to logout the current user. This is to enable virtual wiki
+switching when authentication realms have been added to separate virtual wikis. Link will only appear
+if there is an authenticated user principal is present.
+
+"Minor edit" checkbox to optionally exclude changes from recent changes.
+
+Added proper explanation for when less than two topics are selected in the arbitrary diff in history.
+
+The "print this and how many pages below" form on the printable page version is hidden after being submitted.
+
+Bug fixes:
+ -Fixed problem where Tomcat 5 gave file not found errors if there was a space in the webapp install path
+ -Fixed error in database mode about missing "FritzTextFormattingRules.txt"
+ -Added missing return statement in SaveTopicServlet
+ -Purging topics does not misreport the purging of pseudotopics (e.g. SetUsername)
+
+2.6.4
+
+Added proper back-link searching so that the "is mentioned on", OrphanedWikiTopics and
+ToDoWikiTopics are actually accurate, i.e. instead of an ordinary search being carried out, a
+lexer checks that the relationship is a proper link.
+
+Added admin option to set whether to send more than one email change notification per topic per day.
+
+Added admin console "panic" feature to delete all lock files and recent changes serializations in the event
+that locks are unable to be removed through the lock list.
+
+Bug fixes:
+ -Diffing of topics with spaces in the name
+ -Fixed some resources with no space
+ -Fixed encoding of topic names in menu item URLs
+ -Changed breadcrumb trail to display the resource name of the virtual wiki correctly
+ -Made read-only topic check case-insensitive
+ -Fixed failure to unlock topics with special characters in the name
+
+2.6.3
+
+Bug fixes:
+ -Fixed bug with new "redirect:" pages
+ -Fixed bug in option for separate title words on admin console
+ -Added _en ResourceBundle to fix problem with Safari displaying incorrect locale
+ -Fixed external linking breakage
+
+2.6.2
+
+Arbitrary diffing between versions on the history page.
+
+Added admin setting to enable/disable indexing of attachments when search engine indexing runs. We have *very* large
+PDFs as attachments and the indexing process was taking several hours.
+
+Admin option for making words in CamelCaps appear as separate words in the titles.
+
+Bug fixes:
+-fixed backtick wiki-name match so that a pseudo-shortest-match occurs
+
+2.6.1
+
+Bug fixes:
+ -RecentChanges failures in file mode
+ -OrphanedTopics failure
+
+2.6.0
+
+PostgreSQL added as a standard database type (thanks to Andre Gauthier for the info on the
+necessary script changes). Database type in admin console is now a combo box.
+
+Added option "RecentChangesRefreshInterval" : When the user request the page
+"Recent Changes", it takes long time to generate it. As this page is often
+requested by users, because it briefly resumes all the updates on the web
+site, it charges a lot the server CPU load processing always the same
+information and producing the same page for different users.
+With this option you can customize the lifetime of the RecentChanges page, so
+different users requesting this page will get a "cached version" of the page
+until it expires.  This greatly reduces server CPU load, speeding up the site.
+
+DefaultLineBreaks is now by default set to 1.
+
+CSS are now editable by remote as any other wiki page.
+
+"Website-like" layout by Luigi. It's now possible to create a menu that will be
+displayed on the left side of each page, a "Top Area" (for the site logo and
+banner) and a "Bottom Area" (for sponsors etc.)
+
+"AdminOnlyTopics" special wiki topic contains a white-space separated list of topics that only admin should be allowed
+to read or edit. By default this includes AdminOnlyTopics, TopArea, BottomArea and LeftMenu.
+
+Back-porting of JFlex from VQWiki 3 Alpha to replace the ageing JLex based lexical analyser 
+generation. This together with the addition of UTF-8 encoding by Martin Kuba for flat-file mode should
+clear up problems with non-Latin characters.
+
+Admin option to set the encoding scheme - if you're already using ISO-8859-1 (the default prior
+to using UTF-8) you'll need to set the admin option to ISO-8859-1 or convert your existing files to
+UTF-8.
+
+Czech translation by Martin Kuba.
+
+Bug fixes:
+- typos in default topics and "is mentioned on".
+- Code clean-up (some unused stuff)
+- Fixed \n added in bottom of each file read, that was adding a <br> in the 
+  bottom of each rendered page. (WikiBase.java)
+- fixed unclosed table tags in admin.jsp
+
+2.5.5
+
+Italian translation by Jacopo Giudici.
+
+Explicit wiki server hostname setting in admin console. This can be set to make the server
+sent out in email messages for the registration/notification system always appear as this server
+(useful if you use multiple URLs to access the same server).
+
+Database connection pooling (Jakarta Commons pooling) and DataSource support added by
+Ernst Jan Plugge. See CONNECTIONPOOL_README and/or DATASOURCE_README in the Wiki
+installation directory for details.
+
+Various stability improvements.
+
+2.5.4
+
+Proper Oracle support added by Ernst Jan Plugge. See the ORACLE_README in the Wiki installation
+directory under your webapps directory.
+
+Bug fixes:
+-spaces in key escaped in pseudotopics.properties
+
+2.5.3
+
+Ability to set a target for external hyperlinks. This can be set in 
+linking.properties, e.g. to make all links to pages outside the wiki open
+in a new window this can be added:
+hyperlinks.target=#blank
+
+Bug fixes:
+-search indexing instability in file mode fixed
+
+2.5.2
+
+Tobias added new pseudotopic WikiStatistics that gives a breakdown of Wiki
+usage stats.
+
+Bug fixes:
+-purge deleted in database mode fixed (didn't work with some MySQL drivers)
+-tag error when adding new members fixed
+-fixes for Lucene search indexing
+-bugs with cancel/save under German locale fixed
+
+2.5.1
+
+Bug fixes:
+-append template failure fixed
+-admin console now adds and removes read-only topics for the current virtual wiki
+-text area in history is read-only
+
+2.5.0
+
+Bug fixes:
+-orphaned topics now working again
+-whitespace problem in search results resolved
+
+2.5.0 RC 2
+
+Bug fixes:
+-nested tag upsetting Resin removed
+-admin console login/logout failed redirection on Resin fixed
+-history was still wrong, fixed properly this time
+-table text font same as body text font
+
+Upgraded standard taglib to version 1.0.3, getting rid of the last edit date bug in the process.
+
+Font size in pre/code/tables same size as body (except it doesn't seem to be on Mozilla - does
+anyone know why fixed width font on Mozilla shows up smaller than sans serif?).
+
+2.5.0 RC 1
+
+I registered the domain name veryquick.org, so all the email addresses etc have been
+changed to reflect this. The old domain is still active though, so don't worry about updating
+existing links.
+
+Virtual wiki list: clicking on the "Wiki" part of the page header (the bit before the virtual
+wiki name) will show a list of virtual wikis that are available. This can be suppressed in
+the admin console if you don't wish all users to see all virtual wikis. The virtual wikis can
+now have friendly names set in WEB-INF/classes/ApplicationResources.properties. (Should the
+friendly name go in the page header??)
+
+Some further German translation by Tobias.
+
+Bug-fixes:
+-reserved word "user" changed to "wikiuser" for ANSI compliant database mode
+-history was returning incorrect versions from main list and next/previous were the wrong
+ way around
+-clicking admin link defaults to admin username on login page
+-breadcrumb trail respects virtual wiki boundaries (the trail gets reset on boundary)
+-printable pages with depth > 0 do not include pseudo-topics (e.g. RecentChanges)
+-Changed the heading lex behaviour to ^!.+[^\n]! ^!!.+[^\n]!! etc.
+
+2.5.0 BETA 3
+
+Mainly bug-fixes: fixed the RecentChanges problem where multiple virtual wikis were being
+displayed on the default virtual wiki's recent changes. Various other stability issues.
+
+Changed the heading lex behaviour to !.+[^\n]! !!.+[^\n]!! etc.
+
+2.5.0 BETA 2
+
+Tobias Schulz-Hess implemented Lucene as the search engine - full query syntax, search term
+highlighting etc!! He has also added a breadcrumb trail.
+
+Tobias also created an RSS feed: e.g. http://localhost:8080/wiki/jsp/Wiki?RSS
+
+For developers: reorganized package structure thanks to J Carlsson's suggestion.
+
+For users: the lexers now have the logical names vqwiki.lex.LinkLex etc when setting them
+in the admin console. This means they will need setting on an upgrade, if you use your old
+properties file so set add the .lex bit to each of the lexers names (see UPGRADE for more
+lucid instructions).
+
+Placing a file called "wikiname.ignore" in WEB-INF/classes that contains a list of WikiNames
+(one per line) will mean that those names are not treated as WikiNames by the lexer (they
+won't be linked).
+
+Java2HTML upgrade - thankyou Markus Gebhard.
+
+2.5.0 BETA 1
+
+Improved performance of RecentChanges in file mode.
+
+"ANSI-fied" the SQL used to create tables and to search the database. This means that
+VQWiki should now work with most databases. Added an admin console option for "database type".
+This defaults to "mysql", but can be set to "ansi" to use the ANSI SQL.
+
+Topic redirection. To make one topic automatically redirect to another, simply make the
+contents of the topic "redirect:TopicName". Of course, this makes it rather difficult
+to undo a redirection, since any attempt to get to the topic will result in a redirection
+to "TopicName". So, there is a forced edit format: "edit:TopicName" will link directly
+to the edit of "TopicName".
+
+Internal security management. The web appliaction security context is no longer used
+for admin console authentication. The first time you run (or upgrade to 2.5.0) VQWiki
+you will be shown a password on the first topic you access. This is the admin password.
+The admin username is "admin".
+
+Added new link-lexer "LinkLexLoose" that allows WikiNames to be constructed from words with
+more than one consecutive uppercase letter, e.g. WiKIName. LinkLexLoose is not the default
+link-lexer, but it can be set from the admin console.
+
+Admin password change on the admin console.
+
+Default topic setting on admin console - the topic set here will be the one that greets
+users if they go to the base of the wiki context (index.jsp).
+
+Topic total on all, orphaned and todo topics pages.
+
+Lock list console with unlocking (requires admin login).
+
+Extensible "pseudo-topic" makes adding new special topic URLs easier when writing
+plugins.
+
+Templates are now appended to the topic while it is being edited, rather than appending
+on the topic save.
+
+Commencement of the internationalization of strings, titles, captions etc.
+
+Correct input and display of high unicode characters, e.g. Japanese, Chinese etc.
+
+Confirming membership by email doesn't require the username cookie to be on a machine
+already. If the cookie isn't there at confirmation time, it will be resent.
+
+2.4.0 FINAL
+
+Bug with env-entry explicit properties file setting fixed.
+
+Added \__ to allow entry of double underscores (__ are normally the special character for
+no formatting).
+
+Three-spaces are not converted to tabs when inside a preformatted section.
+
+History in date descending order in file mode.
+
+Fix for bug with re-requesting membership confirmation in database mode.
+
+2.4.0 RC 3
+
+Re-introduced the "convert spaces to tabs" option on the edit page. Added admin setting
+to set the default for this.
+
+Fixed the way that the confirmation URL is produced when subscribing to email notifications.
+The confirmation URL is now always based on the URL the user subscribed from.
+
+2.4.0 RC 2
+
+fixed web.xml bad reference to /AdminServlet
+
+2.4.0 RC 1
+
+If "force setting of username" is on, when the user is forced to set their name on an
+attempted edit, they are redirected back to the edit after setting it, rather than just left
+at the "thankyou" page.
+
+Removed dangling reference in CSS to background image.
+
+Infinite looping during searching for plugins when no user directory found fixed.
+
+Further fixes for international wiki names.
+
+Images uploaded as attachments now appear inline in topics.
+
+2.4.0 BETA 2
+
+Version browser - click the "history" menu item on any topic to see a list of the versions
+of that topic. Clicking a date in the list produces a display of both the marked up version
+and the original contents. The original contents can then be used to restore damaged topics.
+The history view has "next", "previous" and "current" menu options so it is possible to scroll
+through each version of a topic.
+
+Fixed database mode locking behaviour, backing out editing a topic and re-entering without
+using cancel now keeps the lock rather than acting as though the user has lost the lock.
+
+Absolute URLs can be used for the customized logo.
+
+2.4.0 BETA 1
+
+New look'n'feel, courtesy of Joachim Lous. This includes the display/link-to of the current
+virtual wiki in the header (if more than one virtual wiki exists)
+
+Truls Thirud's fixes to allow internationalized WikiNames.
+
+Extensible lexer system including Java source code formatting as an example. Surround some
+Java code in [<java>] [</java>] to see the effects.
+
+Extensible lexer also provides full HTML include: surround HTML in [<html>] [</html>] and
+VQWiki will ignore the markup and output HTML exactly as entered.
+
+Much of the scriptlet code in the JSPs has been replaced with common taglib tags and
+custom VQWiki tags. This makes the JSPs a lot easier to debug and enhance.
+
+2.3.6
+
+Orion-specific fixes that enable correct operation of mail notification system and
+printable page feature.
+
+Occasional bug with security error on emailing fixed.
+
+Combo-box to select the virtual wiki that you wish to purge deletes from.
+
+OrphanedTopics are alphabetised.
+
+The last character of the last cell in a table is not truncated.
+
+2.3.5
+
+Added attachment-type setting. Attachments can be delivered inline or as "attachments". Inline
+means they get opened by the browser (in a new window). "Attachment" means they become prompt
+for a download straight away.
+
+The admin console reports which files were deleted on a purge.
+
+Fixed SMTP authentication settings that weren't saving from the admin console.
+
+2.3.4
+
+Added the file upload size limit setting to the admin console.
+
+Fixed content header delivery so the correct filename and type for the attachment is sent
+on viewing.
+
+Fixed IE-specific (it was working under Mozilla) file upload problem with full path names
+being appended to to upload directory instead of just the filename.
+
+Fixed problem with read-only topics not being deleted from the admin console when in file
+mode.
+
+Included activation.jar (email notification dependency) and commons-logging.jar (file upload
+dependency) in the lib directory.
+
+2.3.3
+
+More rigorous save checking to avoid poorly written web crawlers saving blank topics.
+
+2.3.2
+
+A new line is appended if there is none on topic reads. This stops problems with unterminated
+tables and lists.
+
+Numbered lists were not working, they are now.
+
+A code tag in the same style as the FritzLex has been added to the default lexers:
+e.g. {{{here is some code}}}
+
+An admin option to turn off templates has been added (in case you wish to conserve screen
+real estate)
+
+Updated quick edit help.
+
+2.3.1
+
+Fixed bugs in admin page - some settings not saving.
+
+Switched to 3 pass parser: one for layout, one for format and one for linking.
+The 2 pass can not put bold, italic etc in tables and lists.
+
+2.3
+
+Printable page link in topic menus brings up a page with just the header and contents.
+
+The number of line breaks to insert in the HTML on a new line in the text can be set
+from the admin console. This means you can squeeze everything up a bit by setting it to "1"
+rather than "2" (which is what VQWiki has been using until now - the default is 2).
+
+Extensible links. "links.properties" now holds expansions for prefix:url format links. This
+makes it easy to add extra linking to other Wikis or internal web systems like WebCVS.
+
+Sublists. Use multiple groups of three spaces to create lists within lists.
+
+Improved attachment system. Special syntax for absolute path for uploads is not required. Content
+is delivered directly by servlet rather than having to place the attachment in a location
+relative to the JSP context. "mime.types" can be used to specify by-extension content types.
+SmartUpload is no longer used - now using Jakarta Commons upload.
+
+Improved text formatter. The lexing is now performed in two passes, this has meant fixes are
+possible (and have been implemented) for strange list and table behaviour. A unit test for
+the lexer has also been added to help with further lex enhancements.
+
+SMTP username and password added to admin console for users who require authentication on
+their SMTP servers.
+
+Templates are now available in file mode as well as database mode.
+
+2.2.1
+
+Minor bug fix for issue with Apache/Tomcat delivering content to Mozilla/Netscape browsers.
+A content-type header is now added explicitly, previously the HTML source would be displayed
+instead of being interpreted when viewing pages from Apache/Tomcat with Mozilla-based browsers.
+
+2.2
+
+Email notification of topic changes is now implemented in file-mode and database-mode
+(the groundwork for this was all done by Robert Brewer).
+
+Maximum number of backlinks can be set (default = 20).
+
+Fixed "Last Edited" date in file mode.
+
+Fixed problem with list not working if started on the first line.
+
+In file-mode, RecentChanges are now serialized via JSX to XML, so there will no longer
+be a problem with upgrades making the binary file incompatible between versions. It will
+be simple to write a script to update the file to any new change version.
+
+2.1
+
+Clicking on a topic title searches for occurences of that title.
+
+"Edit page" and "Attach" links no longer appear when a topic is marked read-only.
+
+Added "quick help" to edit page.
+
+Added "virtual wikis", more than one Wiki can now be run from the single server
+instance. All it requires is adding the name in the admin console and a single
+servlet mapping to the web.xml file. See VIRTUALWIKI_README for details.
+
+Added orphaned-topics search and all topics listing: "AllWikiTopics" and
+"OrphanedWikiTopics" respectively.
+
+Fixed database-mode search so that it searches on topic name as well as contents.
+
+Added WikiServlet so all topic requests are directed at "Wiki". Redirection occurs back
+to "Wiki" rather than forwarding, so the page can be refreshed after saving without
+causing re-saving to occur. Dynamic topic requests are now intercepted by the servlet
+rather than by the topic.jsp.
+
+The logo now features a French Orca by the name of "Wiki". :o)
+
+The Database support now uses a MySQL regular expression to do the searching, consequentially
+it database support will no longer (sort of) work with MS SQLServer or other non
+MySQL syntax platforms.
+
+Format-ignore character is now two underscores rather than one so the underscore can be
+used normally.
+
+Localised date formatting on "last edited" menu item.
+
+Tables markup using #### and ##.
+
+Pre-formatted text markup using @@@@.
+
+Menu at top and bottom of the page.
+
+Added supported for a deployer-defined logo image.
+
+2.0 BETA 2
+
+Change from GPL to LGPL for licence on advice of many people. Particularly because of
+the inclusion of non-GPL library code in VQWiki (log4j).
+
+Added read-only topic support to database layer (previously only for flat-file mode).
+
+Improved default topic creation, default topics are now stored as text files in the
+class path rather than being hard-coded.
+
+Improved error handling.
+
+Added new enhanced text-formatter mode created by Fritz Freiheit. The new mode can
+be toggled from the admin console. A new default topic called FritzTextFormattingRules
+explains how to use the enhancements.
+
+Noel fixed database connections so a connection dropped by the database is reconnected.
+
+Added   entry for index.jsp to web.xml.
+
+Made initial config more robust so it is possible to reconfigure from admin console
+if in database mode and database connection fails.
+
+
+2.0 BETA 1
+MySQL database back-end support. The native file-system operates by default after
+installation, but database support can be setup and started from the admin console.
+See MYSQL_README.
+
+Added new escape sequence __ that ignores any formatting inbetween.
+
+Made TextFormattingRules a normal Wiki topic.
+
+
+1.8.2 (not released, changes included in 2.0)
+Moved the properties file to the classpath, using the Log4j Loader to locate it. This
+will avoid problems with running the web container as an anonymous user with no home
+directory and limited access to the Tomcat directory. It can found in WEB-INF\classes.
+
+Made the Wiki file-system (home) directory changeable from the admin console. This can
+be changed on the fly, but it takes a few seconds for the web container's class loader
+to detect that the properties file has been modified and reload the handler... so an
+exception will occur if the home directory is changed while running and then a page is
+accessed too soon.
+
+Added an "allow back-tick" setting to the admin console. This means that the back-tick
+automagic WikiNames e.g. `ACM` can be disabled if required. Back-ticks are not a
+standard Wiki convention.
+
+
+1.8.1
+Fixed lexer so that numbered lists appear correctly when preceded by a blank line.
+
+Shawn created new locking mechanism where an error message is generated if the lock
+that a user editing a document times out. Now they can not overwrite the changes
+made by the person who acquired the timed-out lock.
+
+Automagic links to c2.com and Meatball wikis. E.g. c2:StartingPoints, mb:RecentChanges
+
+The topic names themselves are now indexed in the search engine.
+
+RecentChanges ordering is now most recent to least recent.
+
+1.8.0
+Bill added switchable support for HTML, toggled from admin console.
+
+Added https as a protocol that automagically turns into a link.
+
+Fixed search engine index rebuild to refresh table completely (ooops).
+
+Switched to using proper lexical analyser for tokenizing into the search
+index so HTML tags are stripped and punctuation removed.
+
+Changed JSP comments so that they are not output to the browser.
+
+Added support for binary file uploads that produce an inline link of the
+form attach:filename.ext. This allows the attachment of files to topics.
+
+Added versioning cache to speed up finding where the previous revision is.
+
+Added log4j as the logging engine (http://jakarta.apache.org/log4j).
+
+Put all properties in a single properties file in the working directory.
+
+Added security constraints to web.xml to allow administrators to setup up security
+for allowing edit access to only some users. The constraints are commented out
+by default.
+
+
+1.7.0
+Custom wiki directory can be set by placing a properties file called
+"vqwiki.properties" in the working directory for the web container and
+setting a property "dir" to a directory name (the directory will be
+created by vqwiki on startup).
+
+Topics can be made read-only from the admin console.
+
+
+1.6.3
+Work-around for Tomcat 2.x and 3.x to prevent exception when saving. This
+problem should be fixed in the next released versions of Tomcat.
+
+
+1.6.2
+Fixed text-formatter to handle Unicode so non-English alphabet characters
+can be used.
+
+
+1.6.1
+Fix for problem with backtick sequence only allowing one match per line.
+
+Fix for terms with digits not being search-indexed correctly.
+
+
+1.6
+
+Diff capability.
+Username cookies.
+
+1.5
+
+Improved UI.
+
+1.4
+
+Admin console.
+Search engine.
+
+Comments to vqwiki@veryquick.org

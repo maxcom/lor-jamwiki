@@ -1,0 +1,30 @@
+Click "Edit Page" at the bottom of this page to start contributing.
+To delete a topic, just leave the word "delete" by itself when you save it. It will be
+removed completely when your administrator runs a purge.
+----
+RecentChanges - what, when, who
+----
+TextFormattingRules - how to do emphasis, lists, tables, URLs and so on
+AllWikiTopics - a list of all the topics in the Wiki
+OrphanedWikiTopics - topics that have no links from any other topics, use with caution on a big Wiki
+ToDoWikiTopics - dangling topic links waiting for someone to write about them
+WikiLockList - currently locked topics
+`RSS` - a RSS news stream of this Wiki
+`Export2HTML` - export this wiki into a zip containing pages as html files
+----
+WikiSearch - search the Wiki
+----
+SetUsername - set a name to appear in the RecentChanges
+----
+----
+Do you want to modify...
+	*the TopArea? edit:TopArea
+	*the LeftMenu? edit:LeftMenu
+	*the BottomArea? edit:BottomArea
+	*the StyleSheet? edit:StyleSheet
+
+----
+http://www.vqwiki.org
+----
+If you have a spare moment, please let us know where and what you're using Very Quick Wiki for, and feel free to send us any comments or suggestions:
+mailto:support@vqwiki.org

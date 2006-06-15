@@ -1,0 +1,33 @@
+
+----------------------------------------------------------------------------
+-- Connection pooling README for Very Quick Wiki V2.5
+----------------------------------------------------------------------------
+
+Database persistence uses the Apache Commons DBCP (Database Connection
+Pooling) to provide robust database performance.
+
+Nothing special needs to be configured to make this work, it's there out
+of the box. The default configuration should suffice for most situations,
+but all connection pool parameters are configurable from the administration
+page.
+
+These options should be self-explanatory. For more details on the inner
+workings of DBCP, take a look at the DBCP and Pool homepages:
+
+http://jakarta.apache.org/commons/dbcp/
+http://jakarta.apache.org/commons/pool/
+
+
+If you want to use a database type other than MySQL, you should pay close
+attention to the "validation query" parameter. This is a small query to be
+executed to test the validity of the connection. For MySQL, the query
+"SELECT 1" is appropriate, which is the default. No table is specified,
+because the fact that the query is received and processed by the server is
+enough to ensure the connection is still alive and well. For other database
+types, other queries are appropriate. For Oracle, "SELECT COUNT(*) FROM
+DUAL" is a useful validation query. The table "DUAL" is a special built-in
+table with a single row for exactly this kind of purpose.
+
+If you use another database type, consult your database's documentation for
+details on what is a usable validation query for you.
+

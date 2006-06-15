@@ -1,0 +1,59 @@
+
+----------------------------------------------------------------------------
+-- Oracle README for Very Quick Wiki V2.5
+----------------------------------------------------------------------------
+
+
+You need the classes12.zip Oracle JDBC Thin driver. Either include it
+in the WEB-INF/lib directory of the VQWiki webapp, or in a
+container-specific lib directory that is made available to your
+container's webapps. For Tomcat, that is tomcat/shared/lib. In the
+case of Tomcat, rename the file to classes12.jar. The Tomcat classpath
+builder doesn't see zip files as libraries.
+
+This code should also work with the OCI driver. However, you're on
+your own as to configuring the native code library so that the OCI
+JDBC driver can see it.
+
+The classes12.zip can be downloaded from:
+
+http://otn.oracle.com/software/tech/java/sqlj_jdbc/content.html
+
+
+In the VQWiki Administration Servlet, specify the following:
+
+JDBC driver class: oracle.jdbc.driver.OracleDriver
+Database type    : oracle
+Database URL     : jdbc:oracle:thin:@dbserver:port:dbname
+Database Username: as appropriate
+Database Password: as appropriate
+Validation query: SELECT COUNT(*) FROM DUAL
+
+Fill in the values for dbserver, port and dbname in as appropriate for
+your environment. Ask your database administrator.
+
+
+VQWiki will automatically create the tables if it has the privileges
+to do so. If not, ask your database administrator to execute the
+create_oracle.sql script as the schema owner.
+
+VQWiki will try to recreate the tables every time it starts up. This
+will cause errors such as: java.sql.SQLException: ORA-00955: name is
+already used by an existing object. These can be safely ignored.
+
+
+If you get "Table or view does not exist", even though the tables do exist:
+
+The database user must be able to see the tables without prefixing a
+schema name. You may need to create public synonyms for the tables if
+the schema owner is not the database user. Again, ask your database
+administrator to create public synonyms for the VQWiki tables if this
+is the case.
+
+If VQWiki doesn't create the tables:
+
+Check the log files. If there are messages about SQL syntax errors,
+check the vqwiki.properties file in WEB-INF/classes and the
+administration servlet to make sure the database-type is set to
+"oracle".
+

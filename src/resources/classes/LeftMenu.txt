@@ -1,0 +1,18 @@
+To modify this,
+click: LeftMenu
+----
+RecentChanges
+----
+TextFormattingRules
+AllWikiTopics
+OrphanedWikiTopics
+ToDoWikiTopics
+WikiLockList
+`RSS`
+`Export2HTML`
+----
+WikiSearch
+----
+SetUsername
+----
+[<html>]<a href="http://www.vqwiki.org">VeryQuickWiki</a>[</html>]

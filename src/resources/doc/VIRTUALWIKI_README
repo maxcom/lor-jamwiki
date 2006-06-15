@@ -1,0 +1,28 @@
+---VIRTUALWIKI_README for Very Quick Wiki V2.x---
+
+This document is intended to give instructions on creating new virtual wikis.
+
+1) Access the admin console at http://<host>/<wikicontext>/jsp/admin.jsp
+
+2) Scroll down to the "add virtual wiki" box, enter a name (one word, no spaces) and click add
+
+3) Shut down Tomcat
+
+4) Edit <wikiwebapp>/WEB-INF/web.xml
+
+5) You'll find a sample mapping and a comment for setting up a new Wiki servlet mapping
+
+6) Add a mapping to the Wiki servlet using the same name as you chose in step 2 as the part
+   of the URL after the base Wiki context. E.g. if your virtual wiki is called "other", the
+   complete mapping will look like:
+   <servlet-mapping>
+		 <servlet-name>Wiki</servlet-name>
+		 <url-pattern>/other/Wiki</url-pattern>
+	 </servlet-mapping>
+
+7) Set a "friendly name" for the virtual wiki in <wikiwebapp>/WEB-INF/ApplicationResources.properties.
+   The entry should be of the format:
+   virtualwiki.other.name=Other
+   Where "Other" is the name that will appear in the virtual wiki list.
+
+Questions: vqwiki@veryquick.org

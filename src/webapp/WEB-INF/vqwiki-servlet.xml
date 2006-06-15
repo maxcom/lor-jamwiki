@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+ "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for "wiki" DispatcherServlet.
+  -->
+
+<beans>
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename"><value>messages</value></property>
+    </bean>
+
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/**/view/*.html">viewTopicController</prop>
+                <prop key="/**/edit/*.html">editTopicController</prop>
+                <prop key="/**/delete/*.html">deleteTopicController</prop>
+                <prop key="/**/admin/*.html">adminWikiController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewTopicController" class="org.vqwiki.web.ViewTopicController" />
+    <bean id="editTopicController" class="org.vqwiki.web.EditTopicController" />
+    <bean id="deleteTopicController" class="org.vqwiki.web.DeleteTopicController" />
+    <bean id="adminWikiController" class="org.vqwiki.web.AdminWikiController" />
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass">
+           <value>org.springframework.web.servlet.view.JstlView</value>
+        </property>
+        <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+        <property name="suffix"><value>.jsp</value></property>
+    </bean>
+</beans>

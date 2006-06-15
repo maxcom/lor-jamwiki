@@ -1,0 +1,74 @@
+<script language="JavaScript">
+<!--
+var picture_xp='images/x+.png';
+var picture_xm='images/x-.png';
+var picture_x='images/x.png';
+var picture_ep='images/e+.png';
+var picture_em='images/e-.png';
+var picture_e='images/e.png';
+
+var IE4 = (document.all) ? 1 : 0;
+var ver4 = (IE4) ? 1 : 0;
+
+function getIndex(el) {
+    ind = null;
+    for (i=0; i<document.layers.length; i++) {
+        whichEl = document.layers[i];
+        if (whichEl.id == el) {
+            ind = i;
+            break;
+        }
+    }
+    return ind;
+}
+
+function arrange() {
+    nextY = document.layers[firstInd].pageY + document.layers[firstInd].document.height;
+    for (i=firstInd; i<document.layers.length; i++) {
+        whichEl = document.layers[i];
+        if (whichEl.visibility != "hide") {
+            whichEl.pageY = nextY;
+            nextY += whichEl.document.height;
+        }
+    }
+}
+
+function initIt(){
+	divColl = document.all.tags("DIV");
+	for (i=0; i<divColl.length; i++) {
+		whichEl = divColl(i);
+		if (whichEl.className == "child") whichEl.style.display = "block";
+	}
+}
+
+function expandIt(el) {
+	whichEl = eval(el + "Child");
+	whichIm = event.srcElement;
+	if (whichEl.style.display == "none") {
+		whichEl.style.display = "block";
+		whichIm.src = picture_xm;
+	}
+	else {
+		whichEl.style.display = "none";
+		whichIm.src = picture_xp;
+	}
+}
+
+function expandItE(el) {
+	whichEl = eval(el + "Child");
+	whichIm = event.srcElement;
+	if (whichEl.style.display == "none") {
+		whichEl.style.display = "block";
+		whichIm.src = picture_em;
+	}
+	else {
+		whichEl.style.display = "none";
+		whichIm.src = picture_ep;
+	}
+}
+
+initIt();
+
+-->
+</SCRIPT>
+@@IEVIEW@@

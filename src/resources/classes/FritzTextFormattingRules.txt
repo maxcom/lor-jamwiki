@@ -1,0 +1,29 @@
+^^^New Text Formatting Rules^^^
+
+^^^^Headers^^^^
+Two or more carrets toggle headers one and off (from two to six). The header level is equal to the number carrets minus one.
+For example \\\\^^^\\\\ starts or ends a level two header.
+
+^^^^Horizontal Rules^^^^
+Now, any number of dashes past the first four create one horizontal rule.
+Example:
+{{{\\\\------------------\\\\}}} is the same as {{{\\\\----\\\\}}}
+
+^^^^Pre^^^^
+\\\\{{\\\\ starts pre and \\\\}}\\\\ ends pre.
+
+^^^^Code^^^^
+\\\\{{{\\\\ starts code and \\\\}}}\\\\ ends code.
+
+^^^^Code and Pre^^^^
+\\\\{{{{{\\\\ starts pre-code combo and \\\\}}}}}\\\\ ends pre-code combo.
+
+^^^^Square Bracket Wiki Links^^^^
+In addition to the back tick marking of Wiki Links (i.e. \\\\`\\\\) a Wiki Link can be represented with a two square brackes \\\\[[\\\\link\\\\]]\\\\.
+
+^^^^Backslash is (Tentatively) the Escape Character^^^^
+
+^^^^The Wiki Transformation Toggle^^^^
+The Wiki transformation can be toggled on and off by four backslashes in a row.
+
+----

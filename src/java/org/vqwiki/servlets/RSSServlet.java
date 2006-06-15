@@ -1,0 +1,268 @@
+/**
+ * @author Tobias Schulz-Hess (sourceforge@schulz-hess.de)
+ *  12/04/2003 20:33:31
+ */
+package org.vqwiki.servlets;
+
+import org.apache.log4j.Logger;
+import org.vqwiki.*;
+import org.vqwiki.users.Usergroup;
+import org.vqwiki.utils.JSPUtils;
+import org.vqwiki.utils.Utilities;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
+
+/**
+ * This servlet generates a RSS Stream for the default wiki.
+ * You can add a parameter "virutal-wiki", which then generates
+ * an RSS Stream on a particular virtual wiki.<p>
+ *
+ * For more details on RSS see:
+ * http://www.xml.com/pub/a/2002/12/18/dive-into-xml.html
+ * <p>
+ *
+ * The code of the RSS Generator is taken from
+ * JSPWiki. Author: Janne Jalkanen
+ * JSPWiki is licenced under GPL.
+ * For more information on JSPWiki see:
+ * http://www.ecyrd.com/~jalkanen/JSPWiki/
+ * <P>
+ *  We use the 1.0 spec, including the wiki-specific extensions.  Wiki extensions
+ *  have been defined in <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
+ *
+ *
+ * @author Tobias Schulz-Hess (sourceforge@schulz-hess.de)
+ */
+public class RSSServlet extends HttpServlet {
+
+    /** Logging */
+    private static final Logger logger = Logger.getLogger(RSSServlet.class);
+
+    /**
+     * Handle post request.
+     * Generate a RSS feed and send it back as XML.
+     *
+     * @param request  The current http request
+     * @param response What the servlet will send back as response
+     *
+     * @throws ServletException If something goes wrong during servlet execution
+     * @throws IOException If the output stream cannot be accessed
+     *
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        String virtualWiki = null;
+        String topicName = null;
+        try {
+            virtualWiki = (String) request.getAttribute("virtual-wiki");
+            if (virtualWiki == null || virtualWiki.length() < 1) {
+                virtualWiki = WikiBase.DEFAULT_VWIKI;
+            }
+            // get the latest pages
+            int howManyDatesToGoBack = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
+            if (howManyDatesToGoBack == 0) howManyDatesToGoBack = 5;
+            ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+            Collection changed = new ArrayList();
+            if (cl != null) {
+                Calendar historycal = Calendar.getInstance();
+                for (int i = 0; i < howManyDatesToGoBack; i++) {
+                    try {
+                        Collection col = cl.getChanges(virtualWiki, historycal.getTime());
+                        if (col != null) {
+                            changed.addAll(col);
+                        }
+                    } catch (Exception e) {
+                        logger.fatal("Cannot get changes", e);
+                    }
+                    historycal.add(Calendar.DATE, -1);
+                }
+            }
+            String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
+            String baseURL = JSPUtils.createRootPath(request, virtualWiki, wikiServerHostname);
+            // generate rss
+            // --------- BEGIN CODE BY Janne Jalken ---------------
+            StringBuffer result = new StringBuffer();
+            SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            //
+            //  Preamble
+            //
+            result.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            result.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" +
+                "   xmlns=\"http://purl.org/rss/1.0/\"\n" +
+                "   xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n" +
+                "   xmlns:wiki=\"http://purl.org/rss/1.0/modules/wiki/\">\n");
+            //
+            //  Channel.
+            //
+            result.append(" <channel rdf:about=\"" + baseURL + "\">\n");
+            result.append("  <title><![CDATA[Wiki running on " + request.getServerName() + "]]></title>\n");
+            // FIXME: This might fail in case the base url is not defined.
+            result.append("  <link><![CDATA[").append(baseURL).append("]]></link>\n");
+            result.append("  <description><![CDATA[");
+            result.append("Wiki running on " + request.getServerName());
+            result.append("]]></description>\n");
+            //
+            //  Now, list items.
+            //
+            //  We need two lists, which is why we gotta make a separate list if
+            //  we want to do just a single pass.
+            StringBuffer itemBuffer = new StringBuffer();
+            result.append("  <items>\n   <rdf:Seq>\n");
+            Usergroup usergroup = WikiBase.getInstance().getUsergroupInstance();
+            int items = 0;
+            for (Iterator i = changed.iterator(); i.hasNext() && items < 15; items++) {
+                Change change = (Change) i.next();
+                topicName = change.getTopic();
+                Topic topicObject = new Topic(topicName);
+                String userid = change.getUser();
+                if (userid == null || "".equals(userid)) {
+                    userid = topicObject.getMostRecentAuthor(virtualWiki);
+                }
+                String author = null;
+                if (userid != null) {
+                    author = usergroup.getFullnameById(userid);
+                }
+                java.util.Date lastRevisionDate = topicObject.getMostRecentRevisionDate(virtualWiki);
+                String url = baseURL + "Wiki?" + topicName;
+                result.append("    <rdf:li rdf:resource=\"" + url + "\" />\n");
+                itemBuffer.append(" <item rdf:about=\"" + url + "\">\n");
+                itemBuffer.append("  <title><![CDATA[");
+                itemBuffer.append(topicName);
+                itemBuffer.append("]]></title>\n");
+                itemBuffer.append("  <link><![CDATA[");
+                itemBuffer.append(url);
+                itemBuffer.append("]]></link>\n");
+                itemBuffer.append("  <description>");
+                if (author == null) author = "An unknown author";
+                int numberOfVersions = topicObject.getRevision(virtualWiki);
+                if (numberOfVersions != 1) {
+                    itemBuffer.append(author + " changed this page on " + topicObject.getMostRecentRevisionDate(virtualWiki));
+                } else {
+                    itemBuffer.append(author + " created this page on " + topicObject.getMostRecentRevisionDate(virtualWiki));
+                }
+                itemBuffer.append("<p>\n<![CDATA[");
+                String content = WikiBase.getInstance().readRaw(virtualWiki, topicName);
+                if (content.length() > 200) {
+                    content = content.substring(0, 197) + "...";
+                }
+                itemBuffer.append(content).append("\n");
+                itemBuffer.append("]]></p></description>\n");
+                if (numberOfVersions != -1) {
+                    itemBuffer.append("  <wiki:version>" + numberOfVersions + "</wiki:version>\n");
+                }
+                //
+                //  Modification date.
+                //
+                if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
+                    try {
+                        if (lastRevisionDate != null) {
+                            itemBuffer.append("  <dc:date>");
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(lastRevisionDate);
+                            cal.add(Calendar.MILLISECOND,
+                                -(cal.get(Calendar.ZONE_OFFSET) +
+                                (cal.getTimeZone().inDaylightTime(lastRevisionDate) ? cal.get(Calendar.DST_OFFSET) : 0))
+                            );
+                            itemBuffer.append(iso8601fmt.format(cal.getTime()));
+                            itemBuffer.append("</dc:date>\n");
+                        }
+                    } catch (Exception e) {
+                        logger.warn(e);
+                    }
+                }
+                //
+                //  Author.
+                //
+                itemBuffer.append("  <dc:contributor>\n");
+                itemBuffer.append("   <rdf:Description");
+                if (WikiBase.getInstance().exists(virtualWiki, author)) {
+                    itemBuffer.append(" link=\"" + baseURL + "Wiki?" + author + "\"");
+                }
+                itemBuffer.append(">\n");
+                itemBuffer.append("    <rdf:value>" + author + "</rdf:value>\n");
+                itemBuffer.append("   </rdf:Description>\n");
+                itemBuffer.append("  </dc:contributor>\n");
+                //  PageHistory
+                itemBuffer.append("  <wiki:history>");
+                itemBuffer.append(format(baseURL + "Wiki?topic=" +
+                    topicName + "&action=" + WikiServlet.ACTION_HISTORY + "&type=all")
+                );
+                itemBuffer.append("</wiki:history>\n");
+                //  Close up.
+                itemBuffer.append(" </item>\n");
+            }
+            result.append("   </rdf:Seq>\n  </items>\n");
+            result.append(" </channel>\n");
+            result.append(itemBuffer.toString());
+            //
+            //  In the end, add a search box for JSPWiki
+            //
+            String searchURL = baseURL + "Wiki?WikiSearch";
+            result.append(" <textinput rdf:about=\"" + searchURL + "\">\n");
+            result.append("  <title>Search</title>\n");
+            result.append("  <description>Search this Wiki</description>\n");
+            result.append("  <name>query</name>\n");
+            result.append("  <link>" + searchURL + "</link>\n");
+            result.append(" </textinput>\n");
+            //
+            //  Be a fine boy and close things.
+            //
+            result.append("</rdf:RDF>");
+            // --------- END CODE BY Janne Jalken ---------------
+            byte[] utf_result = result.toString().getBytes("UTF-8");
+            response.setContentType("text/xml; charset=UTF-8");
+            response.setHeader("Expires", "0");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Keep-Alive", "timeout=15, max=100");
+            response.setHeader("Connection", "Keep-Alive");
+            response.setContentLength(utf_result.length);
+            OutputStream out = response.getOutputStream();
+            out.write(utf_result);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            throw new ServletException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Handle get request.
+     * The request is handled the same way as the post request.
+     *
+     * @see doPost()
+     *
+     * @param httpServletRequest  The current http request
+     * @param httpServletResponse What the servlet will send back as response
+     *
+     * @throws ServletException If something goes wrong during servlet execution
+     * @throws IOException If the output stream cannot be accessed
+     *
+     */
+    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+        throws ServletException, IOException {
+        this.doPost(httpServletRequest, httpServletResponse);
+    }
+
+    /**
+     *  Does the required formatting and entity replacement for XML.
+     * @param s The source String to format
+     * @return The String formatted
+     */
+    private String format(String s) {
+        s = Utilities.replaceString(s, "&", "&amp;");
+        s = Utilities.replaceString(s, "<", "&lt;");
+        s = Utilities.replaceString(s, "]]>", "]]&gt;");
+        return s;
+    }
+}
