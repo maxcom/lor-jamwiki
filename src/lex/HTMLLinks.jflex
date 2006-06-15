@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 /*
 Very Quick Wiki - WikiWikiWeb clone

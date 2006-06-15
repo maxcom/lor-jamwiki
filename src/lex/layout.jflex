@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 /*
 Very Quick Wiki - WikiWikiWeb clone
@@ -31,7 +31,7 @@ import org.vqwiki.WikiBase;
 %type String
 %unicode
 %implements org.vqwiki.lex.Lexer
-%class LayoutLex
+%class VQWikiLayoutLex
 
 %init{
 	yybegin( NORMAL );

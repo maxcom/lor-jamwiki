@@ -39,8 +39,8 @@
         <jflex file="${dir.src.lex}/layout.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/links.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/HTMLLinks.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/alt/mediawiki-syntax.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/alt/mediawiki-html.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/mediawiki-syntax.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/mediawiki-html.jflex" destdir="${dir.src.java}" />
     </target>
 
     <target name="compile" depends="jflex" description="Compile source code">

@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 
 /*
@@ -35,7 +35,7 @@ import org.vqwiki.utils.JSPUtils;
 %type String
 %unicode
 %implements	org.vqwiki.lex.Lexer
-%class LinkLex
+%class VQWikiLinkLex
 
 %init{
 	yybegin( NORMAL );

@@ -1,4 +1,4 @@
-package org.vqwiki.lex.alt;
+package org.vqwiki.parser;
 
 /*
  * This class adds paragraph tags as appropriate.

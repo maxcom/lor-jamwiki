@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 
 /*
@@ -29,7 +29,7 @@ import org.vqwiki.WikiBase;
 %type String
 %unicode
 %implements org.vqwiki.lex.Lexer
-%class FormatLex
+%class VQWikiFormatLex
 
 %init{
 	yybegin( NORMAL );

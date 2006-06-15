@@ -1,4 +1,4 @@
-package org.vqwiki.lex.alt;
+package org.vqwiki.parser;
 
 /*
  * This class implements the MediaWiki syntax (http://meta.wikimedia.org/wiki/Help:Editing).
