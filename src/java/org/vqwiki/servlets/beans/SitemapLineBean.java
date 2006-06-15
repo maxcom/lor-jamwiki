@@ -28,73 +28,73 @@ import java.util.List;
  */
 public class SitemapLineBean {
 
-    private String topic;
-    private List levels;
-    private String group;
-    private boolean hasChildren;
+	private String topic;
+	private List levels;
+	private String group;
+	private boolean hasChildren;
 
-    /**
-     * @return
-     */
-    public List getLevels() {
-        return levels;
-    }
+	/**
+	 * @return
+	 */
+	public List getLevels() {
+		return levels;
+	}
 
-    /**
-     * @return
-     */
-    public String getTopic() {
-        return topic;
-    }
+	/**
+	 * @return
+	 */
+	public String getTopic() {
+		return topic;
+	}
 
-    /**
-     * @param list
-     */
-    public void setLevels(List list) {
-        levels = list;
-    }
+	/**
+	 * @param list
+	 */
+	public void setLevels(List list) {
+		levels = list;
+	}
 
-    /**
-     * @param string
-     */
-    public void setTopic(String string) {
-        topic = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setTopic(String string) {
+		topic = string;
+	}
 
-    /**
-     * @return
-     */
-    public boolean isHasChildren() {
-        return hasChildren;
-    }
+	/**
+	 * @return
+	 */
+	public boolean isHasChildren() {
+		return hasChildren;
+	}
 
-    /**
-     * @return
-     */
-    public boolean getHasChildren() {
-        return hasChildren;
-    }
+	/**
+	 * @return
+	 */
+	public boolean getHasChildren() {
+		return hasChildren;
+	}
 
-    /**
-     * @param b
-     */
-    public void setHasChildren(boolean b) {
-        hasChildren = b;
-    }
+	/**
+	 * @param b
+	 */
+	public void setHasChildren(boolean b) {
+		hasChildren = b;
+	}
 
-    /**
-     * @return
-     */
-    public String getGroup() {
-        return group;
-    }
+	/**
+	 * @return
+	 */
+	public String getGroup() {
+		return group;
+	}
 
-    /**
-     * @param string
-     */
-    public void setGroup(String string) {
-        group = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setGroup(String string) {
+		group = string;
+	}
 }
 
 /*

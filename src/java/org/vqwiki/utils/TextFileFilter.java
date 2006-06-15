@@ -23,17 +23,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 public class TextFileFilter implements FilenameFilter {
 
-    /**
-     *
-     */
-    public TextFileFilter() {
-    }
+	/**
+	 *
+	 */
+	public TextFileFilter() {
+	}
 
-    /**
-     *
-     */
-    public boolean accept(File file, String name) {
-        if (name.endsWith(".txt")) return true;
-        return false;
-    }
+	/**
+	 *
+	 */
+	public boolean accept(File file, String name) {
+		if (name.endsWith(".txt")) return true;
+		return false;
+	}
 }

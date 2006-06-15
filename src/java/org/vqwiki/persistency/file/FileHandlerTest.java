@@ -22,31 +22,31 @@ import junit.framework.TestCase;
 
 public class FileHandlerTest extends TestCase {
 
-    // file/path separator for the platform
-    protected static String sep = System.getProperty("file.separator");
-    FileHandler handler;
+	// file/path separator for the platform
+	protected static String sep = System.getProperty("file.separator");
+	FileHandler handler;
 
-    /**
-     *
-     */
-    public FileHandlerTest(String name) {
-        super(name);
-    }
+	/**
+	 *
+	 */
+	public FileHandlerTest(String name) {
+		super(name);
+	}
 
-    /**
-     *
-     */
-    public void testLocking() throws Exception {
-        String topicName = "NewTopic";
-        FileHandler handler = new FileHandler();
-        String key1 = "aKey";
-        String key2 = "bKey";
-        handler.lockTopic("", topicName, key1);
-        assertTrue(handler.lockTopic("", topicName, key1));
-        assertTrue(!handler.lockTopic("", topicName, key2));
-        handler.unlockTopic("", topicName);
-        handler.lockTopic("", topicName, key2);
-        assertTrue(handler.lockTopic("", topicName, key2));
-        assertTrue(!handler.lockTopic("", topicName, key1));
-    }
+	/**
+	 *
+	 */
+	public void testLocking() throws Exception {
+		String topicName = "NewTopic";
+		FileHandler handler = new FileHandler();
+		String key1 = "aKey";
+		String key2 = "bKey";
+		handler.lockTopic("", topicName, key1);
+		assertTrue(handler.lockTopic("", topicName, key1));
+		assertTrue(!handler.lockTopic("", topicName, key2));
+		handler.unlockTopic("", topicName);
+		handler.lockTopic("", topicName, key2);
+		assertTrue(handler.lockTopic("", topicName, key2));
+		assertTrue(!handler.lockTopic("", topicName, key1));
+	}
 }

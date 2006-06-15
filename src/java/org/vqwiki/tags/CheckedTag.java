@@ -14,46 +14,46 @@ import java.io.IOException;
  */
 public class CheckedTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(CheckedTag.class);
+	private static final Logger logger = Logger.getLogger(CheckedTag.class);
 
-    private String var;
+	private String var;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        evaluateExpressions();
-        JspWriter out = pageContext.getOut();
-        try {
-            if ("true".equals(var)) {
-                out.print("checked='true'");
-            }
-        } catch (IOException e) {
-            logger.warn(e);
-        }
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		evaluateExpressions();
+		JspWriter out = pageContext.getOut();
+		try {
+			if ("true".equals(var)) {
+				out.print("checked='true'");
+			}
+		} catch (IOException e) {
+			logger.warn(e);
+		}
+		return EVAL_PAGE;
+	}
 
-    /**
-     *
-     */
-    public String getVar() {
-        return var;
-    }
+	/**
+	 *
+	 */
+	public String getVar() {
+		return var;
+	}
 
-    /**
-     *
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
+	/**
+	 *
+	 */
+	public void setVar(String var) {
+		this.var = var;
+	}
 
-    /**
-     *
-     */
-    private void evaluateExpressions() throws JspException {
-        var = (String) ExpressionUtil.evalNotNull(
-            "edit-grid-row", "var", var, String.class, this, pageContext
-        );
-    }
+	/**
+	 *
+	 */
+	private void evaluateExpressions() throws JspException {
+		var = (String) ExpressionUtil.evalNotNull(
+			"edit-grid-row", "var", var, String.class, this, pageContext
+		);
+	}
 }

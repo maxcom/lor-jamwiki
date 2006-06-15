@@ -15,22 +15,22 @@ import org.apache.log4j.Logger;
  */
 public class PageEncodingTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(CurrentUserTag.class);
+	private static final Logger logger = Logger.getLogger(CurrentUserTag.class);
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        String enc = Environment.getValue(Environment.PROP_BASE_FORCE_ENCODING);
-        if (enc != null) {
-            try {
-                pageContext.getRequest().setCharacterEncoding(enc);
-                pageContext.getResponse().setContentType("text/html;charset=" + enc);
-            } catch (UnsupportedEncodingException e) {
-                logger.warn("Unsupported encoding: " + enc);
-                // Do nothing
-            }
-        }
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		String enc = Environment.getValue(Environment.PROP_BASE_FORCE_ENCODING);
+		if (enc != null) {
+			try {
+				pageContext.getRequest().setCharacterEncoding(enc);
+				pageContext.getResponse().setContentType("text/html;charset=" + enc);
+			} catch (UnsupportedEncodingException e) {
+				logger.warn("Unsupported encoding: " + enc);
+				// Do nothing
+			}
+		}
+		return EVAL_PAGE;
+	}
 }

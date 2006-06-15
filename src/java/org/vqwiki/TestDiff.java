@@ -24,21 +24,21 @@ import org.vqwiki.utils.DiffUtil;
 
 public class TestDiff extends TestCase {
 
-    protected static Logger logger = Logger.getLogger(TestDiff.class);
+	protected static Logger logger = Logger.getLogger(TestDiff.class);
 
-    /**
-     *
-     */
-    public TestDiff(String name) {
-        super(name);
-    }
+	/**
+	 *
+	 */
+	public TestDiff(String name) {
+		super(name);
+	}
 
-    /**
-     *
-     */
-    public void testStringDiff() throws Exception {
-        String string1 = "This is a string";
-        String string2 = "This is a string\nwith a bit extra";
-        logger.debug(DiffUtil.diff(string1, string2, false));
-    }
+	/**
+	 *
+	 */
+	public void testStringDiff() throws Exception {
+		String string1 = "This is a string";
+		String string2 = "This is a string\nwith a bit extra";
+		logger.debug(DiffUtil.diff(string1, string2, false));
+	}
 }

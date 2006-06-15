@@ -18,38 +18,38 @@ import java.util.Collection;
  */
 public interface WikiMembers {
 
-    /**
-     *
-     */
-    public boolean requestMembership(String username, String email, HttpServletRequest request) throws Exception;
+	/**
+	 *
+	 */
+	public boolean requestMembership(String username, String email, HttpServletRequest request) throws Exception;
 
-    /**
-     *
-     */
-    public boolean createMembershipWithoutRequest(String username, String email) throws Exception;
+	/**
+	 *
+	 */
+	public boolean createMembershipWithoutRequest(String username, String email) throws Exception;
 
-    /**
-     *
-     */
-    public boolean confirmMembership(String username, String key) throws Exception;
+	/**
+	 *
+	 */
+	public boolean confirmMembership(String username, String key) throws Exception;
 
-    /**
-     *
-     */
-    public boolean removeMember(String username) throws Exception;
+	/**
+	 *
+	 */
+	public boolean removeMember(String username) throws Exception;
 
-    /**
-     *
-     */
-    public WikiMember findMemberByName(String username) throws Exception;
+	/**
+	 *
+	 */
+	public WikiMember findMemberByName(String username) throws Exception;
 
-    /**
-     *
-     */
-    public Collection getAllMembers() throws Exception;
+	/**
+	 *
+	 */
+	public Collection getAllMembers() throws Exception;
 
-    /**
-     *
-     */
-    public void addMember(String username, String email, String key) throws Exception;
+	/**
+	 *
+	 */
+	public void addMember(String username, String email, String key) throws Exception;
 }

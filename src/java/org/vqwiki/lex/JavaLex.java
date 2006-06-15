@@ -14,13 +14,13 @@ public class JavaLex implements ExternalLex {
 
   public String process(String text) {
 
-    Java2HtmlConversionOptions options =
-        Java2HtmlConversionOptions.getDefault();
+	Java2HtmlConversionOptions options =
+		Java2HtmlConversionOptions.getDefault();
 
-    options.setShowTableBorder(true);
+	options.setShowTableBorder(true);
 
-    options.setShowLineNumbers(false);
-    return
-        Java2Html.convertToHtml(text, options);
+	options.setShowLineNumbers(false);
+	return
+		Java2Html.convertToHtml(text, options);
   }
 }

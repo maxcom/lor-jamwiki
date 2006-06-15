@@ -13,37 +13,37 @@ import java.io.IOException;
  */
 public class WikiVersionTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(WikiVersionTag.class);
+	private static final Logger logger = Logger.getLogger(WikiVersionTag.class);
 
-    private String var;
+	private String var;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        try {
-            if (var == null) {
-                this.pageContext.getOut().print(WikiBase.WIKI_VERSION);
-            } else {
-                pageContext.setAttribute(var, WikiBase.WIKI_VERSION);
-            }
-        } catch (IOException e) {
-            logger.warn(e);
-        }
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		try {
+			if (var == null) {
+				this.pageContext.getOut().print(WikiBase.WIKI_VERSION);
+			} else {
+				pageContext.setAttribute(var, WikiBase.WIKI_VERSION);
+			}
+		} catch (IOException e) {
+			logger.warn(e);
+		}
+		return EVAL_PAGE;
+	}
 
-    /**
-     *
-     */
-    public String getVar() {
-        return var;
-    }
+	/**
+	 *
+	 */
+	public String getVar() {
+		return var;
+	}
 
-    /**
-     *
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
+	/**
+	 *
+	 */
+	public void setVar(String var) {
+		this.var = var;
+	}
 }

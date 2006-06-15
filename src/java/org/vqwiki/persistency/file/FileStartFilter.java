@@ -23,19 +23,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 public class FileStartFilter implements FilenameFilter {
 
-    String prefix;
+	String prefix;
 
-    /**
-     *
-     */
-    public FileStartFilter(String prefix) {
-        this.prefix = prefix;
-    }
+	/**
+	 *
+	 */
+	public FileStartFilter(String prefix) {
+		this.prefix = prefix;
+	}
 
-    /**
-     *
-     */
-    public boolean accept(File file, String name) {
-        return (name.startsWith(prefix));
-    }
+	/**
+	 *
+	 */
+	public boolean accept(File file, String name) {
+		return (name.startsWith(prefix));
+	}
 }

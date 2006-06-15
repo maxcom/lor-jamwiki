@@ -182,35 +182,35 @@ public class SearchApplet extends Applet {
 	 * is appended to ensure that the file name is unique.
 	 * NOTE: This is a copy of the code in Utilities encodeSafeExportFileName
 	 * @param topic
-	 *            The original topic name
+	 *			The original topic name
 	 * @return The safe topic name
 	 */
 	private String safename(String topic) {
-         StringTokenizer st = new StringTokenizer(topic,"%"+File.separator,true);
-         StringBuffer sb = new StringBuffer(topic.length());
-         try {
-             while (st.hasMoreTokens()) {
-                 String token = st.nextToken();
-                 if(File.separator.equals(token)||"%".equals(token)) {
-                    sb.append(token);
-                 } else {
-                    sb.append(URLEncoder.encode(token,"utf-8"));
-                 }
-             }
-         } catch (java.io.UnsupportedEncodingException ex) { 
-             return "java.io.UnsupportedEncodingException";
-         }
+		 StringTokenizer st = new StringTokenizer(topic,"%"+File.separator,true);
+		 StringBuffer sb = new StringBuffer(topic.length());
+		 try {
+			 while (st.hasMoreTokens()) {
+				 String token = st.nextToken();
+				 if(File.separator.equals(token)||"%".equals(token)) {
+					sb.append(token);
+				 } else {
+					sb.append(URLEncoder.encode(token,"utf-8"));
+				 }
+			 }
+		 } catch (java.io.UnsupportedEncodingException ex) {
+			 return "java.io.UnsupportedEncodingException";
+		 }
 
 
-         for (int i=0 ; i < sb.length() ; i++)
-         {
-             if (sb.charAt(i) == '%')
-             {
-                 sb.setCharAt(i, '-');
-             }
-         }
-         
-         return sb.toString();
-    }
+		 for (int i=0 ; i < sb.length() ; i++)
+		 {
+			 if (sb.charAt(i) == '%')
+			 {
+				 sb.setCharAt(i, '-');
+			 }
+		 }
+
+		 return sb.toString();
+	}
 
 }

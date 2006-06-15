@@ -17,116 +17,116 @@ import java.util.Map;
 // FIXME - is this class used anywhere???
 public class ParameterValidator {
 
-    private static ParameterValidator instance;
-    private static final Logger logger = Logger.getLogger(ParameterValidator.class);
-    private Map definitions;
-    private static final String DEFINITIONS_FILENAME = "/parametervalidation.xml";
-    private static final String TAG_PARAMETER = "parameter";
+	private static ParameterValidator instance;
+	private static final Logger logger = Logger.getLogger(ParameterValidator.class);
+	private Map definitions;
+	private static final String DEFINITIONS_FILENAME = "/parametervalidation.xml";
+	private static final String TAG_PARAMETER = "parameter";
 
-    /**
-     *
-     */
-    public synchronized static ParameterValidator getInstance() {
-        if (instance == null) {
-            instance = new ParameterValidator();
-        }
-        return instance;
-    }
+	/**
+	 *
+	 */
+	public synchronized static ParameterValidator getInstance() {
+		if (instance == null) {
+			instance = new ParameterValidator();
+		}
+		return instance;
+	}
 
-    /**
-     *
-     */
-    private ParameterValidator() {
-        definitions = new HashMap();
-        try {
-            String fileName = getClass().getResource(DEFINITIONS_FILENAME).getFile();
-            Document definitionDocument = Utilities.parseDocumentFromFile(fileName);
-            NodeList parameters = definitionDocument.getElementsByTagName(TAG_PARAMETER);
-            for (int i = 0; i < parameters.getLength(); i++) {
-                Element parameterElement = (Element) parameters.item(i);
-                ParameterValidationDefinition definition = new ParameterValidationDefinition();
-            }
-        } catch (Exception e) {
-            logger.warn(e);
-        }
-    }
+	/**
+	 *
+	 */
+	private ParameterValidator() {
+		definitions = new HashMap();
+		try {
+			String fileName = getClass().getResource(DEFINITIONS_FILENAME).getFile();
+			Document definitionDocument = Utilities.parseDocumentFromFile(fileName);
+			NodeList parameters = definitionDocument.getElementsByTagName(TAG_PARAMETER);
+			for (int i = 0; i < parameters.getLength(); i++) {
+				Element parameterElement = (Element) parameters.item(i);
+				ParameterValidationDefinition definition = new ParameterValidationDefinition();
+			}
+		} catch (Exception e) {
+			logger.warn(e);
+		}
+	}
 }
 
 class ParameterValidationDefinition {
 
-    private String action;
-    private String name;
-    private List types;
-    private boolean duplicates;
-    private String regularExpression;
+	private String action;
+	private String name;
+	private List types;
+	private boolean duplicates;
+	private String regularExpression;
 
-    /**
-     *
-     */
-    public String getAction() {
-        return action;
-    }
+	/**
+	 *
+	 */
+	public String getAction() {
+		return action;
+	}
 
-    /**
-     *
-     */
-    public void setAction(String action) {
-        this.action = action;
-    }
+	/**
+	 *
+	 */
+	public void setAction(String action) {
+		this.action = action;
+	}
 
-    /**
-     *
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 *
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     *
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+	/**
+	 *
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     *
-     */
-    public List getTypes() {
-        return types;
-    }
+	/**
+	 *
+	 */
+	public List getTypes() {
+		return types;
+	}
 
-    /**
-     *
-     */
-    public void setTypes(List types) {
-        this.types = types;
-    }
+	/**
+	 *
+	 */
+	public void setTypes(List types) {
+		this.types = types;
+	}
 
-    /**
-     *
-     */
-    public boolean isDuplicates() {
-        return duplicates;
-    }
+	/**
+	 *
+	 */
+	public boolean isDuplicates() {
+		return duplicates;
+	}
 
-    /**
-     *
-     */
-    public void setDuplicates(boolean duplicates) {
-        this.duplicates = duplicates;
-    }
+	/**
+	 *
+	 */
+	public void setDuplicates(boolean duplicates) {
+		this.duplicates = duplicates;
+	}
 
-    /**
-     *
-     */
-    public String getRegularExpression() {
-        return regularExpression;
-    }
+	/**
+	 *
+	 */
+	public String getRegularExpression() {
+		return regularExpression;
+	}
 
-    /**
-     *
-     */
-    public void setRegularExpression(String regularExpression) {
-        this.regularExpression = regularExpression;
-    }
+	/**
+	 *
+	 */
+	public void setRegularExpression(String regularExpression) {
+		this.regularExpression = regularExpression;
+	}
 }

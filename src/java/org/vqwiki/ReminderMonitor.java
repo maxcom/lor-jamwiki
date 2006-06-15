@@ -24,52 +24,52 @@ import java.util.TimerTask;
  */
 public class ReminderMonitor {
 
-    private static final long ONE_DAY = 1000 * 60 * 60 * 24;
-    protected static Logger logger = Logger.getLogger(ReminderMonitor.class);
+	private static final long ONE_DAY = 1000 * 60 * 60 * 24;
+	protected static Logger logger = Logger.getLogger(ReminderMonitor.class);
 
-    /**
-     * Creates a new ReminderMonitor object and notifies the operator.
-     */
-    public static void main(String[] argv) {
-        new ReminderMonitor();
-        logger.info("The VQWiki Reminder Monitor is running...");
-    }
+	/**
+	 * Creates a new ReminderMonitor object and notifies the operator.
+	 */
+	public static void main(String[] argv) {
+		new ReminderMonitor();
+		logger.info("The VQWiki Reminder Monitor is running...");
+	}
 
-    /**
-     * Schedules a sendReminderTask at a fixed rate of 24 hours.
-     */
-    public ReminderMonitor() {
-        Timer timer = new Timer();
-        sendReminderTask aTask = new sendReminderTask();
-        timer.scheduleAtFixedRate(aTask, 0, ONE_DAY);
-    }
+	/**
+	 * Schedules a sendReminderTask at a fixed rate of 24 hours.
+	 */
+	public ReminderMonitor() {
+		Timer timer = new Timer();
+		sendReminderTask aTask = new sendReminderTask();
+		timer.scheduleAtFixedRate(aTask, 0, ONE_DAY);
+	}
 
-    /**
-     * Analyzes reminder files (".rmd") and sends scheduled reminders via email
-     * to registered addresses.
-     */
-    class sendReminderTask extends TimerTask {
+	/**
+	 * Analyzes reminder files (".rmd") and sends scheduled reminders via email
+	 * to registered addresses.
+	 */
+	class sendReminderTask extends TimerTask {
 
-        /**
-         *
-         */
-        public void run() {
-            Date todaysDate = new Date();
-            FilenameFilter remindFilter = new WikiRemindFilter();
-            File dir = new File(Environment.getValue(Environment.PROP_FILE_HOME_DIR));
-            File[] reminderFiles = dir.listFiles(remindFilter);
-            if (reminderFiles != null) {
-                for (int i = 0; i < reminderFiles.length; i++) {
-                    if (reminderFiles[i].isFile()) {
-                        try {
-                            Reminders aReminder = new FileReminders(reminderFiles[i]);
-                            aReminder.sendReminders(todaysDate);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-    }
+		/**
+		 *
+		 */
+		public void run() {
+			Date todaysDate = new Date();
+			FilenameFilter remindFilter = new WikiRemindFilter();
+			File dir = new File(Environment.getValue(Environment.PROP_FILE_HOME_DIR));
+			File[] reminderFiles = dir.listFiles(remindFilter);
+			if (reminderFiles != null) {
+				for (int i = 0; i < reminderFiles.length; i++) {
+					if (reminderFiles[i].isFile()) {
+						try {
+							Reminders aReminder = new FileReminders(reminderFiles[i]);
+							aReminder.sendReminders(todaysDate);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
 }

@@ -15,64 +15,64 @@ import java.io.IOException;
  */
 public class EncodeTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(EncodeTag.class);
+	private static final Logger logger = Logger.getLogger(EncodeTag.class);
 
-    private String var;
-    private String value;
-    private String expandedValue;
+	private String var;
+	private String value;
+	private String expandedValue;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        evaluateExpressions();
-        if (var == null) {
-            JspWriter out = pageContext.getOut();
-            try {
-                out.print(JSPUtils.encodeURL(expandedValue));
-            } catch (IOException e) {
-                logger.warn(e);
-            }
-        } else {
-            pageContext.setAttribute(var, JSPUtils.encodeURL(expandedValue));
-        }
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		evaluateExpressions();
+		if (var == null) {
+			JspWriter out = pageContext.getOut();
+			try {
+				out.print(JSPUtils.encodeURL(expandedValue));
+			} catch (IOException e) {
+				logger.warn(e);
+			}
+		} else {
+			pageContext.setAttribute(var, JSPUtils.encodeURL(expandedValue));
+		}
+		return EVAL_PAGE;
+	}
 
-    /**
-     *
-     */
-    public String getVar() {
-        return var;
-    }
+	/**
+	 *
+	 */
+	public String getVar() {
+		return var;
+	}
 
-    /**
-     *
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
+	/**
+	 *
+	 */
+	public void setVar(String var) {
+		this.var = var;
+	}
 
-    /**
-     *
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 *
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    /**
-     *
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+	/**
+	 *
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    /**
-     *
-     */
-    private void evaluateExpressions() throws JspException {
-        expandedValue = (String) ExpressionUtil.evalNotNull(
-            "encode", "value", value, String.class, this, pageContext
-        );
-    }
+	/**
+	 *
+	 */
+	private void evaluateExpressions() throws JspException {
+		expandedValue = (String) ExpressionUtil.evalNotNull(
+			"encode", "value", value, String.class, this, pageContext
+		);
+	}
 }

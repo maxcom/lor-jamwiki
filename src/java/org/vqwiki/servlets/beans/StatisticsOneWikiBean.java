@@ -29,149 +29,149 @@ import java.util.List;
  */
 public class StatisticsOneWikiBean {
 
-    private String name = null;
-    private String numpages = null;
-    private String numchanges = null;
-    private String nummodifications = null;
-    private String numpageslw = null;
-    private String numchangeslw = null;
-    private String ratiolw = null;
-    private List months = new ArrayList();
-    private List authors = new ArrayList();
+	private String name = null;
+	private String numpages = null;
+	private String numchanges = null;
+	private String nummodifications = null;
+	private String numpageslw = null;
+	private String numchangeslw = null;
+	private String ratiolw = null;
+	private List months = new ArrayList();
+	private List authors = new ArrayList();
 
-    /**
-     * @return
-     */
-    public List getAuthors() {
-        return authors;
-    }
+	/**
+	 * @return
+	 */
+	public List getAuthors() {
+		return authors;
+	}
 
-    /**
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return
-     */
-    public String getNumauthors() {
-        if (authors == null) return "0";
-        return String.valueOf(authors.size());
-    }
+	/**
+	 * @return
+	 */
+	public String getNumauthors() {
+		if (authors == null) return "0";
+		return String.valueOf(authors.size());
+	}
 
-    /**
-     * @return
-     */
-    public String getNumchanges() {
-        return numchanges;
-    }
+	/**
+	 * @return
+	 */
+	public String getNumchanges() {
+		return numchanges;
+	}
 
-    /**
-     * @return
-     */
-    public String getNumchangeslw() {
-        return numchangeslw;
-    }
+	/**
+	 * @return
+	 */
+	public String getNumchangeslw() {
+		return numchangeslw;
+	}
 
-    /**
-     * @return
-     */
-    public String getNummodifications() {
-        return nummodifications;
-    }
+	/**
+	 * @return
+	 */
+	public String getNummodifications() {
+		return nummodifications;
+	}
 
-    /**
-     * @return
-     */
-    public String getNumpages() {
-        return numpages;
-    }
+	/**
+	 * @return
+	 */
+	public String getNumpages() {
+		return numpages;
+	}
 
-    /**
-     * @return
-     */
-    public String getNumpageslw() {
-        return numpageslw;
-    }
+	/**
+	 * @return
+	 */
+	public String getNumpageslw() {
+		return numpageslw;
+	}
 
-    /**
-     * @return
-     */
-    public String getRatiolw() {
-        return ratiolw;
-    }
+	/**
+	 * @return
+	 */
+	public String getRatiolw() {
+		return ratiolw;
+	}
 
-    /**
-     * @param list
-     */
-    public void setAuthors(List list) {
-        authors = list;
-    }
+	/**
+	 * @param list
+	 */
+	public void setAuthors(List list) {
+		authors = list;
+	}
 
-    /**
-     * @param string
-     */
-    public void setName(String string) {
-        name = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setName(String string) {
+		name = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setNumchanges(String string) {
-        numchanges = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setNumchanges(String string) {
+		numchanges = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setNumchangeslw(String string) {
-        numchangeslw = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setNumchangeslw(String string) {
+		numchangeslw = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setNummodifications(String string) {
-        nummodifications = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setNummodifications(String string) {
+		nummodifications = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setNumpages(String string) {
-        numpages = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setNumpages(String string) {
+		numpages = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setNumpageslw(String string) {
-        numpageslw = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setNumpageslw(String string) {
+		numpageslw = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setRatiolw(String string) {
-        ratiolw = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setRatiolw(String string) {
+		ratiolw = string;
+	}
 
-    /**
-     * @return
-     */
-    public List getMonths() {
-        return months;
-    }
+	/**
+	 * @return
+	 */
+	public List getMonths() {
+		return months;
+	}
 
-    /**
-     * @param list
-     */
-    public void setMonths(List list) {
-        months = list;
-    }
+	/**
+	 * @param list
+	 */
+	public void setMonths(List list) {
+		months = list;
+	}
 }
 
 /*

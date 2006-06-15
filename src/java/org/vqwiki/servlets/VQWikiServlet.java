@@ -14,85 +14,85 @@ import java.io.IOException;
 
 public class VQWikiServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(VQWikiServlet.class);
+	private static final Logger logger = Logger.getLogger(VQWikiServlet.class);
 
-    /**
-     *
-     */
-    protected void error(HttpServletRequest request, HttpServletResponse response, Exception err) {
-        request.setAttribute("exception", err);
-        request.setAttribute("title", "Error");
-        err.printStackTrace();
-        logger.error(err.getMessage(), err);
-        log("Error in " + this.getClass(), err);
-        if (err instanceof WikiServletException) {
-            request.setAttribute("javax.servlet.jsp.jspException", err);
-        }
-        dispatch("/WEB-INF/jsp/servlet-error.jsp", request, response);
-    }
+	/**
+	 *
+	 */
+	protected void error(HttpServletRequest request, HttpServletResponse response, Exception err) {
+		request.setAttribute("exception", err);
+		request.setAttribute("title", "Error");
+		err.printStackTrace();
+		logger.error(err.getMessage(), err);
+		log("Error in " + this.getClass(), err);
+		if (err instanceof WikiServletException) {
+			request.setAttribute("javax.servlet.jsp.jspException", err);
+		}
+		dispatch("/WEB-INF/jsp/servlet-error.jsp", request, response);
+	}
 
-    /**
-     *
-     */
-    protected void dispatch(String destination, HttpServletRequest request, HttpServletResponse response) {
-        logger.debug("getting dispatcher for " + destination + ", current URL: " + request.getRequestURL());
-        RequestDispatcher dispatcher = request.getRequestDispatcher(destination);
-        if (dispatcher == null) {
-            logger.error("No dispatcher available for " + destination + " (request=" + request +
-                ", response=" + response + ")");
-            return;
-        }
-        try {
-            dispatcher.forward(request, response);
-        } catch (Exception e) {
-            log("Dispatch error: " + e.getMessage(), e);
-            e.printStackTrace();
-            logger.error("dispatch error", e);
-            try {
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
-                dispatcher.forward(request, response);
-            } catch (Exception e1) {
-                log("Error within dispatch error" + e1);
-            }
-        }
-    }
+	/**
+	 *
+	 */
+	protected void dispatch(String destination, HttpServletRequest request, HttpServletResponse response) {
+		logger.debug("getting dispatcher for " + destination + ", current URL: " + request.getRequestURL());
+		RequestDispatcher dispatcher = request.getRequestDispatcher(destination);
+		if (dispatcher == null) {
+			logger.error("No dispatcher available for " + destination + " (request=" + request +
+				", response=" + response + ")");
+			return;
+		}
+		try {
+			dispatcher.forward(request, response);
+		} catch (Exception e) {
+			log("Dispatch error: " + e.getMessage(), e);
+			e.printStackTrace();
+			logger.error("dispatch error", e);
+			try {
+				dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
+				dispatcher.forward(request, response);
+			} catch (Exception e1) {
+				log("Error within dispatch error" + e1);
+			}
+		}
+	}
 
-    /**
-     *
-     */
-    protected void include(String destination, HttpServletRequest request, HttpServletResponse response) {
-        RequestDispatcher dispatcher = request.getRequestDispatcher(destination);
-        if (dispatcher == null) {
-            log("No dispatcher available for " + destination + " (request=" + request +
-                ", response=" + response + ")");
-            return;
-        }
-        try {
-            dispatcher.include(request, response);
-        } catch (Exception e) {
-            log("Dispatch error: " + e.getMessage(), e);
-            e.printStackTrace();
-            logger.error(e);
-            try {
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
-                dispatcher.forward(request, response);
-            } catch (Exception e1) {
-                log("Error within dispatch error" + e1);
-            }
-        }
-    }
+	/**
+	 *
+	 */
+	protected void include(String destination, HttpServletRequest request, HttpServletResponse response) {
+		RequestDispatcher dispatcher = request.getRequestDispatcher(destination);
+		if (dispatcher == null) {
+			log("No dispatcher available for " + destination + " (request=" + request +
+				", response=" + response + ")");
+			return;
+		}
+		try {
+			dispatcher.include(request, response);
+		} catch (Exception e) {
+			log("Dispatch error: " + e.getMessage(), e);
+			e.printStackTrace();
+			logger.error(e);
+			try {
+				dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/servlet-error.jsp");
+				dispatcher.forward(request, response);
+			} catch (Exception e1) {
+				log("Error within dispatch error" + e1);
+			}
+		}
+	}
 
-    /**
-     *
-     */
-    protected void redirect(String destination, HttpServletResponse response) {
-        String url = response.encodeRedirectURL(destination);
-        try {
-            response.sendRedirect(url);
-        } catch (IOException e) {
-            logger.error(e);
-        }
-    }
+	/**
+	 *
+	 */
+	protected void redirect(String destination, HttpServletResponse response) {
+		String url = response.encodeRedirectURL(destination);
+		try {
+			response.sendRedirect(url);
+		} catch (IOException e) {
+			logger.error(e);
+		}
+	}
 }
 
 // $Log$

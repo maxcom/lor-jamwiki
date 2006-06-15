@@ -16,44 +16,44 @@ import org.vqwiki.utils.Utilities ;
  */
 public class SeparateWordsTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(SeparateWordsTag.class);
+	private static final Logger logger = Logger.getLogger(SeparateWordsTag.class);
 
-    private String value;
+	private String value;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        evaluateExpressions();
-        JspWriter out = pageContext.getOut();
-        try {
-            out.print(Utilities.separateWords(value));
-        } catch (IOException e) {
-            logger.warn(e);
-        }
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		evaluateExpressions();
+		JspWriter out = pageContext.getOut();
+		try {
+			out.print(Utilities.separateWords(value));
+		} catch (IOException e) {
+			logger.warn(e);
+		}
+		return EVAL_PAGE;
+	}
 
-    /**
-     *
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 *
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    /**
-     *
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+	/**
+	 *
+	 */
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    /**
-     * Evaluates expressions as necessary
-     */
-    private void evaluateExpressions() throws JspException {
-        value = (String) ExpressionUtil.evalNotNull(
-            "out", "value", value, String.class, this, pageContext
-        );
-    }
+	/**
+	 * Evaluates expressions as necessary
+	 */
+	private void evaluateExpressions() throws JspException {
+		value = (String) ExpressionUtil.evalNotNull(
+			"out", "value", value, String.class, this, pageContext
+		);
+	}
 }

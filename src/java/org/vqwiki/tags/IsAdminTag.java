@@ -12,28 +12,28 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class IsAdminTag extends TagSupport {
 
-    String var;
+	String var;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        pageContext.setAttribute(var, new Boolean(Utilities.isAdmin(request)));
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+		pageContext.setAttribute(var, new Boolean(Utilities.isAdmin(request)));
+		return EVAL_PAGE;
+	}
 
-    /**
-     *
-     */
-    public String getVar() {
-        return var;
-    }
+	/**
+	 *
+	 */
+	public String getVar() {
+		return var;
+	}
 
-    /**
-     *
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
+	/**
+	 *
+	 */
+	public void setVar(String var) {
+		this.var = var;
+	}
 }

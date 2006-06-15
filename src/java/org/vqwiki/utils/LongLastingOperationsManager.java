@@ -31,92 +31,92 @@ import org.vqwiki.servlets.LongLastingOperationServlet;
  */
 public class LongLastingOperationsManager {
 
-    /** instance of this class */
-    private static LongLastingOperationsManager instance = new LongLastingOperationsManager();
+	/** instance of this class */
+	private static LongLastingOperationsManager instance = new LongLastingOperationsManager();
 
-    /** a vector of all ongoing threads */
-    Vector onGoingThreads = new Vector();
+	/** a vector of all ongoing threads */
+	Vector onGoingThreads = new Vector();
 
-    /**
-     * Constructor; private. Use getInstance() instead
-     *
-     * @see getInstance()
-     */
-    private LongLastingOperationsManager() {
-    }
+	/**
+	 * Constructor; private. Use getInstance() instead
+	 *
+	 * @see getInstance()
+	 */
+	private LongLastingOperationsManager() {
+	}
 
-    /**
-     *
-     */
-    public static LongLastingOperationsManager getInstance() {
-        return instance;
-    }
+	/**
+	 *
+	 */
+	public static LongLastingOperationsManager getInstance() {
+		return instance;
+	}
 
-    /**
-     * Register a new thread to the manager
-     * @param t The thread to register
-     * @return the id of this thread
-     */
-    public synchronized int registerNewThread(Runnable r) {
-        // go through vector if threads already ended can be removed:
-        boolean somethingremoved = false;
-        do {
-            somethingremoved = false;
-            for (Iterator iter = onGoingThreads.iterator(); !somethingremoved && iter.hasNext();) {
-                LongLastingOperationServlet aThread = (LongLastingOperationServlet) iter.next();
-                if (aThread.getProgress() >= LongLastingOperationServlet.PROGRESS_DONE) {
-                    iter.remove();
-                    somethingremoved = true;
-                }
-            }
-        }
-        while (somethingremoved);
-        // register new thread
-        int id = onGoingThreads.size();
-        onGoingThreads.add(id, r);
-        return id;
-    }
+	/**
+	 * Register a new thread to the manager
+	 * @param t The thread to register
+	 * @return the id of this thread
+	 */
+	public synchronized int registerNewThread(Runnable r) {
+		// go through vector if threads already ended can be removed:
+		boolean somethingremoved = false;
+		do {
+			somethingremoved = false;
+			for (Iterator iter = onGoingThreads.iterator(); !somethingremoved && iter.hasNext();) {
+				LongLastingOperationServlet aThread = (LongLastingOperationServlet) iter.next();
+				if (aThread.getProgress() >= LongLastingOperationServlet.PROGRESS_DONE) {
+					iter.remove();
+					somethingremoved = true;
+				}
+			}
+		}
+		while (somethingremoved);
+		// register new thread
+		int id = onGoingThreads.size();
+		onGoingThreads.add(id, r);
+		return id;
+	}
 
-    /**
-     * Get a thread for a certain identifier
-     * @param string The identifier of this thred
-     * @return the thread or null, if the thread cannot be found
-     */
-    public Runnable getThreadForId(String idStr) {
-        try {
-            int id = Integer.parseInt(idStr);
-            return (Runnable) onGoingThreads.get(id);
-        } catch (Exception e) {
-            // in case of error:
-            return null;
-        }
-    }
+	/**
+	 * Get a thread for a certain identifier
+	 * @param string The identifier of this thred
+	 * @return the thread or null, if the thread cannot be found
+	 */
+	public Runnable getThreadForId(String idStr) {
+		try {
+			int id = Integer.parseInt(idStr);
+			return (Runnable) onGoingThreads.get(id);
+		} catch (Exception e) {
+			// in case of error:
+			return null;
+		}
+	}
 
-    /**
-     * Get a thread for a certain identifier
-     * @param int The identifier of this thred
-     * @return the thread or null, if the thread cannot be found
-     */
-    public Runnable getThreadForId(int id) {
-        try {
-            return (Runnable) onGoingThreads.get(id);
-        } catch (Exception e) {
-            // in case of error:
-            return null;
-        }
-    }
+	/**
+	 * Get a thread for a certain identifier
+	 * @param int The identifier of this thred
+	 * @return the thread or null, if the thread cannot be found
+	 */
+	public Runnable getThreadForId(int id) {
+		try {
+			return (Runnable) onGoingThreads.get(id);
+		} catch (Exception e) {
+			// in case of error:
+			return null;
+		}
+	}
 
-    /**
-     * Remove a thread by its identifier
-     * @param id The id if the thread to be removed
-     */
-    public void removeThreadById(int id) {
-        try {
-            onGoingThreads.remove(id);
-        } catch (Exception e) {
-            ;
-        }
-    }
+	/**
+	 * Remove a thread by its identifier
+	 * @param id The id if the thread to be removed
+	 */
+	public void removeThreadById(int id) {
+		try {
+			onGoingThreads.remove(id);
+		} catch (Exception e) {
+			;
+		}
+	}
 }
 
 /*

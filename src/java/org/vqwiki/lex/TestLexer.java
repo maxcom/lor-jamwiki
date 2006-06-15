@@ -15,199 +15,199 @@ public class TestLexer extends TestCase {
   private static final Logger logger = Logger.getLogger(TestLexer.class);
 
   public TestLexer(String s) {
-    super(s);
+	super(s);
   }
 
   public void testFormat() throws Exception {
-    StringBuffer inputBuffer = new StringBuffer();
-    inputBuffer.append("Here '''is''' ''the'' '''first''' line");
-    inputBuffer.append("\n");
-    inputBuffer.append("Here is the second line");
-    inputBuffer.append("\n");
-    inputBuffer.append("\n");
-    inputBuffer.append("Here is the third line following a break");
+	StringBuffer inputBuffer = new StringBuffer();
+	inputBuffer.append("Here '''is''' ''the'' '''first''' line");
+	inputBuffer.append("\n");
+	inputBuffer.append("Here is the second line");
+	inputBuffer.append("\n");
+	inputBuffer.append("\n");
+	inputBuffer.append("Here is the third line following a break");
 
-    StringBuffer expected = new StringBuffer();
-    expected.append("Here <strong>is</strong> <em>the</em> <strong>first</strong> line<br/><br/>\nHere is the second line<br/><br/>\n<br/><br/>\nHere is the third line following a break");
+	StringBuffer expected = new StringBuffer();
+	expected.append("Here <strong>is</strong> <em>the</em> <strong>first</strong> line<br/><br/>\nHere is the second line<br/><br/>\n<br/><br/>\nHere is the third line following a break");
 
-    formatLexify(inputBuffer, expected);
+	formatLexify(inputBuffer, expected);
 
-    inputBuffer = new StringBuffer();
-    inputBuffer.append("Here is the first line");
-    inputBuffer.append("@@@@\n");
-    inputBuffer.append("this is preformatted");
-    inputBuffer.append("\n");
-    inputBuffer.append("so is this");
-    inputBuffer.append("\n");
-    inputBuffer.append("\n");
-    inputBuffer.append("this isn't");
+	inputBuffer = new StringBuffer();
+	inputBuffer.append("Here is the first line");
+	inputBuffer.append("@@@@\n");
+	inputBuffer.append("this is preformatted");
+	inputBuffer.append("\n");
+	inputBuffer.append("so is this");
+	inputBuffer.append("\n");
+	inputBuffer.append("\n");
+	inputBuffer.append("this isn't");
 
-    expected = new StringBuffer();
-    expected.append("Here is the first line<pre>");
-    expected.append("this is preformatted\n");
-    expected.append("so is this</pre>\n");
-    expected.append("this isn't");
+	expected = new StringBuffer();
+	expected.append("Here is the first line<pre>");
+	expected.append("this is preformatted\n");
+	expected.append("so is this</pre>\n");
+	expected.append("this isn't");
 
-    formatLexify(inputBuffer, expected);
+	formatLexify(inputBuffer, expected);
 
   }
 
   public void testUnformat() throws Exception {
-    StringBuffer inputBuffer = new StringBuffer();
-    inputBuffer.append("__Here '''is'''__ ''the'' __'''first'''__ line");
+	StringBuffer inputBuffer = new StringBuffer();
+	inputBuffer.append("__Here '''is'''__ ''the'' __'''first'''__ line");
 
-    StringBuffer expected = new StringBuffer();
-    expected.append("Here '''is''' <em>the</em> '''first''' line");
+	StringBuffer expected = new StringBuffer();
+	expected.append("Here '''is''' <em>the</em> '''first''' line");
 
-    formatLexify(inputBuffer, expected);
+	formatLexify(inputBuffer, expected);
   }
 
   public void testList() throws Exception {
-    StringBuffer inputBuffer = new StringBuffer();
-    inputBuffer.append("No list here");
-    inputBuffer.append("\n");
-    inputBuffer.append("\t*item one");
-    inputBuffer.append("\n");
-    inputBuffer.append("\t*item two");
-    inputBuffer.append("\n");
-    inputBuffer.append("\t\t*subitem two-one");
-    inputBuffer.append("\n");
-    inputBuffer.append("\t\t*subitem two-two");
-    inputBuffer.append("\n");
-    inputBuffer.append("\t*item three");
-    inputBuffer.append("\n");
-    inputBuffer.append("\n");
-    inputBuffer.append("No list here");
-    inputBuffer.append("\n");
+	StringBuffer inputBuffer = new StringBuffer();
+	inputBuffer.append("No list here");
+	inputBuffer.append("\n");
+	inputBuffer.append("\t*item one");
+	inputBuffer.append("\n");
+	inputBuffer.append("\t*item two");
+	inputBuffer.append("\n");
+	inputBuffer.append("\t\t*subitem two-one");
+	inputBuffer.append("\n");
+	inputBuffer.append("\t\t*subitem two-two");
+	inputBuffer.append("\n");
+	inputBuffer.append("\t*item three");
+	inputBuffer.append("\n");
+	inputBuffer.append("\n");
+	inputBuffer.append("No list here");
+	inputBuffer.append("\n");
 
-    StringBuffer expected = new StringBuffer();
-    expected.append("No list here<br/><br/>\n<ul><li>item one");
-    expected.append("</li>\n");
-    expected.append("<li>item two\n");
-    expected.append("<ul><li>subitem two-one");
-    expected.append("</li>\n");
-    expected.append("<li>subitem two-two");
-    expected.append("</li></ul>\n");
-    expected.append("<li>item three");
-    expected.append("</li></ul>\n");
-    expected.append("No list here<br/><br/>\n");
+	StringBuffer expected = new StringBuffer();
+	expected.append("No list here<br/><br/>\n<ul><li>item one");
+	expected.append("</li>\n");
+	expected.append("<li>item two\n");
+	expected.append("<ul><li>subitem two-one");
+	expected.append("</li>\n");
+	expected.append("<li>subitem two-two");
+	expected.append("</li></ul>\n");
+	expected.append("<li>item three");
+	expected.append("</li></ul>\n");
+	expected.append("No list here<br/><br/>\n");
 
-    formatLexify(inputBuffer, expected);
+	formatLexify(inputBuffer, expected);
   }
 
   public void testTables() throws Exception {
-    StringBuffer inputBuffer = new StringBuffer();
-    inputBuffer.append("No table here");
-    inputBuffer.append("\n");
-    inputBuffer.append("####");
-    inputBuffer.append("\n");
-    inputBuffer.append("0,0");
-    inputBuffer.append("##");
-    inputBuffer.append("0,1");
-    inputBuffer.append("##");
-    inputBuffer.append("\n");
-    inputBuffer.append("1,0");
-    inputBuffer.append("##");
-    inputBuffer.append("1,1");
-    inputBuffer.append("##");
-    inputBuffer.append("####");
-    inputBuffer.append("\n");
+	StringBuffer inputBuffer = new StringBuffer();
+	inputBuffer.append("No table here");
+	inputBuffer.append("\n");
+	inputBuffer.append("####");
+	inputBuffer.append("\n");
+	inputBuffer.append("0,0");
+	inputBuffer.append("##");
+	inputBuffer.append("0,1");
+	inputBuffer.append("##");
+	inputBuffer.append("\n");
+	inputBuffer.append("1,0");
+	inputBuffer.append("##");
+	inputBuffer.append("1,1");
+	inputBuffer.append("##");
+	inputBuffer.append("####");
+	inputBuffer.append("\n");
 
-    StringBuffer expected = new StringBuffer();
-    expected.append("No table here<br/><br/>\n<table border=\"1\"><tr><td>0,0</td><td>0,1</td></tr><tr><td>1,0</td><td>1,1</td></tr></table>");
+	StringBuffer expected = new StringBuffer();
+	expected.append("No table here<br/><br/>\n<table border=\"1\"><tr><td>0,0</td><td>0,1</td></tr><tr><td>1,0</td><td>1,1</td></tr></table>");
 
-    formatLexify(inputBuffer, expected);
+	formatLexify(inputBuffer, expected);
   }
 
   public void testWikiNames() throws Exception {
-    StringBuffer inputBuffer = new StringBuffer();
-    inputBuffer.append("Here is a line with a standard WikiName in it");
-    inputBuffer.append("\n");
-    inputBuffer.append("Here is a line with a broken Wiki2Name in it");
-    inputBuffer.append("\n");
-    inputBuffer.append("Here is a `backtick` WikiName");
+	StringBuffer inputBuffer = new StringBuffer();
+	inputBuffer.append("Here is a line with a standard WikiName in it");
+	inputBuffer.append("\n");
+	inputBuffer.append("Here is a line with a broken Wiki2Name in it");
+	inputBuffer.append("\n");
+	inputBuffer.append("Here is a `backtick` WikiName");
 
-    StringBuffer expected = new StringBuffer();
-    expected.append("Here is a line with a standard WikiName<a href=\"Wiki?topic=WikiName&action=action_edit\">?</a> in it");
-    expected.append("\n");
-    expected.append("Here is a line with a broken Wiki2Name in it");
-    expected.append("\n");
-    expected.append("Here is a backtick<a href=\"Wiki?topic=backtick&action=action_edit\">?</a> WikiName<a href=\"Wiki?topic=WikiName&action=action_edit\">?</a>");
-    linkLexify(inputBuffer, expected);
+	StringBuffer expected = new StringBuffer();
+	expected.append("Here is a line with a standard WikiName<a href=\"Wiki?topic=WikiName&action=action_edit\">?</a> in it");
+	expected.append("\n");
+	expected.append("Here is a line with a broken Wiki2Name in it");
+	expected.append("\n");
+	expected.append("Here is a backtick<a href=\"Wiki?topic=backtick&action=action_edit\">?</a> WikiName<a href=\"Wiki?topic=WikiName&action=action_edit\">?</a>");
+	linkLexify(inputBuffer, expected);
   }
 
   public void testHyperlinks() throws Exception {
-    StringBuffer inputBuffer = new StringBuffer();
-    inputBuffer.append("Here is a link: http://www.www.com/something and the end");
-    inputBuffer.append("\n");
-    inputBuffer.append("link: (http://www.www.com/something) and the end");
-    inputBuffer.append("\n");
-    inputBuffer.append("link: (http://www.www.com/something/) and the end");
-    inputBuffer.append("\n");
-    inputBuffer.append("link: <b>http://www.www.com/something/</b> and the end");
-    inputBuffer.append("\n");
-    inputBuffer.append("image: http://www.www.com/something/2.jpg and the end");
-    inputBuffer.append("\n");
-    inputBuffer.append("c2:SomeTopic and mskb:Q1234567 and other:Thing");
+	StringBuffer inputBuffer = new StringBuffer();
+	inputBuffer.append("Here is a link: http://www.www.com/something and the end");
+	inputBuffer.append("\n");
+	inputBuffer.append("link: (http://www.www.com/something) and the end");
+	inputBuffer.append("\n");
+	inputBuffer.append("link: (http://www.www.com/something/) and the end");
+	inputBuffer.append("\n");
+	inputBuffer.append("link: <b>http://www.www.com/something/</b> and the end");
+	inputBuffer.append("\n");
+	inputBuffer.append("image: http://www.www.com/something/2.jpg and the end");
+	inputBuffer.append("\n");
+	inputBuffer.append("c2:SomeTopic and mskb:Q1234567 and other:Thing");
 
-    StringBuffer expected = new StringBuffer();
-    expected.append("Here is a link: <a href=\"http://www.www.com/something\">http://www.www.com/something</a> and the end");
-    expected.append("\n");
-    expected.append("link: (<a href=\"http://www.www.com/something\">http://www.www.com/something</a>) and the end");
-    expected.append("\n");
-    expected.append("link: (<a href=\"http://www.www.com/something/\">http://www.www.com/something/</a>) and the end");
-    expected.append("\n");
-    expected.append("link: <b><a href=\"http://www.www.com/something/\">http://www.www.com/something/</a></b> and the end");
-    expected.append("\n");
-    expected.append("image: <img src=\"http://www.www.com/something/2.jpg\"/> and the end");
-    expected.append("\n");
-    expected.append("<a href=\"http://c2.com/cgi/wiki?SomeTopic\">c2:SomeTopic</a> and <a href=\"http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q1234567\">mskb:Q1234567</a> and other:Thing");
-    linkLexify(inputBuffer, expected);
+	StringBuffer expected = new StringBuffer();
+	expected.append("Here is a link: <a href=\"http://www.www.com/something\">http://www.www.com/something</a> and the end");
+	expected.append("\n");
+	expected.append("link: (<a href=\"http://www.www.com/something\">http://www.www.com/something</a>) and the end");
+	expected.append("\n");
+	expected.append("link: (<a href=\"http://www.www.com/something/\">http://www.www.com/something/</a>) and the end");
+	expected.append("\n");
+	expected.append("link: <b><a href=\"http://www.www.com/something/\">http://www.www.com/something/</a></b> and the end");
+	expected.append("\n");
+	expected.append("image: <img src=\"http://www.www.com/something/2.jpg\"/> and the end");
+	expected.append("\n");
+	expected.append("<a href=\"http://c2.com/cgi/wiki?SomeTopic\">c2:SomeTopic</a> and <a href=\"http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q1234567\">mskb:Q1234567</a> and other:Thing");
+	linkLexify(inputBuffer, expected);
   }
 
   private void linkLexify(StringBuffer inputBuffer, StringBuffer expected) throws Exception {
-    String text = inputBuffer.toString();
-    StringReader in = new StringReader(text);
-    LinkLex lex = new LinkLex(in);
-    lex.setVirtualWiki("jsp");
-    StringBuffer outputBuffer = new StringBuffer();
-    while (true) {
-      String out = lex.yylex();
-      if (out == null) break;
-      outputBuffer.append(out);
-      System.out.print(out);
-    }
-    System.out.println();
-    assertEquals(expected.toString(), outputBuffer.toString());
-    in.close();
+	String text = inputBuffer.toString();
+	StringReader in = new StringReader(text);
+	LinkLex lex = new LinkLex(in);
+	lex.setVirtualWiki("jsp");
+	StringBuffer outputBuffer = new StringBuffer();
+	while (true) {
+	  String out = lex.yylex();
+	  if (out == null) break;
+	  outputBuffer.append(out);
+	  System.out.print(out);
+	}
+	System.out.println();
+	assertEquals(expected.toString(), outputBuffer.toString());
+	in.close();
   }
 
   private void formatLexify(StringBuffer inputBuffer, StringBuffer expected) throws Exception {
-    String text = inputBuffer.toString();
-    StringReader in = new StringReader(text);
-    FormatLex lex = new FormatLex(in);
-    StringBuffer outputBuffer = new StringBuffer();
-    while (true) {
-      String out = lex.yylex();
-      if (out == null) break;
-      outputBuffer.append(out);
-      System.out.print(out);
-    }
-    System.out.println();
-    assertEquals(expected.toString(), outputBuffer.toString());
-    in.close();
+	String text = inputBuffer.toString();
+	StringReader in = new StringReader(text);
+	FormatLex lex = new FormatLex(in);
+	StringBuffer outputBuffer = new StringBuffer();
+	while (true) {
+	  String out = lex.yylex();
+	  if (out == null) break;
+	  outputBuffer.append(out);
+	  System.out.print(out);
+	}
+	System.out.println();
+	assertEquals(expected.toString(), outputBuffer.toString());
+	in.close();
   }
 
 
   public static void main(String[] args) throws Exception {
-    TestLexer test = new TestLexer("lexer");
-    test.testFormat();
-    test.testUnformat();
-    test.testList();
-    test.testTables();
-    test.testWikiNames();
-    test.testHyperlinks();
-    System.exit(0);
+	TestLexer test = new TestLexer("lexer");
+	test.testFormat();
+	test.testUnformat();
+	test.testList();
+	test.testTables();
+	test.testWikiNames();
+	test.testHyperlinks();
+	System.exit(0);
   }
 }
 

@@ -30,38 +30,38 @@ import java.util.List;
  */
 public class StatisticsVWikiBean {
 
-    private List vwiki = new ArrayList();
+	private List vwiki = new ArrayList();
 
-    /**
-     * @return
-     */
-    public String getNumwikis() {
-        if (vwiki == null) return "0";
-        return String.valueOf(vwiki.size());
-    }
+	/**
+	 * @return
+	 */
+	public String getNumwikis() {
+		if (vwiki == null) return "0";
+		return String.valueOf(vwiki.size());
+	}
 
-    /**
-     * @return
-     */
-    public String getShowwikis() {
-        if (vwiki == null) return "true";
-        if (vwiki.size() == 1) return "false";
-        return "true";
-    }
+	/**
+	 * @return
+	 */
+	public String getShowwikis() {
+		if (vwiki == null) return "true";
+		if (vwiki.size() == 1) return "false";
+		return "true";
+	}
 
-    /**
-     * @return
-     */
-    public List getVwiki() {
-        return vwiki;
-    }
+	/**
+	 * @return
+	 */
+	public List getVwiki() {
+		return vwiki;
+	}
 
-    /**
-     * @param list
-     */
-    public void setVwiki(List list) {
-        vwiki = list;
-    }
+	/**
+	 * @param list
+	 */
+	public void setVwiki(List list) {
+		vwiki = list;
+	}
 }
 
 /*

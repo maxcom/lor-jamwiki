@@ -14,54 +14,54 @@ import java.io.IOException;
  */
 public class ResourceTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(ResourceTag.class);
+	private static final Logger logger = Logger.getLogger(ResourceTag.class);
 
-    private String key;
-    private String var;
+	private String key;
+	private String var;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        String value = Utilities.resource(key, pageContext.getRequest().getLocale());
-        if (var == null) {
-            JspWriter writer = pageContext.getOut();
-            try {
-                writer.print(value);
-            } catch (IOException e) {
-                logger.warn(e);
-            }
-        } else {
-            pageContext.setAttribute(var, value);
-        }
-        return EVAL_PAGE;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		String value = Utilities.resource(key, pageContext.getRequest().getLocale());
+		if (var == null) {
+			JspWriter writer = pageContext.getOut();
+			try {
+				writer.print(value);
+			} catch (IOException e) {
+				logger.warn(e);
+			}
+		} else {
+			pageContext.setAttribute(var, value);
+		}
+		return EVAL_PAGE;
+	}
 
-    /**
-     *
-     */
-    public String getKey() {
-        return key;
-    }
+	/**
+	 *
+	 */
+	public String getKey() {
+		return key;
+	}
 
-    /**
-     *
-     */
-    public void setKey(String key) {
-        this.key = key;
-    }
+	/**
+	 *
+	 */
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    /**
-     *
-     */
-    public String getVar() {
-        return var;
-    }
+	/**
+	 *
+	 */
+	public String getVar() {
+		return var;
+	}
 
-    /**
-     *
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
+	/**
+	 *
+	 */
+	public void setVar(String var) {
+		this.var = var;
+	}
 }

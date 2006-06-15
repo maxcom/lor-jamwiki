@@ -21,62 +21,62 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 public class ComparablePair implements Comparable {
 
-    Comparable one;
-    Object two;
+	Comparable one;
+	Object two;
 
-    /**
-     *
-     */
-    public ComparablePair(Comparable one, Object two) {
-        this.one = one;
-        this.two = two;
-    }
+	/**
+	 *
+	 */
+	public ComparablePair(Comparable one, Object two) {
+		this.one = one;
+		this.two = two;
+	}
 
-    /**
-     *
-     */
-    public int compareTo(Object o) {
-        ComparablePair other = (ComparablePair) o;
-        if (one.compareTo(other.getOne()) == 0) return -1;
-        return -one.compareTo(other.getOne());
-    }
+	/**
+	 *
+	 */
+	public int compareTo(Object o) {
+		ComparablePair other = (ComparablePair) o;
+		if (one.compareTo(other.getOne()) == 0) return -1;
+		return -one.compareTo(other.getOne());
+	}
 
-    /**
-     *
-     */
-    public Object getOne() {
-        return this.one;
-    }
+	/**
+	 *
+	 */
+	public Object getOne() {
+		return this.one;
+	}
 
-    /**
-     *
-     */
-    public Object getTwo() {
-        return this.two;
-    }
+	/**
+	 *
+	 */
+	public Object getTwo() {
+		return this.two;
+	}
 
-    /**
-     *
-     */
-    public int hashCode() {
-        return (two.hashCode() + one.hashCode()) % Integer.MAX_VALUE;
-    }
+	/**
+	 *
+	 */
+	public int hashCode() {
+		return (two.hashCode() + one.hashCode()) % Integer.MAX_VALUE;
+	}
 
-    /**
-     *
-     */
-    public boolean equals(Object o) {
-        ComparablePair other = (ComparablePair) o;
-        if (other.getOne().equals(this.one) && other.getTwo().equals(this.two)) {
-            return true;
-        }
-        return false;
-    }
+	/**
+	 *
+	 */
+	public boolean equals(Object o) {
+		ComparablePair other = (ComparablePair) o;
+		if (other.getOne().equals(this.one) && other.getTwo().equals(this.two)) {
+			return true;
+		}
+		return false;
+	}
 
-    /**
-     *
-     */
-    public String toString() {
-        return this.one + ":" + this.two;
-    }
+	/**
+	 *
+	 */
+	public String toString() {
+		return this.one + ":" + this.two;
+	}
 }

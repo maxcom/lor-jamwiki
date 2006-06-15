@@ -12,28 +12,28 @@ import java.util.Date;
  */
 public interface Reminders {
 
-    /**
-     *
-     */
-    public void addReminder(String userName, Date dateToRemind) throws Exception;
+	/**
+	 *
+	 */
+	public void addReminder(String userName, Date dateToRemind) throws Exception;
 
-    /**
-     *
-     */
-    public void removeReminder(String userName) throws Exception;
+	/**
+	 *
+	 */
+	public void removeReminder(String userName) throws Exception;
 
-    /**
-     *
-     */
-    public boolean hasReminder(String userName) throws Exception;
+	/**
+	 *
+	 */
+	public boolean hasReminder(String userName) throws Exception;
 
-    /**
-     *
-     */
-    public Date dateToRemind(String userName) throws Exception;
+	/**
+	 *
+	 */
+	public Date dateToRemind(String userName) throws Exception;
 
-    /**
-     *
-     */
-    public boolean sendReminders(Date remindDate) throws Exception;
+	/**
+	 *
+	 */
+	public boolean sendReminders(Date remindDate) throws Exception;
 }

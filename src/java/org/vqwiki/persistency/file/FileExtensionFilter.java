@@ -9,19 +9,19 @@ import java.io.FilenameFilter;
  */
 public class FileExtensionFilter implements FilenameFilter {
 
-    String extension;
+	String extension;
 
-    /**
-     *
-     */
-    public FileExtensionFilter(String extension) {
-        this.extension = extension;
-    }
+	/**
+	 *
+	 */
+	public FileExtensionFilter(String extension) {
+		this.extension = extension;
+	}
 
-    /**
-     *
-     */
-    public boolean accept(File file, String name) {
-        return (name.endsWith(extension));
-    }
+	/**
+	 *
+	 */
+	public boolean accept(File file, String name) {
+		return (name.endsWith(extension));
+	}
 }

@@ -19,29 +19,29 @@ import org.vqwiki.WikiBase;
  */
 public class LockListServlet extends VQWikiServlet {
 
-    /**
-     * Handle the get request: Give back the list.
-     *
-     * @param request The HttpServletRequest
-     * @param response The HttpServletResponse
-     *
-     * @throws ServletException If something goes wrong
-     * @throws IOException If something goes wrong
-     */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        String virtualWiki = (String) request.getAttribute("virtualWiki");
-        ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources",
-            request.getLocale());
-        List locks = null;
-        try {
-            locks = WikiBase.getInstance().getHandler().getLockList(virtualWiki);
-        } catch (Exception e) {
-            error(request, response, e);
-            return;
-        }
-        request.setAttribute("locks", locks);
-        request.setAttribute("title", messages.getString("locklist.title"));
-        dispatch("/WEB-INF/jsp/locklist.jsp", request, response);
-    }
+	/**
+	 * Handle the get request: Give back the list.
+	 *
+	 * @param request The HttpServletRequest
+	 * @param response The HttpServletResponse
+	 *
+	 * @throws ServletException If something goes wrong
+	 * @throws IOException If something goes wrong
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+		String virtualWiki = (String) request.getAttribute("virtualWiki");
+		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources",
+			request.getLocale());
+		List locks = null;
+		try {
+			locks = WikiBase.getInstance().getHandler().getLockList(virtualWiki);
+		} catch (Exception e) {
+			error(request, response, e);
+			return;
+		}
+		request.setAttribute("locks", locks);
+		request.setAttribute("title", messages.getString("locklist.title"));
+		dispatch("/WEB-INF/jsp/locklist.jsp", request, response);
+	}
 }

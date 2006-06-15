@@ -13,28 +13,28 @@ import java.util.Locale;
  */
 public interface Notify {
 
-    /**
-     *
-     */
-    public void addMember(String userName) throws Exception;
+	/**
+	 *
+	 */
+	public void addMember(String userName) throws Exception;
 
-    /**
-     *
-     */
-    public void removeMember(String userName) throws Exception;
+	/**
+	 *
+	 */
+	public void removeMember(String userName) throws Exception;
 
-    /**
-     *
-     */
-    public boolean isMember(String userName) throws Exception;
+	/**
+	 *
+	 */
+	public boolean isMember(String userName) throws Exception;
 
-    /**
-     *
-     */
-    public Collection getMembers() throws Exception;
+	/**
+	 *
+	 */
+	public Collection getMembers() throws Exception;
 
-    /**
-     *
-     */
-    public boolean sendNotifications(String rootPath, Locale locale) throws Exception;
+	/**
+	 *
+	 */
+	public boolean sendNotifications(String rootPath, Locale locale) throws Exception;
 }

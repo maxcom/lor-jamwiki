@@ -10,10 +10,10 @@ import java.io.File;
  */
 public class WikiRemindFilter implements java.io.FilenameFilter {
 
-    /**
-     *
-     */
-    public boolean accept(File dir, String name) {
-        return name.endsWith(".rmd");
-    }
+	/**
+	 *
+	 */
+	public boolean accept(File dir, String name) {
+		return name.endsWith(".rmd");
+	}
 }

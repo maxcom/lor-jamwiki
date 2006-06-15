@@ -28,44 +28,44 @@ import java.util.List;
  */
 public class SitemapBean {
 
-    private String name;
-    private List pages;
+	private String name;
+	private List pages;
 
-    /**
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return
-     */
-    public List getPages() {
-        return pages;
-    }
+	/**
+	 * @return
+	 */
+	public List getPages() {
+		return pages;
+	}
 
-    /**
-     * @param string
-     */
-    public void setName(String string) {
-        name = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setName(String string) {
+		name = string;
+	}
 
-    /**
-     * @param list
-     */
-    public void setPages(List list) {
-        pages = list;
-    }
+	/**
+	 * @param list
+	 */
+	public void setPages(List list) {
+		pages = list;
+	}
 
-    /**
-     *
-     */
-    public String getNumpages() {
-        if (pages == null) return "0";
-        return String.valueOf(pages.size());
-    }
+	/**
+	 *
+	 */
+	public String getNumpages() {
+		if (pages == null) return "0";
+		return String.valueOf(pages.size());
+	}
 }
 
 /*

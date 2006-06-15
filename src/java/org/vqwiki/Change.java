@@ -24,127 +24,127 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 public class Change implements java.io.Serializable, Comparable {
 
-    protected String topic;
-    protected String user;
-    protected Date time;
-    protected String virtualWiki;
+	protected String topic;
+	protected String user;
+	protected Date time;
+	protected String virtualWiki;
 
-    /**
-     *
-     */
-    public Change() {
-    }
+	/**
+	 *
+	 */
+	public Change() {
+	}
 
-    /**
-     *
-     */
-    public String getTopic() {
-        return topic;
-    }
+	/**
+	 *
+	 */
+	public String getTopic() {
+		return topic;
+	}
 
-    /**
-     *
-     */
-    public Change(String virtualWiki, String inTopic, String inUser, Date changeDate) {
-        this.topic = inTopic;
-        this.user = inUser;
-        this.time = changeDate;
-        this.virtualWiki = virtualWiki;
-    }
+	/**
+	 *
+	 */
+	public Change(String virtualWiki, String inTopic, String inUser, Date changeDate) {
+		this.topic = inTopic;
+		this.user = inUser;
+		this.time = changeDate;
+		this.virtualWiki = virtualWiki;
+	}
 
-    /**
-     *
-     */
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
+	/**
+	 *
+	 */
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
 
-    /**
-     *
-     */
-    public String getUser() {
-        return user;
-    }
+	/**
+	 *
+	 */
+	public String getUser() {
+		return user;
+	}
 
-    /**
-     *
-     */
-    public String getUsername() {
-        try {
-            return WikiBase.getInstance().getUsergroupInstance().getFullnameById(user);
-        } catch (Exception e) {
-            return user;
-        }
-    }
+	/**
+	 *
+	 */
+	public String getUsername() {
+		try {
+			return WikiBase.getInstance().getUsergroupInstance().getFullnameById(user);
+		} catch (Exception e) {
+			return user;
+		}
+	}
 
-    /**
-     *
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
+	/**
+	 *
+	 */
+	public void setUser(String user) {
+		this.user = user;
+	}
 
-    /**
-     *
-     */
-    public Date getTime() {
-        return time;
-    }
+	/**
+	 *
+	 */
+	public Date getTime() {
+		return time;
+	}
 
-    /**
-     *
-     */
-    public void setTime(Date time) {
-        this.time = time;
-    }
+	/**
+	 *
+	 */
+	public void setTime(Date time) {
+		this.time = time;
+	}
 
-    /**
-     *
-     */
-    public String getVirtualWiki() {
-        return virtualWiki;
-    }
+	/**
+	 *
+	 */
+	public String getVirtualWiki() {
+		return virtualWiki;
+	}
 
-    /**
-     *
-     */
-    public void setVirtualWiki(String virtualWiki) {
-        this.virtualWiki = virtualWiki;
-    }
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String virtualWiki) {
+		this.virtualWiki = virtualWiki;
+	}
 
-    /**
-     *
-     */
-    public int compareTo(Object o) {
-        Change incomingChange = (Change) o;
-        if (time.before(incomingChange.time)) {
-            return 1;
-        }
-        if (time.after(incomingChange.time)) {
-            return -1;
-        }
-        return 0;
-    }
+	/**
+	 *
+	 */
+	public int compareTo(Object o) {
+		Change incomingChange = (Change) o;
+		if (time.before(incomingChange.time)) {
+			return 1;
+		}
+		if (time.after(incomingChange.time)) {
+			return -1;
+		}
+		return 0;
+	}
 
-    /**
-     *
-     */
-    public boolean equals(Object o) {
-        if (o == null) return false;
-        if (!(o instanceof Change)) return false;
-        Change c = (Change) o;
-        if (!this.topic.equals(c.getTopic()) || !this.user.equals(c.getUser())) {
-            return false;
-        }
-        Calendar cal1 = Calendar.getInstance();
-        Calendar cal2 = Calendar.getInstance();
-        cal1.setTime(this.time);
-        cal2.setTime(c.getTime());
-        if (cal1.get(Calendar.DATE) != cal2.get(Calendar.DATE) ||
-            cal1.get(Calendar.MONTH) != cal2.get(Calendar.MONTH) ||
-            cal1.get(Calendar.YEAR) != cal2.get(Calendar.YEAR)) {
-            return false;
-        }
-        return true;
-    }
+	/**
+	 *
+	 */
+	public boolean equals(Object o) {
+		if (o == null) return false;
+		if (!(o instanceof Change)) return false;
+		Change c = (Change) o;
+		if (!this.topic.equals(c.getTopic()) || !this.user.equals(c.getUser())) {
+			return false;
+		}
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal1.setTime(this.time);
+		cal2.setTime(c.getTime());
+		if (cal1.get(Calendar.DATE) != cal2.get(Calendar.DATE) ||
+			cal1.get(Calendar.MONTH) != cal2.get(Calendar.MONTH) ||
+			cal1.get(Calendar.YEAR) != cal2.get(Calendar.YEAR)) {
+			return false;
+		}
+		return true;
+	}
 }

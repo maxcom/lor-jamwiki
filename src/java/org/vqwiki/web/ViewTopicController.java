@@ -44,34 +44,34 @@ import org.vqwiki.Topic;
  */
 public class ViewTopicController implements Controller {
 
-    /** Logger for this class and subclasses. */
-    private static Logger logger = Logger.getLogger(ViewTopicController.class.getName());
+	/** Logger for this class and subclasses. */
+	private static Logger logger = Logger.getLogger(ViewTopicController.class.getName());
 
-    /**
-     * This method handles the request after its parent class receives control. It gets the topic's name and the
-     * virtual wiki name from the uri, loads the topic and returns a view to the end user.
-     *
-     * @param request - Standard HttpServletRequest object.
-     * @param response - Standard HttpServletResponse object.
-     * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
-     */
-    public final ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        //This method should parse uri, loadTopic, return view
-        WikiBase wikibase = WikiBase.getInstance();
-        String topicname = wikibase.getTopicFromURI(request.getRequestURI());
+	/**
+	 * This method handles the request after its parent class receives control. It gets the topic's name and the
+	 * virtual wiki name from the uri, loads the topic and returns a view to the end user.
+	 *
+	 * @param request - Standard HttpServletRequest object.
+	 * @param response - Standard HttpServletResponse object.
+	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
+	 */
+	public final ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+		//This method should parse uri, loadTopic, return view
+		WikiBase wikibase = WikiBase.getInstance();
+		String topicname = wikibase.getTopicFromURI(request.getRequestURI());
 
-        Topic topic = new Topic(topicname);
-        topic.loadTopic(wikibase.getVirtualWikiFromURI(request.getRequestURI(), request.getContextPath()));
+		Topic topic = new Topic(topicname);
+		topic.loadTopic(wikibase.getVirtualWikiFromURI(request.getRequestURI(), request.getContextPath()));
 
-        Map topicModel = new HashMap();
-        topicModel.put("topicname", topic.getName());
-        
-        // convert the rawcontent to html content
-        String contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(topic.getRenderedContent())), wikibase.getVirtualWikiFromURI(request.getRequestURI(), request.getContextPath()));
-            
-        topicModel.put("topiccontent", contents);
+		Map topicModel = new HashMap();
+		topicModel.put("topicname", topic.getName());
 
-        logger.debug("Handling request for view of topic: " + topic);
-        return new ModelAndView("viewTopic", "model", topicModel);
-    }
+		// convert the rawcontent to html content
+		String contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(topic.getRenderedContent())), wikibase.getVirtualWikiFromURI(request.getRequestURI(), request.getContextPath()));
+
+		topicModel.put("topiccontent", contents);
+
+		logger.debug("Handling request for view of topic: " + topic);
+		return new ModelAndView("viewTopic", "model", topicModel);
+	}
 }

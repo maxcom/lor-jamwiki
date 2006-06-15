@@ -54,8 +54,8 @@ public class TokenMgrError extends Error {
    * @param reason TODO: Document this parameter.
    */
   public TokenMgrError(String message, int reason) {
-    super(message);
-    errorCode = reason;
+	super(message);
+	errorCode = reason;
   }
 
   /**
@@ -70,19 +70,19 @@ public class TokenMgrError extends Error {
    * @param reason TODO: Document this parameter.
    */
   public TokenMgrError(boolean EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar, int reason) {
-    this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason);
+	this(LexicalError(EOFSeen, lexState, errorLine, errorColumn, errorAfter, curChar), reason);
   }
 
   /**
    * Returns a detailed message for the Error when it is thrown by the
    * token manager to indicate a lexical error.
    * Parameters :
-   *    EOFSeen     : indicates if EOF caused the lexicl error
-   *    curLexState : lexical state in which this error occured
-   *    errorLine   : line number when the error occured
-   *    errorColumn : column number when the error occured
-   *    errorAfter  : prefix that was seen before this error occured
-   *    curchar     : the offending character
+   *	EOFSeen	 : indicates if EOF caused the lexicl error
+   *	curLexState : lexical state in which this error occured
+   *	errorLine   : line number when the error occured
+   *	errorColumn : column number when the error occured
+   *	errorAfter  : prefix that was seen before this error occured
+   *	curchar	 : the offending character
    * Note: You can customize the lexical error message by modifying this method.
    *
    * @param EOFSeen TODO: Document this parameter.
@@ -94,11 +94,11 @@ public class TokenMgrError extends Error {
    * @return TODO: Document the result.
    */
   private final static String LexicalError(boolean EOFSeen, int lexState, int errorLine, int errorColumn, String errorAfter, char curChar) {
-    return ("Lexical error at line " +
-        errorLine + ", column " +
-        errorColumn + ".  Encountered: " +
-        (EOFSeen ? "<EOF> " : ("\"" + addEscapes(String.valueOf(curChar)) + "\"") + " (" + (int) curChar + "), ") +
-        "after : \"" + addEscapes(errorAfter) + "\"");
+	return ("Lexical error at line " +
+		errorLine + ", column " +
+		errorColumn + ".  Encountered: " +
+		(EOFSeen ? "<EOF> " : ("\"" + addEscapes(String.valueOf(curChar)) + "\"") + " (" + (int) curChar + "), ") +
+		"after : \"" + addEscapes(errorAfter) + "\"");
   }
 
   /**
@@ -109,48 +109,48 @@ public class TokenMgrError extends Error {
    * @return TODO: Document the result.
    */
   protected final static String addEscapes(String str) {
-    StringBuffer retval = new StringBuffer();
-    char ch;
-    for (int i = 0; i < str.length(); i++) {
-      switch (str.charAt(i)) {
-        case 0:
-          continue;
-        case '\b':
-          retval.append("\\b");
-          continue;
-        case '\t':
-          retval.append("\\t");
-          continue;
-        case '\n':
-          retval.append("\\n");
-          continue;
-        case '\f':
-          retval.append("\\f");
-          continue;
-        case '\r':
-          retval.append("\\r");
-          continue;
-        case '\"':
-          retval.append("\\\"");
-          continue;
-        case '\'':
-          retval.append("\\\'");
-          continue;
-        case '\\':
-          retval.append("\\\\");
-          continue;
-        default:
-          if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
-            String s = "0000" + Integer.toString(ch, 16);
-            retval.append("\\u" + s.substring(s.length() - 4, s.length()));
-          }
-          else {
-            retval.append(ch);
-          }
-          continue;
-      }
-    }
-    return retval.toString();
+	StringBuffer retval = new StringBuffer();
+	char ch;
+	for (int i = 0; i < str.length(); i++) {
+	  switch (str.charAt(i)) {
+		case 0:
+		  continue;
+		case '\b':
+		  retval.append("\\b");
+		  continue;
+		case '\t':
+		  retval.append("\\t");
+		  continue;
+		case '\n':
+		  retval.append("\\n");
+		  continue;
+		case '\f':
+		  retval.append("\\f");
+		  continue;
+		case '\r':
+		  retval.append("\\r");
+		  continue;
+		case '\"':
+		  retval.append("\\\"");
+		  continue;
+		case '\'':
+		  retval.append("\\\'");
+		  continue;
+		case '\\':
+		  retval.append("\\\\");
+		  continue;
+		default:
+		  if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
+			String s = "0000" + Integer.toString(ch, 16);
+			retval.append("\\u" + s.substring(s.length() - 4, s.length()));
+		  }
+		  else {
+			retval.append(ch);
+		  }
+		  continue;
+	  }
+	}
+	return retval.toString();
   }
 
   /**
@@ -158,13 +158,13 @@ public class TokenMgrError extends Error {
    * For example, cases like LOOP_DETECTED and INVALID_LEXICAL_STATE are not
    * of end-users concern, so you can return something like :
    *
-   *     "Internal Error : Please file a bug report .... "
+   *	 "Internal Error : Please file a bug report .... "
    *
    * from this method for such cases in the release version of your parser.
    *
    * @return The Message.
    */
   public String getMessage() {
-    return super.getMessage();
+	return super.getMessage();
   }
 }

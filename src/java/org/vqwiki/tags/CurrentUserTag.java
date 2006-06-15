@@ -13,36 +13,36 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class CurrentUserTag extends TagSupport {
 
-    private static final Logger logger = Logger.getLogger(CurrentUserTag.class);
+	private static final Logger logger = Logger.getLogger(CurrentUserTag.class);
 
-    private String var;
+	private String var;
 
-    /**
-     *
-     */
-    public int doEndTag() throws JspException {
-        try {
-            String user = Utilities.getUserFromRequest((HttpServletRequest) this.pageContext.getRequest());
-            if (user != null) {
-                pageContext.setAttribute(this.var, user);
-            }
-        } catch (Exception e) {
-            logger.warn(e);
-        }
-        return SKIP_BODY;
-    }
+	/**
+	 *
+	 */
+	public int doEndTag() throws JspException {
+		try {
+			String user = Utilities.getUserFromRequest((HttpServletRequest) this.pageContext.getRequest());
+			if (user != null) {
+				pageContext.setAttribute(this.var, user);
+			}
+		} catch (Exception e) {
+			logger.warn(e);
+		}
+		return SKIP_BODY;
+	}
 
-    /**
-     *
-     */
-    public String getVar() {
-        return var;
-    }
+	/**
+	 *
+	 */
+	public String getVar() {
+		return var;
+	}
 
-    /**
-     *
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
+	/**
+	 *
+	 */
+	public void setVar(String var) {
+		this.var = var;
+	}
 }

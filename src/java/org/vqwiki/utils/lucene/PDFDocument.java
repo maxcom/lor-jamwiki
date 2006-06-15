@@ -1,6 +1,6 @@
 /*
  * $Id: PDFDocument.java 414 2003-11-29 23:29:56Z mrgadget4711 $
- * 
+ *
  * Filename : PDFDocument.java Project : vqwiki-classic
  */
 package org.vqwiki.utils.lucene;
@@ -21,25 +21,25 @@ import org.pdfbox.util.PDFTextStripper;
 
 /**
  * Get the content of a PDF file
- * 
+ *
  * This class was created on 29.11.2003
- * 
+ *
  * @author $Author: mrgadget4711 $
  */
 public class PDFDocument {
 
 	/**
 	 * Actually get the content of a PDF file
-	 * 
+	 *
 	 * @param attachmentFileName
-	 *            String with the filename of the file to read
+	 *			String with the filename of the file to read
 	 * @param attachmentFile
-	 *            File handler of the file to read
+	 *			File handler of the file to read
 	 * @return StringBuffer containing the (textual) content of the PDF file
 	 * @throws FileNotFoundException
-	 *             If the PDF file cannot be found
+	 *			 If the PDF file cannot be found
 	 * @throws IOException
-	 *             If the PDF file cannot be read
+	 *			 If the PDF file cannot be read
 	 */
 	public static StringBuffer getContentOfPDFFile(
 		String attachmentFileName,
@@ -100,7 +100,7 @@ public class PDFDocument {
 }
 /*
  * Log:
- * 
+ *
  * $Log$
  * Revision 1.1  2003/11/29 23:29:56  mrgadget4711
  * Initial version -- moved from AbstractSearchEngine

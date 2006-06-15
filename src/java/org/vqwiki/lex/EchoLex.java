@@ -7,6 +7,6 @@ package org.vqwiki.lex;
  */
 public class EchoLex implements ExternalLex {
   public String process(String text) {
-    return text;
+	return text;
   }
 }

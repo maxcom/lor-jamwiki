@@ -37,14 +37,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * @author $Author: makub $
  */
 public class AppletSearchEngine extends AbstractSearchEngine {
-	
+
 	/** Logging */
 	private static final Logger logger =
 		Logger.getLogger(AppletSearchEngine.class);
-        
-    /** The directory to base the search on */
+
+	/** The directory to base the search on */
 	RAMDirectory ram;
-	
+
 	/**
 	 * Init the search engine. Copy all files from the real index
 	 * into the RAM, because search can only start from RAM.
@@ -52,9 +52,9 @@ public class AppletSearchEngine extends AbstractSearchEngine {
 	public AppletSearchEngine()
 	{
 		AppletSearchEngine.indexPath = "";
-		
+
 		ram = new RAMDirectory();
-		
+
 		StringBuffer contents = new StringBuffer();
 		try {
 			InputStream in = this.getClass().getResourceAsStream("/lucene/index.dir");
@@ -67,24 +67,24 @@ public class AppletSearchEngine extends AbstractSearchEngine {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		try {
-		        //split is only in JDK1.4+
+				//split is only in JDK1.4+
 			//String[] filenames = contents.toString().split(",");
 			StringTokenizer st = new StringTokenizer(contents.toString(),",");
 			String[] filenames = new String[st.countTokens()];
 			for(int i=0;i<filenames.length;i++) { filenames[i]=st.nextToken(); }
-			
+
 			for (int i=0; i < filenames.length; i++)
 			{
 				String filename = filenames[i];
-				
+
 				// make place on ram disk
 				OutputStream os = ram.createFile(filename);
-			
+
 				// read current file
 				InputStream is = this.getClass().getResourceAsStream("/lucene/index/" + filename);
-			
+
  				// and copy to ram disk
 				int len = Math.max(is.available(), 4086);
 				byte[] buf = new byte[4086];
@@ -93,7 +93,7 @@ public class AppletSearchEngine extends AbstractSearchEngine {
 					len = is.read(buf, 0, 4086);
 					os.writeBytes(buf, len);
 				}
-				
+
 				// graceful cleanup
 				is.close();
 				os.close();
@@ -101,8 +101,8 @@ public class AppletSearchEngine extends AbstractSearchEngine {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-	} 
+
+	}
 
 	/* (non-Javadoc)
 	 * @see vqwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)

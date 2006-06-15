@@ -15,26 +15,26 @@ import java.io.IOException;
  */
 public class UnlockServlet extends VQWikiServlet {
 
-    private static final Logger logger = Logger.getLogger(UnlockServlet.class);
+	private static final Logger logger = Logger.getLogger(UnlockServlet.class);
 
-    /**
-     *
-     */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String topic = request.getParameter("topic");
-        if (!Utilities.isAdmin(request)) {
-            request.setAttribute("redirect", "Wiki?WikiLockList");
-            dispatch("/WEB-INF/jsp/login.jsp", request, response);
-            return;
-        }
-        String virtualWiki = (String) request.getAttribute("virtualWiki");
-        logger.debug("Unlocking " + topic);
-        try {
-            WikiBase.getInstance().unlockTopic(virtualWiki, topic);
-        } catch (Exception e) {
-            error(request, response, e);
-            return;
-        }
-        redirect("Wiki?WikiLockList", response);
-    }
+	/**
+	 *
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String topic = request.getParameter("topic");
+		if (!Utilities.isAdmin(request)) {
+			request.setAttribute("redirect", "Wiki?WikiLockList");
+			dispatch("/WEB-INF/jsp/login.jsp", request, response);
+			return;
+		}
+		String virtualWiki = (String) request.getAttribute("virtualWiki");
+		logger.debug("Unlocking " + topic);
+		try {
+			WikiBase.getInstance().unlockTopic(virtualWiki, topic);
+		} catch (Exception e) {
+			error(request, response, e);
+			return;
+		}
+		redirect("Wiki?WikiLockList", response);
+	}
 }

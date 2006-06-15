@@ -27,36 +27,36 @@ package org.vqwiki.servlets.beans;
  */
 public class StatisticsAuthorBean {
 
-    private String name = null;
-    private String changes = null;
+	private String name = null;
+	private String changes = null;
 
-    /**
-     * @return
-     */
-    public String getChanges() {
-        return changes;
-    }
+	/**
+	 * @return
+	 */
+	public String getChanges() {
+		return changes;
+	}
 
-    /**
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @param string
-     */
-    public void setChanges(String string) {
-        changes = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setChanges(String string) {
+		changes = string;
+	}
 
-    /**
-     * @param string
-     */
-    public void setName(String string) {
-        name = string;
-    }
+	/**
+	 * @param string
+	 */
+	public void setName(String string) {
+		name = string;
+	}
 }
 
 /*

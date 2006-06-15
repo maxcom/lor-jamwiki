@@ -37,138 +37,138 @@ import org.vqwiki.utils.LongLastingOperationsManager;
  */
 public abstract class LongLastingOperationServlet extends VQWikiServlet implements Runnable {
 
-    /** time, when everything starts */
-    protected Date startingTime = null;
-    /** Maximum time in seconds to wait until the page is refreshed */
-    protected int MAX_TIME_TO_REFRESH = 3;
-    /** progress done */
-    public static final int PROGRESS_DONE = 1000;
-    /** the url, which is used to call this servlet */
-    protected String url;
-    /** progress made */
-    protected int progress = 0;
-    /** The request, which is used during the operation */
-    protected Locale locale = null;
+	/** time, when everything starts */
+	protected Date startingTime = null;
+	/** Maximum time in seconds to wait until the page is refreshed */
+	protected int MAX_TIME_TO_REFRESH = 3;
+	/** progress done */
+	public static final int PROGRESS_DONE = 1000;
+	/** the url, which is used to call this servlet */
+	protected String url;
+	/** progress made */
+	protected int progress = 0;
+	/** The request, which is used during the operation */
+	protected Locale locale = null;
 
-    /**
-     * Handle post request.
-     * Generate a long lasting operation and execute it.
-     *
-     * @param request  The current http request
-     * @param response What the servlet will send back as response
-     *
-     * @throws ServletException If something goes wrong during servlet execution
-     * @throws IOException If the output stream cannot be accessed
-     *
-     */
-    protected void doPost(HttpServletRequest httpRequest, HttpServletResponse response)
-        throws ServletException, IOException {
-        if (httpRequest.getParameter("norefresh") != null) {
-            startingTime = new Date();
-            locale = httpRequest.getLocale();
-            url = httpRequest.getRequestURL().toString() + "?" + httpRequest.getQueryString();
-            // execute task not in a thread
-            run();
-            dispatchDone(httpRequest, response);
-        } else {
-            LongLastingOperationsManager mgr = LongLastingOperationsManager.getInstance();
-            int id;
-            // check, if we are coming here again
-            if (httpRequest.getParameter("id") == null) {
-                // first time visitor: create new thread
-                startingTime = new Date();
-                locale = httpRequest.getLocale();
-                url = httpRequest.getRequestURL().toString() + "?" + httpRequest.getQueryString();
-                Thread t = new Thread(this);
-                id = mgr.registerNewThread(this);
-                t.setPriority(Thread.MIN_PRIORITY);
-                t.start();
-            } else {
-                try {
-                    id = Integer.parseInt((String) httpRequest.getParameter("id"));
-                } catch (NumberFormatException e) {
-                    id = 0;
-                }
-            }
-            // get information on the thread
-            httpRequest.setAttribute("id", new Integer(id));
-            Runnable myThread = mgr.getThreadForId(id);
-            if (myThread != null) {
-                LongLastingOperationServlet myServlet = (LongLastingOperationServlet) myThread;
-                httpRequest.setAttribute("progress", new Integer(myServlet.getProgress()));
-                httpRequest.setAttribute("nextRefresh", new Integer(myServlet.getNextRefresh()));
-                httpRequest.setAttribute("url", myServlet.getUrl());
-                if (myServlet.getProgress() >= 100) {
-                    myServlet.dispatchDone(httpRequest, response);
-                    mgr.removeThreadById(id);
-                    return;
-                }
-            } else {
-                error(httpRequest, response, new WikiException("Operation lost in /dev/null"));
-                return;
-            }
-            dispatch("/WEB-INF/jsp/longlastingoperation.jsp", httpRequest, response);
-        }
-    }
+	/**
+	 * Handle post request.
+	 * Generate a long lasting operation and execute it.
+	 *
+	 * @param request  The current http request
+	 * @param response What the servlet will send back as response
+	 *
+	 * @throws ServletException If something goes wrong during servlet execution
+	 * @throws IOException If the output stream cannot be accessed
+	 *
+	 */
+	protected void doPost(HttpServletRequest httpRequest, HttpServletResponse response)
+		throws ServletException, IOException {
+		if (httpRequest.getParameter("norefresh") != null) {
+			startingTime = new Date();
+			locale = httpRequest.getLocale();
+			url = httpRequest.getRequestURL().toString() + "?" + httpRequest.getQueryString();
+			// execute task not in a thread
+			run();
+			dispatchDone(httpRequest, response);
+		} else {
+			LongLastingOperationsManager mgr = LongLastingOperationsManager.getInstance();
+			int id;
+			// check, if we are coming here again
+			if (httpRequest.getParameter("id") == null) {
+				// first time visitor: create new thread
+				startingTime = new Date();
+				locale = httpRequest.getLocale();
+				url = httpRequest.getRequestURL().toString() + "?" + httpRequest.getQueryString();
+				Thread t = new Thread(this);
+				id = mgr.registerNewThread(this);
+				t.setPriority(Thread.MIN_PRIORITY);
+				t.start();
+			} else {
+				try {
+					id = Integer.parseInt((String) httpRequest.getParameter("id"));
+				} catch (NumberFormatException e) {
+					id = 0;
+				}
+			}
+			// get information on the thread
+			httpRequest.setAttribute("id", new Integer(id));
+			Runnable myThread = mgr.getThreadForId(id);
+			if (myThread != null) {
+				LongLastingOperationServlet myServlet = (LongLastingOperationServlet) myThread;
+				httpRequest.setAttribute("progress", new Integer(myServlet.getProgress()));
+				httpRequest.setAttribute("nextRefresh", new Integer(myServlet.getNextRefresh()));
+				httpRequest.setAttribute("url", myServlet.getUrl());
+				if (myServlet.getProgress() >= 100) {
+					myServlet.dispatchDone(httpRequest, response);
+					mgr.removeThreadById(id);
+					return;
+				}
+			} else {
+				error(httpRequest, response, new WikiException("Operation lost in /dev/null"));
+				return;
+			}
+			dispatch("/WEB-INF/jsp/longlastingoperation.jsp", httpRequest, response);
+		}
+	}
 
-    /**
-     * Handle get request.
-     * The request is handled the same way as the post request.
-     *
-     * @see doPost()
-     *
-     * @param httpServletRequest  The current http request
-     * @param httpServletResponse What the servlet will send back as response
-     *
-     * @throws ServletException If something goes wrong during servlet execution
-     * @throws IOException If the output stream cannot be accessed
-     *
-     */
-    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-        throws ServletException, IOException {
-        this.doPost(httpServletRequest, httpServletResponse);
-    }
+	/**
+	 * Handle get request.
+	 * The request is handled the same way as the post request.
+	 *
+	 * @see doPost()
+	 *
+	 * @param httpServletRequest  The current http request
+	 * @param httpServletResponse What the servlet will send back as response
+	 *
+	 * @throws ServletException If something goes wrong during servlet execution
+	 * @throws IOException If the output stream cannot be accessed
+	 *
+	 */
+	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+		throws ServletException, IOException {
+		this.doPost(httpServletRequest, httpServletResponse);
+	}
 
-    /**
-     * What is the progress of the ongoing operation?
-     * @return int giving the percent (0 - 100), how much is finished.
-     */
-    public int getProgress() {
-        return progress;
-    }
+	/**
+	 * What is the progress of the ongoing operation?
+	 * @return int giving the percent (0 - 100), how much is finished.
+	 */
+	public int getProgress() {
+		return progress;
+	}
 
-    /**
-     * How many seconds shall we wait until the next refresh?
-     * @return int giving the number of seconds to wait for the next refresh
-     */
-    protected int getNextRefresh() {
-        if (getProgress() < 50) {
-            return MAX_TIME_TO_REFRESH;
-        } else {
-            long alreadyWorking = new Date().getTime() - startingTime.getTime();
-            int timeToFinish = (int) ((double) alreadyWorking / ((double) getProgress() * 10.0));
-            if (timeToFinish > MAX_TIME_TO_REFRESH) {
-                return MAX_TIME_TO_REFRESH;
-            } else {
-                return timeToFinish;
-            }
-        }
-    }
+	/**
+	 * How many seconds shall we wait until the next refresh?
+	 * @return int giving the number of seconds to wait for the next refresh
+	 */
+	protected int getNextRefresh() {
+		if (getProgress() < 50) {
+			return MAX_TIME_TO_REFRESH;
+		} else {
+			long alreadyWorking = new Date().getTime() - startingTime.getTime();
+			int timeToFinish = (int) ((double) alreadyWorking / ((double) getProgress() * 10.0));
+			if (timeToFinish > MAX_TIME_TO_REFRESH) {
+				return MAX_TIME_TO_REFRESH;
+			} else {
+				return timeToFinish;
+			}
+		}
+	}
 
-    /**
-     * Go to the done page
-     * @param request The current servlet request
-     * @param response The current servlet response
-     */
-    protected abstract void dispatchDone(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+	/**
+	 * Go to the done page
+	 * @param request The current servlet request
+	 * @param response The current servlet response
+	 */
+	protected abstract void dispatchDone(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
 
-    /**
-     * Get the url, how this servlet is called
-     * @return
-     */
-    protected String getUrl() {
-        return url;
-    }
+	/**
+	 * Get the url, how this servlet is called
+	 * @return
+	 */
+	protected String getUrl() {
+		return url;
+	}
 }
 
 /*

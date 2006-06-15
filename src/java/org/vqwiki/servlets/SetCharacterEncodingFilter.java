@@ -23,36 +23,36 @@ import javax.servlet.FilterChain;
  */
 public final class SetCharacterEncodingFilter implements Filter {
 
-    /**
-     *
-     */
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
+	/**
+	 *
+	 */
+	public void init(FilterConfig filterConfig) throws ServletException {
+	}
 
-    /**
-     *
-     */
-    public void destroy() {
-    }
+	/**
+	 *
+	 */
+	public void destroy() {
+	}
 
-    /**
-     * Sets request encoding.
-     */
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getCharacterEncoding() == null) {
-            //set response locale according to request locale
-            response.setLocale(request.getLocale());
-            //if fmt tags specified output encoding already, use it
-            if (request instanceof HttpServletRequest) {
-                HttpSession ses = ((HttpServletRequest) request).getSession(false);
-                if (ses != null) {
-                    String encoding = (String) ses.getAttribute("javax.servlet.jsp.jstl.fmt.request.charset");
-                    if (encoding != null) {
-                        request.setCharacterEncoding(encoding);
-                    }
-                }
-            }
-        }
-        chain.doFilter(request, response);
-    }
+	/**
+	 * Sets request encoding.
+	 */
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		if (request.getCharacterEncoding() == null) {
+			//set response locale according to request locale
+			response.setLocale(request.getLocale());
+			//if fmt tags specified output encoding already, use it
+			if (request instanceof HttpServletRequest) {
+				HttpSession ses = ((HttpServletRequest) request).getSession(false);
+				if (ses != null) {
+					String encoding = (String) ses.getAttribute("javax.servlet.jsp.jstl.fmt.request.charset");
+					if (encoding != null) {
+						request.setCharacterEncoding(encoding);
+					}
+				}
+			}
+		}
+		chain.doFilter(request, response);
+	}
 }

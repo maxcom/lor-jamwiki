@@ -11,9 +11,9 @@ import java.util.EventListener;
  */
 public interface TopicListener extends EventListener {
 
-    /**
-     * Fired when a topic is saved
-     * @param event event with information
-     */
-    public void topicSaved(TopicSavedEvent event);
+	/**
+	 * Fired when a topic is saved
+	 * @param event event with information
+	 */
+	public void topicSaved(TopicSavedEvent event);
 }
