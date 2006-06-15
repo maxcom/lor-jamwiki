@@ -34,13 +34,13 @@
     </taskdef>
     <target name="jflex" depends="init,cleanLexers">
         <!-- only generate new source files after old ones were deleted through cleanLexers target -->
-        <jflex file="${dir.src.lex}/backlinks.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/format.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/layout.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/links.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/HTMLLinks.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/mediawiki-syntax.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/mediawiki-html.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/alt/vqwiki-backlinks.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/alt/vqwiki-format.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/alt/vqwiki-layout.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/alt/vqwiki-links.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/alt/vqwiki-htmllinks.jflex" destdir="${dir.src.java}" />
     </target>
 
     <target name="compile" depends="jflex" description="Compile source code">
