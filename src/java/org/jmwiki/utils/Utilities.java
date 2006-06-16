@@ -156,48 +156,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Convert 3 consecutive spaces to a tab character
-	 */
-	public static String convertTabs(String text) {
-		boolean preformatted = false;
-		String converted = "";
-		int spaces = 0;
-		int ats = 0;
-		int linefeeds = 0;
-		for (int i = 0; i < text.length(); i++) {
-			if (text.charAt(i) == ' ') {
-				spaces++;
-			} else if (text.charAt(i) == '@') {
-				ats++;
-			} else if (text.charAt(i) == '\n') {
-				linefeeds++;
-			} else if (text.charAt(i) != '\r') {
-				linefeeds = 0;
-				spaces = 0;
-				ats = 0;
-			} else {
-				spaces = 0;
-				ats = 0;
-			}
-			converted += text.charAt(i);
-			if (ats == 4) {
-				preformatted = true;
-				ats = 0;
-				linefeeds = 0;
-			}
-			if (linefeeds == 2) {
-				linefeeds = 0;
-				preformatted = false;
-			}
-			if (spaces == 3 && (!preformatted)) {
-				converted = converted.substring(0, converted.length() - 3) + "\t";
-				spaces = 0;
-			}
-		}
-		return converted;
-	}
-
-	/**
 	 *
 	 */
 	public static String getDirectoryFromPath(String path) {

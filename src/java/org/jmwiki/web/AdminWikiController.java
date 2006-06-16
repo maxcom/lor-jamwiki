@@ -369,10 +369,6 @@ public class AdminWikiController implements Controller {
 				Environment.PROP_ATTACH_MAX_FILE_SIZE,
 				maxFileSizeInKB * 1000
 			);
-			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_CONVERT_TABS,
-				request.getParameter(Environment.PROP_TOPIC_CONVERT_TABS) != null
-			);
 			Environment.setValue(
 				Environment.PROP_ATTACH_TYPE,
 				request.getParameter(Environment.PROP_ATTACH_TYPE)

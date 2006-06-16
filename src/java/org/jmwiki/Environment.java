@@ -97,7 +97,6 @@ public class Environment {
 	public static final String PROP_TOPIC_ALLOW_TEMPLATES = "allow-templates";
 	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jmwiki-list";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
-	public static final String PROP_TOPIC_CONVERT_TABS = "convert-tabs";
 	public static final String PROP_TOPIC_EDIT_TIME_OUT = "editTimeOut";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	public static final String PROP_TOPIC_MAXIMUM_BACKLINKS = "maximum-backlinks";
@@ -344,7 +343,6 @@ public class Environment {
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
 		defaults.setProperty(PROP_TOPIC_ALLOW_TEMPLATES, "true");
 		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");
-		defaults.setProperty(PROP_TOPIC_CONVERT_TABS, "true");
 		defaults.setProperty(PROP_TOPIC_EDIT_TIME_OUT, "10");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_MAXIMUM_BACKLINKS, "20");

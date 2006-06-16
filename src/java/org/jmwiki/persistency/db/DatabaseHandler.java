@@ -206,7 +206,7 @@ public class DatabaseHandler implements PersistencyHandler {
 				// list of topics that only admin is allowed to edit/view by themselves
 				setupSpecialPage(vWiki, messages.getString("specialpages.adminonlytopics"));
 				if (!exists(vWiki, "SetUsername")) {
-					write(vWiki, "", false, "SetUsername");
+					write(vWiki, "", "SetUsername");
 				}
 			}
 			rs.close();
@@ -222,7 +222,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
 		if (!exists(vWiki, specialPage)) {
 			logger.debug("Setting up " + specialPage);
-			write(vWiki, WikiBase.readDefaultTopic(specialPage), true, specialPage);
+			write(vWiki, WikiBase.readDefaultTopic(specialPage), specialPage);
 		}
 	}
 
@@ -260,10 +260,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(String virtualWiki, String contents, boolean convertTabs, String topicName) throws Exception {
-		if (convertTabs) {
-			contents = Utilities.convertTabs(contents);
-		}
+	public void write(String virtualWiki, String contents, String topicName) throws Exception {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();

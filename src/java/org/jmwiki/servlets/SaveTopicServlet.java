@@ -125,7 +125,7 @@ public class SaveTopicServlet extends JMWikiServlet {
 				error(request, response, new WikiServletException("Contents must be supplied"));
 				return;
 			}
-			base.write(virtualWiki, contents, request.getParameter("convertTabs") != null, topic, user);
+			base.write(virtualWiki, contents, topic, user);
 			if (request.getParameter("minorEdit") == null) {
 				Change change = new Change();
 				change.setTopic(topic);

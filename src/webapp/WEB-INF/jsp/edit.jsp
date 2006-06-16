@@ -26,9 +26,6 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <%
 }
 %>
-<f:message key="edit.spacetotabs"/>
-<input type="checkbox" name="convertTabs" value="true"<%= (Environment.getBooleanValue(Environment.PROP_TOPIC_CONVERT_TABS)) ? " checked" : "" %> />
-</p>
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
 <p>
 <textarea name="contents" cols="80" rows="26"><c:out value="${contents}" escapeXml="false"/></textarea>

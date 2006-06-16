@@ -87,12 +87,7 @@ public class ImportServlet extends JMWikiServlet {
 				logger.info("importing topic " + topicName);
 				buffer.append("imported topic " + topicName);
 				buffer.append("<br/>");
-				databaseHandler.write(
-					virtualWiki,
-					fileHandler.read(virtualWiki, topicName),
-					false,
-					topicName
-				);
+				databaseHandler.write(virtualWiki, fileHandler.read(virtualWiki, topicName), topicName);
 			}
 			// Read-only topics
 			Collection readOnlys = fileHandler.getReadOnlyTopics(virtualWiki);

@@ -205,12 +205,7 @@ public class DatabaseInit {
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
 				try {
-					fileHandler.write(
-						virtualWiki,
-						databaseHandler.read(virtualWiki, topicName),
-						false,
-						topicName
-					);
+					fileHandler.write(virtualWiki, databaseHandler.read(virtualWiki, topicName), topicName);
 				} catch (Exception e) {
 					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki);
 				}

@@ -297,7 +297,7 @@ public class FileHandler implements PersistencyHandler {
 	 * Write contents to file
 	 * Write to version file if versioning is on
 	 */
-	public synchronized void write(String virtualWiki, String contents, boolean convertTabs, String topicName) throws Exception {
+	public synchronized void write(String virtualWiki, String contents, String topicName) throws Exception {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}
@@ -307,9 +307,6 @@ public class FileHandler implements PersistencyHandler {
 		PrintWriter versionWriter = null;
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			versionWriter = getNewPrintWriter(versionFile, true);
-		}
-		if (convertTabs) {
-			contents = Utilities.convertTabs(contents);
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			logger.debug("Writing version: " + versionFile);

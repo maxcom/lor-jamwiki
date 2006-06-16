@@ -207,7 +207,6 @@ public class AdministrationServlet extends JMWikiServlet {
 				int maxFileSizeInKB = Integer.parseInt(request.getParameter("maximumFileSize"));
 				Environment.setIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE, maxFileSizeInKB * 1000);
 				Environment.setValue(Environment.PROP_ATTACH_TYPE, request.getParameter("attachmentType"));
-				Environment.setBooleanValue(Environment.PROP_TOPIC_CONVERT_TABS, (request.getParameter("convertTabs") != null));
 				if (request.getParameter("databaseType") != null) {
 					Environment.setValue(Environment.PROP_DB_TYPE, request.getParameter("databaseType"));
 				}

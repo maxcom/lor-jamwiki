@@ -99,9 +99,6 @@ public class EditServlet extends JMWikiServlet {
 			if (request.getAttribute(WikiServlet.ACTION_PREVIEW) != null) {
 				request.removeAttribute(WikiServlet.ACTION_PREVIEW);
 				contents = (String) request.getParameter("contents");
-				if (request.getParameter("convertTabs") != null) {
-					contents = Utilities.convertTabs(contents);
-				}
 			} else {
 				contents = base.readRaw(virtualWiki, topic);
 			}

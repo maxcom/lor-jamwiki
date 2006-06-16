@@ -122,7 +122,7 @@ public class SaveAttachmentServlet extends JMWikiServlet {
 				}
 				Change change = new Change(virtualWiki, topic, user, new java.util.Date());
 				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-				base.write(virtualWiki, contents.toString(), false, topic, user);
+				base.write(virtualWiki, contents.toString(), topic, user);
 				cl.logChange(change, request);
 			}
 			// Unlock and return

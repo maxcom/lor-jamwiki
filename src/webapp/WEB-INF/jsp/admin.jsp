@@ -226,12 +226,6 @@ function onUserGroupType() {
         <input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) ? " checked" : "" %>>
       </td>
     </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.converttabs"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_TOPIC_CONVERT_TABS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_CONVERT_TABS) ? " checked" : "" %>>
-      </td>
-    </tr>
 
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr>
