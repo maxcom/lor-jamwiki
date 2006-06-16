@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -280,25 +278,6 @@ public class Utilities {
 	public static String resource(String key, Locale locale) {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		return messages.getString(key);
-	}
-
-	/**
-	 *
-	 */
-	public static String convertLineFeeds(String text) {
-		StringBuffer buffer = new StringBuffer();
-		boolean rSeen = false;
-		for (int i = 0; i < text.length(); i++) {
-			char c = text.charAt(i);
-			if (c == '\n') {
-				buffer.append("\r\n");
-			} else if (c == '\r') {
-				//do nothing
-			} else {
-				buffer.append(c);
-			}
-		}
-		return buffer.toString();
 	}
 
 	/**
