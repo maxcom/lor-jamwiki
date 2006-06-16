@@ -1,7 +1,4 @@
 <%--
-Java MediaWiki - WikiWikiWeb clone
-Copyright (C) 2001-2003 Gareth Cronin
-
 This program is free software; you can redistribute it and/or modify
 it under the terms of the latest version of the GNU Lesser General
 Public License as published by the Free Software Foundation;
@@ -16,33 +13,39 @@ along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+
 <% response.setLocale(request.getLocale()); %>
 <%@ include file="top.jsp"%>
-<c:out value="${topArea}" escapeXml="false"/>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
-  <tr>
-    <td>
-      <div class="navbar">
-        <%@ include file="navbar-virtual-wiki.jsp"%>
-        <%@ include file="navbar-history-list.jsp"%>
-        &nbsp; <!-- to render the bar even when empty -->
-      </div>
-    </td>
-  </tr>
-</table>
- <jmwiki:encode var="encodedTitle" value='"${title}"'/>
- <table border="0" cellpadding="0" cellspacing="0" width="100%">
-  <tr>
-    <c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">
-      <td nowrap class="leftMenu" valign="top" width="10%">
-        <c:out value="${leftMenu}" escapeXml="false"/>
-      </td>
-    </c:if>
-    <td valign="top">
-      <%@ include file="top-menu.jsp"%>
-        <div class="contents" >
-          <span class="pageHeader"><c:out value="${title}"/></span><p/>
+<tr>
+	<td class="navigation">
+		<div id="logo">
+		<c:out value="${topArea}" escapeXml="false"/>
+		</div>
+		<br />
+		<c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">
+		<div id="nav-menu">
+		<c:out value="${leftMenu}" escapeXml="false" />
+		</div>
+		</c:if>
+		<div id="nav-search">
+		<form method="POST" action="Wiki">
+		<input type="hidden" name="<%= WikiServlet.PARAMETER_ACTION %>" value="<%= WikiServlet.ACTION_MENU_JUMP %>"/>
+		<input name="text" size="20" value="" />
+		<br />
+		<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
+		<input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
+		</form>
+		</div>
+	</td>
+	<td class="main-content">
+	        <jmwiki:encode var="encodedTitle" value='"${title}"'/>
+	        <%@ include file="top-menu.jsp"%>
+	        <%@ include file="navbar-virtual-wiki.jsp"%>
+	        <%@ include file="navbar-history-list.jsp"%>
+	        <div class="contents" >
+	        <span class="pageHeader"><c:out value="${title}"/></span><p/>
 <%
 // FIXME - this needs to be cleaned up
 String action = (String)request.getAttribute("action");
@@ -101,16 +104,20 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 <%
 }
 %>
-        </div>
-    </td>
-  </tr>
-</table>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td colspan="2" class="footer">
 <%
 if (Utilities.emailAvailable()) {
 %>
-  <%@ include file="member-contents.jsp"%>
+		<%@ include file="member-contents.jsp"%>
 <%
 }
 %>
-<hr/>
+		<hr/>
+	</td>
+</tr>
+</table>
 <%@ include file="close-document.jsp"%>

@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 --%>
 <div class="menu">
   <jmwiki:encode var="encodedTopic" value="${topic}"/>
-  <form method="POST" action="Wiki">
 	<table style="width: 100%; border: 0px solid;">
 		<tr>
 			<td class="menu" align=left>
@@ -36,14 +35,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_PRINT %>' target="_blank"><f:message key="menu.printablepage"/></a>
 				  |
 			</td>
-			<td class="menu" align=right>
-			    <input type="hidden" name="action" value="<%= WikiServlet.ACTION_MENU_JUMP %>"/>
-			    <input name="text" size="20"/>
-			    <input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
-			    <input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
-				&nbsp;
-			</td>
 		</tr>
 	</table>
-  </form>
 </div>
