@@ -60,7 +60,7 @@ package org.jmwiki.utils.lucene;
  */
 
 import java.io.Reader;
-import java.util.Hashtable;
+import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopFilter;
@@ -69,7 +69,7 @@ import org.apache.lucene.analysis.TokenStream;
 /** Filters LetterTokenizer with LowerCaseFilter and StopFilter. */
 
 public final class StopKeepNumbersAnalyzer extends Analyzer {
-  private Hashtable stopTable;
+  private Set stopTable;
 
   /** An array containing some common English words that are not usually useful
 	for searching. */
@@ -83,12 +83,12 @@ public final class StopKeepNumbersAnalyzer extends Analyzer {
 
   /** Builds an analyzer which removes words in ENGLISH_STOP_WORDS. */
   public StopKeepNumbersAnalyzer() {
-	stopTable = StopFilter.makeStopTable(ENGLISH_STOP_WORDS);
+	stopTable = StopFilter.makeStopSet(ENGLISH_STOP_WORDS);
   }
 
   /** Builds an analyzer which removes words in the provided array. */
   public StopKeepNumbersAnalyzer(String[] stopWords) {
-	stopTable = StopFilter.makeStopTable(stopWords);
+	stopTable = StopFilter.makeStopSet(stopWords);
   }
 
   /** Filters LowerCaseTokenizer with StopFilter. */

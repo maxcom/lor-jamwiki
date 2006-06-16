@@ -30,6 +30,8 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Index;
+import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -38,10 +40,11 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.InputStream;
-import org.apache.lucene.store.OutputStream;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.RAMDirectory;
 import org.jmwiki.parser.alt.BackLinkLex;
 import org.jmwiki.utils.Utilities;
@@ -225,12 +228,17 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		logger.debug("search text: " + text);
 		try {
 			BooleanQuery query = new BooleanQuery();
+			QueryParser qp;
 			if (caseInsensitiveSearch) {
-				query.add(QueryParser.parse(text, ITYPE_TOPIC, analyzer), false, false);
-				query.add(QueryParser.parse(text, ITYPE_CONTENT, analyzer), false, false);
+				qp = new QueryParser(ITYPE_TOPIC, analyzer);
+				query.add(qp.parse(text), Occur.SHOULD);
+				qp = new QueryParser(ITYPE_CONTENT, analyzer);
+				query.add(qp.parse(text), Occur.SHOULD);
 			} else {
-				query.add(QueryParser.parse("\"" + text + "\"", ITYPE_TOPIC, analyzer), false, false);
-				query.add(QueryParser.parse("\"" + text + "\"", ITYPE_CONTENT, analyzer), false, false);
+				qp = new QueryParser(ITYPE_TOPIC, analyzer);
+				query.add(qp.parse("\"" + text + "\""), Occur.SHOULD);
+				qp = new QueryParser(ITYPE_CONTENT, analyzer);
+				query.add(qp.parse("\"" + text + "\""), Occur.SHOULD);
 			}
 			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// actually perform the search
@@ -349,7 +357,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			}
 			// delete the current document
 			IndexReader reader = IndexReader.open(directory);
-			reader.delete(new Term(ITYPE_TOPIC_PLAIN, topic));
+			reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic));
 			reader.close();
 			directory.close();
 			// add new document
@@ -499,9 +507,9 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		String[] ar = ram.list();
 		for (int i = 0; i < ar.length; i++) {
 			// make place on ram disk
-			OutputStream os = index.createFile(ar[i]);
+			IndexOutput os = index.createOutput(ar[i]);
 			// read current file
-			InputStream is = ram.openFile(ar[i]);
+			IndexInput is = ram.openInput(ar[i]);
 			// and copy to ram disk
 			int len = (int) is.length();
 			byte[] buf = new byte[len];
@@ -656,13 +664,13 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			logger.debug("Indexing topic " + topic);
 		}
 		Document doc = new Document();
-		doc.add(Field.Text(ITYPE_TOPIC, new StringReader(topic)));
-		doc.add(Field.Keyword(ITYPE_TOPIC_PLAIN, topic));
+		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic)));
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic, Store.YES, Index.UN_TOKENIZED));
 		if (fileName != null) {
-			doc.add(Field.UnIndexed(ITYPE_FILE, fileName));
+			doc.add(new Field(ITYPE_FILE, fileName, Store.YES, Index.NO));
 		}
-		doc.add(Field.Text(ITYPE_CONTENT, new StringReader(contents.toString())));
-		doc.add(Field.UnIndexed(ITYPE_CONTENT_PLAIN, contents.toString()));
+		doc.add(new Field(ITYPE_CONTENT, new StringReader(contents.toString())));
+		doc.add(new Field(ITYPE_CONTENT_PLAIN, contents.toString(), Store.YES, Index.NO));
 		return doc;
 	}
 

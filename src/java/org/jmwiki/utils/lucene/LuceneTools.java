@@ -197,15 +197,13 @@ position++;
    * @param prohibited <code>true</code> to extract "prohibited" terms, too
    * @exception IOException TODO: Document this exception.
    */
-  private final static void getTermsFromBooleanQuery(BooleanQuery query, HashSet terms,
-													 boolean prohibited)
-	  throws IOException {
+  private final static void getTermsFromBooleanQuery(BooleanQuery query, HashSet terms, boolean prohibited) throws IOException {
 	BooleanClause[] queryClauses = query.getClauses();
 	int i;
 
 	for (i = 0; i < queryClauses.length; i++) {
-	  if (prohibited || !queryClauses[i].prohibited) {
-		getTerms(queryClauses[i].query, terms, prohibited);
+	  if (prohibited || !queryClauses[i].isProhibited()) {
+		getTerms(queryClauses[i].getQuery(), terms, prohibited);
 	  }
 	}
   }
@@ -218,10 +216,9 @@ position++;
    * @param prohibited <code>true</code> to extract "prohibited" terms, too
    * @exception IOException TODO: Document this exception.
    */
-  private final static void getTermsFromMultiTermQuery(MultiTermQuery query, HashSet terms,
-													   boolean prohibited)
-	  throws IOException {
-	getTerms(query.getQuery(), terms, prohibited);
+  private final static void getTermsFromMultiTermQuery(MultiTermQuery query, HashSet terms, boolean prohibited) throws IOException {
+	// FIXME - was query.getQuery(), this may not be correct
+	getTerms(query, terms, prohibited);
   }
 
   /**
@@ -233,7 +230,6 @@ position++;
   private final static void getTermsFromPhraseQuery(PhraseQuery query, HashSet terms) {
 	Term[] queryTerms = query.getTerms();
 	int i;
-
 	for (i = 0; i < queryTerms.length; i++) {
 	  terms.add(getTermsFromTerm(queryTerms[i]));
 	}
@@ -247,10 +243,9 @@ position++;
    * @param prohibited <code>true</code> to extract "prohibited" terms, too
    * @exception IOException TODO: Document this exception.
    */
-  private final static void getTermsFromPrefixQuery(PrefixQuery query, HashSet terms,
-													boolean prohibited)
-	  throws IOException {
-	getTerms(query.getQuery(), terms, prohibited);
+  private final static void getTermsFromPrefixQuery(PrefixQuery query, HashSet terms, boolean prohibited) throws IOException {
+	// FIXME - was query.getQuery(), this may not be correct
+	getTerms(query, terms, prohibited);
   }
 
   /**
@@ -261,10 +256,9 @@ position++;
    * @param prohibited <code>true</code> to extract "prohibited" terms, too
    * @exception IOException TODO: Document this exception.
    */
-  private final static void getTermsFromRangeQuery(RangeQuery query, HashSet terms,
-												   boolean prohibited)
-	  throws IOException {
-	getTerms(query.getQuery(), terms, prohibited);
+  private final static void getTermsFromRangeQuery(RangeQuery query, HashSet terms, boolean prohibited) throws IOException {
+	// FIXME - was query.getQuery(), this may not be correct
+	getTerms(query, terms, prohibited);
   }
 
   /**

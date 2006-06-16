@@ -54,13 +54,14 @@ package org.jmwiki.utils.lucene;
  * <http://www.apache.org/>.
  */
 
-import org.apache.lucene.document.DateField;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-
 import java.io.File;
 import java.io.IOException;
-
+import org.apache.lucene.document.DateTools;
+import org.apache.lucene.document.DateTools.Resolution;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Index;
+import org.apache.lucene.document.Field.Store;
 
 /**
  * A utility for making Lucene Documents for HTML documents.
@@ -95,32 +96,31 @@ public class HTMLDocument {
 
 	// Add the url as a field named "url".  Use an UnIndexed field, so
 	// that the url is just stored with the document, but is not searchable.
-	doc.add(Field.UnIndexed("url", f.getPath().replace(dirSep, '/')));
+	doc.add(new Field("url", f.getPath().replace(dirSep, '/'), Store.YES, Index.NO));
 
 	// Add the last modified date of the file a field named "modified".  Use a
 	// Keyword field, so that it's searchable, but so that no attempt is made
 	// to tokenize the field into words.
-	doc.add(Field.Keyword("modified",
-						  DateField.timeToString(f.lastModified())));
+	doc.add(new Field("modified", DateTools.timeToString(f.lastModified(), Resolution.SECOND), Store.YES, Index.UN_TOKENIZED));
 
 	// Add the uid as a field, so that index can be incrementally maintained.
 	// This field is not stored with document, it is indexed, but it is not
 	// tokenized prior to indexing.
-	doc.add(new Field("uid", uid(f), false, true, false));
+	doc.add(new Field("uid", uid(f), Store.NO, Index.NO));
 
 	HTMLParser parser = new HTMLParser(f);
 
 	// Add the tag-stripped contents as a Reader-valued Text field so it will
 	// get tokenized and indexed.
-	doc.add(Field.Text("contents", parser.getReader()));
+	doc.add(new Field("contents", parser.getReader()));
 
 	// Add the summary as an UnIndexed field, so that it is stored and returned
 	// with hit documents for display.
-	doc.add(Field.UnIndexed("summary", parser.getSummary()));
+	doc.add(new Field("summary", parser.getSummary(), Store.NO, Index.NO));
 
 	// Add the title as a separate Text field, so that it can be searched
 	// separately.
-	doc.add(Field.Text("title", parser.getTitle()));
+	doc.add(new Field("title", parser.getTitle(), Store.YES, Index.UN_TOKENIZED));
 
 	// return the document
 	return doc;
@@ -137,9 +137,7 @@ public class HTMLDocument {
 	// sorting gives the same results as a walk of the file hierarchy.  Thus
 	// null (\u0000) is used both to separate directory components and to
 	// separate the path from the date.
-	return f.getPath().replace(dirSep, '\u0000') +
-		"\u0000" +
-		DateField.timeToString(f.lastModified());
+	return f.getPath().replace(dirSep, '\u0000') + "\u0000" + DateTools.timeToString(f.lastModified(), Resolution.SECOND);
   }
 
   /**
