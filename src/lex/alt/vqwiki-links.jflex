@@ -77,12 +77,12 @@ import org.jmwiki.utils.JSPUtils;
 	  else{
 	      if (description.equals(link))
 	      {
-		    return "<a class=\"newtopic\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
+		    return "<a class=\"edit\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
 		      "&action=" + WikiServlet.ACTION_EDIT + "\">" + description + "</a>";
 		  }
 		  else
 		  {
-		    return description + " (<a class=\"newtopic\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
+		    return description + " (<a class=\"edit\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
 		      "&action=" + WikiServlet.ACTION_EDIT + "\">" + link + "</a>)";
 		  }
 	  }

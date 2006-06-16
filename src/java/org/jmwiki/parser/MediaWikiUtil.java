@@ -93,7 +93,7 @@ public class MediaWikiUtil {
 		String url = "Wiki?" + JSPUtils.encodeURL(topic);
 		if (!exists(topic, virtualWiki)) {
 			url = "Wiki?topic=" + JSPUtils.encodeURL(topic) + "&action=" + WikiServlet.ACTION_EDIT;
-			return "<a class=\"newtopic\" title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
+			return "<a class=\"edit\" title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
 		}
 		return "<a title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
 	}
