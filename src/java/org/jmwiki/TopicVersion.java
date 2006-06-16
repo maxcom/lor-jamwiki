@@ -105,7 +105,7 @@ public class TopicVersion {
 				this.topicName,
 				this.versionNumber
 			 ))),
-			 this.virtualWiki, false
+			 this.virtualWiki
 		 );
 	 }
 

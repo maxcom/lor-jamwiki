@@ -341,30 +341,17 @@ public class WikiBase {
 	}
 
 	/**
-	 * Returns a topic's content that has been formatted to Wiki conventions.
-	 *
-	 * @param virtualWiki the virtual wiki to use
-	 * @param topicName   the topic
-	 */
-	public synchronized String readCooked(String virtualWiki, String topicName) throws Exception {
-		return readCooked(virtualWiki, topicName, false);
-	}
-
-	/**
 	 * TODO: DOCUMENT ME!
 	 *
 	 * @param virtualWiki	TODO: DOCUMENT ME!
 	 * @param topicName	  TODO: DOCUMENT ME!
-	 * @param formatLexClass TODO: DOCUMENT ME!
-	 * @param layoutLexClass TODO: DOCUMENT ME!
-	 * @param linkLexClass   TODO: DOCUMENT ME!
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public synchronized String readCooked(String virtualWiki, String topicName, boolean export) throws Exception {
+	public synchronized String readCooked(String virtualWiki, String topicName) throws Exception {
 		String s = handler.read(virtualWiki, topicName);
 		BufferedReader in = new BufferedReader(new StringReader(s));
-		return cook(in, virtualWiki, export);
+		return cook(in, virtualWiki);
 	}
 
 	/**
@@ -375,7 +362,7 @@ public class WikiBase {
 	 * @return				TODO: DOCUMENT ME!
 	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public synchronized String cook(BufferedReader in, String virtualWiki, boolean export) throws Exception {
+	public synchronized String cook(BufferedReader in, String virtualWiki) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
@@ -388,7 +375,7 @@ public class WikiBase {
 		while ((line = in.readLine()) != null) {
 			raw.append(line).append("\n");
 		}
-		return ((export) ? parser.parseExportHTML(raw.toString(), virtualWiki) : parser.parseHTML(raw.toString(), virtualWiki));
+		return parser.parseHTML(raw.toString(), virtualWiki);
 	}
 
 	/**

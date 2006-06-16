@@ -2363,15 +2363,6 @@
           locked. You can use this to see how many topics are currently locked
           and in process of being edited.</para>
         </section>
-
-        <section>
-          <title>Export2HTML</title>
-
-          <para>You can save the entire wiki to a set of HTML files and
-          download them for local archiving. The contents of the wiki will
-          appear as a single large ZIP archive, which you can then save to
-          your local hard drive.</para>
-        </section>
       </section>
 
       <section>

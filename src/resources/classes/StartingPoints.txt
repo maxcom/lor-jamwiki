@@ -10,7 +10,6 @@ OrphanedWikiTopics - topics that have no links from any other topics, use with c
 ToDoWikiTopics - dangling topic links waiting for someone to write about them
 WikiLockList - currently locked topics
 `RSS` - a RSS news stream of this Wiki
-`Export2HTML` - export this wiki into a zip containing pages as html files
 ----
 WikiSearch - search the Wiki
 ----

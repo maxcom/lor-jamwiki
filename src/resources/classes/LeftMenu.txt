@@ -9,7 +9,6 @@ OrphanedWikiTopics
 ToDoWikiTopics
 WikiLockList
 `RSS`
-`Export2HTML`
 ----
 WikiSearch
 ----

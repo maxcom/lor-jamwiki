@@ -105,7 +105,7 @@ public class EditServlet extends JMWikiServlet {
 				contents = base.readRaw(virtualWiki, topic);
 			}
 			templateNames = base.getTemplates(virtualWiki);
-			preview = base.cook(new BufferedReader(new StringReader(contents)), virtualWiki, false);
+			preview = base.cook(new BufferedReader(new StringReader(contents)), virtualWiki);
 		} catch (Exception e) {
 			error(request, response, e);
 			return;

@@ -43,15 +43,4 @@ public abstract class AbstractParser {
 	 * @return HTML representation of the text for online.
 	 */
 	public abstract String parseHTML(String raw, String virtualwiki) throws IOException;
-
-	/**
-	 * Returns a HTML representation of the given wiki raw text for the HTML-exporter.
-	 * This has mainly effect to the links. All links will be on HTML-files and not
-	 * on a Wiki-Servlet. The HTML-files will all be stored flat into the same directory.
-	 *
-	 * @param raw The raw Wiki syntax to be converted into HTML suitable for export.
-	 * @param virtualwiki A virtual wiki prefix (if any).
-	 * @return HTML representation of the text for HTML export.
-	 */
-	public abstract String parseExportHTML(String raw, String virtualwiki) throws IOException;
 }
