@@ -87,7 +87,7 @@ public class Environment {
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_NEW_LINE_BREAKS = "new-line-breaks";
 	public static final String PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS = "separate-wiki-title-words";
-	public static final String PROP_PARSER_TOC = "make-toc";
+	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
 	public static final String PROP_RECENT_CHANGES_REFRESH_INTERVAL = "recentChangesRefreshInterval";
 	public static final String PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED = "attachment-indexing";
