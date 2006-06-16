@@ -1,6 +1,5 @@
 # Java Resource Bundle
 
-admin.caption.franznewtopicstyle=Display new topics with question mark (on) or with css-class "newtopic" (off)?
 admin.caption.attachmenttimestamp=make attachement filenames unique (filenames with timestamp)
 admin.caption.indexsettingsheader=Index settings
 admin.caption.indexextlinks=Include external links when indexing for search engine
@@ -36,11 +35,8 @@ admin.caption.encodepasswords=Encode passwords in property file
 admin.caption.filedir=Adresáø se soubory
 admin.caption.fileEncoding=kódování znakù v souborech
 admin.caption.forceusername=Vynutit nastavení u¾ivatelského jména
-admin.caption.formatlexer=Format Lexer
 admin.caption.indexinterval=Interval automatického indexování (minuty)
 admin.caption.recentchangesinterval=Refresh Interval Recent Changes (minuty)
-admin.caption.layoutlexer=Layout Lexer
-admin.caption.linklexer=Link Lexer
 admin.caption.mark=Oznaèit
 admin.caption.maxbacklinks=Maximální poèet zpìtných odkazù
 admin.caption.maxfilesize=Maximální velikost uploadovaného souboru (KB)
