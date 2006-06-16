@@ -17,19 +17,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.jmwiki.persistency.db;
 
-import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.TopicLock;
-import org.jmwiki.VersionManager;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.PseudoTopicHandler;
-import org.jmwiki.utils.Utilities;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,6 +30,15 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import org.apache.log4j.Logger;
+import org.jmwiki.Environment;
+import org.jmwiki.persistency.PersistencyHandler;
+import org.jmwiki.TopicLock;
+import org.jmwiki.VersionManager;
+import org.jmwiki.WikiBase;
+import org.jmwiki.WikiException;
+import org.jmwiki.PseudoTopicHandler;
+import org.jmwiki.utils.Utilities;
 
 public class DatabaseHandler implements PersistencyHandler {
 
@@ -177,7 +173,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		if (!DatabaseHandler.dbInitialized()) {
 			//set up tables
-			createTables();
+			DatabaseInit.initialize();
 		}
 		Connection conn = null;
 		try {
@@ -227,53 +223,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		if (!exists(vWiki, specialPage)) {
 			logger.debug("Setting up " + specialPage);
 			write(vWiki, WikiBase.readDefaultTopic(specialPage), true, specialPage);
-		}
-	}
-
-	/**
-	 * Run the create tables script
-	 * Ignore SQL exceptions as these may just be the result of existing tables getting in the
-	 * way of create table calls
-	 *
-	 * @throws java.lang.Exception
-	 */
-	private void createTables() throws Exception {
-		String databaseType = DatabaseHandler.getDatabaseType();
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("/create_");
-		buffer.append(databaseType);
-		buffer.append(".sql");
-		String resourceName = buffer.toString();
-		InputStream createScriptStream = getClass().getResourceAsStream(resourceName);
-		if (createScriptStream == null) {
-			logger.error("Can't find create script: " + resourceName);
-		}
-		BufferedReader in = new BufferedReader(new InputStreamReader(createScriptStream));
-		buffer = new StringBuffer();
-		while (true) {
-			String line = in.readLine();
-			if (line == null) {
-				break;
-			}
-			buffer.append(line);
-		}
-		in.close();
-		StringTokenizer tokens = new StringTokenizer(buffer.toString(), ";");
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			Statement st = conn.createStatement();
-			while (tokens.hasMoreTokens()) {
-				String token = tokens.nextToken();
-				try {
-					st.executeUpdate(token);
-				} catch (SQLException e) {
-					logger.warn(e);
-				}
-			}
-			st.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
 		}
 	}
 

@@ -291,7 +291,7 @@ public class DatabaseInit {
 	 *
 	 * @throws java.lang.Exception
 	 */
-	public void initialize() throws Exception {
+	protected static void initialize() throws Exception {
 		String script = DatabaseInit.createScript();
 		String contents = Utilities.readFile(script);
 		StringTokenizer tokens = new StringTokenizer(contents, ";");
