@@ -41,6 +41,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	</td>
 	<td class="main-content">
 		<jmwiki:encode var="encodedTitle" value='"${title}"'/>
+		<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >
 		<%@ include file="navbar-virtual-wiki.jsp"%>

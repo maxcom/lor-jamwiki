@@ -140,7 +140,7 @@ td.navigation {
 	font-size: 90%;
 	padding: 5px 5px 5px 0px;
 	vertical-align: top;
-	width: 160px;
+	width: 180px;
 }
 
 #logo {
@@ -251,6 +251,36 @@ td.menu-tab-close {
 	border-bottom: 1px solid #999999;
 	margin: 0;
 	padding: 0;
+}
+
+/* user menu */
+
+#user-menu {
+	text-align: right;
+}
+
+table.menu-user-table {
+	border: 0;
+	border-collapse: collapse;
+	margin-left: auto;
+	margin-right: 2em;
+	padding: 0;
+	text-align: center;
+}
+
+td.menu-user {
+	font-size: 85%;
+	margin: 0;
+	padding: 0.4em 0.8em 0.4em 0.8em;
+	width: 5px;
+}
+
+/* footer */
+
+td.footer {
+	font-size: 80%;
+	padding: 5px 5px 5px 5px;
+	vertical-align: top;
 }
 
 /* older stuff */
