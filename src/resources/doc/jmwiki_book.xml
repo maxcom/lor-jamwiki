@@ -2689,17 +2689,6 @@
               </row>
 
               <row>
-                <entry>Stats</entry>
-
-                <entry><ulink
-                url="???">http://prdownloads.sourceforge.net/veryquickwiki/stats.zip?download</ulink></entry>
-
-                <entry>Show simple statistics of changes made by users since
-                server was started. - Intended as a demo of writing a topic
-                listener plugin.</entry>
-              </row>
-
-              <row>
                 <entry>HelloWorld</entry>
 
                 <entry><ulink
