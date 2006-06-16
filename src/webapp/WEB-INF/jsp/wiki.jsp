@@ -102,7 +102,6 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 }
 %>
         </div>
-      <%@ include file="bottom-menu.jsp"%>
     </td>
   </tr>
 </table>
