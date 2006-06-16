@@ -33,7 +33,7 @@ public class Encryption {
 
 	private static Logger logger = Logger.getLogger(Encryption.class);
 	public static final String DES_ALGORITHM = "DES";
-	public static final String ENCRYPTION_KEY = "VQWiki Key 12345";
+	public static final String ENCRYPTION_KEY = "JMWiki Key 12345";
 
 	/**
 	 * Hide the constructor by making it private.

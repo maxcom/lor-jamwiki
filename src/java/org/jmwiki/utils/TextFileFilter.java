@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 /*
-Very Quick Wiki - WikiWikiWeb clone
+Java MediaWiki - WikiWikiWeb clone
 Copyright (C) 2001-2002 Gareth Cronin
 
 This program is free software; you can redistribute it and/or modify

@@ -1,13 +1,13 @@
----MySQL README for Very Quick Wiki V2.1---
+---MySQL README for Java MediaWiki V2.1---
 
 You must have the MySQL JDBC driver installed in the lib directory of your web container,
-or in the lib directory for the VQWiki webapp. On Tomcat, this would be 
+or in the lib directory for the JMWiki webapp. On Tomcat, this would be 
 $TOMCAT_HOME/webapps/jmwiki-2.1/lib
 You can download the jmwiki distrbution with the MySQL driver already installed, or you
 can download the latest driver from:
 http://sourceforge.net/project/showfiles.php?group_id=15923
 
-VeryQuickWiki will setup its own tables on startup, provided that the connection settings
+Java MediaWiki will setup its own tables on startup, provided that the connection settings
 are correct, but before running it, you need to create the MySQL database and grant the 
 appropriate access rights to the jmwiki user.
 

@@ -26,7 +26,7 @@ import org.jmwiki.TopicVersion;
  * @author garethc
  * Date: Apr 28, 2003
  */
-public class ImportServlet extends VQWikiServlet {
+public class ImportServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(ImportServlet.class);
 

@@ -24,7 +24,7 @@ import java.io.IOException;
  *		 Last Modified: $Date: 2006-04-23 08:36:56 +0200 (zo, 23 apr 2006) $
  *		 $Id: MenuJumpServlet.java 643 2006-04-23 06:36:56Z wrh2 $
  */
-public class MenuJumpServlet extends VQWikiServlet {
+public class MenuJumpServlet extends JMWikiServlet {
 
 	/**
 	 *

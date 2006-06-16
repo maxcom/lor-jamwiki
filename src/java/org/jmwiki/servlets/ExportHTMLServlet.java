@@ -48,7 +48,7 @@ import org.jmwiki.utils.Utilities;
 import TemplateEngine.Template;
 
 /*
- * Very Quick Wiki - WikiWikiWeb clone Copyright (C) 2001-2002 Gareth Cronin
+ * Java MediaWiki - WikiWikiWeb clone Copyright (C) 2001-2002 Gareth Cronin
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the latest version of the GNU Lesser General Public License as

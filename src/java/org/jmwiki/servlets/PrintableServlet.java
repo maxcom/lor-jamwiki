@@ -24,7 +24,7 @@ import org.jmwiki.utils.JSPUtils;
  * @author garethc, Tobias Schulz-Hess (sourcefoge@schulz-hess.de)
  * Date: Jan 8, 2003
  */
-public class PrintableServlet extends VQWikiServlet {
+public class PrintableServlet extends JMWikiServlet {
 
 	/**
 	 * Handle get request

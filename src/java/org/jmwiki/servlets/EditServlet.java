@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
  * @author garethc
  *		 Date: Jan 8, 2003
  */
-public class EditServlet extends VQWikiServlet {
+public class EditServlet extends JMWikiServlet {
 
 	/**
 	 *

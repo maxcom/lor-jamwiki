@@ -3,7 +3,7 @@ package org.jmwiki;
 import java.util.Date;
 
 /**
- * Stores a list of usernames and dates for each topic page in the VQWiki
+ * Stores a list of usernames and dates for each topic page in the JMWiki
  * system, so that an email can be sent to their registered
  * addresses on the specified date.
  *

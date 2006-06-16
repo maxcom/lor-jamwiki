@@ -8,7 +8,7 @@ pointing at your existing wiki home or wiki database. That way you can keep usin
 old version until you're happy that the new version is doing its job.
 
 * Users who are not using the standard Wiki lexers will need to set the Parser value
-  from the admin screens.  Previously VQWiki allowed as many as three lexers to be
+  from the admin screens.  Previously JMWiki allowed as many as three lexers to be
   specified to handle parsing Wiki syntax, but that process has been simplified and a
   single parser now handles all lexer functionality.
 
@@ -119,7 +119,7 @@ The layout of the RSS feed changed slightly, the font's color was removed for ex
 might want to update any applications listening to the feed.
 
 
----UPGRADE for Very Quick Wiki V2.6---
+---UPGRADE for Java MediaWiki V2.6---
 
 There are numerous combinations of old and new versions that it is possible to upgrade
 between. I'll try to cover a couple of the more typical scenarios.

@@ -12,7 +12,7 @@ import java.util.Enumeration;
  * @author garethc
  *		 Date: Jan 8, 2003
  */
-public class DiffServlet extends VQWikiServlet {
+public class DiffServlet extends JMWikiServlet {
 
 	/**
 	 *

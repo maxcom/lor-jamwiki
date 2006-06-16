@@ -3,7 +3,7 @@
  *
  * Filename  : SelectorBean.java
  * Created   : 24.06.2004
- * Project   : VQWiki
+ * Project   : JMWiki
  */
 package org.jmwiki.servlets.beans;
 

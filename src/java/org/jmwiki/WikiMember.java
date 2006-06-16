@@ -3,7 +3,7 @@ package org.jmwiki;
 import org.apache.log4j.Logger;
 
 /**
- * Represents a single user account in a VQWiki members list.
+ * Represents a single user account in a JMWiki members list.
  *
  * @author Robert E Brewer
  * @version 0.1

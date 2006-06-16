@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Represents a single reminder in a VQWiki reminders list.
+ * Represents a single reminder in a JMWiki reminders list.
  *
  * @author Robert E Brewer
  * @version 0.1

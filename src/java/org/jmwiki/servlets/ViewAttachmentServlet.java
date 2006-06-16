@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.utils.Utilities;
 
-public class ViewAttachmentServlet extends VQWikiServlet {
+public class ViewAttachmentServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(ViewAttachmentServlet.class);
 

@@ -15,7 +15,7 @@ import org.jmwiki.utils.Encryption;
  * @author garethc
  *		 Date: 5/03/2003
  */
-public class LoginServlet extends VQWikiServlet {
+public class LoginServlet extends JMWikiServlet {
 
 	/** Logger */
 	private static final Logger logger = Logger.getLogger(LoginServlet.class);

@@ -17,7 +17,7 @@ import org.jmwiki.WikiBase;
  * @author garethc
  * Date: 5/03/2003
  */
-public class LockListServlet extends VQWikiServlet {
+public class LockListServlet extends JMWikiServlet {
 
 	/**
 	 * Handle the get request: Give back the list.

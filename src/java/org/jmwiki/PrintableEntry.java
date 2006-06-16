@@ -2,7 +2,7 @@
  * $Id: PrintableEntry.java 644 2006-04-23 07:52:28Z wrh2 $
  *
  * Filename  : PrintableEntry.java
- * Project   : VQWiki
+ * Project   : JMWiki
  * Author	: Tobias Schulz-Hess (sourcefoge@schulz-hess.de)
  */
 package org.jmwiki;

@@ -3,7 +3,7 @@
  *
  * Filename  : LdapUsergroup.java
  * Created   : 24.06.2004
- * Project   : VQWiki
+ * Project   : JMWiki
  * copyright (c) 2004 by SinnerSchrader
  */
 package org.jmwiki.users;

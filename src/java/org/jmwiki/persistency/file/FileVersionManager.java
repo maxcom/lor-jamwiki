@@ -9,10 +9,10 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Very Quick Wiki - WikiWikiWeb clone
+ * Java MediaWiki - WikiWikiWeb clone
  * Copyright (C) 2001-2002 Gareth Cronin
  *
- * FileVersionManager is the VQWiki native file system implementation of
+ * FileVersionManager is the JMWiki native file system implementation of
  * the version manager for looking after the version trail that is used
  * in diffs etc.
  *

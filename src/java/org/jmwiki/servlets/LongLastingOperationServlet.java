@@ -1,5 +1,5 @@
 /*
-Very Quick Wiki - WikiWikiWeb clone
+Java MediaWiki - WikiWikiWeb clone
 Copyright (C) 2001-2002 Gareth Cronin
 
 This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import org.jmwiki.utils.LongLastingOperationsManager;
  *
  * @author $Author: wrh2 $
  */
-public abstract class LongLastingOperationServlet extends VQWikiServlet implements Runnable {
+public abstract class LongLastingOperationServlet extends JMWikiServlet implements Runnable {
 
 	/** time, when everything starts */
 	protected Date startingTime = null;

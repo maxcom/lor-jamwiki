@@ -13,7 +13,7 @@ import org.jmwiki.utils.Utilities;
 
 
 /**
- * Very Quick Wiki - WikiWikiWeb clone
+ * Java MediaWiki - WikiWikiWeb clone
  * Copyright (C) 2001-2002 Gareth Cronin
  *
  * This is the search engine for the default file system. There are some idiosyncracies

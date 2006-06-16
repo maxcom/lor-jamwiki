@@ -1,4 +1,4 @@
----README for Very Quick Wiki PostgreSQL support---
+---README for Java MediaWiki PostgreSQL support---
 
 Not really a lot to do here. Set up a Postgres database and grant priveleges to someone
 sensible.

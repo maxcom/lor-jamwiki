@@ -1,6 +1,6 @@
 
 ----------------------------------------------------------------------------
--- Connection pooling README for Very Quick Wiki V2.5
+-- Connection pooling README for Java MediaWiki V2.5
 ----------------------------------------------------------------------------
 
 Database persistence uses the Apache Commons DBCP (Database Connection

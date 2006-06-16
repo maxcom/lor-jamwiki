@@ -69,13 +69,13 @@ import org.jmwiki.users.NoUsergroup;
 import org.jmwiki.users.Usergroup;
 
 /**
- * This class represents the core of VQWiki. It has some central methods, like parsing the URI, and keeps an
+ * This class represents the core of JMWiki. It has some central methods, like parsing the URI, and keeps an
  * instance of the <code>Environment</code> class.
  */
 public class WikiBase {
 
 	// FIXME - remove this
-	public final static String WIKI_VERSION = "3.0.0_alpha";
+	public final static String WIKI_VERSION = "0.0.1";
 	private static WikiBase instance;					   /** An instance to myself. Singleton pattern. */
 	public static final int FILE = 0;					   /** The topics are stored in a flat file */
 	public static final int DATABASE = 1;				   /** The topics are stored in a database */

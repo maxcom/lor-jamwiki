@@ -23,7 +23,7 @@ import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.apache.log4j.Logger;
 
-public class SaveTopicServlet extends VQWikiServlet {
+public class SaveTopicServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(SaveTopicServlet.class);
 

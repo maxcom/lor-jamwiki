@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class VQWikiServlet extends HttpServlet {
+public class JMWikiServlet extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(VQWikiServlet.class);
+	private static final Logger logger = Logger.getLogger(JMWikiServlet.class);
 
 	/**
 	 *

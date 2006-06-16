@@ -38,7 +38,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
 
 /**
- * Provides environmental information to the VQWiki system.
+ * Provides environmental information to the JMWiki system.
  */
 public class Environment {
 

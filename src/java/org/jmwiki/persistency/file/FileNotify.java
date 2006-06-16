@@ -142,7 +142,7 @@ public class FileNotify extends AbstractNotify {
 	}
 
 	/**
-	 * Retrieves the home directory of the VQWiki installation.
+	 * Retrieves the home directory of the JMWiki installation.
 	 *
 	 * @return String the home directory
 	 */

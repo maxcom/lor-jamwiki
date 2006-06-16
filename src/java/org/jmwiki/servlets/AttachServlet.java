@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author garethc
  * Date: Jan 8, 2003
  */
-public class AttachServlet extends VQWikiServlet {
+public class AttachServlet extends JMWikiServlet {
 
 	/**
 	 *

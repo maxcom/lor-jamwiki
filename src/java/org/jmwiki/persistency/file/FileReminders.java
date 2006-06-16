@@ -159,7 +159,7 @@ public class FileReminders implements Reminders {
 	}
 
 	/**
-	 * Retrieves the home directory of the VQWiki installation.
+	 * Retrieves the home directory of the JMWiki installation.
 	 *
 	 * @return String the home directory
 	 */

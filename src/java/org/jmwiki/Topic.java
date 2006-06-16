@@ -263,7 +263,7 @@ public class Topic {
 
 
 		BufferedReader in = new BufferedReader(new StringReader(this.contents));
-//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jmwiki.parser.VQWikiFormatLex", "org.jmwiki.parser.VQWikiLayoutLex", "org.jmwiki.parser.LinkLex");
+//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jmwiki.parser.JMWikiFormatLex", "org.jmwiki.parser.JMWikiLayoutLex", "org.jmwiki.parser.LinkLex");
 		return this.contents;
 	}
 
@@ -277,7 +277,7 @@ public class Topic {
 	public String getRenderedContent(String parsername) {			   // FIXME!!
 
 		BufferedReader in = new BufferedReader(new StringReader(this.contents));
-//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jmwiki.parser.VQWikiFormatLex", "org.jmwiki.parser.VQWikiLayoutLex", "org.jmwiki.parser.LinkLex");
+//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jmwiki.parser.JMWikiFormatLex", "org.jmwiki.parser.JMWikiLayoutLex", "org.jmwiki.parser.LinkLex");
 		return this.contents;
 	}
 

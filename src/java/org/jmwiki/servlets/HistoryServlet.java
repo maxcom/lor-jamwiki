@@ -15,7 +15,7 @@ import java.util.Collection;
  * @author garethc
  * Date: Jan 10, 2003
  */
-public class HistoryServlet extends VQWikiServlet {
+public class HistoryServlet extends JMWikiServlet {
 
 	/**
 	 *

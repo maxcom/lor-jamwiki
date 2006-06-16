@@ -47,7 +47,7 @@
 <br/>
 <br>
 
-<font size="-3">VeryQuickWiki Version @@VERSION@@ - HTML Export</font>
+<font size="-3">Java MediaWiki Version @@VERSION@@ - HTML Export</font>
 
   </body>
 </html>

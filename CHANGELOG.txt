@@ -1,7 +1,7 @@
 - CHANGELOG -
 =============
 
-This is the VQWiki changelog. It lists all non-trivial changes to the project per release,
+This is the JMWiki changelog. It lists all non-trivial changes to the project per release,
 starting at release 3.0 alpha. The most recent release is on top.
 
 

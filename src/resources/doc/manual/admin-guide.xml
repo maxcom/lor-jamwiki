@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE set SYSTEM "docbook/docbookx.dtd" [
 
-	<!ENTITY productname "Very Quick Wiki">
+	<!ENTITY productname "Java MediaWiki">
 
 	<!ENTITY productversion "2.7.1">
 
@@ -37,7 +37,7 @@
 			</copyright>
 			<releaseinfo>
 				<remark>
-				VeryQuickWiki can be downloaded from
+				Java MediaWiki can be downloaded from
 				<ulink url="http://veryquickwiki.sourceforge.net/">http://veryquickwiki.sourceforge.net/</ulink>.&nbsp;&nbsp;
 				This application is a work in progress - contributions and corrections
 				are welcome and may be sent
@@ -54,8 +54,8 @@
 			
 			<para>
 
-					This manual is intended for installers and administrators of VQWiki.&nbsp;&nbsp;It may 
-					also be of use to end users as it provides further detail about advanced functions of VQWiki.
+					This manual is intended for installers and administrators of JMWiki.&nbsp;&nbsp;It may 
+					also be of use to end users as it provides further detail about advanced functions of JMWiki.
 
 				</para>
 			
@@ -92,15 +92,15 @@
 					
 				</para>
 			
-			<para>	"Very Quick Wiki" or "VQWiki" is a Wiki engine written using JSPs and servlets and is designed to run on Tomcat
+			<para>	"Java MediaWiki" or "JMWiki" is a Wiki engine written using JSPs and servlets and is designed to run on Tomcat
 					or any servlet container that supports Java Servlet 2.3 and JSP 1.2 specifications.  &nbsp;&nbsp;
-					Gareth Cronin is the original developer of the VQWiki.&nbsp; &nbsp;
-					Thanks to the contributions of many, VQWiki has undergone numerous improvements.&nbsp;&nbsp;
-					VQWiki supports hyperlinks, topic or text-based searching, email notifications, and utilizes 
+					Gareth Cronin is the original developer of the JMWiki.&nbsp; &nbsp;
+					Thanks to the contributions of many, JMWiki has undergone numerous improvements.&nbsp;&nbsp;
+					JMWiki supports hyperlinks, topic or text-based searching, email notifications, and utilizes 
 					a simple but powerful text syntax for creating topics and editing their content.&nbsp;&nbsp;
 					The first Wiki engine was developed in 1995 by Ward Cunningham. 
 					Since then many <ulink url="http://c2.com/cgi/wiki?WikiEngines">Wiki engines</ulink>, such as 
-					VQWiki,  have been developed.
+					JMWiki,  have been developed.
 										
 				</para>
 			
@@ -142,7 +142,7 @@
 									
 									</entry>
 									
-									<entry>The base URL for accessing VQWiki, e.g. <systemitem>http://localhost:8080/jmwiki-&productversion;</systemitem>.
+									<entry>The base URL for accessing JMWiki, e.g. <systemitem>http://localhost:8080/jmwiki-&productversion;</systemitem>.
 									&nbsp;&nbsp;With a WAR name of "jmwiki-&productversion;.war", the default local URL for Tomcat will be
 									http://localhost:8080/jmwiki-&productversion;
 
@@ -192,13 +192,13 @@
 				<listitem>
 				  <para>
 					A servlet container that supports Java Servlet 2.3 and JSP 1.2 specifications.&nbsp;&nbsp;
-					VQWiki is tested with Apache Tomcat 4.1.24<footnote><para>Apache Tomcat <ulink url="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</ulink>
+					JMWiki is tested with Apache Tomcat 4.1.24<footnote><para>Apache Tomcat <ulink url="http://jakarta.apache.org/tomcat">http://jakarta.apache.org/tomcat</ulink>
 									</para>
 								</footnote>
 					&nbsp;&nbsp;
 					Users have also reported successful implementation with the following servlet containers: JBoss/Jetty; JBoss/Tomcat 4.x,
 					Orion 1.6, Resin 2.1.9, Allaire JRun 4.x, BEA Weblogic 7.x, IBM Websphere 5, Oracle 9i Application Server. &nbsp;&nbsp;
-					Note: Tomcat 3.x is not recommended for use with VQWiki.
+					Note: Tomcat 3.x is not recommended for use with JMWiki.
 					</para>
 						</listitem>
 						<listitem>
@@ -213,7 +213,7 @@
 						</listitem>
 						<listitem>
 							<para>
-					By default, VQWiki runs with flat-file persistence. But an easy to configure database connectivity option is available.
+					By default, JMWiki runs with flat-file persistence. But an easy to configure database connectivity option is available.
 					</para>
 						</listitem>
 					
@@ -227,31 +227,31 @@
 					<para>
 
 				First-time installation should be very simple on any application server.
-				Upgrading from an earlier version of VQWiki is a little more difficult, so we'll cover that later.
+				Upgrading from an earlier version of JMWiki is a little more difficult, so we'll cover that later.
 
 			</para>
 					
 					<para>
 
-				VQWiki is designed to be a "drop and run" application. When you download VQWiki from a website, it will be available as a single "Web Archive File" or "WAR" for short. Most application servers (including Tomcat) are capable of automatically deploying an application directly from a WAR
+				JMWiki is designed to be a "drop and run" application. When you download JMWiki from a website, it will be available as a single "Web Archive File" or "WAR" for short. Most application servers (including Tomcat) are capable of automatically deploying an application directly from a WAR
 
 			</para>
 					
 					<para>
 
 				The following assumes you have installed Tomcat on a Windows machine at {$TOMCAT_HOME} and that it is running with the default stand-alone port 8080.
-				We will also assume that the VQWiki WAR file is named <filename>jmwiki-&productversion;.war</filename>.&nbsp;&nbsp;
+				We will also assume that the JMWiki WAR file is named <filename>jmwiki-&productversion;.war</filename>.&nbsp;&nbsp;
 				The name of the WAR file may be different in which case you should substitute your WAR file name for jmwiki-&productversion;.war.&nbsp;&nbsp;
 				Finally, we will assume you have a Web browser available on the installation machine.
 			</para>
 					
 					<para>
-				To install VQWiki, you should follow your application server instructions for deploying a WAR. Usually it's just a matter
+				To install JMWiki, you should follow your application server instructions for deploying a WAR. Usually it's just a matter
 				of plonking the WAR file into the webapps directory.
 				Then browse to <systemitem>http://localhost:8080/jmwiki-&productversion;</systemitem>, and that's it!
 			</para>
 					<para>
-				For example, if you are using Tomcat 4.x or higher, one method to deploy VQWiki is to take the following steps:
+				For example, if you are using Tomcat 4.x or higher, one method to deploy JMWiki is to take the following steps:
 			</para>
 					
 					<orderedlist numeration="arabic">
@@ -301,10 +301,10 @@
 					
 					<para>
 
-				By default, VQWiki runs with flat-file persistence and other default options.&nbsp;&nbsp;
+				By default, JMWiki runs with flat-file persistence and other default options.&nbsp;&nbsp;
 				Choose the "Admin" link at the bottom of any topic to access administrative functions
-				where you can customise VQWiki.&nbsp;&nbsp; In the chapters below we address setting up database persistence
-				and other VQWiki options.
+				where you can customise JMWiki.&nbsp;&nbsp; In the chapters below we address setting up database persistence
+				and other JMWiki options.
 
 			</para>
 				
@@ -320,7 +320,7 @@
 			
 			<para>
 
-				This chapter will touch on the major mechanisms available in VQWiki. The more complex mechanisms receive their own chapters later on.
+				This chapter will touch on the major mechanisms available in JMWiki. The more complex mechanisms receive their own chapters later on.
 
 			</para>
 			
@@ -353,7 +353,7 @@
 					</blockquote>
 					Examples of well-formed Wikinames are: WikiWord or GoodStyle. 					
 					When you type a WikiName, you establish a hyperlink. It's as easy as that.
-					VQWiki also allows topic-naming by surrounding a word or phrase in back-ticks, such as `Gareth Cronin`.
+					JMWiki also allows topic-naming by surrounding a word or phrase in back-ticks, such as `Gareth Cronin`.
 				</para>
 			
 			</formalpara>
@@ -435,7 +435,7 @@
 				
 				<para>
 
-					When writing Wiki topics it is often useful to be able to attach a file of some kind to the topic. A user can click the "Attach" link on any topic and be presented with a file upload page. Attached files can be referred to by a linking syntax (e.g. "att:myfile.txt"). VQWiki has its own MIME type mapping that can be customised to suit installations.
+					When writing Wiki topics it is often useful to be able to attach a file of some kind to the topic. A user can click the "Attach" link on any topic and be presented with a file upload page. Attached files can be referred to by a linking syntax (e.g. "att:myfile.txt"). JMWiki has its own MIME type mapping that can be customised to suit installations.
 
 				</para>
 			
@@ -451,7 +451,7 @@
 			
 			<formalpara>
 				<title>Virtual Wikis</title>
-				<para>The last part of the VQWiki URL ("jsp" by default) is the name of a "virtual wiki". It is possible to set up as many virtual wikis as you like, each one with its own completely independent contents.
+				<para>The last part of the JMWiki URL ("jsp" by default) is the name of a "virtual wiki". It is possible to set up as many virtual wikis as you like, each one with its own completely independent contents.
 				 Instruction for creating a virtual wiki follows:
 					<orderedlist numeration="arabic">
 					<listitem><para>Access the admin console at {wikiurl}/jsp/admin.jsp</para>
@@ -529,7 +529,7 @@
 				
 				<title>Default Topics</title>
 				
-				<para>Several topics are created by default the first time VQWiki is run, or when a new virtual wiki is accessed. These are TextFormattingRules (a description of the markup available by default), FritzTextFormattingRules (a description of the markup available in one of the other shipped lexers) and StartingPoints (a default start page).</para>
+				<para>Several topics are created by default the first time JMWiki is run, or when a new virtual wiki is accessed. These are TextFormattingRules (a description of the markup available by default), FritzTextFormattingRules (a description of the markup available in one of the other shipped lexers) and StartingPoints (a default start page).</para>
 			
 			</formalpara>
 		
@@ -543,7 +543,7 @@
 				The admin console is protected by a password that is shown to the first person to browse to a Wiki topic after installation. The admin username is "admin". If you have lost your password see the section on password recovery below.
 			</para>
 			<para>
-				At the bottom of any Wiki topic you will see the version of VQWiki you are using and an "Admin" link. Click this link.
+				At the bottom of any Wiki topic you will see the version of JMWiki you are using and an "Admin" link. Click this link.
 			</para>
 			<para>
 				After you have logged in (username "admin"), you will find yourself looking at a list of text fields and check boxes, each representing some customisable feature of the Wiki. We'll present a table of these settings and refer you on to those that need their own chapters for further explanation.
@@ -619,7 +619,7 @@
 						</row>
 						<row>
 							<entry>Persistence</entry>
-							<entry>This is where the persistence mode can be set - either the default "Flat-File", or "Database" to use a MySQL database as the back end. If you select "Database", you will be presented with further fields in which to enter the JDBC database driver name, the database name and a user and password. VQWiki ships with the MM MySQL driver and its name will be the default value. See the chapter on MySQL for more information on setting this up.</entry>
+							<entry>This is where the persistence mode can be set - either the default "Flat-File", or "Database" to use a MySQL database as the back end. If you select "Database", you will be presented with further fields in which to enter the JDBC database driver name, the database name and a user and password. JMWiki ships with the MM MySQL driver and its name will be the default value. See the chapter on MySQL for more information on setting this up.</entry>
 						</row>
 						<row>
 							<entry>Closed user group?</entry>
@@ -700,13 +700,13 @@
 			</table>
 			<section>
 				<title>Admin Password Recovery</title>
-				<para>If you misplace the admin password, you can force VQWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <filename>{installdir}/WEB-INF/classes/jmwiki.properties</filename> file (or another location if you have overridden the default) and change the key-value pair that reads <computeroutput>firstuse=false</computeroutput> to <computeroutput>firstuse=true</computeroutput>. Restart the application context or the application server and browse to StartingPoints. You will be shown the new admin password.</para>
+				<para>If you misplace the admin password, you can force JMWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <filename>{installdir}/WEB-INF/classes/jmwiki.properties</filename> file (or another location if you have overridden the default) and change the key-value pair that reads <computeroutput>firstuse=false</computeroutput> to <computeroutput>firstuse=true</computeroutput>. Restart the application context or the application server and browse to StartingPoints. You will be shown the new admin password.</para>
 			</section>
 		</chapter>
 		<chapter>
 			<title>Configuration "Under the Hood"</title>
 			<para>
-				The Admin Console writes to a properties file called <filename>jmwiki.properties</filename>. This file along with the other configuration files will be by default in <filename>{installdir}/WEB-INF/classes</filename>. The files must be in the root of the classpath becuase they are searched for using the ClassLoader. The VQWiki environment also has hard-coded default values for the properties to ensure that it will always start regardless of whether or not a properties file is available. Here's a summary of all the resource and property files:
+				The Admin Console writes to a properties file called <filename>jmwiki.properties</filename>. This file along with the other configuration files will be by default in <filename>{installdir}/WEB-INF/classes</filename>. The files must be in the root of the classpath becuase they are searched for using the ClassLoader. The JMWiki environment also has hard-coded default values for the properties to ensure that it will always start regardless of whether or not a properties file is available. Here's a summary of all the resource and property files:
 			</para>
 			<table>
 				<title>Configuration Files</title>
@@ -757,7 +757,7 @@
         <Context path="/jmwiki" docBase="jmwiki-2.0" debug="0" >
         	<!-- the rest of your context information -->
         	<env-entry>
-        	  <description>VQWiki propertiesFile</description>
+        	  <description>JMWiki propertiesFile</description>
         	  <env-entry-name>propertiesFile</env-entry-name>
 	         <env-entry-value>c:/myproperties</env-entry-value>
        	  <env-entry-type>java.lang.String</env-entry-type>
@@ -772,7 +772,7 @@
 The custom logo image feature works as follows:
 </para>
 			<para>
-By default, we use <filename>{installdir}/images/logo.jpg</filename>. If the user specifies the URL of an alternate image in the deployment metadata, that image will be used instead.  In this case, a "Powered by VQWiki" image will be displayed on the footer of all pages that use the custom logo.
+By default, we use <filename>{installdir}/images/logo.jpg</filename>. If the user specifies the URL of an alternate image in the deployment metadata, that image will be used instead.  In this case, a "Powered by JMWiki" image will be displayed on the footer of all pages that use the custom logo.
 </para>
 			<para>
 E.g., in Tomcat <filename>server.xml</filename>, it would look like this (note the override attribute):
@@ -802,13 +802,13 @@ or
 	      ]]></computeroutput>
 			</para>
 			<para>
-The index page and admin console still display the VQWiki logo, as always.
+The index page and admin console still display the JMWiki logo, as always.
 </para>
 		</chapter>
 		<chapter>
 			<title>Persistence - The Default File-System</title>
 			<para>
-				VQWiki's major goal is to be as easy to deploy as possible, i.e. drop the WAR, start the server. It is for this reason that the default file system exists. The principles are very simple, but so is WikiWikiWeb, so it works:
+				JMWiki's major goal is to be as easy to deploy as possible, i.e. drop the WAR, start the server. It is for this reason that the default file system exists. The principles are very simple, but so is WikiWikiWeb, so it works:
 </para>
 			<itemizedlist>
 				<listitem>
@@ -835,7 +835,7 @@ The index page and admin console still display the VQWiki logo, as always.
 		<chapter>
 			<title>Persistence - The MySQL Database Mode</title>
 			<para>
-				Using MySQL as a back end turns VQWiki into a very quick Wiki indeed. The development goal is still drop-and-go, so VQWiki will build its own tables when you first connect it to a database: no scripts to run (except for creating the database of course - it has to connect to something).
+				Using MySQL as a back end turns JMWiki into a quick Wiki indeed. The development goal is still drop-and-go, so JMWiki will build its own tables when you first connect it to a database: no scripts to run (except for creating the database of course - it has to connect to something).
 			</para>
 			<para>
 The default settings are for a database called "jmwiki" with a user called "jmwiki" with
@@ -882,16 +882,16 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 			<para>
 				As mentioned earlier, the format lexer is the class responsible for tokenizing the user input and formatting it appropriately - e.g. bold, italics, lists and tables. The link lexer is responsible for the automagic linking as described earlier. It is possible to write a single lexer that does both, in which case the link lexer should be set to "null'.			</para>
 			<para>
-				VQWiki is distributed with three default lexers: <systemitem>jmwiki.lex.FormatLex</systemitem> and <systemitem>jmwiki.lex.LinkLex</systemitem> are designed to work together and should be adequate for most purposes.
+				JMWiki is distributed with three default lexers: <systemitem>jmwiki.lex.FormatLex</systemitem> and <systemitem>jmwiki.lex.LinkLex</systemitem> are designed to work together and should be adequate for most purposes.
 </para>
 			<para>
  A third lexer <systemitem>jmwiki.lex.FritzLex</systemitem> (written by Fritz Freiheit) does not require a separate link lexer, so the link lexer should be set to "null" in the admin console to use it. This lexer supports a wider range of heading styles than the default lexers.
 			</para>
 			<para>
- Another lexer shipped with VQWiki duplicates the syntax used by the popular Mediawiki software (see <ulink url="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</ulink>).  To use this lexer the Format lexer value should be set to jmwiki.lex.MediaWikiSyntax, the layout lexer should be set to jmwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".
+ Another lexer shipped with JMWiki duplicates the syntax used by the popular Mediawiki software (see <ulink url="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</ulink>).  To use this lexer the Format lexer value should be set to jmwiki.lex.MediaWikiSyntax, the layout lexer should be set to jmwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".
 			</para>
 			<para>
-				The lexers that come with VQWiki are generating using the JLex<footnote>
+				The lexers that come with JMWiki are generating using the JLex<footnote>
 					<para>JLex lexical analyser generator <ulink url="http://www.cs.princeton.edu/%7Eappel/modern/java/JLex/">http://www.cs.princeton.edu/%7Eappel/modern/java/JLex/</ulink>
 					</para>
 				</footnote> tool. However, you can write your lexer in any way you choose - so long as it implements the  <systemitem>jmwiki.lex.Lexer</systemitem> interface.
@@ -900,7 +900,7 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 		<chapter>
 			<title>Extensible Lexers</title>
 			<para>
-				From version 2.4.0 onwards, VQWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, VQWiki is supplied with jmwiki.lex.JavaLex which uses the java2html<footnote>
+				From version 2.4.0 onwards, JMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, JMWiki is supplied with jmwiki.lex.JavaLex which uses the java2html<footnote>
 					<para>Java2Html freeware Java source formatter <ulink url="http://www.java2html.de">http://www.java2html.de</ulink>
 					</para>
 				</footnote> library to format Java source code into pretty HTML. To see it in action, try entering the following into a Wiki topic:
@@ -915,7 +915,7 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 			]]></computeroutput>
 			</para>
 			<para>
-				You should see neatly formatted Java source code. The special tag format asks VQWiki to process all the text inside the tags using the class named as the value for "java" in the <filename>{installdir}/WEB-INF/classes/externallex.properties</filename> file. The default entry in this file is: <computeroutput>java=jmwiki.lex.JavaLex</computeroutput>.
+				You should see neatly formatted Java source code. The special tag format asks JMWiki to process all the text inside the tags using the class named as the value for "java" in the <filename>{installdir}/WEB-INF/classes/externallex.properties</filename> file. The default entry in this file is: <computeroutput>java=jmwiki.lex.JavaLex</computeroutput>.
 			</para>
 			<para>
 				To write your own external lexer, write a class that implements <classname>jmwiki.lex.ExternalLex</classname> interface (it's only one method) and put an entry with an appropriate tag name in the externallex.properties file.
@@ -926,7 +926,7 @@ E.g. you might write a class called jmwiki.mylexers.CLex for formatting C code. 
 		</chapter>
 		<chapter>
 			<title>External Links - xx: Entries</title>
-			<para>By default, VQWiki supports entries to make reference to the original C2 WikiWikiWeb, the Meatball Wiki and individual Microsoft Knowledge Base articles. The shorthand for these all take the form <computeroutput>prefix:detail</computeroutput>
+			<para>By default, JMWiki supports entries to make reference to the original C2 WikiWikiWeb, the Meatball Wiki and individual Microsoft Knowledge Base articles. The shorthand for these all take the form <computeroutput>prefix:detail</computeroutput>
 			</para>
 			<para>You can add new external links by editing the file <filename>{installdir}/WEB-INF/classes/linking.properties</filename>. A comment in the file explains the straightforward syntax. In the case of the C2 Wiki, the entry is <computeroutput>c2=http://c2.com/cgi/wiki?${url}</computeroutput>. The <computeroutput>${url} </computeroutput> keyword is expanded to whatever the user puts after the colon when they create the link, e.g if they put c2:StartingPoints, <computeroutput>${url} </computeroutput> will be expanded to "StartingPoints" creating the complete URL <computeroutput>http://c2.com/cgi/wiki?StartingPoints</computeroutput>
 			</para>

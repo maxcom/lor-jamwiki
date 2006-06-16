@@ -8,7 +8,7 @@
           </a>
         </td>
         <td align="left">
-          <h1>The Very Quick Wiki</h1>
+          <h1>The Java MediaWiki</h1>
           <br>
         </td>
       </tr>					 

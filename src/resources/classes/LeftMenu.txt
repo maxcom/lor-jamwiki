@@ -15,4 +15,4 @@ WikiSearch
 ----
 SetUsername
 ----
-[<html>]<a href="http://www.jmwiki.org">VeryQuickWiki</a>[</html>]
+[<html>]<a href="http://www.jmwiki.org">Java MediaWiki</a>[</html>]

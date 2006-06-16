@@ -44,7 +44,7 @@ import org.jmwiki.utils.Utilities;
  * refactorize and split resposibilities in different objects.
  */
 
-public class WikiServlet extends VQWikiServlet {
+public class WikiServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(WikiServlet.class);
 	// constants used as the action parameter in calls to this servlet

@@ -1,7 +1,7 @@
 package org.jmwiki.parser.alt;
 
 /*
-Very Quick Wiki - WikiWikiWeb clone
+Java MediaWiki - WikiWikiWeb clone
 Copyright (C) 2001 Gareth Cronin
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

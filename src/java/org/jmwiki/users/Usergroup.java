@@ -3,7 +3,7 @@
  *
  * Filename  : Usergroup.java
  * Created   : 25.06.2004
- * Project   : VQWiki
+ * Project   : JMWiki
  */
 package org.jmwiki.users;
 

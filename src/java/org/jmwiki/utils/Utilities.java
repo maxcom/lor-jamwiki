@@ -1,5 +1,5 @@
 /*
-Very Quick Wiki - WikiWikiWeb clone
+Java MediaWiki - WikiWikiWeb clone
 Copyright (C) 2001-2002 Gareth Cronin
 
 This program is free software; you can redistribute it and/or modify
@@ -610,7 +610,7 @@ public class Utilities {
 	 */
 	public static boolean isFirstUse() {
 		if (Environment.getBooleanValue(Environment.PROP_BASE_FIRST_USE)) {
-			logger.info("First use of VQWiki, creating admin password");
+			logger.info("First use of JMWiki, creating admin password");
 			try {
 				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, generateNewAdminPassword());
 				Environment.setBooleanValue(Environment.PROP_BASE_FIRST_USE, false);

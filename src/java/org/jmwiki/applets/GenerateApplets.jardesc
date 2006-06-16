@@ -3,7 +3,7 @@
 	<jar path="Z:/work/sourceforge/jmwiki-classic/classes/export2html/vqapplets.jar"/>
 	<options overwrite="true" compress="true" exportErrors="true"
 		exportWarnings="true" saveDescription="true"
-		descriptionLocation="/VQWiki/applets/GenerateApplets.jardesc"
+		descriptionLocation="/JMWiki/applets/GenerateApplets.jardesc"
 		useSourceFolders="false" buildIfNeeded="true"/>
 	<manifest manifestVersion="1.0" usesManifest="true"
 		reuseManifest="false" saveManifest="false"
@@ -14,10 +14,10 @@
 		</sealing>
 	</manifest>
 	<selectedElements exportClassFiles="true" exportJavaFiles="false">
-		<javaElement handleIdentifier="=VQWiki/src&lt;org.jmwiki{AbstractSearchEngine.java"/>
-		<javaElement handleIdentifier="=VQWiki/applets&lt;"/>
-		<javaElement handleIdentifier="=VQWiki/src&lt;org.jmwiki{SearchResultEntry.java"/>
-		<javaElement handleIdentifier="=VQWiki/src&lt;org.jmwiki{SearchEngine.java"/>
-		<javaElement handleIdentifier="=VQWiki/src&lt;org.jmwiki.utils.lucene"/>
+		<javaElement handleIdentifier="=JMWiki/src&lt;org.jmwiki{AbstractSearchEngine.java"/>
+		<javaElement handleIdentifier="=JMWiki/applets&lt;"/>
+		<javaElement handleIdentifier="=JMWiki/src&lt;org.jmwiki{SearchResultEntry.java"/>
+		<javaElement handleIdentifier="=JMWiki/src&lt;org.jmwiki{SearchEngine.java"/>
+		<javaElement handleIdentifier="=JMWiki/src&lt;org.jmwiki.utils.lucene"/>
 	</selectedElements>
 </jardesc>

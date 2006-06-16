@@ -19,7 +19,7 @@ import java.io.IOException;
  * @author garethc
  * Date: Jan 8, 2003
  */
-public class MemberServlet extends VQWikiServlet {
+public class MemberServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(MemberServlet.class);
 

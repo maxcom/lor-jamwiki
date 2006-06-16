@@ -1,5 +1,5 @@
 <%--
-Very Quick Wiki - WikiWikiWeb clone
+Java MediaWiki - WikiWikiWeb clone
 Copyright (C) 2001-2003 Gareth Cronin
 Copyright (C) 2003-2006 Others
 

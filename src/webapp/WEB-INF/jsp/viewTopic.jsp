@@ -35,8 +35,8 @@
     </div>
 
     <div id="footer">
-        <p>VeryQuickWiki Version 3.0.0 alpha | <a href="Wiki?action=action_admin&username=admin">Admin</a></p>
-	    <p>All contents copyright of the VQWiki project. © 2005-2006.</p>
+        <p>Java MediaWiki Version <%= WikiBase.WIKI_VERSION %> | <a href="Wiki?action=action_admin&username=admin">Admin</a></p>
+	    <p>All contents copyright of the JMWiki project. © 2005-2006.</p>
     </div>
 
   </div>

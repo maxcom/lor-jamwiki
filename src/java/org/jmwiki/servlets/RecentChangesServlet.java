@@ -20,7 +20,7 @@ import org.jmwiki.WikiBase;
  * @author garethc
  * Date: 7/03/2003
  */
-public class RecentChangesServlet extends VQWikiServlet {
+public class RecentChangesServlet extends JMWikiServlet {
 
 	Collection all = null;
 	private Object lock = new Object();

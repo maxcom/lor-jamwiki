@@ -1,5 +1,5 @@
  <%--
-Very Quick Wiki - WikiWikiWeb clone
+Java MediaWiki - WikiWikiWeb clone
 Copyright (C) 2001-2003 Gareth Cronin
 
 This program is free software; you can redistribute it and/or modify

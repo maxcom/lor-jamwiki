@@ -3,7 +3,7 @@ The custom logo image feature works as follows:
 By default, we use /images/logo.jpg.
 
 If the user specifies the URL of an alternate image in the deployment metadata,
-that image will be used instead.  In this case, a "Powered by VQWiki" image will
+that image will be used instead.  In this case, a "Powered by JMWiki" image will
 be displayed on the footer of all pages that use the custom logo.
 
 E.g., in Tomcat server.xml, it would look like this (note the override attribute):
@@ -20,4 +20,4 @@ or
                       value="http://images.sourceforge.net/head_bg_new.gif" override="false"/>
 	      </Context>
 
-index.jsp and admin.jsp still display the VQWiki logo, as always.
+index.jsp and admin.jsp still display the JMWiki logo, as always.

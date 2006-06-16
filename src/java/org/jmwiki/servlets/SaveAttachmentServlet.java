@@ -37,7 +37,7 @@ import org.jmwiki.WikiException;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
-public class SaveAttachmentServlet extends VQWikiServlet {
+public class SaveAttachmentServlet extends JMWikiServlet {
 
 	/** Logger */
 	public static final Logger logger = Logger.getLogger(SaveAttachmentServlet.class);

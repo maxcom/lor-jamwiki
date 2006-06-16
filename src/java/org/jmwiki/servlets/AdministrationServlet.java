@@ -24,7 +24,7 @@ import org.jmwiki.utils.Encryption;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
-public class AdministrationServlet extends VQWikiServlet {
+public class AdministrationServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(AdministrationServlet.class);
 

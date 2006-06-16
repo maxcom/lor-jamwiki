@@ -1,6 +1,6 @@
 - INTRODUCTION -
 ================
-This file attempts to aid you in coming to understand the structure of the VQWiki project and to tell you what you need to know in order to be able to
+This file attempts to aid you in coming to understand the structure of the JMWiki project and to tell you what you need to know in order to be able to
 build a working, installable WAR file from the source code.
 
 Contents:
@@ -10,7 +10,7 @@ Contents:
 
 - BUILDING THE SOFTWARE -
 =========================
-To be able to build the software from its source, you will need a few requirements which are listed below. The VQWiki software is built for Sun's Java
+To be able to build the software from its source, you will need a few requirements which are listed below. The JMWiki software is built for Sun's Java
 release 1.4.2. 
 
     requirements
@@ -25,7 +25,7 @@ release 1.4.2.
     prompt> ant
 
     Other ant targets included in the build file are:
-        "javadoc" - creates a javadoc set for the VQWiki source code.
+        "javadoc" - creates a javadoc set for the JMWiki source code.
         "compile" - only compiles the source code
         "test"    - runs the unit tests
         "clean"   - removes all build artifacts
@@ -62,7 +62,7 @@ vqwiki (the root)
     vqwiki/lib
     ==========
     This contains all the libraries needed for the BUILD PROCESS ONLY. The libraries in this directory are NOT packaged into the final WAR file. This
-    allows us to focus on building VQWiki for a certain Java release.
+    allows us to focus on building JMWiki for a certain Java release.
 
     vqwiki/src/java
     ===============
@@ -71,7 +71,7 @@ vqwiki (the root)
     vqwiki/src/lex
     ==============
     Contains the lexer source files from which the lexer (for example JFlex) will generate the java source code for later use in compilation and building.
-    The lex directory only contains the core lexer. The "alt" subdirectory contains any alternative lexers distributed by the VQWiki project.
+    The lex directory only contains the core lexer. The "alt" subdirectory contains any alternative lexers distributed by the JMWiki project.
 
     vqwiki/src/lib
     ==============

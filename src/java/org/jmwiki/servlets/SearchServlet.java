@@ -21,7 +21,7 @@ import org.jmwiki.SearchResultEntry;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.JSPUtils;
 
-public class SearchServlet extends VQWikiServlet {
+public class SearchServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(SearchServlet.class);
 

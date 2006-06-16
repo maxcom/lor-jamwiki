@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author garethc
  * Date: 5/03/2003
  */
-public class UnlockServlet extends VQWikiServlet {
+public class UnlockServlet extends JMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(UnlockServlet.class);
 

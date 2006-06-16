@@ -26,5 +26,5 @@ Do you want to modify...
 ----
 http://www.jmwiki.org
 ----
-If you have a spare moment, please let us know where and what you're using Very Quick Wiki for, and feel free to send us any comments or suggestions:
+If you have a spare moment, please let us know where and what you're using Java MediaWiki for, and feel free to send us any comments or suggestions:
 mailto:support@jmwiki.org

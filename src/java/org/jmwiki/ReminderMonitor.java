@@ -12,7 +12,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * A monitor which should persistently run on the VQWiki server.
+ * A monitor which should persistently run on the JMWiki server.
  * It schedules a new process once every 24 hours to check all
  * WikiReminder files for the presence of scheduled reminders, which
  * it then send via email to the registered recipient(s). The time
@@ -32,7 +32,7 @@ public class ReminderMonitor {
 	 */
 	public static void main(String[] argv) {
 		new ReminderMonitor();
-		logger.info("The VQWiki Reminder Monitor is running...");
+		logger.info("The JMWiki Reminder Monitor is running...");
 	}
 
 	/**

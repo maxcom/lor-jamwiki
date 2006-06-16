@@ -2,7 +2,7 @@
  * $Id: SearchResultEntry.java 644 2006-04-23 07:52:28Z wrh2 $
  *
  * Filename  : SearchResultEntry.java
- * Project   : VQWiki
+ * Project   : JMWiki
  * Auhtor	: Tobias Schulz-Hess (sourceforge@schulz-hess.de)
  */
 package org.jmwiki;
