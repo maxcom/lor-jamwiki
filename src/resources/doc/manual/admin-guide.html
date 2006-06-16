@@ -1541,25 +1541,7 @@ NAME="AEN387"
 ></A
 >Extensible Lexers</H1
 ><P
->&#13;				From version 2.4.0 onwards, JMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, JMWiki is supplied with jmwiki.lex.JavaLex which uses the java2html<A
-NAME="AEN390"
-HREF="#FTN.AEN390"
->[6]</A
-> library to format Java source code into pretty HTML. To see it in action, try entering the following into a Wiki topic:
-			</P
-><P
->&#13;				<TT
-CLASS="computeroutput"
->&#13;				[&#60;java&#62;]
-					class Test{
-						public void test();
-					}
-				[&#60;/java&#62;]
-			</TT
->
-			</P
-><P
->&#13;				You should see neatly formatted Java source code. The special tag format asks JMWiki to process all the text inside the tags using the class named as the value for "java" in the <TT
+>&#13;				From version 2.4.0 onwards, JMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. The special tag format asks JMWiki to process all the text inside the tags using the class named as the value in the <TT
 CLASS="filename"
 >{installdir}/WEB-INF/classes/externallex.properties</TT
 > file. The default entry in this file is: <TT
@@ -1863,29 +1845,6 @@ WIDTH="95%"
 HREF="http://www.cs.princeton.edu/%7Eappel/modern/java/JLex/"
 TARGET="_top"
 >http://www.cs.princeton.edu/%7Eappel/modern/java/JLex/</A
->
-					</P
-></TD
-></TR
-><TR
-><TD
-ALIGN="LEFT"
-VALIGN="TOP"
-WIDTH="5%"
-><A
-NAME="FTN.AEN390"
-HREF="#AEN390"
->[6]</A
-></TD
-><TD
-ALIGN="LEFT"
-VALIGN="TOP"
-WIDTH="95%"
-><P
->Java2Html freeware Java source formatter <A
-HREF="http://www.java2html.de"
-TARGET="_top"
->http://www.java2html.de</A
 >
 					</P
 ></TD

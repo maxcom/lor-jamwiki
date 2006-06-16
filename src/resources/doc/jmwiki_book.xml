@@ -1351,9 +1351,7 @@
 
           <para>From version 2.4.0 onwards, JMWiki supports external lexers.
           These lexers are triggered from the standard lexers using special
-          markup. As an example, JMWiki is supplied with jmwiki.lex.JavaLex
-          which uses the java2html[6] library to format Java source code into
-          pretty HTML.</para>
+          markup.</para>
 
           <para>To see it in action, try entering the following into a Wiki
           topic: <systemitem>[&lt;java&gt;] class Test{ public void test(); }

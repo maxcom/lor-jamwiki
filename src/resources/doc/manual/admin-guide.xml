@@ -897,22 +897,7 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 		<chapter>
 			<title>Extensible Lexers</title>
 			<para>
-				From version 2.4.0 onwards, JMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, JMWiki is supplied with jmwiki.lex.JavaLex which uses the java2html<footnote>
-					<para>Java2Html freeware Java source formatter <ulink url="http://www.java2html.de">http://www.java2html.de</ulink>
-					</para>
-				</footnote> library to format Java source code into pretty HTML. To see it in action, try entering the following into a Wiki topic:
-			</para>
-			<para>
-				<computeroutput><![CDATA[
-				[<java>]
-					class Test{
-						public void test();
-					}
-				[</java>]
-			]]></computeroutput>
-			</para>
-			<para>
-				You should see neatly formatted Java source code. The special tag format asks JMWiki to process all the text inside the tags using the class named as the value for "java" in the <filename>{installdir}/WEB-INF/classes/externallex.properties</filename> file. The default entry in this file is: <computeroutput>java=jmwiki.lex.JavaLex</computeroutput>.
+				From version 2.4.0 onwards, JMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. The special tag format asks JMWiki to process all the text inside the tags using the class named as the value in the <filename>{installdir}/WEB-INF/classes/externallex.properties</filename> file. The default entry in this file is: <computeroutput>java=jmwiki.lex.JavaLex</computeroutput>.
 			</para>
 			<para>
 				To write your own external lexer, write a class that implements <classname>jmwiki.lex.ExternalLex</classname> interface (it's only one method) and put an entry with an appropriate tag name in the externallex.properties file.

@@ -53,7 +53,6 @@
                 <pathelement path="${dir.lib}/commons-dbcp.jar"/>
                 <pathelement path="${dir.lib}/commons-pool-1.3.jar"/>
                 <pathelement path="${dir.lib}/commons-httpclient-2.0.jar"/>
-                <pathelement path="${dir.lib}/java2html.jar"/>
                 <pathelement path="${dir.lib}/jstl.jar"/>
                 <pathelement path="${dir.lib}/jsx.jar"/>
                 <pathelement path="${dir.lib}/junit.jar"/>
