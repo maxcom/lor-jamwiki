@@ -60,7 +60,6 @@
                 <pathelement path="${dir.lib}/servlet.jar"/>
                 <pathelement path="${dir.lib}/standard.jar"/>
                 <pathelement path="${dir.lib}/spring.jar"/>
-                <pathelement path="${dir.lib}/template4java.jar"/>
                 <pathelement path="${dir.lib}/lucene-1.2a.jar"/>
                 <pathelement path="${dir.lib}/PDFBox-0.6.2.jar"/>
                 <pathelement path="${dir.lib}/javadiff-1.0.3.jar"/>
