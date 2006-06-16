@@ -12,7 +12,7 @@
     <!--
     <filter>
         <filter-name>SetCharacterEncodingFilter</filter-name>
-        <filter-class>org.vqwiki.servlets.SetCharacterEncodingFilter</filter-class>
+        <filter-class>org.jmwiki.servlets.SetCharacterEncodingFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SetCharacterEncodingFilter</filter-name>
@@ -21,7 +21,7 @@
     -->
 
     <servlet>
-        <servlet-name>vqwiki</servlet-name>
+        <servlet-name>jmwiki</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -29,105 +29,105 @@
     <!-- old style servlets -->
     <servlet>
         <servlet-name>SaveTopic</servlet-name>
-        <servlet-class>org.vqwiki.servlets.SaveTopicServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.SaveTopicServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Wiki</servlet-name>
-        <servlet-class>org.vqwiki.servlets.WikiServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.WikiServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Search</servlet-name>
-        <servlet-class>org.vqwiki.servlets.SearchServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.SearchServlet</servlet-class>
     </servlet>
     <!--
     <servlet>
         <servlet-name>Admin</servlet-name>
-        <servlet-class>org.vqwiki.servlets.AdministrationServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.AdministrationServlet</servlet-class>
     </servlet>
     -->
     <servlet>
         <servlet-name>SaveAttachment</servlet-name>
-        <servlet-class>org.vqwiki.servlets.SaveAttachmentServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.SaveAttachmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SaveTemplate</servlet-name>
-        <servlet-class>org.vqwiki.servlets.SaveTemplateServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.SaveTemplateServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Notify</servlet-name>
-        <servlet-class>org.vqwiki.servlets.NotifyServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.NotifyServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>MenuJump</servlet-name>
-        <servlet-class>org.vqwiki.servlets.MenuJumpServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.MenuJumpServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ViewAttachment</servlet-name>
-        <servlet-class>org.vqwiki.servlets.ViewAttachmentServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.ViewAttachmentServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Diff</servlet-name>
-        <servlet-class>org.vqwiki.servlets.DiffServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.DiffServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Attach</servlet-name>
-        <servlet-class>org.vqwiki.servlets.AttachServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.AttachServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Member</servlet-name>
-        <servlet-class>org.vqwiki.servlets.MemberServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.MemberServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Printable</servlet-name>
-        <servlet-class>org.vqwiki.servlets.PrintableServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.PrintableServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Edit</servlet-name>
-        <servlet-class>org.vqwiki.servlets.EditServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.EditServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>History</servlet-name>
-        <servlet-class>org.vqwiki.servlets.HistoryServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.HistoryServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LockList</servlet-name>
-        <servlet-class>org.vqwiki.servlets.LockListServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.LockListServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Unlock</servlet-name>
-        <servlet-class>org.vqwiki.servlets.UnlockServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.UnlockServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Login</servlet-name>
-        <servlet-class>org.vqwiki.servlets.LoginServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.LoginServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RecentChanges</servlet-name>
-        <servlet-class>org.vqwiki.servlets.RecentChangesServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.RecentChangesServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RSS</servlet-name>
-        <servlet-class>org.vqwiki.servlets.RSSServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.RSSServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Statistics</servlet-name>
-        <servlet-class>org.vqwiki.servlets.StatisticServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.StatisticServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Sitemap</servlet-name>
-        <servlet-class>org.vqwiki.servlets.SitemapServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.SitemapServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Export2HTML</servlet-name>
-        <servlet-class>org.vqwiki.servlets.ExportHTMLServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.ExportHTMLServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Import</servlet-name>
-        <servlet-class>org.vqwiki.servlets.ImportServlet</servlet-class>
+        <servlet-class>org.jmwiki.servlets.ImportServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>vqwiki</servlet-name>
+        <servlet-name>jmwiki</servlet-name>
         <url-pattern>*.html</url-pattern>
     </servlet-mapping>
     

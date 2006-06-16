@@ -3,7 +3,7 @@
   <title>@@TOPICNAME@@</title>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html">
 @@REDIRECT@@  
-  <link rel="stylesheet" href='vqwiki.css' type="text/css" />
+  <link rel="stylesheet" href='jmwiki.css' type="text/css" />
 </head>
 <body>
 

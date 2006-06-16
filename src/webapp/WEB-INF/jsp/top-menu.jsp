@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
 <div class="menu">
-  <vqwiki:encode var="encodedTopic" value="${topic}"/>
+  <jmwiki:encode var="encodedTopic" value="${topic}"/>
   <form method="POST" action="Wiki">
 	<table style="width: 100%; border: 0px solid;">
 		<tr>

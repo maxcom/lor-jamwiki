@@ -4,7 +4,7 @@
 	<a class="logo" href="http://veryquickwiki.sourceforge.net">
 	 <img align="right" class="logo" src="<%=request.getContextPath()%>/images/pblogo.jpg" alt="Very Quick Wiki"/>
 	</a>
-  <font size="-3">VeryQuickWiki Version <vqwiki:wiki-version/> |
+  <font size="-3">VeryQuickWiki Version <jmwiki:wiki-version/> |
     <a href="admin/admin.html?username=admin"><f:message key="admin.title"/></a>
   </font>
   <c:if test="${not empty pageContext.request.userPrincipal}">|

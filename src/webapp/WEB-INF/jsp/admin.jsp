@@ -20,26 +20,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <html>
 <head>
-<%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
+<%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
 <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
 <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
 <%@page import="
-    org.vqwiki.Environment,
-    org.vqwiki.WikiBase,
-    org.vqwiki.servlets.WikiServlet,
-    org.vqwiki.utils.Encryption,
-    org.vqwiki.utils.JSPUtils,
-    org.vqwiki.users.Usergroup,
+    org.jmwiki.Environment,
+    org.jmwiki.WikiBase,
+    org.jmwiki.servlets.WikiServlet,
+    org.jmwiki.utils.Encryption,
+    org.jmwiki.utils.JSPUtils,
+    org.jmwiki.users.Usergroup,
     java.util.*,
     org.apache.commons.pool.impl.*,
     java.sql.SQLException
 " errorPage="error.jsp"%>
 <f:setBundle basename="ApplicationResources"/>
-<vqwiki:is-admin var="admin"/>
+<jmwiki:is-admin var="admin"/>
 
 <title><f:message key="admin.title"/></title>
 <META HTTP-EQUIV="Expires" CONTENT="Mon, 06 Jan 1990 00:00:01 GMT">
-<link rel="stylesheet" href="../vqwiki.css" type="text/css">
+<link rel="stylesheet" href="../jmwiki.css" type="text/css">
 
 <%
   String message = "";

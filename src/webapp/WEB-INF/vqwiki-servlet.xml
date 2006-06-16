@@ -22,10 +22,10 @@
         </property>
     </bean>
 
-    <bean id="viewTopicController" class="org.vqwiki.web.ViewTopicController" />
-    <bean id="editTopicController" class="org.vqwiki.web.EditTopicController" />
-    <bean id="deleteTopicController" class="org.vqwiki.web.DeleteTopicController" />
-    <bean id="adminWikiController" class="org.vqwiki.web.AdminWikiController" />
+    <bean id="viewTopicController" class="org.jmwiki.web.ViewTopicController" />
+    <bean id="editTopicController" class="org.jmwiki.web.EditTopicController" />
+    <bean id="deleteTopicController" class="org.jmwiki.web.DeleteTopicController" />
+    <bean id="adminWikiController" class="org.jmwiki.web.AdminWikiController" />
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass">

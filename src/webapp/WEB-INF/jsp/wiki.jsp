@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </td>
   </tr>
 </table>
- <vqwiki:encode var="encodedTitle" value='"${title}"'/>
+ <jmwiki:encode var="encodedTitle" value='"${title}"'/>
  <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
     <c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">
@@ -64,11 +64,11 @@ if (Environment.getIntValue(Environment.PROP_USERGROUP_TYPE) != 0) {
 }
 %>
           <span class="pageHeader">
-            <a href='<vqwiki:path-root/>/Wiki?action=<%= WikiServlet.ACTION_SEARCH %>&text=<c:out value="${encodedTitle}"/>'>
+            <a href='<jmwiki:path-root/>/Wiki?action=<%= WikiServlet.ACTION_SEARCH %>&text=<c:out value="${encodedTitle}"/>'>
 <%
 if (Environment.getBooleanValue(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS)) {
 %>
-                  <vqwiki:separate-words value="${title}" />
+                  <jmwiki:separate-words value="${title}" />
 <%
 } else {
 %>

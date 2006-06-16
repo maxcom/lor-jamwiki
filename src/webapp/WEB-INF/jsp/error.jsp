@@ -17,9 +17,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 --%>
 
 <%@ page import="
-        org.vqwiki.WikiException,
-        org.vqwiki.servlets.WikiServlet,
-        org.vqwiki.servlets.WikiServletException
+        org.jmwiki.WikiException,
+        org.jmwiki.servlets.WikiServlet,
+        org.jmwiki.servlets.WikiServletException
     "
     isErrorPage="true"
 %>

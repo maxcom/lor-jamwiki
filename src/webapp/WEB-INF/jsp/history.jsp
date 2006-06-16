@@ -3,7 +3,7 @@
 
 <script type="text/javascript">
 // enable/disable checkboxes before or after the current element
-<%-- FIXME: might be better moved to a vqwiki.js file --%>
+<%-- FIXME: might be better moved to a jmwiki.js file --%>
 function inactive(element) {
   var found = 0;
   var totalChecked = 0;

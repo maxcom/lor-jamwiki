@@ -1,4 +1,4 @@
-package org.vqwiki.parser.alt;
+package org.jmwiki.parser.alt;
 
 /*
 Very Quick Wiki - WikiWikiWeb clone
@@ -24,18 +24,18 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.vqwiki.parser.Lexer;
-import org.vqwiki.Environment;
-import org.vqwiki.WikiBase;
-import org.vqwiki.utils.Utilities;
-import org.vqwiki.utils.JSPUtils;
+import org.jmwiki.parser.Lexer;
+import org.jmwiki.Environment;
+import org.jmwiki.WikiBase;
+import org.jmwiki.utils.Utilities;
+import org.jmwiki.utils.JSPUtils;
 
 %%
 
 %public
 %type String
 %unicode
-%implements	org.vqwiki.parser.Lexer
+%implements	org.jmwiki.parser.Lexer
 %class HTMLLinkLex
 
 %init{

@@ -8,7 +8,7 @@
     - Fixed: Wrong special chars handling in RSSServlet
     - Fixed: Wrong special chars handling in search box
     - Fixed: Non localized messages in top navigation bar History page
-    - Fixed: vqwiki.PluginManager cannot find file
+    - Fixed: jmwiki.PluginManager cannot find file
     - Fixed: Lists break without spaces-to-tabs enabled
     - Fixed: System claims lock is taken by someone else even when it is not
     - Fixed: When I use [[UC 0002]] as an internal link it does not recognize it as a link.
@@ -30,7 +30,7 @@
     Improvement / Patch
 
     - Added: Full support of Lucene Query Syntax
-    - Added: Adding prettylink in the form [http://www.vqwiki.org | the quicky wiki]
+    - Added: Adding prettylink in the form [http://www.jmwiki.org | the quicky wiki]
     - Added: Add style class to tables produced by ####
     - Added: Unsubscribe link in mail
     - Added: Spanish translation
@@ -54,7 +54,7 @@
     2. A new diff function was introduced. It uses stylesheet based layout, please also see the UPGRADE document.
     3. It is now possible to redirect to topics with spaces. If the first word in the content is redirect, the rest will be used
        as the destination topic.
-    4. Passwords in the vqwiki.properties file can be encrypted now, see the admin screen.
+    4. Passwords in the jmwiki.properties file can be encrypted now, see the admin screen.
 
 2.7.7
     - Fixed bug in RSS feed where partial html codes in the description broke the feed
@@ -92,7 +92,7 @@ Will render the HTML: <a href="http://c2.com/cgi/wiki?StartingPoints>C2 Starting
 
 2.7.1
 
-Added support for actions to the plugin manager. Classes that implement vqwiki.WikiAction can be implemented and
+Added support for actions to the plugin manager. Classes that implement jmwiki.WikiAction can be implemented and
 placed in plugin zips. The WikiAction.doAction() method supplies the servlet request and response so there is now
 no need to write new servlets and add mappings to web.xml to extend VQWiki functionality, they can be created as
 plugins rather than in the main code stream.
@@ -335,7 +335,7 @@ Tobias also created an RSS feed: e.g. http://localhost:8080/wiki/jsp/Wiki?RSS
 
 For developers: reorganized package structure thanks to J Carlsson's suggestion.
 
-For users: the lexers now have the logical names vqwiki.lex.LinkLex etc when setting them
+For users: the lexers now have the logical names jmwiki.lex.LinkLex etc when setting them
 in the admin console. This means they will need setting on an upgrade, if you use your old
 properties file so set add the .lex bit to each of the lexers names (see UPGRADE for more
 lucid instructions).
@@ -704,9 +704,9 @@ by default.
 
 1.7.0
 Custom wiki directory can be set by placing a properties file called
-"vqwiki.properties" in the working directory for the web container and
+"jmwiki.properties" in the working directory for the web container and
 setting a property "dir" to a directory name (the directory will be
-created by vqwiki on startup).
+created by jmwiki on startup).
 
 Topics can be made read-only from the admin console.
 
@@ -741,4 +741,4 @@ Improved UI.
 Admin console.
 Search engine.
 
-Comments to vqwiki@veryquick.org
+Comments to jmwiki@veryquick.org

@@ -1,4 +1,4 @@
-package org.vqwiki.parser;
+package org.jmwiki.parser;
 
 /*
  * This class adds paragraph tags as appropriate.
@@ -9,13 +9,13 @@ package org.vqwiki.parser;
 
 import java.util.Stack;
 import org.apache.log4j.Logger;
-import org.vqwiki.WikiBase;
+import org.jmwiki.WikiBase;
 
 %%
 
 %public
 %class MediaWikiHTML
-%implements org.vqwiki.parser.Lexer
+%implements org.jmwiki.parser.Lexer
 %type String
 %unicode
 

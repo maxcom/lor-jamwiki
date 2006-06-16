@@ -1,5 +1,5 @@
 
-<link rel="stylesheet" href="vqwiki.css" type="text/css">
+<link rel="stylesheet" href="jmwiki.css" type="text/css">
 <%--
 Very Quick Wiki - WikiWikiWeb clone
 Copyright (C) 2001-2003 Gareth Cronin
@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </c:if>
     <td valign="top">
 
-      <p><a href='<vqwiki:path-root/>/Wiki?<c:out value="${topic}"/>'><f:message key="diff.text1"/> <c:out value="${topic}"/><f:message key="diff.text2"/></a></p>
+      <p><a href='<jmwiki:path-root/>/Wiki?<c:out value="${topic}"/>'><f:message key="diff.text1"/> <c:out value="${topic}"/><f:message key="diff.text2"/></a></p>
       <%@ include file="top-menu.jsp"%>
       <div class="contents">
         <div class="contents" >

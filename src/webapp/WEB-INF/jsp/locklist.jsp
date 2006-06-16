@@ -66,7 +66,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 </tr>
                 <c:forEach items="${locks}" var="lock">
                   <tr>
-                    <vqwiki:encode value="${lock.topicName}" var="encodedTopic"/>
+                    <jmwiki:encode value="${lock.topicName}" var="encodedTopic"/>
                     <td class="recent">
                       <a href='<c:out value="Wiki?${encodedTopic}"/>'>
                         <c:out value="${lock.topicName}"/>

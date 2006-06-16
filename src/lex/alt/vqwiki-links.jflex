@@ -1,4 +1,4 @@
-package org.vqwiki.parser.alt;
+package org.jmwiki.parser.alt;
 
 
 /*
@@ -22,19 +22,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import org.vqwiki.parser.Lexer;
-import org.vqwiki.Environment;
-import org.vqwiki.WikiBase;
-import org.vqwiki.servlets.WikiServlet;
-import org.vqwiki.utils.Utilities;
-import org.vqwiki.utils.JSPUtils;
+import org.jmwiki.parser.Lexer;
+import org.jmwiki.Environment;
+import org.jmwiki.WikiBase;
+import org.jmwiki.servlets.WikiServlet;
+import org.jmwiki.utils.Utilities;
+import org.jmwiki.utils.JSPUtils;
 
 %%
 
 %public
 %type String
 %unicode
-%implements	org.vqwiki.parser.Lexer
+%implements	org.jmwiki.parser.Lexer
 %class VQWikiLinkLex
 
 %init{

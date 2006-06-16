@@ -142,9 +142,9 @@
 									
 									</entry>
 									
-									<entry>The base URL for accessing VQWiki, e.g. <systemitem>http://localhost:8080/vqwiki-&productversion;</systemitem>.
-									&nbsp;&nbsp;With a WAR name of "vqwiki-&productversion;.war", the default local URL for Tomcat will be
-									http://localhost:8080/vqwiki-&productversion;
+									<entry>The base URL for accessing VQWiki, e.g. <systemitem>http://localhost:8080/jmwiki-&productversion;</systemitem>.
+									&nbsp;&nbsp;With a WAR name of "jmwiki-&productversion;.war", the default local URL for Tomcat will be
+									http://localhost:8080/jmwiki-&productversion;
 
 
 									</entry>
@@ -240,15 +240,15 @@
 					<para>
 
 				The following assumes you have installed Tomcat on a Windows machine at {$TOMCAT_HOME} and that it is running with the default stand-alone port 8080.
-				We will also assume that the VQWiki WAR file is named <filename>vqwiki-&productversion;.war</filename>.&nbsp;&nbsp;
-				The name of the WAR file may be different in which case you should substitute your WAR file name for vqwiki-&productversion;.war.&nbsp;&nbsp;
+				We will also assume that the VQWiki WAR file is named <filename>jmwiki-&productversion;.war</filename>.&nbsp;&nbsp;
+				The name of the WAR file may be different in which case you should substitute your WAR file name for jmwiki-&productversion;.war.&nbsp;&nbsp;
 				Finally, we will assume you have a Web browser available on the installation machine.
 			</para>
 					
 					<para>
 				To install VQWiki, you should follow your application server instructions for deploying a WAR. Usually it's just a matter
 				of plonking the WAR file into the webapps directory.
-				Then browse to <systemitem>http://localhost:8080/vqwiki-&productversion;</systemitem>, and that's it!
+				Then browse to <systemitem>http://localhost:8080/jmwiki-&productversion;</systemitem>, and that's it!
 			</para>
 					<para>
 				For example, if you are using Tomcat 4.x or higher, one method to deploy VQWiki is to take the following steps:
@@ -264,7 +264,7 @@
 						
 						<listitem>
 							
-							<para>Move the downloaded WAR file (vqwiki-&productversion;.war) into the directory {$TOMCAT_HOME}/webapps</para>
+							<para>Move the downloaded WAR file (jmwiki-&productversion;.war) into the directory {$TOMCAT_HOME}/webapps</para>
 						
 						</listitem>
 						
@@ -276,7 +276,7 @@
 						
 						<listitem>
 							
-							<para>Browse to <systemitem>http://localhost:8080/vqwiki-&productversion;</systemitem>
+							<para>Browse to <systemitem>http://localhost:8080/jmwiki-&productversion;</systemitem>
 							
 							</para>
 						
@@ -463,7 +463,7 @@
 							<para>Shut down Tomcat</para>
 						</listitem>
 						<listitem>
-							<para>Edit {$TOMCAT_HOME}/webapps/vqwiki-&productversion;/WEB-INF/web.xml</para>
+							<para>Edit {$TOMCAT_HOME}/webapps/jmwiki-&productversion;/WEB-INF/web.xml</para>
 						</listitem>
 						<listitem>
 							<para>In web.xml you'll find a sample mapping and a comment for setting up a new Wiki servlet mapping.</para>
@@ -480,7 +480,7 @@
 							</para>
 						</listitem>
 						<listitem>
-							<para>Set a "friendly name" for the virtual wiki in {$TOMCAT_HOME}/webapps/vqwiki-&productversion;/WEB-INF/classes/ApplicationResources.properties.
+							<para>Set a "friendly name" for the virtual wiki in {$TOMCAT_HOME}/webapps/jmwiki-&productversion;/WEB-INF/classes/ApplicationResources.properties.
 					The entry should be of the format:</para>
 							<blockquote>
 								<para>
@@ -700,13 +700,13 @@
 			</table>
 			<section>
 				<title>Admin Password Recovery</title>
-				<para>If you misplace the admin password, you can force VQWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <filename>{installdir}/WEB-INF/classes/vqwiki.properties</filename> file (or another location if you have overridden the default) and change the key-value pair that reads <computeroutput>firstuse=false</computeroutput> to <computeroutput>firstuse=true</computeroutput>. Restart the application context or the application server and browse to StartingPoints. You will be shown the new admin password.</para>
+				<para>If you misplace the admin password, you can force VQWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <filename>{installdir}/WEB-INF/classes/jmwiki.properties</filename> file (or another location if you have overridden the default) and change the key-value pair that reads <computeroutput>firstuse=false</computeroutput> to <computeroutput>firstuse=true</computeroutput>. Restart the application context or the application server and browse to StartingPoints. You will be shown the new admin password.</para>
 			</section>
 		</chapter>
 		<chapter>
 			<title>Configuration "Under the Hood"</title>
 			<para>
-				The Admin Console writes to a properties file called <filename>vqwiki.properties</filename>. This file along with the other configuration files will be by default in <filename>{installdir}/WEB-INF/classes</filename>. The files must be in the root of the classpath becuase they are searched for using the ClassLoader. The VQWiki environment also has hard-coded default values for the properties to ensure that it will always start regardless of whether or not a properties file is available. Here's a summary of all the resource and property files:
+				The Admin Console writes to a properties file called <filename>jmwiki.properties</filename>. This file along with the other configuration files will be by default in <filename>{installdir}/WEB-INF/classes</filename>. The files must be in the root of the classpath becuase they are searched for using the ClassLoader. The VQWiki environment also has hard-coded default values for the properties to ensure that it will always start regardless of whether or not a properties file is available. Here's a summary of all the resource and property files:
 			</para>
 			<table>
 				<title>Configuration Files</title>
@@ -719,7 +719,7 @@
 					</thead>
 					<tbody>
 						<row>
-							<entry>vqwiki.properties</entry>
+							<entry>jmwiki.properties</entry>
 							<entry>System settings</entry>
 						</row>
 						<row>
@@ -744,7 +744,7 @@
 						</row>
 						<row>
 							<entry>actions.properties</entry>
-							<entry>This contains key-value mapping of action names to class names of classes that implement vqwiki.WikiAction. Plugins place mappings in this file.</entry>
+							<entry>This contains key-value mapping of action names to class names of classes that implement jmwiki.WikiAction. Plugins place mappings in this file.</entry>
 						</row>
 					</tbody>
 				</tgroup>
@@ -754,7 +754,7 @@
 			</para>
 			<para>
 				<computeroutput><![CDATA[
-        <Context path="/vqwiki" docBase="vqwiki-2.0" debug="0" >
+        <Context path="/jmwiki" docBase="jmwiki-2.0" debug="0" >
         	<!-- the rest of your context information -->
         	<env-entry>
         	  <description>VQWiki propertiesFile</description>
@@ -779,7 +779,7 @@ E.g., in Tomcat <filename>server.xml</filename>, it would look like this (note t
 </para>
 			<para>
 				<computeroutput><![CDATA[
-        <Context path="" docBase="vqwiki-classic" debug="0" >
+        <Context path="" docBase="jmwiki-classic" debug="0" >
 		<env-entry>
          		<description>logoImageName</description>
 		         <env-entry-name>logoImageName</env-entry-name>
@@ -795,7 +795,7 @@ or
 			<para>
 				<computeroutput><![CDATA[
 
-          <Context path="/vqwiki/mikewiki" docBase="vqwiki-classic" debug="0" >
+          <Context path="/jmwiki/mikewiki" docBase="jmwiki-classic" debug="0" >
           	<Environment name="logoImageName" type="java.lang.String"
                       value="http://images.sourceforge.net/head_bg_new.gif" override="false"/>
 	      </Context>
@@ -812,7 +812,7 @@ The index page and admin console still display the VQWiki logo, as always.
 </para>
 			<itemizedlist>
 				<listitem>
-					<para>By default, the file-system is set up in the user's home directory, in a sub-directory named "vqwiki". This location can be changed from the admin console.</para>
+					<para>By default, the file-system is set up in the user's home directory, in a sub-directory named "jmwiki". This location can be changed from the admin console.</para>
 				</listitem>
 				<listitem>
 					<para>Every topic gets written to one text file named as the topic with a "txt" extension</para>
@@ -838,17 +838,17 @@ The index page and admin console still display the VQWiki logo, as always.
 				Using MySQL as a back end turns VQWiki into a very quick Wiki indeed. The development goal is still drop-and-go, so VQWiki will build its own tables when you first connect it to a database: no scripts to run (except for creating the database of course - it has to connect to something).
 			</para>
 			<para>
-The default settings are for a database called "vqwiki" with a user called "vqwiki" with
-password "vqwiki". If you were to use those settings, and the MySQL server is running on
+The default settings are for a database called "jmwiki" with a user called "jmwiki" with
+password "jmwiki". If you were to use those settings, and the MySQL server is running on
 the same machine as the web container, the following two statements will prepare the database:
 </para>
 			<para>
 				<computeroutput>
-create database vqwiki;</computeroutput>
+create database jmwiki;</computeroutput>
 			</para>
 			<para>
 				<computeroutput>
-grant all on vqwiki.* to vqwiki@localhost identified by 'vqwiki';
+grant all on jmwiki.* to jmwiki@localhost identified by 'jmwiki';
 </computeroutput>
 			</para>
 			<para>
@@ -882,25 +882,25 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 			<para>
 				As mentioned earlier, the format lexer is the class responsible for tokenizing the user input and formatting it appropriately - e.g. bold, italics, lists and tables. The link lexer is responsible for the automagic linking as described earlier. It is possible to write a single lexer that does both, in which case the link lexer should be set to "null'.			</para>
 			<para>
-				VQWiki is distributed with three default lexers: <systemitem>vqwiki.lex.FormatLex</systemitem> and <systemitem>vqwiki.lex.LinkLex</systemitem> are designed to work together and should be adequate for most purposes.
+				VQWiki is distributed with three default lexers: <systemitem>jmwiki.lex.FormatLex</systemitem> and <systemitem>jmwiki.lex.LinkLex</systemitem> are designed to work together and should be adequate for most purposes.
 </para>
 			<para>
- A third lexer <systemitem>vqwiki.lex.FritzLex</systemitem> (written by Fritz Freiheit) does not require a separate link lexer, so the link lexer should be set to "null" in the admin console to use it. This lexer supports a wider range of heading styles than the default lexers.
+ A third lexer <systemitem>jmwiki.lex.FritzLex</systemitem> (written by Fritz Freiheit) does not require a separate link lexer, so the link lexer should be set to "null" in the admin console to use it. This lexer supports a wider range of heading styles than the default lexers.
 			</para>
 			<para>
- Another lexer shipped with VQWiki duplicates the syntax used by the popular Mediawiki software (see <ulink url="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</ulink>).  To use this lexer the Format lexer value should be set to vqwiki.lex.MediaWikiSyntax, the layout lexer should be set to vqwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".
+ Another lexer shipped with VQWiki duplicates the syntax used by the popular Mediawiki software (see <ulink url="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</ulink>).  To use this lexer the Format lexer value should be set to jmwiki.lex.MediaWikiSyntax, the layout lexer should be set to jmwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".
 			</para>
 			<para>
 				The lexers that come with VQWiki are generating using the JLex<footnote>
 					<para>JLex lexical analyser generator <ulink url="http://www.cs.princeton.edu/%7Eappel/modern/java/JLex/">http://www.cs.princeton.edu/%7Eappel/modern/java/JLex/</ulink>
 					</para>
-				</footnote> tool. However, you can write your lexer in any way you choose - so long as it implements the  <systemitem>vqwiki.lex.Lexer</systemitem> interface.
+				</footnote> tool. However, you can write your lexer in any way you choose - so long as it implements the  <systemitem>jmwiki.lex.Lexer</systemitem> interface.
 			</para>
 		</chapter>
 		<chapter>
 			<title>Extensible Lexers</title>
 			<para>
-				From version 2.4.0 onwards, VQWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, VQWiki is supplied with vqwiki.lex.JavaLex which uses the java2html<footnote>
+				From version 2.4.0 onwards, VQWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, VQWiki is supplied with jmwiki.lex.JavaLex which uses the java2html<footnote>
 					<para>Java2Html freeware Java source formatter <ulink url="http://www.java2html.de">http://www.java2html.de</ulink>
 					</para>
 				</footnote> library to format Java source code into pretty HTML. To see it in action, try entering the following into a Wiki topic:
@@ -915,13 +915,13 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 			]]></computeroutput>
 			</para>
 			<para>
-				You should see neatly formatted Java source code. The special tag format asks VQWiki to process all the text inside the tags using the class named as the value for "java" in the <filename>{installdir}/WEB-INF/classes/externallex.properties</filename> file. The default entry in this file is: <computeroutput>java=vqwiki.lex.JavaLex</computeroutput>.
+				You should see neatly formatted Java source code. The special tag format asks VQWiki to process all the text inside the tags using the class named as the value for "java" in the <filename>{installdir}/WEB-INF/classes/externallex.properties</filename> file. The default entry in this file is: <computeroutput>java=jmwiki.lex.JavaLex</computeroutput>.
 			</para>
 			<para>
-				To write your own external lexer, write a class that implements <classname>vqwiki.lex.ExternalLex</classname> interface (it's only one method) and put an entry with an appropriate tag name in the externallex.properties file.
+				To write your own external lexer, write a class that implements <classname>jmwiki.lex.ExternalLex</classname> interface (it's only one method) and put an entry with an appropriate tag name in the externallex.properties file.
 			</para>
 			<para>
-E.g. you might write a class called vqwiki.mylexers.CLex for formatting C code. You could then make an entry in the properties file of the form <computeroutput>c=vqwiki.mylexers.CLex</computeroutput>. Anything between the tags <computeroutput><![CDATA[[<c>][</c>]]]></computeroutput> would then be passed to the <methodname>process( String text )</methodname> method in the class <classname>vqwiki.mylexers.CLex</classname>.
+E.g. you might write a class called jmwiki.mylexers.CLex for formatting C code. You could then make an entry in the properties file of the form <computeroutput>c=jmwiki.mylexers.CLex</computeroutput>. Anything between the tags <computeroutput><![CDATA[[<c>][</c>]]]></computeroutput> would then be passed to the <methodname>process( String text )</methodname> method in the class <classname>jmwiki.mylexers.CLex</classname>.
 			</para>
 		</chapter>
 		<chapter>

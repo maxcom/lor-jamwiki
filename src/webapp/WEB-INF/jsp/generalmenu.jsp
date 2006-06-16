@@ -1,9 +1,9 @@
 <%@page import="
-    org.vqwiki.Environment,
-    org.vqwiki.WikiBase,
-    org.vqwiki.servlets.WikiServlet,
-    org.vqwiki.utils.Encryption,
-    org.vqwiki.utils.Utilities
+    org.jmwiki.Environment,
+    org.jmwiki.WikiBase,
+    org.jmwiki.servlets.WikiServlet,
+    org.jmwiki.utils.Encryption,
+    org.jmwiki.utils.Utilities
 " %>
 
 <div class="menu">

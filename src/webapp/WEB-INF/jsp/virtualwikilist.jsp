@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <%@include file="top.jsp"%>
 <c:out value="${topArea}" escapeXml="false"/>
 <%@include file="generalmenu.jsp"%>
-<vqwiki:virtual-wiki-list var="wikis"/>
+<jmwiki:virtual-wiki-list var="wikis"/>
 <table>
 <c:forEach items="${wikis}" var="wiki">
   <tr><td class="recent">

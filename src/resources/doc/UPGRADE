@@ -140,12 +140,12 @@ list of topic names lives in a topic called AdminOnlyTopics. Removing topic name
 this list will open them up to anyone.
 
 ***Upgrading from 2.4 etc to 2.5.0 BETA 2***
-The package structure has changed, lexers are now in their own package called vqwiki.lex. This
+The package structure has changed, lexers are now in their own package called jmwiki.lex. This
 means that if you are using the same properties file for 2.5.0 BETA2 as for eariler versions,
 you will need to go into the admin console and make the following changes:
-LinkLexer: vqwiki.LinkLex becomes vqwiki.lex.LinkLex
-FormatLexer: vqwiki.FormatLex becomes vqwiki.lex.FormatLex
-LayouLexer: vqwiki.LayoutLex becomes vqwiki.lex.LayoutLex
+LinkLexer: jmwiki.LinkLex becomes jmwiki.lex.LinkLex
+FormatLexer: jmwiki.FormatLex becomes jmwiki.lex.FormatLex
+LayouLexer: jmwiki.LayoutLex becomes jmwiki.lex.LayoutLex
 
 ***Upgrading from 2.2 to 2.3 or 2.4***
 File uploads are now stored and retrieved directly by a servlet, so they don't have to be
@@ -160,10 +160,10 @@ Wiki markup and the automagic linking) operates. The lexer is now loaded dynamic
 make it easier for people to create their own lexers. Previously you could select either
 "Standard" or "Fritz" from the admin console. Now if you wish to run the standard (it will
 default to this anyway) the settings are:
-Format Lexer: vqwiki.lex.FormatLex
-Link Lexer: vqwiki.lex.LinkLex
+Format Lexer: jmwiki.lex.FormatLex
+Link Lexer: jmwiki.lex.LinkLex
 If you are using the Fritz lexer, then you need to change this to:
-Format Lexer: vqwiki.lex.FritzLex
+Format Lexer: jmwiki.lex.FritzLex
 Link Lexer: null
 The Fritz lexer only makes one pass, so the second pass is unnecessary.
 

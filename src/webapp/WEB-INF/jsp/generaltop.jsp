@@ -1,15 +1,15 @@
 <%@ page import="
-    org.vqwiki.Environment,
-    org.vqwiki.WikiBase,
-    org.vqwiki.servlets.WikiServlet,
-    org.vqwiki.utils.Encryption,
-    org.vqwiki.utils.Utilities
+    org.jmwiki.Environment,
+    org.jmwiki.WikiBase,
+    org.jmwiki.servlets.WikiServlet,
+    org.jmwiki.utils.Encryption,
+    org.jmwiki.utils.Utilities
 " %>
 <%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
 <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
+<%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
 <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
-<vqwiki:setPageEncoding />
+<jmwiki:setPageEncoding />
 <html>
 <head>
   <f:setBundle basename="ApplicationResources"/>
@@ -27,7 +27,7 @@ if (Utilities.isFirstUse()) {
 }
 %>
 
-  <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/vqwiki.css' type="text/css" />
+  <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/jmwiki.css' type="text/css" />
   <title><c:out value="${title}"/></title>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html">
 </head>
@@ -42,11 +42,11 @@ if (Utilities.isFirstUse()) {
         </a>
       </td>
       <td width=10>&nbsp;</td>
-      <vqwiki:wikibase var="wb"/>
+      <jmwiki:wikibase var="wb"/>
       <c:if test="${wb.virtualWikiCount > 1}">
         <td>
           <b>Wiki :
-          <a class="subHeader" href='<vqwiki:path-root/>/Wiki?StartingPoints'>
+          <a class="subHeader" href='<jmwiki:path-root/>/Wiki?StartingPoints'>
           <c:out value="${virtualWiki}"/></a></b> :
         </td>
       </c:if>

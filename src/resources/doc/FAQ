@@ -1,4 +1,4 @@
-This file is here for historical purposes only. Please see the site at http://www.vqwiki.org
+This file is here for historical purposes only. Please see the site at http://www.jmwiki.org
 
 ---FAQ for the Very Quick Wiki last updated 30 September 2002---
 
@@ -43,7 +43,7 @@ back-ticks to do your linking.
 
 Thanks to Rod Morimoto:
 
-IE would handle the vqwiki pages fine but netscape wouldn't and instead
+IE would handle the jmwiki pages fine but netscape wouldn't and instead
 just show the html source.
 We modified DefaultType on httpd.conf from text/plain to text/html.
 Apparently Netscape interprets text/plain as simply that, while

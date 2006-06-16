@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
 <div class="menu" align="right">
-  <vqwiki:encode var="encodedTopic" value="${topic}"/>
+  <jmwiki:encode var="encodedTopic" value="${topic}"/>
   <c:if test="${!readOnly}">
         <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_EDIT %>'><f:message key="menu.editpage"/></a>
   </c:if>

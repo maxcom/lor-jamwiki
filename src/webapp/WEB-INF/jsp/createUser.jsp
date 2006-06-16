@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
 <%@ include file="top.jsp"%>
-<%@ page import="org.vqwiki.*"%>
+<%@ page import="org.jmwiki.*"%>
 <c:out value="${topArea}" escapeXml="false"/>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">

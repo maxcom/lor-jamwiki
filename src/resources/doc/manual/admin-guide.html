@@ -327,10 +327,10 @@ ALIGN="LEFT"
 VALIGN="MIDDLE"
 >The base URL for accessing VQWiki, e.g. <SPAN
 CLASS="systemitem"
->http://localhost:8080/vqwiki-2.7.1</SPAN
+>http://localhost:8080/jmwiki-2.7.1</SPAN
 >.
-									  With a WAR name of "vqwiki-2.7.1.war", the default local URL for Tomcat will be
-									http://localhost:8080/vqwiki-2.7.1
+									  With a WAR name of "jmwiki-2.7.1.war", the default local URL for Tomcat will be
+									http://localhost:8080/jmwiki-2.7.1
 
 
 									</TD
@@ -448,9 +448,9 @@ CLASS="BLOCKQUOTE"
 				The following assumes you have installed Tomcat on a Windows machine at {$TOMCAT_HOME} and that it is running with the default stand-alone port 8080.
 				We will also assume that the VQWiki WAR file is named <TT
 CLASS="filename"
->vqwiki-2.7.1.war</TT
+>jmwiki-2.7.1.war</TT
 >.
-				The name of the WAR file may be different in which case you should substitute your WAR file name for vqwiki-2.7.1.war.
+				The name of the WAR file may be different in which case you should substitute your WAR file name for jmwiki-2.7.1.war.
 				Finally, we will assume you have a Web browser available on the installation machine.
 			</P
 ><P
@@ -458,7 +458,7 @@ CLASS="filename"
 				of plonking the WAR file into the webapps directory.
 				Then browse to <SPAN
 CLASS="systemitem"
->http://localhost:8080/vqwiki-2.7.1</SPAN
+>http://localhost:8080/jmwiki-2.7.1</SPAN
 >, and that's it!
 			</P
 ><P
@@ -474,7 +474,7 @@ TYPE="1"
 ></LI
 ><LI
 ><P
->Move the downloaded WAR file (vqwiki-2.7.1.war) into the directory {$TOMCAT_HOME}/webapps</P
+>Move the downloaded WAR file (jmwiki-2.7.1.war) into the directory {$TOMCAT_HOME}/webapps</P
 ></LI
 ><LI
 ><P
@@ -484,7 +484,7 @@ TYPE="1"
 ><P
 >Browse to <SPAN
 CLASS="systemitem"
->http://localhost:8080/vqwiki-2.7.1</SPAN
+>http://localhost:8080/jmwiki-2.7.1</SPAN
 >
 
 							</P
@@ -702,7 +702,7 @@ TYPE="1"
 ></LI
 ><LI
 ><P
->Edit {$TOMCAT_HOME}/webapps/vqwiki-2.7.1/WEB-INF/web.xml</P
+>Edit {$TOMCAT_HOME}/webapps/jmwiki-2.7.1/WEB-INF/web.xml</P
 ></LI
 ><LI
 ><P
@@ -732,7 +732,7 @@ CLASS="BLOCKQUOTE"
 ></LI
 ><LI
 ><P
->Set a "friendly name" for the virtual wiki in {$TOMCAT_HOME}/webapps/vqwiki-2.7.1/WEB-INF/classes/ApplicationResources.properties.
+>Set a "friendly name" for the virtual wiki in {$TOMCAT_HOME}/webapps/jmwiki-2.7.1/WEB-INF/classes/ApplicationResources.properties.
 					The entry should be of the format:</P
 ><A
 NAME="AEN154"
@@ -1199,7 +1199,7 @@ NAME="AEN283"
 ><P
 >If you misplace the admin password, you can force VQWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <TT
 CLASS="filename"
->{installdir}/WEB-INF/classes/vqwiki.properties</TT
+>{installdir}/WEB-INF/classes/jmwiki.properties</TT
 > file (or another location if you have overridden the default) and change the key-value pair that reads <TT
 CLASS="computeroutput"
 >firstuse=false</TT
@@ -1219,7 +1219,7 @@ NAME="AEN289"
 ><P
 >&#13;				The Admin Console writes to a properties file called <TT
 CLASS="filename"
->vqwiki.properties</TT
+>jmwiki.properties</TT
 >. This file along with the other configuration files will be by default in <TT
 CLASS="filename"
 >{installdir}/WEB-INF/classes</TT
@@ -1257,7 +1257,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->vqwiki.properties</TD
+>jmwiki.properties</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
@@ -1321,7 +1321,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->This contains key-value mapping of action names to class names of classes that implement vqwiki.WikiAction. Plugins place mappings in this file.</TD
+>This contains key-value mapping of action names to class names of classes that implement jmwiki.WikiAction. Plugins place mappings in this file.</TD
 ></TR
 ></TBODY
 ></TABLE
@@ -1332,7 +1332,7 @@ VALIGN="MIDDLE"
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;        &#60;Context path="/vqwiki" docBase="vqwiki-2.0" debug="0" &#62;
+>&#13;        &#60;Context path="/jmwiki" docBase="jmwiki-2.0" debug="0" &#62;
         	&#60;!-- the rest of your context information --&#62;
         	&#60;env-entry&#62;
         	  &#60;description&#62;VQWiki propertiesFile&#60;/description&#62;
@@ -1370,7 +1370,7 @@ CLASS="filename"
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;        &#60;Context path="" docBase="vqwiki-classic" debug="0" &#62;
+>&#13;        &#60;Context path="" docBase="jmwiki-classic" debug="0" &#62;
 		&#60;env-entry&#62;
          		&#60;description&#62;logoImageName&#60;/description&#62;
 		         &#60;env-entry-name&#62;logoImageName&#60;/env-entry-name&#62;
@@ -1388,7 +1388,7 @@ CLASS="computeroutput"
 >&#13;				<TT
 CLASS="computeroutput"
 >&#13;
-          &#60;Context path="/vqwiki/mikewiki" docBase="vqwiki-classic" debug="0" &#62;
+          &#60;Context path="/jmwiki/mikewiki" docBase="jmwiki-classic" debug="0" &#62;
           	&#60;Environment name="logoImageName" type="java.lang.String"
                       value="http://images.sourceforge.net/head_bg_new.gif" override="false"/&#62;
 	      &#60;/Context&#62;
@@ -1414,7 +1414,7 @@ NAME="AEN339"
 ><UL
 ><LI
 ><P
->By default, the file-system is set up in the user's home directory, in a sub-directory named "vqwiki". This location can be changed from the admin console.</P
+>By default, the file-system is set up in the user's home directory, in a sub-directory named "jmwiki". This location can be changed from the admin console.</P
 ></LI
 ><LI
 ><P
@@ -1451,20 +1451,20 @@ NAME="AEN357"
 >&#13;				Using MySQL as a back end turns VQWiki into a very quick Wiki indeed. The development goal is still drop-and-go, so VQWiki will build its own tables when you first connect it to a database: no scripts to run (except for creating the database of course - it has to connect to something).
 			</P
 ><P
->&#13;The default settings are for a database called "vqwiki" with a user called "vqwiki" with
-password "vqwiki". If you were to use those settings, and the MySQL server is running on
+>&#13;The default settings are for a database called "jmwiki" with a user called "jmwiki" with
+password "jmwiki". If you were to use those settings, and the MySQL server is running on
 the same machine as the web container, the following two statements will prepare the database:
 </P
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;create database vqwiki;</TT
+>&#13;create database jmwiki;</TT
 >
 			</P
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;grant all on vqwiki.* to vqwiki@localhost identified by 'vqwiki';
+>&#13;grant all on jmwiki.* to jmwiki@localhost identified by 'jmwiki';
 </TT
 >
 			</P
@@ -1514,20 +1514,20 @@ NAME="AEN374"
 ><P
 >&#13;				VQWiki is distributed with three default lexers: <SPAN
 CLASS="systemitem"
->vqwiki.lex.FormatLex</SPAN
+>jmwiki.lex.FormatLex</SPAN
 > and <SPAN
 CLASS="systemitem"
->vqwiki.lex.LinkLex</SPAN
+>jmwiki.lex.LinkLex</SPAN
 > are designed to work together and should be adequate for most purposes.
 </P
 ><P
 >&#13; A third lexer <SPAN
 CLASS="systemitem"
->vqwiki.lex.FritzLex</SPAN
+>jmwiki.lex.FritzLex</SPAN
 > (written by Fritz Freiheit) does not require a separate link lexer, so the link lexer should be set to "null" in the admin console to use it. This lexer supports a wider range of heading styles than the default lexers.
 			</P
 ><P
->&#13;Another lexer shipped with VQWiki duplicates the syntax used by the popular Mediawiki software (see <a href="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</a>).  To use this lexer the Format lexer value should be set to vqwiki.lex.MediaWikiSyntax, the layout lexer should be set to vqwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".</P
+>&#13;Another lexer shipped with VQWiki duplicates the syntax used by the popular Mediawiki software (see <a href="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</a>).  To use this lexer the Format lexer value should be set to jmwiki.lex.MediaWikiSyntax, the layout lexer should be set to jmwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".</P
 ><P
 >&#13;				The lexers that come with VQWiki are generating using the JLex<A
 NAME="AEN383"
@@ -1535,7 +1535,7 @@ HREF="#FTN.AEN383"
 >[5]</A
 > tool. However, you can write your lexer in any way you choose - so long as it implements the  <SPAN
 CLASS="systemitem"
->vqwiki.lex.Lexer</SPAN
+>jmwiki.lex.Lexer</SPAN
 > interface.
 			</P
 ></DIV
@@ -1547,7 +1547,7 @@ NAME="AEN387"
 ></A
 >Extensible Lexers</H1
 ><P
->&#13;				From version 2.4.0 onwards, VQWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, VQWiki is supplied with vqwiki.lex.JavaLex which uses the java2html<A
+>&#13;				From version 2.4.0 onwards, VQWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. As an example, VQWiki is supplied with jmwiki.lex.JavaLex which uses the java2html<A
 NAME="AEN390"
 HREF="#FTN.AEN390"
 >[6]</A
@@ -1570,19 +1570,19 @@ CLASS="filename"
 >{installdir}/WEB-INF/classes/externallex.properties</TT
 > file. The default entry in this file is: <TT
 CLASS="computeroutput"
->java=vqwiki.lex.JavaLex</TT
+>java=jmwiki.lex.JavaLex</TT
 >.
 			</P
 ><P
 >&#13;				To write your own external lexer, write a class that implements <TT
 CLASS="classname"
->vqwiki.lex.ExternalLex</TT
+>jmwiki.lex.ExternalLex</TT
 > interface (it's only one method) and put an entry with an appropriate tag name in the externallex.properties file.
 			</P
 ><P
->&#13;E.g. you might write a class called vqwiki.mylexers.CLex for formatting C code. You could then make an entry in the properties file of the form <TT
+>&#13;E.g. you might write a class called jmwiki.mylexers.CLex for formatting C code. You could then make an entry in the properties file of the form <TT
 CLASS="computeroutput"
->c=vqwiki.mylexers.CLex</TT
+>c=jmwiki.mylexers.CLex</TT
 >. Anything between the tags <TT
 CLASS="computeroutput"
 >[&#60;c&#62;][&#60;/c&#62;]</TT
@@ -1591,7 +1591,7 @@ CLASS="methodname"
 >process( String text )</TT
 > method in the class <TT
 CLASS="classname"
->vqwiki.mylexers.CLex</TT
+>jmwiki.mylexers.CLex</TT
 >.
 			</P
 ></DIV

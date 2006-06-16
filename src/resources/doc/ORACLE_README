@@ -53,7 +53,7 @@ is the case.
 If VQWiki doesn't create the tables:
 
 Check the log files. If there are messages about SQL syntax errors,
-check the vqwiki.properties file in WEB-INF/classes and the
+check the jmwiki.properties file in WEB-INF/classes and the
 administration servlet to make sure the database-type is set to
 "oracle".
 

@@ -8,14 +8,14 @@ be displayed on the footer of all pages that use the custom logo.
 
 E.g., in Tomcat server.xml, it would look like this (note the override attribute):
 
-        <Context path="" docBase="vqwiki-classic" debug="0" >
+        <Context path="" docBase="jmwiki-classic" debug="0" >
           <Environment name="logoImageName" type="java.lang.String"
                       value="/images/tomcat-power.png" override="false"/>
 		</Context>
 
 or
 
-          <Context path="/vqwiki/mikewiki" docBase="vqwiki-classic" debug="0" >
+          <Context path="/jmwiki/mikewiki" docBase="jmwiki-classic" debug="0" >
           	<Environment name="logoImageName" type="java.lang.String"
                       value="http://images.sourceforge.net/head_bg_new.gif" override="false"/>
 	      </Context>

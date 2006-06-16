@@ -24,7 +24,7 @@ Do you want to modify...
 	*the StyleSheet? edit:StyleSheet
 
 ----
-http://www.vqwiki.org
+http://www.jmwiki.org
 ----
 If you have a spare moment, please let us know where and what you're using Very Quick Wiki for, and feel free to send us any comments or suggestions:
-mailto:support@vqwiki.org
+mailto:support@jmwiki.org

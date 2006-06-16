@@ -4,7 +4,7 @@
   <head>
     <title><fmt:message key="sitetitle"/> - ${model.topicname}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href='${pageContext.request.contextPath}/css/new_vqwiki.css' type="text/css" />
+    <link rel="stylesheet" href='${pageContext.request.contextPath}/css/new_jmwiki.css' type="text/css" />
   </head>
 
   <body>
@@ -12,7 +12,7 @@
   <div id="container">
 
     <div id="header">
-        <a class="logo" href="Wiki"><img src="http://www.vqwiki.org/wiki/images/logo.jpg"></a>
+        <a class="logo" href="Wiki"><img src="http://www.jmwiki.org/wiki/images/logo.jpg"></a>
 		<span class="title"><fmt:message key="sitetitle"/></span>
 	</div>
 

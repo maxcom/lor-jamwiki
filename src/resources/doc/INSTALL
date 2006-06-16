@@ -2,7 +2,7 @@
 
 ** NOTE THAT VQWIKI *DOES NOT* REQUIRE AN EXTERNAL DATABASE - DATABASE SUPPORT IS OPTIONAL **
 
-If you are upgrading from an ealier verions of vqwiki, please read the UPGRADE file.
+If you are upgrading from an ealier verions of jmwiki, please read the UPGRADE file.
 
 VQWiki is tested with Tomcat 4.1.24 (http://jakarta.apache.org/tomcat) and Sun JDK 1.4.2
 Users have also reported that works with the following:
@@ -19,14 +19,14 @@ Oracle 9i Application Server
 Theoretically it should work with any J2EE web container that support Servlets 2.3 (i.e.
 *not* Tomcat 3.x)
 
-If you do get it working with another container, please let us know: support@vqwiki.org
+If you do get it working with another container, please let us know: support@jmwiki.org
 
 -- Steps --
 1. Deploy VQWiki as you would any WAR file, in the case of Tomcat just put it in
    the webapps directory and start Tomcat up.
 
-2. With a WAR name of "vqwiki-2.7.8.war", the default local URL for Tomcat will
-   be http://localhost:8080/vqwiki-2.7.8
+2. With a WAR name of "jmwiki-2.7.8.war", the default local URL for Tomcat will
+   be http://localhost:8080/jmwiki-2.7.8
 
 If you are upgrading... remember to delete the old caches of the application. In Tomcat,
 delete the $TOMCAT_HOME/work directory. This will ensure there are no problems with cached

@@ -16,8 +16,8 @@ along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 --%>
 <%@ include file="top.jsp"%>
-<%@ page import="org.vqwiki.WikiException,
-                 org.vqwiki.servlets.WikiServletException"%>
+<%@ page import="org.jmwiki.WikiException,
+                 org.jmwiki.servlets.WikiServletException"%>
 <script language="JavaScript">
   function cancel(){
     history.go(-1);

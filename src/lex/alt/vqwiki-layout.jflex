@@ -1,4 +1,4 @@
-package org.vqwiki.parser.alt;
+package org.jmwiki.parser.alt;
 
 /*
 Very Quick Wiki - WikiWikiWeb clone
@@ -21,16 +21,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import org.vqwiki.parser.Lexer;
-import org.vqwiki.Environment;
-import org.vqwiki.WikiBase;
+import org.jmwiki.parser.Lexer;
+import org.jmwiki.Environment;
+import org.jmwiki.WikiBase;
 
 %%
 
 %public
 %type String
 %unicode
-%implements org.vqwiki.parser.Lexer
+%implements org.jmwiki.parser.Lexer
 %class VQWikiLayoutLex
 
 %init{

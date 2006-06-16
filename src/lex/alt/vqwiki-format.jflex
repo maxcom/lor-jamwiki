@@ -1,4 +1,4 @@
-package org.vqwiki.parser.alt;
+package org.jmwiki.parser.alt;
 
 
 /*
@@ -21,14 +21,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 import org.apache.log4j.Logger;
-import org.vqwiki.WikiBase;
+import org.jmwiki.WikiBase;
 
 %%
 
 %public
 %type String
 %unicode
-%implements org.vqwiki.parser.Lexer
+%implements org.jmwiki.parser.Lexer
 %class VQWikiFormatLex
 
 %init{

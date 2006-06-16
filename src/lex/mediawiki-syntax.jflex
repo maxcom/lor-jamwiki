@@ -1,4 +1,4 @@
-package org.vqwiki.parser;
+package org.jmwiki.parser;
 
 /*
  * This class implements the MediaWiki syntax (http://meta.wikimedia.org/wiki/Help:Editing).
@@ -36,16 +36,16 @@ import java.net.URLEncoder;
 import java.util.Hashtable;
 import java.util.Stack;
 import org.apache.log4j.Logger;
-import org.vqwiki.Environment;
-import org.vqwiki.WikiBase;
-import org.vqwiki.servlets.WikiServlet;
-import org.vqwiki.utils.JSPUtils;
+import org.jmwiki.Environment;
+import org.jmwiki.WikiBase;
+import org.jmwiki.servlets.WikiServlet;
+import org.jmwiki.utils.JSPUtils;
 
 %%
 
 %public
 %class MediaWikiSyntax
-%implements org.vqwiki.parser.Lexer
+%implements org.jmwiki.parser.Lexer
 %type String
 %unicode
 

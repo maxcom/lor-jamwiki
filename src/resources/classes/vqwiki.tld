@@ -4,10 +4,10 @@
 <taglib>
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.1</jsp-version>
-  <short-name>vqwiki</short-name>
+  <short-name>jmwiki</short-name>
   <tag>
     <name>separate-words</name>
-    <tag-class>org.vqwiki.tags.SeparateWordsTag</tag-class>
+    <tag-class>org.jmwiki.tags.SeparateWordsTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -16,7 +16,7 @@
   </tag>
   <tag>
     <name>current-user</name>
-    <tag-class>org.vqwiki.tags.CurrentUserTag</tag-class>
+    <tag-class>org.jmwiki.tags.CurrentUserTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -25,7 +25,7 @@
   </tag>
   <tag>
     <name>virtual-wiki-list</name>
-    <tag-class>org.vqwiki.tags.VirtualWikiListTag</tag-class>
+    <tag-class>org.jmwiki.tags.VirtualWikiListTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -34,7 +34,7 @@
   </tag>
   <tag>
     <name>is-admin</name>
-    <tag-class>org.vqwiki.tags.IsAdminTag</tag-class>
+    <tag-class>org.jmwiki.tags.IsAdminTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -43,7 +43,7 @@
   </tag>
   <tag>
     <name>encode</name>
-    <tag-class>org.vqwiki.tags.EncodeTag</tag-class>
+    <tag-class>org.jmwiki.tags.EncodeTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -56,12 +56,12 @@
   </tag>
   <tag>
     <name>setPageEncoding</name>
-    <tag-class>org.vqwiki.tags.PageEncodingTag</tag-class>
+    <tag-class>org.jmwiki.tags.PageEncodingTag</tag-class>
     <body-content>JSP</body-content>
   </tag>
   <tag>
     <name>wiki-version</name>
-    <tag-class>org.vqwiki.tags.WikiVersionTag</tag-class>
+    <tag-class>org.jmwiki.tags.WikiVersionTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -70,12 +70,12 @@
   </tag>
   <tag>
     <name>path-root</name>
-    <tag-class>org.vqwiki.tags.PathRootTag</tag-class>
+    <tag-class>org.jmwiki.tags.PathRootTag</tag-class>
     <body-content>JSP</body-content>
   </tag>
   <tag>
     <name>wikibase</name>
-    <tag-class>org.vqwiki.tags.WikiBaseTag</tag-class>
+    <tag-class>org.jmwiki.tags.WikiBaseTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -84,7 +84,7 @@
   </tag>
   <tag>
     <name>current-member</name>
-    <tag-class>org.vqwiki.tags.MemberTag</tag-class>
+    <tag-class>org.jmwiki.tags.MemberTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -93,7 +93,7 @@
   </tag>
   <tag>
     <name>checked</name>
-    <tag-class>org.vqwiki.tags.CheckedTag</tag-class>
+    <tag-class>org.jmwiki.tags.CheckedTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -102,7 +102,7 @@
   </tag>
   <tag>
     <name>resource</name>
-    <tag-class>org.vqwiki.tags.ResourceTag</tag-class>
+    <tag-class>org.jmwiki.tags.ResourceTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>key</name>
@@ -115,7 +115,7 @@
   </tag>
   <tag>
     <name>notification</name>
-    <tag-class>org.vqwiki.tags.NotificationTag</tag-class>
+    <tag-class>org.jmwiki.tags.NotificationTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>

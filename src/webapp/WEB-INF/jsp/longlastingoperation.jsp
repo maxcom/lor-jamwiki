@@ -2,11 +2,11 @@
 <head>
   <%@page errorPage="/WEB-INF/jsp/error.jsp" %>
   <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
-  <%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
+  <%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
   <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
   <f:setBundle basename="ApplicationResources"/>
 
-  <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/vqwiki.css' type="text/css" />
+  <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/jmwiki.css' type="text/css" />
   <title><c:out value="${progress}"/>% - <f:message key="longlasting.title"/></title>
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html">
   <script>

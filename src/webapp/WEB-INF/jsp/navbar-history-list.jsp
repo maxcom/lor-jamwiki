@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
       <c:forEach items="${historyThisPage}" var="history">
-        <vqwiki:encode value="${history}" var="encodedTopic"/>
+        <jmwiki:encode value="${history}" var="encodedTopic"/>
         <a href='<c:out value="Wiki?${encodedTopic}"/>'>
           <c:out value="${history}"/>
         </a> &gt;&gt;

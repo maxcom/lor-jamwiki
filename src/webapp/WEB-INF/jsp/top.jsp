@@ -1,15 +1,15 @@
 <%@ page import="
-    org.vqwiki.Environment,
-    org.vqwiki.WikiBase,
-    org.vqwiki.servlets.WikiServlet,
-    org.vqwiki.utils.JSPUtils,
-    org.vqwiki.utils.Utilities
+    org.jmwiki.Environment,
+    org.jmwiki.WikiBase,
+    org.jmwiki.servlets.WikiServlet,
+    org.jmwiki.utils.JSPUtils,
+    org.jmwiki.utils.Utilities
 " %>
 <%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
 <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
+<%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
 <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
-<vqwiki:setPageEncoding />
+<jmwiki:setPageEncoding />
 <html>
   <head>
     <f:setBundle basename="ApplicationResources"/>

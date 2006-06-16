@@ -1,4 +1,4 @@
-<%@ page import="org.vqwiki.*,java.util.*"%>
+<%@ page import="org.jmwiki.*,java.util.*"%>
 
     <div class="contents">
       <%=contents.toString()%>

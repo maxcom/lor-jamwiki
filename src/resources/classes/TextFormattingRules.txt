@@ -15,7 +15,7 @@ External References:
 	*A reference to a topic on the c2.com Wiki can be created with the form __c2:TopicName__
 	*A reference to Meatball Wiki can be created with __mb:TopicName__ E.g. c2:StartingPoints
 	*A reference to the Microsoft Knowledge Base can be made with __mskb:QXXXXXX__ where the QXXXXXX is the article number
-URLs: Images referred to by URL will appear in-line, other URLs will appear as hyperlinks, just use the usual syntax, i.e. http://www.vqwiki.org/wiki/
+URLs: Images referred to by URL will appear in-line, other URLs will appear as hyperlinks, just use the usual syntax, i.e. http://www.jmwiki.org/wiki/
 Formatting __between double underscores__ is ignored, unless the double underscore is preceded by a backslash: \
 __You can use tables by putting four hashes (####) on a line by themselves, then one table row of text per line with two hashes (##) after each cell (including the last cell in the row. End the table with four hashes by themselves.__
 Pre-formatted text can be displayed by leading with four at signs (@@@@) by themselves. Leave a blank line by itself to end the block, e.g.:

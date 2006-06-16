@@ -20,10 +20,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <head>
   <%@page errorPage="/WEB-INF/jsp/error.jsp" %>
   <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-  <%@ taglib uri="/WEB-INF/classes/vqwiki.tld" prefix="vqwiki" %>
+  <%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
   <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
   <f:setBundle basename="ApplicationResources"/>
-  <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/vqwiki.css' type="text/css" />
+  <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/jmwiki.css' type="text/css" />
   <style type="text/css">
     @media print { /* if the page is printed, hide the hr line */ 
 	  hr { width:0px; color:white; }

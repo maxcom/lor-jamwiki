@@ -16,8 +16,8 @@ along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page import="org.vqwiki.Environment,
-                 org.vqwiki.WikiBase"%>
+<%@ page import="org.jmwiki.Environment,
+                 org.jmwiki.WikiBase"%>
 <%@ include file="top.jsp"%>
 <c:out value="${topArea}" escapeXml="false"/>
 
