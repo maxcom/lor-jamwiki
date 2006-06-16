@@ -58,6 +58,7 @@ public class Environment {
 	public static final String PROP_BASE_FORCE_ENCODING = "force-encoding";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_SERVER_HOSTNAME = "wiki-server-hostname";
+	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_DB_DRIVER= "driver";
 	public static final String PROP_DB_PASSWORD = "password";
 	public static final String PROP_DB_TYPE = "database-type";
@@ -311,6 +312,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_FORCE_ENCODING, "ISO-8859-1");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "FILE");
 		defaults.setProperty(PROP_BASE_SERVER_HOSTNAME, "");
+		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
 		defaults.setProperty(PROP_DB_TYPE, "postgres");
