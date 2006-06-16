@@ -133,7 +133,6 @@ edit.appendtemplate=Pøipojit tuto ¹ablonu:
 edit.exception.notopic=jméno tématu musí být specifikováno
 edit.exception.pseudotopic=speciální název tématu, nelze editovat
 edit.notemplate=--¾ádná ¹ablona--
-edit.quickhelppage=quickhelp.jsp
 edit.spacetotabs=Mezery-na-tabulátory:
 edit.template.save1=Ulo¾it obsah jako ¹ablonu zvanou 
 edit.template.save2=místo:
@@ -234,7 +233,6 @@ search.search=Hledej
 searchresult.notfound="{0}" nebylo nalezeno v ¾ádném tématu.
 searchresult.title=Hledání "{0}"
 
-specialpages.quickhelp=QuickHelp
 specialpages.startingpoints=StartingPoints
 specialpages.textformattingrules=TextFormattingRules
 specialpages.leftMenu=LeftMenu

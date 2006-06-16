@@ -85,5 +85,3 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <%
 }
 %>
-<c:set var="quickhelp"><f:message key="edit.quickhelppage"/></c:set>
-<c:import url="${quickhelp}"/>
