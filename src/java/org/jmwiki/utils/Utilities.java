@@ -17,11 +17,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.jmwiki.utils;
 
+import java.lang.reflect.Method;
 import java.io.BufferedReader;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -634,5 +637,48 @@ public class Utilities {
 		}
 		String value = buffer.toString();
 		return value;
+	}
+
+	/**
+	 * Read a file and return its contents as a String.
+	 */
+	public static String readFile(String filename) throws Exception {
+		StringBuffer output = new StringBuffer();
+		InputStreamReader reader = null;
+		try {
+			File file = new File(filename);
+			if (file.exists()) {
+				// file passed in as full path
+				reader = new FileReader(file);
+			} else {
+				// look for file in resource directories
+				Class[] parameterTypes = null;
+				Method method = Thread.class.getMethod("getContextClassLoader", parameterTypes);
+				Object[] args = null;
+				ClassLoader loader = (ClassLoader)method.invoke(Thread.currentThread(), args);
+				InputStream stream = loader.getResourceAsStream(filename);
+				if (stream == null) {
+					throw new FileNotFoundException("File " + filename + " is not available for reading");
+				}
+				reader = new InputStreamReader(stream);
+			}
+			char[] buf = new char[4096];
+			int c;
+			while ((c = reader.read(buf, 0, buf.length)) != -1) {
+				output.append(buf, 0, c);
+			}
+			return output.toString();
+		} finally {
+			try {
+				if (reader != null) reader.close();
+			} catch (Exception e) {}
+		}
+	}
+
+	/**
+	 * Utility method for determining if a String is null or empty.
+	 */
+	public static boolean isEmpty(String value) {
+		return (value == null || value.length() == 0);
 	}
 }
