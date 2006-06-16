@@ -25,7 +25,6 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
-import org.jmwiki.servlets.beans.SelectorBean;
 import org.jmwiki.utils.Encryption;
 
 /**
