@@ -529,7 +529,7 @@
 				
 				<title>Default Topics</title>
 				
-				<para>Several topics are created by default the first time JMWiki is run, or when a new virtual wiki is accessed. These are TextFormattingRules (a description of the markup available by default), FritzTextFormattingRules (a description of the markup available in one of the other shipped lexers) and StartingPoints (a default start page).</para>
+				<para>Several topics are created by default the first time JMWiki is run, or when a new virtual wiki is accessed. These are TextFormattingRules (a description of the markup available by default), and StartingPoints (a default start page).</para>
 			
 			</formalpara>
 		
@@ -884,9 +884,6 @@ other than the localhost loopback, e.g. if MySQL is bound to a network card.
 			<para>
 				JMWiki is distributed with three default lexers: <systemitem>jmwiki.lex.FormatLex</systemitem> and <systemitem>jmwiki.lex.LinkLex</systemitem> are designed to work together and should be adequate for most purposes.
 </para>
-			<para>
- A third lexer <systemitem>jmwiki.lex.FritzLex</systemitem> (written by Fritz Freiheit) does not require a separate link lexer, so the link lexer should be set to "null" in the admin console to use it. This lexer supports a wider range of heading styles than the default lexers.
-			</para>
 			<para>
  Another lexer shipped with JMWiki duplicates the syntax used by the popular Mediawiki software (see <ulink url="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</ulink>).  To use this lexer the Format lexer value should be set to jmwiki.lex.MediaWikiSyntax, the layout lexer should be set to jmwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".
 			</para>
