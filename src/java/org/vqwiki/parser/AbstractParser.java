@@ -54,13 +54,4 @@ public abstract class AbstractParser {
 	 * @return HTML representation of the text for HTML export.
 	 */
 	public abstract String parseExportHTML(String raw, String virtualwiki) throws IOException;
-
-	/**
-	 * Get a list of Topics from a raw text (used for backlinks, todo-Topics)
-	 *
-	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @param virtualwiki A virtual wiki prefix (if any).
-	 * @return a List of all Topic names found in the text.
-	 */
-	public abstract List getTopics(String rawtext, String virtualwiki) throws Exception;
 }
