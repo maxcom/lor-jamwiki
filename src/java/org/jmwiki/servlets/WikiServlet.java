@@ -77,6 +77,7 @@ public class WikiServlet extends JMWikiServlet {
 	public static final String ACTION_SAVE_TEMPLATE = "save_template";
 	public static final String ACTION_SEARCH_RESULTS = "search_results";
 	public static final String ACTION_TODO_TOPICS = "todo_topics";
+	public static final String ACTION_DELETE = "action_delete";
 	public static final String PARAMETER_ACTION = "action";
 
 	/** Servlet context */
