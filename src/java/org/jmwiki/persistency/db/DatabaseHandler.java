@@ -148,12 +148,37 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	private static boolean dbInitialized() {
+		Connection conn = null;
+		boolean result = false;
+		try {
+			conn = DatabaseConnection.getConnection();
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("select 1 from VirtualWiki");
+			while (rs.next()) {
+				result = true;
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			// thrown if tables don't exist, so safe to ignore
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return result;
+	}
+
+	/**
+	 *
+	 */
 	public void setDefaults(Locale locale) throws Exception {
 		logger.debug("Setting defaults");
 		// resources for i18n
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		//set up tables
-		createTables();
+		if (!DatabaseHandler.dbInitialized()) {
+			//set up tables
+			createTables();
+		}
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();

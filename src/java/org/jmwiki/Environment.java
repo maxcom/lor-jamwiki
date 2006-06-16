@@ -275,10 +275,6 @@ public class Environment {
 		}
 		String file = null;
 		try {
-			if (propertyFile.equals(PROPERTY_FILE_NAME)) {
-				// now that defaults are loaded, encode the passwords
-				Encryption.togglePropertyEncryption(true);
-			}
 			file = getPropertyFileLocation("properties", propertyFile);
 			logger.info("Loading properties from " + file);
 			properties.load(new BufferedInputStream(new FileInputStream(file)));
@@ -300,8 +296,7 @@ public class Environment {
 		defaults.setProperty(PROP_ATTACH_UPLOAD_DIR, "upload");
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
-		// default false so that plain-text password can be set in the defaults
-		defaults.setProperty(PROP_BASE_ENCODE_PASSWORDS, "false");
+		defaults.setProperty(PROP_BASE_ENCODE_PASSWORDS, "true");
 		defaults.setProperty(PROP_BASE_FIRST_USE, "true");
 		// Tomcat assumes ISO-8859-1 in URI's. That's the reason why all Latin-1 languages can't handle special characters.
 		// However, even worse, there is no standard J2EE-way to handle this. We must set this here to ISO-8859-1.
