@@ -244,10 +244,6 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
 
 <NORMAL>{topicbacktick} {
   logger.debug( "{topicbacktick} '" + yytext() + "'" );
-  if( !Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_BACK_TICK) ) {
-    logger.debug( "No back-tick links allowed" );
-    return yytext();
-  }
   String link = yytext();
   link = link.substring(1);
   link = link.substring( 0, link.length() - 1).trim();
@@ -256,10 +252,6 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
 
 <NORMAL>{topicbackticktail} {
   logger.debug( "{topicbackticktail} '" + yytext() + "'" );
-  if( !Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_BACK_TICK) ) {
-    logger.debug( "No back-tick links allowed" );
-    return yytext();
-  }
   String link = yytext();
   link = link.substring(1);
   String desc = link.substring(link.indexOf('`') + 1).trim();

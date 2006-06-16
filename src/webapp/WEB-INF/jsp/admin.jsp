@@ -291,12 +291,6 @@ function onUserGroupType() {
       </td>
     </tr>
     <tr>
-      <td class="normal"><f:message key="admin.caption.allowbacktick"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_BACK_TICK %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_BACK_TICK) ? " checked" : "" %>>
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.newlinebreaks"/></td>
       <td class="normal">
         <input type="text" name="<%= Environment.PROP_PARSER_NEW_LINE_BREAKS %>" size="2" maxlength="2" value="<%= Environment.getIntValue(Environment.PROP_PARSER_NEW_LINE_BREAKS) %>">

@@ -126,10 +126,6 @@ public class AdministrationServlet extends JMWikiServlet {
 					request.getParameter("forceUserName") != null
 				);
 				Environment.setBooleanValue(
-					Environment.PROP_PARSER_ALLOW_BACK_TICK,
-					request.getParameter("allowBackTick") != null
-				);
-				Environment.setBooleanValue(
 					Environment.PROP_TOPIC_ALLOW_VWIKI_LIST,
 					request.getParameter("allowVirtualWikiList") != null
 				);

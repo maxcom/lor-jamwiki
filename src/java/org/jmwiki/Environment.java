@@ -36,6 +36,7 @@ import javax.naming.InitialContext;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
+import org.jmwiki.utils.Encryption;
 
 /**
  * Provides environmental information to the JMWiki system.
@@ -82,7 +83,6 @@ public class Environment {
 	public static final String PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY = "supress-notify-within-same-day";
 	public static final String PROP_FILE_ENCODING = "file-encoding";
 	public static final String PROP_FILE_HOME_DIR = "homeDir";
-	public static final String PROP_PARSER_ALLOW_BACK_TICK = "allowBackTick";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_NEW_LINE_BREAKS = "new-line-breaks";
@@ -274,6 +274,10 @@ public class Environment {
 		}
 		String file = null;
 		try {
+			if (propertyFile.equals(PROPERTY_FILE_NAME)) {
+				// now that defaults are loaded, encode the passwords
+				Encryption.togglePropertyEncryption(true);
+			}
 			file = getPropertyFileLocation("properties", propertyFile);
 			logger.info("Loading properties from " + file);
 			properties.load(new BufferedInputStream(new FileInputStream(file)));
@@ -295,7 +299,7 @@ public class Environment {
 		defaults.setProperty(PROP_ATTACH_UPLOAD_DIR, "upload");
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
-		// FIXME - this should eventually be made true
+		// default false so that plain-text password can be set in the defaults
 		defaults.setProperty(PROP_BASE_ENCODE_PASSWORDS, "false");
 		defaults.setProperty(PROP_BASE_FIRST_USE, "true");
 		// Tomcat assumes ISO-8859-1 in URI's. That's the reason why all Latin-1 languages can't handle special characters.
@@ -307,12 +311,11 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_FORCE_ENCODING, "ISO-8859-1");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "FILE");
 		defaults.setProperty(PROP_BASE_SERVER_HOSTNAME, "");
-		defaults.setProperty(PROP_DB_DRIVER, "org.gjt.mm.mysql.Driver");
-		// FIXME - default should be empty
-		defaults.setProperty(PROP_DB_PASSWORD, "jmwiki");
-		defaults.setProperty(PROP_DB_TYPE, "mysql");
-		defaults.setProperty(PROP_DB_URL, "jdbc:mysql://localhost/jmwiki");
-		defaults.setProperty(PROP_DB_USERNAME, "jmwiki");
+		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
+		defaults.setProperty(PROP_DB_PASSWORD, "");
+		defaults.setProperty(PROP_DB_TYPE, "postgres");
+		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/user");
+		defaults.setProperty(PROP_DB_USERNAME, "");
 		defaults.setProperty(PROP_DBCP_LOG_ABANDONED, "true");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");
 		defaults.setProperty(PROP_DBCP_MAX_IDLE, "3");
@@ -326,14 +329,13 @@ public class Environment {
 		defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
 		defaults.setProperty(PROP_DBCP_VALIDATION_QUERY, "SELECT 1");
 		defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
-		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "jmwiki-admin@localhost");
+		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "user@hostname");
 		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
 		defaults.setProperty(PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY, "false");
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
-		defaults.setProperty(PROP_PARSER_ALLOW_BACK_TICK, "true");
-		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "false");
+		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jmwiki.parser.MediaWikiParser");
 		defaults.setProperty(PROP_PARSER_NEW_LINE_BREAKS, "1");
 		defaults.setProperty(PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS, "false");
@@ -349,7 +351,7 @@ public class Environment {
 		defaults.setProperty(PROP_TOPIC_EDIT_TIME_OUT, "10");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_MAXIMUM_BACKLINKS, "20");
-		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "false");
+		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
 		defaults.setProperty(PROP_TOPIC_VERSIONING_ON, "true");
 		defaults.setProperty(PROP_USERGROUP_BASIC_SEARCH, "ou=users,dc=mycompany,dc=com");
 		defaults.setProperty(PROP_USERGROUP_DETAILVIEW, "@@cn@@</a><br/>@@title@@<br/>Telefon: @@telephoneNumber@@<br/>Mobil: @@mobile@@<br/>@@ou@@ / @@businessCategory@@<br/><a href=\"mailto:@@mail@@\">@@mail@@</a> <br/>");

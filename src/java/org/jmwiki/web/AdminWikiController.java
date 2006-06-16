@@ -246,10 +246,6 @@ public class AdminWikiController implements Controller {
 				request.getParameter(Environment.PROP_TOPIC_FORCE_USERNAME) != null
 			);
 			Environment.setBooleanValue(
-				Environment.PROP_PARSER_ALLOW_BACK_TICK,
-				request.getParameter(Environment.PROP_PARSER_ALLOW_BACK_TICK) != null
-			);
-			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_ALLOW_VWIKI_LIST,
 				request.getParameter(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) != null
 			);
