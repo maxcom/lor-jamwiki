@@ -82,7 +82,7 @@ public class WikiServlet extends JMWikiServlet {
 	/** Servlet context */
 	// why static? Better not to do that.
 	private static ServletContext servletContext = null;
-	private Map cachedContents = new HashMap();
+	private static Map cachedContents = new HashMap();
 
 	/**
 	 *
@@ -269,7 +269,7 @@ public class WikiServlet extends JMWikiServlet {
 	/**
 	 *
 	 */
-	private void buildLayout(HttpServletRequest request, String virtualWiki) {
+	public static void buildLayout(HttpServletRequest request, String virtualWiki) {
 		// build the layout contents
 		ResourceBundle messages = getMessages(request.getLocale());
 		addIfNotEmpty(
@@ -301,7 +301,7 @@ public class WikiServlet extends JMWikiServlet {
 	/**
 	 *
 	 */
-	private ResourceBundle getMessages(Locale locale) {
+	private static ResourceBundle getMessages(Locale locale) {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		return messages;
 	}
@@ -503,7 +503,7 @@ public class WikiServlet extends JMWikiServlet {
 	/**
 	 *
 	 */
-	private void addIfNotEmpty(HttpServletRequest request, String name, String content) {
+	private static void addIfNotEmpty(HttpServletRequest request, String name, String content) {
 		logger.debug("addIfNotEmpty called for " + name + "/" + content);
 		if (content == null) {
 			logger.debug("content provided is null, returning");
@@ -554,7 +554,7 @@ public class WikiServlet extends JMWikiServlet {
 	/**
 	 *
 	 */
-	private String getCached(String virtualWiki, String topic, WikiReader wr) {
+	private static String getCached(String virtualWiki, String topic, WikiReader wr) {
 		String content = (String) cachedContents.get(virtualWiki + "-" + topic);
 		if (content == null) {
 			try {
@@ -580,7 +580,7 @@ public class WikiServlet extends JMWikiServlet {
 	 * @param topic	   the topic name
 	 * @return the topic contents
 	 */
-	private String getCachedContent(String virtualWiki, String topic) {
+	private static String getCachedContent(String virtualWiki, String topic) {
 		return getCached(virtualWiki, topic, cookedReader);
 	}
 
@@ -593,7 +593,7 @@ public class WikiServlet extends JMWikiServlet {
 	 * @param topic	   the topic name
 	 * @return the topic contents
 	 */
-	private String getCachedRawContent(String virtualWiki, String topic) {
+	private static String getCachedRawContent(String virtualWiki, String topic) {
 		return getCached(virtualWiki, topic, rawReader);
 	}
 
