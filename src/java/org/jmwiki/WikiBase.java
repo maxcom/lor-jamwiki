@@ -28,9 +28,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -41,9 +39,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-
 import org.apache.log4j.Logger;
-
 import org.jmwiki.persistency.PersistencyHandler;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.persistency.db.DatabaseChangeLog;
@@ -61,9 +57,6 @@ import org.jmwiki.persistency.file.FileVersionManager;
 import org.jmwiki.persistency.file.FileWikiMembers;
 import org.jmwiki.parser.AbstractParser;
 import org.jmwiki.parser.alt.BackLinkLex;
-import org.jmwiki.parser.alt.LexExtender;
-import org.jmwiki.parser.Lexer;
-import org.jmwiki.parser.TableOfContents;
 import org.jmwiki.users.LdapUsergroup;
 import org.jmwiki.users.NoUsergroup;
 import org.jmwiki.users.Usergroup;
@@ -252,18 +245,9 @@ public class WikiBase {
 	}
 
 	/**
-	 * Register a topic listener
-	 *
-	 * @param listener listener
-	 */
-	public void addTopicListener(TopicListener listener) {
-		if (!this.topicListeners.contains(listener)) {
-			this.topicListeners.add(listener);
-		}
-	}
-
-	/**
 	 * Finds a default topic file and returns the contents
+	 *
+	 * FIXME - this doesn't belong here
 	 */
 	public static String readDefaultTopic(String topicName) throws Exception {
 		String resourceName = "/" + topicName + ".txt";
@@ -463,32 +447,6 @@ public class WikiBase {
 	}
 
 	/**
-	 * Get recent changes for a given number of days
-	 *
-	 * @deprecated This method seems to be unused and will be removed.
-	 */
-	public Collection listRecentChanges(String virtualWiki, int numDays) throws Exception {
-		TreeSet changes = new TreeSet();
-		try {
-			ChangeLog changeLog = this.getChangeLogInstance();
-			Calendar cal = Calendar.getInstance();
-			for (int i = 0; i <= numDays; i++) {
-				Date aDate = cal.getTime();
-				Collection col = changeLog.getChanges(virtualWiki, aDate);
-				if (col != null) {
-					changes.addAll(col);
-				}
-			}
-			cal.add(Calendar.DATE, -1);
-		} catch (IOException e1) {
-			logger.error(e1);
-		} catch (ClassNotFoundException e1) {
-			logger.error(e1);
-		}
-		return changes;
-	}
-
-	/**
 	 * TODO: DOCUMENT ME!
 	 *
 	 * @param virtualWiki TODO: DOCUMENT ME!
@@ -531,15 +489,6 @@ public class WikiBase {
 	 */
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		this.handler.removeReadOnlyTopic(virtualWiki, topicName);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @return TODO: DOCUMENT ME!
-	 */
-	protected String fileBase() {
-		return Environment.getValue(Environment.PROP_FILE_HOME_DIR);
 	}
 
 	/**
@@ -761,10 +710,6 @@ public class WikiBase {
 		return messages;
 	}
 
-
-
-// NEW AND OR UPDATED METHODS FOR RELEASE 3
-
 	/**
 	 * This method retrieves a topic's name from the URI. The URI is parsed based on the URI below:
 	 *
@@ -778,7 +723,6 @@ public class WikiBase {
 	public String getTopicFromURI(String uri) {
 		logger.debug("Attempting to retrieve topic name from URI");
 		String topic = null;
-
 		uri = uri.trim();
 		if (uri == null || uri.length() <= 0 || uri.equals("")) {
 			logger.fatal("URI string is empty");
@@ -796,10 +740,8 @@ public class WikiBase {
 				}
 			}
 		}
-
 		return topic;
 	}
-
 
 	/**
 	 * This method retrieves a virtual wiki's name from the URI. The URI is parsed based on the URI below:
@@ -815,7 +757,6 @@ public class WikiBase {
 	public String getVirtualWikiFromURI(String uri, String contextpath) {
 		logger.debug("Attempting to retrieve virtual wiki name from URI");
 		String vwiki = null;
-
 		uri = uri.trim();
 		if ((uri == null || uri.length() <= 0 || uri.equals("")) || (contextpath == null || contextpath.length() <= 0 || contextpath.equals(""))) {
 			logger.fatal("URI or contextpath string is empty");
@@ -829,7 +770,6 @@ public class WikiBase {
 				logger.info("Retrieved virtual wiki from URI as: " + vwiki);
 			}
 		}
-
 		return vwiki;
 	}
 }
