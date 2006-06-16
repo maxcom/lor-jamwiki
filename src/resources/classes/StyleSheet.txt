@@ -115,6 +115,25 @@ li {
 	font-size: 100%;
 }
 
+/* main content area */
+
+#contents {
+	border-right: 1px solid #999999;
+	border-left: 1px solid #999999;
+	border-bottom: 1px solid #999999;
+	padding: 8px;
+}
+td.main-content {
+	font-size: 80%;
+	vertical-align: top;
+}
+#contents-header {
+	font-weight: bold;
+	font-size: 200%;
+	padding: 0.2em 0em 0.2em 0em;
+	border-bottom: 1px solid #999999;
+}
+
 /* navbar elements */
 
 td.navigation {
@@ -150,17 +169,91 @@ td.navigation {
 	text-align: center;
 }
 
-/* older stuff */
+/* diff page */
 
-.contents {
-  font-family: Verdana, Helvetica, sans-serif;
-  background: #ffffff;
-  margin-right: 0%;
-  margin-left: 0%;
-  padding: 1.5em;
-  border: 1px solid;
-  border-color: #bbbbbb;
+table.diff {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	width: 100%;
 }
+td.diff-delete {
+	background: #ee7777;
+	font-weight: bold;
+	padding: 0.1em;
+	width: 49%;
+}
+td.diff-add {
+	background: #77ee77;
+	font-weight: bold;
+	padding: 0.1em;
+	width: 49%;
+}
+td.diff-unchanged {
+	background: #dddddd;
+	padding: 0.1em;
+	width: 49%;
+}
+td.diff-indicator {
+	font-weight: bold;
+	padding: 0.1em;
+	text-align: right;
+	width: 1%;
+}
+td.diff-no-indicator {
+	padding: 0.1em;
+	width: 1%;
+}
+td.diff-line {
+	padding: 0.5em 0.1em 0.1em 0.1em;
+	font-weight: bold;
+}
+
+/* table of contents */
+
+table.toc {
+	 border: 1px solid #aaaaaa;
+	 margin: 0.2em 0em 0.2em 0em;
+	 padding: 0.5em 0.3em 0.5em 0em;
+}
+
+/* tab menu */
+
+#menu-tab {
+	margin-left: 0%;
+	margin-right: 0%;
+	color: #dddddd;
+}
+table.menu-tab-table {
+	border: 0px;
+	border-collapse: collapse;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+td.menu-tab-nonselected {
+	color: blue;
+	border: 1px solid #999999;
+	font-size: 85%;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	width: 9em;
+}
+td.menu-tab-space {
+	border-bottom: 1px solid #999999;
+	font-size: 10%;
+	margin: 0;
+	padding: 0;
+	width: 5px;
+}
+td.menu-tab-close {
+	border-bottom: 1px solid #999999;
+	margin: 0;
+	padding: 0;
+}
+
+/* older stuff */
 
 .title {
   background: #ffffff;
@@ -211,10 +304,6 @@ td.navigation {
   font-size: 12px ; color: #ff0000;
 }
 
-th, td {
-  font-size: smaller;
-}
-
 td.recent,th.recent{
   background: #ffffff
 }
@@ -226,52 +315,4 @@ td.recent,th.recent{
 
 .searchresult{
   background-color: gainsboro
-}
-
-/* diff page */
-
-table.diff {
-	border: 0;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-}
-td.diff-delete {
-	background: #ee7777;
-	font-weight: bold;
-	padding: 0.1em;
-	width: 49%;
-}
-td.diff-add {
-	background: #77ee77;
-	font-weight: bold;
-	padding: 0.1em;
-	width: 49%;
-}
-td.diff-unchanged {
-	background: #dddddd;
-	padding: 0.1em;
-	width: 49%;
-}
-td.diff-indicator {
-	font-weight: bold;
-	padding: 0.1em;
-	text-align: right;
-	width: 1%;
-}
-td.diff-no-indicator {
-	padding: 0.1em;
-	width: 1%;
-}
-td.diff-line {
-	padding: 0.5em 0.1em 0.1em 0.1em;
-	font-weight: bold;
-}
-
-/* table of contents */
-
-table.toc {
-	 border: 1px solid #aaaaaa;
-	 margin: 0.2em 0em 0.2em 0em;
-	 padding: 0.5em 0.3em 0.5em 0em;
 }

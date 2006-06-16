@@ -16,25 +16,31 @@ along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<div class="menu">
-  <jmwiki:encode var="encodedTopic" value="${topic}"/>
-	<table style="width: 100%; border: 0px solid;">
-		<tr>
-			<td class="menu" align=left>
-			  <c:if test="${!readOnly}">
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_EDIT %>'><f:message key="menu.editpage"/></a>
-		          | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_ATTACH %>'><f:message key="menu.attach"/></a>
-			  </c:if>
-			  <c:if test="${readOnly}">
-			      | <span class="menuinactive"><f:message key="menu.editpage"/></span>
-		          | <span class="menuinactive"><f:message key="menu.attach"/></span>
-			  </c:if>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?RecentChanges'><f:message key="generalmenu.recentchanges"/></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>'><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?WikiSearch'><f:message key="generalmenu.search"/></a>
-			      | <a href='<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_PRINT %>' target="_blank"><f:message key="menu.printablepage"/></a>
-				  |
-			</td>
-		</tr>
-	</table>
+<div id="menu-tab">
+<jmwiki:encode var="encodedTopic" value="${topic}"/>
+<table class="menu-tab-table">
+<tr>
+	<td class="menu-tab-space">&#160;</td>
+<c:if test="${!special}">
+	<%-- FIXME: hard coding --%>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}"/>Wiki?<c:out value="${encodedTopic}"/>"><f:message key="menu.article" /></a></td>
+	<td class="menu-tab-space">&#160;</td>
+	<c:if test="${!readOnly}">
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_EDIT %>"><f:message key="menu.editpage"/></a></td>
+	<td class="menu-tab-space">&#160;</td>
+	</c:if>
+	<c:if test="${!readOnly}">
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_HISTORY %>&type=all"><f:message key="menu.history"/></a></td>
+	<td class="menu-tab-space">&#160;</td>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_ATTACH %>"><f:message key="menu.attach"/></a></td>
+	</c:if>
+	<td class="menu-tab-space">&#160;</td>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}"/>Wiki?topic=<c:out value="${encodedTopic}"/>&action=<%= WikiServlet.ACTION_PRINT %>" target="_blank"><f:message key="menu.printablepage"/></a></td>
+</c:if>
+<c:if test="${special}">
+	<td class="menu-tab-nonselected"><f:message key="menu.special" /></td>
+</c:if>
+	<td class="menu-tab-close">&#160;</td>
+</tr>
+</table>
 </div>

@@ -40,12 +40,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		</div>
 	</td>
 	<td class="main-content">
-	        <jmwiki:encode var="encodedTitle" value='"${title}"'/>
-	        <%@ include file="top-menu.jsp"%>
-	        <%@ include file="navbar-virtual-wiki.jsp"%>
-	        <%@ include file="navbar-history-list.jsp"%>
-	        <div class="contents" >
-	        <span class="pageHeader"><c:out value="${title}"/></span><p/>
+		<jmwiki:encode var="encodedTitle" value='"${title}"'/>
+		<%@ include file="top-menu.jsp"%>
+		<div id="contents" >
+		<%@ include file="navbar-virtual-wiki.jsp"%>
+		<%@ include file="navbar-history-list.jsp"%>
+		<div id="contents-header"><c:out value="${title}"/></div>
 <%
 // FIXME - this needs to be cleaned up
 String action = (String)request.getAttribute("action");
