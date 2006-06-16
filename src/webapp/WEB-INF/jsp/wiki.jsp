@@ -41,46 +41,67 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </c:if>
     <td valign="top">
       <%@ include file="top-menu.jsp"%>
-      <div class="contents" >
         <div class="contents" >
+          <span class="pageHeader"><c:out value="${title}"/></span><p/>
 <%
-if (Environment.getIntValue(Environment.PROP_USERGROUP_TYPE) != 0) {
+// FIXME - this needs to be cleaned up
+String action = (String)request.getAttribute("action");
+if (action == null) action = "";
+if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
-		    <c:choose>
-			  <c:when test="${!empty lastAuthorDetails}">
-			    <div class="authordetails">
-			      <c:out value="${lastAuthorDetails}" escapeXml="false"/>
-			    </div>
-			  </c:when>
-			  <c:otherwise>
-			    <c:if test="${!empty lastAuthor}">
- 			      <div class="authordetails">
-			        <c:out value="${lastAuthor}"/>
-			      </div>
-			    </c:if>
-			  </c:otherwise>
-			</c:choose>
+		<%@ include file="admin.jsp" %>
 <%
-}
+} else if (action.equals(WikiServlet.ACTION_ATTACH)) {
 %>
-          <span class="pageHeader">
-            <a href='<jmwiki:path-root/>/Wiki?action=<%= WikiServlet.ACTION_SEARCH %>&text=<c:out value="${encodedTitle}"/>'>
+		<%@ include file="attach.jsp" %>
 <%
-if (Environment.getBooleanValue(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS)) {
+} else if (action.equals(WikiServlet.ACTION_DIFF)) {
 %>
-                  <jmwiki:separate-words value="${title}" />
+		<%@ include file="diff.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_EDIT) || action.equals(WikiServlet.ACTION_PREVIEW)) {
+%>
+		<%@ include file="edit.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_EDIT_USER)) {
+%>
+		<%@ include file="createUser.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_HISTORY)) {
+%>
+		<%@ include file="history.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_LOCKLIST)) {
+%>
+		<%@ include file="locklist.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_LOGIN)) {
+%>
+		<%@ include file="login.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_RECENT_CHANGES)) {
+%>
+		<%@ include file="recentChanges.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_SEARCH)) {
+%>
+		<%@ include file="search.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_SEARCH_RESULTS)) {
+%>
+		<%@ include file="searchResults.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_TODO_TOPICS) || action.equals(WikiServlet.ACTION_ORPHANED_TOPICS)) {
+%>
+		<%@ include file="allTopics.jsp" %>
 <%
 } else {
 %>
-                  <c:out value="${title}"/>
+		<div id="content-article"><c:out value="${contents}" escapeXml="false"/></div>
 <%
 }
 %>
-            </a>
-          </span><p/>
-          <c:out value="${contents}" escapeXml="false"/>
         </div>
-      </div>
       <%@ include file="bottom-menu.jsp"%>
     </td>
   </tr>

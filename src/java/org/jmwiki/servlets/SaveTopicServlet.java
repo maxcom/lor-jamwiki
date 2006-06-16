@@ -86,7 +86,8 @@ public class SaveTopicServlet extends JMWikiServlet {
 				request.setAttribute("title", title);
 				request.setAttribute("templateNames", templateNames);
 				request.setAttribute("topic", topic);
-				dispatch("/WEB-INF/jsp/edit.jsp", request, response);
+				request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_EDIT);
+				dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 				return;
 			} else {
 				Collection templateNames = null;
@@ -103,7 +104,8 @@ public class SaveTopicServlet extends JMWikiServlet {
 				request.setAttribute("title", title);
 				request.setAttribute("templateNames", templateNames);
 				request.setAttribute("topic", topic);
-				dispatch("/WEB-INF/jsp/edit.jsp", request, response);
+				request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_EDIT);
+				dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 				return;
 			}
 		}

@@ -67,6 +67,7 @@ public class DiffServlet extends JMWikiServlet {
 			error(request, response, e);
 			return;
 		}
-		dispatch("/WEB-INF/jsp/diff.jsp", request, response);
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_DIFF);
+		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 }

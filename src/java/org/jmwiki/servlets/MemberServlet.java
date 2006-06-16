@@ -122,7 +122,8 @@ public class MemberServlet extends JMWikiServlet {
 			}
 		}
 		request.setAttribute("knownEmail", usergroup.getKnownEmailById(user));
-		dispatch("/WEB-INF/jsp/member.jsp", request, response);
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
+		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 
 	/**

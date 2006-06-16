@@ -47,7 +47,8 @@ public class RecentChangesServlet extends JMWikiServlet {
 														   request.getLocale());
 		request.setAttribute("title", messages.getString("recentchanges.title"));
 		request.setAttribute("changes", all);
-		dispatch("/WEB-INF/jsp/recentChanges.jsp", request, response);
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_RECENT_CHANGES);
+		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 
 	/**

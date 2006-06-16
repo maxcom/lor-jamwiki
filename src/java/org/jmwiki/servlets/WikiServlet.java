@@ -77,6 +77,7 @@ public class WikiServlet extends JMWikiServlet {
 	public static final String ACTION_SAVE_TEMPLATE = "save_template";
 	public static final String ACTION_SEARCH_RESULTS = "search_results";
 	public static final String ACTION_TODO_TOPICS = "todo_topics";
+	public static final String PARAMETER_ACTION = "action";
 
 	/** Servlet context */
 	// why static? Better not to do that.
@@ -158,7 +159,7 @@ public class WikiServlet extends JMWikiServlet {
 		RequestDispatcher dispatch;
 		// make decision on action if one exists
 		String action = request.getParameter("action");
-		logger.debug("action: " + action);
+		logger.info("Servlet action: " + action);
 		if (action != null) {
 			String actionRedirect = PseudoTopicHandler.getInstance().getRedirectURL(action);
 			if (action.equals(ACTION_EDIT)) {
@@ -182,6 +183,29 @@ public class WikiServlet extends JMWikiServlet {
 				return;
 			} else if (actionRedirect != null) {
 				logger.debug("Using redirect from pseudotopics actions: " + actionRedirect);
+				request.setAttribute(WikiServlet.PARAMETER_ACTION, action);
+				// FIXME - this is a mess, clean it up
+				if (action.equals("WikiLockList")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_LOCKLIST);
+				} else if (action.equals("RecentChanges")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_RECENT_CHANGES);
+				} else if (action.equals("WikiSearch")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_SEARCH);
+				} else if (action.equals("SetUsername")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
+				} else if (action.equals("ToDoWikiTopics")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
+				} else if (action.equals("OrphanedWikiTopics")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
+				} else if (action.equals("AllWikiTopics")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_ALL_TOPICS);
+				} else if (action.equals("WikiLogin")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_LOGIN);
+				} else if (action.equals("RSS")) {
+					request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
+				} else {
+					logger.info("Unknown PseudoTopic action " + action);
+				}
 				dispatch(actionRedirect, request, response);
 				return;
 			} else if (ActionManager.getInstance().actionExists(action)) {
@@ -212,6 +236,28 @@ public class WikiServlet extends JMWikiServlet {
 		response.setContentType("text/html");
 		String pseudotopicRedirect = PseudoTopicHandler.getInstance().getRedirectURL(topic);
 		if (pseudotopicRedirect != null) {
+			// FIXME - this is a mess, clean it up
+			if (topic.equals("WikiLockList")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_LOCKLIST);
+			} else if (topic.equals("RecentChanges")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_RECENT_CHANGES);
+			} else if (topic.equals("WikiSearch")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_SEARCH);
+			} else if (topic.equals("SetUsername")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
+			} else if (topic.equals("ToDoWikiTopics")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
+			} else if (topic.equals("OrphanedWikiTopics")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
+			} else if (topic.equals("AllWikiTopics")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_ALL_TOPICS);
+			} else if (topic.equals("WikiLogin")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_LOGIN);
+			} else if (topic.equals("RSS")) {
+				request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
+			} else {
+				logger.info("Unknown PseudoTopic topic " + topic);
+			}
 			PseudoTopicHandler.getInstance().setAttributes(topic, request);
 			dispatch(pseudotopicRedirect, request, response);
 			return;
@@ -282,7 +328,8 @@ public class WikiServlet extends JMWikiServlet {
 						"redirect",
 						buffer.toString()
 					);
-					dispatch("/WEB-INF/jsp/login.jsp", request, response);
+					request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+					dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 					return;
 				}
 			}
@@ -618,6 +665,7 @@ public class WikiServlet extends JMWikiServlet {
 				// TODO: Simplify this servlet.
 				checkActionAndRemoveCachedContentsIfNeeded(action, request.getLocale());
 				logger.debug("Using redirect from pseudotopics actions: " + actionRedirect);
+				request.setAttribute(PARAMETER_ACTION, action);
 				dispatch(actionRedirect, request, response);
 				return;
 			} else if (action.equals(ACTION_SEARCH)) {

@@ -47,6 +47,7 @@ public class AttachServlet extends JMWikiServlet {
 			error(request, response, e);
 			return;
 		}
-		dispatch("/WEB-INF/jsp/attach.jsp", request, response);
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ATTACH);
+		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 }

@@ -36,7 +36,8 @@ public class HistoryServlet extends JMWikiServlet {
 			try {
 				Collection versions = manager.getAllVersions(virtualWiki, topicName);
 				request.setAttribute("versions", versions);
-				dispatch("/WEB-INF/jsp/history.jsp", request, response);
+				request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
+				dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 			} catch (Exception e) {
 				error(request, response, e);
 				return;
@@ -57,7 +58,8 @@ public class HistoryServlet extends JMWikiServlet {
 				error(request, response, e);
 				return;
 			}
-			dispatch("/WEB-INF/jsp/history.jsp", request, response);
+			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
+			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 		}
 	}
 }

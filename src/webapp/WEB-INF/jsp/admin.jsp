@@ -1,29 +1,4 @@
-<%--
-Java MediaWiki - WikiWikiWeb clone
-Copyright (C) 2001-2003 Gareth Cronin
-Copyright (C) 2003-2006 Others
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program (gpl.txt); if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
---%>
-
-<html>
-<head>
-<%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
-<%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
-<%@page import="
+<%@ page import="
     org.jmwiki.Environment,
     org.jmwiki.WikiBase,
     org.jmwiki.servlets.WikiServlet,
@@ -33,13 +8,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     java.util.*,
     org.apache.commons.pool.impl.*,
     java.sql.SQLException
-" errorPage="error.jsp"%>
+" %>
+
 <f:setBundle basename="ApplicationResources"/>
 <jmwiki:is-admin var="admin"/>
-
-<title><f:message key="admin.title"/></title>
-<META HTTP-EQUIV="Expires" CONTENT="Mon, 06 Jan 1990 00:00:01 GMT">
-<link rel="stylesheet" href="../jmwiki.css" type="text/css">
 
 <%
   String message = "";
@@ -129,12 +101,6 @@ function onUserGroupType() {
 }
 </script>
 
-</head>
-
-<body text="#000000">
-<p class="pageHeader">
-<img class="logo" width="147" height="35" src="../images/logo.jpg" alt="StartingPoints"/><f:message key="admin.title"/></p>
-<%@include file="generalmenu.jsp"%>
 <form action="admin.html" method="get">
   <input type="hidden" name="function" value="logout"/>
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
@@ -736,7 +702,3 @@ function onUserGroupType() {
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
 </form>
 <hr/>
-
-<%@include file="generalmenu.jsp"%>
-</body>
-</html>

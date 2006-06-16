@@ -164,7 +164,7 @@ public class Environment {
 		try {
 			 return Integer.parseInt(value);
 		} catch (Exception e) {
-			logger.error("Invalid integer property " + name + " with value " + value);
+			logger.info("Invalid integer property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return -1;

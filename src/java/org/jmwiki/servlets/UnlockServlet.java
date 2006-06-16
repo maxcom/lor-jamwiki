@@ -24,7 +24,8 @@ public class UnlockServlet extends JMWikiServlet {
 		String topic = request.getParameter("topic");
 		if (!Utilities.isAdmin(request)) {
 			request.setAttribute("redirect", "Wiki?WikiLockList");
-			dispatch("/WEB-INF/jsp/login.jsp", request, response);
+			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 			return;
 		}
 		String virtualWiki = (String) request.getAttribute("virtualWiki");

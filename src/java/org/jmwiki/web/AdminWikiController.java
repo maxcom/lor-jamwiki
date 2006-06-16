@@ -35,6 +35,7 @@ import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.persistency.db.DatabaseConnection;
 import org.jmwiki.persistency.db.DBDate;
+import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Encryption;
 import org.jmwiki.utils.Utilities;
 
@@ -125,7 +126,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
 			this.message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -149,7 +151,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while changing password", e);
 			this.message = "Failure while changing password: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -164,7 +167,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while clearing locks", e);
 			this.message = "Failure while clearing locks: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -172,7 +176,7 @@ public class AdminWikiController implements Controller {
 	 */
 	private ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
 		request.getSession().removeAttribute("admin");
-		return new ModelAndView("viewTopic");
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -185,7 +189,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure during panic reset", e);
 			this.message = "Failure during panic reset: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 	/**
 	 *
@@ -455,7 +460,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while processing property values", e);
 			this.message = "Failure while processing property values: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -478,7 +484,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while purging topics", e);
 			this.message = "Failure while purging topics: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -493,7 +500,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while purging versions", e);
 			this.message = "Failure while purging versions: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -507,7 +515,8 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while refreshing search index", e);
 			this.message = "Failure while refreshing search index: " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
@@ -526,13 +535,15 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while removing user " + user, e);
 			this.message = "Failure while removing user " + user + ": " + e.getMessage();
 		}
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
 	private ModelAndView view(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		return new ModelAndView("wiki");
 	}
 }

@@ -76,7 +76,8 @@ public class PrintableServlet extends JMWikiServlet {
 		}
 		// put the result in the request
 		request.setAttribute("contentList", result);
-		dispatch("/WEB-INF/jsp/printable.jsp", request, response);
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_PRINT);
+		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 
 	/**

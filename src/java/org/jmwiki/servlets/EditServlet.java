@@ -64,7 +64,8 @@ public class EditServlet extends JMWikiServlet {
 						"redirect",
 						buffer.toString()
 					);
-					dispatch("/WEB-INF/jsp/login.jsp", request, response);
+					request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+					dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 					return;
 				}
 			}
@@ -119,7 +120,12 @@ public class EditServlet extends JMWikiServlet {
 		request.setAttribute("contents", contents);
 		request.setAttribute("preview", preview);
 		request.setAttribute("topic", topic);
-		dispatch("/WEB-INF/jsp/edit.jsp", request, response);
+		if (request.getAttribute(WikiServlet.ACTION_PREVIEW) != null) {
+			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_PREVIEW);
+		} else {
+			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_EDIT);
+		}
+		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 
 	/**

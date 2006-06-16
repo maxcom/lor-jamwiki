@@ -92,7 +92,8 @@ public class SearchServlet extends JMWikiServlet {
 			}
 			request.setAttribute("results", contents.toString());
 			request.setAttribute("titlelink", "Wiki?WikiSearch");
-			dispatch("/WEB-INF/jsp/searchResults.jsp", request, response);
+			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH_RESULTS);
+			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 		} catch (Exception err) {
 			logger.error(err);
 			err.printStackTrace();
