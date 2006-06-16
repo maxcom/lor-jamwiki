@@ -110,10 +110,6 @@
         <servlet-class>org.jmwiki.servlets.RSSServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Statistics</servlet-name>
-        <servlet-class>org.jmwiki.servlets.StatisticServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Sitemap</servlet-name>
         <servlet-class>org.jmwiki.servlets.SitemapServlet</servlet-class>
     </servlet>
@@ -217,10 +213,6 @@
     <servlet-mapping>
         <servlet-name>RSS</servlet-name>
         <url-pattern>/RSS</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Statistics</servlet-name>
-        <url-pattern>/Statistics</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Sitemap</servlet-name>
