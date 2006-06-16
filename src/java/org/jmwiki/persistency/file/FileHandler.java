@@ -448,13 +448,6 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void initialise(Locale locale) throws Exception {
-		this.createDefaults(locale);
-	}
-
-	/**
-	 *
-	 */
 	public Collection getVirtualWikiList() throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", VIRTUAL_WIKI_LIST);

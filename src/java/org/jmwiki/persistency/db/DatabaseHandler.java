@@ -551,28 +551,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void executeSQL(String sql) throws Exception {
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			Statement st = conn.createStatement();
-			st.execute(sql);
-			st.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void initialise(Locale locale) throws Exception {
-		this.setDefaults(locale);
-	}
-
-	/**
-	 *
-	 */
 	public Collection getVirtualWikiList() throws Exception {
 		Connection conn = null;
 		Collection all = new ArrayList();

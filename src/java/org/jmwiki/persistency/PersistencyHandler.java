@@ -79,11 +79,6 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	public void initialise(Locale locale) throws Exception;
-
-	/**
-	 *
-	 */
 	public Collection getVirtualWikiList() throws Exception;
 
 	/**
