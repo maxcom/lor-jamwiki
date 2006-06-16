@@ -1,4 +1,4 @@
-package org.vqwiki.lex.alt;
+package org.vqwiki.parser;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;

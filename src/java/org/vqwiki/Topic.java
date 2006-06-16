@@ -35,7 +35,7 @@ import org.vqwiki.Revision;
 import org.vqwiki.AccessControlList;
 import org.vqwiki.WikiBase;*/
 import org.vqwiki.persistency.PersistencyHandler;
-import org.vqwiki.lex.Lexer;
+import org.vqwiki.parser.Lexer;
 
 /**
  * This class represents a topic in the wiki with all information pertaining to it like revisions and acl's.
@@ -263,7 +263,7 @@ public class Topic {
 
 
 		BufferedReader in = new BufferedReader(new StringReader(this.contents));
-//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.vqwiki.lex.VQWikiFormatLex", "org.vqwiki.lex.VQWikiLayoutLex", "org.vqwiki.lex.LinkLex");
+//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.vqwiki.parser.VQWikiFormatLex", "org.vqwiki.parser.VQWikiLayoutLex", "org.vqwiki.parser.LinkLex");
 		return this.contents;
 	}
 
@@ -277,7 +277,7 @@ public class Topic {
 	public String getRenderedContent(String parsername) {			   // FIXME!!
 
 		BufferedReader in = new BufferedReader(new StringReader(this.contents));
-//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.vqwiki.lex.VQWikiFormatLex", "org.vqwiki.lex.VQWikiLayoutLex", "org.vqwiki.lex.LinkLex");
+//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.vqwiki.parser.VQWikiFormatLex", "org.vqwiki.parser.VQWikiLayoutLex", "org.vqwiki.parser.LinkLex");
 		return this.contents;
 	}
 

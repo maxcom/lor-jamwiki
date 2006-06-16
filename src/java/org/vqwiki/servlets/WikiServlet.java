@@ -306,7 +306,7 @@ public class WikiServlet extends VQWikiServlet {
 				}
 			}
 			// convert the rawcontent to html content
-			contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(rawcontents)), virtualWiki);
+			contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(rawcontents)), virtualWiki, false);
 		} catch (Exception e) {
 			error(request, response, e);
 			return;

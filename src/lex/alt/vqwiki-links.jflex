@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import org.vqwiki.lex.Lexer;
+import org.vqwiki.parser.Lexer;
 import org.vqwiki.Environment;
 import org.vqwiki.WikiBase;
 import org.vqwiki.servlets.WikiServlet;
@@ -34,7 +34,7 @@ import org.vqwiki.utils.JSPUtils;
 %public
 %type String
 %unicode
-%implements	org.vqwiki.lex.Lexer
+%implements	org.vqwiki.parser.Lexer
 %class VQWikiLinkLex
 
 %init{
@@ -46,7 +46,7 @@ import org.vqwiki.utils.JSPUtils;
 %eofval}
 
 %{
-	protected static Logger logger = Logger.getLogger( LinkLex.class );
+	protected static Logger logger = Logger.getLogger( VQWikiLinkLex.class );
   protected String virtualWiki;
 
 	protected boolean exists( String topic ){
@@ -63,7 +63,7 @@ import org.vqwiki.utils.JSPUtils;
   }
 
 	protected boolean ignoreWikiname( String name ){
-	  return DefaultWikiParser.doIgnoreWikiname(name);
+	  return VQWikiParser.doIgnoreWikiname(name);
   }
   
   protected String getTopicLink(String link, String description)
@@ -75,21 +75,6 @@ import org.vqwiki.utils.JSPUtils;
 	    description + "</a>";
 	  }
 	  else{
-	    if (Environment.getBooleanValue(Environment.PROP_PARSER_FRANZ_NEWTOPIC))
-	    {
-	      if (description.equals(link))
-	      {
-		    return description + "<a class=\"newtopic\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
-			  "&action=" + WikiServlet.ACTION_EDIT + "\">?</a>";
-		  }
-		  else
-		  {
-		    return description + " (" + link + "<a class=\"newtopic\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
-			  "&action=" + WikiServlet.ACTION_EDIT + "\">?</a>)";
-		  }
-	    }
-	    else
-	    {
 	      if (description.equals(link))
 	      {
 		    return "<a class=\"newtopic\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
@@ -100,7 +85,6 @@ import org.vqwiki.utils.JSPUtils;
 		    return description + " (<a class=\"newtopic\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
 		      "&action=" + WikiServlet.ACTION_EDIT + "\">" + link + "</a>)";
 		  }
-		}
 	  }
   }
   

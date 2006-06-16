@@ -85,12 +85,6 @@ public class Environment {
 	public static final String PROP_PARSER_ALLOW_BACK_TICK = "allowBackTick";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_CLASS = "parser";
-	public static final String PROP_PARSER_FORMAT_LEXER = "format-lexer";
-	public static final String PROP_PARSER_FRANZ_NEWTOPIC = "franz-newtopic-style";
-	public static final String PROP_PARSER_LAYOUT_LEXER = "layout-lexer";
-	public static final String PROP_PARSER_LINK_LEXER = "link-lexer";
-	// FIXME (PARSER_TEMP) - temporary property until conversion is complete
-	public static final String PROP_PARSER_NEW = "new-parser";
 	public static final String PROP_PARSER_NEW_LINE_BREAKS = "new-line-breaks";
 	public static final String PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS = "separate-wiki-title-words";
 	public static final String PROP_PARSER_TOC = "make-toc";
@@ -340,12 +334,7 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
 		defaults.setProperty(PROP_PARSER_ALLOW_BACK_TICK, "true");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "false");
-		defaults.setProperty(PROP_PARSER_CLASS, "org.vqwiki.lex.DefaultWikiParser");
-		defaults.setProperty(PROP_PARSER_FORMAT_LEXER, "org.vqwiki.lex.FormatLex");
-		defaults.setProperty(PROP_PARSER_FRANZ_NEWTOPIC, "false");
-		defaults.setProperty(PROP_PARSER_LAYOUT_LEXER, "org.vqwiki.lex.LayoutLex");
-		defaults.setProperty(PROP_PARSER_LINK_LEXER, "org.vqwiki.lex.LinkLex");
-		defaults.setProperty(PROP_PARSER_NEW, "true");
+		defaults.setProperty(PROP_PARSER_CLASS, "org.vqwiki.parser.MediaWikiParser");
 		defaults.setProperty(PROP_PARSER_NEW_LINE_BREAKS, "1");
 		defaults.setProperty(PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS, "false");
 		defaults.setProperty(PROP_PARSER_TOC, "false");

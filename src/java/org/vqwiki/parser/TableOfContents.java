@@ -1,4 +1,4 @@
-package org.vqwiki.lex.alt;
+package org.vqwiki.parser;
 
 import java.util.Enumeration;
 import java.util.Vector;
@@ -16,8 +16,8 @@ import org.vqwiki.Environment;
  * doesn't care where it is. So if you have a header on the TopArea / LeftMenu /
  * BottomArea, it will also add a TOC there...
  *
- * The static addTableOfContents(MakeTableOfContents, StringBuffer) method
- * may be called to insert a pre-built MakeTableOfContents object into an
+ * The static addTableOfContents(TableOfContents, StringBuffer) method
+ * may be called to insert a pre-built TableOfContents object into an
  * article.  This method requires that the parser has added all table of
  * contents headings to the object and included a TOC_INSERT_TAG at the point
  * where the table of contents should be inserted.  It is a bit more flexible
@@ -25,9 +25,9 @@ import org.vqwiki.Environment;
  *
  * @author studer
  */
-public class MakeTableOfContents {
+public class TableOfContents {
 
-	private static final Logger logger = Logger.getLogger(MakeTableOfContents.class);
+	private static final Logger logger = Logger.getLogger(TableOfContents.class);
 	public static final int STATUS_TOC_UNINITIALIZED = 0;
 	public static final int STATUS_TOC_INITIALIZED = 1;
 	public static final int STATUS_NO_TOC = 2;
@@ -82,24 +82,24 @@ public class MakeTableOfContents {
 	}
 
 	/**
-	 * Insert an existing MakeTableOfContents object into formatted HTML
+	 * Insert an existing TableOfContents object into formatted HTML
 	 * output.
 	 *
-	 * @param toc A pre-built MakeTableOfContents object.
+	 * @param toc A pre-built TableOfContents object.
 	 * @param contents The Wiki syntax, which should contain TOC_INSERT_TAG at
 	 *  the point where the table of contents object is to be inserted.
 	 * @return The formatted content containing the table of contents.
 	 */
-	public static StringBuffer addTableOfContents(MakeTableOfContents toc, StringBuffer contents) {
-		int pos = contents.indexOf(MakeTableOfContents.TOC_INSERT_TAG);
+	public static StringBuffer addTableOfContents(TableOfContents toc, StringBuffer contents) {
+		int pos = contents.indexOf(TableOfContents.TOC_INSERT_TAG);
 		if (pos >= 0) {
 			// FIXME - don't hardcode minimum TOC size
-			if (toc == null || toc.size() <= 3 || toc.getStatus() == MakeTableOfContents.STATUS_NO_TOC || !Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
+			if (toc == null || toc.size() <= 3 || toc.getStatus() == TableOfContents.STATUS_NO_TOC || !Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
 				// remove the insert tag
-				contents.delete(pos, pos + MakeTableOfContents.TOC_INSERT_TAG.length());
+				contents.delete(pos, pos + TableOfContents.TOC_INSERT_TAG.length());
 			} else {
 				// insert the toc
-				contents.replace(pos, pos + MakeTableOfContents.TOC_INSERT_TAG.length(), toc.toHTML());
+				contents.replace(pos, pos + TableOfContents.TOC_INSERT_TAG.length(), toc.toHTML());
 			}
 		}
 		return contents;

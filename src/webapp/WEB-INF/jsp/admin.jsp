@@ -272,35 +272,10 @@ function onUserGroupType() {
       <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.lexerheader"/></td>
     </tr>
 
-    <%-- FIXME (FIXME (PARSER_TEMP) - temporary property until conversion is complete --%>
-    <tr>
-      <td class="normal">Use new parser</td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_PARSER_NEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_NEW) ? " checked" : "" %>>
-      </td>
-    </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.parser"/></td>
       <td class="normal">
         <input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= Environment.getValue(Environment.PROP_PARSER_CLASS) %>" size="15">
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.formatlexer"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_PARSER_FORMAT_LEXER %>" value="<%= Environment.getValue(Environment.PROP_PARSER_FORMAT_LEXER) %>" size="15">
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.layoutlexer"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_PARSER_LAYOUT_LEXER %>" value="<%= Environment.getValue(Environment.PROP_PARSER_LAYOUT_LEXER) %>" size="15"> <f:message key="admin.caption.nulllex"/>
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.linklexer"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_PARSER_LINK_LEXER %>" value="<%= Environment.getValue(Environment.PROP_PARSER_LINK_LEXER) %>" size="15"> <f:message key="admin.caption.nulllex"/>
       </td>
     </tr>
     <tr>
@@ -325,12 +300,6 @@ function onUserGroupType() {
       <td class="normal"><f:message key="admin.caption.newlinebreaks"/></td>
       <td class="normal">
         <input type="text" name="<%= Environment.PROP_PARSER_NEW_LINE_BREAKS %>" size="2" maxlength="2" value="<%= Environment.getIntValue(Environment.PROP_PARSER_NEW_LINE_BREAKS) %>">
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.franznewtopicstyle"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_PARSER_FRANZ_NEWTOPIC %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_FRANZ_NEWTOPIC) ? " checked" : "" %>>
       </td>
     </tr>
 

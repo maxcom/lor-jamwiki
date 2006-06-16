@@ -15,7 +15,7 @@ import org.vqwiki.WikiBase;
 
 %public
 %class MediaWikiHTML
-%implements org.vqwiki.lex.Lexer
+%implements org.vqwiki.parser.Lexer
 %type String
 %unicode
 

@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 import java.io.IOException;
 import java.util.Properties;

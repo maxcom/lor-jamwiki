@@ -28,7 +28,7 @@ import org.vqwiki.WikiBase;
 %public
 %type String
 %unicode
-%implements org.vqwiki.lex.Lexer
+%implements org.vqwiki.parser.Lexer
 %class VQWikiFormatLex
 
 %init{
@@ -51,7 +51,7 @@ import org.vqwiki.WikiBase;
 	protected boolean em, strong, underline, center, table, row, cell, allowHtml, code, h1, h2, h3, color;
   protected int listLevel;
   protected boolean ordered;
-	protected static Logger cat = Logger.getLogger( FormatLex.class );
+	protected static Logger cat = Logger.getLogger( VQWikiFormatLex.class );
 
   protected String virtualWiki;
 

@@ -105,7 +105,7 @@ public class EditServlet extends VQWikiServlet {
 				contents = base.readRaw(virtualWiki, topic);
 			}
 			templateNames = base.getTemplates(virtualWiki);
-			preview = base.cook(new BufferedReader(new StringReader(contents)), virtualWiki);
+			preview = base.cook(new BufferedReader(new StringReader(contents)), virtualWiki, false);
 		} catch (Exception e) {
 			error(request, response, e);
 			return;

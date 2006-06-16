@@ -14,7 +14,7 @@
  * @author garethc
  * 8/11/2002 08:53:38
  */
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 import java.io.IOException;
 import java.util.Properties;

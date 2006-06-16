@@ -45,7 +45,7 @@ import org.vqwiki.utils.JSPUtils;
 
 %public
 %class MediaWikiSyntax
-%implements org.vqwiki.lex.Lexer
+%implements org.vqwiki.parser.Lexer
 %type String
 %unicode
 
@@ -95,7 +95,7 @@ import org.vqwiki.utils.JSPUtils;
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
     protected String virtualWiki;
-    protected MakeTableOfContents toc = new MakeTableOfContents();
+    protected TableOfContents toc = new TableOfContents();
     protected boolean allowHtml = false;
     protected boolean wikibold = false;
     protected boolean wikiitalic = false;
@@ -237,8 +237,8 @@ import org.vqwiki.utils.JSPUtils;
      */
     protected String updateToc(String name, String text, int level) {
         String output = "";
-        if (this.toc.getStatus() == MakeTableOfContents.STATUS_TOC_UNINITIALIZED) {
-            output = MakeTableOfContents.TOC_INSERT_TAG;
+        if (this.toc.getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
+            output = TableOfContents.TOC_INSERT_TAG;
         }
         this.toc.addEntry(name, text, level);
         return output;
@@ -254,7 +254,7 @@ import org.vqwiki.utils.JSPUtils;
     /**
      *
      */
-    public void setTOC(MakeTableOfContents toc) {
+    public void setTOC(TableOfContents toc) {
         this.toc = toc;
     }
 %}
@@ -379,7 +379,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{notoc} {
     logger.debug("notoc: " + yytext() + " (" + yystate() + ")");
-    this.toc.setStatus(MakeTableOfContents.STATUS_NO_TOC);
+    this.toc.setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 

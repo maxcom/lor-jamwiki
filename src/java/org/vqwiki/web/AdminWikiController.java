@@ -265,10 +265,6 @@ public class AdminWikiController implements Controller {
 				Environment.PROP_ATTACH_TIMESTAMP,
 				request.getParameter(Environment.PROP_ATTACH_TIMESTAMP) != null
 			);
-			Environment.setBooleanValue(
-				Environment.PROP_PARSER_FRANZ_NEWTOPIC,
-				request.getParameter(Environment.PROP_PARSER_FRANZ_NEWTOPIC) != null
-			);
 			Environment.setValue(
 				Environment.PROP_ATTACH_UPLOAD_DIR,
 				request.getParameter(Environment.PROP_ATTACH_UPLOAD_DIR)
@@ -369,18 +365,6 @@ public class AdminWikiController implements Controller {
 				Environment.PROP_PARSER_CLASS,
 				request.getParameter(Environment.PROP_PARSER_CLASS)
 			);
-			Environment.setValue(
-				Environment.PROP_PARSER_FORMAT_LEXER,
-				request.getParameter(Environment.PROP_PARSER_FORMAT_LEXER)
-			);
-			Environment.setValue(
-				Environment.PROP_PARSER_LINK_LEXER,
-				request.getParameter(Environment.PROP_PARSER_LINK_LEXER)
-			);
-			Environment.setValue(
-				Environment.PROP_PARSER_LAYOUT_LEXER,
-				request.getParameter(Environment.PROP_PARSER_LAYOUT_LEXER)
-			);
 			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_ATTACH_MAX_FILE_SIZE));
 			Environment.setIntValue(
 				Environment.PROP_ATTACH_MAX_FILE_SIZE,
@@ -454,11 +438,6 @@ public class AdminWikiController implements Controller {
 					}
 				}
 			}
-			// FIXME (PARSER_TEMP) - temporary property until conversion is complete
-			Environment.setBooleanValue(
-				Environment.PROP_PARSER_NEW,
-				request.getParameter(Environment.PROP_PARSER_NEW) != null
-			);
 			if (Environment.getValue(Environment.PROP_FILE_HOME_DIR) == null) {
 				// if home directory set empty, use system home directory
 				String dir = System.getProperty("user.home") + System.getProperty("file.separator") + "wiki";

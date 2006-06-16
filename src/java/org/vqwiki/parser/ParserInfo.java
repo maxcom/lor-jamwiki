@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

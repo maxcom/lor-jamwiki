@@ -43,7 +43,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.InputStream;
 import org.apache.lucene.store.OutputStream;
 import org.apache.lucene.store.RAMDirectory;
-import org.vqwiki.lex.BackLinkLex;
+import org.vqwiki.parser.alt.BackLinkLex;
 import org.vqwiki.utils.Utilities;
 import org.vqwiki.utils.lucene.HTMLParser;
 import org.vqwiki.utils.lucene.LuceneTools;

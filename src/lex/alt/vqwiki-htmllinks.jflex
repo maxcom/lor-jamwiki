@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.vqwiki.lex.Lexer;
+import org.vqwiki.parser.Lexer;
 import org.vqwiki.Environment;
 import org.vqwiki.WikiBase;
 import org.vqwiki.utils.Utilities;
@@ -35,7 +35,7 @@ import org.vqwiki.utils.JSPUtils;
 %public
 %type String
 %unicode
-%implements	org.vqwiki.lex.Lexer
+%implements	org.vqwiki.parser.Lexer
 %class HTMLLinkLex
 
 %init{
@@ -64,7 +64,7 @@ import org.vqwiki.utils.JSPUtils;
     }
 
 	protected boolean ignoreWikiname( String name ){
-	  return DefaultWikiParser.doIgnoreWikiname(name);
+	  return VQWikiParser.doIgnoreWikiname(name);
 	}
 
   protected String getTopicLink(String link, String description)

@@ -59,11 +59,11 @@ import org.vqwiki.persistency.file.FileNotify;
 import org.vqwiki.persistency.file.FileSearchEngine;
 import org.vqwiki.persistency.file.FileVersionManager;
 import org.vqwiki.persistency.file.FileWikiMembers;
-import org.vqwiki.lex.AbstractParser;
-import org.vqwiki.lex.BackLinkLex;
-import org.vqwiki.lex.LexExtender;
-import org.vqwiki.lex.Lexer;
-import org.vqwiki.lex.alt.MakeTableOfContents;
+import org.vqwiki.parser.AbstractParser;
+import org.vqwiki.parser.alt.BackLinkLex;
+import org.vqwiki.parser.alt.LexExtender;
+import org.vqwiki.parser.Lexer;
+import org.vqwiki.parser.TableOfContents;
 import org.vqwiki.users.LdapUsergroup;
 import org.vqwiki.users.NoUsergroup;
 import org.vqwiki.users.Usergroup;
@@ -347,9 +347,7 @@ public class WikiBase {
 	 * @param topicName   the topic
 	 */
 	public synchronized String readCooked(String virtualWiki, String topicName) throws Exception {
-		String s = handler.read(virtualWiki, topicName);
-		BufferedReader in = new BufferedReader(new StringReader(s));
-		return cook(in, virtualWiki);
+		return readCooked(virtualWiki, topicName, false);
 	}
 
 	/**
@@ -363,15 +361,10 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public synchronized String readCooked(String virtualWiki, String topicName,
-		String formatLexClass, String layoutLexClass, String linkLexClass, boolean export)
-		throws Exception {
+	public synchronized String readCooked(String virtualWiki, String topicName, boolean export) throws Exception {
 		String s = handler.read(virtualWiki, topicName);
 		BufferedReader in = new BufferedReader(new StringReader(s));
-		return cook(
-			in, virtualWiki, formatLexClass, layoutLexClass,
-			linkLexClass, export
-		);
+		return cook(in, virtualWiki, export);
 	}
 
 	/**
@@ -379,187 +372,23 @@ public class WikiBase {
 	 *
 	 * @param in		  TODO: DOCUMENT ME!
 	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws ClassNotFoundException	TODO: DOCUMENT ME!
-	 * @throws NoSuchMethodException	 TODO: DOCUMENT ME!
-	 * @throws InstantiationException	TODO: DOCUMENT ME!
-	 * @throws IllegalAccessException	TODO: DOCUMENT ME!
-	 * @throws InvocationTargetException TODO: DOCUMENT ME!
-	 * @throws IOException			   TODO: DOCUMENT ME!
+	 * @return				TODO: DOCUMENT ME!
+	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public synchronized String cook(BufferedReader in, String virtualWiki)
-		throws ClassNotFoundException, NoSuchMethodException,
-		InstantiationException, IllegalAccessException,
-		InvocationTargetException, IOException {
-		return cook(
-			in, virtualWiki,
-			Environment.getValue(Environment.PROP_PARSER_FORMAT_LEXER),
-			Environment.getValue(Environment.PROP_PARSER_LAYOUT_LEXER),
-			Environment.getValue(Environment.PROP_PARSER_LINK_LEXER),
-			false
-		);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param in			 TODO: DOCUMENT ME!
-	 * @param virtualWiki	TODO: DOCUMENT ME!
-	 * @param formatLexClass TODO: DOCUMENT ME!
-	 * @param layoutLexClass TODO: DOCUMENT ME!
-	 * @param linkLexClass   TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws ClassNotFoundException	TODO: DOCUMENT ME!
-	 * @throws NoSuchMethodException	 TODO: DOCUMENT ME!
-	 * @throws InstantiationException	TODO: DOCUMENT ME!
-	 * @throws IllegalAccessException	TODO: DOCUMENT ME!
-	 * @throws InvocationTargetException TODO: DOCUMENT ME!
-	 * @throws IOException			   TODO: DOCUMENT ME!
-	 */
-	public synchronized String cook(BufferedReader in, String virtualWiki,
-		String formatLexClass, String layoutLexClass, String linkLexClass, boolean export)
-		throws ClassNotFoundException, NoSuchMethodException,
-		InstantiationException, IllegalAccessException,
-		InvocationTargetException, IOException {
-		// FIXME (PARSER_TEMP) - remove this condition after parser conversion is complete
-		if (Environment.getBooleanValue(Environment.PROP_PARSER_NEW)) {
-			String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
-			logger.debug("Using parser: " + parserClass);
-			Class clazz = Class.forName(parserClass);
-			Class[] parameterTypes = null;
-			Constructor constructor = clazz.getConstructor(parameterTypes);
-			Object[] initArgs = null;
-			AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
-			String line;
-			StringBuffer raw = new StringBuffer();
-			while ((line = in.readLine()) != null) {
-				raw.append(line).append("\n");
-			}
-			return ((export) ? parser.parseExportHTML(raw.toString(), virtualWiki) : parser.parseHTML(raw.toString(), virtualWiki));
+	public synchronized String cook(BufferedReader in, String virtualWiki, boolean export) throws Exception {
+		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
+		logger.debug("Using parser: " + parserClass);
+		Class clazz = Class.forName(parserClass);
+		Class[] parameterTypes = null;
+		Constructor constructor = clazz.getConstructor(parameterTypes);
+		Object[] initArgs = null;
+		AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
+		String line;
+		StringBuffer raw = new StringBuffer();
+		while ((line = in.readLine()) != null) {
+			raw.append(line).append("\n");
 		}
-		// FIXME (PARSER_TEMP) - remove all code below after parser conversion is complete
-		StringBuffer contents = new StringBuffer();
-		Lexer lexer;
-		String formatted;
-		logger.debug("Using format lexer: " + formatLexClass);
-		Class clazz = Class.forName(formatLexClass);
-		Constructor constructor = clazz.getConstructor(
-			new Class[] {
-				Reader.class
-			}
-		);
-		lexer = (Lexer) constructor.newInstance(
-			new Object[] {
-				in
-			}
-		);
-		lexer.setVirtualWiki(virtualWiki);
-		boolean external = false;
-		String tag = null;
-		StringBuffer externalContents = null;
-		while (true) {
-			String line = null;
-			try {
-				line = lexer.yylex();
-			} catch (ArrayIndexOutOfBoundsException e) {
-				logger.debug(e);
-			}
-			logger.debug(line);
-			if (line == null) {
-				break;
-			}
-			if (line.startsWith("[<")) {
-				if (!external) {
-					external = true;
-					tag = line.substring(2, line.length() - 2);
-					logger.debug("External lex call (tag=" + tag + ")");
-					externalContents = new StringBuffer();
-					contents.append(line);
-				} else {
-					external = false;
-					String converted = LexExtender.getInstance().lexify(
-						tag,
-						externalContents.toString()
-					);
-					if (converted != null) {
-						contents.append(converted);
-					}
-					contents.append(line);
-					logger.debug("External ends");
-				}
-			} else {
-				if (!external) {
-					contents.append(line);
-				} else {
-					externalContents.append(line);
-				}
-			}
-		}
-		if (Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
-			formatted = MakeTableOfContents.addTableOfContents(contents.toString());
-		} else {
-			formatted = contents.toString();
-		}
-		String laidOut = formatted;
-		if (!(layoutLexClass.equals("null") || layoutLexClass.equals(""))) {
-			logger.debug("Using layout lexer: " + layoutLexClass);
-			contents = new StringBuffer();
-			clazz = Class.forName(layoutLexClass);
-			constructor = clazz.getConstructor(
-				new Class[] {
-					Reader.class
-				}
-			);
-			lexer = (Lexer) constructor.newInstance(
-				new Object[] {
-					new StringReader(formatted)
-				}
-			);
-			lexer.setVirtualWiki(virtualWiki);
-			while (true) {
-				String line = lexer.yylex();
-				if (line == null) {
-					break;
-				}
-				contents.append(line);
-			}
-			laidOut = contents.toString();
-		}
-		String linked = laidOut;
-		if (!(linkLexClass.equals("null") || linkLexClass.equals(""))) {
-			logger.debug("Using link lexer: " + linkLexClass);
-			contents = new StringBuffer();
-			clazz = Class.forName(linkLexClass);
-			constructor = clazz.getConstructor(
-				new Class[] {
-					Reader.class
-				}
-			);
-			lexer = (Lexer) constructor.newInstance(
-				new Object[] {
-					new StringReader(laidOut)
-				}
-			);
-			lexer.setVirtualWiki(virtualWiki);
-			while (true) {
-				String line = lexer.yylex();
-				if (line == null) {
-					break;
-				}
-				contents.append(line);
-			}
-			linked = contents.toString();
-		}
-		// remove trailing returns at the end of the site.
-		// TODO better do this with StringBuffer, but actually no more
-		// time for a proper cleanup.
-		if (linked.endsWith("<br/>\n")) {
-			linked = linked.substring(0, linked.length() - 6);
-			while (linked.endsWith("<br/>")) {
-				linked = linked.substring(0, linked.length() - 5);
-			}
-		}
-		return linked;
+		return ((export) ? parser.parseExportHTML(raw.toString(), virtualWiki) : parser.parseHTML(raw.toString(), virtualWiki));
 	}
 
 	/**

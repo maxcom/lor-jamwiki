@@ -1,4 +1,4 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser.alt;
 
 /*
 Very Quick Wiki - WikiWikiWeb clone
@@ -22,7 +22,7 @@ import org.vqwiki.WikiBase;
 import org.vqwiki.utils.JSPUtils;
 
 
-public class Yylex implements org.vqwiki.lex.Lexer {
+public class Yylex implements org.vqwiki.parser.Lexer {
   private final int YY_BUFFER_SIZE = 512;
   private final int YY_F = -1;
   private final int YY_NO_STATE = -1;

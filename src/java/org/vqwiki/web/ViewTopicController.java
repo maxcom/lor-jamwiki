@@ -67,7 +67,7 @@ public class ViewTopicController implements Controller {
 		topicModel.put("topicname", topic.getName());
 
 		// convert the rawcontent to html content
-		String contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(topic.getRenderedContent())), wikibase.getVirtualWikiFromURI(request.getRequestURI(), request.getContextPath()));
+		String contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(topic.getRenderedContent())), wikibase.getVirtualWikiFromURI(request.getRequestURI(), request.getContextPath()), false);
 
 		topicModel.put("topiccontent", contents);
 

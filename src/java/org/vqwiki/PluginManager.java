@@ -22,7 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.vqwiki.lex.LexExtender;
+import org.vqwiki.parser.alt.LexExtender;
 import org.vqwiki.utils.Utilities;
 
 /**

@@ -366,10 +366,7 @@ public class ExportHTMLServlet extends LongLastingOperationServlet {
 			// get content
 			StringBuffer content = new StringBuffer();
 			// FIXME (PARSER_TEMP) - update after parser conversion is complete
-			content.append(wb.readCooked(virtualWiki, topicname,
-				Environment.getValue(Environment.PROP_PARSER_FORMAT_LEXER),
-				Environment.getValue(Environment.PROP_PARSER_LAYOUT_LEXER),
-				"vqwiki.lex.HTMLLinkLex", true)
+			content.append(wb.readCooked(virtualWiki, topicname, true)
 			);
 			// handle redirects
 			String redirect = "redirect:";

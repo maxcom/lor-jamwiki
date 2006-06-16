@@ -1,11 +1,11 @@
-package org.vqwiki.lex;
+package org.vqwiki.parser;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-import org.vqwiki.lex.ParserInfo;
+import org.vqwiki.parser.ParserInfo;
 
 /**
  * Abstract class to be used when implementing new lexers.  New lexers

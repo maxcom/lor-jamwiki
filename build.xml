@@ -4,16 +4,13 @@
 
     <target name="cleanLexers" description="Cleans up after lexer generation">
         <!-- delete old generated lexer source files -->
-        <delete file="${dir.src.java}/org/vqwiki/lex/BackLinkLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/FormatLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/LayoutLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/LinkLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/HTMLLinkLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/alt/ExFormatLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/alt/ExLayoutLex.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/alt/MediaWikiHTML.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/alt/MediaWikiSyntax.java"/>
-        <delete file="${dir.src.java}/org/vqwiki/lex/alt/FritzLex.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/MediaWikiHTML.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/MediaWikiSyntax.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/alt/BackLinkLex.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/alt/VQWikiFormatLex.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/alt/VQWikiLayoutLex.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/alt/VQWikiLinkLex.java"/>
+        <delete file="${dir.src.java}/org/vqwiki/parser/alt/HTMLLinkLex.java"/>
     </target>
 
     <target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">

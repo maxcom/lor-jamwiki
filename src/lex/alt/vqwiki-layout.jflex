@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import org.vqwiki.lex.Lexer;
+import org.vqwiki.parser.Lexer;
 import org.vqwiki.Environment;
 import org.vqwiki.WikiBase;
 
@@ -30,7 +30,7 @@ import org.vqwiki.WikiBase;
 %public
 %type String
 %unicode
-%implements org.vqwiki.lex.Lexer
+%implements org.vqwiki.parser.Lexer
 %class VQWikiLayoutLex
 
 %init{
@@ -64,7 +64,7 @@ import org.vqwiki.WikiBase;
   protected boolean allowHtml;
   protected int listLevel;
   protected boolean ordered;
-  protected static Logger cat = Logger.getLogger( LayoutLex.class );
+  protected static Logger cat = Logger.getLogger( VQWikiLayoutLex.class );
   protected String virtualWiki;
 
 	protected boolean exists( String topic ){
