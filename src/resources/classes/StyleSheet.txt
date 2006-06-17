@@ -233,7 +233,7 @@ td.menu-tab-nonselected {
 	color: blue;
 	border: 1px solid #aaa;
 	border-bottom: none;
-	padding: 0.1em 0.7em 0.1em 0.7em;
+	padding: 0.1em 1em 0.1em 1em;
 	margin: 0 .3em 0 0;
 	font-size: 85%;
 	text-align: center;

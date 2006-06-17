@@ -110,14 +110,15 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 </tr>
 <tr>
 	<td colspan="2" class="footer">
-<%
-if (Utilities.emailAvailable()) {
-%>
-		<%@ include file="member-contents.jsp"%>
-<%
-}
-%>
-		<hr/>
+		<hr width="99%" />
+		<c:out value="${bottomArea}" escapeXml="false"/>
+		<br/>
+		<font size="-3">Java MediaWiki Version <jmwiki:wiki-version/> |
+		<a href="admin/admin.html?username=admin"><f:message key="admin.title"/></a>
+		</font>
+		<c:if test="${not empty pageContext.request.userPrincipal}">|
+		<font size="-3"><a href='Wiki?action=<%= WikiServlet.ACTION_LOGIN %>&logout=true&redirect=Wiki%3F<c:out value="${topic}"/>'><f:message key="general.logout"/></a></font>
+		</c:if>
 	</td>
 </tr>
 </table>
