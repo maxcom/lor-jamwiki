@@ -1,6 +1,1 @@
-[<html>]
-  <br/>
-  <font size="-3">
-    All contents copyright of the author. (C)2006.
-  </font>
-[</html>]
+<font size="-3">All contents copyright of the author. (C)2006.</font>

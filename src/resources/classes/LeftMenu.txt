@@ -1,17 +1,14 @@
-To modify this,
-click: LeftMenu
+* [[StartingPoints]]
+* [[RecentChanges]]
+* [[WikiSearch]]
 ----
-RecentChanges
+* [[AllWikiTopics]]
+* [[OrphanedWikiTopics]]
+* [[ToDoWikiTopics]]
+* [[WikiLockList]]
+* [[RSS]]
+* [[WikiSearch]]
+* [[SetUsername]]
+* [[AdminOnlyTopics]]
 ----
-TextFormattingRules
-AllWikiTopics
-OrphanedWikiTopics
-ToDoWikiTopics
-WikiLockList
-`RSS`
-----
-WikiSearch
-----
-SetUsername
-----
-[<html>]<a href="http://www.jmwiki.org">Java MediaWiki</a>[</html>]
+* [http://mediawiki.org MediaWiki]
