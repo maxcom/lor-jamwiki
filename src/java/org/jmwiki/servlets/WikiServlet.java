@@ -744,7 +744,7 @@ public class WikiServlet extends JMWikiServlet {
 			} else if (action.equals(ACTION_ADMIN)) {
 				// request to save admin values
 				logger.debug("Despatching admin servlet");
-				dispatch = request.getRequestDispatcher("/AdministrationServlet");
+				dispatch = request.getRequestDispatcher("/admin.hmtl");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_SAVE_TEMPLATE)) {

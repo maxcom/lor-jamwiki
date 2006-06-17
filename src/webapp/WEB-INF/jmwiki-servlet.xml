@@ -17,7 +17,7 @@
                 <prop key="/**/view/*.html">viewTopicController</prop>
                 <prop key="/**/edit/*.html">editTopicController</prop>
                 <prop key="/**/delete/*.html">deleteTopicController</prop>
-                <prop key="/**/admin/*.html">adminWikiController</prop>
+                <prop key="/**/admin.html">adminWikiController</prop>
             </props>
         </property>
     </bean>

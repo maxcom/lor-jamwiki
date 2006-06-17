@@ -37,6 +37,7 @@ import org.jmwiki.persistency.db.DatabaseConnection;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Encryption;
+import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
 /**
@@ -62,17 +63,23 @@ public class AdminWikiController implements Controller {
 		this.virtualWiki = (String) request.getAttribute("virtual-wiki");
 		WikiServlet.buildLayout(request, virtualWiki);
 		String function = request.getParameter("function");
+		if (function == null) function = "";
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		ModelAndView next = new ModelAndView("wiki");
+		if (!Utilities.isAdmin(request)) {
+			next = login(request, response);
+			return next;
+		}
+		if (function.equals("logout")) {
+			next = logout(request, response);
+			return next;
+		}
 		if (function == null || function.length() == 0) {
 			next = view(request, response);
 			return next;
 		}
 		if (function.equals("refreshIndex")) {
 			next = refreshIndex(request, response);
-		}
-		if (function.equals("logout")) {
-			next = logout(request, response);
 		}
 		if (function.equals("purge")) {
 			next = purge(request, response);
@@ -173,8 +180,25 @@ public class AdminWikiController implements Controller {
 	/**
 	 *
 	 */
+	private ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+		request.setAttribute("title", Utilities.resource("login.title", request.getLocale()));
+		String rootPath = JSPUtils.createLocalRootPath(request, (String) request.getAttribute("virtualWiki"));
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(rootPath);
+		buffer.append("admin.html");
+		request.setAttribute("redirect", buffer.toString());
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		return new ModelAndView("wiki");
+	}
+
+	/**
+	 *
+	 */
 	private ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
 		request.getSession().removeAttribute("admin");
+		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		return new ModelAndView("wiki");
 	}
 
