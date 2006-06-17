@@ -218,6 +218,9 @@ public class WikiServlet extends JMWikiServlet {
 				} else if (action.equals("RSS")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
+				} else if (action.equals(ACTION_FIRST_USE)) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+					request.setAttribute(PARAMETER_ACTION, ACTION_FIRST_USE);
 				} else {
 					logger.info("Unknown PseudoTopic action " + action);
 				}
@@ -287,6 +290,9 @@ public class WikiServlet extends JMWikiServlet {
 			} else if (topic.equals("RSS")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
+			} else if (action.equals(ACTION_FIRST_USE)) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+				request.setAttribute(PARAMETER_ACTION, ACTION_FIRST_USE);
 			} else {
 				logger.info("Unknown PseudoTopic topic " + topic);
 			}
@@ -368,28 +374,8 @@ public class WikiServlet extends JMWikiServlet {
 		} catch (Exception e) {
 			logger.error("error checking admin only topic", e);
 		}
-		String contents = null;
-		try {
-			String rawcontents = WikiBase.getInstance().readRaw(virtualWiki, topic);
-			// deal with redirection
-			if (rawcontents.startsWith("redirect:")) {
-				if (rawcontents.trim().length() > 9) {
-					// The rest until end or newline is a topic name.
-					if (rawcontents.indexOf("\n") >= 0) {
-						topic = rawcontents.substring(rawcontents.indexOf(":") + 1, rawcontents.indexOf("\n")).trim();
-					} else {
-						topic = rawcontents.substring(rawcontents.indexOf(":") + 1).trim();
-					}
-					redirect("Wiki?" + JSPUtils.encodeURL(topic, response.getCharacterEncoding()), response);
-					return;
-				}
-			}
-			// convert the rawcontent to html content
-			contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(rawcontents)), virtualWiki);
-		} catch (Exception e) {
-			error(request, response, e);
-			return;
-		}
+		String contents = handleRedirect(virtualWiki, topic, request, response);
+		if (contents == null) return;
 		// highlight search result
 		if (request.getParameter("highlight") != null) {
 			String highlightparam = request.getParameter("highlight");
@@ -530,6 +516,35 @@ public class WikiServlet extends JMWikiServlet {
 		}
 		request.setAttribute("readOnly", new Boolean(readOnly));
 		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
+	}
+
+	/**
+	 *
+	 */
+	private String handleRedirect(String virtualWiki, String topic, HttpServletRequest request, HttpServletResponse response) {
+		String contents = null;
+		try {
+			String rawcontents = WikiBase.getInstance().readRaw(virtualWiki, topic);
+			// deal with redirection
+			if (rawcontents.startsWith("redirect:")) {
+				if (rawcontents.trim().length() > 9) {
+					// The rest until end or newline is a topic name.
+					if (rawcontents.indexOf("\n") >= 0) {
+						topic = rawcontents.substring(rawcontents.indexOf(":") + 1, rawcontents.indexOf("\n")).trim();
+					} else {
+						topic = rawcontents.substring(rawcontents.indexOf(":") + 1).trim();
+					}
+					redirect("Wiki?" + JSPUtils.encodeURL(topic, response.getCharacterEncoding()), response);
+					return null;
+				}
+			}
+			// convert the rawcontent to html content
+			contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(rawcontents)), virtualWiki);
+		} catch (Exception e) {
+			error(request, response, e);
+			return null;
+		}
+		return contents;
 	}
 
 	/**

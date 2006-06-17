@@ -73,6 +73,10 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="createUser.jsp" %>
 <%
+} else if (action.equals(WikiServlet.ACTION_FIRST_USE)) {
+%>
+		<%@ include file="firstrun.jsp" %>
+<%
 } else if (action.equals(WikiServlet.ACTION_HISTORY)) {
 %>
 		<%@ include file="history.jsp" %>
