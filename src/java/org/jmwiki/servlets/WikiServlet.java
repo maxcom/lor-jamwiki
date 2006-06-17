@@ -192,22 +192,31 @@ public class WikiServlet extends JMWikiServlet {
 				request.setAttribute(WikiServlet.PARAMETER_ACTION, action);
 				// FIXME - this is a mess, clean it up
 				if (action.equals("WikiLockList")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_LOCKLIST);
 				} else if (action.equals("RecentChanges")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_RECENT_CHANGES);
 				} else if (action.equals("WikiSearch")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_SEARCH);
 				} else if (action.equals("SetUsername")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
 				} else if (action.equals("ToDoWikiTopics")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
 				} else if (action.equals("OrphanedWikiTopics")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
 				} else if (action.equals("AllWikiTopics")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_ALL_TOPICS);
 				} else if (action.equals("WikiLogin")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_LOGIN);
 				} else if (action.equals("RSS")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
 				} else {
 					logger.info("Unknown PseudoTopic action " + action);
@@ -244,22 +253,31 @@ public class WikiServlet extends JMWikiServlet {
 		if (pseudotopicRedirect != null) {
 			// FIXME - this is a mess, clean it up
 			if (topic.equals("WikiLockList")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_LOCKLIST);
 			} else if (topic.equals("RecentChanges")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_RECENT_CHANGES);
 			} else if (topic.equals("WikiSearch")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_SEARCH);
 			} else if (topic.equals("SetUsername")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
 			} else if (topic.equals("ToDoWikiTopics")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
 			} else if (topic.equals("OrphanedWikiTopics")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
 			} else if (topic.equals("AllWikiTopics")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_ALL_TOPICS);
 			} else if (topic.equals("WikiLogin")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_LOGIN);
 			} else if (topic.equals("RSS")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
 			} else {
 				logger.info("Unknown PseudoTopic topic " + topic);

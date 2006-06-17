@@ -32,9 +32,7 @@ public class NotifyServlet extends HttpServlet {
 				throw new WikiException("Topic must be specified");
 			}
 			String user = "";
-
 			user = request.getParameter("username");
-
 			if (user == null || user.equals("")) {
 				Cookie[] cookies = request.getCookies();
 				if (cookies != null) {

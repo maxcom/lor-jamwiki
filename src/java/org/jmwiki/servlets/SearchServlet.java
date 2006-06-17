@@ -1,7 +1,3 @@
-/*
- * Copyright 2002 Gareth Cronin
- * This software is subject to the GNU Lesser General Public Licence (LGPL)
- */
 package org.jmwiki.servlets;
 
 import java.io.IOException;
@@ -93,6 +89,7 @@ public class SearchServlet extends JMWikiServlet {
 			request.setAttribute("results", contents.toString());
 			request.setAttribute("titlelink", "Wiki?WikiSearch");
 			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH_RESULTS);
+			request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 		} catch (Exception err) {
 			logger.error(err);

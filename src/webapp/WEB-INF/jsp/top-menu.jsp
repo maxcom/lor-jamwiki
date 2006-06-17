@@ -21,7 +21,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <table class="menu-tab-table">
 <tr>
 	<td class="menu-tab-space">&#160;</td>
-<c:if test="${!special}">
+<%
+// FIXME - this needs to be cleaned up
+boolean special = false;
+try {
+	special = ((Boolean)request.getAttribute(WikiServlet.PARAMETER_SPECIAL)).booleanValue();
+} catch (Exception e) {}
+if (!special) {
+%>
 	<%-- FIXME: hard coding --%>
 	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?<c:out value="${encodedTopic}" />"><f:message key="menu.article" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
@@ -42,10 +49,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_DELETE %>"><f:message key="menu.delete" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_PRINT %>" target="_blank"><f:message key="menu.printablepage" /></a></td>
-</c:if>
-<c:if test="${special}">
+<%
+} else {
+%>
 	<td class="menu-tab-nonselected"><f:message key="menu.special" /></td>
-</c:if>
+<%
+}
+%>
 	<td class="menu-tab-close">&#160;</td>
 </tr>
 </table>

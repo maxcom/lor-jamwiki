@@ -60,6 +60,7 @@ public class LoginServlet extends JMWikiServlet {
 			// should this return a specific message instead?
 			request.setAttribute("loginFailure", "true");
 			request.setAttribute("redirect", redirect);
+			request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 			return;

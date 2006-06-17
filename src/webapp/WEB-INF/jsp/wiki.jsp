@@ -75,6 +75,10 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="history.jsp" %>
 <%
+} else if (action.equals(WikiServlet.ACTION_IMPORT)) {
+%>
+		<%@ include file="history.jsp" %>
+<%
 } else if (action.equals(WikiServlet.ACTION_LOCKLIST)) {
 %>
 		<%@ include file="locklist.jsp" %>

@@ -10,8 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author garethc
- * Date: 5/03/2003
+ *
  */
 public class UnlockServlet extends JMWikiServlet {
 
@@ -25,6 +24,7 @@ public class UnlockServlet extends JMWikiServlet {
 		if (!Utilities.isAdmin(request)) {
 			request.setAttribute("redirect", "Wiki?WikiLockList");
 			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+			request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 			return;
 		}

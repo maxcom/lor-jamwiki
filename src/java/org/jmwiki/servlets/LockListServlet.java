@@ -43,6 +43,7 @@ public class LockListServlet extends JMWikiServlet {
 		request.setAttribute("locks", locks);
 		request.setAttribute("title", messages.getString("locklist.title"));
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOCKLIST);
+		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 }

@@ -42,6 +42,7 @@ public class ImportServlet extends JMWikiServlet {
 			return;
 		}
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_IMPORT);
+		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 
