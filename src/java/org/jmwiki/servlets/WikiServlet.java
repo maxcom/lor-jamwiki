@@ -76,6 +76,7 @@ public class WikiServlet extends JMWikiServlet {
 	public static final String ACTION_SAVE = "save";
 	public static final String ACTION_SAVE_TEMPLATE = "save_template";
 	public static final String ACTION_SEARCH_RESULTS = "search_results";
+	public static final String ACTION_TODO_TOPICS = "todo_topics";
 	public static final String ACTION_DELETE = "action_delete";
 	public static final String PARAMETER_ACTION = "action";
 	public static final String PARAMETER_SPECIAL = "special";
@@ -202,6 +203,9 @@ public class WikiServlet extends JMWikiServlet {
 				} else if (action.equals("SetUsername")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
+				} else if (action.equals("ToDoWikiTopics")) {
+					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+					request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
 				} else if (action.equals("OrphanedWikiTopics")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
@@ -268,6 +272,9 @@ public class WikiServlet extends JMWikiServlet {
 			} else if (topic.equals("SetUsername")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
+			} else if (topic.equals("ToDoWikiTopics")) {
+				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+				request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
 			} else if (topic.equals("OrphanedWikiTopics")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);

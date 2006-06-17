@@ -101,6 +101,10 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="searchResults.jsp" %>
 <%
+} else if (action.equals(WikiServlet.ACTION_TODO_TOPICS) || action.equals(WikiServlet.ACTION_ORPHANED_TOPICS)) {
+%>
+		<%@ include file="allTopics.jsp" %>
+<%
 } else {
 %>
 		<div id="content-article"><c:out value="${contents}" escapeXml="false"/></div>
