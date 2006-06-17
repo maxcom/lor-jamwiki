@@ -521,36 +521,6 @@ public class WikiBase {
 	}
 
 	/**
-	 * Find all topics that haven't been written but are linked to
-	 */
-	public Collection getToDoWikiTopics(String virtualWiki) throws Exception {
-		Collection results = new TreeSet();
-		Collection all = getSearchEngineInstance().getAllTopicNames(virtualWiki);
-		Set topicNames = new HashSet();
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			String topicName = (String) iterator.next();
-			String content = handler.read(virtualWiki, topicName);
-			StringReader reader = new StringReader(content);
-			BackLinkLex lexer = new BackLinkLex(reader);
-			while (lexer.yylex() != null) {
-				;
-			}
-			reader.close();
-			topicNames.addAll(lexer.getLinks());
-		}
-		for (Iterator iterator = topicNames.iterator(); iterator.hasNext();) {
-			String topicName = (String) iterator.next();
-			if (!PseudoTopicHandler.getInstance().isPseudoTopic(topicName)
-				&& !handler.exists(virtualWiki, topicName)
-				&& !"\\\\\\\\link\\\\\\\\".equals(topicName)) {
-				results.add(topicName);
-			}
-		}
-		logger.debug(results.size() + " todo topics found");
-		return results;
-	}
-
-	/**
 	 * Return a list of all virtual wikis on the server
 	 */
 	public Collection getVirtualWikiList() throws Exception {

@@ -2341,20 +2341,6 @@
         </section>
 
         <section>
-          <title>ToDoWikiTopics</title>
-
-          <para>The Wiki automatically creates links when it encounters a word
-          in CamelCase, or a word surrounded by `backticks`. This is
-          considered a "to-do" item- it's been labeled as a link, but the
-          topic behind it hasn't been created. If you are responsible for the
-          content of the wiki, it is probably a good idea to keep an eye on
-          this page and fill in the blanks where possible- even with simple
-          article stubs. This may inspire other contributors to elaborate- and
-          nothing is more maddening than a wiki that is actually just a bunch
-          of twisty narrow passages, all alike.</para>
-        </section>
-
-        <section>
           <title>Wiki Lock List</title>
 
           <para>As users edit topics on the wiki, individual pages will be
