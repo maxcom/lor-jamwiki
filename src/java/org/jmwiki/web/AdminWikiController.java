@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.Environment;
-import org.jmwiki.Topic;
+import org.jmwiki.persistency.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.persistency.db.DatabaseConnection;

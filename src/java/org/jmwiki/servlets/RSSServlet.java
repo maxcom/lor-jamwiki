@@ -6,6 +6,7 @@ package org.jmwiki.servlets;
 
 import org.apache.log4j.Logger;
 import org.jmwiki.*;
+import org.jmwiki.persistency.Topic;
 import org.jmwiki.users.Usergroup;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;

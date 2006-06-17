@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.jmwiki.persistency.Topic;
 import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Utilities;
 import org.jmwiki.utils.JSPUtils;

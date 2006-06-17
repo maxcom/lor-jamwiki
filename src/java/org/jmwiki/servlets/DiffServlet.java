@@ -1,6 +1,6 @@
 package org.jmwiki.servlets;
 
-import org.jmwiki.Topic;
+import org.jmwiki.persistency.Topic;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -31,7 +31,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
 import org.jmwiki.WikiBase;
-import org.jmwiki.Topic;
+import org.jmwiki.persistency.Topic;
 
 /**
  * The <code>ViewTopicController</code> servlet is the servlet which allows users to view topics and

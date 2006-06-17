@@ -1,15 +1,14 @@
 package org.jmwiki.servlets;
 
-import org.jmwiki.TopicVersion;
-import org.jmwiki.VersionManager;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.Utilities;
-
+import java.io.IOException;
+import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Collection;
+import org.jmwiki.persistency.TopicVersion;
+import org.jmwiki.VersionManager;
+import org.jmwiki.WikiBase;
+import org.jmwiki.utils.Utilities;
 
 /**
  * @author garethc

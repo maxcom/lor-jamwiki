@@ -19,6 +19,7 @@ package org.jmwiki;
 
 import java.util.List;
 import java.util.Date;
+import org.jmwiki.persistency.TopicVersion;
 
 public interface VersionManager {
 

@@ -2,23 +2,23 @@ package org.jmwiki.servlets;
 
 import org.apache.log4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Collection;
 import java.util.Iterator;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import org.jmwiki.VersionManager;
+import org.jmwiki.WikiMember;
+import org.jmwiki.WikiMembers;
+import org.jmwiki.persistency.Topic;
+import org.jmwiki.persistency.TopicVersion;
 import org.jmwiki.persistency.file.*;
 import org.jmwiki.persistency.db.DatabaseHandler;
 import org.jmwiki.persistency.db.DatabaseWikiMembers;
 import org.jmwiki.persistency.db.DatabaseNotify;
 import org.jmwiki.persistency.db.DatabaseVersionManager;
-import org.jmwiki.WikiMembers;
-import org.jmwiki.WikiMember;
-import org.jmwiki.VersionManager;
-import org.jmwiki.TopicVersion;
 
 /**
  * Servlet for migrating a file-based wiki into a database-based one

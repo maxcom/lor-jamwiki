@@ -1,12 +1,13 @@
 package org.jmwiki.persistency.file;
 
+import java.io.*;
+import java.util.*;
 import org.apache.log4j.Logger;
 import org.jmwiki.*;
+import org.jmwiki.persistency.TopicVersion;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.utils.DiffUtil;
 import org.jmwiki.utils.Utilities;
-import java.io.*;
-import java.util.*;
 
 /**
  * Java MediaWiki - WikiWikiWeb clone

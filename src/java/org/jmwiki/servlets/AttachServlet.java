@@ -1,6 +1,6 @@
 package org.jmwiki.servlets;
 
-import org.jmwiki.Topic;
+import org.jmwiki.persistency.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.utils.Utilities;

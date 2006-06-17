@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 package org.jmwiki.persistency.db;
 
 import org.jmwiki.Environment;
-import org.jmwiki.TopicVersion;
+import org.jmwiki.persistency.TopicVersion;
 import org.jmwiki.VersionManager;
 import org.jmwiki.utils.DiffUtil;
 

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.Environment;
-import org.jmwiki.Topic;
+import org.jmwiki.persistency.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.persistency.db.DBDate;

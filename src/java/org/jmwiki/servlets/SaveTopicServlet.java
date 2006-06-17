@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jmwiki.Change;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.SearchEngine;
-import org.jmwiki.Topic;
+import org.jmwiki.persistency.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.persistency.file.FileChangeLog;
 import org.jmwiki.utils.JSPUtils;

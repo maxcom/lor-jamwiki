@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
-import org.jmwiki.TopicVersion;
+import org.jmwiki.persistency.TopicVersion;
 import org.jmwiki.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMember;

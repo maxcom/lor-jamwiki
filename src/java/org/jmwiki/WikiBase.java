@@ -451,7 +451,7 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	protected boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
+	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
 		return this.handler.isTopicReadOnly(virtualWiki, topicName);
 	}
 
