@@ -39,12 +39,6 @@
         <servlet-name>Search</servlet-name>
         <servlet-class>org.jmwiki.servlets.SearchServlet</servlet-class>
     </servlet>
-    <!--
-    <servlet>
-        <servlet-name>Admin</servlet-name>
-        <servlet-class>org.jmwiki.servlets.AdministrationServlet</servlet-class>
-    </servlet>
-    -->
     <servlet>
         <servlet-name>SaveAttachment</servlet-name>
         <servlet-class>org.jmwiki.servlets.SaveAttachmentServlet</servlet-class>
@@ -136,12 +130,6 @@
         <servlet-name>SaveTopic</servlet-name>
         <url-pattern>/SaveTopicServlet</url-pattern>
     </servlet-mapping>
-    <!--
-    <servlet-mapping>
-        <servlet-name>Admin</servlet-name>
-        <url-pattern>/AdministrationServlet</url-pattern>
-    </servlet-mapping>
-    -->
     <servlet-mapping>
         <servlet-name>SaveAttachment</servlet-name>
         <url-pattern>/SaveAttachmentServlet</url-pattern>
