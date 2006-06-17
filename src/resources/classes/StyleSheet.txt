@@ -7,7 +7,7 @@
 
 body {
 	font: medium sans-serif;
-	background: #f0f0f0;
+	background: #f9f9f9 url(../images/headbg.jpg) 0 0 no-repeat;
 	color: black;
 	margin: 0;
 	padding: 0;
@@ -37,7 +37,6 @@ a.edit {
 table {
 	font-size: 100%;
 	color: black;
-	background: #f0f0f0;
 }
 
 h1 {
@@ -122,6 +121,7 @@ li {
 	border-left: 1px solid #999999;
 	border-bottom: 1px solid #999999;
 	padding: 8px;
+	background: #f9f8f9;
 }
 td.main-content {
 	font-size: 80%;
@@ -155,6 +155,7 @@ td.navigation {
 	font-size: 90%;
 	margin: 8px 0px 8px 0px;
 	padding: 8px;
+	background: #f9f8f9;
 }
 
 #nav-menu ul {
@@ -167,6 +168,7 @@ td.navigation {
 	margin: 8px 0px 8px 0px;
 	padding: 8px;
 	text-align: center;
+	background: #f9f8f9;
 }
 
 /* diff page */
@@ -239,6 +241,7 @@ td.menu-tab-nonselected {
 	padding: 0;
 	text-align: center;
 	width: 9em;
+	background: #f9f8f9;
 }
 td.menu-tab-space {
 	border-bottom: 1px solid #999999;
