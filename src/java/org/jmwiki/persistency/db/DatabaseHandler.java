@@ -193,8 +193,6 @@ public class DatabaseHandler implements PersistencyHandler {
 				String vWiki = rs.getString("name");
 				// starting points
 				setupSpecialPage(vWiki, messages.getString("specialpages.startingpoints"));
-				// text formatting rules
-				setupSpecialPage(vWiki, messages.getString("specialpages.textformattingrules"));
 				// leftMenu
 				setupSpecialPage(vWiki, messages.getString("specialpages.leftMenu"));
 				// topArea

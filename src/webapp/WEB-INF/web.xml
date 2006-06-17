@@ -200,7 +200,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RecentChanges</servlet-name>
-        <url-pattern>/RecentChangesServlet</url-pattern>
+        <url-pattern>/RecentChanges</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>RSS</servlet-name>

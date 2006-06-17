@@ -92,7 +92,6 @@ public class FileHandler implements PersistencyHandler {
 				dummy.mkdir();
 				// write out default topics
 				setupSpecialPage(vWiki, messages.getString("specialpages.startingpoints"));
-				setupSpecialPage(vWiki, messages.getString("specialpages.textformattingrules"));
 				setupSpecialPage(vWiki, messages.getString("specialpages.leftMenu"));
 				setupSpecialPage(vWiki, messages.getString("specialpages.topArea"));
 				setupSpecialPage(vWiki, messages.getString("specialpages.bottomArea"));

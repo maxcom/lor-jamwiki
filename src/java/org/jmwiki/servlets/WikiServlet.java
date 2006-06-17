@@ -79,6 +79,7 @@ public class WikiServlet extends JMWikiServlet {
 	public static final String ACTION_TODO_TOPICS = "todo_topics";
 	public static final String ACTION_DELETE = "action_delete";
 	public static final String PARAMETER_ACTION = "action";
+	public static final String PARAMETER_SPECIAL = "special";
 
 	/** Servlet context */
 	// why static? Better not to do that.
@@ -180,6 +181,10 @@ public class WikiServlet extends JMWikiServlet {
 				return;
 			} else if (action.equals(ACTION_RSS)) {
 				dispatch = request.getRequestDispatcher("/RSS");
+				dispatch.forward(request, response);
+				return;
+			} else if (action.equals(ACTION_RECENT_CHANGES)) {
+				dispatch = request.getRequestDispatcher("/RecentChanges");
 				dispatch.forward(request, response);
 				return;
 			} else if (actionRedirect != null) {

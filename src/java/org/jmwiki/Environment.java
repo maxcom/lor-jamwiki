@@ -336,7 +336,7 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_NEW_LINE_BREAKS, "1");
 		defaults.setProperty(PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS, "false");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
-		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "5");
+		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "25");
 		defaults.setProperty(PROP_RECENT_CHANGES_REFRESH_INTERVAL, "1");
 		defaults.setProperty(PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_EXTLINKS_INDEXING_ENABLED, "false");
