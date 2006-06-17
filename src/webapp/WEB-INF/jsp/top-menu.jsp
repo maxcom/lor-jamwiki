@@ -52,7 +52,7 @@ if (!special) {
 <%
 } else {
 %>
-	<td class="menu-tab-nonselected"><f:message key="menu.special" /></td>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?<c:out value="${encodedTopic}" />&action=<%= action %>"><f:message key="menu.special" /></a></td>
 <%
 }
 %>

@@ -242,6 +242,14 @@ public class WikiServlet extends JMWikiServlet {
 					dispatch("/WEB-INF/jsp/servlet-error.jsp", request, response);
 					return;
 				}
+			} else if (action.equals(ACTION_SEARCH)) {
+				dispatch = request.getRequestDispatcher("/SearchServlet");
+				dispatch.forward(request, response);
+				return;
+			} else if (action.equals(ACTION_SEARCH_RESULTS)) {
+				dispatch = request.getRequestDispatcher("/SearchServlet");
+				dispatch.forward(request, response);
+				return;
 			}
 		}
 		logger.debug("no action mappings, assuming topic");

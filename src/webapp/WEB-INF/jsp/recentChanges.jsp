@@ -1,11 +1,12 @@
-<%-- FIXME: hard coding --%>
 <form name="num-changes" method="get" action="Wiki?RecentChanges">
+<%-- FIXME: hard coding --%>
+<input type="hidden" name="<%= WikiServlet.PARAMETER_ACTION %>" value="<%= WikiServlet.ACTION_RECENT_CHANGES %>" />
 <table width="100%">
 <tr>
 	<td colspan="5">
 		<%-- FIXME: use JSP tag --%>
 		<%
-		int num = 10;
+		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - breaks if non-integer
 			num = new Integer(request.getParameter("num")).intValue();

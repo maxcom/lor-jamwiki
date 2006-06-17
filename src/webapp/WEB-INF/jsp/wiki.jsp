@@ -16,6 +16,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <% response.setLocale(request.getLocale()); %>
 <%@ include file="top.jsp"%>
+<%
+// FIXME - this needs to be cleaned up
+String action = (String)request.getAttribute("action");
+if (action == null) action = "";
+%>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -48,9 +53,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<%@ include file="navbar-history-list.jsp"%>
 		<div id="contents-header"><c:out value="${title}"/></div>
 <%
-// FIXME - this needs to be cleaned up
-String action = (String)request.getAttribute("action");
-if (action == null) action = "";
 if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="admin.jsp" %>
