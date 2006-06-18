@@ -1,37 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
- "http://www.springframework.org/dtd/spring-beans.dtd">
-
-<!--
-  - Application context definition for "wiki" DispatcherServlet.
-  -->
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="basename"><value>messages</value></property>
-    </bean>
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename"><value>messages</value></property>
+	</bean>
 
-    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="mappings">
-            <props>
-                <prop key="/**/view/*.html">viewTopicController</prop>
-                <prop key="/**/edit/*.html">editTopicController</prop>
-                <prop key="/**/delete/*.html">deleteTopicController</prop>
-                <prop key="/**/admin.html">adminWikiController</prop>
-            </props>
-        </property>
-    </bean>
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/**/Special:Admin">adminWikiController</prop>
+				<prop key="/**/Wiki">Wiki</prop>
+				<prop key="/**/SearchServlet">Search</prop>
+				<prop key="/**/SaveTopicServlet">SaveTopic</prop>
+				<prop key="/**/SaveAttachmentServlet">SaveAttachment</prop>
+				<prop key="/**/SaveTemplateServlet">SaveTemplate</prop>
+				<prop key="/**/NotifyServlet">Notify</prop>
+				<prop key="/**/MenuJumpServlet">MenuJump</prop>
+				<prop key="/**/ViewAttachmentServlet">ViewAttachment</prop>
+				<prop key="/**/DiffServlet">Diff</prop>
+				<prop key="/**/AttachServlet">Attach</prop>
+				<prop key="/**/MemberServlet">Member</prop>
+				<prop key="/**/PrintableServlet">Printable</prop>
+				<prop key="/**/EditServlet">Edit</prop>
+				<prop key="/**/HistoryServlet">History</prop>
+				<prop key="/**/LockListServlet">LockList</prop>
+				<prop key="/**/UnlockServlet">Unlock</prop>
+				<prop key="/**/LoginServlet">Login</prop>
+				<prop key="/**/RecentChanges">RecentChanges</prop>
+				<prop key="/**/RSS">RSS</prop>
+				<prop key="/**/ImportServlet">Import</prop>
+				<prop key="/**/*">viewTopicController</prop>
+			</props>
+		</property>
+	</bean>
 
-    <bean id="viewTopicController" class="org.jmwiki.web.ViewTopicController" />
-    <bean id="editTopicController" class="org.jmwiki.web.EditTopicController" />
-    <bean id="deleteTopicController" class="org.jmwiki.web.DeleteTopicController" />
-    <bean id="adminWikiController" class="org.jmwiki.web.AdminWikiController" />
-
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass">
-           <value>org.springframework.web.servlet.view.JstlView</value>
-        </property>
-        <property name="prefix"><value>/WEB-INF/jsp/</value></property>
-        <property name="suffix"><value>.jsp</value></property>
-    </bean>
+	<bean id="viewTopicController" class="org.jmwiki.web.ViewTopicController" />
+	<bean id="editTopicController" class="org.jmwiki.web.EditTopicController" />
+	<bean id="deleteTopicController" class="org.jmwiki.web.DeleteTopicController" />
+	<bean id="adminWikiController" class="org.jmwiki.web.AdminWikiController" />
+	<bean id="SaveTopic" class="org.jmwiki.servlets.SaveTopicServlet" />
+	<bean id="Wiki" class="org.jmwiki.servlets.WikiServlet" />
+	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />
+	<bean id="SaveAttachment" class="org.jmwiki.servlets.SaveAttachmentServlet" />
+	<bean id="SaveTemplate" class="org.jmwiki.servlets.SaveTemplateServlet" />
+	<bean id="Notify" class="org.jmwiki.servlets.NotifyServlet" />
+	<bean id="MenuJump" class="org.jmwiki.servlets.MenuJumpServlet" />
+	<bean id="ViewAttachment" class="org.jmwiki.servlets.ViewAttachmentServlet" />
+	<bean id="Diff" class="org.jmwiki.servlets.DiffServlet" />
+	<bean id="Attach" class="org.jmwiki.servlets.AttachServlet" />
+	<bean id="Member" class="org.jmwiki.servlets.MemberServlet" />
+	<bean id="Printable" class="org.jmwiki.servlets.PrintableServlet" />
+	<bean id="Edit" class="org.jmwiki.servlets.EditServlet" />
+	<bean id="History" class="org.jmwiki.servlets.HistoryServlet" />
+	<bean id="LockList" class="org.jmwiki.servlets.LockListServlet" />
+	<bean id="Unlock" class="org.jmwiki.servlets.UnlockServlet" />
+	<bean id="Login" class="org.jmwiki.servlets.LoginServlet" />
+	<bean id="RecentChanges" class="org.jmwiki.servlets.RecentChangesServlet" />
+	<bean id="RSS" class="org.jmwiki.servlets.RSSServlet" />
+	<bean id="Import" class="org.jmwiki.servlets.ImportServlet" />
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass">
+		   <value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
+		<property name="suffix"><value>.jsp</value></property>
+	</bean>
 </beans>

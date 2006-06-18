@@ -19,6 +19,8 @@ import org.jmwiki.persistency.db.DatabaseHandler;
 import org.jmwiki.persistency.db.DatabaseWikiMembers;
 import org.jmwiki.persistency.db.DatabaseNotify;
 import org.jmwiki.persistency.db.DatabaseVersionManager;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Servlet for migrating a file-based wiki into a database-based one
@@ -26,9 +28,22 @@ import org.jmwiki.persistency.db.DatabaseVersionManager;
  * @author garethc
  * Date: Apr 28, 2003
  */
-public class ImportServlet extends JMWikiServlet {
+public class ImportServlet extends JMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(ImportServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

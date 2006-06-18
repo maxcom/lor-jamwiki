@@ -9,12 +9,27 @@ import org.jmwiki.persistency.TopicVersion;
 import org.jmwiki.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * @author garethc
  * Date: Jan 10, 2003
  */
-public class HistoryServlet extends JMWikiServlet {
+public class HistoryServlet extends JMWikiServlet implements Controller {
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

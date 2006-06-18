@@ -6,17 +6,18 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Vector;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.PrintableEntry;
 import org.jmwiki.WikiBase;
 import org.jmwiki.PseudoTopicHandler;
 import org.jmwiki.utils.Utilities;
 import org.jmwiki.utils.JSPUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Create a printable view of one servlet.
@@ -24,7 +25,22 @@ import org.jmwiki.utils.JSPUtils;
  * @author garethc, Tobias Schulz-Hess (sourcefoge@schulz-hess.de)
  * Date: Jan 8, 2003
  */
-public class PrintableServlet extends JMWikiServlet {
+public class PrintableServlet extends JMWikiServlet implements Controller {
+
+	private static Logger logger = Logger.getLogger(PrintableServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 * Handle get request

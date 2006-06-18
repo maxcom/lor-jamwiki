@@ -1,13 +1,15 @@
 package org.jmwiki.servlets;
 
-import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.utils.JSPUtils;
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import org.jmwiki.Environment;
 import org.jmwiki.utils.Encryption;
+import org.jmwiki.utils.JSPUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Servlet responsible for managing login and logout.
@@ -15,10 +17,23 @@ import org.jmwiki.utils.Encryption;
  * @author garethc
  *		 Date: 5/03/2003
  */
-public class LoginServlet extends JMWikiServlet {
+public class LoginServlet extends JMWikiServlet implements Controller {
 
 	/** Logger */
 	private static final Logger logger = Logger.getLogger(LoginServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 * Respond to get request. This will be a logout request from the link that appears at the bottom of pages if
@@ -54,6 +69,9 @@ public class LoginServlet extends JMWikiServlet {
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
+		if (redirect == null || redirect.length() == 0) {
+			redirect ="../jsp/Special:Admin";
+		}
 		if ("admin".equals(username) && Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(password)) {
 			request.getSession().setAttribute("admin", "true");
 		} else {

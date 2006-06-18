@@ -37,13 +37,15 @@ import org.jmwiki.persistency.Topic;
 import org.jmwiki.users.Usergroup;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /*
  * TODO This Servlet is a litle bit too complex. It could be a good idea to
  * refactorize and split resposibilities in different objects.
  */
 
-public class WikiServlet extends JMWikiServlet {
+public class WikiServlet extends JMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(WikiServlet.class);
 	// constants used as the action parameter in calls to this servlet
@@ -81,6 +83,19 @@ public class WikiServlet extends JMWikiServlet {
 	public static final String PARAMETER_SPECIAL = "special";
 
 	private static Map cachedContents = new HashMap();
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *
@@ -155,19 +170,26 @@ public class WikiServlet extends JMWikiServlet {
 						return;
 					}
 				}
-				dispatch = request.getRequestDispatcher("/EditServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/EditServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_RSS)) {
-				dispatch = request.getRequestDispatcher("/RSS");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/RSS");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_RECENT_CHANGES)) {
-				dispatch = request.getRequestDispatcher("/RecentChanges");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/RecentChanges");
+				dispatch.forward(request, response);
+				return;
+			} else if (action.equals(ACTION_HISTORY)) {
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/HistoryServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (actionRedirect != null) {
-				logger.debug("Using redirect from pseudotopics actions: " + actionRedirect);
+				if (actionRedirect.indexOf("WEB-INF") == -1) {
+					actionRedirect = "/" + virtualWiki + actionRedirect;
+				}
+				logger.info("Using redirect from pseudotopics actions: " + actionRedirect);
 				request.setAttribute(WikiServlet.PARAMETER_ACTION, action);
 				// FIXME - this is a mess, clean it up
 				if (action.equals("WikiLockList")) {
@@ -225,11 +247,11 @@ public class WikiServlet extends JMWikiServlet {
 					return;
 				}
 			} else if (action.equals(ACTION_SEARCH)) {
-				dispatch = request.getRequestDispatcher("/SearchServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SearchServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_SEARCH_RESULTS)) {
-				dispatch = request.getRequestDispatcher("/SearchServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SearchServlet");
 				dispatch.forward(request, response);
 				return;
 			}
@@ -241,6 +263,10 @@ public class WikiServlet extends JMWikiServlet {
 		response.setContentType("text/html");
 		String pseudotopicRedirect = PseudoTopicHandler.getInstance().getRedirectURL(topic);
 		if (pseudotopicRedirect != null) {
+			if (pseudotopicRedirect.indexOf("WEB-INF") == -1) {
+				pseudotopicRedirect = "/" + virtualWiki + pseudotopicRedirect;
+			}
+			logger.info("Using redirect from pseudotopics actions: " + pseudotopicRedirect);
 			// FIXME - this is a mess, clean it up
 			if (topic.equals("WikiLockList")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
@@ -653,7 +679,7 @@ public class WikiServlet extends JMWikiServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug("virtual wiki: " + virtualWiki);
+		logger.info("virtual wiki: " + virtualWiki);
 		//  TODO virtual-wiki and virtualWiki request params should be unified.
 		request.setAttribute("virtual-wiki", virtualWiki);
 		request.setAttribute("virtualWiki", virtualWiki);
@@ -692,24 +718,24 @@ public class WikiServlet extends JMWikiServlet {
 				checkActionAndRemoveCachedContentsIfNeeded(action, request.getLocale());
 				logger.debug("Using redirect from pseudotopics actions: " + actionRedirect);
 				request.setAttribute(PARAMETER_ACTION, action);
-				dispatch(actionRedirect, request, response);
+				dispatch("/" + virtualWiki + actionRedirect, request, response);
 				return;
 			} else if (action.equals(ACTION_SEARCH)) {
 				// a search request has been made
-				dispatch = request.getRequestDispatcher("/SearchServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SearchServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_SAVE)) {
 				// a save request has been made
 				logger.debug("Dispatching save");
 				removeCachedContents();
-				dispatch = request.getRequestDispatcher("/SaveTopicServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SaveTopicServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_APPEND)) {
 				// a append template request has been made
 				logger.debug("Dispatching append template");
-				dispatch = request.getRequestDispatcher("/SaveTopicServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SaveTopicServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_PREVIEW)) {
@@ -717,25 +743,25 @@ public class WikiServlet extends JMWikiServlet {
 				logger.debug("Dispatching preview");
 				removeCachedContents();
 				request.setAttribute(ACTION_PREVIEW, "true");
-				dispatch = request.getRequestDispatcher("/EditServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/EditServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_ADMIN)) {
 				// request to save admin values
 				logger.debug("Despatching admin servlet");
-				dispatch = request.getRequestDispatcher("/admin.hmtl");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "Special:Admin");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_SAVE_TEMPLATE)) {
 				// save template
 				logger.debug("Despatching save template");
 				removeCachedContents();
-				dispatch = request.getRequestDispatcher("/SaveTemplateServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SaveTemplateServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_RSS)) {
 				// save template
-				dispatch = request.getRequestDispatcher("/RSS");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/RSS");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_CANCEL)) {
@@ -775,21 +801,21 @@ public class WikiServlet extends JMWikiServlet {
 					try {
 						request.setAttribute("userList", WikiBase.getInstance().getUsergroupInstance().getListOfAllUsers());
 					} catch (Exception e) { }
-					dispatch = request.getRequestDispatcher(PseudoTopicHandler.getInstance().getRedirectURL("SetUsername"));
+					dispatch = request.getRequestDispatcher("/" + virtualWiki + PseudoTopicHandler.getInstance().getRedirectURL("SetUsername"));
 					dispatch.forward(request, response);
 					return;
 				} else {
 					request.setAttribute("topic", topic);
-					dispatch = request.getRequestDispatcher("/EditServlet");
+					dispatch = request.getRequestDispatcher("/" + virtualWiki + "/EditServlet");
 					dispatch.forward(request, response);
 					return;
 				}
 			} else if (action.equals(ACTION_NOTIFY)) {
-				dispatch = request.getRequestDispatcher("/NotifyServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/NotifyServlet");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_MEMBER)) {
-				dispatch = request.getRequestDispatcher("/MemberServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/MemberServlet");
 				dispatch.forward(request, response);
 				return;
 			}

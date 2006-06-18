@@ -36,13 +36,31 @@ import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
-public class SaveAttachmentServlet extends JMWikiServlet {
+/**
+ *
+ */
+public class SaveAttachmentServlet extends JMWikiServlet implements Controller {
 
 	/** Logger */
 	public static final Logger logger = Logger.getLogger(SaveAttachmentServlet.class);
 	/** The servlet config for this servlet (initialised during the overriden servlet init()) */
 	private ServletConfig config;
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 * Init the servlet

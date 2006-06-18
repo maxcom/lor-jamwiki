@@ -17,10 +17,28 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
-public class ViewAttachmentServlet extends JMWikiServlet {
+/**
+ *
+ */
+public class ViewAttachmentServlet extends JMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(ViewAttachmentServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

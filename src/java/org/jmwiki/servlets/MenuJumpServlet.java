@@ -8,12 +8,14 @@
 
 package org.jmwiki.servlets;
 
-import org.jmwiki.utils.JSPUtils;
-
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import org.jmwiki.utils.JSPUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * Servlet for handling quick menu search and jump-to options. Despatches work to other servlets.
@@ -24,7 +26,22 @@ import java.io.IOException;
  *		 Last Modified: $Date: 2006-04-23 08:36:56 +0200 (zo, 23 apr 2006) $
  *		 $Id: MenuJumpServlet.java 643 2006-04-23 06:36:56Z wrh2 $
  */
-public class MenuJumpServlet extends JMWikiServlet {
+public class MenuJumpServlet extends JMWikiServlet implements Controller {
+
+	private static Logger logger = Logger.getLogger(MenuJumpServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

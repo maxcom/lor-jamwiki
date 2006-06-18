@@ -182,10 +182,10 @@ public class AdminWikiController implements Controller {
 	 */
 	private ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
 		request.setAttribute("title", Utilities.resource("login.title", request.getLocale()));
-		String rootPath = JSPUtils.createLocalRootPath(request, (String) request.getAttribute("virtualWiki"));
+//		String rootPath = JSPUtils.createLocalRootPath(request, (String) request.getAttribute("virtualWiki"));
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(rootPath);
-		buffer.append("admin.html");
+//		buffer.append(rootPath);
+		buffer.append("../jsp/Special:Admin");
 		request.setAttribute("redirect", buffer.toString());
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));

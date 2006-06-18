@@ -12,13 +12,28 @@ import org.apache.log4j.Logger;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class RecentChangesServlet extends JMWikiServlet {
+public class RecentChangesServlet extends JMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(RecentChangesServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

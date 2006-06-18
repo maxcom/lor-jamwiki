@@ -1,5 +1,13 @@
 package org.jmwiki.servlets;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.ResourceBundle;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.jmwiki.Environment;
 import org.jmwiki.PseudoTopicHandler;
 import org.jmwiki.persistency.Topic;
@@ -7,21 +15,27 @@ import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.ResourceBundle;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * @author garethc
  *		 Date: Jan 8, 2003
  */
-public class EditServlet extends JMWikiServlet {
+public class EditServlet extends JMWikiServlet implements Controller {
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </c:when>
     <c:otherwise>
         <%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
-        <%-- <c:redirect url="jsp/admin.html" /> --%>
+        <%-- <c:redirect url="jsp/Special:Admin" /> --%>
         <c:out value="${defaultTopic}" />
     </c:otherwise>
 </c:choose>

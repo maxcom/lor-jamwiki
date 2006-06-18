@@ -101,7 +101,7 @@ function onUserGroupType() {
 }
 </script>
 
-<form action="admin.html" method="get">
+<form action="../jsp/Special:Admin" method="get">
   <input type="hidden" name="function" value="logout"/>
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
   <table>
@@ -110,7 +110,7 @@ function onUserGroupType() {
     </tr>
   </table>
 </form>
-<form name="form1" method="post" action="admin.html">
+<form name="form1" method="post" action="../jsp/Special:Admin">
 <% if( !message.equals("") ){%>
 <p class="red"><%=message%></p>
 <%}%>
@@ -576,7 +576,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.refresh"/></p>
-<form name="refreshform" method="post" action="admin.html">
+<form name="refreshform" method="post" action="../jsp/Special:Admin">
   <input type="submit" name="submit" value="<f:message key="admin.action.refresh"/>"/>
   <f:message key="admin.message.filemodeonly"/>
   <input type="hidden" name="function" value="refreshIndex"/>
@@ -584,7 +584,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.purge"/></p>
-<form name="purgeform" method="post" action="admin.html">
+<form name="purgeform" method="post" action="../jsp/Special:Admin">
 <f:message key="admin.caption.virtualwiki"/>
 <select name="virtual-wiki">
 <option value="jsp"><f:message key="common.default"/></option>
@@ -610,7 +610,7 @@ function onUserGroupType() {
 <hr/>
 <%-- FIXME - restore virtual wiki --%>
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
-<form name="readOnlyTopics" method="post" action="admin.html" class="contents">
+<form name="readOnlyTopics" method="post" action="../jsp/Special:Admin" class="contents">
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
   <table border="0">
     <tr>
@@ -651,7 +651,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.virtualwiki"/></p>
-<form action="admin.html" method="post">
+<form action="../jsp/Special:Admin" method="post">
   <table class="contents">
     <tr>
       <td><p><f:message key="common.name"/></p></td><td><input type="textfield" name="newVirtualWiki"/></td>
@@ -663,7 +663,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.changepassword"/></p>
-<form action="admin.html" method="post">
+<form action="../jsp/Special:Admin" method="post">
   <table class="contents">
     <tr>
       <td><f:message key="admin.caption.oldpassword"/></td>
@@ -689,7 +689,7 @@ function onUserGroupType() {
 <a href="Wiki?action=<%= WikiServlet.ACTION_IMPORT %>"><f:message key="admin.caption.startimport"/></a>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
-<form action="admin.html" method="post">
+<form action="../jsp/Special:Admin" method="post">
   <table class="contents">
     <tr>
       <td><f:message key="admin.caption.panic"/></td>

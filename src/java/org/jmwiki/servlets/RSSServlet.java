@@ -4,13 +4,6 @@
  */
 package org.jmwiki.servlets;
 
-import org.apache.log4j.Logger;
-import org.jmwiki.*;
-import org.jmwiki.persistency.Topic;
-import org.jmwiki.users.Usergroup;
-import org.jmwiki.utils.JSPUtils;
-import org.jmwiki.utils.Utilities;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +16,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
+import org.apache.log4j.Logger;
+import org.jmwiki.*;
+import org.jmwiki.persistency.Topic;
+import org.jmwiki.users.Usergroup;
+import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * This servlet generates a RSS Stream for the default wiki.
@@ -45,10 +46,23 @@ import java.util.Iterator;
  *
  * @author Tobias Schulz-Hess (sourceforge@schulz-hess.de)
  */
-public class RSSServlet extends HttpServlet {
+public class RSSServlet extends HttpServlet implements Controller {
 
 	/** Logging */
 	private static final Logger logger = Logger.getLogger(RSSServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 * Handle post request.

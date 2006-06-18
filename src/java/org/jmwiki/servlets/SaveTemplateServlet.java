@@ -4,21 +4,35 @@
  */
 package org.jmwiki.servlets;
 
-import org.apache.log4j.Logger;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.JSPUtils;
-import org.jmwiki.utils.Utilities;
-
+import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.apache.log4j.Logger;
+import org.jmwiki.WikiBase;
+import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
-public class SaveTemplateServlet extends HttpServlet {
+public class SaveTemplateServlet extends HttpServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SaveTemplateServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

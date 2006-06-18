@@ -1,27 +1,40 @@
 package org.jmwiki.servlets;
 
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-
 import org.jmwiki.PseudoTopicHandler;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMember;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.users.Usergroup;
 import org.jmwiki.utils.Utilities;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * @author garethc
  * Date: Jan 8, 2003
  */
-public class MemberServlet extends JMWikiServlet {
+public class MemberServlet extends JMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(MemberServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

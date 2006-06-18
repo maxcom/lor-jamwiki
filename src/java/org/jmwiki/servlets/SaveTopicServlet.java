@@ -7,12 +7,11 @@ package org.jmwiki.servlets;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.ResourceBundle;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.log4j.Logger;
 import org.jmwiki.Change;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.SearchEngine;
@@ -21,11 +20,25 @@ import org.jmwiki.WikiBase;
 import org.jmwiki.persistency.file.FileChangeLog;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
-import org.apache.log4j.Logger;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
-public class SaveTopicServlet extends JMWikiServlet {
+public class SaveTopicServlet extends JMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SaveTopicServlet.class);
+
+	/**
+	 *
+	 */
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("wiki");
+		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+			this.doGet(request, response);
+		} else {
+			this.doPost(request, response);
+		}
+		return null;
+	}
 
 	/**
 	 *

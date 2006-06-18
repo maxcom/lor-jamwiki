@@ -124,7 +124,7 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 		<c:out value="${bottomArea}" escapeXml="false"/>
 		<br/>
 		<font size="-3">Java MediaWiki Version <jmwiki:wiki-version/> |
-		<a href="admin.html?username=admin"><f:message key="admin.title"/></a>
+		<a href="../jsp/Special:Admin?username=admin"><f:message key="admin.title"/></a>
 		</font>
 		<c:if test="${not empty pageContext.request.userPrincipal}">|
 		<font size="-3"><a href='Wiki?action=<%= WikiServlet.ACTION_LOGIN %>&logout=true&redirect=Wiki%3F<c:out value="${topic}"/>'><f:message key="general.logout"/></a></font>
