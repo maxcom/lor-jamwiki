@@ -26,8 +26,6 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.Environment;
 import org.jmwiki.persistency.Topic;
@@ -39,6 +37,8 @@ import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Encryption;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * The <code>AdminWikiController</code> servlet is the servlet which allows the administrator
@@ -58,7 +58,7 @@ public class AdminWikiController implements Controller {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public final ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		this.messages = ResourceBundle.getBundle("ApplicationResources", request.getLocale());
 		this.virtualWiki = (String) request.getAttribute("virtual-wiki");
 		WikiServlet.buildLayout(request, virtualWiki);
@@ -236,6 +236,7 @@ public class AdminWikiController implements Controller {
 				Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL,
 				Integer.parseInt(request.getParameter(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL))
 			);
+			Environment.setValue(Environment.PROP_SEARCH_TEMP_DIRECTORY, request.getParameter(Environment.PROP_SEARCH_TEMP_DIRECTORY));
 			Environment.setIntValue(
 				Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL,
 				Integer.parseInt(request.getParameter(Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL))

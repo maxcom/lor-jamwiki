@@ -25,7 +25,6 @@ import java.util.Collection;
 
 import org.jmwiki.AbstractSearchEngine;
 import org.jmwiki.WikiBase;
-import org.jmwiki.servlets.WikiServlet;
 
 
 /**
@@ -62,7 +61,7 @@ public class DatabaseSearchEngine extends AbstractSearchEngine {
 	public static synchronized DatabaseSearchEngine getInstance() throws Exception {
 		if (instance == null) {
 			instance = new DatabaseSearchEngine();
-			instance.initSearchEngine(WikiServlet.getCurrentContext());
+			instance.initSearchEngine();
 			instance.refreshIndex();
 		}
 		return instance;

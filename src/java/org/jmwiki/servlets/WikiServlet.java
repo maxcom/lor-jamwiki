@@ -19,7 +19,6 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -81,27 +80,7 @@ public class WikiServlet extends JMWikiServlet {
 	public static final String PARAMETER_ACTION = "action";
 	public static final String PARAMETER_SPECIAL = "special";
 
-	/** Servlet context */
-	// why static? Better not to do that.
-	private static ServletContext servletContext = null;
 	private static Map cachedContents = new HashMap();
-
-	/**
-	 *
-	 */
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		// store servlet context reference so that it can be accessed from a static
-		// context
-		servletContext = config.getServletContext();
-	}
-
-	/**
-	 * Returns a reference to the current servlet context
-	 */
-	public static ServletContext getCurrentContext() {
-		return servletContext;
-	}
 
 	/**
 	 *

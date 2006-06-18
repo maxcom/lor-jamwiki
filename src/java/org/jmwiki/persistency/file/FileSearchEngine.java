@@ -7,7 +7,6 @@ import java.util.TreeSet;
 import org.jmwiki.AbstractSearchEngine;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
-import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.TextFileFilter;
 import org.jmwiki.utils.Utilities;
 
@@ -60,7 +59,7 @@ public class FileSearchEngine extends AbstractSearchEngine {
 	public static synchronized FileSearchEngine getInstance() throws Exception {
 		if (instance == null) {
 			instance = new FileSearchEngine();
-			instance.initSearchEngine(WikiServlet.getCurrentContext());
+			instance.initSearchEngine();
 		}
 		return instance;
 	}

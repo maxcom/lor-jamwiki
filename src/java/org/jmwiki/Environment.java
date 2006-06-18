@@ -94,6 +94,7 @@ public class Environment {
 	public static final String PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED = "attachment-indexing";
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
+	public static final String PROP_SEARCH_TEMP_DIRECTORY = "search-temp-dir";
 	public static final String PROP_TOPIC_ALLOW_TEMPLATES = "allow-templates";
 	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jmwiki-list";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
@@ -289,7 +290,8 @@ public class Environment {
 	private static void initDefaultProperties() {
 		defaults = new Properties();
 		defaults.setProperty(PROP_ATTACH_MAX_FILE_SIZE, "2000000");
-		defaults.setProperty(PROP_ATTACH_TEMP_DIR, "tmp");
+		// FIXME - make sure this is set
+		defaults.setProperty(PROP_ATTACH_TEMP_DIR, "");
 		defaults.setProperty(PROP_ATTACH_TIMESTAMP, "true");
 		defaults.setProperty(PROP_ATTACH_TYPE, "inline");
 		defaults.setProperty(PROP_ATTACH_UPLOAD_DIR, "upload");
@@ -341,6 +343,8 @@ public class Environment {
 		defaults.setProperty(PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_EXTLINKS_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
+		// FIXME - make sure this is set
+		defaults.setProperty(PROP_SEARCH_TEMP_DIRECTORY, "");
 		defaults.setProperty(PROP_TOPIC_ALLOW_TEMPLATES, "true");
 		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");
 		defaults.setProperty(PROP_TOPIC_EDIT_TIME_OUT, "10");

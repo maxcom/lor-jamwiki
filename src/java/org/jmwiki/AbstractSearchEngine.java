@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import javax.servlet.ServletContext;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
@@ -182,19 +181,15 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/**
 	 * @param indexPath
 	 */
-	protected void initSearchEngine(ServletContext ctx) throws Exception {
-		// Initialize the temp directory used to store search indexes.
-		// In order to avoid collisions in the case of multiple deployments
-		// of this very application, the temp directory supplied by the
-		// servlet container (which is required to be private per servlet
-		// context by ?? 3.7.1 of the Java Servlet Specification) is used
-		// rather than the global temp directory as defined in the system
-		// property 'java.io.tmpdir'.
+	protected void initSearchEngine() throws Exception {
+		// FIXME - need a unique temp directory even if multiple wiki installations
+		// running on the same system.
 		try {
-			File tmpDir = (File) ctx.getAttribute("javax.servlet.context.tempdir");
+			String dir = Environment.getValue(Environment.PROP_SEARCH_TEMP_DIRECTORY);
+			File tmpDir = new File("e:/tmp/wiki/search");
 			indexPath = tmpDir.getPath();
-		} catch (Throwable t) {
-			logger.warn("'javax.servlet.context.tempdir' attribute undefined or invalid, using java.io.tmpdir", t);
+		} catch (Exception e) {
+			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);
 			indexPath = System.getProperty("java.io.tmpdir");
 		}
 		refreshIndex();
