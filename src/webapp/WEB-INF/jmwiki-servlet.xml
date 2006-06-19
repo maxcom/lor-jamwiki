@@ -9,36 +9,34 @@
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
-				<prop key="/**/Special:Admin">adminWikiController</prop>
+				<prop key="/**/Special:Admin">adminController</prop>
 				<prop key="/**/Wiki">Wiki</prop>
-				<prop key="/**/SearchServlet">Search</prop>
-				<prop key="/**/SaveTopicServlet">SaveTopic</prop>
-				<prop key="/**/SaveAttachmentServlet">SaveAttachment</prop>
-				<prop key="/**/SaveTemplateServlet">SaveTemplate</prop>
-				<prop key="/**/NotifyServlet">Notify</prop>
-				<prop key="/**/MenuJumpServlet">MenuJump</prop>
-				<prop key="/**/ViewAttachmentServlet">ViewAttachment</prop>
-				<prop key="/**/DiffServlet">Diff</prop>
-				<prop key="/**/AttachServlet">Attach</prop>
-				<prop key="/**/MemberServlet">Member</prop>
-				<prop key="/**/PrintableServlet">Printable</prop>
-				<prop key="/**/EditServlet">Edit</prop>
-				<prop key="/**/HistoryServlet">History</prop>
-				<prop key="/**/LockListServlet">LockList</prop>
-				<prop key="/**/UnlockServlet">Unlock</prop>
-				<prop key="/**/LoginServlet">Login</prop>
-				<prop key="/**/RecentChanges">RecentChanges</prop>
-				<prop key="/**/RSS">RSS</prop>
-				<prop key="/**/ImportServlet">Import</prop>
-				<prop key="/**/*">viewTopicController</prop>
+				<prop key="/**/Special:Search">Search</prop>
+				<prop key="/**/Special:SaveTopic">SaveTopic</prop>
+				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
+				<prop key="/**/Special:SaveTemplate">SaveTemplate</prop>
+				<prop key="/**/Special:Notify">Notify</prop>
+				<prop key="/**/Special:MenuJump">MenuJump</prop>
+				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
+				<prop key="/**/Special:Diff">Diff</prop>
+				<prop key="/**/Special:Attach">Attach</prop>
+				<prop key="/**/Special:Member">Member</prop>
+				<prop key="/**/Special:Print">Printable</prop>
+				<prop key="/**/Special:Edit">Edit</prop>
+				<prop key="/**/Special:History">History</prop>
+				<prop key="/**/Special:LockList">LockList</prop>
+				<prop key="/**/Special:Unlock">Unlock</prop>
+				<prop key="/**/Special:Login">Login</prop>
+				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
+				<prop key="/**/Special:RSS">RSS</prop>
+				<prop key="/**/Special:Import">Import</prop>
+				<prop key="/**/*">topicController</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean id="viewTopicController" class="org.jmwiki.web.ViewTopicController" />
-	<bean id="editTopicController" class="org.jmwiki.web.EditTopicController" />
-	<bean id="deleteTopicController" class="org.jmwiki.web.DeleteTopicController" />
-	<bean id="adminWikiController" class="org.jmwiki.web.AdminWikiController" />
+	<bean id="topicController" class="org.jmwiki.servlets.TopicController" />
+	<bean id="adminController" class="org.jmwiki.servlets.AdminController" />
 	<bean id="SaveTopic" class="org.jmwiki.servlets.SaveTopicServlet" />
 	<bean id="Wiki" class="org.jmwiki.servlets.WikiServlet" />
 	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />

@@ -1,17 +1,15 @@
-Click "Edit Page" at the top of this page to start contributing.
-To delete a topic, just leave the word "delete" by itself when you save it. It will be
-removed completely when your administrator runs a purge.
+Click "Edit" at the top of this page to start contributing.
 
 Some potentially useful functions:
 
-* [[RecentChanges]] - what, when, who
-* [[AllWikiTopics]] - a list of all the topics in the Wiki
-* [[OrphanedWikiTopics]] - topics that have no links from any other topics, use with caution on a big Wiki
-* [[ToDoWikiTopics]] - dangling topic links waiting for someone to write about them
-* [[WikiLockList]] - currently locked topics
-* [[RSS]] - a RSS news stream of this Wiki
-* [[WikiSearch]] - search the Wiki
-* [[SetUsername]] - set a name to appear in the RecentChanges
+* [[Special:RecentChanges|Recent Changes]] - what, when, who
+* [[Special:AllTopics|All Topics]] - a list of all the topics in the Wiki
+* [[Special:OrphanedTopics|Orphaned Topics]] - topics that have no links from any other topics, use with caution on a big Wiki
+* [[Special:ToDoTopics|To Do Topics]] - dangling topic links waiting for someone to write about them
+* [[Special:LockList|Lock List]] - currently locked topics
+* [[Special:RSS|RSS]] - a RSS news stream of this Wiki
+* [[Special:Search|Search]] - search the Wiki
+* [[Special:SetUsername|Set Username]] - set a name to appear in the RecentChanges
 
 There are also several [[AdminOnlyTopics]] including:
 

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.ResourceBundle;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +17,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class RecentChangesServlet extends JMWikiServlet implements Controller {
+public class RecentChangesServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(RecentChangesServlet.class);
 
@@ -27,18 +26,17 @@ public class RecentChangesServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		JMController.buildLayout(request, next);
+		recentChanges(request, next);
+		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		next.addObject("title", JMController.getMessage("recentchanges.title", request.getLocale()));
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number
@@ -46,19 +44,15 @@ public class RecentChangesServlet extends JMWikiServlet implements Controller {
 		}
 		ArrayList all = null;
 		try {
-			String virtualWiki = (String)request.getAttribute("virtual-wiki");
 			all = reload(virtualWiki, num);
 		} catch (Exception e) {
-			error(request, response, e);
-			return;
+			logger.error(e);
+			throw e;
 		}
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", request.getLocale());
-		request.setAttribute("title", messages.getString("recentchanges.title"));
 		request.setAttribute("changes", all);
 		request.setAttribute("num", new Integer(num));
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_RECENT_CHANGES);
 		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
 	}
 
 	/**

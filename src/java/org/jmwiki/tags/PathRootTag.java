@@ -18,7 +18,7 @@ public class PathRootTag extends TagSupport {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(((HttpServletRequest) this.pageContext.getRequest()).getContextPath());
 		buffer.append("/");
-		buffer.append(this.pageContext.findAttribute("virtual-wiki"));
+		buffer.append(this.pageContext.findAttribute("virtualWiki"));
 		try {
 			this.pageContext.getOut().print(buffer.toString());
 		} catch (IOException e) {

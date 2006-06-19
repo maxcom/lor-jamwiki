@@ -1,17 +1,17 @@
 <%
-String virtualWiki = (String)request.getAttribute("virtual-wiki");
+String virtualWiki = (String)request.getAttribute("virtualWiki");
 Collection all = null;
 String title = "";
 WikiBase wb = WikiBase.getInstance();
 if (request.getParameter("orphaned") == null && request.getAttribute("orphaned") == null && request.getParameter("todo") == null && request.getAttribute("todo") == null) {
 	all = wb.getSearchEngineInstance().getAllTopicNames(virtualWiki);
-	title = "AllWikiTopics";
+	title = "Special:AllTopics";
 } else if (request.getParameter("orphaned") != null || request.getAttribute("orphaned") != null) {
 	all = wb.getOrphanedTopics(virtualWiki);
-	title = "OrphanedWikiTopics";
+	title = "Special:OrphanedTopics";
 } else if (request.getParameter("todo") != null || request.getAttribute("todo") != null) {
 	all = wb.getToDoWikiTopics(virtualWiki);
-	title = "ToDoWikiTopics";
+	title = "Special:ToDoTopics";
 }
 %>
 <table>

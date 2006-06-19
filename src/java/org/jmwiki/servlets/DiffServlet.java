@@ -11,10 +11,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * @author garethc
- *		 Date: Jan 8, 2003
+ *
  */
-public class DiffServlet extends JMWikiServlet implements Controller {
+public class DiffServlet extends JMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(DiffServlet.class);
 
@@ -23,34 +22,23 @@ public class DiffServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		JMController.buildLayout(request, next);
+		diff(request, next);
+		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-		throws ServletException, IOException {
-		doGet(httpServletRequest, httpServletResponse);
-	}
-
-	/**
-	 *
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String virtualWiki = (String) request.getAttribute("virtualWiki");
+	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String topic = request.getParameter("topic");
-		request.setAttribute("title", "Diff " + topic);
-		request.setAttribute("topic", topic);
+		next.addObject("title", "Diff " + topic);
+		next.addObject("topic", topic);
 		try {
 			Topic t = new Topic(topic);
 			String diffType = request.getParameter("type");
-			if (diffType != null && "arbitrary".equals(diffType)) {
+			if (diffType != null && diffType.equals("arbitrary")) {
 				int firstVersion = -1;
 				int secondVersion = -1;
 				Enumeration e = request.getParameterNames();
@@ -66,25 +54,18 @@ public class DiffServlet extends JMWikiServlet implements Controller {
 					}
 				}
 				if (firstVersion == -1 || secondVersion == -1) {
-					request.setAttribute("badinput", "true");
+					next.addObject("badinput", "true");
 				} else {
-					request.setAttribute(
-						"diff", t.getDiff(
-							virtualWiki,
-							Math.min(firstVersion, secondVersion),
-							Math.max(firstVersion, secondVersion),
-							true
-						)
-					);
+					String diff = t.getDiff(virtualWiki, Math.min(firstVersion, secondVersion), Math.max(firstVersion, secondVersion), true);
+					next.addObject("diff", diff);
 				}
 			} else {
-				request.setAttribute("diff", t.mostRecentDiff(virtualWiki, true));
+				next.addObject("diff", t.mostRecentDiff(virtualWiki, true));
 			}
 		} catch (Exception e) {
-			error(request, response, e);
-			return;
+			logger.error(e);
+			throw e;
 		}
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_DIFF);
-		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_DIFF);
 	}
 }

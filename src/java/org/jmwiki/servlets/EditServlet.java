@@ -22,13 +22,14 @@ import org.springframework.web.servlet.mvc.Controller;
  * @author garethc
  *		 Date: Jan 8, 2003
  */
-public class EditServlet extends JMWikiServlet implements Controller {
+public class EditServlet extends JMController implements Controller {
 
 	/**
 	 *
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
@@ -57,7 +58,7 @@ public class EditServlet extends JMWikiServlet implements Controller {
 			);
 			return;
 		}
-		String virtualWiki = (String) request.getAttribute("virtual-wiki");
+		String virtualWiki = (String) request.getAttribute("virtualWiki");
 		try {
 			if (virtualWiki == null) {
 				virtualWiki = Utilities.extractVirtualWiki(request);

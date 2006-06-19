@@ -18,7 +18,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <%@ include file="top.jsp"%>
 <%
 // FIXME - this needs to be cleaned up
-String action = (String)request.getAttribute("action");
+String action = (String)request.getAttribute(WikiServlet.PARAMETER_ACTION);
+if (action == null) {
+	action = request.getParameter(WikiServlet.PARAMETER_ACTION);
+}
 if (action == null) action = "";
 %>
 

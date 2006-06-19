@@ -586,7 +586,7 @@ function onUserGroupType() {
 <p class="subHeader"><f:message key="admin.title.purge"/></p>
 <form name="purgeform" method="post" action="../jsp/Special:Admin">
 <f:message key="admin.caption.virtualwiki"/>
-<select name="virtual-wiki">
+<select name="virtualWiki">
 <option value="jsp"><f:message key="common.default"/></option>
 <%
   Collection virtualWikis = null;

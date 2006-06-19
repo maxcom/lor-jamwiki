@@ -45,7 +45,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * refactorize and split resposibilities in different objects.
  */
 
-public class WikiServlet extends JMWikiServlet implements Controller {
+public class WikiServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(WikiServlet.class);
 	// constants used as the action parameter in calls to this servlet
@@ -89,6 +89,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
@@ -115,11 +116,15 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 		request.setAttribute("lastRequest", request.getRequestURL());
 		// expire now
 		response.setDateHeader("Expires", System.currentTimeMillis() - 24 * 60 * 60 * 1000);
-		String topic = request.getQueryString();
-		if (topic == null) {
-			topic = "StartingPoints";
+		String topic = null;
+		String virtualWiki = null;
+		try {
+			topic = JMController.getTopicFromURI(request);
+			virtualWiki = JMController.getVirtualWikiFromURI(request);
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
-		if (topic.equals("")) {
+		if (topic == null || topic.length() == 0) {
 			topic = "StartingPoints";
 		}
 		if (topic.indexOf('&') > 0) {
@@ -130,14 +135,6 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 		} else {
 			topic = JSPUtils.decodeURL(topic, response.getCharacterEncoding());
 		}
-		String virtualWiki = null;
-		try {
-			virtualWiki = Utilities.extractVirtualWiki(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		logger.debug("virtual wiki: " + virtualWiki);
-		request.setAttribute("virtual-wiki", virtualWiki);
 		request.setAttribute("virtualWiki", virtualWiki);
 		buildLayout(request, virtualWiki);
 		if (Environment.getValue(Environment.PROP_TOPIC_BASE_CONTEXT) == null) {
@@ -170,19 +167,19 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 						return;
 					}
 				}
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/EditServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Edit");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_RSS)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/RSS");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:RSS");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_RECENT_CHANGES)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/RecentChanges");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:RecentChanges");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_HISTORY)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/HistoryServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:History");
 				dispatch.forward(request, response);
 				return;
 			} else if (actionRedirect != null) {
@@ -192,31 +189,31 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 				logger.info("Using redirect from pseudotopics actions: " + actionRedirect);
 				request.setAttribute(WikiServlet.PARAMETER_ACTION, action);
 				// FIXME - this is a mess, clean it up
-				if (action.equals("WikiLockList")) {
+				if (action.equals("Special:LockList")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_LOCKLIST);
-				} else if (action.equals("RecentChanges")) {
+				} else if (action.equals("Special:RecentChanges")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_RECENT_CHANGES);
-				} else if (action.equals("WikiSearch")) {
+				} else if (action.equals("Special:Search")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_SEARCH);
-				} else if (action.equals("SetUsername")) {
+				} else if (action.equals("Special:SetUsername")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
-				} else if (action.equals("ToDoWikiTopics")) {
+				} else if (action.equals("Special:ToDoTopics")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
-				} else if (action.equals("OrphanedWikiTopics")) {
+				} else if (action.equals("Special:OrphanedTopics")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
-				} else if (action.equals("AllWikiTopics")) {
+				} else if (action.equals("Special:AllTopics")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_ALL_TOPICS);
-				} else if (action.equals("WikiLogin")) {
+				} else if (action.equals("Special:Login")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_LOGIN);
-				} else if (action.equals("RSS")) {
+				} else if (action.equals("Special:RSS")) {
 					request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 					request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
 				} else if (action.equals(ACTION_FIRST_USE)) {
@@ -247,11 +244,11 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 					return;
 				}
 			} else if (action.equals(ACTION_SEARCH)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SearchServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Search");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_SEARCH_RESULTS)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SearchServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Search");
 				dispatch.forward(request, response);
 				return;
 			}
@@ -268,31 +265,31 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 			}
 			logger.info("Using redirect from pseudotopics actions: " + pseudotopicRedirect);
 			// FIXME - this is a mess, clean it up
-			if (topic.equals("WikiLockList")) {
+			if (topic.equals("Special:LockList")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_LOCKLIST);
-			} else if (topic.equals("RecentChanges")) {
+			} else if (topic.equals("Special:RecentChanges")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_RECENT_CHANGES);
-			} else if (topic.equals("WikiSearch")) {
+			} else if (topic.equals("Special:Search")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_SEARCH);
-			} else if (topic.equals("SetUsername")) {
+			} else if (topic.equals("Special:SetUsername")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_EDIT_USER);
-			} else if (topic.equals("ToDoWikiTopics")) {
+			} else if (topic.equals("Special:ToDoTopics")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_TODO_TOPICS);
-			} else if (topic.equals("OrphanedWikiTopics")) {
+			} else if (topic.equals("Special:OrphanedTopics")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_ORPHANED_TOPICS);
-			} else if (topic.equals("AllWikiTopics")) {
+			} else if (topic.equals("Special:AllTopics")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_ALL_TOPICS);
-			} else if (topic.equals("WikiLogin")) {
+			} else if (topic.equals("Special:Login")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_LOGIN);
-			} else if (topic.equals("RSS")) {
+			} else if (topic.equals("Special:RSS")) {
 				request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				request.setAttribute(PARAMETER_ACTION, ACTION_RSS);
 			} else if (action.equals(ACTION_FIRST_USE)) {
@@ -344,7 +341,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 	/**
 	 *
 	 */
-	private static ResourceBundle getMessages(Locale locale) {
+	public static ResourceBundle getMessages(Locale locale) {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		return messages;
 	}
@@ -606,7 +603,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 	/**
 	 *
 	 */
-	private static String getCached(String virtualWiki, String topic, WikiReader wr) {
+	public static String getCached(String virtualWiki, String topic, WikiReader wr) {
 		String content = (String) cachedContents.get(virtualWiki + "-" + topic);
 		if (content == null) {
 			try {
@@ -632,7 +629,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 	 * @param topic	   the topic name
 	 * @return the topic contents
 	 */
-	private static String getCachedContent(String virtualWiki, String topic) {
+	public static String getCachedContent(String virtualWiki, String topic) {
 		return getCached(virtualWiki, topic, cookedReader);
 	}
 
@@ -645,7 +642,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 	 * @param topic	   the topic name
 	 * @return the topic contents
 	 */
-	private static String getCachedRawContent(String virtualWiki, String topic) {
+	public static String getCachedRawContent(String virtualWiki, String topic) {
 		return getCached(virtualWiki, topic, rawReader);
 	}
 
@@ -675,13 +672,10 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 		response.setContentType("text/html");
 		String virtualWiki = null;
 		try {
-			virtualWiki = Utilities.extractVirtualWiki(request);
+			virtualWiki = JMController.getVirtualWikiFromURI(request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ServletException(e);
 		}
-		logger.info("virtual wiki: " + virtualWiki);
-		//  TODO virtual-wiki and virtualWiki request params should be unified.
-		request.setAttribute("virtual-wiki", virtualWiki);
 		request.setAttribute("virtualWiki", virtualWiki);
 		buildLayout(request, virtualWiki);
 		// make decision based on action
@@ -722,20 +716,20 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 				return;
 			} else if (action.equals(ACTION_SEARCH)) {
 				// a search request has been made
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SearchServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Search");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_SAVE)) {
 				// a save request has been made
 				logger.debug("Dispatching save");
 				removeCachedContents();
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SaveTopicServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SaveTopic");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_APPEND)) {
 				// a append template request has been made
 				logger.debug("Dispatching append template");
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SaveTopicServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SaveTopic");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_PREVIEW)) {
@@ -743,7 +737,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 				logger.debug("Dispatching preview");
 				removeCachedContents();
 				request.setAttribute(ACTION_PREVIEW, "true");
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/EditServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Edit");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_ADMIN)) {
@@ -756,7 +750,7 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 				// save template
 				logger.debug("Despatching save template");
 				removeCachedContents();
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/SaveTemplateServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SaveTemplate");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_RSS)) {
@@ -806,16 +800,16 @@ public class WikiServlet extends JMWikiServlet implements Controller {
 					return;
 				} else {
 					request.setAttribute("topic", topic);
-					dispatch = request.getRequestDispatcher("/" + virtualWiki + "/EditServlet");
+					dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Edit");
 					dispatch.forward(request, response);
 					return;
 				}
 			} else if (action.equals(ACTION_NOTIFY)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/NotifyServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Notify");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_MEMBER)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/MemberServlet");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Member");
 				dispatch.forward(request, response);
 				return;
 			}

@@ -702,71 +702,8 @@ public class WikiBase {
 	 * @param locale locale
 	 * @return
 	 */
-	private ResourceBundle getMessages(Locale locale) {
+	private static ResourceBundle getMessages(Locale locale) {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		return messages;
-	}
-
-	/**
-	 * This method retrieves a topic's name from the URI. The URI is parsed based on the URI below:
-	 *
-	 * www.somesite.com/<context-root>/<virtualwiki>/<action>/<topicname>.html
-	 *
-	 * where "www.somesite.com/<context-root>/<virtualwiki>/<action>/" and ".html" are ignored.
-	 *
-	 * @param uri - The URI as provided by the original HTML request.
-	 * @return The name of the topic for which the user requested an action.
-	 */
-	public String getTopicFromURI(String uri) {
-		logger.debug("Attempting to retrieve topic name from URI");
-		String topic = null;
-		uri = uri.trim();
-		if (uri == null || uri.length() <= 0 || uri.equals("")) {
-			logger.fatal("URI string is empty");
-		} else {
-			int htmlIndex = uri.lastIndexOf(".html");
-			int slashIndex = uri.lastIndexOf('/');
-			if (htmlIndex == -1) {
-				logger.fatal("Could not locate .html substring in URI");
-			} else {
-				if (slashIndex == -1) {
-					logger.fatal("Could not locate a final slash character in URI");
-				} else {
-					topic = uri.substring(slashIndex + 1, htmlIndex);
-					logger.info("Retrieved topic from URI as: " + topic);
-				}
-			}
-		}
-		return topic;
-	}
-
-	/**
-	 * This method retrieves a virtual wiki's name from the URI. The URI is parsed based on the URI below:
-	 *
-	 * www.somesite.com/<context-root>/<virtualwiki>/<action>/<topicname>.html
-	 *
-	 * where "www.somesite.com/<context-root>/" and "/<action>/<topicname>.html" are ignored.
-	 *
-	 * @param uri - The URI as provided by the original HTML request.
-	 * @param contextpath - The context-root of the original HTML request.
-	 * @return The name of the virtual wiki in which the user requested an action.
-	 */
-	public String getVirtualWikiFromURI(String uri, String contextpath) {
-		logger.debug("Attempting to retrieve virtual wiki name from URI");
-		String vwiki = null;
-		uri = uri.trim();
-		if ((uri == null || uri.length() <= 0 || uri.equals("")) || (contextpath == null || contextpath.length() <= 0 || contextpath.equals(""))) {
-			logger.fatal("URI or contextpath string is empty");
-		} else {
-			uri = uri.substring(contextpath.length() + 1);
-			int slashIndex = uri.indexOf('/');
-			if (slashIndex == -1) {
-				logger.fatal("Could not locate a first slash character in URI");
-			} else {
-				vwiki = uri.substring(0, slashIndex);
-				logger.info("Retrieved virtual wiki from URI as: " + vwiki);
-			}
-		}
-		return vwiki;
 	}
 }

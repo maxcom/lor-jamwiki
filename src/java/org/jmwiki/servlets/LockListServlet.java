@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * @author garethc
  * Date: 5/03/2003
  */
-public class LockListServlet extends JMWikiServlet implements Controller {
+public class LockListServlet extends JMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(LockListServlet.class);
 
@@ -26,6 +26,7 @@ public class LockListServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

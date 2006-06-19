@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class UnlockServlet extends JMWikiServlet implements Controller {
+public class UnlockServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(UnlockServlet.class);
 
@@ -22,6 +22,7 @@ public class UnlockServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

@@ -26,6 +26,7 @@ public class SaveTemplateServlet extends HttpServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
@@ -48,7 +49,7 @@ public class SaveTemplateServlet extends HttpServlet implements Controller {
 		}
 		WikiBase base = null;
 		try {
-			virtualWiki = (String) request.getAttribute("virtual-wiki");
+			virtualWiki = (String) request.getAttribute("virtualWiki");
 			if (virtualWiki == null) {
 				virtualWiki = Utilities.extractVirtualWiki(request.getRequestURI());
 			}

@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class ViewAttachmentServlet extends JMWikiServlet implements Controller {
+public class ViewAttachmentServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(ViewAttachmentServlet.class);
 
@@ -45,7 +45,7 @@ public class ViewAttachmentServlet extends JMWikiServlet implements Controller {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String attachmentName = request.getParameter("attachment");
-		String virtualWiki = (String) request.getAttribute("virtual-wiki");
+		String virtualWiki = (String) request.getAttribute("virtualWiki");
 		File uploadPath = Utilities.uploadPath(virtualWiki, attachmentName);
 		response.reset();
 		// attachments can be "inline" or "attachment"

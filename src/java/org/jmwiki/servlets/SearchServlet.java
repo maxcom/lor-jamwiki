@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class SearchServlet extends JMWikiServlet implements Controller {
+public class SearchServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SearchServlet.class);
 
@@ -28,30 +28,26 @@ public class SearchServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		JMController.buildLayout(request, next);
+		search(request, response, next);
+		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", request.getLocale());
+	private void search(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		MessageFormat formatter = new MessageFormat("");
 		formatter.setLocale(request.getLocale());
 		try {
 			String searchField = request.getParameter("text");
-			formatter.applyPattern(messages.getString("searchresult.title"));
-			request.setAttribute("title", formatter.format(new Object[]{searchField}));
-			// It's best to get the vwiki from the request, if it's there.
-			String virtualWiki = (String) request.getAttribute("virtualWiki");
+			formatter.applyPattern(JMController.getMessage("searchresult.title", request.getLocale()));
+			next.addObject("title", formatter.format(new Object[]{searchField}));
 			// forward back to the search page if the request is blank or null
-			if (searchField == null || "".equals(searchField)) {
-				redirect("Wiki?WikiSearch", response);
+			if (searchField == null || searchField.length() == 0) {
+				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH);
+				next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				return;
 			}
 			// grab search engine instance and find
@@ -97,18 +93,17 @@ public class SearchServlet extends JMWikiServlet implements Controller {
 				contents.append("<p>");
 				formatter = new MessageFormat("");
 				formatter.setLocale(request.getLocale());
-				formatter.applyPattern(messages.getString("searchresult.notfound"));
+				formatter.applyPattern(JMController.getMessage("searchresult.notfound", request.getLocale()));
 				contents.append(formatter.format(new Object[]{searchField}));
 				contents.append("</p>");
 			}
-			request.setAttribute("results", contents.toString());
-			request.setAttribute("titlelink", "Wiki?WikiSearch");
-			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH_RESULTS);
-			request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
+			next.addObject("results", contents.toString());
+			next.addObject("titlelink", "Special:Search");
+			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH_RESULTS);
+			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			return;
 		} catch (Exception err) {
 			logger.error(err);
-			err.printStackTrace();
 			throw new WikiServletException(err.toString());
 		}
 	}

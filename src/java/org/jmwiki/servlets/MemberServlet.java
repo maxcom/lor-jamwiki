@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * @author garethc
  * Date: Jan 8, 2003
  */
-public class MemberServlet extends JMWikiServlet implements Controller {
+public class MemberServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(MemberServlet.class);
 
@@ -28,6 +28,7 @@ public class MemberServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

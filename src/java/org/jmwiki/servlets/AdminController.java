@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-package org.jmwiki.web;
+package org.jmwiki.servlets;
 
 import java.text.DateFormat;
 import java.util.Collection;
@@ -41,12 +41,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * The <code>AdminWikiController</code> servlet is the servlet which allows the administrator
+ * The <code>AdminController</code> servlet is the servlet which allows the administrator
  * to perform administrative actions on the wiki.
  */
-public class AdminWikiController implements Controller {
+public class AdminController implements Controller {
 
-	private static Logger logger = Logger.getLogger(AdminWikiController.class.getName());
+	private static Logger logger = Logger.getLogger(AdminController.class.getName());
 	private ResourceBundle messages = null;
 	private String virtualWiki = null;
 	private String message = null;
@@ -59,51 +59,49 @@ public class AdminWikiController implements Controller {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		this.messages = ResourceBundle.getBundle("ApplicationResources", request.getLocale());
-		this.virtualWiki = (String) request.getAttribute("virtual-wiki");
-		WikiServlet.buildLayout(request, virtualWiki);
+		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		String function = request.getParameter("function");
 		if (function == null) function = "";
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
-		ModelAndView next = new ModelAndView("wiki");
 		if (!Utilities.isAdmin(request)) {
-			next = login(request, response);
+			login(request, next);
 			return next;
 		}
 		if (function.equals("logout")) {
-			next = logout(request, response);
+			logout(request, next);
 			return next;
 		}
 		if (function == null || function.length() == 0) {
-			next = view(request, response);
+			view(request, next);
 			return next;
 		}
 		if (function.equals("refreshIndex")) {
-			next = refreshIndex(request, response);
+			refreshIndex(request, next);
 		}
 		if (function.equals("purge")) {
-			next = purge(request, response);
+			purge(request, next);
 		}
 		if (function.equals("purge-versions")) {
-			next = purgeVersions(request, response);
+			purgeVersions(request, next);
 		}
 		if (function.equals("properties")) {
-			next = properties(request, response);
+			properties(request, next);
 		}
 		if (function.equals("clearEditLock")) {
-			next = clearEditLock(request, response);
+			clearEditLock(request, next);
 		}
 		if (function.equals("removeUser")) {
-			next = removeUser(request, response);
+			removeUser(request, next);
 		}
 		if (function.equals("addVirtualWiki")) {
-			next = addVirtualWiki(request, response);
+			addVirtualWiki(request, next);
 		}
 		if (function.equals("changePassword")) {
-			next = changePassword(request, response);
+			changePassword(request, next);
 		}
 		if (function.equals("panic")) {
-			next = panic(request, response);
+			panic(request, next);
 		}
 		this.virtualWiki = (String) request.getAttribute("virtualWiki");
 		if (request.getParameter("addReadOnly") != null) {
@@ -124,7 +122,7 @@ public class AdminWikiController implements Controller {
 	/**
 	 *
 	 */
-	private ModelAndView addVirtualWiki(HttpServletRequest request, HttpServletResponse response) {
+	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) {
 		String newWiki = request.getParameter("newVirtualWiki");
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
@@ -135,13 +133,12 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
 			this.message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView changePassword(HttpServletRequest request, HttpServletResponse response) {
+	private void changePassword(HttpServletRequest request, ModelAndView next) {
 		try {
 			String oldPassword = request.getParameter("oldPassword");
 			String newPassword = request.getParameter("newPassword");
@@ -159,28 +156,26 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while changing password", e);
 			this.message = "Failure while changing password: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView clearEditLock(HttpServletRequest request, HttpServletResponse response) {
+	private void clearEditLock(HttpServletRequest request, ModelAndView next) {
 		try {
 			WikiBase base = WikiBase.getInstance();
-			base.unlockTopic(request.getParameter("virtual-wiki"), request.getParameter("topic"));
+			base.unlockTopic(request.getParameter("virtualWiki"), request.getParameter("topic"));
 			this.message = Utilities.resource("admin.message.lockcleared", request.getLocale());
 		} catch (Exception e) {
 			logger.error("Failure while clearing locks", e);
 			this.message = "Failure while clearing locks: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+	private void login(HttpServletRequest request, ModelAndView next) {
 		request.setAttribute("title", Utilities.resource("login.title", request.getLocale()));
 //		String rootPath = JSPUtils.createLocalRootPath(request, (String) request.getAttribute("virtualWiki"));
 		StringBuffer buffer = new StringBuffer();
@@ -189,35 +184,32 @@ public class AdminWikiController implements Controller {
 		request.setAttribute("redirect", buffer.toString());
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView logout(HttpServletRequest request, HttpServletResponse response) {
+	private void logout(HttpServletRequest request, ModelAndView next) {
 		request.getSession().removeAttribute("admin");
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView panic(HttpServletRequest request, HttpServletResponse response) {
+	private void panic(HttpServletRequest request, ModelAndView next) {
 		try {
 			WikiBase.getInstance().panic();
 		} catch (Exception e) {
 			logger.error("Failure during panic reset", e);
 			this.message = "Failure during panic reset: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 	/**
 	 *
 	 */
-	private ModelAndView properties(HttpServletRequest request, HttpServletResponse response) {
+	private void properties(HttpServletRequest request, ModelAndView next) {
 		try {
 			Encryption.togglePropertyEncryption(request.getParameter(Environment.PROP_BASE_ENCODE_PASSWORDS) != null);
 			Environment.setIntValue(
@@ -479,15 +471,14 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while processing property values", e);
 			this.message = "Failure while processing property values: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView purge(HttpServletRequest request, HttpServletResponse response) {
+	private void purge(HttpServletRequest request, ModelAndView next) {
 		try {
-			Collection purged = WikiBase.getInstance().purgeDeletes(request.getParameter("virtual-wiki"));
+			Collection purged = WikiBase.getInstance().purgeDeletes(request.getParameter("virtualWiki"));
 			StringBuffer buffer = new StringBuffer();
 			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
 			cl.removeChanges(this.virtualWiki, purged);
@@ -502,13 +493,12 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while purging topics", e);
 			this.message = "Failure while purging topics: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView purgeVersions(HttpServletRequest request, HttpServletResponse response) {
+	private void purgeVersions(HttpServletRequest request, ModelAndView next) {
 		try {
 			DateFormat dateFormat = DateFormat.getInstance();
 			DBDate date = new DBDate(dateFormat.parse(request.getParameter("purgedate")));
@@ -517,13 +507,12 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while purging versions", e);
 			this.message = "Failure while purging versions: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView refreshIndex(HttpServletRequest request, HttpServletResponse response) {
+	private void refreshIndex(HttpServletRequest request, ModelAndView next) {
 		try {
 			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
 			this.message = this.messages.getString("admin.message.indexrefreshed");
@@ -531,13 +520,12 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while refreshing search index", e);
 			this.message = "Failure while refreshing search index: " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView removeUser(HttpServletRequest request, HttpServletResponse response) {
+	private void removeUser(HttpServletRequest request, ModelAndView next) {
 		String user = request.getParameter("userName");
 		try {
 			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(this.virtualWiki);
@@ -550,13 +538,11 @@ public class AdminWikiController implements Controller {
 			logger.error("Failure while removing user " + user, e);
 			this.message = "Failure while removing user " + user + ": " + e.getMessage();
 		}
-		return new ModelAndView("wiki");
 	}
 
 	/**
 	 *
 	 */
-	private ModelAndView view(HttpServletRequest request, HttpServletResponse response) {
-		return new ModelAndView("wiki");
+	private void view(HttpServletRequest request, ModelAndView next) {
 	}
 }

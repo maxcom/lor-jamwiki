@@ -13,9 +13,9 @@
     <td class="menu" align=left>
         | <span class="menuinactive"><f:message key="menu.editpage"/></span>
         | <span class="menuinactive"><f:message key="menu.attach"/></span>
-        | <a href="Wiki?RecentChanges"><f:message key="generalmenu.recentchanges"/></a>
-        | <a href='Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>'><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a>
-        | <a href="Wiki?WikiSearch"><f:message key="generalmenu.search"/></a>
+        | <a href="../jsp/Special:RecentChanges"><f:message key="generalmenu.recentchanges"/></a>
+        | <a href='<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>'><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a>
+        | <a href="../jsp/Special:Search"><f:message key="generalmenu.search"/></a>
         | <span class="menuinactive"><f:message key="menu.printablepage"/></span>
         |
     </td>

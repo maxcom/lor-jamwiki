@@ -25,15 +25,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // FIXME - this needs to be cleaned up
 boolean special = false;
 try {
-	special = ((Boolean)request.getAttribute(WikiServlet.PARAMETER_SPECIAL)).booleanValue();
+	if (request.getAttribute(WikiServlet.PARAMETER_SPECIAL) != null) {
+		special = ((Boolean)request.getAttribute(WikiServlet.PARAMETER_SPECIAL)).booleanValue();
+	}
+	if (request.getParameter(WikiServlet.PARAMETER_SPECIAL) != null) {
+		special = (new Boolean(request.getParameter(WikiServlet.PARAMETER_SPECIAL))).booleanValue();
+	}
 } catch (Exception e) {}
 if (!special) {
 %>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?<c:out value="${encodedTopic}" />"><f:message key="menu.article" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" /><c:out value="${encodedTopic}" />"><f:message key="menu.article" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?Comments:<c:out value="${encodedTopic}" />"><f:message key="menu.comments" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />../jsp/Comments:<c:out value="${encodedTopic}" />"><f:message key="menu.comments" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_EDIT %>"><f:message key="menu.editpage" /></a></td>
@@ -52,7 +57,7 @@ if (!special) {
 <%
 } else {
 %>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?<c:out value="${encodedTopic}" />&action=<%= action %>"><f:message key="menu.special" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" /><c:out value="${encodedTopic}" />&action=<%= action %>"><f:message key="menu.special" /></a></td>
 <%
 }
 %>

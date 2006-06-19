@@ -23,7 +23,7 @@ import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
-public class SaveTopicServlet extends JMWikiServlet implements Controller {
+public class SaveTopicServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SaveTopicServlet.class);
 
@@ -32,6 +32,7 @@ public class SaveTopicServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
@@ -61,7 +62,7 @@ public class SaveTopicServlet extends JMWikiServlet implements Controller {
 		WikiBase base = null;
 		try {
 			base = WikiBase.getInstance();
-			virtualWiki = (String) request.getAttribute("virtual-wiki");
+			virtualWiki = (String) request.getAttribute("virtualWiki");
 			logger.debug("vwiki is " + virtualWiki);
 		} catch (Exception err) {
 			error(request, response, new WikiServletException(err.getMessage()));

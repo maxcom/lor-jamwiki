@@ -27,6 +27,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
@@ -42,7 +43,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 		String virtualWiki = null;
 		String topic = null;
 		try {
-			virtualWiki = (String) request.getAttribute("virtual-wiki");
+			virtualWiki = (String) request.getAttribute("virtualWiki");
 			String action = request.getParameter("notify_action");
 			topic = request.getParameter("topic");
 			if (topic == null || topic.equals("")) {

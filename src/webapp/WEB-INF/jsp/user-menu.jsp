@@ -16,8 +16,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <table class="menu-user-table">
 <tr>
 	<%-- FIXME: do not hardcode --%>
-	<td class="menu-user"><a href="<c:out value="${pathRoot}"/>Wiki?SetUsername">Username</a></td>
-	<td class="menu-user"><a href="<c:out value="${pathRoot}"/>Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a></td>
-	<td class="menu-user"><a href="<c:out value="${pathRoot}"/>Wiki?<%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a></td>
+	<td class="menu-user"><a href="<c:out value="${pathRoot}"/>Special:SetUsername">Username</a></td>
+	<td class="menu-user"><a href="<c:out value="${pathRoot}"/><%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a></td>
+	<td class="menu-user"><a href="<c:out value="${pathRoot}"/><%= JSPUtils.encodeURL(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC)) %>"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></a></td>
 </tr>
 </table>

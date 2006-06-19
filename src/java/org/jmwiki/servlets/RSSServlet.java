@@ -80,7 +80,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 		String virtualWiki = null;
 		String topicName = null;
 		try {
-			virtualWiki = (String) request.getAttribute("virtual-wiki");
+			virtualWiki = (String) request.getAttribute("virtualWiki");
 			if (virtualWiki == null || virtualWiki.length() < 1) {
 				virtualWiki = WikiBase.DEFAULT_VWIKI;
 			}
@@ -223,7 +223,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 			//
 			//  In the end, add a search box for JSPWiki
 			//
-			String searchURL = baseURL + "Wiki?WikiSearch";
+			String searchURL = baseURL + "Special:Search";
 			result.append(" <textinput rdf:about=\"" + searchURL + "\">\n");
 			result.append("  <title>Search</title>\n");
 			result.append("  <description>Search this Wiki</description>\n");

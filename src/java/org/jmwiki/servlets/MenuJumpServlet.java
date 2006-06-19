@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.Controller;
  *		 Last Modified: $Date: 2006-04-23 08:36:56 +0200 (zo, 23 apr 2006) $
  *		 $Id: MenuJumpServlet.java 643 2006-04-23 06:36:56Z wrh2 $
  */
-public class MenuJumpServlet extends JMWikiServlet implements Controller {
+public class MenuJumpServlet extends JMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(MenuJumpServlet.class);
 
@@ -35,6 +35,7 @@ public class MenuJumpServlet extends JMWikiServlet implements Controller {
 	 */
 	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
+		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
