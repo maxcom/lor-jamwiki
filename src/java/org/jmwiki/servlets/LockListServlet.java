@@ -1,21 +1,16 @@
 package org.jmwiki.servlets;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.ResourceBundle;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jmwiki.WikiBase;
+import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Give a list of topics, which are logged
  *
- * @author garethc
- * Date: 5/03/2003
  */
 public class LockListServlet extends JMController implements Controller {
 
@@ -24,42 +19,57 @@ public class LockListServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
+		if (isTopic(request, "Special:Unlock")) {
+			unlock(request, next);
 		} else {
-			this.doPost(request, response);
+			lockList(request, next);
 		}
-		return null;
+		return next;
 	}
 
 	/**
-	 * Handle the get request: Give back the list.
 	 *
-	 * @param request The HttpServletRequest
-	 * @param response The HttpServletResponse
-	 *
-	 * @throws ServletException If something goes wrong
-	 * @throws IOException If something goes wrong
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
-		String virtualWiki = (String) request.getAttribute("virtualWiki");
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources",
-			request.getLocale());
+	private void lockList(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topic = request.getParameter("topic");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		List locks = null;
 		try {
 			locks = WikiBase.getInstance().getHandler().getLockList(virtualWiki);
 		} catch (Exception e) {
-			error(request, response, e);
+			logger.error("Error retrieving lock list", e);
+			// FIXME - hard coding
+			throw new Exception("Error retrieving lock list " + e.getMessage());
+		}
+		next.addObject("locks", locks);
+		next.addObject("title", JMController.getMessage("locklist.title", request.getLocale()));
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOCKLIST);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+	}
+
+	/**
+	 *
+	 */
+	private void unlock(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topic = request.getParameter("topic");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		if (!Utilities.isAdmin(request)) {
+			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
+			next.addObject("redirect", redirect);
+			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		}
-		request.setAttribute("locks", locks);
-		request.setAttribute("title", messages.getString("locklist.title"));
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOCKLIST);
-		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
+		try {
+			WikiBase.getInstance().unlockTopic(virtualWiki, topic);
+		} catch (Exception e) {
+			logger.error("Failure while unlocking " + topic, e);
+			// FIXME - hard coding
+			throw new Exception("Failure while unlocking " + topic + ": " + e.getMessage());
+		}
+		lockList(request, next);
 	}
 }

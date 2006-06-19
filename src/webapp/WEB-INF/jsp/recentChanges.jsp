@@ -1,4 +1,4 @@
-<form name="num-changes" method="get" action="../jsp/Special:RecentChanges">
+<form name="num-changes" method="get" action="<jmwiki:link value="Special:RecentChanges" />">
 <%-- FIXME: hard coding --%>
 <input type="hidden" name="<%= WikiServlet.PARAMETER_ACTION %>" value="<%= WikiServlet.ACTION_RECENT_CHANGES %>" />
 <table width="100%">
@@ -32,8 +32,8 @@
 <tr>
 	<jmwiki:encode value="${change.topic}" var="encodedTopic"/>
 	<%-- FIXME: hard coding --%>
-	<td>(<a href="../jsp/Special:Diff?action=<%= WikiServlet.ACTION_DIFF %>&topic=<c:out value="${encodedTopic}" />">diff</a>)</td>
-	<td>(<a href="../jsp/Special:History?action=<%= WikiServlet.ACTION_HISTORY %>&topic=<c:out value="${encodedTopic}" />&type=all">history</a>)</td>
+	<td>(<a href="<jmwiki:link value="Special:Diff" />?action=<%= WikiServlet.ACTION_DIFF %>&topic=<c:out value="${encodedTopic}" />">diff</a>)</td>
+	<td>(<a href="<jmwiki:link value="Special:History" />?action=<%= WikiServlet.ACTION_HISTORY %>&topic=<c:out value="${encodedTopic}" />&type=all">history</a>)</td>
 	<td class="recent">
 		<a href='<c:out value="${encodedTopic}"/>'><c:out value="${change.topic}"/></a>
 	</td>

@@ -12,7 +12,6 @@
 				<prop key="/**/Special:Admin">adminController</prop>
 				<prop key="/**/Wiki">Wiki</prop>
 				<prop key="/**/Special:Search">Search</prop>
-				<prop key="/**/Special:SaveTopic">SaveTopic</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:SaveTemplate">SaveTemplate</prop>
 				<prop key="/**/Special:Notify">Notify</prop>
@@ -20,16 +19,20 @@
 				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Attach">Attach</prop>
-				<prop key="/**/Special:Member">Member</prop>
+				<prop key="/**/Special:SetUsername">Member</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:Edit">Edit</prop>
 				<prop key="/**/Special:History">History</prop>
 				<prop key="/**/Special:LockList">LockList</prop>
-				<prop key="/**/Special:Unlock">Unlock</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:RSS">RSS</prop>
 				<prop key="/**/Special:Import">Import</prop>
+				<prop key="/**/Special:ToDoTopics">topicController</prop>
+				<prop key="/**/Special:AllTopics">topicController</prop>
+				<prop key="/**/Special:OrphanedTopics">topicController</prop>
+				<prop key="/**/Special:Unlock">LockList</prop>
+				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
 				<prop key="/**/*">topicController</prop>
 			</props>
 		</property>
@@ -37,7 +40,6 @@
 
 	<bean id="topicController" class="org.jmwiki.servlets.TopicController" />
 	<bean id="adminController" class="org.jmwiki.servlets.AdminController" />
-	<bean id="SaveTopic" class="org.jmwiki.servlets.SaveTopicServlet" />
 	<bean id="Wiki" class="org.jmwiki.servlets.WikiServlet" />
 	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />
 	<bean id="SaveAttachment" class="org.jmwiki.servlets.SaveAttachmentServlet" />
@@ -52,11 +54,11 @@
 	<bean id="Edit" class="org.jmwiki.servlets.EditServlet" />
 	<bean id="History" class="org.jmwiki.servlets.HistoryServlet" />
 	<bean id="LockList" class="org.jmwiki.servlets.LockListServlet" />
-	<bean id="Unlock" class="org.jmwiki.servlets.UnlockServlet" />
 	<bean id="Login" class="org.jmwiki.servlets.LoginServlet" />
 	<bean id="RecentChanges" class="org.jmwiki.servlets.RecentChangesServlet" />
 	<bean id="RSS" class="org.jmwiki.servlets.RSSServlet" />
 	<bean id="Import" class="org.jmwiki.servlets.ImportServlet" />
+	<bean id="VirtualWikiList" class="org.jmwiki.servlets.VirtualWikiServlet" />
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass">
 		   <value>org.springframework.web.servlet.view.JstlView</value>

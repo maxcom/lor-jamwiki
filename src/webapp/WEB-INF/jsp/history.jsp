@@ -45,15 +45,15 @@ function inactive(element) {
 
 <c:choose>
 	<c:when test="${param.type=='all'}">
-<form action="../jsp/Special:Diff" method="get" name="historyForm">
+<form action="<jmwiki:link value="Special:Diff" />" method="get" name="historyForm">
 <input type="hidden" name="action" value="<%= WikiServlet.ACTION_DIFF %>"/>
 <input type="hidden" name="type" value="arbitrary"/>
-<input type="hidden" name="topic" value='<c:out value="${param.topic}"/>'/>
+<input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
 <table>
 		<c:forEach items="${versions}" var="version">
 		<f:formatDate value="${version.revisionDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" var="revisionDate" />
 <tr>
-	<td><a href='Wiki?action=<%= WikiServlet.ACTION_HISTORY %>&type=version&versionNumber=<c:out value="${version.versionNumber}" />&topic=<c:out value="${topic.topicName}" />'><c:out value="${revisionDate}"/></a></td>
+	<td><a href="<jmwiki:link var="Special:History" />?type=version&versionNumber=<c:out value="${version.versionNumber}" />&topic=<c:out value="${topic}" />"><c:out value="${revisionDate}"/></a></td>
 	<td><input type="checkbox" name='<c:out value="diff:${version.versionNumber}"/>' onclick="inactive(this)" /></td>
 </tr>
 		</c:forEach>

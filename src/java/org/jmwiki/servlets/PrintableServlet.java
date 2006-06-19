@@ -20,10 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Create a printable view of one servlet.
  *
- * @author garethc, Tobias Schulz-Hess (sourcefoge@schulz-hess.de)
- * Date: Jan 8, 2003
  */
 public class PrintableServlet extends JMController implements Controller {
 
@@ -32,35 +29,24 @@ public class PrintableServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView next = new ModelAndView("wiki");
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView next = new ModelAndView("printable");
 		JMController.buildLayout(request, next);
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		print(request, next);
+		return next;
 	}
 
 	/**
-	 * Handle get request
 	 *
-	 * @param request The servlet request
-	 * @param response The servlet response
-	 *
-	 * @throws ServletException If something went wrong with the servlet
-	 * @throws IOException If the servlet cannot print
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
+	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topic = request.getParameter("topic");
-		String virtualWiki = (String) request.getAttribute("virtualWiki");
-		request.setAttribute("topic", topic);
-		request.setAttribute("title", topic);
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		next.addObject("topic", topic);
+		next.addObject("title", topic);
 		String strDepth = request.getParameter("depth");
 		if (request.getParameter("hideform") != null) {
-			request.setAttribute("hideform", "true");
+			next.addObject("hideform", "true");
 		}
 		int depth = 0;
 		try {
@@ -68,16 +54,16 @@ public class PrintableServlet extends JMController implements Controller {
 		} catch (NumberFormatException e1) {
 			depth = 0;
 		}
-		request.setAttribute("depth", String.valueOf(depth));
+		next.addObject("depth", String.valueOf(depth));
 		String contextPath = request.getContextPath();
 		Environment.setValue(Environment.PROP_TOPIC_BASE_CONTEXT, contextPath);
 		ArrayList result = new ArrayList();
 		Vector alreadyVisited = new Vector();
 		try {
-			result.addAll(parsePage(ResourceBundle.getBundle("ApplicationResources", request.getLocale()), virtualWiki, topic, depth, alreadyVisited));
+			result.addAll(parsePage(request, ResourceBundle.getBundle("ApplicationResources", request.getLocale()), virtualWiki, topic, depth, alreadyVisited));
 		} catch (Exception e) {
-			error(request, response, e);
-			return;
+			logger.error("Failure while creating printable page", e);
+			throw new Exception("Failure while creating printable page " + e.getMessage());
 		}
 		// now go through all pages and replace
 		// all href=Wiki? with href=# for the
@@ -92,9 +78,8 @@ public class PrintableServlet extends JMController implements Controller {
 			}
 		}
 		// put the result in the request
-		request.setAttribute("contentList", result);
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_PRINT);
-		dispatch("/WEB-INF/jsp/printable.jsp", request, response);
+		next.addObject("contentList", result);
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_PRINT);
 	}
 
 	/**
@@ -104,10 +89,10 @@ public class PrintableServlet extends JMController implements Controller {
 	 * @param depth The depth to go into
 	 * @return Collection of pages
 	 */
-	private Collection parsePage(ResourceBundle messages, String virtualWiki, String topic, int depth, Vector alreadyVisited)
+	private Collection parsePage(HttpServletRequest request, ResourceBundle messages, String virtualWiki, String topic, int depth, Vector alreadyVisited)
 		throws Exception {
 		WikiBase base = WikiBase.getInstance();
-		String onepage = base.readCooked(virtualWiki, topic);
+		String onepage = base.readCooked(request.getContextPath(), virtualWiki, topic);
 		Collection result = new ArrayList();
 		if (onepage != null) {
 			PrintableEntry entry = new PrintableEntry();
@@ -132,7 +117,7 @@ public class PrintableServlet extends JMController implements Controller {
 						!link.startsWith("action=") &&
 						!alreadyVisited.contains(link) &&
 						!PseudoTopicHandler.getInstance().isPseudoTopic(link)) {
-						result.addAll(parsePage(messages, virtualWiki, link, (depth - 1), alreadyVisited));
+						result.addAll(parsePage(request, messages, virtualWiki, link, (depth - 1), alreadyVisited));
 					}
 					iPos = onepage.indexOf(searchfor, iPos + 10);
 				}

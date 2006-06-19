@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && WikiBase.getInstance().getVirtualWikiCount() > 1) {
 %>
-<a href="Wiki?VirtualWikiList">
+<a href="<jmwiki:link value="Special:VirtualWikiList" />">
 <%
 }
 %>
@@ -35,6 +35,6 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && Wiki
 }
 %>
           :
-          <a href='<jmwiki:path-root/>/Wiki?StartingPoints'>
+          <a href="<jmwiki:link value="StartingPoints" />">
           <c:out value="${wikiname}"/></a></b> :
       </c:if>

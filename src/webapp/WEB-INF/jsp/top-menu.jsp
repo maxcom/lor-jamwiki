@@ -35,29 +35,29 @@ try {
 if (!special) {
 %>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" /><c:out value="${encodedTopic}" />"><f:message key="menu.article" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link var="${topic}" />"><f:message key="menu.article" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />../jsp/Comments:<c:out value="${encodedTopic}" />"><f:message key="menu.comments" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link var="Comments:${topic}" />"><f:message key="menu.comments" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_EDIT %>"><f:message key="menu.editpage" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Edit" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.editpage" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>
 	<c:if test="${!readOnly}">
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_HISTORY %>&type=all"><f:message key="menu.history" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:History" />?topic=<jmwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_ATTACH %>"><f:message key="menu.attach" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Attach" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.attach" /></a></td>
 	</c:if>
 	<%-- FIXME: admin only --%>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_DELETE %>"><f:message key="menu.delete" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Delete" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" />Wiki?topic=<c:out value="${encodedTopic}" />&action=<%= WikiServlet.ACTION_PRINT %>" target="_blank"><f:message key="menu.printablepage" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Print" />?topic=<jmwiki:encode value="${topic}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
 <%
 } else {
 %>
-	<td class="menu-tab-nonselected"><a href="<c:out value="${pathRoot}" /><c:out value="${encodedTopic}" />&action=<%= action %>"><f:message key="menu.special" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link var="${topic}" />"><f:message key="menu.special" /></a></td>
 <%
 }
 %>

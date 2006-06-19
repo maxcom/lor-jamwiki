@@ -1,10 +1,5 @@
 /*
- * $Id: LdapUsergroup.java 640 2006-04-22 19:42:46Z wrh2 $
  *
- * Filename  : LdapUsergroup.java
- * Created   : 24.06.2004
- * Project   : JMWiki
- * copyright (c) 2004 by SinnerSchrader
  */
 package org.jmwiki.users;
 
@@ -29,9 +24,6 @@ import org.jmwiki.utils.Encryption;
 
 /**
  * Use an LDAP server as usergroup.
- *
- * @version $Revision: 640 $ - $Date: 2006-04-22 21:42:46 +0200 (za, 22 apr 2006) $
- * @author SinnerSchrader (tobsch)
  */
 public class LdapUsergroup extends Usergroup {
 

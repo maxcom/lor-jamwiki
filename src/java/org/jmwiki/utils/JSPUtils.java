@@ -1,34 +1,17 @@
 package org.jmwiki.utils;
 
-import org.jmwiki.WikiBase;
-import org.jmwiki.Environment;
-
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.io.UnsupportedEncodingException;
-
 import org.apache.log4j.Logger;
+import org.jmwiki.Environment;
+import org.jmwiki.WikiBase;
 
-/*
-Java MediaWiki - WikiWikiWeb clone
-Copyright (C) 2001-2002 Gareth Cronin
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the latest version of the GNU Lesser General
-Public License as published by the Free Software Foundation;
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program (gpl.txt); if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-
+/**
+ *
+ */
 public class JSPUtils {
 
 	/** Logger */
@@ -46,28 +29,22 @@ public class JSPUtils {
 	 * behaviour, so we'll look for a default encoding. (coljac)
 	 */
 	public static String encodeURL(String url) {
-		try {
-			if (Environment.getValue(Environment.PROP_BASE_FORCE_ENCODING) != null) {
-				return URLEncoder.encode(url, Environment.getValue(Environment.PROP_BASE_FORCE_ENCODING));
-			} else {
-				return url;
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return url;
-		}
+		String charSet = Environment.getValue(Environment.PROP_BASE_FORCE_ENCODING);
+		if (charSet == null) charSet = "UTF-8";
+		return JSPUtils.encodeURL(url, charSet);
 	}
 
 	/**
 	 *
 	 */
-	public static String encodeURL(String url,String charset) {
+	public static String encodeURL(String url,String charSet) {
 		try {
-			return URLEncoder.encode(url,charset);
-		} catch (java.io.UnsupportedEncodingException ex) {
-			logger.error("unknown char set: " + charset, ex);
-			return null;
+			url = URLEncoder.encode(url, charSet);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while encoding " + url, e);
 		}
+		// FIXME - un-encode colons.  handle this better.
+		return Utilities.replaceString(url, "%3A", ":");
 	}
 
 	/**

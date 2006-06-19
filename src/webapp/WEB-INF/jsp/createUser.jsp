@@ -4,7 +4,7 @@
 	</c:when>
 	<c:otherwise>
 <p><f:message key="createuser.info.text1"/></p>
-<form name="form1" method="post" action="Wiki?action=<%= WikiServlet.ACTION_SAVE_USER %>">
+<form name="form1" method="post" action="<jmwiki:link value="Special:SetUsername" />">
 	<f:message key="createuser.form.name"/>
 <%
 if (Environment.getIntValue(Environment.PROP_USERGROUP_TYPE) == 0) {

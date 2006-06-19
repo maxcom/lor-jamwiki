@@ -1,36 +1,28 @@
 package org.jmwiki.persistency.file;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.log4j.Logger;
-import org.jmwiki.*;
+import org.jmwiki.Environment;
+import org.jmwiki.VersionManager;
+import org.jmwiki.WikiBase;
 import org.jmwiki.persistency.TopicVersion;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.utils.DiffUtil;
 import org.jmwiki.utils.Utilities;
 
 /**
- * Java MediaWiki - WikiWikiWeb clone
- * Copyright (C) 2001-2002 Gareth Cronin
  *
- * FileVersionManager is the JMWiki native file system implementation of
- * the version manager for looking after the version trail that is used
- * in diffs etc.
- *
- *This program is free software; you can redistribute it and/or modify
- *it under the terms of the latest version of the GNU Lesser General
- *Public License as published by the Free Software Foundation;
- *
- *This program is distributed in the hope that it will be useful,
- *but WITHOUT ANY WARRANTY; without even the implied warranty of
- *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *GNU Lesser General Public License for more details.
- *
- *You should have received a copy of the GNU Lesser General Public License
- *along with this program (gpl.txt); if not, write to the Free Software
- *Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 public class FileVersionManager implements VersionManager {
 
 	private static final Logger logger = Logger.getLogger(FileVersionManager.class);
@@ -154,9 +146,23 @@ public class FileVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String virtualWiki, String topicName, int versionNumber) throws Exception {
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception {
 		List allVersions = getAllVersions(virtualWiki, topicName);
-		return (TopicVersion) allVersions.get(versionNumber);
+		TopicVersion version = (TopicVersion) allVersions.get(versionNumber);
+		WikiBase instance = WikiBase.getInstance();
+		String cookedContents = instance.cook(
+			context,
+			virtualWiki,
+			new BufferedReader(new StringReader(
+				instance.getVersionManagerInstance().getVersionContents(
+					virtualWiki,
+					topicName,
+					versionNumber
+				)
+			))
+		);
+		version.setCookedContents(cookedContents);
+		return version;
 	}
 
 	/**

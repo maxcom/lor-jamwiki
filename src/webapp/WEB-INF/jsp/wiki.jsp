@@ -96,6 +96,10 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="login.jsp" %>
 <%
+} else if (action.equals(WikiServlet.ACTION_MEMBER)) {
+%>
+		<%@ include file="createUser.jsp" %>
+<%
 } else if (action.equals(WikiServlet.ACTION_RECENT_CHANGES)) {
 %>
 		<%@ include file="recentChanges.jsp" %>
@@ -108,9 +112,13 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="searchResults.jsp" %>
 <%
-} else if (action.equals(WikiServlet.ACTION_TODO_TOPICS) || action.equals(WikiServlet.ACTION_ORPHANED_TOPICS)) {
+} else if (action.equals(WikiServlet.ACTION_ALL_TOPICS) || action.equals(WikiServlet.ACTION_TODO_TOPICS) || action.equals(WikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>
 		<%@ include file="allTopics.jsp" %>
+<%
+} else if (action.equals(WikiServlet.ACTION_VIRTUAL_WIKI_LIST)) {
+%>
+		<%@ include file="virtualwikilist.jsp" %>
 <%
 } else {
 %>
@@ -127,7 +135,7 @@ if (action.equals(WikiServlet.ACTION_ADMIN)) {
 		<c:out value="${bottomArea}" escapeXml="false"/>
 		<br/>
 		<font size="-3">Java MediaWiki Version <jmwiki:wiki-version/> |
-		<a href="../jsp/Special:Admin?username=admin"><f:message key="admin.title"/></a>
+		<a href="<jmwiki:link value="Special:Admin" />?username=admin"><f:message key="admin.title"/></a>
 		</font>
 		<c:if test="${not empty pageContext.request.userPrincipal}">|
 		<font size="-3"><a href='Wiki?action=<%= WikiServlet.ACTION_LOGIN %>&logout=true&redirect=Wiki%3F<c:out value="${topic}"/>'><f:message key="general.logout"/></a></font>

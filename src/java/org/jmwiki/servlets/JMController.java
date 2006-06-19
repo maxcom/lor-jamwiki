@@ -1,10 +1,7 @@
 /**
- * @author garethc
- * 25/10/2002 12:21:23
+ *
  */
 package org.jmwiki.servlets;
-
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -13,11 +10,17 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ *
+ */
 public abstract class JMController extends HttpServlet {
 
 	private static final Logger logger = Logger.getLogger(JMController.class);
+	public static final String PARAMETER_TOPIC = "topic";
+	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 
 	/**
 	 *
@@ -101,16 +104,40 @@ public abstract class JMController extends HttpServlet {
 		if (virtualWiki == null) {
 			throw new Exception("Invalid virtual wiki");
 		}
+		String topic = request.getParameter(PARAMETER_TOPIC);
+		if (topic == null && request.getAttribute("topic") != null) {
+			topic = (String)request.getAttribute("topic");
+		}
+		if (topic == null) {
+			topic = JMController.getTopicFromURI(request);
+		}
+		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
-		String leftMenu = WikiServlet.getCachedContent(virtualWiki, JMController.getMessage("specialpages.leftMenu", request.getLocale()));
+		String leftMenu = WikiServlet.getCachedContent(
+			request.getContextPath(),
+			virtualWiki,
+			JMController.getMessage("specialpages.leftMenu", request.getLocale())
+		);
 		next.addObject("leftMenu", leftMenu);
-		String topArea = WikiServlet.getCachedContent(virtualWiki, JMController.getMessage("specialpages.topArea", request.getLocale()));
+		String topArea = WikiServlet.getCachedContent(
+			request.getContextPath(),
+			virtualWiki,
+			JMController.getMessage("specialpages.topArea", request.getLocale())
+		);
 		next.addObject("topArea", topArea);
-		String bottomArea = WikiServlet.getCachedContent(virtualWiki, JMController.getMessage("specialpages.bottomArea", request.getLocale()));
+		String bottomArea = WikiServlet.getCachedContent(
+			request.getContextPath(),
+			virtualWiki,
+			JMController.getMessage("specialpages.bottomArea", request.getLocale())
+		);
 		next.addObject("bottomArea", bottomArea);
-		String styleSheet = WikiServlet.getCachedRawContent(virtualWiki, JMController.getMessage("specialpages.stylesheet", request.getLocale()));
+		String styleSheet = WikiServlet.getCachedRawContent(
+			request.getContextPath(),
+			virtualWiki,
+			JMController.getMessage("specialpages.stylesheet", request.getLocale())
+		);
 		next.addObject("StyleSheet", styleSheet);
-		next.addObject("virtualWiki", virtualWiki);
+		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
 	}
 
 	/**
@@ -146,7 +173,7 @@ public abstract class JMController extends HttpServlet {
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = request.getRequestURI().trim();
 		String contextPath = request.getContextPath().trim();
-		String vwiki = null;
+		String virtualWiki = null;
 		if ((uri == null || uri.length() <= 0) || (contextPath == null || contextPath.length() <= 0)) {
 			return null;
 		}
@@ -155,8 +182,41 @@ public abstract class JMController extends HttpServlet {
 		if (slashIndex == -1) {
 			return null;
 		}
-		vwiki = uri.substring(0, slashIndex);
-		logger.info("Retrieved virtual wiki from URI as: " + vwiki);
-		return vwiki;
+		virtualWiki = uri.substring(0, slashIndex);
+		logger.info("Retrieved virtual wiki from URI as: " + virtualWiki);
+		return virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isAction(HttpServletRequest request, String key, String constant) {
+		String action = request.getParameter(WikiServlet.PARAMETER_ACTION);
+		if (action == null || action.length() == 0) {
+			return false;
+		}
+		if (key != null &&  action.equals(JMController.getMessage(key, request.getLocale()))) {
+			return true;
+		}
+		if (constant != null && action.equals(constant)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isTopic(HttpServletRequest request, String value) {
+		try {
+			String topic = JMController.getTopicFromURI(request);
+			if (topic == null || topic.length() == 0) {
+				return false;
+			}
+			if (value != null &&  topic.equals(value)) {
+				return true;
+			}
+		} catch (Exception e) {}
+		return false;
 	}
 }

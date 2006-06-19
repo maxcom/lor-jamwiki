@@ -101,16 +101,15 @@ function onUserGroupType() {
 }
 </script>
 
-<form action="../jsp/Special:Admin" method="get">
-  <input type="hidden" name="function" value="logout"/>
-  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+<form action="<jmwiki:link value="Special:Login" />" method="get">
+  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_LOGOUT %>"/>
   <table>
     <tr>
       <td><input type="submit" value="<f:message key="admin.action.logout"/>"/></td>
     </tr>
   </table>
 </form>
-<form name="form1" method="post" action="../jsp/Special:Admin">
+<form name="form1" method="post" action="<jmwiki:link value="Special:Admin" />">
 <% if( !message.equals("") ){%>
 <p class="red"><%=message%></p>
 <%}%>
@@ -576,7 +575,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.refresh"/></p>
-<form name="refreshform" method="post" action="../jsp/Special:Admin">
+<form name="refreshform" method="post" action="<jmwiki:link value="Special:Admin" />">
   <input type="submit" name="submit" value="<f:message key="admin.action.refresh"/>"/>
   <f:message key="admin.message.filemodeonly"/>
   <input type="hidden" name="function" value="refreshIndex"/>
@@ -584,7 +583,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.purge"/></p>
-<form name="purgeform" method="post" action="../jsp/Special:Admin">
+<form name="purgeform" method="post" action="<jmwiki:link value="Special:Admin" />">
 <f:message key="admin.caption.virtualwiki"/>
 <select name="virtualWiki">
 <option value="jsp"><f:message key="common.default"/></option>
@@ -610,7 +609,7 @@ function onUserGroupType() {
 <hr/>
 <%-- FIXME - restore virtual wiki --%>
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
-<form name="readOnlyTopics" method="post" action="../jsp/Special:Admin" class="contents">
+<form name="readOnlyTopics" method="post" action="<jmwiki:link value="Special:Admin" />">
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
   <table border="0">
     <tr>
@@ -651,7 +650,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.virtualwiki"/></p>
-<form action="../jsp/Special:Admin" method="post">
+<form action="<jmwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
       <td><p><f:message key="common.name"/></p></td><td><input type="textfield" name="newVirtualWiki"/></td>
@@ -663,7 +662,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.changepassword"/></p>
-<form action="../jsp/Special:Admin" method="post">
+<form action="<jmwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
       <td><f:message key="admin.caption.oldpassword"/></td>
@@ -689,7 +688,7 @@ function onUserGroupType() {
 <a href="Wiki?action=<%= WikiServlet.ACTION_IMPORT %>"><f:message key="admin.caption.startimport"/></a>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
-<form action="../jsp/Special:Admin" method="post">
+<form action="<jmwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
       <td><f:message key="admin.caption.panic"/></td>

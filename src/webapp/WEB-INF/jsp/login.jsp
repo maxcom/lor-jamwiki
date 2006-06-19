@@ -1,5 +1,5 @@
-<form method="post" action="Wiki?action=<%= WikiServlet.ACTION_LOGIN %>">
-<input type="hidden" name="redirect" value='<c:out value="${redirect}"/>'/>
+<form method="post" action="<jmwiki:link value="Special:Login" />">
+<input type="hidden" name="redirect" value="<c:out value="${redirect}"/>" />
 <table>
 <c:if test="${loginFailure}">
 <tr><td colspan="2" class="red"><f:message key="error.login" /></td></tr>

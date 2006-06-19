@@ -359,7 +359,7 @@ public class Environment {
 		defaults.setProperty(PROP_USERGROUP_MAIL_FIELD, "mail");
 		defaults.setProperty(PROP_USERGROUP_PASSWORD, "");
 		defaults.setProperty(PROP_USERGROUP_SEARCH_RESTRICTIONS, "objectClass=person");
-		defaults.setProperty(PROP_USERGROUP_TYPE, "");
+		defaults.setProperty(PROP_USERGROUP_TYPE, "0");
 		defaults.setProperty(PROP_USERGROUP_URL, "ldap://localhost:389");
 		defaults.setProperty(PROP_USERGROUP_USERID_FIELD, "uid");
 		defaults.setProperty(PROP_USERGROUP_USERNAME, "");

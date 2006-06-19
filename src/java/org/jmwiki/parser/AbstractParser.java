@@ -42,5 +42,5 @@ public abstract class AbstractParser {
 	 * @param virtualwiki A virtual wiki prefix (if any).
 	 * @return HTML representation of the text for online.
 	 */
-	public abstract String parseHTML(String raw, String virtualwiki) throws IOException;
+	public abstract String parseHTML(String context, String virtualWiki, String raw) throws IOException;
 }

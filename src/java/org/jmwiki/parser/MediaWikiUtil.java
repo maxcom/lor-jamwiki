@@ -72,7 +72,7 @@ public class MediaWikiUtil {
 	/**
 	 *
 	 */
-	protected static String buildWikiLink(String raw, String virtualWiki) {
+	protected static String buildWikiLink(String context, String virtualWiki, String raw) {
 		if (raw == null || raw.length() <= 4) {
 			// no topic, display the raw text
 			return raw;
@@ -90,7 +90,7 @@ public class MediaWikiUtil {
 			text = topic.substring(pos+1).trim();
 			topic = topic.substring(0, pos).trim();
 		}
-		String url = JSPUtils.encodeURL(topic);
+		String url = Utilities.buildInternalLink(context, virtualWiki, topic);
 		if (!exists(topic, virtualWiki)) {
 			url = "Wiki?topic=" + JSPUtils.encodeURL(topic) + "&action=" + WikiServlet.ACTION_EDIT;
 			return "<a class=\"edit\" title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";

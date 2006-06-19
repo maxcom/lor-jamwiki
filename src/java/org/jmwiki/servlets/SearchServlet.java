@@ -13,6 +13,7 @@ import org.jmwiki.SearchEngine;
 import org.jmwiki.SearchResultEntry;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -26,7 +27,7 @@ public class SearchServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
 		search(request, response, next);
@@ -63,11 +64,11 @@ public class SearchServlet extends JMController implements Controller {
 					contents.append("<p>");
 					contents.append("<div class=\"searchresult\">");
 					contents.append("<a href=\"");
-					contents.append(JSPUtils.createLocalRootPath(request, virtualWiki));
-					contents.append("Wiki?");
-					contents.append(result.getTopic());
+					contents.append(
+						Utilities.buildInternalLink(request.getContextPath(), virtualWiki, result.getTopic())
+					);
 					if (result.getFoundWord().length() > 0) {
-						contents.append("&highlight=");
+						contents.append("?highlight=");
 						contents.append(JSPUtils.encodeURL(result.getFoundWord()));
 					}
 					contents.append("\">" + result.getTopic() + "</a>");
@@ -77,10 +78,10 @@ public class SearchServlet extends JMController implements Controller {
 						contents.append("<br>");
 						contents.append(result.getTextBefore());
 						contents.append("<a style=\"background:yellow\" href=\"");
-						contents.append(JSPUtils.createLocalRootPath(request, virtualWiki));
-						contents.append("Wiki?");
-						contents.append(result.getTopic());
-						contents.append("&highlight=");
+						contents.append(
+							Utilities.buildInternalLink(request.getContextPath(), virtualWiki, result.getTopic())
+						);
+						contents.append("?highlight=");
 						contents.append(JSPUtils.encodeURL(result.getFoundWord()));
 						contents.append("\">");
 						contents.append(result.getFoundWord());

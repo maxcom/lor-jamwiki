@@ -16,8 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * @author garethc
- * Date: Jan 8, 2003
+ *
  */
 public class MemberServlet extends JMController implements Controller {
 
@@ -26,44 +25,37 @@ public class MemberServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		setUsername(request, response, next);
+		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	// FIXME - shouldn't need to pass in response
+	private void setUsername(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String user = null;
-		if (request.getParameter("userName") != null) {
-			if (!"".equals(request.getParameter("userName"))) {
-				user = request.getParameter("userName");
-				logger.debug("retrieved username by parameter: " + user);
-			}
+		if (request.getParameter("userName") != null && request.getParameter("userName").length() > 0) {
+			user = request.getParameter("userName");
 		}
 		if (user == null) {
 			user = Utilities.getUserFromRequest(request);
-			logger.debug("retrieved user from cookie: " + user);
 		}
-		logger.debug("setting user to: " + user);
-		request.setAttribute("title", "Wiki Membership");
-		request.setAttribute("user", user);
-		String virtualWiki = (String) request.getAttribute("virtualWiki");
+		next.addObject("title", "Wiki Membership");
+		next.addObject("user", user);
 		WikiMembers members = null;
 		Usergroup usergroup = null;
 		try {
 			members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
 			usergroup = WikiBase.getInstance().getUsergroupInstance();
 		} catch (Exception e) {
-			error(request, response, e);
-			return;
+			logger.error("Failure while retrieving user list", e);
+			// FIXME - hard coding
+			throw new Exception("Failure while retrieving user list " + e.getMessage());
 		}
 		String email = request.getParameter("email");
 		String key = request.getParameter("key");
@@ -76,42 +68,39 @@ public class MemberServlet extends JMController implements Controller {
 			logger.warn("finding user name", e);
 		}
 		if (member == null) {
-			request.setAttribute("type", "newMember");
+			next.addObject("type", "newMember");
 		} else if (member.isPending()) {
-			request.setAttribute("type", "pendingMember");
+			next.addObject("type", "pendingMember");
 		} else if (member.isConfirmed()) {
-			request.setAttribute("type", "confirmedMember");
+			next.addObject("type", "confirmedMember");
 		} else {
-			request.setAttribute("type", "newMember");
+			next.addObject("type", "newMember");
 		}
-		logger.debug("Set type to " + request.getAttribute("type"));
 		if (email != null) {
 			// request for membership - mail the user a key for confirmation
 			try {
 				if (usergroup.isEmailValidated()) {
-					logger.debug("confirming membership");
 					members.createMembershipWithoutRequest(user, email);
 					if (Utilities.getUserFromRequest(request) == null) {
 						// resend the username cookie
 						Cookie cookie = Utilities.createUsernameCookie(user);
 						response.addCookie(cookie);
 					}
-					request.setAttribute("type", "confirmation");
-					request.setAttribute("valid", new Boolean(true));
+					next.addObject("type", "confirmation");
+					next.addObject("valid", new Boolean(true));
 				} else {
-					logger.debug("requesting membership");
 					members.requestMembership(user, email, request);
-					request.setAttribute("type", "membershipRequested");
+					next.addObject("type", "membershipRequested");
 				}
 			} catch (Exception e) {
-				error(request, response, e);
-				return;
+				logger.error("Failure while mailing membership key", e);
+				// FIXME - hard coding
+				throw new Exception("Failure while mailing membership key " + e.getMessage());
 			}
 		} else if (key != null) {
 			// request for confirmation, check that key is valid
 			boolean isValid = false;
 			try {
-				logger.debug("confirming membership");
 				isValid = members.confirmMembership(user, key);
 				if (isValid) {
 					if (Utilities.getUserFromRequest(request) == null) {
@@ -120,31 +109,22 @@ public class MemberServlet extends JMController implements Controller {
 						response.addCookie(cookie);
 					}
 				}
-				request.setAttribute("type", "confirmation");
+				next.addObject("type", "confirmation");
 			} catch (Exception e) {
-				error(request, response, e);
-				return;
+				logger.error("Failure while confirming membership", e);
+				// FIXME - hard coding
+				throw new Exception("Failure while confirming membership " + e.getMessage());
 			}
-			request.setAttribute("valid", new Boolean(isValid));
-		} else {
-			if (user == null) {
-				// force user to create a username first
-				logger.debug("user is null, username needs to be set");
-				request.setAttribute("userList", usergroup.getListOfAllUsers());
-				dispatch(PseudoTopicHandler.getInstance().getRedirectURL("SetUsername"), request, response);
-				return;
-			}
+			next.addObject("valid", new Boolean(isValid));
+		} else if (user == null) {
+			// force user to create a username first
+			next.addObject("userList", usergroup.getListOfAllUsers());
+			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
+			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			return;
 		}
-		request.setAttribute("knownEmail", usergroup.getKnownEmailById(user));
-		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
-		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
-	}
-
-	/**
-	 *
-	 */
-	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-		this.doGet(httpServletRequest, httpServletResponse);
+		next.addObject("knownEmail", usergroup.getKnownEmailById(user));
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
 	}
 }

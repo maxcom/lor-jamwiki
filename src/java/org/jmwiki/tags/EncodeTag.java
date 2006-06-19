@@ -10,8 +10,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 /**
- * @author garethc
- * Date: 5/03/2003
+ *
  */
 public class EncodeTag extends TagSupport {
 

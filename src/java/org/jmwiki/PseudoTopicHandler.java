@@ -1,8 +1,5 @@
 /**
- * (c) 2002-2004 Gareth Cronin.
- * Subject to LGPL
- * @author garethc
- * Date: 5/03/2003
+ *
  */
 package org.jmwiki;
 

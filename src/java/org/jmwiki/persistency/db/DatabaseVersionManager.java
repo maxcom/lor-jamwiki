@@ -17,11 +17,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.jmwiki.persistency.db;
 
-import org.jmwiki.Environment;
-import org.jmwiki.persistency.TopicVersion;
-import org.jmwiki.VersionManager;
-import org.jmwiki.utils.DiffUtil;
-
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,9 +26,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.log4j.Logger;
+import org.jmwiki.Environment;
+import org.jmwiki.WikiBase;
+import org.jmwiki.VersionManager;
+import org.jmwiki.persistency.TopicVersion;
+import org.jmwiki.utils.DiffUtil;
 
+/**
+ *
+ */
 public class DatabaseVersionManager implements VersionManager {
 
 	protected final static String STATEMENT_VERSION_FIND =
@@ -192,9 +196,23 @@ public class DatabaseVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String virtualWiki, String topicName, int versionNumber) throws Exception {
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception {
 		List allVersions = getAllVersions(virtualWiki, topicName);
-		return (TopicVersion) allVersions.get(versionNumber);
+		TopicVersion version = (TopicVersion) allVersions.get(versionNumber);
+		WikiBase instance = WikiBase.getInstance();
+		String cookedContents = instance.cook(
+			context,
+			virtualWiki,
+			new BufferedReader(new StringReader(
+				instance.getVersionManagerInstance().getVersionContents(
+					virtualWiki,
+					topicName,
+					versionNumber
+				)
+			))
+		);
+		version.setCookedContents(cookedContents);
+		return version;
 	}
 
 	/**

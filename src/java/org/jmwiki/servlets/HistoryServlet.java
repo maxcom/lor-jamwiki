@@ -23,7 +23,7 @@ public class HistoryServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
 		history(request, next);
@@ -48,7 +48,12 @@ public class HistoryServlet extends JMController implements Controller {
 			} else if (type.equals("version")) {
 				int versionNumber = Integer.parseInt(request.getParameter("versionNumber"));
 				int numberOfVersions = manager.getNumberOfVersions(virtualWiki, topicName);
-				TopicVersion topicVersion = manager.getTopicVersion(virtualWiki, topicName, versionNumber);
+				TopicVersion topicVersion = manager.getTopicVersion(
+					request.getContextPath(),
+					virtualWiki,
+					topicName,
+					versionNumber
+				);
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("numberOfVersions", new Integer(numberOfVersions));
 				next.addObject("title", topicName + " @" + Utilities.formatDateTime(topicVersion.getRevisionDate()));

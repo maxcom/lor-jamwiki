@@ -94,7 +94,8 @@ import org.jmwiki.utils.JSPUtils;
     protected static Logger logger = Logger.getLogger(MediaWikiSyntax.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
-    protected String virtualWiki;
+    protected String virtualWiki = null;;
+    protected String context = null;
     protected TableOfContents toc = new TableOfContents();
     protected boolean allowHtml = false;
     protected boolean wikibold = false;
@@ -230,6 +231,13 @@ import org.jmwiki.utils.JSPUtils;
             output.append(currentOpenTag);
         }
         return output.toString();
+    }
+    
+    /**
+     *
+     */
+    protected void setContext(String context) {
+    	this.context = context;
     }
     
     /**
@@ -387,7 +395,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return MediaWikiUtil.buildWikiLink(yytext(), virtualWiki);
+    return MediaWikiUtil.buildWikiLink(this.context, this.virtualWiki, yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {

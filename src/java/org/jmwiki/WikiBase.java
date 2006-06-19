@@ -332,10 +332,10 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public synchronized String readCooked(String virtualWiki, String topicName) throws Exception {
+	public synchronized String readCooked(String context, String virtualWiki, String topicName) throws Exception {
 		String s = handler.read(virtualWiki, topicName);
 		BufferedReader in = new BufferedReader(new StringReader(s));
-		return cook(in, virtualWiki);
+		return cook(context, virtualWiki, in);
 	}
 
 	/**
@@ -346,7 +346,7 @@ public class WikiBase {
 	 * @return				TODO: DOCUMENT ME!
 	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public synchronized String cook(BufferedReader in, String virtualWiki) throws Exception {
+	public synchronized String cook(String context, String virtualWiki, BufferedReader in) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
@@ -359,7 +359,7 @@ public class WikiBase {
 		while ((line = in.readLine()) != null) {
 			raw.append(line).append("\n");
 		}
-		return parser.parseHTML(raw.toString(), virtualWiki);
+		return parser.parseHTML(context, virtualWiki, raw.toString());
 	}
 
 	/**

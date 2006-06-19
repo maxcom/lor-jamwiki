@@ -20,9 +20,12 @@ package org.jmwiki.persistency;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.sql.Timestamp;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.jmwiki.WikiBase;
 import org.jmwiki.persistency.db.DBDate;
+// FIXME - remove this dependency
+import org.jmwiki.servlets.JMController;
 
 /**
  *
@@ -154,6 +157,7 @@ public class TopicVersion {
 	private String topicName;
 	private DBDate revisionDate;
 	private int versionNumber;
+	private String cookedContents;
 
 	/**
 	 *
@@ -164,6 +168,7 @@ public class TopicVersion {
 		this.topicName = topicName;
 		this.revisionDate = revisionDate;
 		this.versionNumber = versionNumber;
+		this.cookedContents = null;
 	}
 
 	/**
@@ -236,16 +241,15 @@ public class TopicVersion {
 	/**
 	 *
 	 */
-	public String getCookedContents() throws Exception {
-		WikiBase instance = WikiBase.getInstance();
-		return instance.cook(new BufferedReader(new StringReader(
-			instance.getVersionManagerInstance().getVersionContents(
-				this.virtualWiki,
-				this.topicName,
-				this.versionNumber
-			 ))),
-			 this.virtualWiki
-		 );
+	public String getCookedContents() {
+		return this.cookedContents;
+	 }
+
+	/**
+	 *
+	 */
+	public void setCookedContents(String cookedContents) {
+		this.cookedContents = cookedContents;
 	 }
 
 	/**

@@ -55,6 +55,7 @@ import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.persistency.file.FileHandler;
+import org.jmwiki.servlets.JMController;
 
 public class Utilities {
 
@@ -615,5 +616,19 @@ public class Utilities {
 	 */
 	public static boolean isEmpty(String value) {
 		return (value == null || value.length() == 0);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLink(String context, String virtualWiki, String page) {
+		String url = context;
+		// context never ends with a "/" per servlet specification
+		url += "/";
+		// get the virtual wiki, which should have been set by the parent servlet
+		url += JSPUtils.encodeURL(virtualWiki);
+		url += "/";
+		url += JSPUtils.encodeURL(page);
+		return url;
 	}
 }

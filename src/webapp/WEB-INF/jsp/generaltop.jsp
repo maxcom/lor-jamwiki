@@ -46,7 +46,7 @@ if (Utilities.isFirstUse()) {
       <c:if test="${wb.virtualWikiCount > 1}">
         <td>
           <b>Wiki :
-          <a class="subHeader" href='<jmwiki:path-root/>/Wiki?StartingPoints'>
+          <a class="subHeader" href='<jmwiki:link value="StartingPoints" />'>
           <c:out value="${virtualWiki}"/></a></b> :
         </td>
       </c:if>

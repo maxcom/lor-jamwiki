@@ -8,14 +8,12 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.utils.Encryption;
 import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Servlet responsible for managing login and logout.
  *
- * @author garethc
- *		 Date: 5/03/2003
  */
 public class LoginServlet extends JMController implements Controller {
 
@@ -25,65 +23,62 @@ public class LoginServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
+		if (isAction(request, null, WikiServlet.ACTION_LOGOUT)) {
+			// FIXME - response is non-standard here
+			logout(request, response, next);
+			return null;
 		} else {
-			this.doPost(request, response);
-		}
-		return null;
-	}
-
-	/**
-	 * Respond to get request. This will be a logout request from the link that appears at the bottom of pages if
-	 * there is a user principal in the session.
-	 * @param httpServletRequest
-	 * @param httpServletResponse
-	 * @throws ServletException
-	 * @throws IOException
-	 */
-	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-		throws ServletException, IOException {
-		String logoutParameter = httpServletRequest.getParameter("logout");
-		if (logoutParameter != null) {
-			Boolean logout = new Boolean(logoutParameter);
-			if (logout.booleanValue()) {
-				httpServletRequest.getSession().invalidate();
-				String redirect = JSPUtils.createRedirectURL(httpServletRequest, httpServletRequest.getParameter("redirect"));
-				redirect(redirect, httpServletResponse);
+			// FIXME - response is non-standard here
+			if (login(request, response, next)) {
+				// FIXME - use Spring
+				// login successful, non-Spring redirect
+				return null;
 			}
 		}
+		return next;
 	}
 
 	/**
-	 * Respond to post request. This will be called when the login form is filled out in login.jsp and is used for
-	 * admin authentication for AdminOnlyTopics and the admin console.
-	 * @param request
-	 * @param httpServletResponse
-	 * @throws ServletException
-	 * @throws IOException
+	 *
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
-		IOException {
+	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		request.getSession().invalidate();
+		String redirect = request.getParameter("redirect");
+		if (redirect == null || redirect.length() == 0) {
+			redirect = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+		}
+		redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, redirect);
+		// FIXME - can a redirect be done with Spring?
+		redirect(redirect, response);
+	}
+
+	/**
+	 *
+	 */
+	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
 		if (redirect == null || redirect.length() == 0) {
-			redirect ="../jsp/Special:Admin";
+			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Admin");
 		}
-		if ("admin".equals(username) && Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(password)) {
-			request.getSession().setAttribute("admin", "true");
-		} else {
+		// FIXME - hard coding
+		if (!username.equals("admin") || !Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(password)) {
 			// should this return a specific message instead?
-			request.setAttribute("loginFailure", "true");
-			request.setAttribute("redirect", redirect);
-			request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-			request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
-			dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
-			return;
+			next.addObject("loginFailure", "true");
+			next.addObject("redirect", redirect);
+			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+			return false;
 		}
+		request.getSession().setAttribute("admin", "true");
+		// FIXME - can a redirect be done with Spring?
 		redirect(redirect, response);
+		return true;
 	}
 }

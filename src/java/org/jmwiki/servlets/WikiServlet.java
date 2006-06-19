@@ -1,9 +1,5 @@
 /**
- * The WikiServlet handles the main interactions from the user and forwards to the
- * appropriate servlets and JSPs
  *
- * Copyright 2002 Gareth Cronin
- * This software is subject to the GNU Lesser General Public Licence (LGPL)
  */
 package org.jmwiki.servlets;
 
@@ -41,10 +37,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /*
- * TODO This Servlet is a litle bit too complex. It could be a good idea to
- * refactorize and split resposibilities in different objects.
+ *
  */
-
 public class WikiServlet extends JMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(WikiServlet.class);
@@ -58,6 +52,7 @@ public class WikiServlet extends JMController implements Controller {
 	public static final String ACTION_HISTORY = "action_history";
 	public static final String ACTION_IMPORT = "action_import";
 	public static final String ACTION_LOGIN = "action_login";
+	public static final String ACTION_LOGOUT = "action_logout";
 	public static final String ACTION_MEMBER = "action_member";
 	public static final String ACTION_MENU_JUMP = "action_menujump";
 	public static final String ACTION_NOTIFY = "action_notify";
@@ -79,6 +74,7 @@ public class WikiServlet extends JMController implements Controller {
 	public static final String ACTION_SEARCH_RESULTS = "search_results";
 	public static final String ACTION_TODO_TOPICS = "todo_topics";
 	public static final String ACTION_DELETE = "action_delete";
+	public static final String ACTION_VIRTUAL_WIKI_LIST = "action_virtual_wiki_list";
 	public static final String PARAMETER_ACTION = "action";
 	public static final String PARAMETER_SPECIAL = "special";
 
@@ -87,7 +83,7 @@ public class WikiServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public final ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
@@ -314,24 +310,28 @@ public class WikiServlet extends JMController implements Controller {
 		ResourceBundle messages = getMessages(request.getLocale());
 		addIfNotEmpty(
 			request, "leftMenu", getCachedContent(
+				request.getContextPath(),
 				virtualWiki,
 				messages.getString("specialpages.leftMenu")
 			)
 		);
 		request.setAttribute(
 			"topArea", getCachedContent(
+				request.getContextPath(),
 				virtualWiki,
 				messages.getString("specialpages.topArea")
 			)
 		);
 		request.setAttribute(
 			"bottomArea", getCachedContent(
+				request.getContextPath(),
 				virtualWiki,
 				messages.getString("specialpages.bottomArea")
 			)
 		);
 		request.setAttribute(
 			"StyleSheet", getCachedRawContent(
+				request.getContextPath(),
 				virtualWiki,
 				messages.getString("specialpages.stylesheet")
 			)
@@ -541,7 +541,7 @@ public class WikiServlet extends JMController implements Controller {
 				}
 			}
 			// convert the rawcontent to html content
-			contents = WikiBase.getInstance().cook(new BufferedReader(new StringReader(rawcontents)), virtualWiki);
+			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(rawcontents)));
 		} catch (Exception e) {
 			error(request, response, e);
 			return null;
@@ -579,15 +579,15 @@ public class WikiServlet extends JMController implements Controller {
 	 *
 	 */
 	private interface WikiReader {
-		String read(String virtualWiki, String topic) throws Exception;
+		String read(String context, String virtualWiki, String topic) throws Exception;
 	}
 
 	/**
 	 *
 	 */
 	private static WikiReader cookedReader = new WikiReader() {
-		public String read(String virtualWiki, String topic) throws Exception {
-			return WikiBase.getInstance().readCooked(virtualWiki, topic);
+		public String read(String context, String virtualWiki, String topic) throws Exception {
+			return WikiBase.getInstance().readCooked(context, virtualWiki, topic);
 		}
 	};
 
@@ -595,7 +595,7 @@ public class WikiServlet extends JMController implements Controller {
 	 *
 	 */
 	private static WikiReader rawReader = new WikiReader() {
-		public String read(String virtualWiki, String topic) throws Exception {
+		public String read(String context, String virtualWiki, String topic) throws Exception {
 			return WikiBase.getInstance().readRaw(virtualWiki, topic);
 		}
 	};
@@ -603,12 +603,12 @@ public class WikiServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	public static String getCached(String virtualWiki, String topic, WikiReader wr) {
+	public static String getCached(String context, String virtualWiki, String topic, WikiReader wr) {
 		String content = (String) cachedContents.get(virtualWiki + "-" + topic);
 		if (content == null) {
 			try {
 				logger.debug("reloading topic " + topic);
-				content = wr.read(virtualWiki, topic);
+				content = wr.read(context, virtualWiki, topic);
 				synchronized (cachedContents) {
 					cachedContents.put(virtualWiki + "-" + topic, content);
 				}
@@ -629,8 +629,8 @@ public class WikiServlet extends JMController implements Controller {
 	 * @param topic	   the topic name
 	 * @return the topic contents
 	 */
-	public static String getCachedContent(String virtualWiki, String topic) {
-		return getCached(virtualWiki, topic, cookedReader);
+	public static String getCachedContent(String context, String virtualWiki, String topic) {
+		return getCached(context, virtualWiki, topic, cookedReader);
 	}
 
 	/**
@@ -642,8 +642,8 @@ public class WikiServlet extends JMController implements Controller {
 	 * @param topic	   the topic name
 	 * @return the topic contents
 	 */
-	public static String getCachedRawContent(String virtualWiki, String topic) {
-		return getCached(virtualWiki, topic, rawReader);
+	public static String getCachedRawContent(String context, String virtualWiki, String topic) {
+		return getCached(context, virtualWiki, topic, rawReader);
 	}
 
 	/**
@@ -652,13 +652,11 @@ public class WikiServlet extends JMController implements Controller {
 	 * <p/>
 	 * Clearing all cached contents forces to reload.
 	 */
-	private void removeCachedContents() {
-		if (logger.isDebugEnabled()) {
-			logger.debug(
-				"Removing Cached Contents; " +
-				"cachedContents.size() = " + cachedContents.size()
-			);
-		}
+	public static void removeCachedContents() {
+		logger.debug(
+			"Removing Cached Contents; " +
+			"cachedContents.size() = " + cachedContents.size()
+		);
 		cachedContents.clear();
 	}
 
@@ -687,9 +685,7 @@ public class WikiServlet extends JMController implements Controller {
 			// first, convert locale-specific action into a constant.  this isn't
 			// terribly important with the current code, but if anything is to
 			// be done with action values in the future it will be helpful.
-			if (checkAction(action, Utilities.resource("edit.action.save", request.getLocale()))) {
-				action = ACTION_SAVE;
-			} else if (checkAction(action, Utilities.resource("edit.action.append", request.getLocale()))) {
+			if (checkAction(action, Utilities.resource("edit.action.append", request.getLocale()))) {
 				action = ACTION_APPEND;
 			} else if (checkAction(action, Utilities.resource("edit.action.preview", request.getLocale()))) {
 				action = ACTION_PREVIEW;
@@ -700,7 +696,7 @@ public class WikiServlet extends JMController implements Controller {
 			}
 			if (actionRedirect != null) {
 				// Handle the layout pages in a cache: do not reload the for every
-				// request, just reload when an update is made on any page (SaveTopicServlet)
+				// request, just reload when an update is made on any page
 				// This is for performance reasons.
 				//
 				// In the previous version the removeCachedContents() call was added in update
@@ -717,19 +713,6 @@ public class WikiServlet extends JMController implements Controller {
 			} else if (action.equals(ACTION_SEARCH)) {
 				// a search request has been made
 				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Search");
-				dispatch.forward(request, response);
-				return;
-			} else if (action.equals(ACTION_SAVE)) {
-				// a save request has been made
-				logger.debug("Dispatching save");
-				removeCachedContents();
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SaveTopic");
-				dispatch.forward(request, response);
-				return;
-			} else if (action.equals(ACTION_APPEND)) {
-				// a append template request has been made
-				logger.debug("Dispatching append template");
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SaveTopic");
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_PREVIEW)) {
@@ -809,7 +792,7 @@ public class WikiServlet extends JMController implements Controller {
 				dispatch.forward(request, response);
 				return;
 			} else if (action.equals(ACTION_MEMBER)) {
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:Member");
+				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SetUsername");
 				dispatch.forward(request, response);
 				return;
 			}
@@ -825,7 +808,7 @@ public class WikiServlet extends JMController implements Controller {
 	 * (topArea, bottomArea, leftMenu, etc.)
 	 */
 	private void checkActionAndRemoveCachedContentsIfNeeded(String action, Locale locale) {
-		if (action.equals(ACTION_SAVE) || action.equals(ACTION_SAVE_TEMPLATE) || action.equals(ACTION_CANCEL)) {
+		if (action.equals(ACTION_SAVE_TEMPLATE) || action.equals(ACTION_CANCEL)) {
 			removeCachedContents();
 		}
 	}
