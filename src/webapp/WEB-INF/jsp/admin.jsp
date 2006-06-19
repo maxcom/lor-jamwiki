@@ -685,7 +685,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.import"/></p>
-<a href="Wiki?action=<%= WikiServlet.ACTION_IMPORT %>"><f:message key="admin.caption.startimport"/></a>
+<a href="<jmwiki:link value="Special:Import" />"><f:message key="admin.caption.startimport"/></a>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
 <form action="<jmwiki:link value="Special:Admin" />" method="post">

@@ -1,7 +1,5 @@
 package org.jmwiki.servlets;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Collection;
@@ -9,12 +7,17 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.apache.log4j.Logger;
 import org.jmwiki.VersionManager;
 import org.jmwiki.WikiMember;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.persistency.Topic;
 import org.jmwiki.persistency.TopicVersion;
-import org.jmwiki.persistency.file.*;
+import org.jmwiki.persistency.file.FileHandler;
+import org.jmwiki.persistency.file.FileNotify;
+import org.jmwiki.persistency.file.FileSearchEngine;
+import org.jmwiki.persistency.file.FileVersionManager;
+import org.jmwiki.persistency.file.FileWikiMembers;
 import org.jmwiki.persistency.db.DatabaseHandler;
 import org.jmwiki.persistency.db.DatabaseWikiMembers;
 import org.jmwiki.persistency.db.DatabaseNotify;
@@ -23,10 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * Servlet for migrating a file-based wiki into a database-based one
  *
- * @author garethc
- * Date: Apr 28, 2003
  */
 public class ImportServlet extends JMController implements Controller {
 
@@ -38,28 +38,22 @@ public class ImportServlet extends JMController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		importFiles(request, next);
+		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		logger.debug("Importing...");
+	private void importFiles(HttpServletRequest request, ModelAndView next) throws Exception {
 		try {
-			request.setAttribute("results", importAll());
+			next.addObject("results", importAll());
 		} catch (Exception e) {
-			error(request, response, e);
-			return;
+			logger.error("Failure while importing files", e);
+			throw new Exception("Failure while importing files" + e.getMessage());
 		}
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_IMPORT);
-		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_IMPORT);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
