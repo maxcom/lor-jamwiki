@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +59,7 @@ public class PrintableServlet extends JMController implements Controller {
 		ArrayList result = new ArrayList();
 		Vector alreadyVisited = new Vector();
 		try {
-			result.addAll(parsePage(request, ResourceBundle.getBundle("ApplicationResources", request.getLocale()), virtualWiki, topic, depth, alreadyVisited));
+			result.addAll(parsePage(request, virtualWiki, topic, depth, alreadyVisited));
 		} catch (Exception e) {
 			logger.error("Failure while creating printable page", e);
 			throw new Exception("Failure while creating printable page " + e.getMessage());
@@ -89,7 +88,7 @@ public class PrintableServlet extends JMController implements Controller {
 	 * @param depth The depth to go into
 	 * @return Collection of pages
 	 */
-	private Collection parsePage(HttpServletRequest request, ResourceBundle messages, String virtualWiki, String topic, int depth, Vector alreadyVisited)
+	private Collection parsePage(HttpServletRequest request, String virtualWiki, String topic, int depth, Vector alreadyVisited)
 		throws Exception {
 		WikiBase base = WikiBase.getInstance();
 		String onepage = base.readCooked(request.getContextPath(), virtualWiki, topic);
@@ -103,7 +102,7 @@ public class PrintableServlet extends JMController implements Controller {
 			if (depth > 0) {
 				String searchfor = "href=\"";
 				int iPos = onepage.indexOf(searchfor);
-				int iEndPos = onepage.indexOf(messages.getString("topic.ismentionedon"));
+				int iEndPos = onepage.indexOf(JMController.getMessage("topic.ismentionedon", request.getLocale()));
 				if (iEndPos == -1) iEndPos = Integer.MAX_VALUE;
 				while (iPos > -1 && iPos < iEndPos) {
 					String link = onepage.substring(iPos + searchfor.length(),
@@ -117,7 +116,7 @@ public class PrintableServlet extends JMController implements Controller {
 						!link.startsWith("action=") &&
 						!alreadyVisited.contains(link) &&
 						!PseudoTopicHandler.getInstance().isPseudoTopic(link)) {
-						result.addAll(parsePage(request, messages, virtualWiki, link, (depth - 1), alreadyVisited));
+						result.addAll(parsePage(request, virtualWiki, link, (depth - 1), alreadyVisited));
 					}
 					iPos = onepage.indexOf(searchfor, iPos + 10);
 				}

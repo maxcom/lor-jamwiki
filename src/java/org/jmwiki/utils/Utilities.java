@@ -23,8 +23,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -39,9 +37,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
 import org.jmwiki.persistency.file.FileHandler;
-import org.jmwiki.servlets.JMController;
 
 /**
  *

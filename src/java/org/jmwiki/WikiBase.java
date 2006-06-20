@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
@@ -57,6 +56,7 @@ import org.jmwiki.persistency.file.FileVersionManager;
 import org.jmwiki.persistency.file.FileWikiMembers;
 import org.jmwiki.parser.AbstractParser;
 import org.jmwiki.parser.alt.BackLinkLex;
+import org.jmwiki.servlets.JMController;
 import org.jmwiki.users.LdapUsergroup;
 import org.jmwiki.users.NoUsergroup;
 import org.jmwiki.users.Usergroup;
@@ -659,7 +659,7 @@ public class WikiBase {
 	 * @return
 	 */
 	public boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
-		String adminOnlyTopics = readRaw(virtualWiki, getMessages(locale).getString("specialpages.adminonlytopics"));
+		String adminOnlyTopics = readRaw(virtualWiki, JMController.getMessage("specialpages.adminonlytopics", locale));
 		StringTokenizer tokenizer = new StringTokenizer(adminOnlyTopics);
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
@@ -668,15 +668,5 @@ public class WikiBase {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Get messages for the given locale
-	 * @param locale locale
-	 * @return
-	 */
-	private static ResourceBundle getMessages(Locale locale) {
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		return messages;
 	}
 }

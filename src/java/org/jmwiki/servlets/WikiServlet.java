@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.Vector;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -306,43 +305,34 @@ public class WikiServlet extends JMController implements Controller {
 	 */
 	public static void buildLayout(HttpServletRequest request, String virtualWiki) {
 		// build the layout contents
-		ResourceBundle messages = getMessages(request.getLocale());
 		addIfNotEmpty(
 			request, "leftMenu", getCachedContent(
 				request.getContextPath(),
 				virtualWiki,
-				messages.getString("specialpages.leftMenu")
+				JMController.getMessage("specialpages.leftMenu", request.getLocale())
 			)
 		);
 		request.setAttribute(
 			"topArea", getCachedContent(
 				request.getContextPath(),
 				virtualWiki,
-				messages.getString("specialpages.topArea")
+				JMController.getMessage("specialpages.topArea", request.getLocale())
 			)
 		);
 		request.setAttribute(
 			"bottomArea", getCachedContent(
 				request.getContextPath(),
 				virtualWiki,
-				messages.getString("specialpages.bottomArea")
+				JMController.getMessage("specialpages.bottomArea", request.getLocale())
 			)
 		);
 		request.setAttribute(
 			"StyleSheet", getCachedRawContent(
 				request.getContextPath(),
 				virtualWiki,
-				messages.getString("specialpages.stylesheet")
+				JMController.getMessage("specialpages.stylesheet", request.getLocale())
 			)
 		);
-	}
-
-	/**
-	 *
-	 */
-	public static ResourceBundle getMessages(Locale locale) {
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		return messages;
 	}
 
 	/**
@@ -444,13 +434,12 @@ public class WikiServlet extends JMController implements Controller {
 			// create backlinks
 			if (topic != null) {
 				Collection results = sedb.findLinkedTo(virtualWiki, topic);
-				ResourceBundle messages = getMessages(request.getLocale());
 				if (results != null && results.size() > 0) {
 					StringBuffer buffer = new StringBuffer("");
 					buffer.append("<br /><br /><span class=\"backlinks\">");
 					buffer.append(topic);
 					buffer.append(" ");
-					buffer.append(messages.getString("topic.ismentionedon"));
+					buffer.append(JMController.getMessage("topic.ismentionedon", request.getLocale()));
 					buffer.append(" ");
 					Iterator it = results.iterator();
 					String divider = "";
@@ -747,8 +736,7 @@ public class WikiServlet extends JMController implements Controller {
 				String username = request.getParameter("username");
 				if (username == null || username.trim().length() == 0) {
 					// FIXME: this is a fix for VQW-54, but it could be handled more elegantly
-					ResourceBundle messages = getMessages(request.getLocale());
-					error(request, response, new WikiServletException(messages.getString("exception.badusername")));
+					error(request, response, new WikiServletException(JMController.getMessage("exception.badusername", request.getLocale())));
 					return;
 				}
 				Cookie c = Utilities.createUsernameCookie(username);
@@ -757,8 +745,7 @@ public class WikiServlet extends JMController implements Controller {
 					response.addCookie(c);
 				} catch (Exception e) {
 					logger.warn(e.getMessage(), e);
-					ResourceBundle messages = getMessages(request.getLocale());
-					error(request, response, new WikiServletException(messages.getString("exception.badusername")));
+					error(request, response, new WikiServletException(JMController.getMessage("exception.badusername", request.getLocale())));
 					return;
 				}
 				String topic = request.getParameter("topic");

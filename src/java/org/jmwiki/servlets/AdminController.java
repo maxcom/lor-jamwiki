@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -47,7 +46,6 @@ import org.springframework.web.servlet.mvc.Controller;
 public class AdminController implements Controller {
 
 	private static Logger logger = Logger.getLogger(AdminController.class.getName());
-	private ResourceBundle messages = null;
 	private String virtualWiki = null;
 	private String message = null;
 
@@ -127,7 +125,7 @@ public class AdminController implements Controller {
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
 			WikiBase.getInstance().addVirtualWiki(newWiki);
-			this.message = this.messages.getString("admin.message.virtualwikiadded");
+			this.message = JMController.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			WikiBase.initialise();
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
@@ -144,13 +142,13 @@ public class AdminController implements Controller {
 			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
 			if (!Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(oldPassword)) {
-				this.message = this.messages.getString("admin.message.oldpasswordincorrect");
+				this.message = JMController.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
 			} else if (!newPassword.equals(confirmPassword)) {
-				this.message = this.messages.getString("admin.message.passwordsnomatch");
+				this.message = JMController.getMessage("admin.message.passwordsnomatch", request.getLocale());
 			} else {
 				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, newPassword);
 				Environment.saveProperties();
-				this.message = this.messages.getString("admin.message.passwordchanged");
+				this.message = JMController.getMessage("admin.message.passwordchanged", request.getLocale());
 			}
 		} catch (Exception e) {
 			logger.error("Failure while changing password", e);
@@ -461,7 +459,7 @@ public class AdminController implements Controller {
 			}
 			Environment.saveProperties();
 			WikiBase.initialise();
-			this.message = this.messages.getString("admin.message.changessaved");
+			this.message = JMController.getMessage("admin.message.changessaved", request.getLocale());
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
 			this.message = "Failure while processing property values: " + e.getMessage();
@@ -510,7 +508,7 @@ public class AdminController implements Controller {
 	private void refreshIndex(HttpServletRequest request, ModelAndView next) {
 		try {
 			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
-			this.message = this.messages.getString("admin.message.indexrefreshed");
+			this.message = JMController.getMessage("admin.message.indexrefreshed", request.getLocale());
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
 			this.message = "Failure while refreshing search index: " + e.getMessage();
@@ -525,9 +523,9 @@ public class AdminController implements Controller {
 		try {
 			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(this.virtualWiki);
 			if (members.removeMember(user)) {
-				this.message = user + this.messages.getString("admin.message.userremoved.success");
+				this.message = user + JMController.getMessage("admin.message.userremoved.success", request.getLocale());
 			} else {
-				this.message = user + this.messages.getString("admin.message.userremoved.failure");
+				this.message = user + JMController.getMessage("admin.message.userremoved.failure", request.getLocale());
 			}
 		} catch (Exception e) {
 			logger.error("Failure while removing user " + user, e);
