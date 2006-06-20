@@ -16,10 +16,10 @@ try {
 if (!special) {
 %>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link var="${topic}" />"><f:message key="menu.article" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="${topic}" />"><f:message key="menu.article" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link var="Comments:${topic}" />"><f:message key="menu.comments" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Comments:${topic}" />"><f:message key="menu.comments" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Edit" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.editpage" /></a></td>
@@ -38,7 +38,7 @@ if (!special) {
 <%
 } else {
 %>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link var="${topic}" />"><f:message key="menu.special" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="${topic}" />"><f:message key="menu.special" /></a></td>
 <%
 }
 %>

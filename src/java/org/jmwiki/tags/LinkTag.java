@@ -16,22 +16,13 @@ public class LinkTag extends TagSupport {
 
 	private static Logger logger = Logger.getLogger(LinkTag.class);
 	private String value = null;
-	private String var = null;
 
 	/**
 	 *
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			if (value == null && var == null) {
-				throw new JspException("value OR var parameter must be set in jmwiki:link");
-			}
-			if (value != null && var != null) {
-				throw new JspException("value (" + value + ") AND var (" + var + ") parameter cannot both be set in jmwiki:link");
-			}
-			if (value == null) {
-				value = (String)ExpressionUtil.evalNotNull("link", "var", var, Object.class, this, pageContext);
-			}
+			value = (String)ExpressionUtil.evalNotNull("link", "value", value, Object.class, this, pageContext);
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			String url = null;
 			String virtualWiki = retrieveVirtualWiki(request);
@@ -81,23 +72,8 @@ public class LinkTag extends TagSupport {
 	/**
 	 *
 	 */
-	public String getVar() {
-		return var;
-	}
-
-	/**
-	 *
-	 */
-	public void setVar(String var) {
-		this.var = var;
-	}
-
-	/**
-	 *
-	 */
     public void release() {
 		super.release();
-		this.var = null;
 		this.value = null;
     }
 }

@@ -1,3 +1,3 @@
 <c:forEach items="${historyThisPage}" var="history">
-<a href="<jmwiki:link var="${history} " />"><c:out value="${history}"/></a> &gt;&gt;
+<a href="<jmwiki:link value="${history} " />"><c:out value="${history}"/></a> &gt;&gt;
 </c:forEach>

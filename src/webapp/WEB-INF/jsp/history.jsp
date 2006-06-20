@@ -53,7 +53,7 @@ function inactive(element) {
 		<c:forEach items="${versions}" var="version">
 		<f:formatDate value="${version.revisionDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" var="revisionDate" />
 <tr>
-	<td><a href="<jmwiki:link var="Special:History" />?type=version&versionNumber=<c:out value="${version.versionNumber}" />&topic=<jmwiki:encode value="${topic}" />"><c:out value="${revisionDate}"/></a></td>
+	<td><a href="<jmwiki:link value="Special:History" />?type=version&versionNumber=<c:out value="${version.versionNumber}" />&topic=<jmwiki:encode value="${topic}" />"><c:out value="${revisionDate}"/></a></td>
 	<td><input type="checkbox" name='<c:out value="diff:${version.versionNumber}"/>' onclick="inactive(this)" /></td>
 </tr>
 		</c:forEach>
