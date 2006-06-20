@@ -16,7 +16,7 @@
 				<prop key="/**/Special:MenuJump">MenuJump</prop>
 				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
-				<prop key="/**/Special:Attach">Attach</prop>
+				<prop key="/**/Special:Upload">Attach</prop>
 				<prop key="/**/Special:SetUsername">Member</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:Edit">Edit</prop>

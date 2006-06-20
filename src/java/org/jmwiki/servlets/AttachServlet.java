@@ -3,14 +3,11 @@
  */
 package org.jmwiki.servlets;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jmwiki.persistency.Topic;
 import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -28,46 +25,44 @@ public class AttachServlet extends JMController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
-		return null;
+		attach(request, next);
+		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void attach(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topic = request.getParameter("topic");
-		request.setAttribute("title", "Attach Files to " + topic);
-		request.setAttribute("topic", topic);
-		String virtualWiki = (String) request.getAttribute("virtualWiki");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		next.addObject("title", "Attach Files to " + topic);
+		next.addObject("topic", topic);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);
 		}
-		request.setAttribute("user", user);
+		next.addObject("user", user);
 		try {
 			Topic t = new Topic(topic);
 			if (t.isReadOnlyTopic(virtualWiki)) {
-				error(request, response, new WikiException(WikiException.READ_ONLY));
-				return;
+				logger.warn("Topic " + topic + " is read only");
+				// FIXME - hard coding
+				throw new Exception("Topic " + topic + " is read only");
 			}
 			if (topic == null || topic.equals("")) {
-				throw new WikiException("Topic must be specified");
+				throw new Exception("Topic must be specified");
 			}
-			WikiBase base = WikiBase.getInstance();
 			String key = request.getSession().getId();
-			if (!base.lockTopic(virtualWiki, topic, key)) {
-				throw new WikiException(WikiException.TOPIC_LOCKED);
+			if (!WikiBase.getInstance().lockTopic(virtualWiki, topic, key)) {
+				// FIXME - hard coding
+				throw new Exception("Topic " + topic + " is locked");
 			}
 		} catch (Exception e) {
-			error(request, response, e);
-			return;
+			logger.error("Failure while getting attachment topic info for " + topic, e);
+			// FIXME - hard coding
+			throw new Exception("Failure while getting attachment topic info for " + topic + " " + e.getMessage());
 		}
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ATTACH);
-		dispatch("/WEB-INF/jsp/wiki.jsp", request, response);
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ATTACH);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 }

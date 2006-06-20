@@ -28,7 +28,7 @@ if (!special) {
 	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:History" />?topic=<jmwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Attach" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.attach" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Upload" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.attach" /></a></td>
 	</c:if>
 	<%-- FIXME: admin only --%>
 	<td class="menu-tab-space">&#160;</td>
