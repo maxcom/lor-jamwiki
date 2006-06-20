@@ -66,14 +66,14 @@ public class PrintableServlet extends JMController implements Controller {
 			throw new Exception("Failure while creating printable page " + e.getMessage());
 		}
 		// now go through all pages and replace
-		// all href=Wiki? with href=# for the
+		// all href=/ with href=# for the
 		// pages in the alreadyVisited vector
 		for (Iterator iter = result.iterator(); iter.hasNext();) {
 			PrintableEntry element = (PrintableEntry) iter.next();
 			for (Iterator visitedIterator = alreadyVisited.iterator(); visitedIterator.hasNext();) {
 				String visitedTopic = (String) visitedIterator.next();
 				element.setContent(Utilities.replaceString(element.getContent(),
-					"href=\"Wiki?" + visitedTopic, "href=\"#" + visitedTopic)
+					"href=\"" + visitedTopic, "href=\"#" + visitedTopic)
 				);
 			}
 		}
@@ -101,7 +101,7 @@ public class PrintableServlet extends JMController implements Controller {
 			result.add(entry);
 			alreadyVisited.add(topic);
 			if (depth > 0) {
-				String searchfor = "href=\"Wiki?";
+				String searchfor = "href=\"";
 				int iPos = onepage.indexOf(searchfor);
 				int iEndPos = onepage.indexOf(messages.getString("topic.ismentionedon"));
 				if (iEndPos == -1) iEndPos = Integer.MAX_VALUE;

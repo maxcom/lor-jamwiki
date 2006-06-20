@@ -15,9 +15,9 @@ import org.jmwiki.utils.Utilities;
  *
  * @author Ryan Holliday
  */
-public class MediaWikiUtil {
+public class ParserUtil {
 
-	private static Logger logger = Logger.getLogger(MediaWikiUtil.class.getName());
+	private static Logger logger = Logger.getLogger(ParserUtil.class.getName());
 
 	/**
 	 * Given a String that represents a Wiki HTML link (a URL with an optional
@@ -92,7 +92,8 @@ public class MediaWikiUtil {
 		}
 		String url = Utilities.buildInternalLink(context, virtualWiki, topic);
 		if (!exists(topic, virtualWiki)) {
-			url = "Wiki?topic=" + JSPUtils.encodeURL(topic) + "&action=" + WikiServlet.ACTION_EDIT;
+			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
+			url += "?topic=" + JSPUtils.encodeURL(topic);
 			return "<a class=\"edit\" title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
 		}
 		return "<a title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";

@@ -16,9 +16,7 @@ along with this program (gpl.txt); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-      <c:forEach items="${historyThisPage}" var="history">
-        <jmwiki:encode value="${history}" var="encodedTopic"/>
-        <a href='<c:out value="Wiki?${encodedTopic}"/>'>
-          <c:out value="${history}"/>
-        </a> &gt;&gt;
-      </c:forEach>
+
+<c:forEach items="${historyThisPage}" var="history">
+<a href="<jmwiki:link var="${history} " />"><c:out value="${history}"/></a> &gt;&gt;
+</c:forEach>

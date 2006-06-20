@@ -22,13 +22,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <c:set var="defaultTopic"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
 <c:choose>
-    <c:when test="${!empty defaultTopic}">
-        <%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
-        <c:redirect url="jsp/Wiki?${defaultTopic}" />
-    </c:when>
-    <c:otherwise>
-        <%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
-        <%-- <c:redirect url="jsp/Special:Admin" /> --%>
-        <c:out value="${defaultTopic}" />
-    </c:otherwise>
+	<c:when test="${!empty defaultTopic}">
+		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
+		<c:redirect url="jsp/${defaultTopic}" />
+	</c:when>
+	<c:otherwise>
+		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
+		<c:redirect url="jsp/Special:Admin" />
+	</c:otherwise>
 </c:choose>

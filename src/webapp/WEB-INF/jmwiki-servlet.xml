@@ -10,7 +10,6 @@
 		<property name="mappings">
 			<props>
 				<prop key="/**/Special:Admin">adminController</prop>
-				<prop key="/**/Wiki">Wiki</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:SaveTemplate">SaveTemplate</prop>
@@ -40,7 +39,6 @@
 
 	<bean id="topicController" class="org.jmwiki.servlets.TopicController" />
 	<bean id="adminController" class="org.jmwiki.servlets.AdminController" />
-	<bean id="Wiki" class="org.jmwiki.servlets.WikiServlet" />
 	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />
 	<bean id="SaveAttachment" class="org.jmwiki.servlets.SaveAttachmentServlet" />
 	<bean id="SaveTemplate" class="org.jmwiki.servlets.SaveTemplateServlet" />

@@ -26,8 +26,8 @@ import org.jmwiki.parser.Lexer;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
 import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.Utilities;
 import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 
 %%
 
@@ -47,47 +47,59 @@ import org.jmwiki.utils.JSPUtils;
 
 %{
 	protected static Logger logger = Logger.getLogger( VQWikiLinkLex.class );
-  protected String virtualWiki;
-
-	protected boolean exists( String topic ){
-	  try{
-	    return WikiBase.getInstance().exists( virtualWiki, topic );
-	  }catch( Exception err ){
-	    logger.error( err );
-	  }
-	  return false;
+	protected String virtualWiki;
+	protected String context = null;
+	
+	/**
+	 *
+	 */
+	protected boolean exists(String topic) {
+		try {
+			return WikiBase.getInstance().exists(virtualWiki, topic);
+		} catch (Exception err) {
+			logger.error(err);
+		}
+		return false;
 	}
-
-  public void setVirtualWiki( String vWiki ){
-    this.virtualWiki = vWiki;
-  }
-
-	protected boolean ignoreWikiname( String name ){
-	  return VQWikiParser.doIgnoreWikiname(name);
-  }
-  
-  protected String getTopicLink(String link, String description)
-  {
-      link = link.trim();
-      description = description.trim();
-	  if( exists( link ) ){
-	    return "<a class=\"topic\" href=\"Wiki?" + JSPUtils.encodeURL(link) + "\">" +
-	    description + "</a>";
-	  }
-	  else{
-	      if (description.equals(link))
-	      {
-		    return "<a class=\"edit\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
-		      "&action=" + WikiServlet.ACTION_EDIT + "\">" + description + "</a>";
-		  }
-		  else
-		  {
-		    return description + " (<a class=\"edit\" href=\"Wiki?topic=" + JSPUtils.encodeURL(link) +
-		      "&action=" + WikiServlet.ACTION_EDIT + "\">" + link + "</a>)";
-		  }
-	  }
-  }
-  
+	
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String vWiki) {
+		this.virtualWiki = vWiki;
+	}
+	
+	/**
+	 *
+	 */
+	protected boolean ignoreWikiname(String name) {
+		return VQWikiParser.doIgnoreWikiname(name);
+	}
+	
+	/**
+	 *
+	 */
+	protected String getTopicLink(String link, String description) {
+		link = link.trim();
+		description = description.trim();
+		if (exists(link)) {
+			return "<a class=\"topic\" href=\"" + Utilities.buildInternalLink(context, virtualWiki, link)
+				+ "\">" + description + "</a>";
+		} else if (description.equals(link)) {
+			return "<a class=\"edit\" href=\"Special:Edit?topic=" + JSPUtils.encodeURL(link)
+				+ "\">" + description + "</a>";
+		} else {
+			return description + " (<a class=\"edit\" href=\"Special:Edit?topic=" + JSPUtils.encodeURL(link)
+				+ "\">" + link + "</a>)";
+		}
+	}
+	
+	/**
+	 *
+	 */
+	protected void setContext(String context) {
+		this.context = context;
+	}
 %}
 
 whitespace = ([\t\ \r\n])
@@ -293,7 +305,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
   String displayLink = yytext();
   int firstQuotePosition = displayLink.indexOf("\"");
   String attachmentName = displayLink.substring(firstQuotePosition+1, displayLink.length()-1);
-  String link = "Wiki?action=" + WikiServlet.ACTION_VIEW_ATTACHMENT + "&attachment=" +
+  String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
                 JSPUtils.encodeURL( attachmentName );
   return "<img src=\"" + link.trim() + "\"/>";
 }
@@ -302,7 +314,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
   logger.debug( "{imageattachment}" );
   String displayLink = yytext();
   String attachmentName = displayLink.substring(7);
-  String link = "Wiki?action=" + WikiServlet.ACTION_VIEW_ATTACHMENT + "&attachment=" +
+  String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
                 JSPUtils.encodeURL( attachmentName );
   return "<img src=\"" + link.trim() + "\"/>";
 }
@@ -312,7 +324,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
  String displayLink = yytext();
  int firstQuotePosition = displayLink.indexOf("\"");
  String attachmentName = displayLink.substring(firstQuotePosition+1, displayLink.length()-1);
- String link = "Wiki?action=" + WikiServlet.ACTION_VIEW_ATTACHMENT + "&attachment=" +
+ String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
    JSPUtils.encodeURL( attachmentName );
   StringBuffer buffer = new StringBuffer();
   buffer.append( "<a class=\"attachmentlink\"" );
@@ -331,7 +343,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
  logger.debug( "{attachment}" );
  String displayLink = yytext();
  String attachmentName = displayLink.substring(7);
- String link = "Wiki?action=" + WikiServlet.ACTION_VIEW_ATTACHMENT + "&attachment=" +
+ String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
    JSPUtils.encodeURL( attachmentName );
   StringBuffer buffer = new StringBuffer();
   buffer.append( "<a class=\"attachmentlink\"" );

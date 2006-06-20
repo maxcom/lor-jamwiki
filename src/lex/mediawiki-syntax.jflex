@@ -395,17 +395,17 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return MediaWikiUtil.buildWikiLink(this.context, this.virtualWiki, yytext());
+    return ParserUtil.buildWikiLink(this.context, this.virtualWiki, yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
     logger.debug("htmllink: " + yytext() + " (" + yystate() + ")");
-    return MediaWikiUtil.buildHtmlLink(yytext());
+    return ParserUtil.buildHtmlLink(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllinkraw} {
     logger.debug("htmllinkraw: " + yytext() + " (" + yystate() + ")");
-    return MediaWikiUtil.buildHtmlLinkRaw(yytext());
+    return ParserUtil.buildHtmlLinkRaw(yytext());
 }
 
 /* ----- tables ----- */
@@ -593,147 +593,147 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlbreak} {
     logger.debug("htmlbreak: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<br />" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<br />" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlboldstart} {
     logger.debug("htmlboldstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<b>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<b>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlboldend} {
     logger.debug("htmlboldend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</b>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</b>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlcodestart} {
     logger.debug("htmlcodestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<code>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<code>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlcodeend} {
     logger.debug("htmlcodeend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</code>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</code>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmldivstart} {
     logger.debug("htmldivstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? yytext() : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmldivend} {
     logger.debug("htmldivend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</div>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</div>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlitalicstart} {
     logger.debug("htmlitalicstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<i>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<i>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlitalicend} {
     logger.debug("htmlitalicend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</i>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</i>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlspanstart} {
     logger.debug("htmlspanstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? yytext() : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlspanend} {
     logger.debug("htmlspanend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</span>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</span>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlstrikestart} {
     logger.debug("htmlstrikestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<strike>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<strike>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlstrikeend} {
     logger.debug("htmlstrikeend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</strike>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</strike>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlsubstart} {
     logger.debug("htmlsubstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<sub>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<sub>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlsubend} {
     logger.debug("htmlsubend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</sub>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</sub>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlsupstart} {
     logger.debug("htmlsupstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<sup>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<sup>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlsupend} {
     logger.debug("htmlsupend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</sup>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</sup>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltablestart} {
     logger.debug("htmltablestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? yytext() : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltableend} {
     logger.debug("htmltableend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</table>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</table>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltdstart} {
     logger.debug("htmltdstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? yytext() : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltdend} {
     logger.debug("htmltdend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</td>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</td>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlthstart} {
     logger.debug("htmlthstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? yytext() : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlthend} {
     logger.debug("htmlthend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</th>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</th>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltrstart} {
     logger.debug("htmltrstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? yytext() : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltrend} {
     logger.debug("htmltrend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</tr>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</tr>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlttstart} {
     logger.debug("htmlttstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<tt>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<tt>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlttend} {
     logger.debug("htmlttend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</tt>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</tt>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlunderlinestart} {
     logger.debug("htmlunderlinestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<u>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "<u>" : ParserUtil.escapeHtml(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlunderlineend} {
     logger.debug("htmlunderlineend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</u>" : MediaWikiUtil.escapeHtml(yytext());
+    return (allowHtml()) ? "</u>" : ParserUtil.escapeHtml(yytext());
 }
 
 /* ----- other ----- */
