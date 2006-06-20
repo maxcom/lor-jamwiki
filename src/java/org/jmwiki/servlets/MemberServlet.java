@@ -39,11 +39,20 @@ public class MemberServlet extends JMController implements Controller {
 	private void setUsername(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String user = null;
-		if (request.getParameter("userName") != null && request.getParameter("userName").length() > 0) {
+		if (request.getParameter("username") != null && request.getParameter("username").length() > 0) {
 			user = request.getParameter("userName");
 		}
 		if (user == null) {
 			user = Utilities.getUserFromRequest(request);
+		}
+		Cookie c = Utilities.createUsernameCookie(user);
+		logger.debug("Delivering cookie: " + c.getName() + " " + c.getValue());
+		try {
+			response.addCookie(c);
+		} catch (Exception e) {
+			logger.warn(e.getMessage(), e);
+			error(request, response, new WikiServletException(JMController.getMessage("exception.badusername", request.getLocale())));
+			return;
 		}
 		next.addObject("title", "Wiki Membership");
 		next.addObject("user", user);
