@@ -28,7 +28,7 @@ import org.jmwiki.SearchEngine;
 import org.jmwiki.SearchResultEntry;
 import org.jmwiki.WikiAction;
 import org.jmwiki.WikiBase;
-import org.jmwiki.persistency.Topic;
+import org.jmwiki.model.Topic;
 import org.jmwiki.users.Usergroup;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;

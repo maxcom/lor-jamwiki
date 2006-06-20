@@ -16,7 +16,7 @@ import org.jmwiki.PseudoTopicHandler;
 import org.jmwiki.SearchEngine;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
-import org.jmwiki.persistency.Topic;
+import org.jmwiki.model.Topic;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;

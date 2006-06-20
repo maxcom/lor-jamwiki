@@ -15,7 +15,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
-package org.jmwiki.persistency;
+package org.jmwiki.model;
 
 import java.io.BufferedReader;
 import java.io.Serializable;
@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Change;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
+import org.jmwiki.persistency.PersistencyHandler;
 
 /**
  *

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Change;
 import org.jmwiki.ChangeLog;
 import org.jmwiki.Environment;
-import org.jmwiki.persistency.Topic;
+import org.jmwiki.model.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.utils.JSPUtils;

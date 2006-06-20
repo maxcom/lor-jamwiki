@@ -5,7 +5,7 @@ package org.jmwiki;
 
 import java.util.List;
 import java.util.Date;
-import org.jmwiki.persistency.TopicVersion;
+import org.jmwiki.model.TopicVersion;
 
 /**
  *

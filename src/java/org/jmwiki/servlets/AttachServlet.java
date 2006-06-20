@@ -6,7 +6,7 @@ package org.jmwiki.servlets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.persistency.Topic;
+import org.jmwiki.model.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;

@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.VersionManager;
 import org.jmwiki.WikiBase;
-import org.jmwiki.persistency.TopicVersion;
+import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.utils.DiffUtil;
 import org.jmwiki.utils.Utilities;

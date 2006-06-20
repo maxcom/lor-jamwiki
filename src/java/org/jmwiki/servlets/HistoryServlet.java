@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.persistency.TopicVersion;
+import org.jmwiki.model.TopicVersion;
 import org.jmwiki.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.Utilities;

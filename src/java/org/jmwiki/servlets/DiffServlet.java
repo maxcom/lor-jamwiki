@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import org.apache.log4j.Logger;
-import org.jmwiki.persistency.Topic;
+import org.jmwiki.model.Topic;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
