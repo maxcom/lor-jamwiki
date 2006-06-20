@@ -52,11 +52,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
+		rss(request, response, next);
 		return null;
 	}
 
@@ -66,20 +62,11 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 *
 	 * @param request  The current http request
 	 * @param response What the servlet will send back as response
-	 *
-	 * @throws ServletException If something goes wrong during servlet execution
-	 * @throws IOException If the output stream cannot be accessed
-	 *
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-		throws ServletException, IOException {
-		String virtualWiki = null;
-		String topicName = null;
+	private void rss(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		String topic = request.getParameter("topic");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		try {
-			virtualWiki = (String) request.getAttribute("virtualWiki");
-			if (virtualWiki == null || virtualWiki.length() < 1) {
-				virtualWiki = WikiBase.DEFAULT_VWIKI;
-			}
 			// get the latest pages
 			int howManyDatesToGoBack = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 			if (howManyDatesToGoBack == 0) howManyDatesToGoBack = 5;
@@ -134,8 +121,8 @@ public class RSSServlet extends HttpServlet implements Controller {
 			int items = 0;
 			for (Iterator i = changed.iterator(); i.hasNext() && items < 15; items++) {
 				Change change = (Change) i.next();
-				topicName = change.getTopic();
-				Topic topicObject = new Topic(topicName);
+				topic = change.getTopic();
+				Topic topicObject = new Topic(topic);
 				String userid = change.getUser();
 				if (userid == null || "".equals(userid)) {
 					userid = topicObject.getMostRecentAuthor(virtualWiki);
@@ -145,11 +132,11 @@ public class RSSServlet extends HttpServlet implements Controller {
 					author = usergroup.getFullnameById(userid);
 				}
 				java.util.Date lastRevisionDate = topicObject.getMostRecentRevisionDate(virtualWiki);
-				String url = baseURL + "Wiki?" + topicName;
+				String url = baseURL + "Wiki?" + topic;
 				result.append("	<rdf:li rdf:resource=\"" + url + "\" />\n");
 				itemBuffer.append(" <item rdf:about=\"" + url + "\">\n");
 				itemBuffer.append("  <title><![CDATA[");
-				itemBuffer.append(topicName);
+				itemBuffer.append(topic);
 				itemBuffer.append("]]></title>\n");
 				itemBuffer.append("  <link><![CDATA[");
 				itemBuffer.append(url);
@@ -163,7 +150,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 					itemBuffer.append(author + " created this page on " + topicObject.getMostRecentRevisionDate(virtualWiki));
 				}
 				itemBuffer.append("<p>\n<![CDATA[");
-				String content = WikiBase.getInstance().readRaw(virtualWiki, topicName);
+				String content = WikiBase.getInstance().readRaw(virtualWiki, topic);
 				if (content.length() > 200) {
 					content = content.substring(0, 197) + "...";
 				}
@@ -207,7 +194,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				//  PageHistory
 				itemBuffer.append("  <wiki:history>");
 				itemBuffer.append(format(baseURL + "Wiki?topic=" +
-					topicName + "&action=" + WikiServlet.ACTION_HISTORY + "&type=all")
+					topic + "&action=" + WikiServlet.ACTION_HISTORY + "&type=all")
 				);
 				itemBuffer.append("</wiki:history>\n");
 				//  Close up.
@@ -232,6 +219,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 			result.append("</rdf:RDF>");
 			// --------- END CODE BY Janne Jalken ---------------
 			byte[] utf_result = result.toString().getBytes("UTF-8");
+			// FIXME - try to use Spring here
 			response.setContentType("text/xml; charset=UTF-8");
 			response.setHeader("Expires", "0");
 			response.setHeader("Pragma", "no-cache");
@@ -245,24 +233,6 @@ public class RSSServlet extends HttpServlet implements Controller {
 		} catch (Exception e) {
 			throw new ServletException(e.getMessage(), e);
 		}
-	}
-
-	/**
-	 * Handle get request.
-	 * The request is handled the same way as the post request.
-	 *
-	 * @see doPost()
-	 *
-	 * @param httpServletRequest  The current http request
-	 * @param httpServletResponse What the servlet will send back as response
-	 *
-	 * @throws ServletException If something goes wrong during servlet execution
-	 * @throws IOException If the output stream cannot be accessed
-	 *
-	 */
-	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-		throws ServletException, IOException {
-		this.doPost(httpServletRequest, httpServletResponse);
 	}
 
 	/**

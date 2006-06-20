@@ -108,11 +108,4 @@ public class SearchServlet extends JMController implements Controller {
 			throw new WikiServletException(err.toString());
 		}
 	}
-
-	/**
-	 *
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
-	}
 }
