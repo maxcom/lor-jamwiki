@@ -46,6 +46,19 @@
     </attribute>
   </tag>
   <tag>
+    <name>decode</name>
+    <tag-class>org.jmwiki.tags.EncodeTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+    </attribute>
+    <attribute>
+      <name>var</name>
+      <required>false</required>
+    </attribute>
+  </tag>
+  <tag>
     <name>setPageEncoding</name>
     <tag-class>org.jmwiki.tags.PageEncodingTag</tag-class>
     <body-content>JSP</body-content>

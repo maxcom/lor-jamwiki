@@ -36,7 +36,7 @@ public class HistoryServlet extends JMController implements Controller {
 	private void history(HttpServletRequest request, ModelAndView next) throws Exception {
 		VersionManager manager;
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		String topicName = request.getParameter("topic");
+		String topicName = JMController.getTopicFromRequest(request);
 		try {
 			manager = WikiBase.getInstance().getVersionManagerInstance();
 			String type = request.getParameter("type");

@@ -9,9 +9,9 @@ import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 /**
  *
  */
-public class EncodeTag extends TagSupport {
+public class DecodeTag extends TagSupport {
 
-	private static final Logger logger = Logger.getLogger(EncodeTag.class);
+	private static final Logger logger = Logger.getLogger(DecodeTag.class);
 
 	private String var;
 	private String value;
@@ -21,16 +21,16 @@ public class EncodeTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			value = (String)ExpressionUtil.evalNotNull("encode", "value", value, Object.class, this, pageContext);
+			value = (String)ExpressionUtil.evalNotNull("decode", "value", value, Object.class, this, pageContext);
 			try {
-				value = JSPUtils.encodeURL(value);
+				value = JSPUtils.decodeURL(value);
 				if (var == null) {
 					this.pageContext.getOut().print(value);
 				} else {
 					this.pageContext.setAttribute(var, value);
 				}
 			} catch (Exception e) {
-				logger.error("Failure while encoding value " + value);
+				logger.error("Failure while decoding value " + value);
 				throw new JspException(e);
 			}
 			return EVAL_PAGE;

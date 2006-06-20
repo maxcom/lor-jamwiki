@@ -39,7 +39,7 @@ public class PrintableServlet extends JMController implements Controller {
 	 *
 	 */
 	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = request.getParameter("topic");
+		String topic = JMController.getTopicFromRequest(request);
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		next.addObject("topic", topic);
 		next.addObject("title", topic);

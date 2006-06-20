@@ -32,7 +32,7 @@ public class DiffServlet extends JMController implements Controller {
 	 */
 	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		String topic = request.getParameter("topic");
+		String topic = JMController.getTopicFromRequest(request);
 		next.addObject("title", "Diff " + topic);
 		next.addObject("topic", topic);
 		try {

@@ -30,12 +30,11 @@
 </tr>
 <c:forEach items="${changes}" var="change">
 <tr>
-	<jmwiki:encode value="${change.topic}" var="encodedTopic"/>
 	<%-- FIXME: hard coding --%>
-	<td>(<a href="<jmwiki:link value="Special:Diff" />?action=<%= WikiServlet.ACTION_DIFF %>&topic=<c:out value="${encodedTopic}" />">diff</a>)</td>
-	<td>(<a href="<jmwiki:link value="Special:History" />?action=<%= WikiServlet.ACTION_HISTORY %>&topic=<c:out value="${encodedTopic}" />&type=all">history</a>)</td>
+	<td>(<a href="<jmwiki:link value="Special:Diff" />?action=<%= WikiServlet.ACTION_DIFF %>&topic=<jmwiki:encode value="${change.topic}" />">diff</a>)</td>
+	<td>(<a href="<jmwiki:link value="Special:History" />?action=<%= WikiServlet.ACTION_HISTORY %>&topic=<jmwiki:encode value="${change.topic}" />&type=all">history</a>)</td>
 	<td class="recent">
-		<a href='<c:out value="${encodedTopic}"/>'><c:out value="${change.topic}"/></a>
+		<a href='<jmwiki:encode value="${change.topic}"/>'><c:out value="${change.topic}"/></a>
 	</td>
 	<td class="recent">
 		<c:out value="${change.username}"/>

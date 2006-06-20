@@ -34,7 +34,7 @@ public class LockListServlet extends JMController implements Controller {
 	 *
 	 */
 	private void lockList(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = request.getParameter("topic");
+		String topic = JMController.getTopicFromRequest(request);
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		List locks = null;
 		try {
@@ -54,7 +54,7 @@ public class LockListServlet extends JMController implements Controller {
 	 *
 	 */
 	private void unlock(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = request.getParameter("topic");
+		String topic = JMController.getTopicFromRequest(request);
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");

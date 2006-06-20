@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jmwiki.utils.JSPUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -104,10 +105,7 @@ public abstract class JMController extends HttpServlet {
 		if (virtualWiki == null) {
 			throw new Exception("Invalid virtual wiki");
 		}
-		String topic = request.getParameter(PARAMETER_TOPIC);
-		if (topic == null && request.getAttribute("topic") != null) {
-			topic = (String)request.getAttribute("topic");
-		}
+		String topic = JMController.getTopicFromRequest(request);
 		if (topic == null) {
 			topic = JMController.getTopicFromURI(request);
 		}
@@ -163,7 +161,21 @@ public abstract class JMController extends HttpServlet {
 			throw new Exception("No topic in URL: " + uri);
 		}
 		String topic = uri.substring(slashIndex + 1);
+		topic = JSPUtils.decodeURL(topic);
 		logger.info("Retrieved topic from URI as: " + topic);
+		return topic;
+	}
+
+	/**
+	 *
+	 */
+	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
+		String topic = request.getParameter(JMController.PARAMETER_TOPIC);
+		if (topic == null) {
+			topic = (String)request.getAttribute(JMController.PARAMETER_TOPIC);
+		}
+		if (topic == null) return null;
+		topic = JSPUtils.decodeURL(topic);
 		return topic;
 	}
 

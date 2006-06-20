@@ -48,7 +48,6 @@ if (action == null) action = "";
 		</div>
 	</td>
 	<td class="main-content">
-		<jmwiki:encode var="encodedTitle" value='"${title}"'/>
 		<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >

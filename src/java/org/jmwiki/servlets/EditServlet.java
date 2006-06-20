@@ -53,7 +53,7 @@ public class EditServlet extends JMController implements Controller {
 	 *
 	 */
 	private void cancel(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = request.getParameter("topic");
+		String topic = JMController.getTopicFromRequest(request);
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		try {
 			WikiBase.getInstance().unlockTopic(virtualWiki, topic);
@@ -71,10 +71,7 @@ public class EditServlet extends JMController implements Controller {
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next) throws Exception {
 		request.getSession().setMaxInactiveInterval(60 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
-		String topic = request.getParameter("topic");
-		if (topic == null && request.getAttribute("topic") != null) {
-			topic = (String)request.getAttribute("topic");
-		}
+		String topic = JMController.getTopicFromRequest(request);
 		if (topic == null || topic.length() == 0) {
 			// FIXME - hard coding
 			throw new Exception("Invalid or missing topic");

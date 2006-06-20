@@ -64,7 +64,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 * @param response What the servlet will send back as response
 	 */
 	private void rss(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String topic = request.getParameter("topic");
+		String topic = JMController.getTopicFromRequest(request);
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		try {
 			// get the latest pages

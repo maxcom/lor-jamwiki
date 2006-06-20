@@ -29,7 +29,7 @@ public class JSPUtils {
 	 * behaviour, so we'll look for a default encoding. (coljac)
 	 */
 	public static String encodeURL(String url) {
-		String charSet = Environment.getValue(Environment.PROP_BASE_FORCE_ENCODING);
+		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
 		if (charSet == null) charSet = "UTF-8";
 		return JSPUtils.encodeURL(url, charSet);
 	}
@@ -38,42 +38,39 @@ public class JSPUtils {
 	 *
 	 */
 	public static String encodeURL(String url,String charSet) {
+		// convert spaces to underscores
+		url = Utilities.replaceString(url, " ", "_");
 		try {
 			url = URLEncoder.encode(url, charSet);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while encoding " + url, e);
+			logger.error("Failure while encoding url " + url + " with charset " + charSet, e);
 		}
 		// FIXME - un-encode colons.  handle this better.
-		return Utilities.replaceString(url, "%3A", ":");
+		url = Utilities.replaceString(url, "%3A", ":");
+		return url;
 	}
 
 	/**
 	 *
 	 */
 	public static String decodeURL(String url) {
-		try {
-			return URLDecoder.decode(url, Environment.getValue(Environment.PROP_FILE_ENCODING));
-		} catch (UnsupportedEncodingException e) {
-			logger.error("unknown char set in environment", e);
-			try {
-				return URLDecoder.decode(url, "UTF-8");
-			} catch (UnsupportedEncodingException e1) {
-				logger.fatal("unknown charset in catch-method: ", e1);
-				return null;
-			}
-		}
+		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
+		if (charSet == null) charSet = "UTF-8";
+		return JSPUtils.decodeURL(url, charSet);
 	}
 
 	/**
 	 *
 	 */
-	public static String decodeURL(String url,String charset) {
+	public static String decodeURL(String url,String charSet) {
 		try {
-			return URLDecoder.decode(url,charset);
-		} catch (java.io.UnsupportedEncodingException ex) {
-			logger.error("unknown char set: " + charset, ex);
-			return null;
+			url = URLDecoder.decode(url, charSet);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while decoding url " + url + " with charset " + charSet, e);
 		}
+		// convert underscores to spaces
+		url = Utilities.replaceString(url, "_", " ");
+		return url;
 	}
 
 	/**
