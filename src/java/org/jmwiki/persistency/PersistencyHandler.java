@@ -71,16 +71,6 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getTemplateNames(String virtualWiki) throws Exception;
-
-	/**
-	 *
-	 */
-	public String getTemplate(String virtualWiki, String templateName) throws Exception;
-
-	/**
-	 *
-	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception;
 
 	/**
@@ -92,11 +82,6 @@ public interface PersistencyHandler {
 	 *
 	 */
 	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception;
-
-	/**
-	 *
-	 */
-	public void saveAsTemplate(String virtualWiki, String templateName, String contents) throws Exception;
 
 	/**
 	 *

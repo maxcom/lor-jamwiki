@@ -10,22 +10,6 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 }
 %>
 <input type="submit" name="action" value='<f:message key="edit.action.cancel"/>'/>
-<%
-    if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_TEMPLATES)) {
-%>
-&nbsp;<f:message key="edit.appendtemplate"/>
-<select name="templateabove">
-<option><f:message key="edit.notemplate"/></option>
-<c:if test="${!empty templateNames}">
-<c:forEach items="${templateNames}" var="name">
-<option><c:out value="${name}"/></option>
-</c:forEach>
-</c:if>
-</select>
-<input type="submit" name="action" value='<f:message key="edit.action.append"/>'/>
-<%
-}
-%>
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
 <p>
 <textarea name="contents" cols="80" rows="26"><c:out value="${contents}" escapeXml="false"/></textarea>
@@ -40,33 +24,10 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 }
 %>
 <input type="submit" name="action" value="<f:message key="edit.action.cancel"/>"/>
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_TEMPLATES)) {
-%>
-&nbsp;<f:message key="edit.appendtemplate"/>
-<select name="templatebelow">
-<option><f:message key="edit.notemplate"/></option>
-<c:if test="${!empty templateNames}">
-<c:forEach items="${templateNames}" var="name">
-<option><c:out value="${name}"/></option>
-</c:forEach>
-</c:if>
-</select>
-<input type="submit" name="action" value='<f:message key="edit.action.append"/>'/>
-<%
-}
-%>
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="minorEdit"/>
 <f:message key="edit.isMinorEdit"/>
 </p>
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_TEMPLATES)) {
-%>
-    <f:message key="edit.template.save1"/> <input type="text" name="save-template"/> <f:message key="edit.template.save2"/> <input type="submit" value='<f:message key="edit.action.savetemplate"/>' name="action"/>
-<%
-}
-%>
 </form>
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {

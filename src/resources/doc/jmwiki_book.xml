@@ -2364,35 +2364,6 @@
       </section>
 
       <section>
-        <title>Templates</title>
-
-        <para>Templates allow you to set up standard text that users can later
-        automatically include in the topics they are editing.</para>
-
-        <para>An example would be a software company, that had decided to use
-        JMWiki to keep track of some of their old projects. They want to add a
-        quick description to the wiki for each of their projects. They want to
-        capture standard information for each one, plus whatever additional
-        information team members wanted to add. They start by editing a topic,
-        and simply inserting labels for the information they want to add in:
-        Project Name, Client, Start Date, End Date, Description. Instead of
-        saving the topic, they enter in a name like "project_info" into the
-        box labeled "Save Contents as Template: ". They save the
-        template.</para>
-
-        <para>Now when they add a new topic, they can just go to the box
-        labeled "Append Template:", select the "project_info" template, press
-        the Append button. The contents of the template will be copied into
-        the editing area. Now the users have the information we want them to
-        add, the wiki looks more consistent, and they don't have to type it
-        all in again for each project they add.</para>
-
-        <para>To change an existing template, append it to a blank topic, edit
-        it as necessary, and simply save it as a template again, using the
-        same name.</para>
-      </section>
-
-      <section>
         <title>Advanced Formatting</title>
 
         <para>JMWiki supports a reasonably rich set of formatting controls.
@@ -2766,13 +2737,6 @@
         <listitem>
           <para>Don't get hung up on structure. A wiki is amorphous, and it
           will change its shape over time.</para>
-        </listitem>
-
-        <listitem>
-          <para>Watch how users work on the site, and try to come up with
-          templates that they can use to speed up the time it takes to enter
-          new information. It will improve the consistency of the information
-          the wiki captures</para>
         </listitem>
 
         <listitem>

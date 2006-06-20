@@ -70,7 +70,6 @@ public class WikiServlet extends JMController implements Controller {
 	public static final String ACTION_PREVIEW = "preview";
 	public static final String ACTION_RECENT_CHANGES = "recent_changes";
 	public static final String ACTION_SAVE = "save";
-	public static final String ACTION_SAVE_TEMPLATE = "save_template";
 	public static final String ACTION_SEARCH_RESULTS = "search_results";
 	public static final String ACTION_TODO_TOPICS = "todo_topics";
 	public static final String ACTION_DELETE = "action_delete";
@@ -689,8 +688,6 @@ public class WikiServlet extends JMController implements Controller {
 				action = ACTION_APPEND;
 			} else if (checkAction(action, Utilities.resource("edit.action.preview", request.getLocale()))) {
 				action = ACTION_PREVIEW;
-			} else if (checkAction(action, Utilities.resource("edit.action.savetemplate", request.getLocale()))) {
-				action = ACTION_SAVE_TEMPLATE;
 			} else if (action.equals(Utilities.resource("edit.action.cancel", request.getLocale()))) {
 				action = ACTION_CANCEL;
 			}
@@ -729,15 +726,7 @@ public class WikiServlet extends JMController implements Controller {
 				dispatch = request.getRequestDispatcher("/" + virtualWiki + "Special:Admin");
 				dispatch.forward(request, response);
 				return;
-			} else if (action.equals(ACTION_SAVE_TEMPLATE)) {
-				// save template
-				logger.debug("Despatching save template");
-				removeCachedContents();
-				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/Special:SaveTemplate");
-				dispatch.forward(request, response);
-				return;
 			} else if (action.equals(ACTION_RSS)) {
-				// save template
 				dispatch = request.getRequestDispatcher("/" + virtualWiki + "/RSS");
 				dispatch.forward(request, response);
 				return;
@@ -803,12 +792,12 @@ public class WikiServlet extends JMController implements Controller {
 	}
 
 	/**
-	 * if the action is Save, SaveTemplate or CancelFromEdit, clears the cache
+	 * if the action is Save or CancelFromEdit, clears the cache
 	 * and force the wiki to reload layout page elements
 	 * (topArea, bottomArea, leftMenu, etc.)
 	 */
 	private void checkActionAndRemoveCachedContentsIfNeeded(String action, Locale locale) {
-		if (action.equals(ACTION_SAVE_TEMPLATE) || action.equals(ACTION_CANCEL)) {
+		if (action.equals(ACTION_CANCEL)) {
 			removeCachedContents();
 		}
 	}

@@ -95,7 +95,6 @@ public class Environment {
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
 	public static final String PROP_SEARCH_TEMP_DIRECTORY = "search-temp-dir";
-	public static final String PROP_TOPIC_ALLOW_TEMPLATES = "allow-templates";
 	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jmwiki-list";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
 	public static final String PROP_TOPIC_EDIT_TIME_OUT = "editTimeOut";
@@ -345,7 +344,6 @@ public class Environment {
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
 		// FIXME - make sure this is set
 		defaults.setProperty(PROP_SEARCH_TEMP_DIRECTORY, "");
-		defaults.setProperty(PROP_TOPIC_ALLOW_TEMPLATES, "true");
 		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");
 		defaults.setProperty(PROP_TOPIC_EDIT_TIME_OUT, "10");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");

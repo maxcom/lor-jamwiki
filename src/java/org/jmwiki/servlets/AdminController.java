@@ -366,10 +366,6 @@ public class AdminController implements Controller {
 				);
 			}
 			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_ALLOW_TEMPLATES,
-				request.getParameter(Environment.PROP_TOPIC_ALLOW_TEMPLATES) != null
-			);
-			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_USE_PREVIEW,
 				request.getParameter(Environment.PROP_TOPIC_USE_PREVIEW) != null
 			);

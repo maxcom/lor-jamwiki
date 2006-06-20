@@ -65,10 +65,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		"SELECT COUNT(*) FROM TopicReadOnly WHERE topic = ? AND virtualwiki = ?";
 	protected static final String STATEMENT_GET_ALL_VIRTUAL_WIKIS =
 		"SELECT name FROM VirtualWiki";
-	protected static final String STATEMENT_GET_TEMPLATE_NAMES =
-		"SELECT name FROM WikiTemplate WHERE virtualwiki = ?";
-	protected static final String STATEMENT_GET_TEMPLATE =
-		"SELECT contents FROM WikiTemplate WHERE virtualwiki = ? AND name = ?";
 	protected static final String STATEMENT_ADD_VIRTUAL_WIKI =
 		"INSERT INTO VirtualWiki VALUES(?)";
 	protected static final String STATEMENT_PURGE_DELETES =
@@ -83,18 +79,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
 	protected final static String STATEMENT_PURGE_VERSIONS =
 		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
-	protected final static String STATEMENT_ADD_TEMPLATE =
-		"INSERT INTO WikiTemplate( virtualwiki, name, contents ) VALUES( ?, ?, ? )";
-	protected final static String STATEMENT_ADD_TEMPLATE_ORACLE =
-		"INSERT INTO WikiTemplate( virtualwiki, name, contents ) VALUES( ?, ?, EMPTY_CLOB() )";
-	protected final static String STATEMENT_TEMPLATE_EXISTS =
-		"SELECT COUNT(*) FROM WikiTemplate WHERE virtualwiki = ? AND name = ?";
-	protected final static String STATEMENT_UPDATE_TEMPLATE =
-		"UPDATE WikiTemplate SET contents = ? WHERE virtualwiki = ? AND name = ?";
-	protected final static String STATEMENT_UPDATE_TEMPLATE_ORACLE1 =
-		"UPDATE WikiTemplate SET contents = EMPTY_CLOB() WHERE virtualwiki = ? AND name = ?";
-	protected final static String STATEMENT_UPDATE_TEMPLATE_ORACLE2 =
-		"SELECT contents FROM WikiTemplate WHERE virtualwiki = ? AND name = ? FOR UPDATE";
 	protected final static String STATEMENT_GET_LOCK_LIST =
 		"SELECT * FROM TopicLock WHERE virtualwiki = ?";
 
@@ -562,60 +546,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getTemplateNames(String virtualWiki) throws Exception {
-		logger.debug("Returning template names for " + virtualWiki);
-		Collection all = new ArrayList();
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(STATEMENT_GET_TEMPLATE_NAMES);
-			stmt.setString(1, virtualWiki);
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				all.add(rs.getString("name"));
-			}
-			rs.close();
-			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		logger.debug(all.size() + " templates exist");
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public String getTemplate(String virtualWiki, String templateName) throws Exception {
-		Connection conn = null;
-		String contents;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(STATEMENT_GET_TEMPLATE);
-			stmt.setString(1, virtualWiki);
-			stmt.setString(2, templateName);
-			ResultSet rs = stmt.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				stmt.close();
-				throw new WikiException("Template not found: " + templateName);
-			}
-			if (DatabaseHandler.isOracle()) {
-				contents = OracleClobHelper.getClobValue(rs.getClob("contents"));
-			} else {
-				contents = rs.getString("contents");
-			}
-			rs.close();
-			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return contents;
-	}
-
-	/**
-	 *
-	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception {
 		if (getVirtualWikiList().contains(virtualWiki)) {
 			return;
@@ -751,90 +681,6 @@ public class DatabaseHandler implements PersistencyHandler {
 			stmt.setString(2, virtualWiki);
 			stmt.execute();
 			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void saveAsTemplate(String virtualWiki, String templateName, String contents) throws Exception {
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(STATEMENT_TEMPLATE_EXISTS);
-			stmt.setString(1, virtualWiki);
-			stmt.setString(2, templateName);
-			ResultSet rs = stmt.executeQuery();
-			rs.next();
-			int count = rs.getInt(1);
-			stmt.close();
-			if (count < 1) {
-				if (DatabaseHandler.isOracle()) {
-					boolean savedAutoCommit = conn.getAutoCommit();
-					conn.setAutoCommit(false);
-					stmt = conn.prepareStatement(STATEMENT_ADD_TEMPLATE_ORACLE);
-					stmt.setString(1, virtualWiki);
-					stmt.setString(2, templateName);
-					stmt.execute();
-					stmt.close();
-					conn.commit();
-					stmt = conn.prepareStatement(
-						STATEMENT_UPDATE_TEMPLATE_ORACLE2,
-						ResultSet.TYPE_SCROLL_INSENSITIVE,
-						ResultSet.CONCUR_UPDATABLE
-					);
-					stmt.setString(1, virtualWiki);
-					stmt.setString(2, templateName);
-					rs = stmt.executeQuery();
-					rs.next();
-					OracleClobHelper.setClobValue(rs.getClob(1), contents);
-					rs.close();
-					stmt.close();
-					conn.commit();
-					conn.setAutoCommit(savedAutoCommit);
-				} else {
-					stmt = conn.prepareStatement(STATEMENT_ADD_TEMPLATE);
-					stmt.setString(1, virtualWiki);
-					stmt.setString(2, templateName);
-					stmt.setString(3, contents);
-					stmt.execute();
-					stmt.close();
-				}
-			} else {
-				if (DatabaseHandler.isOracle()) {
-					boolean savedAutoCommit = conn.getAutoCommit();
-					conn.setAutoCommit(false);
-					stmt = conn.prepareStatement(STATEMENT_UPDATE_TEMPLATE_ORACLE1);
-					stmt.setString(1, virtualWiki);
-					stmt.setString(2, templateName);
-					stmt.execute();
-					stmt.close();
-					conn.commit();
-					stmt = conn.prepareStatement(
-						STATEMENT_UPDATE_TEMPLATE_ORACLE2,
-						ResultSet.TYPE_SCROLL_INSENSITIVE,
-						ResultSet.CONCUR_UPDATABLE
-					);
-					stmt.setString(1, virtualWiki);
-					stmt.setString(2, templateName);
-					rs = stmt.executeQuery();
-					rs.next();
-					OracleClobHelper.setClobValue(rs.getClob(1), contents);
-					rs.close();
-					stmt.close();
-					conn.commit();
-					conn.setAutoCommit(savedAutoCommit);
-				} else {
-					stmt = conn.prepareStatement(STATEMENT_UPDATE_TEMPLATE);
-					stmt.setString(1, contents);
-					stmt.setString(2, virtualWiki);
-					stmt.setString(3, templateName);
-					stmt.execute();
-					stmt.close();
-				}
-			}
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}

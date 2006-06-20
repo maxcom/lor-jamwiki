@@ -138,19 +138,6 @@ public class ImportServlet extends JMController implements Controller {
 					databaseNotify.addMember(memberName);
 				}
 			}
-			// Templates
-			Collection templates = fileHandler.getTemplateNames(virtualWiki);
-			for (Iterator templateIterator = templates.iterator(); templateIterator.hasNext();) {
-				String templateName = (String) templateIterator.next();
-				logger.info("importing template " + templateName);
-				buffer.append("imported template " + templateName);
-				buffer.append("<br/>");
-				databaseHandler.saveAsTemplate(
-					virtualWiki,
-					templateName,
-					fileHandler.getTemplate(virtualWiki, templateName)
-				);
-			}
 		}
 		return buffer.toString();
 	}

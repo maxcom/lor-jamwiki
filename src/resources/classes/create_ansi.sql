@@ -61,17 +61,6 @@ CREATE TABLE vqw_topic_version (
   CONSTRAINT vqw_fk_topic_version_author FOREIGN KEY (author_id) REFERENCES vqw_author
 );
 
-CREATE SEQUENCE vqw_template_seq;
-
-CREATE TABLE vqw_template (
-  template_id INTEGER NOT NULL DEFAULT NEXTVAL('vqw_template_seq'),
-  template_name VARCHAR(100) NOT NULL,
-  template_content TEXT,
-  virtual_wiki_id INTEGER NOT NULL,
-  CONSTRAINT vqw_pk_template PRIMARY KEY (template_id),
-  CONSTRAINT vqw_fk_template_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES vqw_virtual_wiki
-);
-
 CREATE SEQUENCE vqw_notification_seq;
 
 CREATE TABLE vqw_notification (

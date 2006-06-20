@@ -12,7 +12,6 @@
 				<prop key="/**/Special:Admin">adminController</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
-				<prop key="/**/Special:SaveTemplate">SaveTemplate</prop>
 				<prop key="/**/Special:Notify">Notify</prop>
 				<prop key="/**/Special:MenuJump">MenuJump</prop>
 				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
@@ -41,7 +40,6 @@
 	<bean id="adminController" class="org.jmwiki.servlets.AdminController" />
 	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />
 	<bean id="SaveAttachment" class="org.jmwiki.servlets.SaveAttachmentServlet" />
-	<bean id="SaveTemplate" class="org.jmwiki.servlets.SaveTemplateServlet" />
 	<bean id="Notify" class="org.jmwiki.servlets.NotifyServlet" />
 	<bean id="MenuJump" class="org.jmwiki.servlets.MenuJumpServlet" />
 	<bean id="ViewAttachment" class="org.jmwiki.servlets.ViewAttachmentServlet" />

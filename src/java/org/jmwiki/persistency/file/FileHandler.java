@@ -25,7 +25,6 @@ public class FileHandler implements PersistencyHandler {
 	// file used for storing read-only topics
 	private final static String READ_ONLY_FILE = "ReadOnlyTopics";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
-	public static final String TEMPLATES_DIR = "templates";
 	private File file;
 	private final String LOCK_EXTENSION = ".lock";
 
@@ -453,40 +452,6 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getTemplateNames(String virtualWiki) throws Exception {
-		File file = getPathFor(virtualWiki, TEMPLATES_DIR);
-		file.mkdir();
-		Collection all = new ArrayList();
-		String[] filenames = file.list(new TextFileFilter());
-		if (filenames != null) {
-			for (int i = 0; i < filenames.length; i++) {
-				String filename = filenames[i];
-				all.add(filename.substring(0, filename.length() - 4));
-			}
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public String getTemplate(String virtualWiki, String templateName) throws Exception {
-		File dir = getPathFor(virtualWiki, TEMPLATES_DIR);
-		File file = new File(dir, templateName + EXT);
-		StringBuffer buffer = new StringBuffer();
-		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-		int nextByte;
-		while (-1 != (nextByte = in.read())) {
-			char nextChar = (char) nextByte;
-			buffer.append(nextChar);
-		}
-		in.close();
-		return buffer.toString();
-	}
-
-	/**
-	 *
-	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", VIRTUAL_WIKI_LIST);
@@ -533,19 +498,6 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
 		throw new UnsupportedOperationException("New version purging available for file handler yet");
-	}
-
-	/**
-	 *
-	 */
-	public void saveAsTemplate(String virtualWiki, String templateName, String contents) throws Exception {
-		File dir = getPathFor(virtualWiki, TEMPLATES_DIR);
-		logger.debug("saving template: " + templateName + " to " + dir);
-		dir.mkdir();
-		File file = new File(dir, templateName + EXT);
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-		writer.print(contents);
-		writer.close();
 	}
 
 	/**

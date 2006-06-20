@@ -63,12 +63,6 @@ public class DatabaseInit {
 				logger.warn("Failure while executing " + sql);
 			}
 			try {
-				sql = "DROP TABLE vqw_template";
-				st.executeUpdate(sql);
-			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
-			}
-			try {
 				sql = "DROP TABLE vqw_notification";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
@@ -118,12 +112,6 @@ public class DatabaseInit {
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_topic_version_seq";
-				st.executeUpdate(sql);
-			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
-			}
-			try {
-				sql = "DROP SEQUENCE vqw_template_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql);
@@ -240,20 +228,6 @@ public class DatabaseInit {
 					}
 				}
 			}
-			// Templates
-			Collection templates = databaseHandler.getTemplateNames(virtualWiki);
-			for (Iterator templateIterator = templates.iterator(); templateIterator.hasNext();) {
-				String templateName = (String) templateIterator.next();
-				try {
-					fileHandler.saveAsTemplate(
-						virtualWiki,
-						templateName,
-						databaseHandler.getTemplate(virtualWiki, templateName)
-					);
-				} catch (Exception e) {
-					logger.error("Unable to convert template to file: " + templateName + " / " + virtualWiki);
-				}
-			}
 		}
 	}
 
@@ -311,8 +285,6 @@ public class DatabaseInit {
 			sql = "DROP TABLE WikiMember";
 			st.executeUpdate(sql);
 			sql = "DROP TABLE Notification";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE WikiTemplate";
 			st.executeUpdate(sql);
 			sql = "DROP TABLE VirtualWiki";
 			st.executeUpdate(sql);

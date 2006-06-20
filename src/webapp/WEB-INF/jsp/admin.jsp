@@ -220,12 +220,6 @@ function onUserGroupType() {
       </td>
     </tr>
     <tr>
-      <td class="normal"><f:message key="admin.caption.usetemplates"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_TOPIC_ALLOW_TEMPLATES %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_TEMPLATES) ? " checked" : "" %>>
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.usepreview"/></td>
       <td class="normal">
         <input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) ? " checked" : "" %>>

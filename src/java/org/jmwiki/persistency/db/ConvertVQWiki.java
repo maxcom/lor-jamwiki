@@ -169,15 +169,6 @@ public class ConvertVQWiki {
 				+ "AND vqw_author.login = Notification.wikiuser "
 				+ "AND vqw_author.virtual_wiki_id = vqw_virtual_wiki.virtual_wiki_id ";
 			st.executeUpdate(sql);
-			// vqw_template
-			sql = "INSERT INTO vqw_template ( "
-				+   "template_name, template_content, virtual_wiki_id "
-				+ ") "
-				+ "SELECT WikiTemplate.name, WikiTemplate.contents, "
-				+ "vqw_virtual_wiki.virtual_wiki_id "
-				+ "FROM WikiTemplate, vqw_virtual_wiki "
-				+ "WHERE WikiTemplate.virtualwiki = vqw_virtual_wiki.virtual_wiki_name ";
-			st.executeUpdate(sql);
 			// vqw_recent_change
 			sql = "INSERT INTO vqw_recent_change ( "
 				+   "topic_version_id, topic_id, "
@@ -218,8 +209,6 @@ public class ConvertVQWiki {
 			sql = "DROP TABLE WikiMember";
 			st.executeUpdate(sql);
 			sql = "DROP TABLE Notification";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE WikiTemplate";
 			st.executeUpdate(sql);
 			sql = "DROP TABLE VirtualWiki";
 			st.executeUpdate(sql);

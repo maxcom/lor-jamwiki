@@ -558,20 +558,6 @@ public class WikiBase {
 	}
 
 	/**
-	 * Return a list of available templates
-	 */
-	public Collection getTemplates(String virtualWiki) throws Exception {
-		return this.handler.getTemplateNames(virtualWiki);
-	}
-
-	/**
-	 * Return a given template
-	 */
-	public String getTemplate(String virtualWiki, String name) throws Exception {
-		return this.handler.getTemplate(virtualWiki, name);
-	}
-
-	/**
 	 * Purge deleted files
 	 *
 	 * @return a collection of strings that are the deleted topic names
@@ -592,19 +578,6 @@ public class WikiBase {
 	 */
 	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
 		this.handler.purgeVersionsOlderThan(virtualWiki, date);
-	}
-
-	/**
-	 * save the contents as a template
-	 */
-	public void saveAsTemplate(String virtualWiki, String templateName, String contents)
-		throws Exception {
-		// If the last line is not a return value, the parser can be tricked out.
-		// (got this from wikipedia)
-		if (!contents.endsWith("\n")) {
-			contents += "\n";
-		}
-		this.handler.saveAsTemplate(virtualWiki, templateName, contents);
 	}
 
 	/**

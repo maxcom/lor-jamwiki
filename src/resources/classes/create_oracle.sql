@@ -93,24 +93,6 @@ begin
     end if;
 end;
 
-CREATE SEQUENCE vqw_template_seq;
-
-CREATE TABLE vqw_template (
-  template_id INTEGER,
-  template_content TEXT,
-  virtual_wiki_id INTEGER NOT NULL,
-  CONSTRAINT vqw_pk_template PRIMARY KEY (template_id),
-  CONSTRAINT vqw_fk_template_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES vqw_virtual_wiki
-);
-
-CREATE OR REPLACE TRIGGER vqw_trig_template_id
-before insert on vqw_template for each row
-begin
-    if :new.template_id is null then
-        select vqw_template_seq.nextval into :new.template_id from dual;
-    end if;
-end;
-
 CREATE SEQUENCE vqw_notification_seq;
 
 CREATE TABLE vqw_notification (

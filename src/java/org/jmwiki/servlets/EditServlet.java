@@ -110,14 +110,12 @@ public class EditServlet extends JMController implements Controller {
 		}
 		String contents = null;
 		String preview = null;
-		Collection templateNames = null;
 		if (isPreview(request)) {
 			WikiServlet.removeCachedContents();
 			contents = (String)request.getParameter("contents");
 		} else {
 			contents = WikiBase.getInstance().readRaw(virtualWiki, topic);
 		}
-		templateNames = WikiBase.getInstance().getTemplates(virtualWiki);
 		preview = WikiBase.getInstance().cook(
 			request.getContextPath(),
 			virtualWiki,
@@ -128,7 +126,6 @@ public class EditServlet extends JMController implements Controller {
 		buffer.append(" ");
 		buffer.append(topic);
 		next.addObject("title", buffer.toString());
-		next.addObject("templateNames", templateNames);
 		next.addObject("contents", contents);
 		next.addObject("preview", preview);
 		if (request.getAttribute(WikiServlet.ACTION_PREVIEW) != null) {
@@ -206,8 +203,6 @@ public class EditServlet extends JMController implements Controller {
 			// FIXME - hard coding
 			throw new Exception("Topic must be specified");
 		}
-		// First try the templatelist.
-		if (saveWithTemplate(request, next)) return;
 		Topic t = new Topic(topic);
 		if (t.isReadOnlyTopic(virtualWiki)) {
 			logger.warn("The topic " + topic + " is read only and cannot be saved");
@@ -240,61 +235,6 @@ public class EditServlet extends JMController implements Controller {
 		sedb.indexText(virtualWiki, topic, request.getParameter("contents"));
 		WikiBase.getInstance().unlockTopic(virtualWiki, topic);
 		view(request, next);
-	}
-
-	/**
-	 *
-	 */
-	private boolean saveWithTemplate(HttpServletRequest request, ModelAndView next) throws Exception {
-		String append = JMController.getMessage("edit.action.append", request.getLocale());
-		if (append == null) append = "append";
-		String topic = request.getParameter(JMController.PARAMETER_TOPIC);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		String templateValue = request.getParameter("templateabove");
-		String notemplate = Utilities.resource("edit.notemplate", request.getLocale());
-		if (templateValue != null) {
-			// if it is not set try the below templatelist.
-			if (templateValue.equals(notemplate)) {
-				templateValue = request.getParameter("templatebelow");
-			}
-		}
-		if ((templateValue == null) || !append.equals(request.getParameter("action"))) {
-			return false;
-		}
-		logger.debug("appending template contents from template: " + templateValue);
-		if (!templateValue.equals(notemplate)) {
-			String templateContents = null;
-			Collection templateNames = null;
-			try {
-				templateContents = WikiBase.getInstance().getTemplate(virtualWiki, templateValue);
-				templateNames = WikiBase.getInstance().getTemplates(virtualWiki);
-			} catch (Exception e) {
-				throw new Exception("Error while saving to template " + templateValue);
-			}
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(request.getParameter("contents"));
-			buffer.append(templateContents);
-			next.addObject("contents", buffer.toString());
-			String title = JMController.getMessage("edit", request.getLocale()) + " " + topic;
-			next.addObject("title", title);
-			next.addObject("templateNames", templateNames);
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_EDIT);
-		} else {
-			Collection templateNames = null;
-			try {
-				templateNames = WikiBase.getInstance().getTemplates(virtualWiki);
-			} catch (Exception e) {
-				logger.error("Failure while saving to template");
-			}
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(request.getParameter("contents"));
-			next.addObject("contents", buffer.toString());
-			String title = JMController.getMessage("edit", request.getLocale()) + " " + topic;
-			next.addObject("title", title);
-			next.addObject("templateNames", templateNames);
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_EDIT);
-		}
-		return true;
 	}
 
 	/**
