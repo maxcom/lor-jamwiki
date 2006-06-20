@@ -1,16 +1,17 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
 
-import org.jmwiki.Notify;
-import org.jmwiki.WikiBase;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-
 import org.apache.log4j.Logger;
+import org.jmwiki.Notify;
+import org.jmwiki.WikiBase;
 
 /**
- * @author garethc
- * Date: Jan 7, 2003
+ *
  */
 public class NotificationTag extends TagSupport {
 

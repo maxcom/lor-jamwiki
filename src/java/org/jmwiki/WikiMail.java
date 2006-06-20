@@ -1,24 +1,23 @@
+/**
+ *
+ */
 package org.jmwiki;
 
-import org.apache.log4j.Logger;
-
+import java.util.Date;
+import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.util.Date;
-import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**
  * Sends mail via SMTP to the specified host. <b>REDISTRIBUTION:</b> you
  * will either have to hard-code your own SMTP host name into the constructor
  * function and recompile, or rewrite the Environment class to record
  * this information in the jmwiki.properties file.
- *
- * @author Robert E Brewer
- * @version 0.1
  */
 public class WikiMail {
 

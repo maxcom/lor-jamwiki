@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.persistency.db;
 
 import java.io.IOException;
@@ -8,9 +11,8 @@ import java.lang.reflect.Method;
 import java.sql.Clob;
 import java.sql.SQLException;
 
-/*
- * Created on Aug 14, 2003
- * @author Ernst Jan Plugge &lt;<a href="mailto:rmc@dds.nl">rmc@dds.nl</a>&gt;
+/**
+ *
  */
 public class OracleClobHelper {
 

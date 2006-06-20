@@ -1,19 +1,10 @@
 /*
- * $Id: PrintableEntry.java 644 2006-04-23 07:52:28Z wrh2 $
  *
- * Filename  : PrintableEntry.java
- * Project   : JMWiki
- * Author	: Tobias Schulz-Hess (sourcefoge@schulz-hess.de)
  */
 package org.jmwiki;
 
-
 /**
  * One entry of the printable page (the page can contain multiple entries)
- *
- * This class was created on 20:18:49 15.04.2003
- *
- * @author Tobias Schulz-Hess (sourcefoge@schulz-hess.de)
  */
 public class PrintableEntry {
 
@@ -58,22 +49,3 @@ public class PrintableEntry {
 		content = mycontent;
 	}
 }
-
-/*
- * Log:
- *
- * $Log$
- * Revision 1.4  2006/04/23 07:52:28  wrh2
- * Coding style updates (VQW-73).
- *
- * Revision 1.3  2003/10/05 05:07:30  garethc
- * fixes and admin file encoding option + merge with contributions
- *
- * Revision 1.2  2003/04/15 23:11:01  garethc
- * lucene fixes
- *
- * Revision 1.1  2003/04/15 18:40:25  mrgadget4711
- * ADD: Print multiple pages
- *
- * ------------END------------
- */

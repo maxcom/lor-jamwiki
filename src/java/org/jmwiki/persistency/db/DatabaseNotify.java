@@ -1,6 +1,5 @@
 /**
- * @author garethc
- *  22/10/2002 11:40:10
+ *
  */
 package org.jmwiki.persistency.db;
 
@@ -14,6 +13,9 @@ import org.apache.log4j.Logger;
 import org.jmwiki.AbstractNotify;
 import org.jmwiki.Environment;
 
+/**
+ *
+ */
 public class DatabaseNotify extends AbstractNotify {
 
 	private static final Logger logger = Logger.getLogger(DatabaseNotify.class);

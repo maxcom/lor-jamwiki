@@ -10,8 +10,6 @@ package org.jmwiki.utils.lucene;
  *
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
- *
- * @version $Id: ParseException.java 234 2003-04-15 23:11:06Z garethc $
  */
 public class ParseException extends Exception {
 

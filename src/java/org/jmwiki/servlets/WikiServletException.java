@@ -1,12 +1,14 @@
-/*
- * Copyright 2002 Gareth Cronin
- * This software is subject to the GNU Lesser General Public Licence (LGPL)
+/**
+ *
  */
 package org.jmwiki.servlets;
 
 import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 
+/**
+ *
+ */
 public class WikiServletException extends ServletException {
 
 	protected static Logger logger = Logger.getLogger(WikiServletException.class);

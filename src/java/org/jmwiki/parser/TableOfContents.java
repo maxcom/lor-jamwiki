@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.parser;
 
 import java.util.Enumeration;
@@ -22,8 +25,6 @@ import org.jmwiki.Environment;
  * contents headings to the object and included a TOC_INSERT_TAG at the point
  * where the table of contents should be inserted.  It is a bit more flexible
  * but requires more preperatory work.
- *
- * @author studer
  */
 public class TableOfContents {
 

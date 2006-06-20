@@ -1,22 +1,16 @@
-/*
-Java MediaWiki - WikiWikiWeb clone
-Copyright (C) 2001-2002 Gareth Cronin
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the latest version of the GNU Lesser General
-Public License as published by the Free Software Foundation;
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program (gpl.txt); if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+/**
+ *
  */
 package org.jmwiki.persistency.db;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.jmwiki.Change;
 import org.jmwiki.ChangeLog;
@@ -25,15 +19,9 @@ import org.jmwiki.WikiBase;
 import org.jmwiki.Environment;
 import org.jmwiki.utils.JSPUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-
+/**
+ *
+ */
 public class DatabaseChangeLog implements ChangeLog {
 
 	private static final Logger logger = Logger.getLogger(DatabaseChangeLog.class);

@@ -1,18 +1,18 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
-
-import org.apache.log4j.Logger;
-import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
-
-import org.jmwiki.utils.Utilities ;
+import org.apache.log4j.Logger;
+import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
+import org.jmwiki.utils.Utilities;
 
 /**
- * @author cmeans
- * Date: Dec 12, 2003
+ *
  */
 public class SeparateWordsTag extends TagSupport {
 

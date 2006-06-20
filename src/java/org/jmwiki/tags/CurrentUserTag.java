@@ -1,15 +1,16 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
-
-import org.apache.log4j.Logger;
-import org.jmwiki.utils.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.apache.log4j.Logger;
+import org.jmwiki.utils.Utilities;
 
 /**
- * @author garethc
- * Date: Jan 7, 2003
+ *
  */
 public class CurrentUserTag extends TagSupport {
 

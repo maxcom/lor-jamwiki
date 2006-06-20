@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.parser;
 
 import java.util.Locale;
@@ -5,7 +8,6 @@ import java.util.ResourceBundle;
 
 /**
  * Returns general informations about the parser.
- * @author boessu
  */
 public class ParserInfo {
 

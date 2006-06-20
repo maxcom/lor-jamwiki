@@ -1,11 +1,13 @@
+/**
+ *
+ */
 package org.jmwiki.persistency.file;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * @author garethc
- * Date: 5/03/2003
+ *
  */
 public class FileExtensionFilter implements FilenameFilter {
 

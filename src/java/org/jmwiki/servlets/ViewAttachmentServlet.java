@@ -1,9 +1,5 @@
 /**
- * Delivers an attachment to the browser. Sends as a binary stream along with a content-type
- * determined by the mime.types file in the classpath.
  *
- * @author garethc
- * 25/10/2002 14:18:32
  */
 package org.jmwiki.servlets;
 

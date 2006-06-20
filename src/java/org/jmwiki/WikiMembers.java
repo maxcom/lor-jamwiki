@@ -1,8 +1,10 @@
+/**
+ *
+ */
 package org.jmwiki;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-
 
 /**
  * Stores a list of usernames and their registered email addresses so
@@ -12,9 +14,6 @@ import java.util.Collection;
  * containing a validation key. The key is then checked against the
  * list of registered names and confirmed, at which point the user
  * is allowed to set notifications and reminders.
- *
- * @author Robert E Brewer
- * @version 0.1
  */
 public interface WikiMembers {
 

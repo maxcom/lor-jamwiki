@@ -1,8 +1,5 @@
 /**
- * Copyright 2004, Gareth Cronin
- * User: garethc
- * Date: 6/06/2004
- * Time: 09:19:14
+ *
  */
 package org.jmwiki;
 

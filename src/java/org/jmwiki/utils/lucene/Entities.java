@@ -58,9 +58,7 @@ import java.util.Hashtable;
 
 
 /**
- * TODO: Document this class.
  *
- * @version $Id: Entities.java 234 2003-04-15 23:11:06Z garethc $
  */
 public class Entities {
   /**

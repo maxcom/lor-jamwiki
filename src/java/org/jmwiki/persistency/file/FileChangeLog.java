@@ -1,22 +1,11 @@
-/*
-Java MediaWiki - WikiWikiWeb clone
-Copyright (C) 2001-2002 Gareth Cronin
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the latest version of the GNU Lesser General
-Public License as published by the Free Software Foundation;
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program (gpl.txt); if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+/**
+ *
  */
 package org.jmwiki.persistency.file;
 
+import java.io.*;
+import java.util.*;
+import javax.servlet.http.HttpServletRequest;
 import JSX.ObjIn;
 import JSX.ObjOut;
 import org.apache.log4j.Logger;
@@ -24,10 +13,9 @@ import org.jmwiki.*;
 import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.util.*;
-
+/**
+ *
+ */
 public class FileChangeLog implements ChangeLog {
 
 	private static final Logger logger = Logger.getLogger(FileChangeLog.class);

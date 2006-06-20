@@ -1,7 +1,5 @@
-/*
- * $Id: PDFDocument.java 414 2003-11-29 23:29:56Z mrgadget4711 $
+/**
  *
- * Filename : PDFDocument.java Project : jmwiki-classic
  */
 package org.jmwiki.utils.lucene;
 
@@ -11,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
 import org.pdfbox.encryption.DecryptDocument;
 import org.pdfbox.exceptions.CryptographyException;
 import org.pdfbox.exceptions.InvalidPasswordException;
@@ -21,10 +18,6 @@ import org.pdfbox.util.PDFTextStripper;
 
 /**
  * Get the content of a PDF file
- *
- * This class was created on 29.11.2003
- *
- * @author $Author: mrgadget4711 $
  */
 public class PDFDocument {
 
@@ -98,12 +91,3 @@ public class PDFDocument {
 		return contents;
 	}
 }
-/*
- * Log:
- *
- * $Log$
- * Revision 1.1  2003/11/29 23:29:56  mrgadget4711
- * Initial version -- moved from AbstractSearchEngine
- *
- * ------------END------------
- */

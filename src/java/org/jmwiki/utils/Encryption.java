@@ -1,18 +1,6 @@
-/*
-This program is free software; you can redistribute it and/or modify
-it under the terms of the latest version of the GNU Lesser General
-Public License as published by the Free Software Foundation;
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program (gpl.txt); if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+/**
+ *
  */
-
 package org.jmwiki.utils;
 
 import javax.crypto.Cipher;
@@ -26,8 +14,6 @@ import org.jmwiki.Environment;
 /**
  * Provide capability for encrypting and decrypting values.  Inspired by an
  * example from http://www.devx.com/assets/sourcecode/10387.zip.
- *
- * @author Ryan Holliday
  */
 public class Encryption {
 

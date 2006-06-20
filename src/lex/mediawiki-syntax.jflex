@@ -1,5 +1,3 @@
-package org.jmwiki.parser;
-
 /*
  * This class implements the MediaWiki syntax (http://meta.wikimedia.org/wiki/Help:Editing).
  * It will also escape any HTML tags that have not been specifically allowed to be
@@ -25,12 +23,10 @@ package org.jmwiki.parser;
  * Not yet implemented:
  *
  *   <math>
- *
- * To do:
- *
- *
- * @author W. Ryan Holliday
+ *   Templates
+ *   __TOC__
  */
+package org.jmwiki.parser;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;

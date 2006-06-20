@@ -56,11 +56,8 @@ package org.jmwiki.utils.lucene;
 
 import java.io.IOException;
 
-
 /**
- * TODO: Document this class.
  *
- * @version $Id: ParserThread.java 365 2003-10-05 05:07:32Z garethc $
  */
 class ParserThread extends Thread {
   /**

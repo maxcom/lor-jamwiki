@@ -1,6 +1,5 @@
 /**
- * @author garethc
- *  22/10/2002 11:52:37
+ *
  */
 package org.jmwiki;
 
@@ -14,6 +13,9 @@ import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Utilities;
 import org.jmwiki.utils.JSPUtils;
 
+/**
+ *
+ */
 public abstract class AbstractNotify implements Notify {
 
 	private static final Logger logger = Logger.getLogger(AbstractNotify.class);

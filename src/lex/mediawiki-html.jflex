@@ -1,11 +1,7 @@
-package org.jmwiki.parser;
-
 /*
  * This class adds paragraph tags as appropriate.
- *   
- *
- * @author W. Ryan Holliday
  */
+package org.jmwiki.parser;
 
 import java.util.Stack;
 import org.apache.log4j.Logger;

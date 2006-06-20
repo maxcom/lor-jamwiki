@@ -1,20 +1,19 @@
+/**
+ *
+ */
 package org.jmwiki.persistency.file;
 
+import java.io.*;
+import java.util.*;
 import org.apache.log4j.Logger;
 import org.jmwiki.AbstractNotify;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiException;
 
-import java.io.*;
-import java.util.*;
-
 /**
  * Implementation of Notify which stores notification records in text files.
  * Notification files use the same filename as the associated topic and use
  * the extension ".ntf".
- *
- * @author Robert E Brewer
- * @version 0.1
  */
 public class FileNotify extends AbstractNotify {
 

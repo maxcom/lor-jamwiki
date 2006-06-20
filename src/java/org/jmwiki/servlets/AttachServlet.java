@@ -1,9 +1,12 @@
+/**
+ *
+ */
 package org.jmwiki.servlets;
 
+import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.jmwiki.persistency.Topic;
 import org.jmwiki.WikiBase;
@@ -13,8 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * @author garethc
- * Date: Jan 8, 2003
+ *
  */
 public class AttachServlet extends JMController implements Controller {
 

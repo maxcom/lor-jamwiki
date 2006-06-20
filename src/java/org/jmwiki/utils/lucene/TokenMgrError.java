@@ -2,11 +2,8 @@
 // package com.tchibo.misc.lucene;
 package org.jmwiki.utils.lucene;
 
-
 /**
- * TODO: Document this class.
  *
- * @version $Id: TokenMgrError.java 234 2003-04-15 23:11:06Z garethc $
  */
 public class TokenMgrError extends Error {
 

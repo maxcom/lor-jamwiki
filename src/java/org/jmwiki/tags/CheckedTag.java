@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
 
 import org.apache.log4j.Logger;
@@ -9,8 +12,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 /**
- * @author garethc
- * Date: Feb 19, 2003
+ *
  */
 public class CheckedTag extends TagSupport {
 

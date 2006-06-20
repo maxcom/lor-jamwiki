@@ -1,9 +1,5 @@
-/*
- * $Id: Usergroup.java 636 2006-04-20 00:14:40Z wrh2 $
+/**
  *
- * Filename  : Usergroup.java
- * Created   : 25.06.2004
- * Project   : JMWiki
  */
 package org.jmwiki.users;
 
@@ -13,9 +9,6 @@ import org.jmwiki.WikiBase;
 
 /**
  * Abstract class to handle user groups
- *
- * @version $Revision: 636 $ - $Date: 2006-04-20 02:14:40 +0200 (do, 20 apr 2006) $
- * @author SinnerSchrader (tobsch)
  */
 public abstract class Usergroup {
 

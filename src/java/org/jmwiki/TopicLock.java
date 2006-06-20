@@ -1,10 +1,12 @@
+/**
+ *
+ */
 package org.jmwiki;
 
 import org.jmwiki.persistency.db.DBDate;
 
 /**
- * @author garethc
- * Date: 5/03/2003
+ *
  */
 public class TopicLock {
 

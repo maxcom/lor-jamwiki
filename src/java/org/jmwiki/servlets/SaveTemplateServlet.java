@@ -1,6 +1,5 @@
 /**
- * @author garethc
- *  5/09/2002 13:03:32
+ *
  */
 package org.jmwiki.servlets;
 
@@ -17,6 +16,9 @@ import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+/**
+ *
+ */
 public class SaveTemplateServlet extends HttpServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SaveTemplateServlet.class);

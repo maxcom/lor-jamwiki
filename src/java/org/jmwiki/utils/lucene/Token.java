@@ -2,13 +2,9 @@
 // package com.tchibo.misc.lucene;
 package org.jmwiki.utils.lucene;
 
-
 /**
- * Describes the input token stream.
  *
- * @version $Id: Token.java 234 2003-04-15 23:11:06Z garethc $
  */
-
 public class Token {
 
   /**

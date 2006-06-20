@@ -1,11 +1,5 @@
 /**
- * Servlet for handling the uploading of attachments for topics. It's behaviour is
- * a bit different to the other servlets, in that the request parameters are hidden
- * in the multipart upload and forwarding through the WikiServlet doesn't work, so
- * the virtual wiki is extracted from a hidden input parameter in the form in attach.jsp.
  *
- * Copyright 2002 Gareth Cronin
- * This software is subject to the GNU Lesser General Public Licence (LGPL)
  */
 package org.jmwiki.servlets;
 

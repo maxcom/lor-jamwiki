@@ -1,14 +1,15 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
-
-import org.jmwiki.utils.Utilities;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.jmwiki.utils.Utilities;
 
 /**
- * @author garethc
- * Date: 7/03/2003
+ *
  */
 public class IsAdminTag extends TagSupport {
 

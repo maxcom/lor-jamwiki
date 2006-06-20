@@ -1,17 +1,18 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.log4j.Logger;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.utils.Utilities;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-
 /**
- * @author garethc
- * Date: Jan 7, 2003
+ *
  */
 public class MemberTag extends TagSupport {
 

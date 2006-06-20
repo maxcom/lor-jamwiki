@@ -1,15 +1,16 @@
+/**
+ *
+ */
 package org.jmwiki.tags;
 
+import java.io.IOException;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.log4j.Logger;
 import org.jmwiki.WikiBase;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
-
 /**
- * @author garethc
- * Date: Jan 7, 2003
+ *
  */
 public class WikiVersionTag extends TagSupport {
 

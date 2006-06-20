@@ -1,6 +1,5 @@
 /**
- * @author garethc
- *  22/10/2002 11:46:44
+ *
  */
 package org.jmwiki.persistency.db;
 
@@ -16,6 +15,9 @@ import org.jmwiki.AbstractWikiMembers;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiMember;
 
+/**
+ *
+ */
 public class DatabaseWikiMembers extends AbstractWikiMembers {
 
 	private static final Logger logger = Logger.getLogger(DatabaseWikiMembers.class);

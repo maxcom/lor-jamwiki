@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.parser.alt;
 
 import java.io.IOException;
@@ -12,9 +15,6 @@ import org.jmwiki.Environment;
  * [&lt;tagname&gt;][&lt;/tagname&gt;] where tagname is the name of the external lex
  * to use process the content between the tags. The entry in this manager maps this name
  * to an implementation class of {@link ExternalLex} that is used to process the text.
- *
- * @author garethc
- *		 Date: Jan 6, 2003
  */
 public class LexExtender {
 

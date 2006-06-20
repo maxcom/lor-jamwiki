@@ -1,14 +1,10 @@
-/*
- * Filename  : SelectorBean.java
- * Created   : 24.06.2004
- * Project   : VQWiki
+/**
+ *
  */
 package org.jmwiki.users;
 
 /**
  * Bean, which is used for a selector
- *
- * @author SinnerSchrader (tobsch)
  */
 public class SelectorBean {
 

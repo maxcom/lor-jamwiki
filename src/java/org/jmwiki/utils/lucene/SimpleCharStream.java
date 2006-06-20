@@ -2,14 +2,9 @@
 // package com.tchibo.misc.lucene;
 package org.jmwiki.utils.lucene;
 
-
 /**
- * An implementation of interface CharStream, where the stream is assumed to
- * contain only ASCII characters (without unicode processing).
  *
- * @version $Id: SimpleCharStream.java 365 2003-10-05 05:07:32Z garethc $
  */
-
 public final class SimpleCharStream {
   /**
    * TODO: Document this field.

@@ -1,8 +1,5 @@
 /*
- * $Id: AbstractSearchEngine.java 644 2006-04-23 07:52:28Z wrh2 $
  *
- * Filename  : AbstractSearchEngine.java
- * Project   : jmwiki-classic
  */
 package org.jmwiki;
 
@@ -51,13 +48,8 @@ import org.jmwiki.utils.lucene.HTMLParser;
 import org.jmwiki.utils.lucene.LuceneTools;
 import org.jmwiki.utils.lucene.SimpleKeepNumbersAnalyzer;
 
-
-/**
- * Abstract class to do the search.
+/*
  *
- * This class was created on 09:59:41 04.08.2003
- *
- * @author tobsch
  */
 public abstract class AbstractSearchEngine implements SearchEngine {
 
@@ -724,83 +716,3 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		return indexPath + sep + "index" + virtualWiki;
 	}
 }
-
-/*
- * Log:
- *
- * $Log$
- * Revision 1.23  2006/04/23 07:52:28  wrh2
- * Coding style updates (VQW-73).
- *
- * Revision 1.22  2006/04/20 01:32:17  wrh2
- * Use standard variable name for logger (VQW-73).
- *
- * Revision 1.21  2006/03/15 00:23:21  studer
- * Fixing bug http://www.jmwiki.org/jira/browse/VQW-26
- * Adding new parameter on the admin console to switch off indexing of http:-resources
- *
- * Revision 1.20  2006/03/01 17:34:57  studer
- * fixing http://www.jmwiki.org/jira/browse/VQW-51
- *
- * Revision 1.19  2006/02/28 21:23:40  studer
- * Humm.. a guess for the VQW-26 bug. Maybe it is something with the jdk and maybe it helps Pete...
- *
- * Revision 1.18  2006/01/31 21:57:13  studer
- * http://www.jmwiki.org/jira/browse/VQW-26
- * Fixed definitively a bug. Quoted attach:-files wheren't indexed at all. But I guess it's not the one which got us some problems?!
- *
- * Revision 1.17  2004/07/14 04:58:51  garethc
- * fix
- *
- * Revision 1.16  2004/06/28 09:42:06  mrgadget4711
- * Fix with searching referred HTML pages
- *
- * Revision 1.15  2004/06/24 18:55:22  mrgadget4711
- * ADD: The search engine now also searches external links
- *
- * Revision 1.14  2004/04/02 12:51:54  mrgadget4711
- * ADD: Ignore numbers, when doing a search
- *
- * Revision 1.13  2004/02/28 04:05:42  garethc
- * General bug fixes, panic on admin console
- *
- * Revision 1.12  2003/11/29 23:40:12  mrgadget4711
- * MOD: Using the PDFDocument by dynamic lookup. By this, you can
- * delete it if you need JDK 1.3.x compatibility.
- *
- * Revision 1.11  2003/11/29 21:53:08  mrgadget4711
- * MOD: In case, search throws an IOException, only give a warning
- * and do not dump the whole stacktrace.
- *
- * Revision 1.10  2003/11/29 21:24:26  mrgadget4711
- * MOD: catching a null pointer exception in PDFparser.close();
- *
- * Revision 1.9  2003/11/27 01:57:11  garethc
- * fixes
- *
- * Revision 1.8  2003/10/05 05:07:30  garethc
- * fixes and admin file encoding option + merge with contributions
- *
- * Revision 1.7  2003/09/12 14:06:43  makub
- * Made code JDK1.3 compatible by removing calls to StringBuffer.indexOf() and STring.split()
- *
- * Revision 1.6  2003/08/22 12:34:34  mrgadget4711
- * Search extendes, so that text attachments,
- * html attachments and pdf attachments are searched as well
- *
- * Revision 1.5  2003/08/20 20:45:45  mrgadget4711
- * Avoid scanning of result, if not needed
- *
- * Revision 1.3  2003/08/05 05:41:45  mrgadget4711
- * MOD: Wait up to 10 seconds until a lock is released
- * ADD: More specific log information
- *
- * Revision 1.2  2003/08/04 17:23:58  mrgadget4711
- * MOD: Use RAM to build up index, then copy it by brute force into the file system
- *
- * Revision 1.1  2003/08/04 09:06:47  mrgadget4711
- * MOD: Extracted all core search engine functionality into an AbstractSearchEngine
- * MOD: Try really hard to delete a lock
- *
- * ------------END------------
- */

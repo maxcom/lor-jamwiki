@@ -254,25 +254,3 @@ public class LdapUsergroup extends Usergroup {
 		}
 	}
 }
-
-/*
- * Log:
- *
- * $Log$
- * Revision 1.5  2006/04/22 19:42:46  wrh2
- * VQW-78: Allow option to not store passwords as plain text.
- *
- * Revision 1.4  2006/04/20 01:32:17  wrh2
- * Use standard variable name for logger (VQW-73).
- *
- * Revision 1.3  2006/04/20 00:14:40  wrh2
- * Coding style updates (VQW-73).
- *
- * Revision 1.2  2004/07/02 10:19:28  mrgadget4711
- * MOD: Better cope with null as identifier
- *
- * Revision 1.1  2004/06/28 09:37:19  mrgadget4711
- * Classes for User groups
- *
- * ------------END------------
- */

@@ -1,9 +1,5 @@
-/*
- * $Id: NoUsergroup.java 636 2006-04-20 00:14:40Z wrh2 $
+/**
  *
- * Filename  : NoUsergroup.java
- * Created   : 25.06.2004
- * Project   : JMWiki
  */
 package org.jmwiki.users;
 
@@ -12,9 +8,6 @@ import java.util.List;
 /**
  * Usergroup, if there is no usergroup. This class implements the
  * default wiki behavior.
- *
- * @version $Revision: 636 $ - $Date: 2006-04-20 02:14:40 +0200 (do, 20 apr 2006) $
- * @author SinnerSchrader (tobsch)
  */
 public class NoUsergroup extends Usergroup {
 
@@ -80,16 +73,3 @@ public class NoUsergroup extends Usergroup {
 		return false;
 	}
 }
-
-/*
- * Log:
- *
- * $Log$
- * Revision 1.2  2006/04/20 00:14:40  wrh2
- * Coding style updates (VQW-73).
- *
- * Revision 1.1  2004/06/28 09:37:19  mrgadget4711
- * Classes for User groups
- *
- * ------------END------------
- */

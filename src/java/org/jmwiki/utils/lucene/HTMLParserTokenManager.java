@@ -2,11 +2,8 @@
 // package com.tchibo.misc.lucene;
 package org.jmwiki.utils.lucene;
 
-
 /**
- * TODO: Document this class.
  *
- * @version $Id: HTMLParserTokenManager.java 365 2003-10-05 05:07:32Z garethc $
  */
 public class HTMLParserTokenManager implements HTMLParserConstants {
   /**

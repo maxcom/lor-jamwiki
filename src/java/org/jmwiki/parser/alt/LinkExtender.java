@@ -10,9 +10,6 @@
  *
  * c2=http://c2.com/cgi/wiki?${url}
  * c2.target=#blank
- *
- * @author garethc
- * 8/11/2002 08:53:38
  */
 package org.jmwiki.parser.alt;
 
@@ -21,6 +18,9 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 
+/**
+ *
+ */
 public class LinkExtender {
 
 	private static final Logger logger = Logger.getLogger(LinkExtender.class);

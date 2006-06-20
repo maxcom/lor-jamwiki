@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.parser;
 
 import java.net.URLEncoder;
@@ -12,8 +15,6 @@ import org.jmwiki.utils.Utilities;
 
 /**
  * Utility methods used with the Mediawiki lexers.
- *
- * @author Ryan Holliday
  */
 public class ParserUtil {
 

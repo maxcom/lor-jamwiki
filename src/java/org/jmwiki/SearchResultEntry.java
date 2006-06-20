@@ -1,18 +1,10 @@
-/*
- * $Id: SearchResultEntry.java 644 2006-04-23 07:52:28Z wrh2 $
+/**
  *
- * Filename  : SearchResultEntry.java
- * Project   : JMWiki
- * Auhtor	: Tobias Schulz-Hess (sourceforge@schulz-hess.de)
  */
 package org.jmwiki;
 
 /**
- * bean, which contains one search result entry
  *
- * This class was created on 09:58:54 14.04.2003
- *
- * @author Tobias Schulz-Hess (sourceforge@schulz-hess.de)
  */
 public class SearchResultEntry {
 
@@ -128,23 +120,3 @@ public class SearchResultEntry {
 		return result;
 	}
 }
-
-/*
- * Log:
- *
- * $Log$
- * Revision 1.4  2006/04/23 07:52:28  wrh2
- * Coding style updates (VQW-73).
- *
- * Revision 1.3  2004/02/28 04:05:42  garethc
- * General bug fixes, panic on admin console
- *
- * Revision 1.2  2003/04/15 23:11:02  garethc
- * lucene fixes
- *
- * Revision 1.1  2003/04/15 08:41:32  mrgadget4711
- * ADD: Lucene search
- * ADD: RSS Stream
- *
- * ------------END------------
- */

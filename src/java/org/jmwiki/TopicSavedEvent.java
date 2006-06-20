@@ -1,6 +1,5 @@
 /**
- * @author garethc
- *  11/11/2002 12:20:23
+ *
  */
 package org.jmwiki;
 

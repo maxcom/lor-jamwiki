@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.persistency.file;
 
 import java.io.File;
@@ -25,9 +28,6 @@ import org.jmwiki.utils.Utilities;
  * list of registered names and confirmed, at which point the user
  * is allowed to set notifications and reminders. This is a file-based
  * implementation of the WikiMembers interface.
- *
- * @author Robert E Brewer
- * @version 0.1
  */
 public class FileWikiMembers extends AbstractWikiMembers {
 

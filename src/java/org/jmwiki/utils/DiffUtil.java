@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.utils;
 
 import java.util.List;
@@ -9,8 +12,6 @@ import org.incava.util.diff.Difference;
 /**
  * Utility class for creating either a text of HTML representation of the difference
  * between two files.
- *
- * @author Ryan Holliday
  */
 public class DiffUtil {
 

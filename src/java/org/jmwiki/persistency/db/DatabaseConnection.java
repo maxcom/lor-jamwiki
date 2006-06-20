@@ -1,6 +1,5 @@
-/*
- * Copyright 2002 Gareth Cronin
- * This software is subject to the GNU Public Licence
+/**
+ *
  */
 package org.jmwiki.persistency.db;
 
@@ -19,6 +18,9 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.utils.Encryption;
 
+/**
+ *
+ */
 public class DatabaseConnection {
 
 	private static final Logger logger = Logger.getLogger(DatabaseConnection.class);

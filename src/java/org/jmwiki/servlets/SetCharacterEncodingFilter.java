@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki.servlets;
 
 import java.io.IOException;
@@ -18,8 +21,6 @@ import javax.servlet.FilterChain;
  * This filter uses the variable to set request encoding
  * for servlets, as they cannot use &lt;fmt:requestEncoding/&gt;
  * as JSP pages.
- *
- * @author Martin Kuba makub@ics.muni.cz
  */
 public final class SetCharacterEncodingFilter implements Filter {
 

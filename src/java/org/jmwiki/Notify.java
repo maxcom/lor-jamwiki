@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package org.jmwiki;
 
 import java.util.Collection;
@@ -7,9 +10,6 @@ import java.util.Locale;
  * Stores a list of usernames for each topic page in the JMWiki
  * system, so that an email can be sent to their registered
  * addresses when changes are made to the associated topic page.
- *
- * @author Robert E Brewer
- * @version 0.1
  */
 public interface Notify {
 

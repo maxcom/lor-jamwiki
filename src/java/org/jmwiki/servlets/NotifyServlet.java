@@ -1,6 +1,5 @@
 /**
- * @author garethc
- *  15/10/2002 15:06:53
+ *
  */
 package org.jmwiki.servlets;
 
@@ -18,6 +17,9 @@ import org.jmwiki.utils.JSPUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+/**
+ *
+ */
 public class NotifyServlet extends HttpServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(NotifyServlet.class);

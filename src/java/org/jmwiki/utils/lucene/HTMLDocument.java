@@ -64,11 +64,8 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 
 /**
- * A utility for making Lucene Documents for HTML documents.
  *
- * @version $Id: HTMLDocument.java 365 2003-10-05 05:07:32Z garethc $
  */
-
 public class HTMLDocument {
   /**
    * TODO: Document this field.
