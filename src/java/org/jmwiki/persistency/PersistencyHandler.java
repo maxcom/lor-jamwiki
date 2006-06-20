@@ -6,12 +6,34 @@ package org.jmwiki.persistency;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import org.jmwiki.model.Topic;
+import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.db.DBDate;
 
 /**
  *
  */
 public interface PersistencyHandler {
+
+	/**
+	 * Retrieve a specified number of the most recent changes to the system.
+	 */
+	public Collection getRecentChanges(String virtualWiki, int num) throws Exception;
+
+	/**
+	 * Create a new topic, or update the existing topic if it already exists.
+	 */
+	public void updateTopic(Topic topic) throws Exception;
+
+	/**
+	 * Create a new topic version.  The parent topic must already exist for the
+	 * new version to be successfully created.
+	 */
+	public void insertTopicVersion(TopicVersion topicVersion) throws Exception;
+
+	// ======================================
+	// DELETE THE CODE BELOW
+	// ======================================
 
 	/**
 	 *

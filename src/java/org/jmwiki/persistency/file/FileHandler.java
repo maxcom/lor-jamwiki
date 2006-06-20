@@ -3,12 +3,35 @@
  */
 package org.jmwiki.persistency.file;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 import org.apache.log4j.Logger;
-import org.jmwiki.*;
+import org.jmwiki.Environment;
+import org.jmwiki.TopicLock;
+import org.jmwiki.WikiBase;
+import org.jmwiki.WikiException;
+import org.jmwiki.model.Topic;
+import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.PersistencyHandler;
 import org.jmwiki.persistency.db.DBDate;
+import org.jmwiki.servlets.JMController;
 import org.jmwiki.utils.TextFileFilter;
 import org.jmwiki.utils.Utilities;
 
@@ -17,9 +40,36 @@ import org.jmwiki.utils.Utilities;
  */
 public class FileHandler implements PersistencyHandler {
 
+	private static final Logger logger = Logger.getLogger(FileHandler.class);
+
+	/**
+	 *
+	 */
+	public Collection getRecentChanges(String virtualWiki, int num) throws Exception {
+		// FIXME - implement this
+		return new Vector();
+	}
+
+	/**
+	 *
+	 */
+	public void updateTopic(Topic topic) throws Exception {
+		// FIXME - implement this
+	}
+
+	/**
+	 *
+	 */
+	public void insertTopicVersion(TopicVersion topicVersion) throws Exception {
+		// FIXME - implement this
+	}
+
+	// ======================================
+	// DELETE THE CODE BELOW
+	// ======================================
+
 	public static final String VERSION_DIR = "versions";
 	public final static String EXT = ".txt";
-	private static final Logger logger = Logger.getLogger(FileHandler.class);
 	// the read-only topics
 	protected Map readOnlyTopics;
 	// file used for storing read-only topics
@@ -49,8 +99,6 @@ public class FileHandler implements PersistencyHandler {
 		versionDirCheck.mkdir();
 		// create the virtual wiki list file if necessary
 		File virtualList = new File(fileBase("") + VIRTUAL_WIKI_LIST);
-		// resources for i18n
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		// get the virtual wiki list and set up the file system
 		try {
 			if (!virtualList.exists()) {
@@ -77,12 +125,12 @@ public class FileHandler implements PersistencyHandler {
 				dummy = getPathFor(vWiki, VERSION_DIR);
 				dummy.mkdir();
 				// write out default topics
-				setupSpecialPage(vWiki, messages.getString("specialpages.startingpoints"));
-				setupSpecialPage(vWiki, messages.getString("specialpages.leftMenu"));
-				setupSpecialPage(vWiki, messages.getString("specialpages.topArea"));
-				setupSpecialPage(vWiki, messages.getString("specialpages.bottomArea"));
-				setupSpecialPage(vWiki, messages.getString("specialpages.stylesheet"));
-				setupSpecialPage(vWiki, messages.getString("specialpages.adminonlytopics"));
+				setupSpecialPage(vWiki, JMController.getMessage("specialpages.startingpoints", locale));
+				setupSpecialPage(vWiki, JMController.getMessage("specialpages.leftMenu", locale));
+				setupSpecialPage(vWiki, JMController.getMessage("specialpages.topArea", locale));
+				setupSpecialPage(vWiki, JMController.getMessage("specialpages.bottomArea", locale));
+				setupSpecialPage(vWiki, JMController.getMessage("specialpages.stylesheet", locale));
+				setupSpecialPage(vWiki, JMController.getMessage("specialpages.adminonlytopics", locale));
 				loadReadOnlyTopics(vWiki);
 			}
 			in.close();

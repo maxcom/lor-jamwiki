@@ -149,9 +149,9 @@ public class TopicVersion {
 		this.versionContent = versionContent;
 	}
 
-	// =========================================================
-	// Delete everything below
-	// =========================================================
+	// ======================================
+	// DELETE THE CODE BELOW
+	// ======================================
 
 	private String virtualWiki;
 	private String topicName;

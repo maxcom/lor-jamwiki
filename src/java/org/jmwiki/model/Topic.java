@@ -172,9 +172,9 @@ public class Topic implements Serializable {
 		this.virtualWiki = virtualWiki;
 	}
 
-	// =========================================================
-	// Delete everything below
-	// =========================================================
+	// ======================================
+	// DELETE THE CODE BELOW
+	// ======================================
 
 	protected String contents;			  /** Contents of this topic */   //FIXME: remove and use actual revision object
 	protected String author;				/** Author of this topic */

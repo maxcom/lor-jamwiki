@@ -24,12 +24,44 @@ import org.jmwiki.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.PseudoTopicHandler;
+import org.jmwiki.model.Topic;
+import org.jmwiki.model.TopicVersion;
 import org.jmwiki.utils.Utilities;
 
 /**
  *
  */
 public class DatabaseHandler implements PersistencyHandler {
+
+	public static final String DB_TYPE_ORACLE = "oracle";
+	public static final String DB_TYPE_MYSQL = "mysql";
+	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
+
+	/**
+	 *
+	 */
+	public Collection getRecentChanges(String virtualWiki, int num) throws Exception {
+		// FIXME - implement this
+		return new Vector();
+	}
+
+	/**
+	 *
+	 */
+	public void updateTopic(Topic topic) throws Exception {
+		// FIXME - implement this
+	}
+
+	/**
+	 *
+	 */
+	public void insertTopicVersion(TopicVersion topicVersion) throws Exception {
+		// FIXME - implement this
+	}
+
+	// ======================================
+	// DELETE THE CODE BELOW
+	// ======================================
 
 	protected final static String STATEMENT_READ =
 		"SELECT contents FROM Topic WHERE name = ? AND virtualwiki = ?";
@@ -81,10 +113,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
 	protected final static String STATEMENT_GET_LOCK_LIST =
 		"SELECT * FROM TopicLock WHERE virtualwiki = ?";
-
-	public static final String DB_TYPE_ORACLE = "oracle";
-	public static final String DB_TYPE_MYSQL = "mysql";
-	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
 
 	/**
 	 *
