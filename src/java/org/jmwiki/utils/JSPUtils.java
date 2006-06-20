@@ -153,15 +153,4 @@ public class JSPUtils {
 		}
 		return contextPath + "/" + virtualWiki + "/";
 	}
-
-	/**
-	 *
-	 */
-	public static String createRedirectURL(HttpServletRequest request, String url) {
-		String rootPath = JSPUtils.createLocalRootPath(request, (String) request.getAttribute("virtualWiki"));
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(rootPath);
-		buffer.append(url);
-		return buffer.toString();
-	}
 }

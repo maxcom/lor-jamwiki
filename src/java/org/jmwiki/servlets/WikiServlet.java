@@ -357,7 +357,7 @@ public class WikiServlet extends JMController implements Controller {
 		try {
 			if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topic)) {
 				if (!Utilities.isAdmin(request)) {
-					request.setAttribute("title", Utilities.resource("login.title", request.getLocale()));
+					request.setAttribute("title", JMController.getMessage("login.title", request.getLocale()));
 					logger.debug("Current URL: " + request.getRequestURL());
 					String rootPath = JSPUtils.createLocalRootPath(request, virtualWiki);
 					StringBuffer buffer = new StringBuffer();
@@ -684,11 +684,11 @@ public class WikiServlet extends JMController implements Controller {
 			// first, convert locale-specific action into a constant.  this isn't
 			// terribly important with the current code, but if anything is to
 			// be done with action values in the future it will be helpful.
-			if (checkAction(action, Utilities.resource("edit.action.append", request.getLocale()))) {
+			if (checkAction(action, JMController.getMessage("edit.action.append", request.getLocale()))) {
 				action = ACTION_APPEND;
-			} else if (checkAction(action, Utilities.resource("edit.action.preview", request.getLocale()))) {
+			} else if (checkAction(action, JMController.getMessage("edit.action.preview", request.getLocale()))) {
 				action = ACTION_PREVIEW;
-			} else if (action.equals(Utilities.resource("edit.action.cancel", request.getLocale()))) {
+			} else if (action.equals(JMController.getMessage("edit.action.cancel", request.getLocale()))) {
 				action = ACTION_CANCEL;
 			}
 			if (actionRedirect != null) {

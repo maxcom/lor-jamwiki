@@ -146,86 +146,8 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String getDirectoryFromPath(String path) {
-		logger.debug("getDirectoryFromPath: " + path);
-		return path.substring(0, 1 + path.lastIndexOf('/'));
-	}
-
-	/**
-	 *
-	 */
 	public static String sep() {
 		return System.getProperty("file.separator");
-	}
-
-	/**
-	 * Extracts the virtual wiki from the URL path.  Defaults to the default
-	 * wiki if there's trouble.
-	 *
-	 */
-	public static String extractVirtualWiki(HttpServletRequest request) throws Exception {
-		String path = request.getRequestURL().toString();
-		return extractVirtualWiki(path);
-	}
-
-	/**
-	 *
-	 */
-	public static String extractVirtualWiki(String path) throws Exception {
-		logger.debug("path: " + path);
-		StringTokenizer tokenizer = new StringTokenizer(path, "/");
-		// if there's no tokens, use default
-		if (tokenizer.countTokens() == 0) return WikiBase.DEFAULT_VWIKI;
-		String[] tokens = new String[tokenizer.countTokens()];
-		int i = 0;
-		int jspPosition = -1;
-		while (tokenizer.hasMoreTokens()) {
-			tokens[i] = tokenizer.nextToken();
-			logger.debug("tokens[" + i + "]: " + tokens[i]);
-			if (tokens[i].equalsIgnoreCase("jsp")) jspPosition = i;
-			i++;
-		}
-		logger.debug("jspPosition: " + jspPosition);
-		// We didn't find "jsp" in the path
-		if (jspPosition == -1) {
-			// servlet name only (application is root level context)
-			if (i == 1) {
-				return WikiBase.DEFAULT_VWIKI;
-			} else if (isAVirtualWiki(tokens[i - 2])) {
-				return tokens[i - 2];
-			} else {
-				String errorMessage = "The virtual wiki that you have chosen " +
-					"does not exist.  Verify the web address that you entered. " +
-					"If the problem continues, contact your wiki administrator";
-				throw new WikiException(errorMessage);
-			}
-		} else if (jspPosition == 0 || i == 1) {
-			// handle the case where we have a "jsp" token in the URL
-			// jsp is first in path (last element is always the servlet/jsp)
-			// if we have only the servlet/jsp name assume default virtual wiki
-			return WikiBase.DEFAULT_VWIKI;
-		} else if (isAVirtualWiki(tokens[jspPosition - 1])) {
-			return tokens[jspPosition - 1];
-		} else {
-			// if we come up with anything not in the vwiki list, we use the default
-			return WikiBase.DEFAULT_VWIKI;
-		}
-	}
-
-	/**
-	 * checks the string parameter against there virtual wiki list
-	 */
-	public static boolean isAVirtualWiki(String virtualWiki) {
-		try {
-			WikiBase wikibase = WikiBase.getInstance();
-			Iterator wikilist = wikibase.getVirtualWikiList().iterator();
-			while (wikilist.hasNext()) {
-				if (virtualWiki.equals((String) wikilist.next())) return true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	/**
@@ -245,29 +167,6 @@ public class Utilities {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 *
-	 */
-	public static boolean checkValidTopicName(String name) {
-		if (name.indexOf(':') >= 0 || name.indexOf('/') >= 0 || name.indexOf('.') >= 0 ||
-			name.indexOf("%3a") >= 0 || name.indexOf("%2f") >= 0 || name.indexOf("%2e") >= 0) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Return a String from the ApplicationResources. The ApplicationResources contains all text,
-	 * links, etc. which may be language specific and is located in the classes folder.
-	 * @param key The key to get.
-	 * @param locale The locale to use.
-	 * @return String containing the requested text.
-	 */
-	public static String resource(String key, Locale locale) {
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		return messages.getString(key);
 	}
 
 	/**

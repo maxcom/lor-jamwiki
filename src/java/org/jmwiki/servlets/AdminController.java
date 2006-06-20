@@ -165,7 +165,7 @@ public class AdminController implements Controller {
 		try {
 			WikiBase base = WikiBase.getInstance();
 			base.unlockTopic(request.getParameter("virtualWiki"), request.getParameter("topic"));
-			this.message = Utilities.resource("admin.message.lockcleared", request.getLocale());
+			this.message = JMController.getMessage("admin.message.lockcleared", request.getLocale());
 		} catch (Exception e) {
 			logger.error("Failure while clearing locks", e);
 			this.message = "Failure while clearing locks: " + e.getMessage();
@@ -176,11 +176,10 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void login(HttpServletRequest request, ModelAndView next) {
-		request.setAttribute("title", Utilities.resource("login.title", request.getLocale()));
-//		String rootPath = JSPUtils.createLocalRootPath(request, (String) request.getAttribute("virtualWiki"));
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		request.setAttribute("title", JMController.getMessage("login.title", request.getLocale()));
 		StringBuffer buffer = new StringBuffer();
-//		buffer.append(rootPath);
-		buffer.append("../jsp/Special:Admin");
+		buffer.append(Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Admin"));
 		request.setAttribute("redirect", buffer.toString());
 		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
