@@ -87,9 +87,11 @@ h5 {
 }
 
 pre {
-	border: 1px dashed #0000aa;
+	background-color: #f9f9f9;
+	border: 1px dashed #2f6fab;
 	color: black;
-	margin: 0;
+	font-size: 110%;
+	line-height: 1.1em;
 	padding: 1em;
 }
 
