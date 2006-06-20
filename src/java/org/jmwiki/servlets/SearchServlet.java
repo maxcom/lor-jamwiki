@@ -42,8 +42,12 @@ public class SearchServlet extends JMController implements Controller {
 		formatter.setLocale(request.getLocale());
 		try {
 			String searchField = request.getParameter("text");
-			formatter.applyPattern(JMController.getMessage("searchresult.title", request.getLocale()));
-			next.addObject("title", formatter.format(new Object[]{searchField}));
+			if (request.getParameter("text") == null) {
+				next.addObject("title", "Special:Search");
+			} else {
+				formatter.applyPattern(JMController.getMessage("searchresult.title", request.getLocale()));
+				next.addObject("title", formatter.format(new Object[]{searchField}));
+			}
 			// forward back to the search page if the request is blank or null
 			if (searchField == null || searchField.length() == 0) {
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH);
@@ -90,6 +94,7 @@ public class SearchServlet extends JMController implements Controller {
 					contents.append("</p>");
 				}
 			} else {
+				next.addObject("text", searchField);
 				contents.append("<p>");
 				formatter = new MessageFormat("");
 				formatter.setLocale(request.getLocale());

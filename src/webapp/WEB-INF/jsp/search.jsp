@@ -1,5 +1,5 @@
-<form name="searchForm" method="post" action="Wiki">
-<f:message key="search.for"/><input type="text" name="text">  <input type="submit" name="Submit" value="<f:message key="search.search"/>">
+<form name="searchForm" method="post" action="<jmwiki:link value="Special:Search" />">
+<f:message key="search.for"/><input type="text" name="text" value="<c:out value="${text}" />">  <input type="submit" name="Submit" value="<f:message key="search.search"/>">
 <p>&nbsp;</p>
 <f:message key="search.hints"/>
 <input type="hidden" name="action" value="<%= WikiServlet.ACTION_SEARCH %>"/>
