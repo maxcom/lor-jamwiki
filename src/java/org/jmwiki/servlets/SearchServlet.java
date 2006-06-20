@@ -29,8 +29,26 @@ public class SearchServlet extends JMController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
+		String jumpto = request.getParameter("jumpto");
+		if (jumpto != null) {
+			jumpTo(request, response, next);
+			return null;
+		}
 		search(request, response, next);
 		return next;
+	}
+
+	/**
+	 *
+	 */
+	private void jumpTo(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String text = request.getParameter("text");
+		// FIXME - if topic doesn't exist, should probably go to an edit page
+		// or else give an error message
+		// FIXME - need a better way to do redirects
+		String redirectURL = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, text);
+		redirect(redirectURL, response);
 	}
 
 	/**

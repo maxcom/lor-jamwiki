@@ -13,7 +13,6 @@
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:Notify">Notify</prop>
-				<prop key="/**/Special:MenuJump">MenuJump</prop>
 				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Upload">Attach</prop>
@@ -41,7 +40,6 @@
 	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />
 	<bean id="SaveAttachment" class="org.jmwiki.servlets.SaveAttachmentServlet" />
 	<bean id="Notify" class="org.jmwiki.servlets.NotifyServlet" />
-	<bean id="MenuJump" class="org.jmwiki.servlets.MenuJumpServlet" />
 	<bean id="ViewAttachment" class="org.jmwiki.servlets.ViewAttachmentServlet" />
 	<bean id="Diff" class="org.jmwiki.servlets.DiffServlet" />
 	<bean id="Attach" class="org.jmwiki.servlets.AttachServlet" />

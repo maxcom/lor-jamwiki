@@ -38,8 +38,7 @@ if (action == null) action = "";
 		</div>
 		</c:if>
 		<div id="nav-search">
-		<form method="POST" action="<jmwiki:link value="Special:MenuJump" />">
-		<input type="hidden" name="<%= WikiServlet.PARAMETER_ACTION %>" value="<%= WikiServlet.ACTION_MENU_JUMP %>"/>
+		<form method="POST" action="<jmwiki:link value="Special:Search" />">
 		<input type="text" name="text" size="20" value="" />
 		<br />
 		<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
