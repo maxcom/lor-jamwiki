@@ -38,63 +38,63 @@ public class ConvertVQWiki {
 			Statement st = conn.createStatement();
 			Statement results = conn.createStatement();
 			ResultSet rs = null;
-			// vqw_virtual_wiki
-			sql = "INSERT INTO vqw_virtual_wiki ("
+			// jmw_virtual_wiki
+			sql = "INSERT INTO jmw_virtual_wiki ("
 				+   "virtual_wiki_name "
 				+ ") "
 				+ "SELECT name FROM VirtualWiki ";
 			st.executeUpdate(sql);
-			// vqw_author
-			sql = "INSERT INTO vqw_author ( "
+			// jmw_author
+			sql = "INSERT INTO jmw_author ( "
 				+   "login, virtual_wiki_id, confirmation_key, email, display_name, "
 				+   "encoded_password, initial_ip_address, last_ip_address "
 				+ ") "
-				+ "SELECT WikiMember.wikiuser, vqw_virtual_wiki.virtual_wiki_id, "
+				+ "SELECT WikiMember.wikiuser, jmw_virtual_wiki.virtual_wiki_id, "
 				+ "WikiMember.userkey, WikiMember.email, WikiMember.wikiuser, "
 				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
 				+ "'127.0.0.1', '127.0.0.1' "
-				+ "FROM WikiMember, vqw_virtual_wiki "
-				+ "WHERE WikiMember.virtualwiki = vqw_virtual_wiki.virtual_wiki_name ";
+				+ "FROM WikiMember, jmw_virtual_wiki "
+				+ "WHERE WikiMember.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
 			st.executeUpdate(sql);
-			sql = "INSERT INTO vqw_author ( "
+			sql = "INSERT INTO jmw_author ( "
 				+   "login, virtual_wiki_id, display_name, "
 				+   "encoded_password, initial_ip_address, last_ip_address "
 				+ ") "
-				+ "SELECT DISTINCT TopicChange.username, vqw_virtual_wiki.virtual_wiki_id, "
+				+ "SELECT DISTINCT TopicChange.username, jmw_virtual_wiki.virtual_wiki_id, "
 				+ "TopicChange.username, "
 				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
 				+ "'127.0.0.1', '127.0.0.1' "
-				+ "FROM TopicChange, vqw_virtual_wiki "
-				+ "WHERE TopicChange.virtualwiki = vqw_virtual_wiki.virtual_wiki_name "
+				+ "FROM TopicChange, jmw_virtual_wiki "
+				+ "WHERE TopicChange.virtualwiki = jmw_virtual_wiki.virtual_wiki_name "
 				+ "AND NOT EXISTS ( "
 				+   "SELECT * FROM WikiMember "
 				+   "WHERE TopicChange.username = WikiMember.wikiuser "
 				+   "AND TopicChange.virtualwiki = WikiMember.virtualwiki "
 				+ ") ";
 			st.executeUpdate(sql);
-			// vqw_topic
-			sql = "insert into vqw_topic ( "
+			// jmw_topic
+			sql = "insert into jmw_topic ( "
 				+   "virtual_wiki_id, topic_name, topic_type "
 				+ ") "
-				+ "SELECT vqw_virtual_wiki.virtual_wiki_id, Topic.name, "
+				+ "SELECT jmw_virtual_wiki.virtual_wiki_id, Topic.name, "
 				+ DatabaseInit.TOPIC_TYPE_DEFAULT + " "
-				+ "FROM Topic, vqw_virtual_wiki "
-				+ "WHERE Topic.virtualwiki = vqw_virtual_wiki.virtual_wiki_name ";
+				+ "FROM Topic, jmw_virtual_wiki "
+				+ "WHERE Topic.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
 			st.executeUpdate(sql);
 			sql = "SELECT topic, virtualwiki FROM TopicReadOnly ";
 			rs = results.executeQuery(sql);
 			while (rs.next()) {
-				sql = "UPDATE vqw_topic set topic_read_only = TRUE "
+				sql = "UPDATE jmw_topic set topic_read_only = TRUE "
 					+ "WHERE topic_name = '" + rs.getString("topic") + "' "
 					+ "AND virtual_wiki_id = ( "
-					+   "SELECT virtual_wiki_id FROM vqw_virtual_wiki "
+					+   "SELECT virtual_wiki_id FROM jmw_virtual_wiki "
 					+   "WHERE virtual_wiki_name = '" + rs.getString("virtualwiki") + "' "
 					+ ") ";
 				st.executeUpdate(sql);
 			}
-			// vqw_topic_version
+			// jmw_topic_version
 			// create default author for edits with no author
-			sql = "INSERT INTO vqw_author ( "
+			sql = "INSERT INTO jmw_author ( "
 				+   "login, virtual_wiki_id, display_name, "
 				+   "encoded_password, initial_ip_address, last_ip_address "
 				+ ") "
@@ -102,89 +102,89 @@ public class ConvertVQWiki {
 				+ "virtual_wiki_id, '" + DatabaseInit.DEFAULT_AUTHOR_NAME + "', "
 				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
 				+ "'127.0.0.1', '127.0.0.1' "
-				+ "FROM vqw_virtual_wiki ";
+				+ "FROM jmw_virtual_wiki ";
 			st.executeUpdate(sql);
 			// get default author (will update later)
-			sql = "SELECT author_id FROM vqw_author "
+			sql = "SELECT author_id FROM jmw_author "
 				+ "WHERE login = '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "' ";
 			rs  = results.executeQuery(sql);
 			int authorId = 0;
 			while (rs.next()) {
 				authorId = rs.getInt("author_id");
 			}
-			sql = "INSERT INTO vqw_topic_version ( "
+			sql = "INSERT INTO jmw_topic_version ( "
 				+   "topic_id, version_content, author_id, "
 				+   "edit_date, edit_type "
 				+ ") "
-				+ "SELECT vqw_topic.topic_id, TopicVersion.contents, "
+				+ "SELECT jmw_topic.topic_id, TopicVersion.contents, "
 				+ authorId + ", "
 				+ "TopicVersion.versionat, "
 				+ DatabaseInit.EDIT_TYPE_DEFAULT + " "
-				+ "FROM TopicVersion, vqw_topic, vqw_virtual_wiki "
-				+ "WHERE vqw_topic.topic_name = TopicVersion.name "
-				+ "AND vqw_topic.virtual_wiki_id = vqw_virtual_wiki.virtual_wiki_id "
-				+ "AND TopicVersion.virtualwiki = vqw_virtual_wiki.virtual_wiki_name ";
+				+ "FROM TopicVersion, jmw_topic, jmw_virtual_wiki "
+				+ "WHERE jmw_topic.topic_name = TopicVersion.name "
+				+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id "
+				+ "AND TopicVersion.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
 			st.executeUpdate(sql);
 			// add links to authors
-			sql = "SELECT vqw_author.author_id, vqw_topic_version.topic_version_id "
-				+ "FROM vqw_author, TopicChange, vqw_topic_version, "
-				+ "vqw_virtual_wiki, vqw_topic "
-				+ "WHERE vqw_author.login = TopicChange.username "
-				+ "AND vqw_author.virtual_wiki_id = vqw_virtual_wiki.virtual_wiki_id "
-				+ "AND vqw_virtual_wiki.virtual_wiki_name = TopicChange.virtualwiki "
-				+ "AND (TopicChange.changeat - vqw_topic_version.edit_date) < INTERVAL '5 seconds' "
-				+ "AND vqw_topic_version.topic_id = vqw_topic.topic_id "
-				+ "AND vqw_topic.virtual_wiki_id = vqw_virtual_wiki.virtual_wiki_id "
-				+ "AND vqw_topic.topic_name = TopicChange.topic ";
+			sql = "SELECT jmw_author.author_id, jmw_topic_version.topic_version_id "
+				+ "FROM jmw_author, TopicChange, jmw_topic_version, "
+				+ "jmw_virtual_wiki, jmw_topic "
+				+ "WHERE jmw_author.login = TopicChange.username "
+				+ "AND jmw_author.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id "
+				+ "AND jmw_virtual_wiki.virtual_wiki_name = TopicChange.virtualwiki "
+				+ "AND (TopicChange.changeat - jmw_topic_version.edit_date) < INTERVAL '5 seconds' "
+				+ "AND jmw_topic_version.topic_id = jmw_topic.topic_id "
+				+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id "
+				+ "AND jmw_topic.topic_name = TopicChange.topic ";
 			rs  = results.executeQuery(sql);
 			while (rs.next()) {
-				sql = "UPDATE vqw_topic_version "
+				sql = "UPDATE jmw_topic_version "
 					+ "SET author_id = " + rs.getInt("author_id") + " "
 					+ "WHERE topic_version_id = " + rs.getInt("topic_version_id") + " ";
 				st.executeUpdate(sql);
 			}
 			// update articles still using default author
 			sql = "SELECT author_id, topic_id "
-				+ "FROM vqw_author, vqw_topic "
-				+ "WHERE vqw_author.login = '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "' "
-				+ "AND vqw_author.virtual_wiki_id = vqw_topic.virtual_wiki_id ";
+				+ "FROM jmw_author, jmw_topic "
+				+ "WHERE jmw_author.login = '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "' "
+				+ "AND jmw_author.virtual_wiki_id = jmw_topic.virtual_wiki_id ";
 			rs  = results.executeQuery(sql);
 			while (rs.next()) {
 				// FIXME - not all topics need to be updated, so this is inefficient
-				sql = "UPDATE vqw_topic_version "
+				sql = "UPDATE jmw_topic_version "
 					+ "SET author_id = " + rs.getInt("author_id") + " "
 					+ "WHERE author_id = " + authorId + " "
 					+ "AND topic_id = " + rs.getInt("topic_id") + " ";
 				st.executeUpdate(sql);
 			}
-			// vqw_notification
-			sql = "INSERT INTO vqw_notification ( "
+			// jmw_notification
+			sql = "INSERT INTO jmw_notification ( "
 				+   "author_id, topic_id "
 				+ ") "
-				+ "SELECT vqw_author.author_id, vqw_topic.topic_id "
-				+ "FROM vqw_author, vqw_topic, vqw_virtual_wiki, Notification "
-				+ "WHERE vqw_topic.topic_name = Notification.topic "
-				+ "AND vqw_virtual_wiki.virtual_wiki_name = Notification.virtualwiki "
-				+ "AND vqw_virtual_wiki.virtual_wiki_id = vqw_topic.virtual_wiki_id "
-				+ "AND vqw_author.login = Notification.wikiuser "
-				+ "AND vqw_author.virtual_wiki_id = vqw_virtual_wiki.virtual_wiki_id ";
+				+ "SELECT jmw_author.author_id, jmw_topic.topic_id "
+				+ "FROM jmw_author, jmw_topic, jmw_virtual_wiki, Notification "
+				+ "WHERE jmw_topic.topic_name = Notification.topic "
+				+ "AND jmw_virtual_wiki.virtual_wiki_name = Notification.virtualwiki "
+				+ "AND jmw_virtual_wiki.virtual_wiki_id = jmw_topic.virtual_wiki_id "
+				+ "AND jmw_author.login = Notification.wikiuser "
+				+ "AND jmw_author.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id ";
 			st.executeUpdate(sql);
-			// vqw_recent_change
-			sql = "INSERT INTO vqw_recent_change ( "
+			// jmw_recent_change
+			sql = "INSERT INTO jmw_recent_change ( "
 				+   "topic_version_id, topic_id, "
 				+   "topic_name, edit_date, author_id, display_name, "
 				+   "edit_type, virtual_wiki_id, virtual_wiki_name "
 				+ ") "
 				+ "SELECT "
-				+   "vqw_topic_version.topic_version_id, vqw_topic.topic_id, "
-				+   "vqw_topic.topic_name, vqw_topic_version.edit_date, "
-				+   "vqw_topic_version.author_id, vqw_author.display_name, "
-				+   "vqw_topic_version.edit_type, vqw_virtual_wiki.virtual_wiki_id, "
-				+   "vqw_virtual_wiki.virtual_wiki_name "
-				+ "FROM vqw_topic, vqw_topic_version, vqw_author, vqw_virtual_wiki "
-				+ "WHERE vqw_topic.topic_id = vqw_topic_version.topic_id "
-				+ "AND vqw_topic_version.author_id = vqw_author.author_id "
-				+ "AND vqw_topic.virtual_wiki_id = vqw_virtual_wiki.virtual_wiki_id ";
+				+   "jmw_topic_version.topic_version_id, jmw_topic.topic_id, "
+				+   "jmw_topic.topic_name, jmw_topic_version.edit_date, "
+				+   "jmw_topic_version.author_id, jmw_author.display_name, "
+				+   "jmw_topic_version.edit_type, jmw_virtual_wiki.virtual_wiki_id, "
+				+   "jmw_virtual_wiki.virtual_wiki_name "
+				+ "FROM jmw_topic, jmw_topic_version, jmw_author, jmw_virtual_wiki "
+				+ "WHERE jmw_topic.topic_id = jmw_topic_version.topic_id "
+				+ "AND jmw_topic_version.author_id = jmw_author.author_id "
+				+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id ";
 			st.executeUpdate(sql);
 			st.close();
 		} catch (Exception e) {

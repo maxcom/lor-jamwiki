@@ -53,37 +53,37 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static Hashtable virtualWikiHash = null;
 
 	private static final String STATEMENT_INSERT_TOPIC =
-		"insert into vqw_topic ( "
+		"insert into jmw_topic ( "
 		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
 		+   "topic_locked_by, topic_lock_date, topic_read_only "
 		+ ") values ( "
 		+   "?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_INSERT_TOPIC_VERSION =
-		"insert into vqw_topic_version ("
+		"insert into jmw_topic_version ("
 		+   "topic_version_id, topic_id, edit_comment, version_content, "
 		+   "author_id, edit_date, edit_type "
 		+ ") values ( "
 		+   "?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_INSERT_VIRTUAL_WIKI =
-		"insert into vqw_virtual_wiki ("
+		"insert into jmw_virtual_wiki ("
 		+   "virtual_wiki_id, virtual_wiki_name "
 		+ ") values ( "
 		+   "?, ? "
 		+ ") ";
 	private static final String STATEMENT_SELECT_TOPIC =
-		"select topic_id from vqw_topic "
+		"select topic_id from jmw_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_name = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
-		"select nextval('vqw_topic_seq') as topic_id ";
+		"select nextval('jmw_topic_seq') as topic_id ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
-		"select nextval('vqw_topic_version_seq') as topic_version_id ";
+		"select nextval('jmw_topic_version_seq') as topic_version_id ";
 	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
-		"select nextval('vqw_virtual_wiki_seq') as virtual_wiki_id ";
+		"select nextval('jmw_virtual_wiki_seq') as virtual_wiki_id ";
 	private static final String STATEMENT_UPDATE_TOPIC =
-		"update vqw_topic set "
+		"update jmw_topic set "
 		+ "virtual_wiki_id = ?, "
 		+ "topic_name = ?, "
 		+ "topic_type = ?, "
@@ -220,7 +220,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	protected static void loadVirtualWikiHash() throws Exception {
 		virtualWikiHash = new Hashtable();
-		String sql = "select * from vqw_virtual_wiki ";
+		String sql = "select * from jmw_virtual_wiki ";
 		try {
 			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
 			while (rs.next()) {
@@ -343,7 +343,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	private static boolean dbInitialized() {
-		String sql = "select 1 from vqw_virtual_wiki ";
+		String sql = "select 1 from Topic ";
 		try {
 			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
 			return rs.next();
@@ -366,13 +366,16 @@ public class DatabaseHandler implements PersistencyHandler {
 		}
 		String sql = null;
 		WikiResultSet rs = null;
-		sql = "select 1 from vqw_virtual_wiki ";
-		rs = DatabaseConnection.executeQuery(sql);
-		if (!rs.next()) {
+		sql = "select * from jmw_virtual_wiki ";
+		try {
+			rs = DatabaseConnection.executeQuery(sql);
+		} catch (Exception e) {
+			// return, tables not set up yet
+			return;
+		}
+		if (rs.size() == 0) {
 			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		}
-		sql = "select * from vqw_virtual_wiki ";
-		rs = DatabaseConnection.executeQuery(sql);
 		while (rs.next()) {
 			String vWiki = rs.getString("virtual_wiki_name");
 			// starting points
