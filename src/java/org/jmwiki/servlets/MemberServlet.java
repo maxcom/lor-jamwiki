@@ -28,7 +28,11 @@ public class MemberServlet extends JMController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JMController.buildLayout(request, next);
-		setUsername(request, response, next);
+		if (false) {
+			// FIXME - used with email notifications
+			notify(request, response, next);
+		}
+		username(request, response, next);
 		return next;
 	}
 
@@ -36,24 +40,17 @@ public class MemberServlet extends JMController implements Controller {
 	 *
 	 */
 	// FIXME - shouldn't need to pass in response
-	private void setUsername(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private void notify(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String user = null;
 		if (request.getParameter("username") != null && request.getParameter("username").length() > 0) {
-			user = request.getParameter("userName");
+			user = request.getParameter("username");
 		}
 		if (user == null) {
 			user = Utilities.getUserFromRequest(request);
 		}
-		Cookie c = Utilities.createUsernameCookie(user);
-		logger.debug("Delivering cookie: " + c.getName() + " " + c.getValue());
-		try {
-			response.addCookie(c);
-		} catch (Exception e) {
-			logger.warn(e.getMessage(), e);
-			error(request, response, new WikiServletException(JMController.getMessage("exception.badusername", request.getLocale())));
-			return;
-		}
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
 		next.addObject(JMController.PARAMETER_TITLE, "Wiki Membership");
 		next.addObject("user", user);
 		WikiMembers members = null;
@@ -133,7 +130,30 @@ public class MemberServlet extends JMController implements Controller {
 			return;
 		}
 		next.addObject("knownEmail", usergroup.getKnownEmailById(user));
+	}
+
+	/**
+	 *
+	 */
+	// FIXME - shouldn't need to pass in response
+	private void username(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
+		next.addObject(JMController.PARAMETER_TITLE, "Wiki Membership");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String user = null;
+		if (request.getParameter("username") != null && request.getParameter("username").length() > 0) {
+			user = request.getParameter("username");
+		}
+		if (user == null) {
+			user = Utilities.getUserFromRequest(request);
+		}
+		Cookie c = Utilities.createUsernameCookie(user);
+		try {
+			response.addCookie(c);
+		} catch (Exception e) {
+			logger.error("Unable to set cookie " + c.getName() + " with value " + c.getValue());
+			throw e;
+		}
 	}
 }
