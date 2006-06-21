@@ -13,11 +13,6 @@
 <f:setBundle basename="ApplicationResources"/>
 
 <%
-  String message = "";
-
-  if( request.getParameter("message") != null ){
-    message = request.getParameter("message");
-  }
   Collection readOnlyTopics = new ArrayList();
   try{
     WikiBase wb = WikiBase.getInstance();
@@ -109,9 +104,7 @@ function onUserGroupType() {
   </table>
 </form>
 <form name="form1" method="post" action="<jmwiki:link value="Special:Admin" />">
-<% if( !message.equals("") ){%>
-<p class="red"><%=message%></p>
-<%}%>
+<c:if test="${!empty message}"><p class="red"><c:out value="${message}" /></p></c:if>
   <p class="subHeader"><f:message key="admin.title.settings"/></p>
   <table border="0" class="contents">
 

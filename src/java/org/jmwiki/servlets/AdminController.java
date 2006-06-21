@@ -18,6 +18,7 @@ import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.persistency.db.DatabaseConnection;
 import org.jmwiki.persistency.db.DBDate;
+import org.jmwiki.persistency.db.DatabaseInit;
 import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Encryption;
 import org.jmwiki.utils.JSPUtils;
@@ -29,7 +30,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * The <code>AdminController</code> servlet is the servlet which allows the administrator
  * to perform administrative actions on the wiki.
  */
-public class AdminController implements Controller {
+public class AdminController extends JMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(AdminController.class.getName());
 	private String virtualWiki = null;
@@ -47,12 +48,27 @@ public class AdminController implements Controller {
 		JMController.buildLayout(request, next);
 		String function = request.getParameter("function");
 		if (function == null) function = "";
+		// FIXME - hard coding of "function" values
 		if (!Utilities.isAdmin(request)) {
 			login(request, next);
 			return next;
 		}
 		if (function.equals("logout")) {
 			logout(request, next);
+			return next;
+		}
+		if (isTopic(request, "Special:Upgrade")) {
+			if (function.equals("Create")) {
+				upgradeCreate(request, next);
+			} else if (function.equals("Import")) {
+				upgradeImport(request, next);
+			} else if (function.equals("Purge")) {
+				upgradePurge(request, next);
+			} else if (function.equals("Convert to File")) {
+				upgradeConvertToFile(request, next);
+			} else {
+				upgradeView(request, next);
+			}
 			return next;
 		}
 		if (function == null || function.length() == 0) {
@@ -98,6 +114,9 @@ public class AdminController implements Controller {
 				t.makeTopicWritable(this.virtualWiki);
 			}
 		}
+		if (this.message != null) {
+			next.addObject("message", this.message);
+		}
 		// FIXME - put the message object in the response
 		return next;
 	}
@@ -105,7 +124,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) {
+	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) throws Exception {
 		String newWiki = request.getParameter("newVirtualWiki");
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
@@ -124,7 +143,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void changePassword(HttpServletRequest request, ModelAndView next) {
+	private void changePassword(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -150,7 +169,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void clearEditLock(HttpServletRequest request, ModelAndView next) {
+	private void clearEditLock(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -167,11 +186,12 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void login(HttpServletRequest request, ModelAndView next) {
+	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String page = JMController.getTopicFromURI(request);
 		next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Admin"));
+		buffer.append(Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page));
 		next.addObject("redirect", buffer.toString());
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
@@ -181,7 +201,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void logout(HttpServletRequest request, ModelAndView next) {
+	private void logout(HttpServletRequest request, ModelAndView next) throws Exception {
 		request.getSession().removeAttribute("admin");
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
@@ -191,7 +211,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void panic(HttpServletRequest request, ModelAndView next) {
+	private void panic(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -205,7 +225,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void properties(HttpServletRequest request, ModelAndView next) {
+	private void properties(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -471,7 +491,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void purge(HttpServletRequest request, ModelAndView next) {
+	private void purge(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -496,7 +516,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void purgeVersions(HttpServletRequest request, ModelAndView next) {
+	private void purgeVersions(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -513,7 +533,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void refreshIndex(HttpServletRequest request, ModelAndView next) {
+	private void refreshIndex(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -529,7 +549,7 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void removeUser(HttpServletRequest request, ModelAndView next) {
+	private void removeUser(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
@@ -550,7 +570,80 @@ public class AdminController implements Controller {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next) {
+	private void upgradeConvertToFile(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			DatabaseInit.convertToFile();
+			next.addObject("message", "Database values successfully written to files");
+		} catch (Exception e) {
+			logger.error("Failure while executing database-to-file conversion", e);
+			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
+		}
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
+	private void upgradeCreate(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			DatabaseInit.initialize();
+			next.addObject("message", "Database tables successfully created");
+		} catch (Exception e) {
+			logger.error("Failure while executing database creation", e);
+			next.addObject("errorMessage", "Failure while executing database creation: " + e.getMessage());
+		}
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
+	private void upgradeImport(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			DatabaseInit.convert();
+			next.addObject("message", "Database tables successfully imported");
+		} catch (Exception e) {
+			logger.error("Failure while executing database import", e);
+			next.addObject("errorMessage", "Failure while executing database imoprt: " + e.getMessage());
+		}
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
+	private void upgradePurge(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			DatabaseInit.cleanup();
+			next.addObject("message", "Database tables successfully purged");
+		} catch (Exception e) {
+			logger.error("Failure while executing database cleanup", e);
+			next.addObject("errorMessage", "Failure while executing database cleanup: " + e.getMessage());
+		}
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
+	private void upgradeView(HttpServletRequest request, ModelAndView next) throws Exception {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");

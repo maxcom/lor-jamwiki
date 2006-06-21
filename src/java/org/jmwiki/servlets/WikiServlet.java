@@ -43,6 +43,7 @@ public class WikiServlet extends JMController implements Controller {
 	private static final Logger logger = Logger.getLogger(WikiServlet.class);
 	// constants used as the action parameter in calls to this servlet
 	public static final String ACTION_ADMIN = "action_admin";
+	public static final String ACTION_ADMIN_UPGRADE = "action_admin_upgrade";
 	public static final String ACTION_ATTACH = "action_attach";
 	public static final String ACTION_CANCEL = "Cancel";
 	public static final String ACTION_DIFF = "action_diff";

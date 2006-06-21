@@ -30,7 +30,7 @@ public class ConvertVQWiki {
 	/**
 	 *
 	 */
-	private void convertFromDatabase() throws Exception {
+	protected static void convertFromDatabase() throws Exception {
 		Connection conn = null;
 		String sql = null;
 		try {

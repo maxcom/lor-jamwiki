@@ -10,6 +10,7 @@
 		<property name="mappings">
 			<props>
 				<prop key="/**/Special:Admin">adminController</prop>
+				<prop key="/**/Special:Upgrade">adminController</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:Notify">Notify</prop>

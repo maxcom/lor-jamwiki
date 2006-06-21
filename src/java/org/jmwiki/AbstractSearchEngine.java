@@ -391,7 +391,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		}
 		try {
 			// check, if classes are here:
-			Class.forName("jmwiki.utils.lucene.HTMLParser");
+			Class.forName("org.jmwiki.utils.lucene.HTMLParser");
 			canParseHTML = true;
 		} catch (ClassNotFoundException e) {
 			canParseHTML = false;
@@ -583,7 +583,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				}
 				if (canParsePDF && ("pdf".equals(extension))) {
 					try {
-						Class pdfclass = Class.forName("jmwiki.utils.lucene.PDFDocument");
+						Class pdfclass = Class.forName("org.jmwiki.utils.lucene.PDFDocument");
 						Object pdfdocument = pdfclass.newInstance();
 						Method method = pdfclass.getMethod("getContentOfPDFFile", new Class[]{String.class, File.class});
 						Object result = method.invoke(pdfdocument, new Object[]{attachmentFileName, attachmentFile});

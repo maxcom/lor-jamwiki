@@ -49,7 +49,7 @@ public class DatabaseInit {
 	/**
 	 * FIXME: temporary
 	 */
-	public void cleanup() throws Exception {
+	public static void cleanup() throws Exception {
 		Connection conn = null;
 		String sql = null;
 		try {
@@ -60,73 +60,73 @@ public class DatabaseInit {
 				sql = "DROP TABLE vqw_recent_change";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP TABLE vqw_notification";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP TABLE vqw_topic_version";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP TABLE vqw_topic";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP TABLE vqw_author";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP TABLE vqw_virtual_wiki";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_virtual_wiki_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_author_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_topic_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_topic_version_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_notification_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
 				sql = "DROP SEQUENCE vqw_recent_change_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
-				logger.warn("Failure while executing " + sql);
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			st.close();
 		} catch (Exception e) {
@@ -142,7 +142,7 @@ public class DatabaseInit {
 	/**
 	 *
 	 */
-	public void convertToFile() throws Exception {
+	public static void convertToFile() throws Exception {
 		// language does not matter here
 		FileHandler fileHandler = new FileHandler();
 		DatabaseHandler databaseHandler = new DatabaseHandler();
@@ -243,13 +243,21 @@ public class DatabaseInit {
 	}
 
 	/**
+	 *
+	 */
+	// FIXME - temporary
+	public static void convert() throws Exception {
+		ConvertVQWiki.convertFromDatabase();
+	}
+
+	/**
 	 * Run the create tables script
 	 * Ignore SQL exceptions as these may just be the result of existing tables getting in the
 	 * way of create table calls
 	 *
 	 * @throws java.lang.Exception
 	 */
-	protected static void initialize() throws Exception {
+	public static void initialize() throws Exception {
 		String script = DatabaseInit.createScript();
 		String contents = Utilities.readFile(script);
 		StringTokenizer tokens = new StringTokenizer(contents, ";");
