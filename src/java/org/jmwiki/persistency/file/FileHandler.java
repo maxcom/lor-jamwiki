@@ -45,6 +45,20 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	public void addTopic(Topic topic) throws Exception {
+		// FIXME - implement this
+	}
+
+	/**
+	 *
+	 */
+	public void addTopicVersion(TopicVersion topicVersion) throws Exception {
+		// FIXME - implement this
+	}
+
+	/**
+	 *
+	 */
 	public Collection getRecentChanges(String virtualWiki, int num) throws Exception {
 		// FIXME - implement this
 		return new Vector();
@@ -54,13 +68,6 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public void updateTopic(Topic topic) throws Exception {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void insertTopicVersion(TopicVersion topicVersion) throws Exception {
 		// FIXME - implement this
 	}
 
