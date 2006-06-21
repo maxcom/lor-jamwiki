@@ -39,7 +39,7 @@ CREATE TABLE vqw_topic (
   topic_name VARCHAR(200) NOT NULL,
   topic_locked_by INTEGER,
   topic_lock_date TIMESTAMP,
-  topic_readonly BOOLEAN DEFAULT FALSE,
+  topic_read_only BOOLEAN DEFAULT FALSE,
   /* standard article, user page, talk page, template */
   topic_type INTEGER NOT NULL,
   CONSTRAINT vqw_pk_topic PRIMARY KEY (topic_id),

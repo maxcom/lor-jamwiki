@@ -608,7 +608,7 @@ public class AdminController extends JMController implements Controller {
 			next.addObject("message", "Database tables successfully imported");
 		} catch (Exception e) {
 			logger.error("Failure while executing database import", e);
-			next.addObject("errorMessage", "Failure while executing database imoprt: " + e.getMessage());
+			next.addObject("errorMessage", "Failure while executing database import: " + e.getMessage());
 		}
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN_UPGRADE);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));

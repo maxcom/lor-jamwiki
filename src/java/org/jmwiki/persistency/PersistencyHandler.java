@@ -21,15 +21,15 @@ public interface PersistencyHandler {
 	public Collection getRecentChanges(String virtualWiki, int num) throws Exception;
 
 	/**
-	 * Create a new topic, or update the existing topic if it already exists.
-	 */
-	public void updateTopic(Topic topic) throws Exception;
-
-	/**
 	 * Create a new topic version.  The parent topic must already exist for the
 	 * new version to be successfully created.
 	 */
 	public void insertTopicVersion(TopicVersion topicVersion) throws Exception;
+
+	/**
+	 * Create a new topic, or update the existing topic if it already exists.
+	 */
+	public void updateTopic(Topic topic) throws Exception;
 
 	// ======================================
 	// DELETE THE CODE BELOW

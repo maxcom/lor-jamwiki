@@ -36,7 +36,8 @@ public class TopicVersion {
 	private static final int EDIT_MINOR = 2;
 	private static final int EDIT_REVERT = 3;
 	private static final int EDIT_MOVE = 4;
-	private int authorId = -1;
+	// FIXME - change back to -1 once author handling works
+	private int authorId = 1;
 	private String editComment = null;
 	private Timestamp editDate = null;
 	private int editType = EDIT_NORMAL;

@@ -262,19 +262,12 @@ public class Utilities {
 	 * @return the altered string
 	 */
 	public static String replaceString(String text, String find, String replace) {
-		int findLength = find.length();
-		StringBuffer buffer = new StringBuffer();
-		int i;
-		for (i = 0; i < text.length() - find.length() + 1; i++) {
-			String substring = text.substring(i, i + findLength);
-			if (substring.equals(find)) {
-				buffer.append(replace);
-				i += find.length() - 1;
-			} else {
-				buffer.append(text.charAt(i));
-			}
+		StringBuffer buffer = new StringBuffer(text);
+		int i = 0;
+		while ((i = buffer.indexOf(find, i)) != -1) {
+			buffer.replace(i, i + find.length(), replace);
+			i = i + replace.length();
 		}
-		buffer.append(text.substring(text.length() - (text.length() - i)));
 		return buffer.toString();
 	}
 

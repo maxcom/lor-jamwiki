@@ -6,6 +6,8 @@ package org.jmwiki.persistency.db;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import org.apache.commons.dbcp.AbandonedConfig;
@@ -56,15 +58,15 @@ public class DatabaseConnection {
 	 *
 	 */
 	public static Connection getConnection() throws Exception {
-		logger.debug("get Connection from pool.");
 		String url = Environment.getValue(Environment.PROP_DB_URL);
 		String userName = Environment.getValue(Environment.PROP_DB_USERNAME);
 		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD);
+		Connection conn = null;
 		if (url.startsWith("jdbc:")) {
 			if (!poolInitialized) {
 				setUpConnectionPool(url, userName, password);
 			}
-			return DriverManager.getConnection("jdbc:apache:commons:dbcp:jmwiki");
+			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jmwiki");
 		} else {
 			// Use Reflection here to avoid a compile time dependency
 			// on the DataSource interface. It's not available by default
@@ -81,8 +83,10 @@ public class DatabaseConnection {
 				m = dataSource.getClass().getMethod("getConnection", new Class[]{String.class, String.class});
 				args = new Object[]{userName, password};
 			}
-			return (Connection) m.invoke(dataSource, args);
+			conn = (Connection)m.invoke(dataSource, args);
 		}
+		conn.setAutoCommit(true);
+		return conn;
 	}
 
 	/**
@@ -93,14 +97,56 @@ public class DatabaseConnection {
 	}
 
 	/**
+	 * Utility method for closing a database connection, a statement and a result set.
+	 * This method must ALWAYS be called for any connection retrieved by the
+	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
+	 * connection SHOULD NOT have already been closed.
 	 *
+	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
+	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
+	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
+	 * @param rs A result set object that is to be closed.  May be <code>null</code>.
+	 */
+	public static void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {}
+		}
+		DatabaseConnection.closeConnection(conn, stmt);
+	}
+
+	/**
+	 * Utility method for closing a database connection and a statement.  This method
+	 * must ALWAYS be called for any connection retrieved by the
+	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
+	 * connection SHOULD NOT have already been closed.
+	 *
+	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
+	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
+	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
+	 */
+	public static void closeConnection(Connection conn, Statement stmt) {
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (Exception e) {}
+		}
+		DatabaseConnection.closeConnection(conn);
+	}
+
+	/**
+	 * Utility method for closing a database connection.  This method must ALWAYS be
+	 * called for any connection retrieved by the
+	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
+	 * connection SHOULD NOT have already been closed.
+	 *
+	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
+	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
 	 */
 	public static void closeConnection(Connection conn) {
-		logger.debug("release connection to pool.");
 		if (conn == null) {
-			String msg = "Attempt to call DatabaseConnection.closeConnection() "
-					   + "with null connection value";
-			logger.info(msg);
+			logger.info("Attempt to call DatabaseConnection.closeConnection() with null connection value");
 			return;
 		}
 		try {

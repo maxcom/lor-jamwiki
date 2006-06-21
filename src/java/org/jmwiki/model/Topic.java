@@ -51,7 +51,7 @@ public class Topic implements Serializable {
 	private boolean readOnly = false;
 	private int topicId = -1;
 	private int topicType = TYPE_ARTICLE;
-	private int virtualWiki = -1;
+	private String virtualWiki = null;
 	private static Logger logger = Logger.getLogger(Topic.class);
 
 	/**
@@ -161,14 +161,14 @@ public class Topic implements Serializable {
 	/**
 	 *
 	 */
-	public int getVirtualWiki() {
+	public String getVirtualWiki() {
 		return this.virtualWiki;
 	}
 
 	/**
 	 *
 	 */
-	public void setVirtualWiki(int virtualWiki) {
+	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
 	}
 

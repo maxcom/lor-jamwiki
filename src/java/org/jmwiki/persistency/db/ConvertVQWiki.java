@@ -84,7 +84,7 @@ public class ConvertVQWiki {
 			sql = "SELECT topic, virtualwiki FROM TopicReadOnly ";
 			rs = results.executeQuery(sql);
 			while (rs.next()) {
-				sql = "UPDATE vqw_topic set topic_readonly = TRUE "
+				sql = "UPDATE vqw_topic set topic_read_only = TRUE "
 					+ "WHERE topic_name = '" + rs.getString("topic") + "' "
 					+ "AND virtual_wiki_id = ( "
 					+   "SELECT virtual_wiki_id FROM vqw_virtual_wiki "
