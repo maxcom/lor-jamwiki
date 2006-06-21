@@ -1,5 +1,18 @@
 /**
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE, version 2.1, dated February 1999.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the latest version of the GNU Lesser General
+ * Public License as published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program (gpl.txt); if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.jmwiki.persistency.db;
 
@@ -39,121 +52,122 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
 	private static Hashtable virtualWikiHash = null;
 
+	private static final String STATEMENT_INSERT_TOPIC =
+		"insert into vqw_topic ( "
+		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
+		+   "topic_locked_by, topic_lock_date, topic_read_only "
+		+ ") values ( "
+		+   "?, ?, ?, ?, ?, ?, ? "
+		+ ") ";
+	private static final String STATEMENT_INSERT_TOPIC_VERSION =
+		"insert into vqw_topic_version ("
+		+   "topic_version_id, topic_id, edit_comment, version_content, "
+		+   "author_id, edit_date, edit_type "
+		+ ") values ( "
+		+   "?, ?, ?, ?, ?, ?, ? "
+		+ ") ";
+	private static final String STATEMENT_INSERT_VIRTUAL_WIKI =
+		"insert into vqw_virtual_wiki ("
+		+   "virtual_wiki_id, virtual_wiki_name "
+		+ ") values ( "
+		+   "?, ? "
+		+ ") ";
+	private static final String STATEMENT_SELECT_TOPIC =
+		"select topic_id from vqw_topic "
+		+ "where virtual_wiki_id = ? "
+		+ "and topic_name = ? ";
+	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
+		"select nextval('vqw_topic_seq') as topic_id ";
+	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
+		"select nextval('vqw_topic_version_seq') as topic_version_id ";
+	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
+		"select nextval('vqw_virtual_wiki_seq') as virtual_wiki_id ";
+	private static final String STATEMENT_UPDATE_TOPIC =
+		"update vqw_topic set "
+		+ "virtual_wiki_id = ?, "
+		+ "topic_name = ?, "
+		+ "topic_type = ?, "
+		+ "topic_locked_by = ?, "
+		+ "topic_lock_date = ?, "
+		+ "topic_read_only = ? "
+		+ "where topic_id = ? ";
+
 	/**
 	 *
 	 */
 	public void addTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(topic.getVirtualWiki());
-		// FIXME - switch this to a PreparedStatement
-		String sql = "select nextval('vqw_topic_seq') as topic_id ";
-		WikiResultSet rs = DatabaseHandler.executeQuery(sql);
-		topic.setTopicId(rs.getInt("topic_id"));
-		sql = "insert into vqw_topic ( "
-		    +   "topic_id, virtual_wiki_id, topic_name, topic_type, "
-		    +   "topic_locked_by, topic_lock_date, topic_read_only "
-		    + ") values ( "
-		    +   topic.getTopicId() + ", "
-		    +   virtualWikiId + ", "
-		    +   escapeSQL(topic.getName()) + ", "
-		    +   topic.getTopicType() + ", "
-		    +   topic.getLockedBy() + ", "
-		    +   topic.getLockedDate() + ", "
-		    +   topic.getReadOnly() + " "
-		    + ") ";
-		DatabaseHandler.executeUpdate(sql);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
+			topic.setTopicId(rs.getInt("topic_id"));
+			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC);
+			stmt.setInt(1, topic.getTopicId());
+			stmt.setInt(2, virtualWikiId);
+			stmt.setString(3, topic.getName());
+			stmt.setInt(4, topic.getTopicType());
+			stmt.setInt(5, topic.getLockedBy());
+			stmt.setTimestamp(6, topic.getLockedDate());
+			stmt.setBoolean(7, topic.getReadOnly());
+			stmt.executeUpdate();
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt);
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void addTopicVersion(TopicVersion topicVersion) throws Exception {
-		// FIXME - use PreparedStatement
-		String sql;
-		sql = "select nextval('vqw_topic_version_seq') as topic_version_id ";
-		WikiResultSet rs = DatabaseHandler.executeQuery(sql);
-		topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
-		sql = "insert into vqw_topic_version ("
-		    +   "topic_version_id, topic_id, edit_comment, version_content, "
-		    +   "author_id, edit_date, edit_type "
-		    + ") values ( "
-		    +   topicVersion.getTopicVersionId() + ", "
-		    +   topicVersion.getTopicId() + ", "
-		    +   escapeSQL(topicVersion.getEditComment()) + ", "
-		    +   escapeSQL(topicVersion.getVersionContent()) + ", "
-		    +   topicVersion.getAuthorId() + ", "
-		    // FIXME - CURRENT_TIME is postgres specific, also, what if it has been set already?
-		    +   "CURRENT_TIMESTAMP, "
-//		    +   topicVersion.getEditDate() + ", "
-		    +   topicVersion.getEditType() + " "
-		    + ") ";
-		DatabaseHandler.executeUpdate(sql);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, conn);
+			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_VERSION);
+			stmt.setInt(1, topicVersion.getTopicVersionId());
+			stmt.setInt(2, topicVersion.getTopicId());
+			stmt.setString(3, topicVersion.getEditComment());
+			stmt.setString(4, topicVersion.getVersionContent());
+			stmt.setInt(5, topicVersion.getAuthorId());
+			// FIXME - it would be better to let this default to CURRENT_TIMESTAMP...
+			stmt.setTimestamp(6, topicVersion.getEditDate());
+			stmt.setInt(7, topicVersion.getEditType());
+			stmt.executeUpdate();
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt);
+			}
+		}
 	}
 
 	/**
 	 *
 	 */
 	public void addVirtualWiki(String virtualWikiName) throws Exception {
-		// FIXME - use PreparedStatement
-		String sql;
-		sql = "select nextval('vqw_virtual_wiki_seq') as virtual_wiki_id ";
-		WikiResultSet rs = DatabaseHandler.executeQuery(sql);
-		int virtualWikiId = rs.getInt("virtual_wiki_id");
-		sql = "insert into vqw_virtual_wiki ("
-		    +   "virtual_wiki_id, virtual_wiki_name "
-		    + ") values ( "
-		    +   virtualWikiId + ", "
-		    +   escapeSQL(virtualWikiName) + " "
-		    + ") ";
-		DatabaseHandler.executeUpdate(sql);
-		if (virtualWikiHash != null) {
-			virtualWikiHash.put(virtualWikiName, new Integer(virtualWikiId));
-		}
-	}
-
-	/**
-	 *
-	 */
-	public static String escapeSQL(String sql) {
-		// FIXME - hard coding of "NULL" should be database-specific
-		if (sql == null) return "NULL";
-		return "'" + Utilities.replaceString(sql, "'", "''") + "'";
-	}
-
-	/**
-	 *
-	 */
-	protected static WikiResultSet executeQuery(String sql) throws Exception {
 		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		int virtualWikiId;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.createStatement();
-			logger.info("Executing SQL: " + sql);
-			rs = stmt.executeQuery(sql);
-			return new WikiResultSet(rs);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	protected static void executeUpdate(String sql) throws Exception {
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.createStatement();
-			logger.info("Executing SQL: " + sql);
-			stmt.executeUpdate(sql);
+			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE, conn);
+			virtualWikiId = rs.getInt("virtual_wiki_id");
+			stmt = conn.prepareStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, virtualWikiName);
+			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
 				DatabaseConnection.closeConnection(conn, stmt);
 			}
+		}
+		if (virtualWikiHash != null) {
+			virtualWikiHash.put(virtualWikiName, new Integer(virtualWikiId));
 		}
 	}
 
@@ -170,11 +184,21 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public int lookupTopic(String virtualWiki, String topic) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(virtualWiki);
-		String sql = "select topic_id from vqw_topic "
-		           + "where virtual_wiki_id = " + virtualWikiId + " "
-		           + "and topic_name = " + escapeSQL(topic) + " ";
-		WikiResultSet rs = executeQuery(sql);
-		return (rs.next() ? rs.getInt("topic_id") : -1);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topic);
+			rs = stmt.executeQuery();
+			return (rs.next() ? rs.getInt("topic_id") : -1);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
+		}
 	}
 
 	/**
@@ -198,7 +222,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		virtualWikiHash = new Hashtable();
 		String sql = "select * from vqw_virtual_wiki ";
 		try {
-			WikiResultSet rs = DatabaseHandler.executeQuery(sql);
+			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
 			while (rs.next()) {
 				Integer value = new Integer(rs.getInt("virtual_wiki_id"));
 				String key = rs.getString("virtual_wiki_name");
@@ -218,17 +242,24 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public void updateTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(topic.getVirtualWiki());
-		String sql = null;
-		// FIXME - switch this to a PreparedStatement
-		sql = "update vqw_topic set "
-		    + "virtual_wiki_id = " + virtualWikiId + ", "
-		    + "topic_name = " + escapeSQL(topic.getName()) + ", "
-		    + "topic_type = " + topic.getTopicType() + ", "
-		    + "topic_locked_by = " + topic.getLockedBy() + ", "
-		    + "topic_lock_date = " + topic.getLockedDate() + ", "
-		    + "topic_read_only = " + topic.getReadOnly() + " "
-		    + "where topic_id = " + topic.getTopicId() + " ";
-		DatabaseHandler.executeUpdate(sql);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topic.getName());
+			stmt.setInt(3, topic.getTopicType());
+			stmt.setInt(4, topic.getLockedBy());
+			stmt.setTimestamp(5, topic.getLockedDate());
+			stmt.setBoolean(6, topic.getReadOnly());
+			stmt.setInt(7, topic.getTopicId());
+			stmt.executeUpdate();
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt);
+			}
+		}
 	}
 
 	// ======================================
@@ -314,7 +345,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static boolean dbInitialized() {
 		String sql = "select 1 from vqw_virtual_wiki ";
 		try {
-			WikiResultSet rs = executeQuery(sql);
+			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
 			return rs.next();
 		} catch (Exception e) {
 			// thrown if table doesn't exist, so safe to ignore
@@ -336,12 +367,12 @@ public class DatabaseHandler implements PersistencyHandler {
 		String sql = null;
 		WikiResultSet rs = null;
 		sql = "select 1 from vqw_virtual_wiki ";
-		rs = executeQuery(sql);
+		rs = DatabaseConnection.executeQuery(sql);
 		if (!rs.next()) {
 			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		}
 		sql = "select * from vqw_virtual_wiki ";
-		rs = executeQuery(sql);
+		rs = DatabaseConnection.executeQuery(sql);
 		while (rs.next()) {
 			String vWiki = rs.getString("virtual_wiki_name");
 			// starting points

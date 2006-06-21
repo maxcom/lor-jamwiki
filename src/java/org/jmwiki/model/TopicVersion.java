@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *
  */
 package org.jmwiki.model;
 
@@ -39,7 +38,7 @@ public class TopicVersion {
 	// FIXME - change back to -1 once author handling works
 	private int authorId = 1;
 	private String editComment = null;
-	private Timestamp editDate = null;
+	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
 	private int topicId = -1;
 	private int topicVersionId = -1;

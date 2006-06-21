@@ -1,5 +1,18 @@
 /**
+ * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE, version 2.1, dated February 1999.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the latest version of the GNU Lesser General
+ * Public License as published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program (gpl.txt); if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package org.jmwiki.persistency.db;
 
@@ -57,7 +70,80 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	public static Connection getConnection() throws Exception {
+	protected static WikiResultSet executeQuery(String sql) throws Exception {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			return executeQuery(sql, conn);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn);
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static WikiResultSet executeQuery(String sql, Connection conn) throws Exception {
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			logger.info("Executing SQL: " + sql);
+			rs = stmt.executeQuery(sql);
+			return new WikiResultSet(rs);
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (Exception e) {}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (Exception e) {}
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static void executeUpdate(String sql) throws Exception {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			executeUpdate(sql, conn);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn);
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static void executeUpdate(String sql, Connection conn) throws Exception {
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			logger.info("Executing SQL: " + sql);
+			stmt.executeUpdate(sql);
+		} finally {
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (Exception e) {}
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static Connection getConnection() throws Exception {
 		String url = Environment.getValue(Environment.PROP_DB_URL);
 		String userName = Environment.getValue(Environment.PROP_DB_USERNAME);
 		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD);
