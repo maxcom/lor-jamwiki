@@ -1,18 +1,4 @@
 /**
- * Licensed under the GNU LESSER GENERAL PUBLIC LICENSE, version 2.1, dated February 1999.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the latest version of the GNU Lesser General
- * Public License as published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program (gpl.txt); if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
 package org.jmwiki.servlets;
@@ -61,7 +47,6 @@ public class AdminController implements Controller {
 		JMController.buildLayout(request, next);
 		String function = request.getParameter("function");
 		if (function == null) function = "";
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		if (!Utilities.isAdmin(request)) {
 			login(request, next);
 			return next;
@@ -122,6 +107,9 @@ public class AdminController implements Controller {
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) {
 		String newWiki = request.getParameter("newVirtualWiki");
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
 			WikiBase.getInstance().addVirtualWiki(newWiki);
@@ -137,6 +125,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void changePassword(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			String oldPassword = request.getParameter("oldPassword");
 			String newPassword = request.getParameter("newPassword");
@@ -160,6 +151,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void clearEditLock(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase base = WikiBase.getInstance();
 			base.unlockTopic(request.getParameter("virtualWiki"), request.getParameter("topic"));
@@ -175,12 +169,13 @@ public class AdminController implements Controller {
 	 */
 	private void login(HttpServletRequest request, ModelAndView next) {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		request.setAttribute("title", JMController.getMessage("login.title", request.getLocale()));
+		next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Admin"));
-		request.setAttribute("redirect", buffer.toString());
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
-		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject("redirect", buffer.toString());
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Login");
 	}
 
 	/**
@@ -188,14 +183,18 @@ public class AdminController implements Controller {
 	 */
 	private void logout(HttpServletRequest request, ModelAndView next) {
 		request.getSession().removeAttribute("admin");
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
-		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Login");
 	}
 
 	/**
 	 *
 	 */
 	private void panic(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase.getInstance().panic();
 		} catch (Exception e) {
@@ -207,6 +206,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void properties(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			Encryption.togglePropertyEncryption(request.getParameter(Environment.PROP_BASE_ENCODE_PASSWORDS) != null);
 			Environment.setIntValue(
@@ -470,6 +472,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void purge(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			Collection purged = WikiBase.getInstance().purgeDeletes(request.getParameter("virtualWiki"));
 			StringBuffer buffer = new StringBuffer();
@@ -492,6 +497,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void purgeVersions(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			DateFormat dateFormat = DateFormat.getInstance();
 			DBDate date = new DBDate(dateFormat.parse(request.getParameter("purgedate")));
@@ -506,6 +514,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void refreshIndex(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
 			this.message = JMController.getMessage("admin.message.indexrefreshed", request.getLocale());
@@ -519,6 +530,9 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void removeUser(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		String user = request.getParameter("userName");
 		try {
 			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(this.virtualWiki);
@@ -537,5 +551,8 @@ public class AdminController implements Controller {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 	}
 }

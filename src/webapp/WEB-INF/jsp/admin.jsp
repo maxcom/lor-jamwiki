@@ -3,11 +3,11 @@
     org.jmwiki.WikiBase,
     org.jmwiki.servlets.WikiServlet,
     org.jmwiki.utils.Encryption,
-    org.jmwiki.utils.JSPUtils,
     org.jmwiki.users.Usergroup,
-    java.util.*,
-    org.apache.commons.pool.impl.*,
-    java.sql.SQLException
+    java.util.ArrayList,
+    java.util.Collection,
+    java.util.Iterator,
+    org.apache.commons.pool.impl.GenericObjectPool
 " %>
 
 <f:setBundle basename="ApplicationResources"/>

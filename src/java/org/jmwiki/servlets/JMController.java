@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class JMController extends HttpServlet {
 
 	private static final Logger logger = Logger.getLogger(JMController.class);
+	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 

@@ -50,7 +50,7 @@ public class Environment {
 	public static final String PROP_ATTACH_TIMESTAMP = "attachment-timestamp";
 	public static final String PROP_ATTACH_TYPE = "attachment-type";
 	public static final String PROP_ATTACH_UPLOAD_DIR = "uploadDir";
-	public static final String PROP_BASE_ADMIN_PASSWORD = "adminPassword";
+	public static final String PROP_BASE_ADMIN_PASSWORD = "admin-password";
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_ENCODE_PASSWORDS = "encode-passwords";
@@ -60,10 +60,10 @@ public class Environment {
 	public static final String PROP_BASE_SERVER_HOSTNAME = "wiki-server-hostname";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_DB_DRIVER= "driver";
-	public static final String PROP_DB_PASSWORD = "password";
+	public static final String PROP_DB_PASSWORD = "db-password";
 	public static final String PROP_DB_TYPE = "database-type";
 	public static final String PROP_DB_URL = "url";
-	public static final String PROP_DB_USERNAME = "username";
+	public static final String PROP_DB_USERNAME = "db-user";
 	public static final String PROP_DBCP_LOG_ABANDONED = "dbcp-log-abandoned";
 	public static final String PROP_DBCP_MAX_ACTIVE = "dbcp-max-active";
 	public static final String PROP_DBCP_MAX_IDLE = "dbcp-max-idle";
