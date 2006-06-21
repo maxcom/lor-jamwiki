@@ -11,7 +11,6 @@
 " %>
 
 <f:setBundle basename="ApplicationResources"/>
-<jmwiki:is-admin var="admin"/>
 
 <%
   String message = "";

@@ -24,15 +24,6 @@
     </attribute>
   </tag>
   <tag>
-    <name>is-admin</name>
-    <tag-class>org.jmwiki.tags.IsAdminTag</tag-class>
-    <body-content>JSP</body-content>
-    <attribute>
-      <name>var</name>
-      <required>true</required>
-    </attribute>
-  </tag>
-  <tag>
     <name>encode</name>
     <tag-class>org.jmwiki.tags.EncodeTag</tag-class>
     <body-content>JSP</body-content>
