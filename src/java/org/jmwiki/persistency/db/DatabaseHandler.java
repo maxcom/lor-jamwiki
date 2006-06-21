@@ -55,9 +55,9 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static final String STATEMENT_INSERT_TOPIC =
 		"insert into jmw_topic ( "
 		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
-		+   "topic_locked_by, topic_lock_date, topic_read_only "
+		+   "topic_locked_by, topic_lock_date, topic_read_only, topic_content "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_INSERT_TOPIC_VERSION =
 		"insert into jmw_topic_version ("
@@ -89,7 +89,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		+ "topic_type = ?, "
 		+ "topic_locked_by = ?, "
 		+ "topic_lock_date = ?, "
-		+ "topic_read_only = ? "
+		+ "topic_read_only = ?, "
+		+ "topic_content = ? "
 		+ "where topic_id = ? ";
 
 	/**
@@ -111,6 +112,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			stmt.setInt(5, topic.getLockedBy());
 			stmt.setTimestamp(6, topic.getLockedDate());
 			stmt.setBoolean(7, topic.getReadOnly());
+			stmt.setString(8, topic.getTopicContent());
 			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
@@ -253,7 +255,8 @@ public class DatabaseHandler implements PersistencyHandler {
 			stmt.setInt(4, topic.getLockedBy());
 			stmt.setTimestamp(5, topic.getLockedDate());
 			stmt.setBoolean(6, topic.getReadOnly());
-			stmt.setInt(7, topic.getTopicId());
+			stmt.setString(7, topic.getTopicContent());
+			stmt.setInt(8, topic.getTopicId());
 			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
@@ -515,6 +518,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			Topic topic = new Topic();
 			topic.setName(topicName);
 			topic.setVirtualWiki(virtualWiki);
+			topic.setTopicContent(contents);
 			int topicId = lookupTopic(topic.getVirtualWiki(), topic.getName());
 			topic.setTopicId(topicId);
 			if (topicId == -1) {

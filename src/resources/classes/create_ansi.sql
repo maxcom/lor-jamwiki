@@ -40,6 +40,7 @@ CREATE TABLE jmw_topic (
   topic_locked_by INTEGER,
   topic_lock_date TIMESTAMP,
   topic_read_only BOOLEAN DEFAULT FALSE,
+  topic_content TEXT,
   /* standard article, user page, talk page, template */
   topic_type INTEGER NOT NULL,
   CONSTRAINT jmw_pk_topic PRIMARY KEY (topic_id),

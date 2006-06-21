@@ -48,6 +48,7 @@ public class Topic implements Serializable {
 	private Timestamp lockedDate = null;
 	private String name = null;
 	private boolean readOnly = false;
+	private String topicContent = null;
 	private int topicId = -1;
 	private int topicType = TYPE_ARTICLE;
 	private String virtualWiki = null;
@@ -127,6 +128,20 @@ public class Topic implements Serializable {
 	 */
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	/**
+	 *
+	 */
+	public String getTopicContent() {
+		return this.topicContent;
+	}
+
+	/**
+	 *
+	 */
+	public void setTopicContent(String topicContent) {
+		this.topicContent = topicContent;
 	}
 
 	/**

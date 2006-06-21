@@ -74,10 +74,11 @@ public class ConvertVQWiki {
 			st.executeUpdate(sql);
 			// jmw_topic
 			sql = "insert into jmw_topic ( "
-				+   "virtual_wiki_id, topic_name, topic_type "
+				+   "virtual_wiki_id, topic_name, topic_type, topic_content "
 				+ ") "
 				+ "SELECT jmw_virtual_wiki.virtual_wiki_id, Topic.name, "
-				+ DatabaseInit.TOPIC_TYPE_DEFAULT + " "
+				+ DatabaseInit.TOPIC_TYPE_DEFAULT + ", "
+				+ "Topic.contents "
 				+ "FROM Topic, jmw_virtual_wiki "
 				+ "WHERE Topic.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
 			st.executeUpdate(sql);
