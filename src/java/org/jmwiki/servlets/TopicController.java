@@ -53,7 +53,7 @@ public class TopicController extends JMController implements Controller {
 		String title = "Special:AllTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject("title", title);
+		next.addObject(JMController.PARAMETER_TITLE, title);
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ALL_TOPICS);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -151,7 +151,7 @@ public class TopicController extends JMController implements Controller {
 		String title = "Special:OrphanedTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject("title", title);
+		next.addObject(JMController.PARAMETER_TITLE, title);
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ORPHANED_TOPICS);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -179,7 +179,7 @@ public class TopicController extends JMController implements Controller {
 		String title = "Special:ToDoTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject("title", title);
+		next.addObject(JMController.PARAMETER_TITLE, title);
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_TODO_TOPICS);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -192,7 +192,7 @@ public class TopicController extends JMController implements Controller {
 		String topicName = JMController.getTopicFromURI(request);
 		Topic topic = new Topic(topicName);
 		topic.loadTopic(virtualWiki);
-		next.addObject("title", topicName);
+		next.addObject(JMController.PARAMETER_TITLE, topicName);
 		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getRenderedContent())));
 		contents = highlight(request, contents);
 		next.addObject("contents", contents);

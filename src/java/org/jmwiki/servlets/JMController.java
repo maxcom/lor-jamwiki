@@ -29,7 +29,7 @@ public abstract class JMController extends HttpServlet {
 	 */
 	protected void error(HttpServletRequest request, HttpServletResponse response, Exception err) {
 		request.setAttribute("exception", err);
-		request.setAttribute("title", "Error");
+		request.setAttribute(JMController.PARAMETER_TITLE, "Error");
 		logger.error(err.getMessage(), err);
 		if (err instanceof WikiServletException) {
 			request.setAttribute("javax.servlet.jsp.jspException", err);

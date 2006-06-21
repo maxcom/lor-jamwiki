@@ -33,8 +33,8 @@ public class DiffServlet extends JMController implements Controller {
 	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String topic = JMController.getTopicFromRequest(request);
-		next.addObject("title", "Diff " + topic);
-		next.addObject("topic", topic);
+		next.addObject(JMController.PARAMETER_TITLE, "Diff " + topic);
+		next.addObject(JMController.PARAMETER_TOPIC, topic);
 		try {
 			Topic t = new Topic(topic);
 			String diffType = request.getParameter("type");

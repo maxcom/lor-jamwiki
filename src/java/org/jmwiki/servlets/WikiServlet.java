@@ -173,7 +173,7 @@ public class WikiServlet extends JMController implements Controller {
 				} catch (Exception e) {
 					logger.error("error running action", e);
 					request.setAttribute("exception", e);
-					request.setAttribute("title", "Error");
+					request.setAttribute(JMController.PARAMETER_TITLE, "Error");
 					log("Error in " + this.getClass(), e);
 					if (e instanceof WikiServletException) {
 						request.setAttribute("javax.servlet.jsp.jspException", e);
@@ -185,7 +185,7 @@ public class WikiServlet extends JMController implements Controller {
 		}
 		logger.debug("no action mappings, assuming topic");
 		request.setAttribute("topic", JSPUtils.decodeURL(topic));
-		request.setAttribute("title", JSPUtils.decodeURL(topic));
+		request.setAttribute(JMController.PARAMETER_TITLE, JSPUtils.decodeURL(topic));
 		// make decision based on topic
 		response.setContentType("text/html");
 		String pseudotopicRedirect = PseudoTopicHandler.getInstance().getRedirectURL(topic);
@@ -256,7 +256,7 @@ public class WikiServlet extends JMController implements Controller {
 		try {
 			if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topic)) {
 				if (!Utilities.isAdmin(request)) {
-					request.setAttribute("title", JMController.getMessage("login.title", request.getLocale()));
+					request.setAttribute(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
 					logger.debug("Current URL: " + request.getRequestURL());
 					String rootPath = JSPUtils.createLocalRootPath(request, virtualWiki);
 					StringBuffer buffer = new StringBuffer();

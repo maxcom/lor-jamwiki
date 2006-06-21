@@ -34,7 +34,7 @@ public class VirtualWikiServlet extends JMController implements Controller {
 		Collection virtualWikiList = WikiBase.getInstance().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		// FIXME - hard coding
-		next.addObject("title", "Special:VirtualWikiList");
+		next.addObject(JMController.PARAMETER_TITLE, "Special:VirtualWikiList");
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_VIRTUAL_WIKI_LIST);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}

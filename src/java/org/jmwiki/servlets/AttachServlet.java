@@ -35,8 +35,8 @@ public class AttachServlet extends JMController implements Controller {
 	private void attach(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topic = JMController.getTopicFromRequest(request);
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		next.addObject("title", "Attach Files to " + topic);
-		next.addObject("topic", topic);
+		next.addObject(JMController.PARAMETER_TITLE, "Attach Files to " + topic);
+		next.addObject(JMController.PARAMETER_TOPIC, topic);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);

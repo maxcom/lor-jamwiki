@@ -45,7 +45,7 @@ public class LockListServlet extends JMController implements Controller {
 			throw new Exception("Error retrieving lock list " + e.getMessage());
 		}
 		next.addObject("locks", locks);
-		next.addObject("title", JMController.getMessage("locklist.title", request.getLocale()));
+		next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("locklist.title", request.getLocale()));
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOCKLIST);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}

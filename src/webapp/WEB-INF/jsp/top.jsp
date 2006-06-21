@@ -20,8 +20,6 @@ if (Utilities.isFirstUse()) {
       // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
       String firstUseUrl = "/jsp/Wiki?action=" + WikiServlet.ACTION_FIRST_USE;
       %>
-      <f:message key="firstuse.title" var="res"/>
-      <c:set var="title" scope="request" value="${res}"/>
       <jsp:forward page="<%= firstUseUrl %>" />
 <%
 }

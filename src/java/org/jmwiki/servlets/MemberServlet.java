@@ -54,7 +54,7 @@ public class MemberServlet extends JMController implements Controller {
 			error(request, response, new WikiServletException(JMController.getMessage("exception.badusername", request.getLocale())));
 			return;
 		}
-		next.addObject("title", "Wiki Membership");
+		next.addObject(JMController.PARAMETER_TITLE, "Wiki Membership");
 		next.addObject("user", user);
 		WikiMembers members = null;
 		Usergroup usergroup = null;

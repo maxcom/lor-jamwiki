@@ -87,7 +87,7 @@ public class EditServlet extends JMController implements Controller {
 		}
 		if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topic)) {
 			if (!Utilities.isAdmin(request)) {
-				next.addObject("title", JMController.getMessage("login.title", request.getLocale()));
+				next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
 				String redirect = Utilities.buildInternalLink(
 					request.getContextPath(),
 					virtualWiki,
@@ -121,7 +121,7 @@ public class EditServlet extends JMController implements Controller {
 		buffer.append(JMController.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
 		buffer.append(topic);
-		next.addObject("title", buffer.toString());
+		next.addObject(JMController.PARAMETER_TITLE, buffer.toString());
 		next.addObject("contents", contents);
 		next.addObject("preview", preview);
 		if (request.getAttribute(WikiServlet.ACTION_PREVIEW) != null) {
@@ -242,7 +242,7 @@ public class EditServlet extends JMController implements Controller {
 		String topicName = request.getParameter(JMController.PARAMETER_TOPIC);
 		Topic topic = new Topic(topicName);
 		topic.loadTopic(virtualWiki);
-		next.addObject("title", topicName);
+		next.addObject(JMController.PARAMETER_TITLE, topicName);
 		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getRenderedContent())));
 		next.addObject("contents", contents);
 	}

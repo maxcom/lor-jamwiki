@@ -61,10 +61,10 @@ public class SearchServlet extends JMController implements Controller {
 		try {
 			String searchField = request.getParameter("text");
 			if (request.getParameter("text") == null) {
-				next.addObject("title", "Special:Search");
+				next.addObject(JMController.PARAMETER_TITLE, "Special:Search");
 			} else {
 				formatter.applyPattern(JMController.getMessage("searchresult.title", request.getLocale()));
-				next.addObject("title", formatter.format(new Object[]{searchField}));
+				next.addObject(JMController.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
 			}
 			// forward back to the search page if the request is blank or null
 			if (searchField == null || searchField.length() == 0) {

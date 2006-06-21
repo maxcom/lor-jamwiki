@@ -36,7 +36,7 @@ public class RecentChangesServlet extends JMController implements Controller {
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		next.addObject("title", JMController.getMessage("recentchanges.title", request.getLocale()));
+		next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("recentchanges.title", request.getLocale()));
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number

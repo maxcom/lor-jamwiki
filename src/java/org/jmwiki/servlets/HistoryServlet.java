@@ -41,7 +41,7 @@ public class HistoryServlet extends JMController implements Controller {
 			manager = WikiBase.getInstance().getVersionManagerInstance();
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
-				next.addObject("title", "History for " + topicName);
+				next.addObject(JMController.PARAMETER_TITLE, "History for " + topicName);
 				Collection versions = manager.getAllVersions(virtualWiki, topicName);
 				next.addObject("versions", versions);
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
@@ -56,7 +56,7 @@ public class HistoryServlet extends JMController implements Controller {
 				);
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("numberOfVersions", new Integer(numberOfVersions));
-				next.addObject("title", topicName + " @" + Utilities.formatDateTime(topicVersion.getRevisionDate()));
+				next.addObject(JMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getRevisionDate()));
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
 			}
 		} catch (Exception e) {
