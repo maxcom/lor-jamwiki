@@ -68,7 +68,6 @@
         </javac>
     </target>
 
-
     <target name="war" depends="compile" description="Construct the war file.">
         <war warfile="${dir.build}/${war.name}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml">
             <classes dir="${dir.build.classes}" includes="org/jmwiki/**" />
@@ -78,6 +77,17 @@
             <zipfileset dir="${dir.src.resources}/images" prefix="images" />
             <zipfileset dir="${dir.src.resources}/js" prefix="js" />
             <zipfileset dir="${dir.src.resources}/css" prefix="css" />
+        </war>
+    </target>
+
+    <target name="war-local" depends="war" description="Construct the war file using local property files.">
+        <war warfile="${dir.build}/${war.name}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml" update="true">
+            <classes dir="${dir.local}">
+            	<include name="*.properties" />
+            </classes>
+            <lib dir="${dir.local}">
+            	<include name="*.jar" />
+            </lib>
         </war>
     </target>
 
