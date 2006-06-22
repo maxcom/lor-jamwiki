@@ -76,6 +76,10 @@ public class DatabaseHandler implements PersistencyHandler {
 		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_name = ? ";
+	private static final String STATEMENT_SELECT_TOPIC_READ_ONLY =
+		"select * from jmw_topic "
+		+ "where virtual_wiki_id = ? "
+		+ "and topic_read_only = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select nextval('jmw_topic_seq') as topic_id ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
@@ -300,6 +304,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		"DELETE FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
 	protected final static String STATEMENT_REMOVE_ANY_LOCK =
 		"DELETE FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
+
+	// FIXME - DELETE BELOW
 	protected final static String STATEMENT_READONLY_INSERT =
 		"INSERT INTO TopicReadOnly( topic, virtualwiki ) VALUES ( ?, ? )";
 	protected final static String STATEMENT_READONLY_DELETE =
@@ -308,6 +314,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		"SELECT topic FROM TopicReadOnly";
 	protected final static String STATEMENT_READONLY_FIND =
 		"SELECT COUNT(*) FROM TopicReadOnly WHERE topic = ? AND virtualwiki = ?";
+	// FIXME - DELETE ABOVE
+
 	protected static final String STATEMENT_PURGE_DELETES =
 		"DELETE FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
 	protected static final String STATEMENT_PURGE_TOPIC =
@@ -643,6 +651,10 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		return topic.getReadOnly();
+		// FIXME - DELETE BELOW
+		/*
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -662,6 +674,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			DatabaseConnection.closeConnection(conn);
 		}
 		return false;
+		*/
 	}
 
 	/**
@@ -669,6 +682,25 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
+		int virtualWikiId = lookupVirtualWiki(virtualWiki);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setBoolean(2, true);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				all.add(rs.getString("topic_name"));
+			}
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
+		}
+		/*
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -682,6 +714,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		*/
 		return all;
 	}
 
@@ -689,6 +722,11 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(true);
+		updateTopic(topic);
+
+		// FIXME - DELETE BELOW
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -700,12 +738,19 @@ public class DatabaseHandler implements PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		// FIXME - DELETE ABOVE
+
 	}
 
 	/**
 	 *
 	 */
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(false);
+		updateTopic(topic);
+
+		// FIXME - DELETE BELOW
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -717,6 +762,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		// FIXME - DELETE ABOVE
+
 	}
 
 	/**

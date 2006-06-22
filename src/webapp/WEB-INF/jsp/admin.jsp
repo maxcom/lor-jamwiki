@@ -13,16 +13,7 @@
 <f:setBundle basename="ApplicationResources"/>
 
 <%
-  Collection readOnlyTopics = new ArrayList();
-  try{
-    WikiBase wb = WikiBase.getInstance();
-    readOnlyTopics = wb.getReadOnlyTopics( (String)request.getAttribute("virtualWiki") );
-  } catch( Exception err ){
-    // Ignore database error - probably just an invalid setting, the
-    // user may not have config'd yet
-  }
-//  boolean attachmentsToDatabase = Environment.isAttachmentsToDatabase();
-  int maximumFileSize = (int)((float)Environment.getIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE)/1000);
+int maximumFileSize = (int)((float)Environment.getIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE)/1000);
 %>
 
 <script type="text/javascript">
@@ -597,6 +588,7 @@ function onUserGroupType() {
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
 <form name="readOnlyTopics" method="post" action="<jmwiki:link value="Special:Admin" />">
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
+  <input type="hidden" name="function" value="readOnly">
   <table border="0">
     <tr>
       <td>
@@ -612,20 +604,14 @@ function onUserGroupType() {
       <td><f:message key="common.topic"/></td>
       <td><f:message key="admin.caption.mark"/></td>
     </tr>
-    <%
-	if( readOnlyTopics != null ){
-      Iterator it = readOnlyTopics.iterator();
-      while( it.hasNext() ){
-          String topic = (String)it.next();
-%>
+    <c:forEach items="${readOnlyTopics}" var="topic">
     <tr>
-      <td><%=topic%></td>
+      <td><c:out value="${topic}" /></td>
       <td>
-        <input type="checkbox" name="markRemove" value="<%=topic%>">
+        <input type="checkbox" name="markRemove" value="<c:out value="${topic}" />" />
       </td>
     </tr>
-    <%}
-    }%>
+    </c:forEach>
     <tr>
       <td>
         <input type="submit" name="removeReadOnly" value="<f:message key="admin.action.remove"/>">

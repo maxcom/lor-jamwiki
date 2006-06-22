@@ -4,6 +4,7 @@
 package org.jmwiki.servlets;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
@@ -33,8 +34,6 @@ import org.springframework.web.servlet.mvc.Controller;
 public class AdminController extends JMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(AdminController.class.getName());
-	private String virtualWiki = null;
-	private String message = null;
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -73,7 +72,6 @@ public class AdminController extends JMController implements Controller {
 		}
 		if (function == null || function.length() == 0) {
 			view(request, next);
-			return next;
 		}
 		if (function.equals("refreshIndex")) {
 			refreshIndex(request, next);
@@ -102,22 +100,11 @@ public class AdminController extends JMController implements Controller {
 		if (function.equals("panic")) {
 			panic(request, next);
 		}
-		this.virtualWiki = (String) request.getAttribute("virtualWiki");
-		if (request.getParameter("addReadOnly") != null) {
-			Topic t = new Topic(request.getParameter("readOnlyTopic"));
-			t.makeTopicReadOnly(this.virtualWiki);
+		if (function.equals("readOnly")) {
+			readOnly(request, next);
 		}
-		if (request.getParameter("removeReadOnly") != null) {
-			String[] topics = request.getParameterValues("markRemove");
-			for (int i = 0; i < topics.length; i++) {
-				Topic t = new Topic(topics[i]);
-				t.makeTopicWritable(this.virtualWiki);
-			}
-		}
-		if (this.message != null) {
-			next.addObject("message", this.message);
-		}
-		// FIXME - put the message object in the response
+		// FIXME - remove this
+		readOnlyList(request, next);
 		return next;
 	}
 
@@ -132,11 +119,13 @@ public class AdminController extends JMController implements Controller {
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
 			WikiBase.getInstance().addVirtualWiki(newWiki);
-			this.message = JMController.getMessage("admin.message.virtualwikiadded", request.getLocale());
+			String message = JMController.getMessage("admin.message.virtualwikiadded", request.getLocale());
+			next.addObject("message", message);
 			WikiBase.initialise();
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
-			this.message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
+			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
@@ -152,17 +141,21 @@ public class AdminController extends JMController implements Controller {
 			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
 			if (!Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(oldPassword)) {
-				this.message = JMController.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
+				String message = JMController.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
+				next.addObject("message", message);
 			} else if (!newPassword.equals(confirmPassword)) {
-				this.message = JMController.getMessage("admin.message.passwordsnomatch", request.getLocale());
+				String message = JMController.getMessage("admin.message.passwordsnomatch", request.getLocale());
+				next.addObject("message", message);
 			} else {
 				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, newPassword);
 				Environment.saveProperties();
-				this.message = JMController.getMessage("admin.message.passwordchanged", request.getLocale());
+				String message = JMController.getMessage("admin.message.passwordchanged", request.getLocale());
+				next.addObject("message", message);
 			}
 		} catch (Exception e) {
 			logger.error("Failure while changing password", e);
-			this.message = "Failure while changing password: " + e.getMessage();
+			String message = "Failure while changing password: " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
@@ -173,13 +166,16 @@ public class AdminController extends JMController implements Controller {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		try {
 			WikiBase base = WikiBase.getInstance();
-			base.unlockTopic(request.getParameter("virtualWiki"), request.getParameter("topic"));
-			this.message = JMController.getMessage("admin.message.lockcleared", request.getLocale());
+			base.unlockTopic(virtualWiki, request.getParameter("topic"));
+			String message = JMController.getMessage("admin.message.lockcleared", request.getLocale());
+			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while clearing locks", e);
-			this.message = "Failure while clearing locks: " + e.getMessage();
+			String message = "Failure while clearing locks: " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
@@ -219,9 +215,11 @@ public class AdminController extends JMController implements Controller {
 			WikiBase.getInstance().panic();
 		} catch (Exception e) {
 			logger.error("Failure during panic reset", e);
-			this.message = "Failure during panic reset: " + e.getMessage();
+			String message = "Failure during panic reset: " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
+
 	/**
 	 *
 	 */
@@ -476,15 +474,18 @@ public class AdminController extends JMController implements Controller {
 				try {
 					DatabaseConnection.setPoolInitialized(false);
 				} catch (Exception e) {
-					this.message = e.getMessage();
+					String message = e.getMessage();
+					next.addObject("message", message);
 				}
 			}
 			Environment.saveProperties();
 			WikiBase.initialise();
-			this.message = JMController.getMessage("admin.message.changessaved", request.getLocale());
+			String message = JMController.getMessage("admin.message.changessaved", request.getLocale());
+			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
-			this.message = "Failure while processing property values: " + e.getMessage();
+			String message = "Failure while processing property values: " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
@@ -495,21 +496,24 @@ public class AdminController extends JMController implements Controller {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		try {
-			Collection purged = WikiBase.getInstance().purgeDeletes(request.getParameter("virtualWiki"));
+			Collection purged = WikiBase.getInstance().purgeDeletes(virtualWiki);
 			StringBuffer buffer = new StringBuffer();
 			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-			cl.removeChanges(this.virtualWiki, purged);
+			cl.removeChanges(virtualWiki, purged);
 			buffer.append("Purged: ");
 			for (Iterator iterator = purged.iterator(); iterator.hasNext();) {
 				String topicName = (String) iterator.next();
 				buffer.append(topicName);
 				buffer.append("; ");
 			}
-			this.message = buffer.toString();
+			String message = buffer.toString();
+			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while purging topics", e);
-			this.message = "Failure while purging topics: " + e.getMessage();
+			String message = "Failure while purging topics: " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
@@ -520,13 +524,51 @@ public class AdminController extends JMController implements Controller {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		try {
 			DateFormat dateFormat = DateFormat.getInstance();
 			DBDate date = new DBDate(dateFormat.parse(request.getParameter("purgedate")));
-			WikiBase.getInstance().purgeVersionsOlderThan(this.virtualWiki, date);
+			WikiBase.getInstance().purgeVersionsOlderThan(virtualWiki, date);
 		} catch (Exception e) {
 			logger.error("Failure while purging versions", e);
-			this.message = "Failure while purging versions: " + e.getMessage();
+			String message = "Failure while purging versions: " + e.getMessage();
+			next.addObject("message", message);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void readOnly(HttpServletRequest request, ModelAndView next) throws Exception {
+		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
+		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		if (request.getParameter("addReadOnly") != null) {
+			Topic t = new Topic(request.getParameter("readOnlyTopic"));
+			t.makeTopicReadOnly(virtualWiki);
+		}
+		if (request.getParameter("removeReadOnly") != null) {
+			String[] topics = request.getParameterValues("markRemove");
+			for (int i = 0; i < topics.length; i++) {
+				Topic t = new Topic(topics[i]);
+				t.makeTopicWritable(virtualWiki);
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void readOnlyList(HttpServletRequest request, ModelAndView next) throws Exception {
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		Collection readOnlyTopics = new ArrayList();
+		try {
+			readOnlyTopics = WikiBase.getInstance().getReadOnlyTopics(virtualWiki);
+			next.addObject("readOnlyTopics", readOnlyTopics);
+		} catch (Exception e) {
+			// Ignore database error - probably just an invalid setting, the
+			// user may not have config'd yet
 		}
 	}
 
@@ -539,10 +581,12 @@ public class AdminController extends JMController implements Controller {
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
-			this.message = JMController.getMessage("admin.message.indexrefreshed", request.getLocale());
+			String message = JMController.getMessage("admin.message.indexrefreshed", request.getLocale());
+			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
-			this.message = "Failure while refreshing search index: " + e.getMessage();
+			String message = "Failure while refreshing search index: " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
@@ -553,17 +597,21 @@ public class AdminController extends JMController implements Controller {
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ADMIN);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JMController.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String user = request.getParameter("userName");
 		try {
-			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(this.virtualWiki);
+			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
 			if (members.removeMember(user)) {
-				this.message = user + JMController.getMessage("admin.message.userremoved.success", request.getLocale());
+				String message = user + JMController.getMessage("admin.message.userremoved.success", request.getLocale());
+				next.addObject("message", message);
 			} else {
-				this.message = user + JMController.getMessage("admin.message.userremoved.failure", request.getLocale());
+				String message = user + JMController.getMessage("admin.message.userremoved.failure", request.getLocale());
+				next.addObject("message", message);
 			}
 		} catch (Exception e) {
 			logger.error("Failure while removing user " + user, e);
-			this.message = "Failure while removing user " + user + ": " + e.getMessage();
+			String message = "Failure while removing user " + user + ": " + e.getMessage();
+			next.addObject("message", message);
 		}
 	}
 
