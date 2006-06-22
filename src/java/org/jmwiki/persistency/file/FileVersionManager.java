@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
-import org.jmwiki.VersionManager;
+import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.db.DBDate;

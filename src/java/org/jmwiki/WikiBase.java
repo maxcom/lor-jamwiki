@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.jmwiki.persistency.PersistencyHandler;
+import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.persistency.db.DatabaseChangeLog;
 import org.jmwiki.persistency.db.DatabaseHandler;

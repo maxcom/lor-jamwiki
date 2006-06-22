@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.model.TopicVersion;
-import org.jmwiki.VersionManager;
+import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMember;
 import org.jmwiki.WikiMembers;

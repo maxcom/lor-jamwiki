@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
-import org.jmwiki.VersionManager;
+import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiMember;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.model.Topic;

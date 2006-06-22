@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.persistency.PersistencyHandler;
 import org.jmwiki.TopicLock;
-import org.jmwiki.VersionManager;
+import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.PseudoTopicHandler;
@@ -301,8 +301,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	protected final static String STATEMENT_CHECK_SPECIFIC_LOCK =
 		"SELECT lockat, sessionkey FROM TopicLock WHERE topic = ? AND virtualwiki = ? AND sessionkey = ?";
 	protected final static String STATEMENT_REMOVE_LOCK =
-		"DELETE FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_REMOVE_ANY_LOCK =
 		"DELETE FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
 
 	// FIXME - DELETE BELOW
@@ -637,7 +635,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			PreparedStatement removeAnyLockStatement = conn.prepareStatement(STATEMENT_REMOVE_ANY_LOCK);
+			PreparedStatement removeAnyLockStatement = conn.prepareStatement(STATEMENT_REMOVE_LOCK);
 			removeAnyLockStatement.setString(1, topicName);
 			removeAnyLockStatement.setString(2, virtualWiki);
 			removeAnyLockStatement.execute();

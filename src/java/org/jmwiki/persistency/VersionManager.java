@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.jmwiki;
+package org.jmwiki.persistency;
 
 import java.util.List;
 import java.util.Date;
