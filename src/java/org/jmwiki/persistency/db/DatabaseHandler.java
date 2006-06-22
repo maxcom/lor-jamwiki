@@ -108,7 +108,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopic(Topic topic) throws Exception {
+	private void addTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(topic.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -141,7 +141,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(TopicVersion topicVersion) throws Exception {
+	private void addTopicVersion(TopicVersion topicVersion) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
@@ -194,14 +194,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, int num) throws Exception {
-		// FIXME - implement this
-		return new Vector();
-	}
-
-	/**
-	 *
-	 */
 	protected static void loadVirtualWikiHash() throws Exception {
 		virtualWikiHash = new Hashtable();
 		String sql = "select * from jmw_virtual_wiki ";
@@ -224,7 +216,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
+	protected Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(virtualWiki);
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -272,7 +264,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void updateTopic(Topic topic) throws Exception {
+	private void updateTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(topic.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -304,6 +296,8 @@ public class DatabaseHandler implements PersistencyHandler {
 	// DELETE THE CODE BELOW
 	// ======================================
 
+
+	// FIXME - DELETE BELOW
 	protected final static String STATEMENT_UPDATE =
 		"UPDATE Topic SET contents = ? WHERE name = ? AND virtualwiki = ?";
 	protected final static String STATEMENT_UPDATE_ORACLE1 =
@@ -318,20 +312,12 @@ public class DatabaseHandler implements PersistencyHandler {
 		"INSERT INTO TopicLock( topic, sessionkey, lockat, virtualwiki ) VALUES( ?, ?, ?, ? )";
 	protected final static String STATEMENT_CHECK_LOCK =
 		"SELECT lockat, sessionkey FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_CHECK_SPECIFIC_LOCK =
-		"SELECT lockat, sessionkey FROM TopicLock WHERE topic = ? AND virtualwiki = ? AND sessionkey = ?";
 	protected final static String STATEMENT_REMOVE_LOCK =
 		"DELETE FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
-
-	// FIXME - DELETE BELOW
 	protected final static String STATEMENT_READONLY_INSERT =
 		"INSERT INTO TopicReadOnly( topic, virtualwiki ) VALUES ( ?, ? )";
 	protected final static String STATEMENT_READONLY_DELETE =
 		"DELETE FROM TopicReadOnly WHERE topic = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_READONLY_ALL =
-		"SELECT topic FROM TopicReadOnly";
-	protected final static String STATEMENT_READONLY_FIND =
-		"SELECT COUNT(*) FROM TopicReadOnly WHERE topic = ? AND virtualwiki = ?";
 	// FIXME - DELETE ABOVE
 
 	protected static final String STATEMENT_PURGE_DELETES =
@@ -346,8 +332,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
 	protected final static String STATEMENT_PURGE_VERSIONS =
 		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
-	protected final static String STATEMENT_GET_LOCK_LIST =
-		"SELECT * FROM TopicLock WHERE virtualwiki = ?";
 
 	/**
 	 *
@@ -579,37 +563,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
-		/*
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement checkLockStatement = conn.prepareStatement(STATEMENT_CHECK_SPECIFIC_LOCK);
-			checkLockStatement.setString(1, topicName);
-			checkLockStatement.setString(2, virtualWiki);
-			checkLockStatement.setString(3, key);
-			ResultSet rs = checkLockStatement.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				checkLockStatement.close();
-				// Since the topic is not locked, there's no problem in allowing someone to save the topic.
-				// Create a lock and return the outcome.
-				return lockTopic(virtualWiki, topicName, key);
-			}
-			java.util.Date lockedAt = new DBDate(rs.getTimestamp("lockat"));
-			VersionManager versionManager = WikiBase.getInstance().getVersionManagerInstance();
-			java.util.Date lastRevision = versionManager.lastRevisionDate(virtualWiki, topicName);
-			logger.info("Checking for lock possession: locked at " + lockedAt + " last changed at " + lastRevision);
-			if (lastRevision != null) {
-				if (lastRevision.after(lockedAt)) {
-					return false;
-				}
-			}
-			rs.close();
-			checkLockStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		*/
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic.getLockSessionKey() == null) {
 			return lockTopic(virtualWiki, topicName, key);
@@ -730,28 +683,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		return topic.getReadOnly();
-		// FIXME - DELETE BELOW
-		/*
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement findReadOnlyStatement = conn.prepareStatement(STATEMENT_READONLY_FIND);
-			findReadOnlyStatement.setString(1, topicName);
-			findReadOnlyStatement.setString(2, virtualWiki);
-			ResultSet rs = findReadOnlyStatement.executeQuery();
-			rs.next();
-			if (rs.getInt(1) > 0) {
-				rs.close();
-				findReadOnlyStatement.close();
-				return true;
-			}
-			rs.close();
-			findReadOnlyStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return false;
-		*/
 	}
 
 	/**
@@ -777,21 +708,6 @@ public class DatabaseHandler implements PersistencyHandler {
 				DatabaseConnection.closeConnection(conn, stmt, rs);
 			}
 		}
-		/*
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement getReadOnlyStatement = conn.prepareStatement(STATEMENT_READONLY_ALL);
-			ResultSet rs = getReadOnlyStatement.executeQuery();
-			while (rs.next()) {
-				all.add(rs.getString("topic"));
-			}
-			rs.close();
-			getReadOnlyStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		*/
 		return all;
 	}
 

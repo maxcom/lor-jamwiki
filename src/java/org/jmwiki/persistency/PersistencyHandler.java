@@ -16,34 +16,9 @@ import org.jmwiki.persistency.db.DBDate;
 public interface PersistencyHandler {
 
 	/**
-	 * Add a new topic.
-	 */
-	public void addTopic(Topic topic) throws Exception;
-
-	/**
-	 * Create a new topic version.  The parent topic must already exist for the
-	 * new version to be successfully created.
-	 */
-	public void addTopicVersion(TopicVersion topicVersion) throws Exception;
-
-	/**
 	 *
 	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception;
-
-	/**
-	 * Retrieve a specified number of the most recent changes to the system.
-	 */
-	public Collection getRecentChanges(String virtualWiki, int num) throws Exception;
-
-	/**
-	 * Update an existing topic.
-	 */
-	public void updateTopic(Topic topic) throws Exception;
-
-	// ======================================
-	// DELETE THE CODE BELOW
-	// ======================================
 
 	/**
 	 *

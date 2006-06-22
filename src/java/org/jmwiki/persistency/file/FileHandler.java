@@ -42,39 +42,6 @@ public class FileHandler implements PersistencyHandler {
 
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
-	/**
-	 *
-	 */
-	public void addTopic(Topic topic) throws Exception {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public void addTopicVersion(TopicVersion topicVersion) throws Exception {
-		// FIXME - implement this
-	}
-
-	/**
-	 *
-	 */
-	public Collection getRecentChanges(String virtualWiki, int num) throws Exception {
-		// FIXME - implement this
-		return new Vector();
-	}
-
-	/**
-	 *
-	 */
-	public void updateTopic(Topic topic) throws Exception {
-		// FIXME - implement this
-	}
-
-	// ======================================
-	// DELETE THE CODE BELOW
-	// ======================================
-
 	public static final String VERSION_DIR = "versions";
 	public final static String EXT = ".txt";
 	// the read-only topics
