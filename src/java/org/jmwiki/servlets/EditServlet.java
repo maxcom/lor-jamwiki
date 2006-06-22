@@ -217,7 +217,7 @@ public class EditServlet extends JMController implements Controller {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topic + " has no content");
 		}
-		WikiBase.getInstance().write(virtualWiki, contents, topic, user);
+		WikiBase.getInstance().write(virtualWiki, contents, topic, user, request.getRemoteAddr());
 		if (request.getParameter("minorEdit") == null) {
 			Change change = new Change();
 			change.setTopic(topic);

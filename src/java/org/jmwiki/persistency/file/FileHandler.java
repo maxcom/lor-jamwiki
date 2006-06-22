@@ -337,7 +337,7 @@ public class FileHandler implements PersistencyHandler {
 	 * Write contents to file
 	 * Write to version file if versioning is on
 	 */
-	public synchronized void write(String virtualWiki, String contents, String topicName) throws Exception {
+	public synchronized void write(String virtualWiki, String contents, String topicName, String ipAddress) throws Exception {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}

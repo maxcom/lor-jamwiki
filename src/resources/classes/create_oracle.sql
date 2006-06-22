@@ -55,13 +55,15 @@ CREATE TABLE jmw_topic (
   topic_name VARCHAR(200) NOT NULL,
   topic_locked_by INTEGER,
   topic_lock_date TIMESTAMP,
+  topic_lock_session_key VARCHAR(100),
   topic_read_only BOOLEAN DEFAULT FALSE,
   topic_admin_only BOOLEAN DEFAULT FALSE,
   topic_content TEXT,
   /* standard article, user page, talk page, template */
   topic_type INTEGER NOT NULL,
   CONSTRAINT jmw_pk_topic PRIMARY KEY (topic_id),
-  CONSTRAINT jmw_fk_topic_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jmw_virtual_wiki
+  CONSTRAINT jmw_fk_topic_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jmw_virtual_wiki,
+  CONSTRAINT jmw_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jmw_author
 );
 
 CREATE OR REPLACE TRIGGER jmw_trig_topic_id
@@ -80,6 +82,7 @@ CREATE TABLE jmw_topic_version (
   edit_comment VARCHAR(200),
   version_content TEXT,
   author_id INTEGER NOT NULL,
+  author_ip_address VARCHAR(15) NOT NULL,
   edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   edit_type INTEGER NOT NULL,
   CONSTRAINT jmw_pk_topic_version PRIMARY KEY (topic_version_id),

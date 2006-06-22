@@ -47,7 +47,7 @@ public class ImportServlet extends JMController implements Controller {
 	 */
 	private void importFiles(HttpServletRequest request, ModelAndView next) throws Exception {
 		try {
-			next.addObject("results", importAll());
+			next.addObject("results", importAll(request));
 		} catch (Exception e) {
 			logger.error("Failure while importing files", e);
 			throw new Exception("Failure while importing files" + e.getMessage());
@@ -59,7 +59,7 @@ public class ImportServlet extends JMController implements Controller {
 	/**
 	 *
 	 */
-	private String importAll() throws Exception {
+	private String importAll(HttpServletRequest request) throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		// language does not matter here
 		FileHandler fileHandler = new FileHandler();
@@ -98,7 +98,7 @@ public class ImportServlet extends JMController implements Controller {
 				logger.info("importing topic " + topicName);
 				buffer.append("imported topic " + topicName);
 				buffer.append("<br/>");
-				databaseHandler.write(virtualWiki, fileHandler.read(virtualWiki, topicName), topicName);
+				databaseHandler.write(virtualWiki, fileHandler.read(virtualWiki, topicName), topicName, request.getRemoteAddr());
 			}
 			// Read-only topics
 			Collection readOnlys = fileHandler.getReadOnlyTopics(virtualWiki);

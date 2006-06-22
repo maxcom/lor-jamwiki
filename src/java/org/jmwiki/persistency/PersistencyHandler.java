@@ -53,7 +53,7 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(String virtualWiki, String contents, String topicName) throws Exception;
+	public void write(String virtualWiki, String contents, String topicName, String ipAddress) throws Exception;
 
 	/**
 	 *

@@ -37,6 +37,7 @@ public class TopicVersion {
 	private static final int EDIT_MOVE = 4;
 	// FIXME - change back to -1 once author handling works
 	private int authorId = 1;
+	private String authorIpAddress = null;
 	private String editComment = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
@@ -63,6 +64,20 @@ public class TopicVersion {
 	 */
 	public void setAuthorId(int authorId) {
 		this.authorId = authorId;
+	}
+
+	/**
+	 *
+	 */
+	public String getAuthorIpAddress() {
+		return this.authorIpAddress;
+	}
+
+	/**
+	 *
+	 */
+	public void setAuthorIpAddress(String authorIpAddress) {
+		this.authorIpAddress = authorIpAddress;
 	}
 
 	/**

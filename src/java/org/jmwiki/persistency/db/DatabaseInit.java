@@ -43,6 +43,7 @@ public class DatabaseInit {
 	protected static final String DEFAULT_PASSWORD = "password";
 	protected static final String DEFAULT_AUTHOR_LOGIN = "unknown_author";
 	protected static final String DEFAULT_AUTHOR_NAME = "Unknown Author";
+	protected static final String DEFAULT_AUTHOR_IP_ADDRESS = "0.0.0.0";
 	protected static final int TOPIC_TYPE_DEFAULT = 1;
 	protected static final int EDIT_TYPE_DEFAULT = 1;
 
@@ -182,7 +183,7 @@ public class DatabaseInit {
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
 				try {
-					fileHandler.write(virtualWiki, databaseHandler.read(virtualWiki, topicName), topicName);
+					fileHandler.write(virtualWiki, databaseHandler.read(virtualWiki, topicName), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
 				} catch (Exception e) {
 					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki);
 				}

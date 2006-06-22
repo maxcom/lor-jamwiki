@@ -52,7 +52,8 @@ public class ConvertVQWiki {
 				+ "SELECT WikiMember.wikiuser, jmw_virtual_wiki.virtual_wiki_id, "
 				+ "WikiMember.userkey, WikiMember.email, WikiMember.wikiuser, "
 				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
-				+ "'127.0.0.1', '127.0.0.1' "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM WikiMember, jmw_virtual_wiki "
 				+ "WHERE WikiMember.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
 			st.executeUpdate(sql);
@@ -63,7 +64,8 @@ public class ConvertVQWiki {
 				+ "SELECT DISTINCT TopicChange.username, jmw_virtual_wiki.virtual_wiki_id, "
 				+ "TopicChange.username, "
 				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
-				+ "'127.0.0.1', '127.0.0.1' "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM TopicChange, jmw_virtual_wiki "
 				+ "WHERE TopicChange.virtualwiki = jmw_virtual_wiki.virtual_wiki_name "
 				+ "AND NOT EXISTS ( "
@@ -93,6 +95,19 @@ public class ConvertVQWiki {
 					+ ") ";
 				st.executeUpdate(sql);
 			}
+			sql = "SELECT topic, sessionkey, lockat, virtualwiki FROM TopicLock ";
+			rs = results.executeQuery(sql);
+			while (rs.next()) {
+				sql = "UPDATE jmw_topic set "
+				    + "topic_lock_session_key = '" + rs.getString("sessionkey") + "', "
+				    + "topic_lock_date = '" + rs.getTimestamp("lockat") + "' "
+					+ "WHERE topic_name = '" + rs.getString("topic") + "' "
+					+ "AND virtual_wiki_id = ( "
+					+   "SELECT virtual_wiki_id FROM jmw_virtual_wiki "
+					+   "WHERE virtual_wiki_name = '" + rs.getString("virtualwiki") + "' "
+					+ ") ";
+				st.executeUpdate(sql);
+			}
 			// jmw_topic_version
 			// create default author for edits with no author
 			sql = "INSERT INTO jmw_author ( "
@@ -102,7 +117,8 @@ public class ConvertVQWiki {
 				+ "SELECT '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "', "
 				+ "virtual_wiki_id, '" + DatabaseInit.DEFAULT_AUTHOR_NAME + "', "
 				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
-				+ "'127.0.0.1', '127.0.0.1' "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM jmw_virtual_wiki ";
 			st.executeUpdate(sql);
 			// get default author (will update later)
@@ -115,12 +131,13 @@ public class ConvertVQWiki {
 			}
 			sql = "INSERT INTO jmw_topic_version ( "
 				+   "topic_id, version_content, author_id, "
-				+   "edit_date, edit_type "
+				+   "edit_date, edit_type, author_ip_address "
 				+ ") "
 				+ "SELECT jmw_topic.topic_id, TopicVersion.contents, "
 				+ authorId + ", "
 				+ "TopicVersion.versionat, "
-				+ DatabaseInit.EDIT_TYPE_DEFAULT + " "
+				+ DatabaseInit.EDIT_TYPE_DEFAULT + ", "
+				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM TopicVersion, jmw_topic, jmw_virtual_wiki "
 				+ "WHERE jmw_topic.topic_name = TopicVersion.name "
 				+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id "

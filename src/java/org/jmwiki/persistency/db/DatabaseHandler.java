@@ -21,6 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -55,16 +57,17 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static final String STATEMENT_INSERT_TOPIC =
 		"insert into jmw_topic ( "
 		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
-		+   "topic_locked_by, topic_lock_date, topic_read_only, topic_content "
+		+   "topic_locked_by, topic_lock_date, topic_read_only, topic_content, "
+		+   "topic_lock_session_key "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ?, ?, ?, ?"
 		+ ") ";
 	private static final String STATEMENT_INSERT_TOPIC_VERSION =
 		"insert into jmw_topic_version ("
 		+   "topic_version_id, topic_id, edit_comment, version_content, "
-		+   "author_id, edit_date, edit_type "
+		+   "author_id, edit_date, edit_type, author_ip_address "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_INSERT_VIRTUAL_WIKI =
 		"insert into jmw_virtual_wiki ("
@@ -80,6 +83,10 @@ public class DatabaseHandler implements PersistencyHandler {
 		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_read_only = ? ";
+	private static final String STATEMENT_SELECT_TOPIC_LOCKED =
+		"select * from jmw_topic "
+		+ "where virtual_wiki_id = ? "
+		+ "and topic_lock_session_key is not null ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select nextval('jmw_topic_seq') as topic_id ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
@@ -94,7 +101,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		+ "topic_locked_by = ?, "
 		+ "topic_lock_date = ?, "
 		+ "topic_read_only = ?, "
-		+ "topic_content = ? "
+		+ "topic_content = ?, "
+		+ "topic_lock_session_key = ? "
 		+ "where topic_id = ? ";
 
 	/**
@@ -113,10 +121,15 @@ public class DatabaseHandler implements PersistencyHandler {
 			stmt.setInt(2, virtualWikiId);
 			stmt.setString(3, topic.getName());
 			stmt.setInt(4, topic.getTopicType());
-			stmt.setInt(5, topic.getLockedBy());
+			if (topic.getLockedBy() > 0) {
+				stmt.setInt(5, topic.getLockedBy());
+			} else {
+				stmt.setNull(5, Types.INTEGER);
+			}
 			stmt.setTimestamp(6, topic.getLockedDate());
 			stmt.setBoolean(7, topic.getReadOnly());
 			stmt.setString(8, topic.getTopicContent());
+			stmt.setString(9, topic.getLockSessionKey());
 			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
@@ -144,6 +157,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			// FIXME - it would be better to let this default to CURRENT_TIMESTAMP...
 			stmt.setTimestamp(6, topicVersion.getEditDate());
 			stmt.setInt(7, topicVersion.getEditType());
+			stmt.setString(8, topicVersion.getAuthorIpAddress());
 			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
@@ -230,6 +244,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			topic.setTopicId(rs.getInt("topic_id"));
 			topic.setLockedBy(rs.getInt("topic_locked_by"));
 			topic.setLockedDate(rs.getTimestamp("topic_lock_date"));
+			topic.setLockSessionKey(rs.getString("topic_lock_session_key"));
 			topic.setReadOnly(rs.getBoolean("topic_read_only"));
 			topic.setTopicType(rs.getInt("topic_type"));
 			return topic;
@@ -267,11 +282,16 @@ public class DatabaseHandler implements PersistencyHandler {
 			stmt.setInt(1, virtualWikiId);
 			stmt.setString(2, topic.getName());
 			stmt.setInt(3, topic.getTopicType());
-			stmt.setInt(4, topic.getLockedBy());
+			if (topic.getLockedBy() > 0) {
+				stmt.setInt(4, topic.getLockedBy());
+			} else {
+				stmt.setNull(4, Types.INTEGER);
+			}
 			stmt.setTimestamp(5, topic.getLockedDate());
 			stmt.setBoolean(6, topic.getReadOnly());
 			stmt.setString(7, topic.getTopicContent());
-			stmt.setInt(8, topic.getTopicId());
+			stmt.setString(8, topic.getLockSessionKey());
+			stmt.setInt(9, topic.getTopicId());
 			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
@@ -409,7 +429,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			// list of topics that only admin is allowed to edit/view by themselves
 			setupSpecialPage(vWiki, messages.getString("specialpages.adminonlytopics"));
 			if (!exists(vWiki, "SetUsername")) {
-				write(vWiki, "", "SetUsername");
+				write(vWiki, "", "SetUsername", DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
 			}
 		}
 	}
@@ -420,7 +440,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
 		if (!exists(vWiki, specialPage)) {
 			logger.debug("Setting up " + specialPage);
-			write(vWiki, WikiBase.readDefaultTopic(specialPage), specialPage);
+			write(vWiki, WikiBase.readDefaultTopic(specialPage), specialPage, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
 		}
 	}
 
@@ -439,7 +459,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(String virtualWiki, String contents, String topicName) throws Exception {
+	public void write(String virtualWiki, String contents, String topicName, String ipAddress) throws Exception {
 
 		// FIXME - DELETE BELOW
 		Connection conn = null;
@@ -520,12 +540,17 @@ public class DatabaseHandler implements PersistencyHandler {
 
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
+			topic = new Topic();
 			topic.setName(topicName);
 			topic.setVirtualWiki(virtualWiki);
 			topic.setTopicContent(contents);
 			this.addTopic(topic);
 		} else {
 			topic.setTopicContent(contents);
+			// release any lock that is held by setting lock fields null
+			topic.setLockedBy(-1);
+			topic.setLockedDate(null);
+			topic.setLockSessionKey(null);
 			this.updateTopic(topic);
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
@@ -538,6 +563,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			TopicVersion version = new TopicVersion();
 			version.setTopicId(topic.getTopicId());
 			version.setVersionContent(contents);
+			version.setAuthorIpAddress(ipAddress);
 			this.addTopicVersion(version);
 		}
 	}
@@ -553,6 +579,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
+		/*
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -582,6 +609,13 @@ public class DatabaseHandler implements PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		*/
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic.getLockSessionKey() == null) {
+			return lockTopic(virtualWiki, topicName, key);
+		}
+		// FIXME - old code included a check to see if last version was made after the time
+		// the lock was taken.  that should be impossible with the new code.
 		return true;
 	}
 
@@ -589,6 +623,9 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
+
+		// FIXME - DELETE BELOW
+		boolean addLock = true;
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -610,6 +647,7 @@ public class DatabaseHandler implements PersistencyHandler {
 					removeLockStatement.execute();
 					removeLockStatement.close();
 				} else {
+					addLock = false;
 					String existingKey = rs.getString("sessionkey");
 					rs.close();
 					checkLockStatement.close();
@@ -617,22 +655,49 @@ public class DatabaseHandler implements PersistencyHandler {
 					// the lock, otherwise, it must be locked by someone else
 					boolean sameKey = existingKey.equals(key);
 					logger.debug("Same key: " + sameKey);
-					return sameKey;
+//					return sameKey;
 				}
 			}
-			logger.debug("Setting lock");
-			PreparedStatement setLockStatement = conn.prepareStatement(STATEMENT_SET_LOCK);
-			setLockStatement.setString(1, topicName);
-			setLockStatement.setString(2, key);
-			setLockStatement.setTimestamp(3, (new DBDate()).asTimestamp());
-			setLockStatement.setString(4, virtualWiki);
-			setLockStatement.execute();
-			setLockStatement.close();
-			rs.close();
-			checkLockStatement.close();
+			if (addLock) {
+				logger.debug("Setting lock");
+				PreparedStatement setLockStatement = conn.prepareStatement(STATEMENT_SET_LOCK);
+				setLockStatement.setString(1, topicName);
+				setLockStatement.setString(2, key);
+				setLockStatement.setTimestamp(3, (new DBDate()).asTimestamp());
+				setLockStatement.setString(4, virtualWiki);
+				setLockStatement.execute();
+				setLockStatement.close();
+				rs.close();
+				checkLockStatement.close();
+			}
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		// FIXME - DELETE ABOVE
+
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		logger.info("RYAN: checking lock status for " + virtualWiki + " / " + topicName);
+		if (topic.getLockSessionKey() != null) {
+			logger.info("RYAN: lock exists - " + topic.getLockSessionKey());
+			// lock exists, see if it has expired
+			Timestamp expireDate = new Timestamp(System.currentTimeMillis() - (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
+			if (topic.getLockSessionKey().equals(key)) {
+				logger.info("RYAN: same user has the lock");
+				// same user still has the lock, return true
+				return true;
+			}
+			if (topic.getLockedDate().before(expireDate)) {
+				logger.info("RYAN: lock still valid");
+				// lock is still valid, return false
+				return false;
+			}
+		}
+		logger.info("RYAN: taking lock with key " + key);
+		topic.setLockSessionKey(key);
+		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
+		// FIXME - save author
+		//topic.setLockedBy(authorId);
+		updateTopic(topic);
 		return true;
 	}
 
@@ -640,6 +705,8 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public void unlockTopic(String virtualWiki, String topicName) throws Exception {
+
+		// FIXME - DELETE BELOW
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -651,6 +718,13 @@ public class DatabaseHandler implements PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
+		// FIXME - DELETE ABOVE
+
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setLockSessionKey(null);
+		topic.setLockedDate(null);
+		topic.setLockedBy(-1);
+		updateTopic(topic);
 	}
 
 	/**
@@ -912,24 +986,25 @@ public class DatabaseHandler implements PersistencyHandler {
 	public List getLockList(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		int virtualWikiId = lookupVirtualWiki(virtualWiki);
 		try {
 			conn = DatabaseConnection.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(STATEMENT_GET_LOCK_LIST);
-			stmt.setString(1, virtualWiki);
-			ResultSet rs = stmt.executeQuery();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOCKED);
+			stmt.setInt(1, virtualWikiId);
+			rs = stmt.executeQuery();
 			while (rs.next()) {
 				TopicLock lock = new TopicLock(
-					rs.getString("virtualwiki"),
-					rs.getString("topic"),
-					new DBDate(rs.getTimestamp("lockat")),
-					rs.getString("sessionkey")
+					virtualWiki,
+					rs.getString("topic_name"),
+					new DBDate(rs.getTimestamp("topic_lock_date")),
+					rs.getString("topic_lock_session_key")
 				);
 				all.add(lock);
 			}
-			rs.close();
-			stmt.close();
 		} finally {
-			DatabaseConnection.closeConnection(conn);
+			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 		return all;
 	}

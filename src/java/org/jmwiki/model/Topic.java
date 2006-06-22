@@ -46,6 +46,7 @@ public class Topic implements Serializable {
 	private boolean adminOnly = false;
 	private int lockedBy = -1;
 	private Timestamp lockedDate = null;
+	private String lockSessionKey = null;
 	private String name = null;
 	private boolean readOnly = false;
 	private String topicContent = null;
@@ -100,6 +101,20 @@ public class Topic implements Serializable {
 	 */
 	public void setLockedDate(Timestamp lockedDate) {
 		this.lockedDate = lockedDate;
+	}
+
+	/**
+	 *
+	 */
+	public String getLockSessionKey() {
+		return this.lockSessionKey;
+	}
+
+	/**
+	 *
+	 */
+	public void setLockSessionKey(String lockSessionKey) {
+		this.lockSessionKey = lockSessionKey;
 	}
 
 	/**
