@@ -676,23 +676,20 @@ public class DatabaseHandler implements PersistencyHandler {
 		// FIXME - DELETE ABOVE
 
 		Topic topic = lookupTopic(virtualWiki, topicName);
-		logger.info("RYAN: checking lock status for " + virtualWiki + " / " + topicName);
 		if (topic.getLockSessionKey() != null) {
-			logger.info("RYAN: lock exists - " + topic.getLockSessionKey());
-			// lock exists, see if it has expired
-			Timestamp expireDate = new Timestamp(System.currentTimeMillis() - (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
+			// a lock still exists, see if it was taken by the current user
 			if (topic.getLockSessionKey().equals(key)) {
-				logger.info("RYAN: same user has the lock");
 				// same user still has the lock, return true
 				return true;
 			}
-			if (topic.getLockedDate().before(expireDate)) {
-				logger.info("RYAN: lock still valid");
+			// see if the existing lock has expired
+			Timestamp expireDate = new Timestamp(topic.getLockedDate().getTime() + (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			if (now.before(expireDate)) {
 				// lock is still valid, return false
 				return false;
 			}
 		}
-		logger.info("RYAN: taking lock with key " + key);
 		topic.setLockSessionKey(key);
 		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
 		// FIXME - save author
