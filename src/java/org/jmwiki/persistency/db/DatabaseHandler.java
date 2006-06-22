@@ -440,6 +440,8 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public void write(String virtualWiki, String contents, String topicName) throws Exception {
+
+		// FIXME - DELETE BELOW
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -511,26 +513,32 @@ public class DatabaseHandler implements PersistencyHandler {
 					updateStatement.close();
 				}
 			}
-			Topic topic = lookupTopic(virtualWiki, topicName);
-			if (topic == null) {
-				topic.setName(topicName);
-				topic.setVirtualWiki(virtualWiki);
-				topic.setTopicContent(contents);
-				this.addTopic(topic);
-			} else {
-				topic.setTopicContent(contents);
-				this.updateTopic(topic);
-			}
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		// FIXME - DELETE ABOVE
+
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic.setName(topicName);
+			topic.setVirtualWiki(virtualWiki);
+			topic.setTopicContent(contents);
+			this.addTopic(topic);
+		} else {
+			topic.setTopicContent(contents);
+			this.updateTopic(topic);
+		}
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
+
+			// FIXME - DELETE BELOW
+			// write version
+			DatabaseVersionManager.getInstance().addVersion(virtualWiki, topicName, contents, new DBDate());
+			// FIXME - DELETE ABOVE
+
 			TopicVersion version = new TopicVersion();
 			version.setTopicId(topic.getTopicId());
 			version.setVersionContent(contents);
 			this.addTopicVersion(version);
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			// write version
-			DatabaseVersionManager.getInstance().addVersion(virtualWiki, topicName, contents, new DBDate());
 		}
 	}
 
