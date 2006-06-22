@@ -73,7 +73,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		+   "?, ? "
 		+ ") ";
 	private static final String STATEMENT_SELECT_TOPIC =
-		"select topic_id from jmw_topic "
+		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_name = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
@@ -184,7 +184,29 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public int lookupTopic(String virtualWiki, String topic) throws Exception {
+	protected static void loadVirtualWikiHash() throws Exception {
+		virtualWikiHash = new Hashtable();
+		String sql = "select * from jmw_virtual_wiki ";
+		try {
+			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
+			while (rs.next()) {
+				Integer value = new Integer(rs.getInt("virtual_wiki_id"));
+				String key = rs.getString("virtual_wiki_name");
+				virtualWikiHash.put(key, value);
+			}
+		} catch (Exception e) {
+			logger.error("Failure while loading virtual wiki hashtable ", e);
+			// if there is an error make sure the hashtable is reset since it wasn't
+			// properly initialized
+			virtualWikiHash = null;
+			throw e;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		int virtualWikiId = lookupVirtualWiki(virtualWiki);
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -193,9 +215,20 @@ public class DatabaseHandler implements PersistencyHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
 			stmt.setInt(1, virtualWikiId);
-			stmt.setString(2, topic);
+			stmt.setString(2, topicName);
 			rs = stmt.executeQuery();
-			return (rs.next() ? rs.getInt("topic_id") : -1);
+			if (!rs.next()) return null;
+			Topic topic = new Topic();
+			topic.setAdminOnly(rs.getBoolean("topic_admin_only"));
+			topic.setName(rs.getString("topic_name"));
+			topic.setVirtualWiki(virtualWiki);
+			topic.setTopicContent(rs.getString("topic_content"));
+			topic.setTopicId(rs.getInt("topic_id"));
+			topic.setLockedBy(rs.getInt("topic_locked_by"));
+			topic.setLockedDate(rs.getTimestamp("topic_lock_date"));
+			topic.setReadOnly(rs.getBoolean("topic_read_only"));
+			topic.setTopicType(rs.getInt("topic_type"));
+			return topic;
 		} finally {
 			if (conn != null) {
 				DatabaseConnection.closeConnection(conn, stmt, rs);
@@ -215,28 +248,6 @@ public class DatabaseHandler implements PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWiki + " not found");
 		}
 		return virtualWikiId.intValue();
-	}
-
-	/**
-	 *
-	 */
-	protected static void loadVirtualWikiHash() throws Exception {
-		virtualWikiHash = new Hashtable();
-		String sql = "select * from jmw_virtual_wiki ";
-		try {
-			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
-			while (rs.next()) {
-				Integer value = new Integer(rs.getInt("virtual_wiki_id"));
-				String key = rs.getString("virtual_wiki_name");
-				virtualWikiHash.put(key, value);
-			}
-		} catch (Exception e) {
-			logger.error("Failure while loading virtual wiki hashtable ", e);
-			// if there is an error make sure the hashtable is reset since it wasn't
-			// properly initialized
-			virtualWikiHash = null;
-			throw e;
-		}
 	}
 
 	/**
@@ -269,8 +280,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	// DELETE THE CODE BELOW
 	// ======================================
 
-	protected final static String STATEMENT_READ =
-		"SELECT contents FROM Topic WHERE name = ? AND virtualwiki = ?";
 	protected final static String STATEMENT_UPDATE =
 		"UPDATE Topic SET contents = ? WHERE name = ? AND virtualwiki = ?";
 	protected final static String STATEMENT_UPDATE_ORACLE1 =
@@ -413,31 +422,12 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public String read(String virtualWiki, String topicName) throws Exception {
+		// FIXME - virtualWiki should never be empty, fix callers
 		if (virtualWiki == null || virtualWiki.length() == 0) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
-		String contents = null;
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement readStatement = conn.prepareStatement(STATEMENT_READ);
-			readStatement.setString(1, topicName);
-			readStatement.setString(2, virtualWiki);
-			ResultSet rs = readStatement.executeQuery();
-			if (!rs.next()) {
-				return "This is a new topic";
-			}
-			if (DatabaseHandler.isOracle()) {
-				contents = OracleClobHelper.getClobValue(rs.getClob("contents"));
-			} else {
-				contents = rs.getString("contents");
-			}
-			rs.close();
-			readStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return (contents);
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		return (topic == null) ? "" : topic.getTopicContent();
 	}
 
 	/**
@@ -515,15 +505,14 @@ public class DatabaseHandler implements PersistencyHandler {
 					updateStatement.close();
 				}
 			}
-			Topic topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
-			topic.setTopicContent(contents);
-			int topicId = lookupTopic(topic.getVirtualWiki(), topic.getName());
-			topic.setTopicId(topicId);
-			if (topicId == -1) {
+			Topic topic = lookupTopic(virtualWiki, topicName);
+			if (topic == null) {
+				topic.setName(topicName);
+				topic.setVirtualWiki(virtualWiki);
+				topic.setTopicContent(contents);
 				this.addTopic(topic);
 			} else {
+				topic.setTopicContent(contents);
 				this.updateTopic(topic);
 			}
 			TopicVersion version = new TopicVersion();
@@ -543,7 +532,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		return (lookupTopic(virtualWiki, topicName) != -1);
+		return (lookupTopic(virtualWiki, topicName) != null);
 	}
 
 	/**
@@ -568,7 +557,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			java.util.Date lockedAt = new DBDate(rs.getTimestamp("lockat"));
 			VersionManager versionManager = WikiBase.getInstance().getVersionManagerInstance();
 			java.util.Date lastRevision = versionManager.lastRevisionDate(virtualWiki, topicName);
-			logger.debug("Checking for lock possession: locked at " + lockedAt + " last changed at " + lastRevision);
+			logger.info("Checking for lock possession: locked at " + lockedAt + " last changed at " + lastRevision);
 			if (lastRevision != null) {
 				if (lastRevision.after(lockedAt)) {
 					return false;
@@ -596,7 +585,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			if (rs.next()) {
 				DBDate date = new DBDate(rs.getTimestamp("lockat"));
 				DBDate now = new DBDate();
-				logger.debug("Already locked at " + date);
+				logger.info("Already locked at " + date);
 				long fiveMinutesAgo = now.getTime() - 60000 *
 				Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT);
 				if (date.getTime() < fiveMinutesAgo) {
