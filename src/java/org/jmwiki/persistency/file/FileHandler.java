@@ -61,6 +61,21 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
+		File versionDir = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(topicName);
+		buffer.append(FileHandler.EXT);
+		buffer.append(Utilities.fileFriendlyDate(at));
+		File versionFile = new File(versionDir, buffer.toString());
+		Writer writer = new OutputStreamWriter(new FileOutputStream(versionFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(contents);
+		writer.close();
+	}
+
+	/**
 	 * Set up the file system and default topics if necessary
 	 */
 	public void createDefaults(Locale locale) {

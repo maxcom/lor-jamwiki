@@ -189,19 +189,4 @@ public class FileVersionManager implements VersionManager {
 		if (files != null) return files.length;
 		return -1;
 	}
-
-	/**
-	 *
-	 */
-	public void addVersion(String virtualWiki, String topicName, String contents, Date at) throws Exception {
-		File versionDir = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR);
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(topicName);
-		buffer.append(FileHandler.EXT);
-		buffer.append(Utilities.fileFriendlyDate(at));
-		File versionFile = new File(versionDir, buffer.toString());
-		Writer writer = new OutputStreamWriter(new FileOutputStream(versionFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(contents);
-		writer.close();
-	}
 }

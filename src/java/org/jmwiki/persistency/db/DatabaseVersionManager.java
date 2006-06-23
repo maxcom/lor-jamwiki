@@ -26,12 +26,6 @@ public class DatabaseVersionManager implements VersionManager {
 
 	protected final static String STATEMENT_VERSION_FIND =
 		"SELECT * FROM TopicVersion WHERE name = ? AND virtualwiki = ? ORDER BY versionat DESC";
-	protected final static String STATEMENT_ADD_VERSION =
-		"INSERT INTO TopicVersion (virtualwiki, name, contents, versionat) VALUES( ?, ?, ?, ?)";
-	protected final static String STATEMENT_ADD_VERSION_ORACLE1 =
-		"INSERT INTO TopicVersion (virtualwiki, name, contents, versionat) VALUES( ?, ?, EMPTY_CLOB(), ?)";
-	protected final static String STATEMENT_ADD_VERSION_ORACLE2 =
-		"SELECT contents FROM TopicVersion WHERE name = ?  AND virtualwiki = ? ORDER BY versionat DESC FOR UPDATE";
 	protected final static String STATEMENT_VERSION_FIND_ONE =
 		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
 	protected final static String STATEMENT_GET_ALL =
@@ -232,51 +226,5 @@ public class DatabaseVersionManager implements VersionManager {
 			DatabaseConnection.closeConnection(conn);
 		}
 		return -1;
-	}
-
-	/**
-	 *
-	 */
-	public void addVersion(String virtualWiki, String topicName, String contents, Date at) throws Exception {
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement addStatement;
-			if (DatabaseHandler.isOracle()) {
-				boolean savedAutoCommit = conn.getAutoCommit();
-				conn.setAutoCommit(false);
-				addStatement = conn.prepareStatement(STATEMENT_ADD_VERSION_ORACLE1);
-				addStatement.setString(1, virtualWiki);
-				addStatement.setString(2, topicName);
-				addStatement.setTimestamp(3, new DBDate(at).asTimestamp());
-				addStatement.execute();
-				addStatement.close();
-				conn.commit();
-				addStatement = conn.prepareStatement(
-					STATEMENT_ADD_VERSION_ORACLE2,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_UPDATABLE
-				);
-				addStatement.setString(1, topicName);
-				addStatement.setString(2, virtualWiki);
-				ResultSet rs = addStatement.executeQuery();
-				rs.next();
-				OracleClobHelper.setClobValue(rs.getClob(1), contents);
-				rs.close();
-				addStatement.close();
-				conn.commit();
-				conn.setAutoCommit(savedAutoCommit);
-			} else {
-				addStatement = conn.prepareStatement(STATEMENT_ADD_VERSION);
-				addStatement.setString(1, virtualWiki);
-				addStatement.setString(2, topicName);
-				addStatement.setString(3, contents);
-				addStatement.setTimestamp(4, new DBDate(at).asTimestamp());
-				addStatement.execute();
-				addStatement.close();
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
 	}
 }

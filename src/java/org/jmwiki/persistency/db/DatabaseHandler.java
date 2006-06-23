@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -136,6 +137,65 @@ public class DatabaseHandler implements PersistencyHandler {
 				DatabaseConnection.closeConnection(conn, stmt);
 			}
 		}
+	}
+
+	/**
+	 *
+	 */
+	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
+
+		// FIXME - DELETE BELOW
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			PreparedStatement addStatement;
+			if (DatabaseHandler.isOracle()) {
+				boolean savedAutoCommit = conn.getAutoCommit();
+				conn.setAutoCommit(false);
+				addStatement = conn.prepareStatement(STATEMENT_ADD_VERSION_ORACLE1);
+				addStatement.setString(1, virtualWiki);
+				addStatement.setString(2, topicName);
+				addStatement.setTimestamp(3, new DBDate(at).asTimestamp());
+				addStatement.execute();
+				addStatement.close();
+				conn.commit();
+				addStatement = conn.prepareStatement(
+					STATEMENT_ADD_VERSION_ORACLE2,
+					ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_UPDATABLE
+				);
+				addStatement.setString(1, topicName);
+				addStatement.setString(2, virtualWiki);
+				ResultSet rs = addStatement.executeQuery();
+				rs.next();
+				OracleClobHelper.setClobValue(rs.getClob(1), contents);
+				rs.close();
+				addStatement.close();
+				conn.commit();
+				conn.setAutoCommit(savedAutoCommit);
+			} else {
+				addStatement = conn.prepareStatement(STATEMENT_ADD_VERSION);
+				addStatement.setString(1, virtualWiki);
+				addStatement.setString(2, topicName);
+				addStatement.setString(3, contents);
+				addStatement.setTimestamp(4, new DBDate(at).asTimestamp());
+				addStatement.execute();
+				addStatement.close();
+			}
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		// FIXME - DELETE ABOVE
+
+		TopicVersion version = new TopicVersion();
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
+		}
+		version.setTopicId(topic.getTopicId());
+		version.setVersionContent(contents);
+		version.setAuthorIpAddress(ipAddress);
+		addTopicVersion(version);
 	}
 
 	/**
@@ -318,6 +378,12 @@ public class DatabaseHandler implements PersistencyHandler {
 		"INSERT INTO TopicReadOnly( topic, virtualwiki ) VALUES ( ?, ? )";
 	protected final static String STATEMENT_READONLY_DELETE =
 		"DELETE FROM TopicReadOnly WHERE topic = ? AND virtualwiki = ?";
+	protected final static String STATEMENT_ADD_VERSION =
+		"INSERT INTO TopicVersion (virtualwiki, name, contents, versionat) VALUES( ?, ?, ?, ?)";
+	protected final static String STATEMENT_ADD_VERSION_ORACLE1 =
+		"INSERT INTO TopicVersion (virtualwiki, name, contents, versionat) VALUES( ?, ?, EMPTY_CLOB(), ?)";
+	protected final static String STATEMENT_ADD_VERSION_ORACLE2 =
+		"SELECT contents FROM TopicVersion WHERE name = ?  AND virtualwiki = ? ORDER BY versionat DESC FOR UPDATE";
 	// FIXME - DELETE ABOVE
 
 	protected static final String STATEMENT_PURGE_DELETES =
@@ -538,17 +604,8 @@ public class DatabaseHandler implements PersistencyHandler {
 			this.updateTopic(topic);
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-
-			// FIXME - DELETE BELOW
 			// write version
-			DatabaseVersionManager.getInstance().addVersion(virtualWiki, topicName, contents, new DBDate());
-			// FIXME - DELETE ABOVE
-
-			TopicVersion version = new TopicVersion();
-			version.setTopicId(topic.getTopicId());
-			version.setVersionContent(contents);
-			version.setAuthorIpAddress(ipAddress);
-			this.addTopicVersion(version);
+			addTopicVersion(virtualWiki, topicName, contents, new DBDate(), ipAddress);
 		}
 	}
 

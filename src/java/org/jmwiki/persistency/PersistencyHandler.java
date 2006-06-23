@@ -4,6 +4,7 @@
 package org.jmwiki.persistency;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.jmwiki.model.Topic;
@@ -14,6 +15,11 @@ import org.jmwiki.persistency.db.DBDate;
  *
  */
 public interface PersistencyHandler {
+
+	/**
+	 *
+	 */
+	void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception;
 
 	/**
 	 *

@@ -168,11 +168,12 @@ public class DatabaseInit {
 					String contents = topicVersion.getRawContents();
 					if (contents == null) contents = "";
 					try {
-						fileVersionManager.addVersion(
+						fileHandler.addTopicVersion(
 							virtualWiki,
 							topicVersion.getTopicName(),
 							contents,
-							topicVersion.getRevisionDate()
+							topicVersion.getRevisionDate(),
+							topicVersion.getAuthorIpAddress()
 						);
 					} catch (Exception e) {
 						logger.error("Unable to convert topic version to file: " + topicVersion.getTopicName() + " / " + virtualWiki);

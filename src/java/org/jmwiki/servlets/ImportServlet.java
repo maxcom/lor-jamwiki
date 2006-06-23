@@ -84,11 +84,12 @@ public class ImportServlet extends JMController implements Controller {
 				buffer.append("<br/>");
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
-					databaseVersionManager.addVersion(
+					databaseHandler.addTopicVersion(
 						virtualWiki,
 						topicVersion.getTopicName(),
 						topicVersion.getRawContents(),
-						topicVersion.getRevisionDate()
+						topicVersion.getRevisionDate(),
+						topicVersion.getAuthorIpAddress()
 					);
 				}
 			}
