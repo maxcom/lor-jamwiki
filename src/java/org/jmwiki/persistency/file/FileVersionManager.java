@@ -54,7 +54,7 @@ public class FileVersionManager implements VersionManager {
 	 */
 	public synchronized Object lookupRevision(String virtualWiki, String topicName, int version) throws Exception {
 		logger.debug("Looking up revision " + version + " for " + virtualWiki + "/" + topicName);
-		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR);
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR);
 		String fileName = Utilities.encodeSafeFileName(topicName + FileHandler.EXT);
 		String[] files = file.list(new FileStartFilter(fileName));
 		if (files == null) return null;
@@ -84,13 +84,13 @@ public class FileVersionManager implements VersionManager {
 		fileName.append(Utilities.sep());
 		fileName.append(revision1Name);
 		logger.debug("Finding path for " + fileName);
-		String fileName1 = FileHandler.getPathFor(virtualWiki, Utilities.decodeSafeFileName(fileName.toString())).getPath();
+		String fileName1 = FileHandler.getPathFor(virtualWiki, null, Utilities.decodeSafeFileName(fileName.toString())).getPath();
 		fileName = new StringBuffer();
 		fileName.append(FileHandler.VERSION_DIR);
 		fileName.append(Utilities.sep());
 		fileName.append(revision2Name);
 		logger.debug("Finding path for " + fileName);
-		String fileName2 = FileHandler.getPathFor(virtualWiki, Utilities.decodeSafeFileName(fileName.toString())).getPath();
+		String fileName2 = FileHandler.getPathFor(virtualWiki, null, Utilities.decodeSafeFileName(fileName.toString())).getPath();
 		logger.debug("Diffing: " + fileName1 + " against " + fileName2);
 		FileHandler handler = new FileHandler();
 		String contents1 = (handler.read(new File(fileName1))).toString();
@@ -116,7 +116,7 @@ public class FileVersionManager implements VersionManager {
 	 */
 	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
 		List all = new LinkedList();
-		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR);
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR);
 		String fileName = Utilities.encodeSafeFileName(topicName + FileHandler.EXT);
 		String[] files = file.list(new FileStartFilter(fileName));
 		if (files == null) return all;
@@ -173,7 +173,7 @@ public class FileVersionManager implements VersionManager {
 		logger.debug("Getting file " + fileName);
 		FileHandler fileHandler = (FileHandler) WikiBase.getInstance().getHandler();
 		File file = new File(
-			FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR),
+			FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR),
 			fileName
 		);
 		return fileHandler.read(file).toString();
@@ -183,7 +183,7 @@ public class FileVersionManager implements VersionManager {
 	 *
 	 */
 	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR);
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR);
 		String fileName = Utilities.encodeSafeFileName(topicName + FileHandler.EXT);
 		String[] files = file.list(new FileStartFilter(fileName));
 		if (files != null) return files.length;

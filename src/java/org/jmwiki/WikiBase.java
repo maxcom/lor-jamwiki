@@ -631,7 +631,7 @@ public class WikiBase {
 			// destroy recent changes
 			if (WikiBase.getPersistenceType() != DATABASE) {
 				try {
-					FileHandler.getPathFor(virtualWikiName, "recent.xml").delete();
+					FileHandler.getPathFor(virtualWikiName, null, "recent.xml").delete();
 				} catch (Exception e) {
 					logger.error("error removing recent.xml", e);
 				}
@@ -639,7 +639,7 @@ public class WikiBase {
 			// failsafe
 			if (WikiBase.getPersistenceType() != DATABASE) {
 				try {
-					File wikiDir = FileHandler.getPathFor(virtualWikiName, null);
+					File wikiDir = FileHandler.getPathFor(virtualWikiName, null, null);
 					File[] locks = wikiDir.listFiles(new FileExtensionFilter(".lock"));
 					for (int i = 0; i < locks.length; i++) {
 						File lock = locks[i];

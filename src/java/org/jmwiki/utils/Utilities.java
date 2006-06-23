@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Collection;
@@ -131,7 +134,15 @@ public class Utilities {
 	 * Converts back file name encoded by encodeSafeFileName().
 	 */
 	public static String decodeSafeFileName(String name) {
-		return JSPUtils.decodeURL(name, "utf-8");
+		// URL decode the rest of the name
+		try {
+			name = URLDecoder.decode(name, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while decoding " + name + " with charset UTF-8", e);
+		}
+		// replace spaces with underscores
+		name = Utilities.replaceString(name, " ", "_");
+		return name;
 	}
 
 	/**
@@ -153,17 +164,15 @@ public class Utilities {
 	 * Converts arbitrary string into string usable as file name.
 	 */
 	public static String encodeSafeFileName(String name) {
-		StringTokenizer st = new StringTokenizer(name,"%"+File.separator,true);
-		StringBuffer sb = new StringBuffer(name.length());
-		while (st.hasMoreTokens()) {
-			String token = st.nextToken();
-			if (File.separator.equals(token) || token.equals("%")) {
-				sb.append(token);
-			} else {
-				sb.append(JSPUtils.encodeURL(token, "utf-8"));
-			}
+		// replace spaces with underscores
+		name = Utilities.replaceString(name, " ", "_");
+		// URL encode the rest of the name
+		try {
+			name = URLEncoder.encode(name, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while encoding " + name + " with charset UTF-8", e);
 		}
-		return sb.toString();
+		return name;
 	}
 
 	/**

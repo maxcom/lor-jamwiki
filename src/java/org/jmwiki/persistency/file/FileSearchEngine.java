@@ -84,6 +84,6 @@ public class FileSearchEngine extends AbstractSearchEngine {
 	 * @see jmwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)
 	 */
 	protected String getFilename(String currentWiki, String topic) {
-		return FileHandler.getPathFor(currentWiki, topic + FileHandler.EXT).getName();
+		return FileHandler.getPathFor(currentWiki, null, topic + FileHandler.EXT).getName();
 	}
 }

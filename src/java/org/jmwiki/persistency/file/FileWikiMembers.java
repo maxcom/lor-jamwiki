@@ -43,7 +43,7 @@ public class FileWikiMembers extends AbstractWikiMembers {
 	 */
 	public FileWikiMembers(String virtualWiki) throws ClassNotFoundException, IOException {
 		this.virtualWiki = virtualWiki;
-		this.memberFile = FileHandler.getPathFor(virtualWiki, "member.xml");
+		this.memberFile = FileHandler.getPathFor(virtualWiki, null, "member.xml");
 		if (!memberFile.exists()) {
 			File dirFile = new File(Utilities.dir());
 			if (!dirFile.exists()) dirFile.mkdir();

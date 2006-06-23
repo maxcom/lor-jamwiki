@@ -40,12 +40,12 @@ public class DatabaseInit {
 	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
 
 	// FIXME - move to more logical location
-	protected static final String DEFAULT_PASSWORD = "password";
-	protected static final String DEFAULT_AUTHOR_LOGIN = "unknown_author";
-	protected static final String DEFAULT_AUTHOR_NAME = "Unknown Author";
-	protected static final String DEFAULT_AUTHOR_IP_ADDRESS = "0.0.0.0";
-	protected static final int TOPIC_TYPE_DEFAULT = 1;
-	protected static final int EDIT_TYPE_DEFAULT = 1;
+	public static final String DEFAULT_PASSWORD = "password";
+	public static final String DEFAULT_AUTHOR_LOGIN = "unknown_author";
+	public static final String DEFAULT_AUTHOR_NAME = "Unknown Author";
+	public static final String DEFAULT_AUTHOR_IP_ADDRESS = "0.0.0.0";
+	public static final int TOPIC_TYPE_DEFAULT = 1;
+	public static final int EDIT_TYPE_DEFAULT = 1;
 
 	/**
 	 * FIXME: temporary
@@ -156,7 +156,7 @@ public class DatabaseInit {
 			try {
 				fileHandler.addVirtualWiki(virtualWiki);
 			} catch (Exception e) {
-				logger.error("Unable to convert virtual wiki to file: " + virtualWiki);
+				logger.error("Unable to convert virtual wiki to file: " + virtualWiki + ": " + e.getMessage());
 			}
 			// Versions
 			Collection topics = databaseSearchEngine.getAllTopicNames(virtualWiki);
@@ -176,7 +176,7 @@ public class DatabaseInit {
 							topicVersion.getAuthorIpAddress()
 						);
 					} catch (Exception e) {
-						logger.error("Unable to convert topic version to file: " + topicVersion.getTopicName() + " / " + virtualWiki);
+						logger.error("Unable to convert topic version to file: " + topicVersion.getTopicName() + " / " + virtualWiki + ": " + e.getMessage());
 					}
 				}
 			}
@@ -186,7 +186,7 @@ public class DatabaseInit {
 				try {
 					fileHandler.write(virtualWiki, databaseHandler.read(virtualWiki, topicName), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
 				} catch (Exception e) {
-					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki);
+					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
 				}
 			}
 			// Read-only topics
@@ -196,7 +196,7 @@ public class DatabaseInit {
 				try {
 					fileHandler.addReadOnlyTopic(virtualWiki, topicName);
 				} catch (Exception e) {
-					logger.error("Unable to convert read-only topic to file: " + topicName + " / " + virtualWiki);
+					logger.error("Unable to convert read-only topic to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
 				}
 			}
 			// Members
@@ -212,7 +212,7 @@ public class DatabaseInit {
 						wikiMember.getKey()
 					);
 				} catch (Exception e) {
-					logger.error("Unable to convert wiki member to file: " + wikiMember.getUserName());
+					logger.error("Unable to convert wiki member to file: " + wikiMember.getUserName() + ": " + e.getMessage());
 				}
 			}
 			// Notifications
@@ -226,7 +226,7 @@ public class DatabaseInit {
 					try {
 						fileNotify.addMember(memberName);
 					} catch (Exception e) {
-						logger.error("Unable to convert notify member to file: " + memberName);
+						logger.error("Unable to convert notify member to file: " + memberName + ": " + e.getMessage());
 					}
 				}
 			}

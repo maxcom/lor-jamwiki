@@ -7,11 +7,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,12 +64,8 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
-		File versionDir = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR);
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(topicName);
-		buffer.append(FileHandler.EXT);
-		buffer.append(Utilities.fileFriendlyDate(at));
-		File versionFile = new File(versionDir, buffer.toString());
+		String filename = topicName + "-" + Utilities.fileFriendlyDate(at) + FileHandler.EXT;
+		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(versionFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		writer.write(contents);
 		writer.close();
@@ -81,13 +77,11 @@ public class FileHandler implements PersistencyHandler {
 	public void createDefaults(Locale locale) {
 		// create wiki home if necessary
 		File dirCheck = new File(fileBase(""));
-		//logger.info( "Using filebase: " + dirCheck );
 		dirCheck.mkdir();
 		// create default virtual wiki versions directory if necessary
-		File versionDirCheck = new File(fileBase("") + VERSION_DIR);
-		versionDirCheck.mkdir();
+		File versionDirCheck = getPathFor(null, null, VERSION_DIR);
 		// create the virtual wiki list file if necessary
-		File virtualList = new File(fileBase("") + VIRTUAL_WIKI_LIST);
+		File virtualList = getPathFor(null, null, VIRTUAL_WIKI_LIST);
 		// get the virtual wiki list and set up the file system
 		try {
 			if (!virtualList.exists()) {
@@ -109,10 +103,8 @@ public class FileHandler implements PersistencyHandler {
 				logger.debug("Creating defaults for " + vWiki);
 				File dummy;
 				// create the directories for the virtual wiki
-				dummy = getPathFor(vWiki, "");
-				dummy.mkdir();
-				dummy = getPathFor(vWiki, VERSION_DIR);
-				dummy.mkdir();
+				dummy = getPathFor(vWiki, null, "");
+				dummy = getPathFor(vWiki, null, VERSION_DIR);
 				// write out default topics
 				setupSpecialPage(vWiki, JMController.getMessage("specialpages.startingpoints", locale));
 				setupSpecialPage(vWiki, JMController.getMessage("specialpages.leftMenu", locale));
@@ -125,7 +117,6 @@ public class FileHandler implements PersistencyHandler {
 			in.close();
 		} catch (Exception ex) {
 			logger.error(ex);
-			ex.printStackTrace();
 		}
 	}
 
@@ -133,7 +124,7 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
-		File dummy = getPathFor(vWiki, specialPage + ".txt");
+		File dummy = getPathFor(vWiki, null, specialPage + ".txt");
 		if (!dummy.exists()) {
 			Writer writer = new OutputStreamWriter(new FileOutputStream(dummy), Environment.getValue(Environment.PROP_FILE_ENCODING));
 			writer.write(WikiBase.readDefaultTopic(specialPage));
@@ -164,17 +155,14 @@ public class FileHandler implements PersistencyHandler {
 			buffer.append(dir);
 			buffer.append(File.separator);
 		}
+		File directory = new File(buffer.toString());
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
 		if (fileName != null) {
 			buffer.append(Utilities.encodeSafeFileName(fileName));
 		}
 		return new File(buffer.toString());
-	}
-
-	/**
-	 *
-	 */
-	public static File getPathFor(String virtualWiki, String fileName) {
-		return getPathFor(virtualWiki, null, fileName);
 	}
 
 	/**
@@ -184,11 +172,7 @@ public class FileHandler implements PersistencyHandler {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(topicName);
-		buffer.append(EXT);
-		logger.debug("Virtual wiki was determined to be: " + virtualWiki + " Topic name was: " + topicName);
-		File file = getPathFor(virtualWiki, buffer.toString());
+		File file = getPathFor(virtualWiki, null, topicName + EXT);
 		StringBuffer contents = read(file);
 		return contents.toString();
 	}
@@ -199,29 +183,13 @@ public class FileHandler implements PersistencyHandler {
 	public StringBuffer read(File file) throws IOException {
 		StringBuffer contents = new StringBuffer();
 		if (file.exists()) {
-			Reader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-			//CR=13=\r LF=10=\n
-			boolean cr = false;
-			while (true) {
-				int c = in.read();
-				if (c == -1) break;
-				if (c == 13) cr = true;
-				if (cr && c == 10) {
-					cr = false;
-					contents.append((char) 10);
-				} else {
-					if (c == 13) {
-						// do nothing
-					} else if (cr) {
-						contents.append((char) 13);
-						contents.append((char) c);
-						cr = false;
-					} else {
-						contents.append((char) c);
-					}
-				}
+			FileReader reader = new FileReader(file);
+			char[] buf = new char[4096];
+			int c;
+			while ((c = reader.read(buf, 0, buf.length)) != -1) {
+				contents.append(buf, 0, c);
 			}
-			in.close();
+			reader.close();
 		} else {
 			logger.debug("File does not exist, returning default contents: " + file);
 			contents.append("This is a new topic");
@@ -250,7 +218,6 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public synchronized boolean lockTopic(String virtualWiki, String topicName, String key) throws IOException {
 		File lockFile = makeLockFile(virtualWiki, topicName);
-		logger.debug("Locking " + topicName);
 		Date currentDate = new Date();
 		logger.debug("Edit timeout in minutes is " + Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
 		long fiveMinutesAgo = currentDate.getTime() - 60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT);
@@ -277,7 +244,7 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		File checkFile = getPathFor(virtualWiki, topicName + ".txt");
+		File checkFile = getPathFor(virtualWiki, null, topicName + ".txt");
 		return checkFile.exists();
 	}
 
@@ -285,13 +252,7 @@ public class FileHandler implements PersistencyHandler {
 	 * Create a lock file of the format topicName.lock
 	 */
 	private File makeLockFile(String virtualWiki, String topicName) {
-		StringBuffer buffer = new StringBuffer();
-		if (virtualWiki.equals(WikiBase.DEFAULT_VWIKI)) virtualWiki = "";
-		buffer.append(fileBase(virtualWiki));
-		buffer.append(File.separator);
-		buffer.append(Utilities.encodeSafeFileName(topicName));
-		buffer.append(LOCK_EXTENSION);
-		return new File(buffer.toString());
+		return getPathFor(virtualWiki, null, topicName + LOCK_EXTENSION);
 	}
 
 	/**
@@ -308,7 +269,7 @@ public class FileHandler implements PersistencyHandler {
 	 * Unlocks a locked file
 	 */
 	public synchronized void unlockTopic(String virtualWiki, String topicName) throws IOException {
-		File lockFile = getPathFor(virtualWiki, topicName + LOCK_EXTENSION);
+		File lockFile = getPathFor(virtualWiki, null, topicName + LOCK_EXTENSION);
 		if (!lockFile.exists()) {
 			logger.warn("attempt to unlock topic by deleting lock file failed (file does not exist): " + lockFile);
 		}
@@ -323,17 +284,10 @@ public class FileHandler implements PersistencyHandler {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}
-		File versionFile = getPathFor(virtualWiki, VERSION_DIR, topicName + EXT + "." + Utilities.fileFriendlyDate(new Date()));
-		File file = getPathFor(virtualWiki, topicName + EXT);
+		File file = getPathFor(virtualWiki, null, topicName + EXT);
 		PrintWriter writer = getNewPrintWriter(file, true);
-		PrintWriter versionWriter = null;
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			versionWriter = getNewPrintWriter(versionFile, true);
-		}
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			logger.debug("Writing version: " + versionFile);
-			versionWriter.print(contents);
-			versionWriter.close();
+			addTopicVersion(virtualWiki, topicName, contents, new Date(), ipAddress);
 		}
 		logger.debug("Writing topic: " + file);
 		writer.print(contents);
@@ -352,7 +306,7 @@ public class FileHandler implements PersistencyHandler {
 	 * Write the read-only list out to disk
 	 */
 	protected synchronized void saveReadOnlyTopics(String virtualWiki) throws IOException {
-		File roFile = getPathFor(virtualWiki, READ_ONLY_FILE);
+		File roFile = getPathFor(virtualWiki, null, READ_ONLY_FILE);
 		logger.debug("Saving read-only topics to " + roFile);
 		Writer out = new OutputStreamWriter(new FileOutputStream(roFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		Iterator it = ((Collection) this.readOnlyTopics.get(virtualWiki)).iterator();
@@ -403,7 +357,7 @@ public class FileHandler implements PersistencyHandler {
 	protected synchronized void loadReadOnlyTopics(String virtualWiki) {
 		logger.debug("Loading read only topics for " + virtualWiki);
 		Collection roTopics = new ArrayList();
-		File roFile = getPathFor(virtualWiki, READ_ONLY_FILE);
+		File roFile = getPathFor(virtualWiki, null, READ_ONLY_FILE);
 		if (!roFile.exists()) {
 			logger.debug("Empty read only topics for " + virtualWiki);
 			if (virtualWiki == null || virtualWiki.equals("")) {
@@ -472,7 +426,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public Collection getVirtualWikiList() throws Exception {
 		Collection all = new ArrayList();
-		File file = getPathFor("", VIRTUAL_WIKI_LIST);
+		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
 		while (true) {
 			String line = in.readLine();
@@ -491,7 +445,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
-		File file = getPathFor("", VIRTUAL_WIKI_LIST);
+		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
 		while (true) {
 			String line = in.readLine();
@@ -513,7 +467,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public Collection purgeDeletes(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
-		file = getPathFor(virtualWiki, "");
+		file = getPathFor(virtualWiki, null, "");
 		File[] files = file.listFiles(new TextFileFilter());
 		for (int i = 0; i < files.length; i++) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i]), Environment.getValue(Environment.PROP_FILE_ENCODING)));
@@ -543,7 +497,7 @@ public class FileHandler implements PersistencyHandler {
 	public List getLockList(String virtualWiki) throws Exception {
 		if (virtualWiki == null) virtualWiki = "";
 		List all = new ArrayList();
-		File path = getPathFor(virtualWiki, "");
+		File path = getPathFor(virtualWiki, null, "");
 		File[] files = path.listFiles(new FileExtensionFilter(LOCK_EXTENSION));
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];

@@ -39,7 +39,7 @@ public class FileChangeLog implements ChangeLog {
 		if (cache.containsKey(virtualWiki)) {
 			return (Hashtable) cache.get(virtualWiki);
 		}
-		File changesPath = FileHandler.getPathFor(virtualWiki, RECENTFILE);
+		File changesPath = FileHandler.getPathFor(virtualWiki, null, RECENTFILE);
 		logger.debug("reading changes for " + virtualWiki + " from " + changesPath);
 		Hashtable vwikiCache;
 		if (!changesPath.exists()) {
@@ -64,7 +64,7 @@ public class FileChangeLog implements ChangeLog {
 	 */
 	private void saveTableFor(String virtualWiki) throws IOException {
 		if (virtualWiki == null) virtualWiki = "";
-		File changesPath = FileHandler.getPathFor(virtualWiki, RECENTFILE);
+		File changesPath = FileHandler.getPathFor(virtualWiki, null, RECENTFILE);
 		FileOutputStream fileOutputStream = new FileOutputStream(changesPath);
 		ObjOut out = new ObjOut(fileOutputStream);
 		Object changeTable = cache.get(virtualWiki);
@@ -157,7 +157,7 @@ public class FileChangeLog implements ChangeLog {
 	 */
 	public void deleteChangeTableFile(String virtualWiki) {
 		try {
-			FileHandler.getPathFor(virtualWiki, RECENTFILE).delete();
+			FileHandler.getPathFor(virtualWiki, null, RECENTFILE).delete();
 		} catch (Exception err) {
 			logger.error("Unable to delete recent changes file for " + virtualWiki, err);
 		}
