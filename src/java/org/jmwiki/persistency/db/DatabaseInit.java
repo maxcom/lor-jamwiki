@@ -162,18 +162,19 @@ public class DatabaseInit {
 			Collection topics = databaseSearchEngine.getAllTopicNames(virtualWiki);
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
-				List versions = databaseVersionManager.getAllVersions(virtualWiki, topicName);
+				List versions = databaseHandler.getAllVersions(virtualWiki, topicName);
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
-					String contents = topicVersion.getRawContents();
+					String contents = topicVersion.getVersionContent();
 					if (contents == null) contents = "";
 					try {
 						fileHandler.addTopicVersion(
 							virtualWiki,
-							topicVersion.getTopicName(),
+							topicName,
 							contents,
 							topicVersion.getRevisionDate(),
-							topicVersion.getAuthorIpAddress()
+							topicVersion.getAuthorIpAddress(),
+							topicVersion.getTopicVersionId()
 						);
 					} catch (Exception e) {
 						logger.error("Unable to convert topic version to file: " + topicVersion.getTopicName() + " / " + virtualWiki + ": " + e.getMessage());
@@ -250,7 +251,7 @@ public class DatabaseInit {
 	// FIXME - temporary
 	public static void convert() throws Exception {
 		ConvertVQWiki.convertFromDatabase();
-		DatabaseHandler.loadVirtualWikiHash();
+		DatabaseHandler.loadVirtualWikiHashes();
 	}
 
 	/**

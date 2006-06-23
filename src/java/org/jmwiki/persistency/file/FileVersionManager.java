@@ -108,46 +108,10 @@ public class FileVersionManager implements VersionManager {
 	}
 
 	/**
-	 * Returns all versions of the given topic in reverse chronological order
-	 * @param virtualWiki
-	 * @param topicName
-	 * @return
-	 * @throws Exception
-	 */
-	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
-		List all = new LinkedList();
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR);
-		String fileName = Utilities.encodeSafeFileName(topicName + FileHandler.EXT);
-		String[] files = file.list(new FileStartFilter(fileName));
-		if (files == null) return all;
-		Arrays.sort(
-			files,
-			new Comparator() {
-				public int compare(Object o1, Object o2) {
-					String one = (String) o1;
-					String two = (String) o2;
-					return two.compareTo(one);
-				}
-			}
-		);
-		for (int i = 0; i < files.length; i++) {
-			String currentFile = files[i];
-			TopicVersion version = new TopicVersion(
-				virtualWiki,
-				topicName,
-				new DBDate(Utilities.convertFileFriendlyDate(currentFile)),
-				i
-			);
-			all.add(version);
-		}
-		return all;
-	}
-
-	/**
 	 *
 	 */
 	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception {
-		List allVersions = getAllVersions(virtualWiki, topicName);
+		List allVersions = WikiBase.getInstance().getHandler().getAllVersions(virtualWiki, topicName);
 		TopicVersion version = (TopicVersion) allVersions.get(versionNumber);
 		WikiBase instance = WikiBase.getInstance();
 		String cookedContents = instance.cook(

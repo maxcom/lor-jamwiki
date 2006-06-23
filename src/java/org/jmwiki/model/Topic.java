@@ -279,7 +279,7 @@ public class Topic implements Serializable {
 		this.author = null;
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// get list of versions:
-			List allVersions = WikiBase.getInstance().getVersionManagerInstance().getAllVersions(virtualWiki, this.name);
+			List allVersions = WikiBase.getInstance().getHandler().getAllVersions(virtualWiki, this.name);
 			// sort the list so that the most recent version is on top:
 			Collections.sort(allVersions,new Comparator() {
 				public int compare(Object o1, Object o2) {

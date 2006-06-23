@@ -27,6 +27,25 @@ public interface PersistencyHandler {
 	public void addVirtualWiki(String virtualWiki) throws Exception;
 
 	/**
+	 * Returns all versions of the given topic in reverse chronological order
+	 * @param virtualWiki
+	 * @param topicName
+	 * @return
+	 * @throws Exception
+	 */
+	public List getAllVersions(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
+	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
+	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
+
+	/**
 	 *
 	 */
 	public String read(String virtualWiki, String topicName) throws Exception;

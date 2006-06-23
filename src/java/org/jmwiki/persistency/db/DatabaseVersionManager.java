@@ -28,8 +28,6 @@ public class DatabaseVersionManager implements VersionManager {
 		"SELECT * FROM TopicVersion WHERE name = ? AND virtualwiki = ? ORDER BY versionat DESC";
 	protected final static String STATEMENT_VERSION_FIND_ONE =
 		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
-	protected final static String STATEMENT_GET_ALL =
-		"SELECT versionat FROM TopicVersion WHERE name = ?  AND virtualwiki = ? ORDER BY versionat DESC";
 	protected final static String STATEMENT_COUNT_VERSIONS =
 		"SELECT COUNT(*) FROM TopicVersion WHERE name = ?  AND virtualwiki = ?";
 
@@ -147,37 +145,8 @@ public class DatabaseVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
-		List all = new ArrayList();
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement getAllStatement = conn.prepareStatement(STATEMENT_GET_ALL);
-			getAllStatement.setString(1, topicName);
-			getAllStatement.setString(2, virtualWiki);
-			ResultSet rs = getAllStatement.executeQuery();
-			for (int i = 0; rs.next(); i++) {
-				TopicVersion version = new TopicVersion(
-					virtualWiki,
-					topicName,
-					new DBDate(rs.getTimestamp("versionat")),
-					i
-				);
-				all.add(version);
-			}
-			rs.close();
-			getAllStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
 	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception {
-		List allVersions = getAllVersions(virtualWiki, topicName);
+		List allVersions = WikiBase.getInstance().getHandler().getAllVersions(virtualWiki, topicName);
 		TopicVersion version = (TopicVersion) allVersions.get(versionNumber);
 		WikiBase instance = WikiBase.getInstance();
 		String cookedContents = instance.cook(

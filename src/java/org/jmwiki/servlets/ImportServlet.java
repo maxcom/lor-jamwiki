@@ -78,7 +78,7 @@ public class ImportServlet extends JMController implements Controller {
 			Collection topics = fileSearchEngine.getAllTopicNames(virtualWiki);
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
-				List versions = fileVersionManager.getAllVersions(virtualWiki, topicName);
+				List versions = fileHandler.getAllVersions(virtualWiki, topicName);
 				logger.info("importing " + versions.size() + " versions of topic " + topicName);
 				buffer.append("imported " + versions.size() + " versions of topic " + topicName);
 				buffer.append("<br/>");

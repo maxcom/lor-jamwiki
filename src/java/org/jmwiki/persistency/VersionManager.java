@@ -29,15 +29,6 @@ public interface VersionManager {
 	public java.util.Date lastRevisionDate(String virtualWiki, String topicName) throws Exception;
 
 	/**
-	 * Returns all versions of the given topic in reverse chronological order
-	 * @param virtualWiki
-	 * @param topicName
-	 * @return
-	 * @throws Exception
-	 */
-	public List getAllVersions(String virtualWiki, String topicName) throws Exception;
-
-	/**
 	 *
 	 */
 	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception;

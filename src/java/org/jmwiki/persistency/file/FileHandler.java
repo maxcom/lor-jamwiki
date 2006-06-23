@@ -14,10 +14,13 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -50,7 +53,9 @@ public class FileHandler implements PersistencyHandler {
 	private final static String READ_ONLY_FILE = "ReadOnlyTopics";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
 	private File file;
-	private final String LOCK_EXTENSION = ".lock";
+	private static final String LOCK_EXTENSION = ".lock";
+	private static final String TOPIC_VERSION_ID_FILE = "topic_version.id";
+	private static int NEXT_TOPIC_VERSION_ID = -1;
 
 	/**
 	 *
@@ -63,9 +68,50 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static String topicFilename(String topicName) {
+		return topicName + EXT;
+	}
+
+	/**
+	 *
+	 */
+	protected static String topicVersionFilename(int topicVersionId) {
+		return topicVersionId + EXT;
+	}
+
+	/**
+	 *
+	 */
+	private static int nextTopicVersionId() throws Exception {
+		if (NEXT_TOPIC_VERSION_ID < 0) {
+			// read value from file
+			File topicVersionIdFile = getPathFor(null, null, TOPIC_VERSION_ID_FILE);
+			if (!topicVersionIdFile.exists()) {
+				NEXT_TOPIC_VERSION_ID = 0;
+			} else {
+				NEXT_TOPIC_VERSION_ID = new Integer(read(topicVersionIdFile).toString()).intValue();
+			}
+		}
+		return NEXT_TOPIC_VERSION_ID++;
+	}
+
+	/**
+	 *
+	 */
 	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
-		String filename = topicName + "-" + Utilities.fileFriendlyDate(at) + FileHandler.EXT;
-		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, filename);
+		int topicVersionId = nextTopicVersionId();
+		addTopicVersion(virtualWiki, topicName, contents, at, ipAddress, topicVersionId);
+	}
+
+	/**
+	 *
+	 */
+	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress, int topicVersionId) throws Exception {
+		if (topicVersionId > NEXT_TOPIC_VERSION_ID) {
+			NEXT_TOPIC_VERSION_ID = topicVersionId;
+		}
+		String filename = topicVersionFilename(topicVersionId);
+		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(versionFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		writer.write(contents);
 		writer.close();
@@ -121,6 +167,35 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
+	 * Returns all versions of the given topic in reverse chronological order
+	 * @param virtualWiki
+	 * @param topicName
+	 * @return
+	 * @throws Exception
+	 */
+	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
+		List all = new LinkedList();
+		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName);
+		File[] files = file.listFiles();
+		if (files == null) return all;
+		Arrays.sort(
+			files,
+			new Comparator() {
+				public int compare(Object o1, Object o2) {
+					String one = ((File)o1).getName();
+					String two = ((File)o2).getName();
+					return two.compareTo(one);
+				}
+			}
+		);
+		for (int i = 0; i < files.length; i++) {
+			TopicVersion version = initTopicVersion(files[i]);
+			all.add(version);
+		}
+		return all;
+	}
+
+	/**
 	 *
 	 */
 	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
@@ -145,14 +220,25 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public static File getPathFor(String virtualWiki, String dir, String fileName) {
+		return getPathFor(virtualWiki, dir, null, fileName);
+	}
+
+	/**
+	 *
+	 */
+	public static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
 		StringBuffer buffer = new StringBuffer();
 		if (virtualWiki == null || virtualWiki.equals(WikiBase.DEFAULT_VWIKI)) {
 			virtualWiki = "";
 		}
 		buffer.append(fileBase(virtualWiki));
 		buffer.append(File.separator);
-		if (dir != null) {
-			buffer.append(dir);
+		if (dir1 != null) {
+			buffer.append(Utilities.encodeSafeFileName(dir1));
+			buffer.append(File.separator);
+		}
+		if (dir2 != null) {
+			buffer.append(Utilities.encodeSafeFileName(dir2));
 			buffer.append(File.separator);
 		}
 		File directory = new File(buffer.toString());
@@ -166,13 +252,86 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	protected static Topic initTopic(String virtualWiki, File file) {
+		try {
+			// FIXME - clean this up.
+			// get topic name
+			if (!file.exists() || file.getName() == null) {
+				return null;
+			}
+			int pos = file.getName().lastIndexOf(EXT);
+			if (pos < 0) {
+				return null;
+			}
+			String topicName = file.getName().substring(0, pos);
+			Topic topic = new Topic();
+			topic.setName(topicName);
+			topic.setVirtualWiki(virtualWiki);
+			topic.setTopicContent(read(file).toString());
+			// FIXME - set these
+			/*
+			topic.setAdminOnly(boolean);
+			topic.setTopicId(int);
+			topic.setLockedBy(int);
+			topic.setLockedDate(Timestamp);
+			topic.setLockSessionKey(String);
+			topic.setReadOnly(boolean);
+			topic.setTopicType(int);
+			*/
+			return topic;
+		} catch (Exception e) {
+			logger.error("Failure while initializing topic", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static TopicVersion initTopicVersion(File file) {
+		try {
+			// FIXME - clean this up.
+			// get topic version id
+			if (!file.exists() || file.getName() == null) {
+				return null;
+			}
+			int pos = file.getName().lastIndexOf(EXT);
+			if (pos < 0) {
+				return null;
+			}
+			int topicVersionId = new Integer(file.getName().substring(0, pos)).intValue();
+			// get version content
+			String contents = read(file).toString();
+			TopicVersion topicVersion = new TopicVersion();
+			topicVersion.setTopicVersionId(topicVersionId);
+			topicVersion.setVersionContent(contents);
+			// FIXME - set these
+			/*
+			topicVersion.setTopicId(rs.getInt("topic_id"));
+			topicVersion.setEditComment(rs.getString("edit_comment"));
+			topicVersion.setAuthorId(rs.getInt("author_id"));
+			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
+			topicVersion.setEditType(rs.getInt("edit_type"));
+			topicVersion.setAuthorIpAddress(rs.getString("author_ip_address"));
+			*/
+			return topicVersion;
+		} catch (Exception e) {
+			logger.error("Failure while initializing topic version", e);
+			return null;
+		}
+	}
+
+	/**
 	 * Reads a file from disk
 	 */
 	public String read(String virtualWiki, String topicName) throws Exception {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}
-		File file = getPathFor(virtualWiki, null, topicName + EXT);
+		String filename = topicFilename(topicName);
+		File file = getPathFor(virtualWiki, null, filename);
 		StringBuffer contents = read(file);
 		return contents.toString();
 	}
@@ -180,7 +339,7 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public StringBuffer read(File file) throws IOException {
+	public static StringBuffer read(File file) throws IOException {
 		StringBuffer contents = new StringBuffer();
 		if (file.exists()) {
 			FileReader reader = new FileReader(file);
@@ -244,7 +403,8 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		File checkFile = getPathFor(virtualWiki, null, topicName + ".txt");
+		String filename = topicFilename(topicName);
+		File checkFile = getPathFor(virtualWiki, null, filename);
 		return checkFile.exists();
 	}
 
@@ -266,6 +426,24 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
+		String filename = topicFilename(topicName);
+		File file = getPathFor(virtualWiki, null, filename);
+		return initTopic(virtualWiki, file);
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		String filename = topicVersionFilename(nextTopicVersionId());
+		File file = getPathFor(virtualWiki, VERSION_DIR, topicName, filename);
+		return initTopicVersion(file);
+	}
+
+	/**
 	 * Unlocks a locked file
 	 */
 	public synchronized void unlockTopic(String virtualWiki, String topicName) throws IOException {
@@ -284,7 +462,8 @@ public class FileHandler implements PersistencyHandler {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}
-		File file = getPathFor(virtualWiki, null, topicName + EXT);
+		String filename = topicFilename(topicName);
+		File file = getPathFor(virtualWiki, null, filename);
 		PrintWriter writer = getNewPrintWriter(file, true);
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			addTopicVersion(virtualWiki, topicName, contents, new Date(), ipAddress);
@@ -325,7 +504,6 @@ public class FileHandler implements PersistencyHandler {
 	 * @throws Exception
 	 */
 	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
-		logger.debug("isTopicReadonly: " + virtualWiki + "/" + topicName);
 		if (readOnlyTopics == null) {
 			return false;
 		} else {
@@ -406,7 +584,6 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		logger.debug("Adding read-only topic: " + topicName);
 		Collection roTopics = (Collection) this.readOnlyTopics.get(virtualWiki);
 		roTopics.add(topicName);
 		this.saveReadOnlyTopics(virtualWiki);
@@ -416,7 +593,6 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		logger.debug("Removing read-only topic: " + topicName);
 		((Collection) this.readOnlyTopics.get(virtualWiki)).remove(topicName);
 		this.saveReadOnlyTopics(virtualWiki);
 	}
