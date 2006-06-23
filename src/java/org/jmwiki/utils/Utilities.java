@@ -150,19 +150,6 @@ public class Utilities {
 	}
 
 	/**
-	 *
-	 */
-	public static String encodeSafeExportFileName(String name) {
-		StringBuffer sb = new StringBuffer(encodeSafeFileName(name));
-		for (int i=0 ; i < sb.length(); i++) {
-			if (sb.charAt(i) == '%') {
-				sb.setCharAt(i, '-');
-			}
-		}
-		return sb.toString();
-	}
-
-	/**
 	 * Converts arbitrary string into string usable as file name.
 	 */
 	public static String encodeSafeFileName(String name) {
