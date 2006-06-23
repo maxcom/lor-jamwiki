@@ -10,7 +10,6 @@
         <delete file="${dir.src.java}/org/jmwiki/parser/alt/VQWikiFormatLex.java"/>
         <delete file="${dir.src.java}/org/jmwiki/parser/alt/VQWikiLayoutLex.java"/>
         <delete file="${dir.src.java}/org/jmwiki/parser/alt/VQWikiLinkLex.java"/>
-        <delete file="${dir.src.java}/org/jmwiki/parser/alt/HTMLLinkLex.java"/>
     </target>
 
     <target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">
@@ -36,7 +35,6 @@
         <jflex file="${dir.src.lex}/alt/vqwiki-format.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-layout.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-links.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/alt/vqwiki-htmllinks.jflex" destdir="${dir.src.java}" />
     </target>
 
     <target name="compile" depends="jflex" description="Compile source code">
