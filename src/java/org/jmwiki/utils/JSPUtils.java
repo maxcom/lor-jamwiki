@@ -25,62 +25,6 @@ public class JSPUtils {
 	}
 
 	/**
-	 * This caused problems - encoding without a charset is not well-defined
-	 * behaviour, so we'll look for a default encoding. (coljac)
-	 */
-	public static String encodeURL(String url) {
-		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
-		if (charSet == null) charSet = "UTF-8";
-		return JSPUtils.encodeURL(url, charSet);
-	}
-
-	/**
-	 *
-	 */
-	public static String encodeURL(String url,String charSet) {
-		// convert spaces to underscores
-		url = Utilities.replaceString(url, " ", "_");
-		try {
-			url = URLEncoder.encode(url, charSet);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while encoding url " + url + " with charset " + charSet, e);
-		}
-		// FIXME - un-encode colons.  handle this better.
-		url = Utilities.replaceString(url, "%3A", ":");
-		return url;
-	}
-
-	/**
-	 *
-	 */
-	public static String decodeURL(String url) {
-		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
-		if (charSet == null) charSet = "UTF-8";
-		return JSPUtils.decodeURL(url, charSet);
-	}
-
-	/**
-	 *
-	 */
-	public static String decodeURL(String url,String charSet) {
-		try {
-			url = URLDecoder.decode(url, charSet);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while decoding url " + url + " with charset " + charSet, e);
-		}
-		// convert underscores to spaces
-		url = Utilities.replaceString(url, "_", " ");
-		return url;
-	}
-
-	/**
-	 *
-	 */
-	public static String decimalFormat(double number) {
-		return decFormat.format(number);
-	}
-
-	/**
 	 *
 	 */
 	public static String convertToHTML(char character) {
@@ -93,20 +37,6 @@ public class JSPUtils {
 				return "&amp";
 		}
 		return String.valueOf(character);
-	}
-
-	/**
-	 *
-	 */
-	public static boolean containsSpecial(String text) {
-		if (text.indexOf('<') >= 0) {
-			return true;
-		} else if (text.indexOf('>') >= 0) {
-			return true;
-		} else if (text.indexOf('&') >= 0) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -149,5 +79,61 @@ public class JSPUtils {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		return contextPath + "/" + virtualWiki + "/";
+	}
+
+	/**
+	 *
+	 */
+	public static String decimalFormat(double number) {
+		return decFormat.format(number);
+	}
+
+	/**
+	 *
+	 */
+	public static String decodeURL(String url) {
+		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
+		if (charSet == null) charSet = "UTF-8";
+		return JSPUtils.decodeURL(url, charSet);
+	}
+
+	/**
+	 *
+	 */
+	public static String decodeURL(String url,String charSet) {
+		try {
+			url = URLDecoder.decode(url, charSet);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while decoding url " + url + " with charset " + charSet, e);
+		}
+		// convert underscores to spaces
+		url = Utilities.replaceString(url, "_", " ");
+		return url;
+	}
+
+	/**
+	 * This caused problems - encoding without a charset is not well-defined
+	 * behaviour, so we'll look for a default encoding. (coljac)
+	 */
+	public static String encodeURL(String url) {
+		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
+		if (charSet == null) charSet = "UTF-8";
+		return JSPUtils.encodeURL(url, charSet);
+	}
+
+	/**
+	 *
+	 */
+	public static String encodeURL(String url,String charSet) {
+		// convert spaces to underscores
+		url = Utilities.replaceString(url, " ", "_");
+		try {
+			url = URLEncoder.encode(url, charSet);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while encoding url " + url + " with charset " + charSet, e);
+		}
+		// FIXME - un-encode colons.  handle this better.
+		url = Utilities.replaceString(url, "%3A", ":");
+		return url;
 	}
 }

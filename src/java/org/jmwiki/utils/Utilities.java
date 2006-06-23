@@ -50,6 +50,20 @@ public class Utilities {
 	private static final int STATE_AMPERSAND_HASH = 2;
 
 	/**
+	 *
+	 */
+	public static String buildInternalLink(String context, String virtualWiki, String page) {
+		String url = context;
+		// context never ends with a "/" per servlet specification
+		url += "/";
+		// get the virtual wiki, which should have been set by the parent servlet
+		url += JSPUtils.encodeURL(virtualWiki);
+		url += "/";
+		url += JSPUtils.encodeURL(page);
+		return url;
+	}
+
+	/**
 	 * Returns true if the given collection of strings contains the given string where the case
 	 * of either is ignored
 	 * @param collection collection of {@link String}s
@@ -64,29 +78,6 @@ public class Utilities {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 *
-	 */
-	public static Cookie createUsernameCookie(String username) {
-		Cookie c = new Cookie("username", username);
-		c.setMaxAge(Environment.getIntValue(Environment.PROP_BASE_COOKIE_EXPIRE));
-		return c;
-	}
-
-	/**
-	 * Localised
-	 */
-	public static String formatDate(Date date) {
-		return DateFormat.getDateInstance().format(date);
-	}
-
-	/**
-	 *
-	 */
-	public static String formatDateTime(Date date) {
-		return DateFormat.getDateTimeInstance().format(date);
 	}
 
 	/**
@@ -115,78 +106,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Convert Java date to a file-friendly date
-	 */
-	public static String fileFriendlyDate(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return String.valueOf(cal.get(Calendar.YEAR)) + "." +
-			padTensWithZero(cal.get(Calendar.MONTH) + 1) + "." +
-			padTensWithZero(cal.get(Calendar.DATE)) + "." +
-			padTensWithZero(cal.get(Calendar.HOUR_OF_DAY)) + "." +
-			padTensWithZero(cal.get(Calendar.MINUTE)) + "." +
-			padTensWithZero(cal.get(Calendar.SECOND));
-	}
-
-	/**
-	 *
-	 */
-	protected static String padTensWithZero(int n) {
-		if (n < 10) {
-			return "0" + n;
-		} else {
-			return String.valueOf(n);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public static String sep() {
-		return System.getProperty("file.separator");
-	}
-
-	/**
-	 *
-	 */
-	public static String getUserFromRequest(HttpServletRequest request) {
-		if (request.getRemoteUser() != null) {
-			return request.getRemoteUser();
-		}
-		Cookie[] cookies = request.getCookies();
-		if (cookies == null) return null;
-		if (cookies.length > 0) {
-			for (int i = 0; i < cookies.length; i++) {
-				if (cookies[i].getName().equals("username")) {
-					return cookies[i].getValue();
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Read a file from the file system
-	 * @param file The file to read
-	 * @return a Stringbuffer with the content of this file or an empty StringBuffer, if an error has occured
-	 */
-	public static StringBuffer readFile(File file) {
-		char[] buf = new char[1024];
-		StringBuffer content = new StringBuffer((int)file.length());
-		try {
-			Reader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),Environment.getValue(Environment.PROP_FILE_ENCODING)));
-			int numread = 0;
-			while((numread=in.read(buf))!=-1) {
-				content.append(buf,0,numread);
-			}
-			in.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		return content;
-	}
-
-	/**
 	 *
 	 */
 	public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
@@ -202,73 +121,62 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static void unzip(File zipFileToOpen, File outputDirectory) {
-		Enumeration entries;
-		ZipFile zipFile;
-		try {
-			zipFile = new ZipFile(zipFileToOpen);
-			entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				if (entry.isDirectory()) {
-					logger.debug("Extracting directory: " + entry.getName());
-					// This is not robust, just for demonstration purposes.
-					File file = new File(outputDirectory, entry.getName());
-					file.mkdir();
-				}
-			}
-			entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				if (!entry.isDirectory()) {
-					logger.debug("Extracting file: " + entry.getName());
-					File outputFile = new File(outputDirectory, entry.getName());
-					copyInputStream(zipFile.getInputStream(entry),
-					new BufferedOutputStream(new FileOutputStream(outputFile)));
-				}
-			}
-			zipFile.close();
-		} catch (IOException ioe) {
-			logger.error("Unzipping error: " + ioe);
-			ioe.printStackTrace();
-			return;
-		}
+	public static Cookie createUsernameCookie(String username) {
+		Cookie c = new Cookie("username", username);
+		c.setMaxAge(Environment.getIntValue(Environment.PROP_BASE_COOKIE_EXPIRE));
+		return c;
 	}
 
 	/**
-	 * Use standard factory to create DocumentBuilder and parse a file
+	 * Converts back file name encoded by encodeSafeFileName().
 	 */
-	public static Document parseDocumentFromFile(String fileName) throws Exception {
-		File file = new File(fileName);
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		return builder.parse(file);
+	public static String decodeSafeFileName(String name) {
+		return JSPUtils.decodeURL(name, "utf-8");
 	}
 
 	/**
 	 *
 	 */
-	public static boolean isAdmin(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		String value = (String) session.getAttribute("admin");
-		return "true".equals(value);
+	public static String dir() {
+		return Environment.getValue(Environment.PROP_FILE_HOME_DIR) + System.getProperty("file.separator");
 	}
 
 	/**
-	 * Replaces occurences of the find string with the replace string in the given text
-	 * @param text
-	 * @param find
-	 * @param replace
-	 * @return the altered string
+	 *
 	 */
-	public static String replaceString(String text, String find, String replace) {
-		StringBuffer buffer = new StringBuffer(text);
-		int i = 0;
-		while ((i = buffer.indexOf(find, i)) != -1) {
-			buffer.replace(i, i + find.length(), replace);
-			i = i + replace.length();
+	public static boolean emailAvailable() {
+		String smtpHost = Environment.getValue(Environment.PROP_EMAIL_SMTP_HOST);
+		return (smtpHost != null && smtpHost.length() > 0);
+	}
+
+	/**
+	 *
+	 */
+	public static String encodeSafeExportFileName(String name) {
+		StringBuffer sb = new StringBuffer(encodeSafeFileName(name));
+		for (int i=0 ; i < sb.length(); i++) {
+			if (sb.charAt(i) == '%') {
+				sb.setCharAt(i, '-');
+			}
 		}
-		return buffer.toString();
+		return sb.toString();
+	}
+
+	/**
+	 * Converts arbitrary string into string usable as file name.
+	 */
+	public static String encodeSafeFileName(String name) {
+		StringTokenizer st = new StringTokenizer(name,"%"+File.separator,true);
+		StringBuffer sb = new StringBuffer(name.length());
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			if (File.separator.equals(token) || token.equals("%")) {
+				sb.append(token);
+			} else {
+				sb.append(JSPUtils.encodeURL(token, "utf-8"));
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -292,131 +200,79 @@ public class Utilities {
 	}
 
 	/**
-	 * Converts arbitrary string into string usable as file name.
+	 * Convert Java date to a file-friendly date
 	 */
-	public static String encodeSafeFileName(String name) {
-		StringTokenizer st = new StringTokenizer(name,"%"+File.separator,true);
-		StringBuffer sb = new StringBuffer(name.length());
-		while (st.hasMoreTokens()) {
-			String token = st.nextToken();
-			if(File.separator.equals(token)||"%".equals(token)) {
-				sb.append(token);
-			} else {
-				sb.append(JSPUtils.encodeURL(token,"utf-8"));
+	public static String fileFriendlyDate(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return String.valueOf(cal.get(Calendar.YEAR)) + "." +
+			padTensWithZero(cal.get(Calendar.MONTH) + 1) + "." +
+			padTensWithZero(cal.get(Calendar.DATE)) + "." +
+			padTensWithZero(cal.get(Calendar.HOUR_OF_DAY)) + "." +
+			padTensWithZero(cal.get(Calendar.MINUTE)) + "." +
+			padTensWithZero(cal.get(Calendar.SECOND));
+	}
+
+	/**
+	 * Localised
+	 */
+	public static String formatDate(Date date) {
+		return DateFormat.getDateInstance().format(date);
+	}
+
+	/**
+	 *
+	 */
+	public static String formatDateTime(Date date) {
+		return DateFormat.getDateTimeInstance().format(date);
+	}
+
+	/**
+	 *
+	 */
+	private static String generateNewAdminPassword() {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < 5; i++) {
+			int n = (int) (Math.random() * 26 + 65);
+			buffer.append((char) n);
+		}
+		String value = buffer.toString();
+		return value;
+	}
+
+	/**
+	 *
+	 */
+	public static String getUserFromRequest(HttpServletRequest request) {
+		if (request.getRemoteUser() != null) {
+			return request.getRemoteUser();
+		}
+		Cookie[] cookies = request.getCookies();
+		if (cookies == null) return null;
+		if (cookies.length > 0) {
+			for (int i = 0; i < cookies.length; i++) {
+				if (cookies[i].getName().equals("username")) {
+					return cookies[i].getValue();
+				}
 			}
 		}
-		return sb.toString();
+		return null;
 	}
 
 	/**
 	 *
 	 */
-	public static String encodeSafeExportFileName(String name) {
-		StringBuffer sb = new StringBuffer(encodeSafeFileName(name));
-		for (int i=0 ; i < sb.length(); i++) {
-			if (sb.charAt(i) == '%') {
-				sb.setCharAt(i, '-');
-			}
-		}
-		return sb.toString();
+	public static boolean isAdmin(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		String value = (String) session.getAttribute("admin");
+		return "true".equals(value);
 	}
 
 	/**
-	 * Converts back file name encoded by encodeSafeFileName().
+	 * Utility method for determining if a String is null or empty.
 	 */
-	public static String decodeSafeFileName(String name) {
-		return JSPUtils.decodeURL(name,"utf-8");
-	}
-
-	/**
-	 * Converts CamelCase to seperate words.
-	 */
-	public static String separateWords(String text) {
-		// Do not try to separateWords if there are spaces in the text.
-		if (text.indexOf(" ") != -1) return text ;
-		// Allocate enough space for the new string, plus
-		// magic number (5) for a guess at the likely max
-		// number of words.
-		StringBuffer sb = new StringBuffer(text.length() + 5) ;
-		int offset = 0 ;  // points to the start of each word.
-		// Loop through the CamelCase text, at each capital letter
-		// concatenate the previous word text to the result
-		// and append a space.
-		// The first character is assumed to be a "capital".
-		for (int i=1; i < text.length(); i++) {
-			if ((text.charAt(i) >= 'A') && (text.charAt(i) <= 'Z')) {
-				// Append the current word and a trailing space.
-				sb.append (text.substring(offset, i)).append (" ") ;
-				// Start of the next word.
-				offset = i ;
-			}
-		}
-		// Append the last word.
-		sb.append (text.substring (offset)) ;
-		return sb.toString () ;
-	}
-
-	/**
-	 * Parse DOM document from XML in input stream
-	 * @param xmlIn
-	 * @return
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
-	 */
-	public static Document parseDocumentFromInputStream(InputStream xmlIn) throws IOException,
-		SAXException, ParserConfigurationException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		return builder.parse(xmlIn);
-	}
-
-	/**
-	 * The directory to place attachments in. This is either an absolute path if the admin setting for "upload directory"
-	 * starts with a "/" or a drive letter, or it is a relative path.
-	 * @param virtualWiki
-	 * @param name
-	 * @return
-	 */
-	public static File uploadPath(String virtualWiki, String name) {
-		String path = Environment.getValue(Environment.PROP_ATTACH_UPLOAD_DIR);
-		String dir = Utilities.relativeDirIfNecessary(path);
-		if (virtualWiki == null || "".equals(virtualWiki)) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		File baseDir = new File(dir, virtualWiki);
-		baseDir.mkdirs();
-		dir = baseDir.getAbsolutePath();
-		File uploadedFile = new File(dir, name);
-		return uploadedFile;
-	}
-
-	/**
-	 *
-	 */
-	public static String relativeDirIfNecessary(String path) {
-		if (path.length() <= 2) {
-			return path;
-		}
-		if (!path.startsWith("/") && !(Character.isLetter(path.charAt(0)) && path.charAt(1) == ':')) {
-			return new File(Utilities.dir(), path).getAbsolutePath();
-		}
-		return path;
-	}
-
-	/**
-	 *
-	 */
-	public static String dir() {
-		return Environment.getValue(Environment.PROP_FILE_HOME_DIR) + System.getProperty("file.separator");
-	}
-
-	/**
-	 *
-	 */
-	public static boolean emailAvailable() {
-		String smtpHost = Environment.getValue(Environment.PROP_EMAIL_SMTP_HOST);
-		return (smtpHost != null && smtpHost.length() > 0);
+	public static boolean isEmpty(String value) {
+		return (value == null || value.length() == 0);
 	}
 
 	/**
@@ -440,14 +296,58 @@ public class Utilities {
 	/**
 	 *
 	 */
-	private static String generateNewAdminPassword() {
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < 5; i++) {
-			int n = (int) (Math.random() * 26 + 65);
-			buffer.append((char) n);
+	protected static String padTensWithZero(int n) {
+		if (n < 10) {
+			return "0" + n;
+		} else {
+			return String.valueOf(n);
 		}
-		String value = buffer.toString();
-		return value;
+	}
+
+	/**
+	 * Use standard factory to create DocumentBuilder and parse a file
+	 */
+	public static Document parseDocumentFromFile(String fileName) throws Exception {
+		File file = new File(fileName);
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		return builder.parse(file);
+	}
+
+	/**
+	 * Parse DOM document from XML in input stream
+	 * @param xmlIn
+	 * @return
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
+	 */
+	public static Document parseDocumentFromInputStream(InputStream xmlIn) throws IOException,
+		SAXException, ParserConfigurationException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		return builder.parse(xmlIn);
+	}
+
+	/**
+	 * Read a file from the file system
+	 * @param file The file to read
+	 * @return a Stringbuffer with the content of this file or an empty StringBuffer, if an error has occured
+	 */
+	public static StringBuffer readFile(File file) {
+		char[] buf = new char[1024];
+		StringBuffer content = new StringBuffer((int)file.length());
+		try {
+			Reader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),Environment.getValue(Environment.PROP_FILE_ENCODING)));
+			int numread = 0;
+			while((numread=in.read(buf))!=-1) {
+				content.append(buf,0,numread);
+			}
+			in.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return content;
 	}
 
 	/**
@@ -487,23 +387,123 @@ public class Utilities {
 	}
 
 	/**
-	 * Utility method for determining if a String is null or empty.
+	 *
 	 */
-	public static boolean isEmpty(String value) {
-		return (value == null || value.length() == 0);
+	public static String relativeDirIfNecessary(String path) {
+		if (path.length() <= 2) {
+			return path;
+		}
+		if (!path.startsWith("/") && !(Character.isLetter(path.charAt(0)) && path.charAt(1) == ':')) {
+			return new File(Utilities.dir(), path).getAbsolutePath();
+		}
+		return path;
+	}
+
+	/**
+	 * Replaces occurences of the find string with the replace string in the given text
+	 * @param text
+	 * @param find
+	 * @param replace
+	 * @return the altered string
+	 */
+	public static String replaceString(String text, String find, String replace) {
+		StringBuffer buffer = new StringBuffer(text);
+		int i = 0;
+		while ((i = buffer.indexOf(find, i)) != -1) {
+			buffer.replace(i, i + find.length(), replace);
+			i = i + replace.length();
+		}
+		return buffer.toString();
 	}
 
 	/**
 	 *
 	 */
-	public static String buildInternalLink(String context, String virtualWiki, String page) {
-		String url = context;
-		// context never ends with a "/" per servlet specification
-		url += "/";
-		// get the virtual wiki, which should have been set by the parent servlet
-		url += JSPUtils.encodeURL(virtualWiki);
-		url += "/";
-		url += JSPUtils.encodeURL(page);
-		return url;
+	public static String sep() {
+		return System.getProperty("file.separator");
+	}
+
+	/**
+	 * Converts CamelCase to seperate words.
+	 */
+	public static String separateWords(String text) {
+		// Do not try to separateWords if there are spaces in the text.
+		if (text.indexOf(" ") != -1) return text ;
+		// Allocate enough space for the new string, plus
+		// magic number (5) for a guess at the likely max
+		// number of words.
+		StringBuffer sb = new StringBuffer(text.length() + 5) ;
+		int offset = 0 ;  // points to the start of each word.
+		// Loop through the CamelCase text, at each capital letter
+		// concatenate the previous word text to the result
+		// and append a space.
+		// The first character is assumed to be a "capital".
+		for (int i=1; i < text.length(); i++) {
+			if ((text.charAt(i) >= 'A') && (text.charAt(i) <= 'Z')) {
+				// Append the current word and a trailing space.
+				sb.append (text.substring(offset, i)).append (" ") ;
+				// Start of the next word.
+				offset = i ;
+			}
+		}
+		// Append the last word.
+		sb.append (text.substring (offset)) ;
+		return sb.toString () ;
+	}
+
+	/**
+	 *
+	 */
+	public static void unzip(File zipFileToOpen, File outputDirectory) {
+		Enumeration entries;
+		ZipFile zipFile;
+		try {
+			zipFile = new ZipFile(zipFileToOpen);
+			entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				if (entry.isDirectory()) {
+					logger.debug("Extracting directory: " + entry.getName());
+					// This is not robust, just for demonstration purposes.
+					File file = new File(outputDirectory, entry.getName());
+					file.mkdir();
+				}
+			}
+			entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry) entries.nextElement();
+				if (!entry.isDirectory()) {
+					logger.debug("Extracting file: " + entry.getName());
+					File outputFile = new File(outputDirectory, entry.getName());
+					copyInputStream(zipFile.getInputStream(entry),
+					new BufferedOutputStream(new FileOutputStream(outputFile)));
+				}
+			}
+			zipFile.close();
+		} catch (IOException ioe) {
+			logger.error("Unzipping error: " + ioe);
+			ioe.printStackTrace();
+			return;
+		}
+	}
+
+	/**
+	 * The directory to place attachments in. This is either an absolute path if the admin setting for "upload directory"
+	 * starts with a "/" or a drive letter, or it is a relative path.
+	 * @param virtualWiki
+	 * @param name
+	 * @return
+	 */
+	public static File uploadPath(String virtualWiki, String name) {
+		String path = Environment.getValue(Environment.PROP_ATTACH_UPLOAD_DIR);
+		String dir = Utilities.relativeDirIfNecessary(path);
+		if (virtualWiki == null || "".equals(virtualWiki)) {
+			virtualWiki = WikiBase.DEFAULT_VWIKI;
+		}
+		File baseDir = new File(dir, virtualWiki);
+		baseDir.mkdirs();
+		dir = baseDir.getAbsolutePath();
+		File uploadedFile = new File(dir, name);
+		return uploadedFile;
 	}
 }
