@@ -20,7 +20,6 @@
     <target name="init" depends="clean" description="Initialize for build sequence">
         <mkdir dir="${dir.build}" />
         <mkdir dir="${dir.build}/classes" />
-        <mkdir dir="${dir.build}/applet"/>
     </target>
 
     <!-- Targets related to the LEXERS -->
