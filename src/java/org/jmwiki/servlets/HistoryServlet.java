@@ -49,17 +49,17 @@ public class HistoryServlet extends JMController implements Controller {
 				next.addObject("versions", versions);
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
 			} else if (type.equals("version")) {
-				int versionNumber = Integer.parseInt(request.getParameter("versionNumber"));
+				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 				int numberOfVersions = manager.getNumberOfVersions(virtualWiki, topicName);
 				TopicVersion topicVersion = manager.getTopicVersion(
 					request.getContextPath(),
 					virtualWiki,
 					topicName,
-					versionNumber
+					topicVersionId
 				);
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("numberOfVersions", new Integer(numberOfVersions));
-				next.addObject(JMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getRevisionDate()));
+				next.addObject(JMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
 			}
 		} catch (Exception e) {

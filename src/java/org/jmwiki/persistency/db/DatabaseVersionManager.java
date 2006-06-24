@@ -51,45 +51,6 @@ public class DatabaseVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public Object lookupLastRevision(String virtualWiki, String topicName) throws Exception {
-		// improvement would be: find max "versionat" for revisions
-		// return the date as a string
-		return lookupRevision(virtualWiki, topicName, 0);
-	}
-
-	/**
-	 *
-	 */
-	public Object lookupRevision(String virtualWiki, String topicName, int version) throws Exception {
-		if (version < 0) throw new Exception("version # must be >= 0");
-		Connection conn = null;
-		Timestamp stamp = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement versionFindStatement = conn.prepareStatement(STATEMENT_VERSION_FIND);
-			versionFindStatement.setString(1, topicName);
-			versionFindStatement.setString(2, virtualWiki);
-			ResultSet rs = versionFindStatement.executeQuery();
-			for (int i = 0; i <= version; i++) {
-				if (!rs.next()) {
-					rs.close();
-					versionFindStatement.close();
-					return null;
-				}
-			}
-			stamp = rs.getTimestamp("versionat");
-			logger.debug("Revision #" + version + " @" + stamp);
-			rs.close();
-			versionFindStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return stamp;
-	}
-
-	/**
-	 *
-	 */
 	public String revisionContents(String virtualWiki, String topicName, Timestamp date) throws Exception {
 		Connection conn = null;
 		String contents;
@@ -122,12 +83,13 @@ public class DatabaseVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public String diff(String virtualWiki, String topicName, int revision1, int revision2, boolean useHtml) throws Exception {
-		logger.debug("Diff for version " + revision1 + " against version " + revision2 + ", " + virtualWiki + "/" + topicName);
-		String contents1 = revisionContents(virtualWiki, topicName, (Timestamp) lookupRevision(virtualWiki, topicName, revision1));
-		String contents2 = revisionContents(virtualWiki, topicName, (Timestamp) lookupRevision(virtualWiki, topicName, revision2));
+	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
+		TopicVersion version1 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
+		TopicVersion version2 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		String contents1 = version1.getVersionContent();
+		String contents2 = version2.getVersionContent();
 		if (contents1 == null && contents2 == null) {
-			logger.error("No versions found for " + revision1 + " against " + revision2);
+			logger.error("No versions found for " + topicVersionId1 + " against " + topicVersionId2);
 			return "";
 		}
 		return DiffUtil.diff(contents1, contents2, useHtml);
@@ -137,26 +99,23 @@ public class DatabaseVersionManager implements VersionManager {
 	 *
 	 */
 	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		Timestamp stamp = (Timestamp) lookupLastRevision(virtualWiki, topicName);
-		if (stamp == null) return null;
-		return new Date(stamp.getTime());
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		return version.getEditDate();
 	}
 
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception {
-		List allVersions = WikiBase.getInstance().getHandler().getAllVersions(virtualWiki, topicName);
-		TopicVersion version = (TopicVersion) allVersions.get(versionNumber);
-		WikiBase instance = WikiBase.getInstance();
-		String cookedContents = instance.cook(
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		String cookedContents = WikiBase.getInstance().cook(
 			context,
 			virtualWiki,
 			new BufferedReader(new StringReader(
-				instance.getVersionManagerInstance().getVersionContents(
+				WikiBase.getInstance().getVersionManagerInstance().getVersionContents(
 					virtualWiki,
 					topicName,
-					versionNumber
+					topicVersionId
 				)
 			))
 		);
@@ -167,9 +126,9 @@ public class DatabaseVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public String getVersionContents(String virtualWiki, String topicName, int versionNumber) throws Exception {
-		Timestamp stamp = (Timestamp) lookupRevision(virtualWiki, topicName, versionNumber);
-		return revisionContents(virtualWiki, topicName, stamp);
+	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		return version.getVersionContent();
 	}
 
 	/**

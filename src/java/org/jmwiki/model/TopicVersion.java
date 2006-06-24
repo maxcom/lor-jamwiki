@@ -171,33 +171,18 @@ public class TopicVersion {
 	private String virtualWiki;
 	private String topicName;
 	private DBDate revisionDate;
-	private int versionNumber;
 	private String cookedContents;
 
 	/**
 	 *
 	 */
-	public TopicVersion(String virtualWiki, String topicName, DBDate revisionDate, int versionNumber) {
+	public TopicVersion(String virtualWiki, String topicName, DBDate revisionDate, int topicVersionId) {
 		if (virtualWiki == null) virtualWiki = "";
+		this.topicVersionId = topicVersionId;
 		this.virtualWiki = virtualWiki;
 		this.topicName = topicName;
 		this.revisionDate = revisionDate;
-		this.versionNumber = versionNumber;
 		this.cookedContents = null;
-	}
-
-	/**
-	 *
-	 */
-	public int getVersionNumber() {
-		return versionNumber;
-	}
-
-	/**
-	 *
-	 */
-	public void setVersionNumber(int versionNumber) {
-		this.versionNumber = versionNumber;
 	}
 
 	/**
@@ -249,7 +234,7 @@ public class TopicVersion {
 		return WikiBase.getInstance().getVersionManagerInstance().getVersionContents(
 			this.virtualWiki,
 			this.topicName,
-			this.versionNumber
+			this.topicVersionId
 		);
 	}
 
@@ -272,7 +257,7 @@ public class TopicVersion {
 	 */
 	 public String toString() {
 		 StringBuffer buffer = new StringBuffer();
-		 buffer.append(this.versionNumber);
+		 buffer.append(this.topicVersionId);
 		 buffer.append(":");
 		 buffer.append(this.revisionDate);
 		 return buffer.toString();

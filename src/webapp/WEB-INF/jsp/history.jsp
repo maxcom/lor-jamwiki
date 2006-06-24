@@ -51,10 +51,10 @@ function inactive(element) {
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
 <table>
 		<c:forEach items="${versions}" var="version">
-		<f:formatDate value="${version.revisionDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" var="revisionDate" />
+		<f:formatDate value="${version.editDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" var="editDate" />
 <tr>
-	<td><a href="<jmwiki:link value="Special:History" />?type=version&versionNumber=<c:out value="${version.versionNumber}" />&topic=<jmwiki:encode value="${topic}" />"><c:out value="${revisionDate}"/></a></td>
-	<td><input type="checkbox" name='<c:out value="diff:${version.versionNumber}"/>' onclick="inactive(this)" /></td>
+	<td><a href="<jmwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${version.topicVersionId}" />&topic=<jmwiki:encode value="${topic}" />"><c:out value="${editDate}"/></a></td>
+	<td><input type="checkbox" name='<c:out value="diff:${version.topicVersionId}"/>' onclick="inactive(this)" /></td>
 </tr>
 		</c:forEach>
 </table>
@@ -65,7 +65,7 @@ function inactive(element) {
 <c:out value="${topicVersion.cookedContents}" escapeXml="${false}"/>
 <hr/>
 <form>
-<textarea readonly="true" cols="80" rows="26"><c:out value="${topicVersion.rawContents}" escapeXml="${false}"/></textarea>
+<textarea readonly="true" cols="80" rows="26"><c:out value="${topicVersion.versionContent}" escapeXml="${false}"/></textarea>
 </form>
 	</c:when>
 </c:choose>

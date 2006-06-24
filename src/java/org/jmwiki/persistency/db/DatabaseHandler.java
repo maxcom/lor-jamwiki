@@ -97,6 +97,9 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static final String STATEMENT_SELECT_TOPIC_VERSIONS =
 		"select * from jmw_topic_version "
 		+ "where topic_id = ? ";
+	private static final String STATEMENT_SELECT_TOPIC_VERSION_LAST =
+		"select max(topic_version_id) as topic_version_id from jmw_topic_version "
+		+ "where topic_id = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
 		"select nextval('jmw_topic_version_seq') as topic_version_id ";
 	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
@@ -373,6 +376,30 @@ public class DatabaseHandler implements PersistencyHandler {
 			virtualWikiNameHash = null;
 			virtualWikiIdHash = null;
 			throw e;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
+			stmt.setInt(1, topic.getTopicId());
+			rs = stmt.executeQuery();
+			if (rs == null) return null;
+			rs.next();
+			int topicVersionId = rs.getInt("topic_version_id");
+			return lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
 		}
 	}
 

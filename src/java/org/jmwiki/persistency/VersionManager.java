@@ -13,12 +13,6 @@ import org.jmwiki.model.TopicVersion;
 public interface VersionManager {
 
 	/**
-	 * Returns the revision key to get topic with
-	 * Revision 0 is the most recent revision
-	 */
-	public Object lookupRevision(String virtualWiki, String topicName, int version) throws Exception;
-
-	/**
 	 *
 	 */
 	public String diff(String virtualWiki, String topicName, int revision1, int revision2, boolean useHtml) throws Exception;
@@ -31,12 +25,12 @@ public interface VersionManager {
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception;
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception;
 
 	/**
 	 *
 	 */
-	public String getVersionContents(String virtualWiki, String topicName, int versionNumber) throws Exception;
+	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception;
 
 	/**
 	 *

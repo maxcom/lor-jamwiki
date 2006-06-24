@@ -167,6 +167,18 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	private File[] retrieveTopicVersionFiles(String virtualWiki, String topicName) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName);
+		File[] files = file.listFiles();
+		if (files == null) return null;
+		Comparator comparator = new TopicVersionComparator();
+		Arrays.sort(files, comparator);
+		return files;
+	}
+
+	/**
 	 * Returns all versions of the given topic in reverse chronological order
 	 * @param virtualWiki
 	 * @param topicName
@@ -175,19 +187,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
 		List all = new LinkedList();
-		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName);
-		File[] files = file.listFiles();
-		if (files == null) return all;
-		Arrays.sort(
-			files,
-			new Comparator() {
-				public int compare(Object o1, Object o2) {
-					String one = ((File)o1).getName();
-					String two = ((File)o2).getName();
-					return two.compareTo(one);
-				}
-			}
-		);
+		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
 		for (int i = 0; i < files.length; i++) {
 			TopicVersion version = initTopicVersion(files[i]);
 			all.add(version);
@@ -428,6 +428,17 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
+		// get all files, sorted.  last one is last version.
+		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
+		if (files == null) return null;
+		File file = files[files.length - 1];
+		return initTopicVersion(file);
+	}
+
+	/**
+	 *
+	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		String filename = topicFilename(topicName);
 		File file = getPathFor(virtualWiki, null, filename);
@@ -438,7 +449,7 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		String filename = topicVersionFilename(nextTopicVersionId());
+		String filename = topicVersionFilename(topicVersionId);
 		File file = getPathFor(virtualWiki, VERSION_DIR, topicName, filename);
 		return initTopicVersion(file);
 	}
@@ -686,5 +697,24 @@ public class FileHandler implements PersistencyHandler {
 			));
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	class TopicVersionComparator implements Comparator {
+
+		/**
+		 *
+		 */
+		public int compare(Object first, Object second) {
+			String one = ((File)first).getName();
+			String two = ((File)second).getName();
+			int pos = one.lastIndexOf(EXT);
+			int arg1 = new Integer(one.substring(0, pos)).intValue();
+			pos = two.lastIndexOf(EXT);
+			int arg2 = new Integer(two.substring(0, pos)).intValue();
+			return arg1 - arg2;
+		}
 	}
 }

@@ -45,56 +45,11 @@ public class FileVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public synchronized String lookupLastRevision(String virtualWiki, String topicName) throws Exception {
-		return (String) lookupRevision(virtualWiki, topicName, 0);
-	}
-
-	/**
-	 * Revision 0 is the most recent revision
-	 */
-	public synchronized Object lookupRevision(String virtualWiki, String topicName, int version) throws Exception {
-		logger.debug("Looking up revision " + version + " for " + virtualWiki + "/" + topicName);
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR);
-		String fileName = Utilities.encodeSafeFileName(topicName + FileHandler.EXT);
-		String[] files = file.list(new FileStartFilter(fileName));
-		if (files == null) return null;
-		if (files.length >= (1 + version)) {
-			Arrays.sort(files);
-			if (logger.isDebugEnabled()) {
-				for (int i = 0; i < files.length; i++) {
-					logger.debug("File " + i + " is " + files[i]);
-				}
-			}
-			logger.debug("Returning looked-up file: " + files[version]);
-			return files[files.length - 1 - version];
-		}
-		logger.debug("No version for revision " + version);
-		return null;
-	}
-
-	/**
-	 *
-	 */
-	public String diff(String virtualWiki, String topicName, int revision1, int revision2, boolean useHtml) throws Exception {
-		logger.debug("Diff for version " + revision1 + " against version " + revision2 + " of topic " + topicName);
-		String revision1Name = (String) lookupRevision(virtualWiki, topicName, revision1);
-		String revision2Name = (String) lookupRevision(virtualWiki, topicName, revision2);
-		StringBuffer fileName = new StringBuffer();
-		fileName.append(FileHandler.VERSION_DIR);
-		fileName.append(Utilities.sep());
-		fileName.append(revision1Name);
-		logger.debug("Finding path for " + fileName);
-		String fileName1 = FileHandler.getPathFor(virtualWiki, null, Utilities.decodeSafeFileName(fileName.toString())).getPath();
-		fileName = new StringBuffer();
-		fileName.append(FileHandler.VERSION_DIR);
-		fileName.append(Utilities.sep());
-		fileName.append(revision2Name);
-		logger.debug("Finding path for " + fileName);
-		String fileName2 = FileHandler.getPathFor(virtualWiki, null, Utilities.decodeSafeFileName(fileName.toString())).getPath();
-		logger.debug("Diffing: " + fileName1 + " against " + fileName2);
-		FileHandler handler = new FileHandler();
-		String contents1 = (handler.read(new File(fileName1))).toString();
-		String contents2 = (handler.read(new File(fileName2))).toString();
+	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
+		TopicVersion version1 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
+		TopicVersion version2 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		String contents1 = version1.getVersionContent();
+		String contents2 = version2.getVersionContent();
 		return DiffUtil.diff(contents1, contents2, useHtml);
 	}
 
@@ -102,26 +57,23 @@ public class FileVersionManager implements VersionManager {
 	 *
 	 */
 	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		String revision = this.lookupLastRevision(virtualWiki, topicName);
-		if (revision == null) return null;
-		return Utilities.convertFileFriendlyDate(revision);
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		return version.getEditDate();
 	}
 
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int versionNumber) throws Exception {
-		List allVersions = WikiBase.getInstance().getHandler().getAllVersions(virtualWiki, topicName);
-		TopicVersion version = (TopicVersion) allVersions.get(versionNumber);
-		WikiBase instance = WikiBase.getInstance();
-		String cookedContents = instance.cook(
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		String cookedContents = WikiBase.getInstance().cook(
 			context,
 			virtualWiki,
 			new BufferedReader(new StringReader(
-				instance.getVersionManagerInstance().getVersionContents(
+				WikiBase.getInstance().getVersionManagerInstance().getVersionContents(
 					virtualWiki,
 					topicName,
-					versionNumber
+					topicVersionId
 				)
 			))
 		);
@@ -132,15 +84,9 @@ public class FileVersionManager implements VersionManager {
 	/**
 	 *
 	 */
-	public String getVersionContents(String virtualWiki, String topicName, int versionNumber) throws Exception {
-		String fileName = (String) lookupRevision(virtualWiki, topicName, versionNumber);
-		logger.debug("Getting file " + fileName);
-		FileHandler fileHandler = (FileHandler) WikiBase.getInstance().getHandler();
-		File file = new File(
-			FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR),
-			fileName
-		);
-		return fileHandler.read(file).toString();
+	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		return version.getVersionContent();
 	}
 
 	/**
