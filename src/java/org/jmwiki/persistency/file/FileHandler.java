@@ -198,6 +198,14 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
+		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
+		return (files != null) ? files.length : -1;
+	}
+
+	/**
+	 *
+	 */
 	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
 		File dummy = getPathFor(vWiki, null, specialPage + ".txt");
 		if (!dummy.exists()) {

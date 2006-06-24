@@ -94,6 +94,9 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static final String STATEMENT_SELECT_TOPIC_VERSION =
 		"select * from jmw_topic_version "
 		+ "where topic_version_id = ? ";
+	private static final String STATEMENT_SELECT_TOPIC_VERSION_COUNT =
+		"select count(*) as total from jmw_topic_version "
+		+ "where topic_version_id = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSIONS =
 		"select * from jmw_topic_version "
 		+ "where topic_id = ? ";
@@ -285,27 +288,33 @@ public class DatabaseHandler implements PersistencyHandler {
 			while (wrs.next()) {
 				all.add(initTopicVersion(wrs));
 			}
-			/*
-			PreparedStatement getAllStatement = conn.prepareStatement(STATEMENT_GET_ALL);
-			getAllStatement.setString(1, topicName);
-			getAllStatement.setString(2, virtualWiki);
-			ResultSet rs = getAllStatement.executeQuery();
-			for (int i = 0; rs.next(); i++) {
-				TopicVersion version = new TopicVersion(
-					virtualWiki,
-					topicName,
-					new DBDate(rs.getTimestamp("versionat")),
-					i
-				);
-				all.add(version);
-			}
-			rs.close();
-			getAllStatement.close();
-			*/
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
+		}
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION_COUNT);
+			stmt.setInt(1, topic.getTopicId());
+			rs = stmt.executeQuery();
+			rs.next();
+			return rs.getInt("total");
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
 	}
 
 	/**

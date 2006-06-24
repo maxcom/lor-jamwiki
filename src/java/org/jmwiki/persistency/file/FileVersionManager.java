@@ -88,15 +88,4 @@ public class FileVersionManager implements VersionManager {
 		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 		return version.getVersionContent();
 	}
-
-	/**
-	 *
-	 */
-	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.VERSION_DIR);
-		String fileName = Utilities.encodeSafeFileName(topicName + FileHandler.EXT);
-		String[] files = file.list(new FileStartFilter(fileName));
-		if (files != null) return files.length;
-		return -1;
-	}
 }

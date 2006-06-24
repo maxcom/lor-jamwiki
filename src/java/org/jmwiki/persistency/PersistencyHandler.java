@@ -38,6 +38,11 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
+	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception;
 
 	/**

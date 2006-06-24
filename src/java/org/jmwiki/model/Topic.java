@@ -344,8 +344,7 @@ public class Topic implements Serializable {
 	 * @return the revision number
 	 */
 	public int getRevision(String virtualWiki) throws Exception {
-		this.revision = WikiBase.getInstance().getVersionManagerInstance().
-		getNumberOfVersions(virtualWiki, this.name);
+		this.revision = WikiBase.getInstance().getHandler().getNumberOfVersions(virtualWiki, this.name);
 		return this.revision;
 	}
 

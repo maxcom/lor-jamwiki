@@ -24,12 +24,8 @@ import org.jmwiki.utils.DiffUtil;
  */
 public class DatabaseVersionManager implements VersionManager {
 
-	protected final static String STATEMENT_VERSION_FIND =
-		"SELECT * FROM TopicVersion WHERE name = ? AND virtualwiki = ? ORDER BY versionat DESC";
 	protected final static String STATEMENT_VERSION_FIND_ONE =
 		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
-	protected final static String STATEMENT_COUNT_VERSIONS =
-		"SELECT COUNT(*) FROM TopicVersion WHERE name = ?  AND virtualwiki = ?";
 
 	protected static DatabaseVersionManager instance;
 	private static final Logger logger = Logger.getLogger(DatabaseVersionManager.class);
@@ -129,30 +125,5 @@ public class DatabaseVersionManager implements VersionManager {
 	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 		return version.getVersionContent();
-	}
-
-	/**
-	 *
-	 */
-	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement getAllStatement = conn.prepareStatement(STATEMENT_COUNT_VERSIONS);
-			getAllStatement.setString(1, topicName);
-			getAllStatement.setString(2, virtualWiki);
-			ResultSet rs = getAllStatement.executeQuery();
-			if (rs.next()) {
-				int count = rs.getInt(1);
-				rs.close();
-				getAllStatement.close();
-				return count;
-			}
-			rs.close();
-			getAllStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return -1;
 	}
 }

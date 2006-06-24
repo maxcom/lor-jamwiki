@@ -50,7 +50,7 @@ public class HistoryServlet extends JMController implements Controller {
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
-				int numberOfVersions = manager.getNumberOfVersions(virtualWiki, topicName);
+				int numberOfVersions = handler.getNumberOfVersions(virtualWiki, topicName);
 				TopicVersion topicVersion = manager.getTopicVersion(
 					request.getContextPath(),
 					virtualWiki,

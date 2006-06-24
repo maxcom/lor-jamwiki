@@ -31,9 +31,4 @@ public interface VersionManager {
 	 *
 	 */
 	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception;
-
-	/**
-	 *
-	 */
-	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception;
 }
