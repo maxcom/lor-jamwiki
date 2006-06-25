@@ -13,14 +13,12 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.model.TopicVersion;
-import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiMember;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.WikiVersion;
 import org.jmwiki.persistency.file.FileHandler;
 import org.jmwiki.persistency.file.FileNotify;
-import org.jmwiki.persistency.file.FileVersionManager;
 import org.jmwiki.persistency.file.FileWikiMembers;
 import org.jmwiki.utils.Encryption;
 import org.jmwiki.utils.Utilities;
@@ -148,8 +146,6 @@ public class DatabaseInit {
 		FileHandler fileHandler = new FileHandler();
 		DatabaseHandler databaseHandler = new DatabaseHandler();
 		DatabaseSearchEngine databaseSearchEngine = DatabaseSearchEngine.getInstance();
-		VersionManager fileVersionManager = FileVersionManager.getInstance();
-		VersionManager databaseVersionManager = DatabaseVersionManager.getInstance();
 		Collection virtualWikis = databaseHandler.getVirtualWikiList();
 		for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
 			String virtualWiki = (String) virtualWikiIterator.next();

@@ -124,4 +124,24 @@ public interface PersistencyHandler {
 	 *
 	 */
 	public List getLockList(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
+	public String diff(String virtualWiki, String topicName, int revision1, int revision2, boolean useHtml) throws Exception;
+
+	/**
+	 *
+	 */
+	public java.util.Date lastRevisionDate(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception;
+
+	/**
+	 *
+	 */
+	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception;
 }

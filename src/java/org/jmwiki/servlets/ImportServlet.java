@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
-import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiMember;
 import org.jmwiki.WikiMembers;
 import org.jmwiki.model.Topic;
@@ -16,12 +15,10 @@ import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.file.FileHandler;
 import org.jmwiki.persistency.file.FileNotify;
 import org.jmwiki.persistency.file.FileSearchEngine;
-import org.jmwiki.persistency.file.FileVersionManager;
 import org.jmwiki.persistency.file.FileWikiMembers;
 import org.jmwiki.persistency.db.DatabaseHandler;
 import org.jmwiki.persistency.db.DatabaseWikiMembers;
 import org.jmwiki.persistency.db.DatabaseNotify;
-import org.jmwiki.persistency.db.DatabaseVersionManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -65,8 +62,6 @@ public class ImportServlet extends JMController implements Controller {
 		FileHandler fileHandler = new FileHandler();
 		DatabaseHandler databaseHandler = new DatabaseHandler();
 		FileSearchEngine fileSearchEngine = FileSearchEngine.getInstance();
-		VersionManager fileVersionManager = FileVersionManager.getInstance();
-		VersionManager databaseVersionManager = DatabaseVersionManager.getInstance();
 		Collection virtualWikis = fileHandler.getVirtualWikiList();
 		for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
 			String virtualWiki = (String) virtualWikiIterator.next();

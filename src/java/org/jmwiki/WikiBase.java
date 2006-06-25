@@ -40,20 +40,17 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.persistency.db.DatabaseChangeLog;
 import org.jmwiki.persistency.db.DatabaseHandler;
 import org.jmwiki.persistency.db.DatabaseNotify;
 import org.jmwiki.persistency.db.DatabaseSearchEngine;
-import org.jmwiki.persistency.db.DatabaseVersionManager;
 import org.jmwiki.persistency.db.DatabaseWikiMembers;
 import org.jmwiki.persistency.file.FileChangeLog;
 import org.jmwiki.persistency.file.FileExtensionFilter;
 import org.jmwiki.persistency.file.FileHandler;
 import org.jmwiki.persistency.file.FileNotify;
 import org.jmwiki.persistency.file.FileSearchEngine;
-import org.jmwiki.persistency.file.FileVersionManager;
 import org.jmwiki.persistency.file.FileWikiMembers;
 import org.jmwiki.parser.AbstractParser;
 import org.jmwiki.parser.alt.BackLinkLex;
@@ -171,23 +168,6 @@ public class WikiBase {
 			//  return DatabaseUsergroup.getInstance();
 			default:
 				return NoUsergroup.getInstance();
-		}
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public VersionManager getVersionManagerInstance() throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return FileVersionManager.getInstance();
-			case DATABASE:
-				return DatabaseVersionManager.getInstance();
-			default:
-				return FileVersionManager.getInstance();
 		}
 	}
 

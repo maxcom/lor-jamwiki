@@ -16,6 +16,8 @@
  */
 package org.jmwiki.persistency.db;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,12 +39,12 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.persistency.PersistencyHandler;
 import org.jmwiki.TopicLock;
-import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.PseudoTopicHandler;
 import org.jmwiki.model.Topic;
 import org.jmwiki.model.TopicVersion;
+import org.jmwiki.utils.DiffUtil;
 import org.jmwiki.utils.Utilities;
 
 /**
@@ -565,6 +567,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
 	protected final static String STATEMENT_PURGE_VERSIONS =
 		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
+	protected final static String STATEMENT_VERSION_FIND_ONE =
+		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
 
 	/**
 	 *
@@ -1144,5 +1148,84 @@ public class DatabaseHandler implements PersistencyHandler {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	public String revisionContents(String virtualWiki, String topicName, Timestamp date) throws Exception {
+		Connection conn = null;
+		String contents;
+		try {
+			conn = DatabaseConnection.getConnection();
+			PreparedStatement versionFindStatementOne = conn.prepareStatement(STATEMENT_VERSION_FIND_ONE);
+			versionFindStatementOne.setString(1, topicName);
+			versionFindStatementOne.setString(2, virtualWiki);
+			versionFindStatementOne.setTimestamp(3, date);
+			ResultSet rs = versionFindStatementOne.executeQuery();
+			if (!rs.next()) {
+				rs.close();
+				versionFindStatementOne.close();
+				return null;
+			}
+			if (DatabaseHandler.isOracle()) {
+				contents = OracleClobHelper.getClobValue(rs.getClob("contents"));
+			} else {
+				contents = rs.getString("contents");
+			}
+			logger.debug("Contents @" + date + ": " + contents);
+			rs.close();
+			versionFindStatementOne.close();
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return contents;
+	}
+
+	/**
+	 *
+	 */
+	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
+		TopicVersion version1 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
+		TopicVersion version2 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		String contents1 = version1.getVersionContent();
+		String contents2 = version2.getVersionContent();
+		if (contents1 == null && contents2 == null) {
+			logger.error("No versions found for " + topicVersionId1 + " against " + topicVersionId2);
+			return "";
+		}
+		return DiffUtil.diff(contents1, contents2, useHtml);
+	}
+
+	/**
+	 *
+	 */
+	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		return version.getEditDate();
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		String cookedContents = WikiBase.getInstance().cook(
+			context,
+			virtualWiki,
+			new BufferedReader(new StringReader(
+				getVersionContents(virtualWiki, topicName, topicVersionId)
+			))
+		);
+		version.setCookedContents(cookedContents);
+		return version;
+	}
+
+	/**
+	 *
+	 */
+	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		return version.getVersionContent();
 	}
 }

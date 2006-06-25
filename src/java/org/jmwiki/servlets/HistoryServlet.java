@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.persistency.VersionManager;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,12 +34,10 @@ public class HistoryServlet extends JMController implements Controller {
 	 *
 	 */
 	private void history(HttpServletRequest request, ModelAndView next) throws Exception {
-		VersionManager manager;
 		PersistencyHandler handler;
 		String virtualWiki = JMController.getVirtualWikiFromURI(request);
 		String topicName = JMController.getTopicFromRequest(request);
 		try {
-			manager = WikiBase.getInstance().getVersionManagerInstance();
 			handler = WikiBase.getInstance().getHandler();
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
@@ -51,7 +48,7 @@ public class HistoryServlet extends JMController implements Controller {
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 				int numberOfVersions = handler.getNumberOfVersions(virtualWiki, topicName);
-				TopicVersion topicVersion = manager.getTopicVersion(
+				TopicVersion topicVersion = handler.getTopicVersion(
 					request.getContextPath(),
 					virtualWiki,
 					topicName,

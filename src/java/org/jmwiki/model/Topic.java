@@ -235,7 +235,7 @@ public class Topic implements Serializable {
 	 */
 	public Date getMostRecentRevisionDate(String virtualWiki) throws Exception {
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			this.lastRevisionDate = WikiBase.getInstance().getVersionManagerInstance().lastRevisionDate(virtualWiki, this.name);
+			this.lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, this.name);
 			return this.lastRevisionDate;
 		} else {
 			return null;
@@ -252,7 +252,7 @@ public class Topic implements Serializable {
 	 * @return a diff to the last revision
 	 */
 	public String mostRecentDiff(String virtualWiki, boolean useHtml) throws Exception {
-		return WikiBase.getInstance().getVersionManagerInstance().diff(virtualWiki, name, 0, 1, useHtml);
+		return WikiBase.getInstance().getHandler().diff(virtualWiki, name, 0, 1, useHtml);
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class Topic implements Serializable {
 	 * @return
 	 */
 	public String getDiff(String virtualWiki, int firstVersion, int secondVersion, boolean useHtml) throws Exception {
-		return WikiBase.getInstance().getVersionManagerInstance().diff(virtualWiki, name, firstVersion, secondVersion, useHtml);
+		return WikiBase.getInstance().getHandler().diff(virtualWiki, name, firstVersion, secondVersion, useHtml);
 	}
 
 	/**

@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import org.jmwiki.model.TopicVersion;
 import org.jmwiki.persistency.PersistencyHandler;
 import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.servlets.JMController;
+import org.jmwiki.utils.DiffUtil;
 import org.jmwiki.utils.TextFileFilter;
 import org.jmwiki.utils.Utilities;
 
@@ -724,5 +726,48 @@ public class FileHandler implements PersistencyHandler {
 			int arg2 = new Integer(two.substring(0, pos)).intValue();
 			return arg1 - arg2;
 		}
+	}
+
+	/**
+	 *
+	 */
+	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
+		TopicVersion version1 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
+		TopicVersion version2 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		String contents1 = version1.getVersionContent();
+		String contents2 = version2.getVersionContent();
+		return DiffUtil.diff(contents1, contents2, useHtml);
+	}
+
+	/**
+	 *
+	 */
+	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		return version.getEditDate();
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		String cookedContents = WikiBase.getInstance().cook(
+			context,
+			virtualWiki,
+			new BufferedReader(new StringReader(
+				getVersionContents(virtualWiki, topicName, topicVersionId)
+			))
+		);
+		version.setCookedContents(cookedContents);
+		return version;
+	}
+
+	/**
+	 *
+	 */
+	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception {
+		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		return version.getVersionContent();
 	}
 }
