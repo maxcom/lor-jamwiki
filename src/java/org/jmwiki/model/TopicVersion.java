@@ -230,17 +230,6 @@ public class TopicVersion {
 	/**
 	 *
 	 */
-	public String getRawContents() throws Exception {
-		return WikiBase.getInstance().getHandler().getVersionContents(
-			this.virtualWiki,
-			this.topicName,
-			this.topicVersionId
-		);
-	}
-
-	/**
-	 *
-	 */
 	public String getCookedContents() {
 		return this.cookedContents;
 	 }

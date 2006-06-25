@@ -82,7 +82,7 @@ public class ImportServlet extends JMController implements Controller {
 					databaseHandler.addTopicVersion(
 						virtualWiki,
 						topicVersion.getTopicName(),
-						topicVersion.getRawContents(),
+						topicVersion.getVersionContent(),
 						topicVersion.getRevisionDate(),
 						topicVersion.getAuthorIpAddress()
 					);

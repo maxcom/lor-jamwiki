@@ -139,9 +139,4 @@ public interface PersistencyHandler {
 	 *
 	 */
 	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception;
-
-	/**
-	 *
-	 */
-	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception;
 }

@@ -1214,19 +1214,9 @@ public class DatabaseHandler implements PersistencyHandler {
 		String cookedContents = WikiBase.getInstance().cook(
 			context,
 			virtualWiki,
-			new BufferedReader(new StringReader(
-				getVersionContents(virtualWiki, topicName, topicVersionId)
-			))
+			new BufferedReader(new StringReader(version.getVersionContent()))
 		);
 		version.setCookedContents(cookedContents);
 		return version;
-	}
-
-	/**
-	 *
-	 */
-	public String getVersionContents(String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-		return version.getVersionContent();
 	}
 }
