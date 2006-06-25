@@ -101,7 +101,8 @@ public class DatabaseHandler implements PersistencyHandler {
 		+ "where topic_version_id = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSIONS =
 		"select * from jmw_topic_version "
-		+ "where topic_id = ? ";
+		+ "where topic_id = ? "
+		+ "order by topic_version_id desc ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_LAST =
 		"select max(topic_version_id) as topic_version_id from jmw_topic_version "
 		+ "where topic_id = ? ";
