@@ -554,8 +554,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		"SELECT contents FROM TopicVersion WHERE name = ?  AND virtualwiki = ? ORDER BY versionat DESC FOR UPDATE";
 	// FIXME - DELETE ABOVE
 
-	protected final static String STATEMENT_GET_ALL =
-		"SELECT versionat FROM TopicVersion WHERE name = ?  AND virtualwiki = ? ORDER BY versionat DESC";
 	protected static final String STATEMENT_PURGE_DELETES =
 		"DELETE FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
 	protected static final String STATEMENT_PURGE_TOPIC =
