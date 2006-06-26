@@ -318,14 +318,6 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		TopicVersion version = lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-		return version;
-	}
-
-	/**
-	 *
-	 */
 	public Collection getVirtualWikiList() throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
@@ -437,22 +429,22 @@ public class FileHandler implements PersistencyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
-		if (readOnlyTopics == null) {
-			return false;
-		}
-		if (readOnlyTopics.get(virtualWiki) == null) {
-			return false;
-		}
-		Collection readOnlyTopicsForVWiki = ((Collection) readOnlyTopics.get(virtualWiki));
-		for (Iterator iterator = readOnlyTopicsForVWiki.iterator(); iterator.hasNext();) {
-			String readOnlyTopicName = (String) iterator.next();
-			if (topicName.equalsIgnoreCase(readOnlyTopicName)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
+//		if (readOnlyTopics == null) {
+//			return false;
+//		}
+//		if (readOnlyTopics.get(virtualWiki) == null) {
+//			return false;
+//		}
+//		Collection readOnlyTopicsForVWiki = ((Collection) readOnlyTopics.get(virtualWiki));
+//		for (Iterator iterator = readOnlyTopicsForVWiki.iterator(); iterator.hasNext();) {
+//			String readOnlyTopicName = (String) iterator.next();
+//			if (topicName.equalsIgnoreCase(readOnlyTopicName)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	/**
 	 *

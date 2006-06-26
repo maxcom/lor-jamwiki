@@ -620,11 +620,17 @@ public class DatabaseHandler implements PersistencyHandler {
 	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
 		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
 		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		if (version1 == null || version2 == null) {
+			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
+			logger.error(msg);
+			throw new Exception(msg);
+		}
 		String contents1 = version1.getVersionContent();
 		String contents2 = version2.getVersionContent();
 		if (contents1 == null && contents2 == null) {
-			logger.error("No versions found for " + topicVersionId1 + " against " + topicVersionId2);
-			return "";
+			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
+			logger.error(msg);
+			throw new Exception(msg);
 		}
 		return DiffUtil.diff(contents1, contents2, useHtml);
 	}
@@ -701,14 +707,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		TopicVersion version = lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-		return version;
-	}
-
-	/**
-	 *
-	 */
 	public Collection getVirtualWikiList() throws Exception {
 		if (virtualWikiNameHash == null) {
 			loadVirtualWikiHashes();
@@ -741,14 +739,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public static boolean isOracle() {
 		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE);
-	}
-
-	/**
-	 *
-	 */
-	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		return (topic != null && topic.getReadOnly());
 	}
 
 	/**

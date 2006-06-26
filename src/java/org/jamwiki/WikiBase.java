@@ -431,18 +431,6 @@ public class WikiBase {
 	 * TODO: DOCUMENT ME!
 	 *
 	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
-		return this.handler.isTopicReadOnly(virtualWiki, topicName);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */

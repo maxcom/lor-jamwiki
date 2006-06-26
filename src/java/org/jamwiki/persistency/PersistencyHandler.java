@@ -96,11 +96,6 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception;
-
-	/**
-	 *
-	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception;
 
 	/**
@@ -147,9 +142,4 @@ public interface PersistencyHandler {
 	 *
 	 */
 	public java.util.Date lastRevisionDate(String virtualWiki, String topicName) throws Exception;
-
-	/**
-	 *
-	 */
-	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception;
 }
