@@ -447,7 +447,7 @@ public class AdminController extends JAMController implements Controller {
 			} else if (membershipType == WikiBase.DATABASE) {
 				usergroupType = "DATABASE";
 			} else {
-				usergroupType = "";
+				usergroupType = "0";
 			}
 			Environment.setValue(Environment.PROP_USERGROUP_TYPE, usergroupType);
 			String[] autoFill = {
