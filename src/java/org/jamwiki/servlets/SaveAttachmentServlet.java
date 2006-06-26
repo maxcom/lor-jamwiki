@@ -101,18 +101,18 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 			return;
 		}
 		String virtualWiki = null;
-		String topic = null;
+		String topicName = null;
 		String user = null;
-		Topic t = null;
+		Topic topic = null;
 		boolean cancel = false;
 		try {
 			for (Iterator iterator = fileList.iterator(); iterator.hasNext();) {
 				FileItem item = (FileItem) iterator.next();
 				if (item.isFormField()) {
 					if (item.getFieldName().equals("topic")) {
-						topic = item.getString();
-						t = new Topic(topic);
-						if (t.isReadOnlyTopic(virtualWiki)) {
+						topicName = item.getString();
+						topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+						if (topic.getReadOnly()) {
 							throw new WikiException(WikiException.READ_ONLY);
 						}
 					} else if (item.getFieldName().equals("user")) {
@@ -130,7 +130,7 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 				String[] names = storeFiles(fileList, virtualWiki);
 				int nameIndex = 0;
 				// Update the topic
-				StringBuffer contents = new StringBuffer(base.readRaw(virtualWiki, topic));
+				StringBuffer contents = new StringBuffer(base.readRaw(virtualWiki, topicName));
 				for (Iterator iterator = fileList.iterator(); iterator.hasNext();) {
 					FileItem item = (FileItem) iterator.next();
 					if (!item.isFormField() && !item.getName().equals("")) {
@@ -145,17 +145,17 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 						contents.append("\n");
 					}
 				}
-				Change change = new Change(virtualWiki, topic, user, new java.util.Date());
+				Change change = new Change(virtualWiki, topicName, user, new java.util.Date());
 				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-				base.write(virtualWiki, contents.toString(), topic, user, request.getRemoteAddr());
+				base.write(virtualWiki, contents.toString(), topicName, user, request.getRemoteAddr());
 				cl.logChange(change, request);
 			}
 			// Unlock and return
-			base.unlockTopic(virtualWiki, topic);
+			base.unlockTopic(virtualWiki, topicName);
 			StringBuffer next = new StringBuffer();
 			next.append(Utilities.createLocalRootPath(request, virtualWiki));
 			next.append("Wiki?");
-			next.append(topic);
+			next.append(topicName);
 			response.sendRedirect(response.encodeRedirectURL(next.toString()));
 		} catch (Exception e) {
 			e.printStackTrace();

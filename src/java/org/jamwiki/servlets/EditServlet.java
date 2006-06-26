@@ -98,11 +98,11 @@ public class EditServlet extends JAMController implements Controller {
 			topic = new Topic();
 			topic.setName(topicName);
 		}
-		if (topic.isReadOnlyTopic(virtualWiki)) {
+		if (topic.getReadOnly()) {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topicName + " is read only");
 		}
-		if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topicName)) {
+		if (topic.getAdminOnly()) {
 			if (!Utilities.isAdmin(request)) {
 				next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("login.title", request.getLocale()));
 				String redirect = Utilities.buildInternalLink(
@@ -201,39 +201,43 @@ public class EditServlet extends JAMController implements Controller {
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
 		// a save request has been made
 		WikiBase.removeCachedContents();
-		String topic = request.getParameter(JAMController.PARAMETER_TOPIC);
+		String topicName = request.getParameter(JAMController.PARAMETER_TOPIC);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);
 		}
-		if (topic == null) {
+		if (topicName == null) {
 			logger.warn("Attempt to save null topic");
 			// FIXME - hard coding
 			throw new Exception("Topic must be specified");
 		}
-		Topic t = new Topic(topic);
-		if (t.isReadOnlyTopic(virtualWiki)) {
-			logger.warn("The topic " + topic + " is read only and cannot be saved");
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic = new Topic();
+			topic.setName(topicName);
+		}
+		if (topic.getReadOnly()) {
+			logger.warn("The topic " + topicName + " is read only and cannot be saved");
 			// FIXME - hard coding
-			throw new Exception("The topic " + topic + " is read only and cannot be saved");
+			throw new Exception("The topic " + topicName + " is read only and cannot be saved");
 		}
 		String key = request.getSession().getId();
-		if (!WikiBase.getInstance().holdsLock(virtualWiki, topic, key)) {
-			logger.warn("The lock on " + topic + " has timed out");
+		if (!WikiBase.getInstance().holdsLock(virtualWiki, topicName, key)) {
+			logger.warn("The lock on " + topicName + " has timed out");
 			// FIXME - hard coding
-			throw new Exception("The lock on " + topic + " has timed out");
+			throw new Exception("The lock on " + topicName + " has timed out");
 		}
 		String contents = request.getParameter("contents");
 		if (contents == null) {
-			logger.warn("The topic " + topic + " has no content");
+			logger.warn("The topic " + topicName + " has no content");
 			// FIXME - hard coding
-			throw new Exception("The topic " + topic + " has no content");
+			throw new Exception("The topic " + topicName + " has no content");
 		}
-		WikiBase.getInstance().write(virtualWiki, contents, topic, user, request.getRemoteAddr());
+		WikiBase.getInstance().write(virtualWiki, contents, topicName, user, request.getRemoteAddr());
 		if (request.getParameter("minorEdit") == null) {
 			Change change = new Change();
-			change.setTopic(topic);
+			change.setTopic(topicName);
 			change.setUser(user);
 			change.setTime(new java.util.Date());
 			change.setVirtualWiki(virtualWiki);
@@ -241,8 +245,8 @@ public class EditServlet extends JAMController implements Controller {
 			cl.logChange(change, request);
 		}
 		SearchEngine sedb = WikiBase.getInstance().getSearchEngineInstance();
-		sedb.indexText(virtualWiki, topic, request.getParameter("contents"));
-		WikiBase.getInstance().unlockTopic(virtualWiki, topic);
+		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
+		WikiBase.getInstance().unlockTopic(virtualWiki, topicName);
 		view(request, next);
 	}
 

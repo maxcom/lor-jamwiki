@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.servlets.JAMController;
 import org.jamwiki.utils.Utilities;
@@ -59,8 +60,7 @@ public abstract class AbstractNotify implements Notify {
 	 */
 	public boolean sendNotifications(String rootPath, Locale locale) throws Exception {
 		logger.debug("sending notifications for path " + rootPath);
-		ResourceBundle messages =
-			ResourceBundle.getBundle("ApplicationResources", locale);
+		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
 		logger.debug(members.getAllMembers().size() + " members found");
 		WikiMail mailer = WikiMail.getInstance();
@@ -81,11 +81,14 @@ public abstract class AbstractNotify implements Notify {
 			}
 			buffer.append(rootPath + "Wiki?" + Utilities.encodeURL(topicName));
 			buffer.append("\n");
-			Topic topicObject = new Topic(topicName);
+			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			if (topic == null) {
+				throw new Exception("No topic found " + topicName + " / " + virtualWiki);
+			}
 			String author = null;
 			java.util.Date lastRevisionDate = null;
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-				lastRevisionDate = topicObject.getMostRecentRevisionDate(virtualWiki);
+				lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName);
 				if (lastRevisionDate != null) {
 					buffer.append(messages.getString("mail.notification.body.revision") + Utilities.formatDateTime(lastRevisionDate) + "\n");
 					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, lastRevisionDate);
@@ -103,7 +106,8 @@ public abstract class AbstractNotify implements Notify {
 			if (author != null) {
 				buffer.append(messages.getString("mail.notification.body.author") + author + "\n");
 			}
-			buffer.append("\n" + messages.getString("mail.notification.body.diff") + "\n" + topicObject.mostRecentDiff(this.virtualWiki, false));
+			String diff = WikiBase.getInstance().getHandler().diff(this.virtualWiki, topic.getName(), 0, 1, false);
+			buffer.append("\n" + messages.getString("mail.notification.body.diff") + "\n" + diff);
 			buffer.append("\n\n\n----\n\n");
 			buffer.append(messages.getString("mail.unsubscribe") + " <");
 			buffer.append(rootPath);

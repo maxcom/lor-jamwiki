@@ -755,6 +755,9 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
+			return null;
+		}
 		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
 		return version.getEditDate();
 	}

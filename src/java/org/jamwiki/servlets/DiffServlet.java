@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -48,11 +49,10 @@ public class DiffServlet extends JAMController implements Controller {
 	 */
 	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		String topic = JAMController.getTopicFromRequest(request);
-		next.addObject(JAMController.PARAMETER_TITLE, "Diff " + topic);
-		next.addObject(JAMController.PARAMETER_TOPIC, topic);
+		String topicName = JAMController.getTopicFromRequest(request);
+		next.addObject(JAMController.PARAMETER_TITLE, "Diff " + topicName);
+		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
 		try {
-			Topic t = new Topic(topic);
 			String diffType = request.getParameter("type");
 			if (diffType != null && diffType.equals("arbitrary")) {
 				int firstVersion = -1;
@@ -72,11 +72,12 @@ public class DiffServlet extends JAMController implements Controller {
 				if (firstVersion == -1 || secondVersion == -1) {
 					next.addObject("badinput", "true");
 				} else {
-					String diff = t.getDiff(virtualWiki, Math.min(firstVersion, secondVersion), Math.max(firstVersion, secondVersion), true);
+					String diff = WikiBase.getInstance().getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion), true);
 					next.addObject("diff", diff);
 				}
 			} else {
-				next.addObject("diff", t.mostRecentDiff(virtualWiki, true));
+				String diff = WikiBase.getInstance().getHandler().diff(virtualWiki, topicName, 0, 1, true);
+				next.addObject("diff", diff);
 			}
 		} catch (Exception e) {
 			logger.error(e);

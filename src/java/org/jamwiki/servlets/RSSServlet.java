@@ -76,7 +76,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 * @param response What the servlet will send back as response
 	 */
 	private void rss(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String topic = JAMController.getTopicFromRequest(request);
+		String topicName = JAMController.getTopicFromRequest(request);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		try {
 			// get the latest pages
@@ -133,44 +133,32 @@ public class RSSServlet extends HttpServlet implements Controller {
 			int items = 0;
 			for (Iterator i = changed.iterator(); i.hasNext() && items < 15; items++) {
 				Change change = (Change) i.next();
-				topic = change.getTopic();
-				Topic topicObject = new Topic(topic);
+				topicName = change.getTopic();
 				String userid = change.getUser();
-				if (userid == null || "".equals(userid)) {
-					userid = topicObject.getMostRecentAuthor(virtualWiki);
-				}
 				String author = null;
 				if (userid != null) {
 					author = usergroup.getFullnameById(userid);
 				}
-				java.util.Date lastRevisionDate = topicObject.getMostRecentRevisionDate(virtualWiki);
-				String url = baseURL + "Wiki?" + topic;
+				java.util.Date lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName);
+				String url = baseURL + "Wiki?" + topicName;
 				result.append("	<rdf:li rdf:resource=\"" + url + "\" />\n");
 				itemBuffer.append(" <item rdf:about=\"" + url + "\">\n");
 				itemBuffer.append("  <title><![CDATA[");
-				itemBuffer.append(topic);
+				itemBuffer.append(topicName);
 				itemBuffer.append("]]></title>\n");
 				itemBuffer.append("  <link><![CDATA[");
 				itemBuffer.append(url);
 				itemBuffer.append("]]></link>\n");
 				itemBuffer.append("  <description>");
 				if (author == null) author = "An unknown author";
-				int numberOfVersions = topicObject.getRevision(virtualWiki);
-				if (numberOfVersions != 1) {
-					itemBuffer.append(author + " changed this page on " + topicObject.getMostRecentRevisionDate(virtualWiki));
-				} else {
-					itemBuffer.append(author + " created this page on " + topicObject.getMostRecentRevisionDate(virtualWiki));
-				}
+				itemBuffer.append("Last changed by " + author + " on " + WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName));
 				itemBuffer.append("<p>\n<![CDATA[");
-				String content = WikiBase.getInstance().readRaw(virtualWiki, topic);
+				String content = WikiBase.getInstance().readRaw(virtualWiki, topicName);
 				if (content.length() > 200) {
 					content = content.substring(0, 197) + "...";
 				}
 				itemBuffer.append(content).append("\n");
 				itemBuffer.append("]]></p></description>\n");
-				if (numberOfVersions != -1) {
-					itemBuffer.append("  <wiki:version>" + numberOfVersions + "</wiki:version>\n");
-				}
 				//
 				//  Modification date.
 				//
@@ -206,7 +194,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				//  PageHistory
 				itemBuffer.append("  <wiki:history>");
 				itemBuffer.append(format(baseURL + "Wiki?topic=" +
-					topic + "&action=" + JAMController.ACTION_HISTORY + "&type=all")
+					topicName + "&action=" + JAMController.ACTION_HISTORY + "&type=all")
 				);
 				itemBuffer.append("</wiki:history>\n");
 				//  Close up.

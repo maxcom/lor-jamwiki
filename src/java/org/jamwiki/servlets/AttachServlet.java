@@ -46,34 +46,34 @@ public class AttachServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void attach(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JAMController.getTopicFromRequest(request);
+		String topicName = JAMController.getTopicFromRequest(request);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		next.addObject(JAMController.PARAMETER_TITLE, "Attach Files to " + topic);
-		next.addObject(JAMController.PARAMETER_TOPIC, topic);
+		next.addObject(JAMController.PARAMETER_TITLE, "Attach Files to " + topicName);
+		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);
 		}
 		next.addObject("user", user);
 		try {
-			Topic t = new Topic(topic);
-			if (t.isReadOnlyTopic(virtualWiki)) {
-				logger.warn("Topic " + topic + " is read only");
-				// FIXME - hard coding
-				throw new Exception("Topic " + topic + " is read only");
+			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			if (topic == null) {
+				throw new Exception("Topic does not exist: " + topicName + " / " + virtualWiki);
 			}
-			if (topic == null || topic.equals("")) {
-				throw new Exception("Topic must be specified");
+			if (topic.getReadOnly()) {
+				logger.warn("Topic " + topicName + " is read only");
+				// FIXME - hard coding
+				throw new Exception("Topic " + topicName + " is read only");
 			}
 			String key = request.getSession().getId();
-			if (!WikiBase.getInstance().lockTopic(virtualWiki, topic, key)) {
+			if (!WikiBase.getInstance().lockTopic(virtualWiki, topicName, key)) {
 				// FIXME - hard coding
-				throw new Exception("Topic " + topic + " is locked");
+				throw new Exception("Topic " + topicName + " is locked");
 			}
 		} catch (Exception e) {
-			logger.error("Failure while getting attachment topic info for " + topic, e);
+			logger.error("Failure while getting attachment topic info for " + topicName, e);
 			// FIXME - hard coding
-			throw new Exception("Failure while getting attachment topic info for " + topic + " " + e.getMessage());
+			throw new Exception("Failure while getting attachment topic info for " + topicName + " " + e.getMessage());
 		}
 		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ATTACH);
 		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
