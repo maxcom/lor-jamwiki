@@ -33,7 +33,6 @@ import org.jmwiki.SearchEngine;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
 import org.jmwiki.model.Topic;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -185,7 +184,7 @@ public class EditServlet extends JMController implements Controller {
 			virtualWiki,
 			"Special:Edit"
 		);
-		redirect += "?topic=" + JSPUtils.encodeURL(topic);
+		redirect += "?topic=" + Utilities.encodeURL(topic);
 		next.addObject("redirect", redirect);
 		return;
 	}

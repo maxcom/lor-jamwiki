@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.jmwiki.model.Topic;
 import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Utilities;
-import org.jmwiki.utils.JSPUtils;
 
 /**
  *
@@ -80,7 +79,7 @@ public abstract class AbstractNotify implements Notify {
 				buffer.append(this.virtualWiki);
 				buffer.append("\n");
 			}
-			buffer.append(rootPath + "Wiki?" + JSPUtils.encodeURL(topicName));
+			buffer.append(rootPath + "Wiki?" + Utilities.encodeURL(topicName));
 			buffer.append("\n");
 			Topic topicObject = new Topic(topicName);
 			String author = null;
@@ -109,8 +108,8 @@ public abstract class AbstractNotify implements Notify {
 			buffer.append(messages.getString("mail.unsubscribe") + " <");
 			buffer.append(rootPath);
 			buffer.append("Wiki?action=" + WikiServlet.ACTION_NOTIFY);
-			buffer.append("&notify_action=notify_off&topic=" + JSPUtils.encodeURL(topicName));
-			buffer.append("&username=" + JSPUtils.encodeURL(aUsername) + ">");
+			buffer.append("&notify_action=notify_off&topic=" + Utilities.encodeURL(topicName));
+			buffer.append("&username=" + Utilities.encodeURL(aUsername) + ">");
 			logger.debug("Sending notification email to " + aMember.getEmail() + " for " + virtualWiki + "/" + topicName);
 			String mailTopicName = topicName;
 			if (mailTopicName.length() > 25) {

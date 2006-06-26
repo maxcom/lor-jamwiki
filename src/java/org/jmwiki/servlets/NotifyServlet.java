@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Notify;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
-import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -90,7 +90,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 		} catch (Exception e) {
 			throw new ServletException(e.getMessage(), e);
 		}
-		String next = JSPUtils.createLocalRootPath(request, virtualWiki) + "Wiki?" + topic;
+		String next = Utilities.createLocalRootPath(request, virtualWiki) + "Wiki?" + topic;
 		response.sendRedirect(response.encodeRedirectURL(next));
 	}
 

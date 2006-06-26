@@ -18,7 +18,7 @@ package org.jmwiki.tags;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 
@@ -39,7 +39,7 @@ public class DecodeTag extends TagSupport {
 		try {
 			value = (String)ExpressionUtil.evalNotNull("decode", "value", value, Object.class, this, pageContext);
 			try {
-				value = JSPUtils.decodeURL(value);
+				value = Utilities.decodeURL(value);
 				if (var == null) {
 					this.pageContext.getOut().print(value);
 				} else {

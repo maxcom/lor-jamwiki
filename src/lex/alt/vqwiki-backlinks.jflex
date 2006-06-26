@@ -12,7 +12,6 @@ import org.jmwiki.parser.Lexer;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
 import org.jmwiki.utils.Utilities;
-import org.jmwiki.utils.JSPUtils;
 
 %%
 

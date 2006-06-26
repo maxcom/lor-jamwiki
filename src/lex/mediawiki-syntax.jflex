@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
 import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 
 %%
 
@@ -510,7 +510,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <NORMAL>^{h1} {
     logger.debug("h1: " + yytext() + " (" + yystate() + ")");
     String tagText = yytext().substring(1, yytext().indexOf("=", 1)).trim();
-    String tagName = JSPUtils.encodeURL(tagText);
+    String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 1);
     return output + "<a name=\"" + tagName + "\"></a><h1>" + tagText + "</h1>";
 }
@@ -518,7 +518,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <NORMAL>^{h2} {
     logger.debug("h2: " + yytext() + " (" + yystate() + ")");
     String tagText = yytext().substring(2, yytext().indexOf("==", 2)).trim();
-    String tagName = JSPUtils.encodeURL(tagText);
+    String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 2);
     return output + "<a name=\"" + tagName + "\"></a><h2>" + tagText + "</h2>";
 }
@@ -526,7 +526,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <NORMAL>^{h3} {
     logger.debug("h3: " + yytext() + " (" + yystate() + ")");
     String tagText = yytext().substring(3, yytext().indexOf("===", 3)).trim();
-    String tagName = JSPUtils.encodeURL(tagText);
+    String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 3);
     return output + "<a name=\"" + tagName + "\"></a><h3>" + tagText + "</h3>";
 }
@@ -534,7 +534,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <NORMAL>^{h4} {
     logger.debug("h4: " + yytext() + " (" + yystate() + ")");
     String tagText = yytext().substring(4, yytext().indexOf("====", 4)).trim();
-    String tagName = JSPUtils.encodeURL(tagText);
+    String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 4);
     return output + "<a name=\"" + tagName + "\"></a><h4>" + tagText + "</h4>";
 }
@@ -542,7 +542,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <NORMAL>^{h5} {
     logger.debug("h5: " + yytext() + " (" + yystate() + ")");
     String tagText = yytext().substring(5, yytext().indexOf("=====", 5)).trim();
-    String tagName = JSPUtils.encodeURL(tagText);
+    String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 5);
     return output + "<a name=\"" + tagName + "\"></a><h5>" + tagText + "</h5>";
 }

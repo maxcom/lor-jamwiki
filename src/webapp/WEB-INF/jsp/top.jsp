@@ -2,7 +2,6 @@
     org.jmwiki.Environment,
     org.jmwiki.WikiBase,
     org.jmwiki.servlets.WikiServlet,
-    org.jmwiki.utils.JSPUtils,
     org.jmwiki.utils.Utilities
 " %>
 <%@ page errorPage="/WEB-INF/jsp/error.jsp" %>

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -175,7 +175,7 @@ public abstract class JMController extends HttpServlet {
 			throw new Exception("No topic in URL: " + uri);
 		}
 		String topic = uri.substring(slashIndex + 1);
-		topic = JSPUtils.decodeURL(topic);
+		topic = Utilities.decodeURL(topic);
 		logger.info("Retrieved topic from URI as: " + topic);
 		return topic;
 	}
@@ -189,7 +189,7 @@ public abstract class JMController extends HttpServlet {
 			topic = (String)request.getAttribute(JMController.PARAMETER_TOPIC);
 		}
 		if (topic == null) return null;
-		topic = JSPUtils.decodeURL(topic);
+		topic = Utilities.decodeURL(topic);
 		return topic;
 	}
 

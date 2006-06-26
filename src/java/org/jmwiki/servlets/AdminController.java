@@ -35,7 +35,6 @@ import org.jmwiki.persistency.db.DBDate;
 import org.jmwiki.persistency.db.DatabaseInit;
 import org.jmwiki.servlets.WikiServlet;
 import org.jmwiki.utils.Encryption;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;

@@ -41,7 +41,6 @@ import org.jmwiki.Environment;
 import org.jmwiki.model.Topic;
 import org.jmwiki.WikiBase;
 import org.jmwiki.WikiException;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -154,7 +153,7 @@ public class SaveAttachmentServlet extends JMController implements Controller {
 			// Unlock and return
 			base.unlockTopic(virtualWiki, topic);
 			StringBuffer next = new StringBuffer();
-			next.append(JSPUtils.createLocalRootPath(request, virtualWiki));
+			next.append(Utilities.createLocalRootPath(request, virtualWiki));
 			next.append("Wiki?");
 			next.append(topic);
 			response.sendRedirect(response.encodeRedirectURL(next.toString()));

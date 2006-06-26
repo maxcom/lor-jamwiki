@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import org.jmwiki.SearchEngine;
 import org.jmwiki.SearchResultEntry;
 import org.jmwiki.WikiBase;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -106,7 +105,7 @@ public class SearchServlet extends JMController implements Controller {
 					);
 					if (result.getFoundWord().length() > 0) {
 						contents.append("?highlight=");
-						contents.append(JSPUtils.encodeURL(result.getFoundWord()));
+						contents.append(Utilities.encodeURL(result.getFoundWord()));
 					}
 					contents.append("\">" + result.getTopic() + "</a>");
 					contents.append("</div>");
@@ -119,7 +118,7 @@ public class SearchServlet extends JMController implements Controller {
 							Utilities.buildInternalLink(request.getContextPath(), virtualWiki, result.getTopic())
 						);
 						contents.append("?highlight=");
-						contents.append(JSPUtils.encodeURL(result.getFoundWord()));
+						contents.append(Utilities.encodeURL(result.getFoundWord()));
 						contents.append("\">");
 						contents.append(result.getFoundWord());
 						contents.append("</a> ");

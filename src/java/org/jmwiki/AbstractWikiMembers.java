@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
 /*
@@ -65,10 +64,10 @@ public abstract class AbstractWikiMembers implements WikiMembers {
 		buffer.append(messages.getString("mail.confirmation.body"));
 		buffer.append("\n\n");
 		String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
-		buffer.append(JSPUtils.createRootPath(request, virtualWiki, wikiServerHostname));
+		buffer.append(Utilities.createRootPath(request, virtualWiki, wikiServerHostname));
 		buffer.append("Wiki");
 		buffer.append("?userName=");
-		buffer.append(JSPUtils.encodeURL(username));
+		buffer.append(Utilities.encodeURL(username));
 		buffer.append("&key=");
 		buffer.append(aMember.getKey());
 		buffer.append("&action=").append(WikiServlet.ACTION_MEMBER);

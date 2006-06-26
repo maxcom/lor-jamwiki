@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -64,6 +65,7 @@ public class Utilities {
 	private static final int STATE_NO_ENTITY = 0;
 	private static final int STATE_AMPERSAND = 1;
 	private static final int STATE_AMPERSAND_HASH = 2;
+	private static DecimalFormat decFormat = new DecimalFormat("0.00");
 
 	/**
 	 *
@@ -73,9 +75,9 @@ public class Utilities {
 		// context never ends with a "/" per servlet specification
 		url += "/";
 		// get the virtual wiki, which should have been set by the parent servlet
-		url += JSPUtils.encodeURL(virtualWiki);
+		url += Utilities.encodeURL(virtualWiki);
 		url += "/";
-		url += JSPUtils.encodeURL(page);
+		url += Utilities.encodeURL(page);
 		return url;
 	}
 
@@ -124,6 +126,21 @@ public class Utilities {
 	/**
 	 *
 	 */
+	public static String convertToHTML(char character) {
+		switch (character) {
+			case ('<'):
+				return "&lt";
+			case ('>'):
+				return "&gt";
+			case ('&'):
+				return "&amp";
+		}
+		return String.valueOf(character);
+	}
+
+	/**
+	 *
+	 */
 	public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[1024];
 		int len;
@@ -135,12 +152,61 @@ public class Utilities {
 	}
 
 	/**
+	 * Create the root path for a specific WIKI without the server name.
+	 * This is useful for local redirection or local URL's (relative URL's to the server).
+	 * @param request The HttpServletRequest
+	 * @param virtualWiki The name of the current virtual Wiki
+	 * @return the root path for this viki
+	 */
+	public static String createLocalRootPath(HttpServletRequest request, String virtualWiki) {
+		String contextPath = "";
+		contextPath += request.getContextPath();
+		if (virtualWiki == null || virtualWiki.length() < 1) {
+			virtualWiki = WikiBase.DEFAULT_VWIKI;
+		}
+		return contextPath + "/" + virtualWiki + "/";
+	}
+
+	/**
+	 * Create the root path for a specific WIKI with a specific server
+	 * @param request The HttpServletRequest
+	 * @param virtualWiki The name of the current virtual Wiki
+	 * @param server the specific server given for the path.
+	 *			   If it is set to "null" or an empty string, it will take
+	 *			   the servername from the given request.
+	 * @return the root path for this viki
+	 */
+	public static String createRootPath(HttpServletRequest request, String virtualWiki, String server) {
+		String contextPath = "";
+		if (server == null || server.trim().equals("")) {
+			contextPath = "http://" + request.getServerName();
+		} else {
+			contextPath = "http://" + server;
+		}
+		if (request.getServerPort() != 80) {
+			contextPath += ":" + request.getServerPort();
+		}
+		contextPath += request.getContextPath();
+		if (virtualWiki == null || virtualWiki.length() < 1) {
+			virtualWiki = WikiBase.DEFAULT_VWIKI;
+		}
+		return contextPath + "/" + virtualWiki + "/";
+	}
+
+	/**
 	 *
 	 */
 	public static Cookie createUsernameCookie(String username) {
 		Cookie c = new Cookie("username", username);
 		c.setMaxAge(Environment.getIntValue(Environment.PROP_BASE_COOKIE_EXPIRE));
 		return c;
+	}
+
+	/**
+	 *
+	 */
+	public static String decimalFormat(double number) {
+		return decFormat.format(number);
 	}
 
 	/**
@@ -156,6 +222,29 @@ public class Utilities {
 		// replace spaces with underscores
 		name = Utilities.replaceString(name, " ", "_");
 		return name;
+	}
+
+	/**
+	 *
+	 */
+	public static String decodeURL(String url) {
+		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
+		if (charSet == null) charSet = "UTF-8";
+		return Utilities.decodeURL(url, charSet);
+	}
+
+	/**
+	 *
+	 */
+	public static String decodeURL(String url,String charSet) {
+		try {
+			url = URLDecoder.decode(url, charSet);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while decoding url " + url + " with charset " + charSet, e);
+		}
+		// convert underscores to spaces
+		url = Utilities.replaceString(url, "_", " ");
+		return url;
 	}
 
 	/**
@@ -186,6 +275,32 @@ public class Utilities {
 			logger.error("Failure while encoding " + name + " with charset UTF-8", e);
 		}
 		return name;
+	}
+
+	/**
+	 * This caused problems - encoding without a charset is not well-defined
+	 * behaviour, so we'll look for a default encoding. (coljac)
+	 */
+	public static String encodeURL(String url) {
+		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
+		if (charSet == null) charSet = "UTF-8";
+		return Utilities.encodeURL(url, charSet);
+	}
+
+	/**
+	 *
+	 */
+	public static String encodeURL(String url,String charSet) {
+		// convert spaces to underscores
+		url = Utilities.replaceString(url, " ", "_");
+		try {
+			url = URLEncoder.encode(url, charSet);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failure while encoding url " + url + " with charset " + charSet, e);
+		}
+		// FIXME - un-encode colons.  handle this better.
+		url = Utilities.replaceString(url, "%3A", ":");
+		return url;
 	}
 
 	/**

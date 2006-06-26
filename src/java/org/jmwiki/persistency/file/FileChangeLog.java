@@ -23,7 +23,6 @@ import JSX.ObjIn;
 import JSX.ObjOut;
 import org.apache.log4j.Logger;
 import org.jmwiki.*;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
 /**
@@ -133,7 +132,7 @@ public class FileChangeLog implements ChangeLog {
 				logger.debug("running notifier");
 				Notify notifier = new FileNotify(virtualWiki, change.getTopic());
 				String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
-				notifier.sendNotifications(JSPUtils.createRootPath(request, virtualWiki, wikiServerHostname), request.getLocale());
+				notifier.sendNotifications(Utilities.createRootPath(request, virtualWiki, wikiServerHostname), request.getLocale());
 			} catch (Exception e) {
 				logger.warn("exception occurred in notifier", e);
 				e.printStackTrace();

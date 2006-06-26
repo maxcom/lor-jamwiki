@@ -30,7 +30,6 @@ import org.jmwiki.PrintableEntry;
 import org.jmwiki.WikiBase;
 import org.jmwiki.PseudoTopicHandler;
 import org.jmwiki.utils.Utilities;
-import org.jmwiki.utils.JSPUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -126,7 +125,7 @@ public class PrintableServlet extends JMController implements Controller {
 					if (link.indexOf('&') > -1) {
 						link = link.substring(0, link.indexOf('&'));
 					}
-					link = JSPUtils.decodeURL(link);
+					link = Utilities.decodeURL(link);
 					if (link.length() > 3 &&
 						!link.startsWith("topic=") &&
 						!link.startsWith("action=") &&

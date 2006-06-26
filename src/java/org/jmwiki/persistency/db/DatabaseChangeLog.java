@@ -30,7 +30,7 @@ import org.jmwiki.ChangeLog;
 import org.jmwiki.Notify;
 import org.jmwiki.WikiBase;
 import org.jmwiki.Environment;
-import org.jmwiki.utils.JSPUtils;
+import org.jmwiki.utils.Utilities;
 
 /**
  *
@@ -119,7 +119,7 @@ public class DatabaseChangeLog implements ChangeLog {
 			try {
 				Notify notifier = WikiBase.getInstance().getNotifyInstance(virtualWiki, topic);
 				String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
-				notifier.sendNotifications(JSPUtils.createRootPath(request, virtualWiki, wikiServerHostname), request.getLocale());
+				notifier.sendNotifications(Utilities.createRootPath(request, virtualWiki, wikiServerHostname), request.getLocale());
 			} catch (Exception e) {
 				logger.warn(e);
 				e.printStackTrace();

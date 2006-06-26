@@ -43,7 +43,6 @@ import org.jmwiki.WikiAction;
 import org.jmwiki.WikiBase;
 import org.jmwiki.model.Topic;
 import org.jmwiki.users.Usergroup;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -137,9 +136,9 @@ public class WikiServlet extends JMController implements Controller {
 			topic = topic.substring(0, topic.indexOf('&'));
 		}
 		if (request.getCharacterEncoding() != null) {
-			topic = JSPUtils.decodeURL(topic, request.getCharacterEncoding());
+			topic = Utilities.decodeURL(topic, request.getCharacterEncoding());
 		} else {
-			topic = JSPUtils.decodeURL(topic, response.getCharacterEncoding());
+			topic = Utilities.decodeURL(topic, response.getCharacterEncoding());
 		}
 		request.setAttribute("virtualWiki", virtualWiki);
 		buildLayout(request, virtualWiki);
@@ -198,8 +197,8 @@ public class WikiServlet extends JMController implements Controller {
 			}
 		}
 		logger.debug("no action mappings, assuming topic");
-		request.setAttribute("topic", JSPUtils.decodeURL(topic));
-		request.setAttribute(JMController.PARAMETER_TITLE, JSPUtils.decodeURL(topic));
+		request.setAttribute("topic", Utilities.decodeURL(topic));
+		request.setAttribute(JMController.PARAMETER_TITLE, Utilities.decodeURL(topic));
 		// make decision based on topic
 		response.setContentType("text/html");
 		String pseudotopicRedirect = PseudoTopicHandler.getInstance().getRedirectURL(topic);
@@ -272,7 +271,7 @@ public class WikiServlet extends JMController implements Controller {
 				if (!Utilities.isAdmin(request)) {
 					request.setAttribute(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
 					logger.debug("Current URL: " + request.getRequestURL());
-					String rootPath = JSPUtils.createLocalRootPath(request, virtualWiki);
+					String rootPath = Utilities.createLocalRootPath(request, virtualWiki);
 					StringBuffer buffer = new StringBuffer();
 					buffer.append(rootPath);
 					buffer.append("Wiki?" + topic);
@@ -369,7 +368,7 @@ public class WikiServlet extends JMController implements Controller {
 					int i = 0;
 					for (; i < maxBackLinks && it.hasNext(); i++) {
 						SearchResultEntry result = (SearchResultEntry) it.next();
-						String pathRoot = JSPUtils.createLocalRootPath(request, virtualWiki);
+						String pathRoot = Utilities.createLocalRootPath(request, virtualWiki);
 						request.setAttribute("pathRoot", pathRoot);
 						if (!result.getTopic().equals(topic)) {
 							buffer.append(divider);
@@ -379,7 +378,7 @@ public class WikiServlet extends JMController implements Controller {
 							buffer.append(result.getTopic());
 							if (result.getFoundWord().length() > 0) {
 								buffer.append("&highlight=");
-								buffer.append(JSPUtils.encodeURL(result.getFoundWord(), response.getCharacterEncoding()));
+								buffer.append(Utilities.encodeURL(result.getFoundWord(), response.getCharacterEncoding()));
 							}
 							buffer.append("\">");
 							buffer.append(result.getTopic());
@@ -447,7 +446,7 @@ public class WikiServlet extends JMController implements Controller {
 					} else {
 						topic = rawcontents.substring(rawcontents.indexOf(":") + 1).trim();
 					}
-					redirect("Wiki?" + JSPUtils.encodeURL(topic, response.getCharacterEncoding()), response);
+					redirect("Wiki?" + Utilities.encodeURL(topic, response.getCharacterEncoding()), response);
 					return null;
 				}
 			}

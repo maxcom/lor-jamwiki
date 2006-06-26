@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 import org.jmwiki.Environment;
 import org.jmwiki.WikiBase;
 import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 
 /**
@@ -107,7 +106,7 @@ public class ParserUtil {
 		String url = Utilities.buildInternalLink(context, virtualWiki, topic);
 		if (!exists(topic, virtualWiki)) {
 			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
-			url += "?topic=" + JSPUtils.encodeURL(topic);
+			url += "?topic=" + Utilities.encodeURL(topic);
 			return "<a class=\"edit\" title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
 		}
 		return "<a title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";

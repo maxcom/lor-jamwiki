@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import org.jmwiki.*;
 import org.jmwiki.model.Topic;
 import org.jmwiki.users.Usergroup;
-import org.jmwiki.utils.JSPUtils;
 import org.jmwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -100,7 +99,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				}
 			}
 			String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
-			String baseURL = JSPUtils.createRootPath(request, virtualWiki, wikiServerHostname);
+			String baseURL = Utilities.createRootPath(request, virtualWiki, wikiServerHostname);
 			// generate rss
 			// --------- BEGIN CODE BY Janne Jalken ---------------
 			StringBuffer result = new StringBuffer();
