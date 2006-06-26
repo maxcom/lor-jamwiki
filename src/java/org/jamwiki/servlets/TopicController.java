@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
-import org.jamwiki.servlets.WikiServlet;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -68,8 +67,8 @@ public class TopicController extends JAMController implements Controller {
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
 		next.addObject(JAMController.PARAMETER_TITLE, title);
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ALL_TOPICS);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ALL_TOPICS);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
@@ -166,8 +165,8 @@ public class TopicController extends JAMController implements Controller {
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
 		next.addObject(JAMController.PARAMETER_TITLE, title);
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ORPHANED_TOPICS);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ORPHANED_TOPICS);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
@@ -194,8 +193,8 @@ public class TopicController extends JAMController implements Controller {
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
 		next.addObject(JAMController.PARAMETER_TITLE, title);
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_TODO_TOPICS);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_TODO_TOPICS);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**

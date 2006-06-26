@@ -29,6 +29,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
+import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DBDate;
 import org.jamwiki.persistency.db.DatabaseChangeLog;
@@ -75,7 +77,7 @@ public class WikiBase {
 	protected PersistencyHandler handler;				   /** The handler that looks after read/write operations for a persitence type */
 	private List topicListeners;							/** Listeners for topic changes */
 	private int virtualWikiCount;						   /** Number of virtual wikis */
-
+	private static HashMap cachedContents = new HashMap();
 
 	/**
 	 * Creates an instance of <code>WikiBase</code> with a specified persistency sub-system.
@@ -650,5 +652,42 @@ public class WikiBase {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 *
+	 */
+	public static String getCachedContent(String context, String virtualWiki, String topicName, boolean cook) {
+		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
+		if (content == null) {
+			try {
+				Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+				content = topic.getTopicContent();
+				if (cook) {
+					content = WikiBase.getInstance().cook(context, virtualWiki, content);
+				}
+				synchronized (cachedContents) {
+					cachedContents.put(virtualWiki + "-" + topicName, content);
+				}
+			} catch (Exception e) {
+				logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
+				return null;
+			}
+		}
+		return content;
+	}
+
+	/**
+	 * Clears the cached content
+	 * This method is called when a "edit-save" or "edit-cancel" is invoked.
+	 * <p/>
+	 * Clearing all cached contents forces to reload.
+	 */
+	public static void removeCachedContents() {
+		logger.debug(
+			"Removing Cached Contents; " +
+			"cachedContents.size() = " + cachedContents.size()
+		);
+		cachedContents.clear();
 	}
 }

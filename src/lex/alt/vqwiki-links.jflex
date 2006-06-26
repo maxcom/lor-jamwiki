@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.jamwiki.parser.Lexer;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.servlets.WikiServlet;
 import org.jamwiki.utils.Utilities;
 
 %%

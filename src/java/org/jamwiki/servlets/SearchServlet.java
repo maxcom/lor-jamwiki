@@ -83,8 +83,8 @@ public class SearchServlet extends JAMController implements Controller {
 			}
 			// forward back to the search page if the request is blank or null
 			if (searchField == null || searchField.length() == 0) {
-				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH);
-				next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_SEARCH);
+				next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 				return;
 			}
 			// grab search engine instance and find
@@ -137,8 +137,8 @@ public class SearchServlet extends JAMController implements Controller {
 			}
 			next.addObject("results", contents.toString());
 			next.addObject("titlelink", "Special:Search");
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_SEARCH_RESULTS);
-			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_SEARCH_RESULTS);
+			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		} catch (Exception err) {
 			logger.error(err);

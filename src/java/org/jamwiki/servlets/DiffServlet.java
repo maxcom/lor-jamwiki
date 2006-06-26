@@ -82,6 +82,6 @@ public class DiffServlet extends JAMController implements Controller {
 			logger.error(e);
 			throw e;
 		}
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_DIFF);
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_DIFF);
 	}
 }

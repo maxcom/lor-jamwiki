@@ -60,7 +60,7 @@ public class HistoryServlet extends JAMController implements Controller {
 				next.addObject(JAMController.PARAMETER_TITLE, "History for " + topicName);
 				Collection versions = handler.getAllVersions(virtualWiki, topicName);
 				next.addObject("versions", versions);
-				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
+				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_HISTORY);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 				int numberOfVersions = handler.getNumberOfVersions(virtualWiki, topicName);
@@ -75,7 +75,7 @@ public class HistoryServlet extends JAMController implements Controller {
 				next.addObject("numberOfVersions", new Integer(numberOfVersions));
 				next.addObject("cookedContents", cookedContents);
 				next.addObject(JAMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
-				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
+				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_HISTORY);
 			}
 		} catch (Exception e) {
 			logger.error(e);

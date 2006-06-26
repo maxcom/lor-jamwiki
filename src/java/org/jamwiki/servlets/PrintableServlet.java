@@ -94,7 +94,7 @@ public class PrintableServlet extends JAMController implements Controller {
 		}
 		// put the result in the request
 		next.addObject("contentList", result);
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_PRINT);
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_PRINT);
 	}
 
 	/**

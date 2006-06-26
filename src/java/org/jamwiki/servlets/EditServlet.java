@@ -75,7 +75,7 @@ public class EditServlet extends JAMController implements Controller {
 			throw new Exception("Unable to unlock topic " + virtualWiki + "/" + topic);
 		}
 		// FIXME - the caching needs to be simplified
-		WikiServlet.removeCachedContents();
+		WikiBase.removeCachedContents();
 		view(request, next);
 	}
 
@@ -111,8 +111,8 @@ public class EditServlet extends JAMController implements Controller {
 					"Special:Edit"
 				);
 				next.addObject("redirect", redirect);
-				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
-				next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
+				next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 				return;
 			}
 		}
@@ -124,7 +124,7 @@ public class EditServlet extends JAMController implements Controller {
 		String contents = null;
 		String preview = null;
 		if (isPreview(request)) {
-			WikiServlet.removeCachedContents();
+			WikiBase.removeCachedContents();
 			contents = (String)request.getParameter("contents");
 		} else {
 			contents = WikiBase.getInstance().readRaw(virtualWiki, topicName);
@@ -137,10 +137,10 @@ public class EditServlet extends JAMController implements Controller {
 		next.addObject(JAMController.PARAMETER_TITLE, buffer.toString());
 		next.addObject("contents", contents);
 		next.addObject("preview", preview);
-		if (request.getAttribute(WikiServlet.ACTION_PREVIEW) != null) {
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_PREVIEW);
+		if (request.getAttribute(JAMController.ACTION_PREVIEW) != null) {
+			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_PREVIEW);
 		} else {
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_EDIT);
+			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_EDIT);
 		}
 	}
 
@@ -148,21 +148,21 @@ public class EditServlet extends JAMController implements Controller {
 	 *
 	 */
 	private boolean isCancel(HttpServletRequest request) {
-		return isAction(request, "edit.action.cancel", WikiServlet.ACTION_CANCEL);
+		return isAction(request, "edit.action.cancel", JAMController.ACTION_CANCEL);
 	}
 
 	/**
 	 *
 	 */
 	private boolean isPreview(HttpServletRequest request) {
-		return isAction(request, "edit.action.preview", WikiServlet.ACTION_PREVIEW);
+		return isAction(request, "edit.action.preview", JAMController.ACTION_PREVIEW);
 	}
 
 	/**
 	 *
 	 */
 	private boolean isSave(HttpServletRequest request) {
-		return isAction(request, "edit.action.save", WikiServlet.ACTION_SAVE);
+		return isAction(request, "edit.action.save", JAMController.ACTION_SAVE);
 	}
 
 	/**
@@ -175,8 +175,8 @@ public class EditServlet extends JAMController implements Controller {
 		} catch (Exception e) { }
 		String topic = request.getParameter(JAMController.PARAMETER_TOPIC);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
 		String redirect = Utilities.buildInternalLink(
 			request.getContextPath(),
 			virtualWiki,
@@ -200,7 +200,7 @@ public class EditServlet extends JAMController implements Controller {
 	 */
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
 		// a save request has been made
-		WikiServlet.removeCachedContents();
+		WikiBase.removeCachedContents();
 		String topic = request.getParameter(JAMController.PARAMETER_TOPIC);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String user = request.getRemoteAddr();

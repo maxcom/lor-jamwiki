@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
-import org.jamwiki.servlets.WikiServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -51,7 +50,7 @@ public class VirtualWikiServlet extends JAMController implements Controller {
 		next.addObject("wikis", virtualWikiList);
 		// FIXME - hard coding
 		next.addObject(JAMController.PARAMETER_TITLE, "Special:VirtualWikiList");
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_VIRTUAL_WIKI_LIST);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_VIRTUAL_WIKI_LIST);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 }

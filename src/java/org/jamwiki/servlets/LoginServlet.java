@@ -41,7 +41,7 @@ public class LoginServlet extends JAMController implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JAMController.buildLayout(request, next);
-		if (isAction(request, null, WikiServlet.ACTION_LOGOUT)) {
+		if (isAction(request, null, JAMController.ACTION_LOGOUT)) {
 			// FIXME - response is non-standard here
 			logout(request, response, next);
 			return null;
@@ -87,8 +87,8 @@ public class LoginServlet extends JAMController implements Controller {
 			// should this return a specific message instead?
 			next.addObject("loginFailure", "true");
 			next.addObject("redirect", redirect);
-			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
+			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
 			return false;
 		}
 		request.getSession().setAttribute("admin", "true");

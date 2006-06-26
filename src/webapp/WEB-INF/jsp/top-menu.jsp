@@ -6,11 +6,11 @@
 // FIXME - this needs to be cleaned up
 boolean special = false;
 try {
-	if (request.getAttribute(WikiServlet.PARAMETER_SPECIAL) != null) {
-		special = ((Boolean)request.getAttribute(WikiServlet.PARAMETER_SPECIAL)).booleanValue();
+	if (request.getAttribute(JAMController.PARAMETER_SPECIAL) != null) {
+		special = ((Boolean)request.getAttribute(JAMController.PARAMETER_SPECIAL)).booleanValue();
 	}
-	if (request.getParameter(WikiServlet.PARAMETER_SPECIAL) != null) {
-		special = (new Boolean(request.getParameter(WikiServlet.PARAMETER_SPECIAL))).booleanValue();
+	if (request.getParameter(JAMController.PARAMETER_SPECIAL) != null) {
+		special = (new Boolean(request.getParameter(JAMController.PARAMETER_SPECIAL))).booleanValue();
 	}
 } catch (Exception e) {}
 if (!special) {

@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -33,6 +34,39 @@ import org.springframework.web.servlet.ModelAndView;
 public abstract class JAMController extends HttpServlet {
 
 	private static final Logger logger = Logger.getLogger(JAMController.class);
+	// constants used as the action parameter in calls to this servlet
+	public static final String ACTION_ADMIN = "action_admin";
+	public static final String ACTION_ADMIN_UPGRADE = "action_admin_upgrade";
+	public static final String ACTION_ATTACH = "action_attach";
+	public static final String ACTION_CANCEL = "Cancel";
+	public static final String ACTION_DIFF = "action_diff";
+	public static final String ACTION_EDIT = "action_edit";
+	public static final String ACTION_FIRST_USE = "action_firstuse";
+	public static final String ACTION_HISTORY = "action_history";
+	public static final String ACTION_IMPORT = "action_import";
+	public static final String ACTION_LOGIN = "action_login";
+	public static final String ACTION_LOGOUT = "action_logout";
+	public static final String ACTION_MEMBER = "action_member";
+	public static final String ACTION_NOTIFY = "action_notify";
+	public static final String ACTION_PRINT = "action_printable";
+	public static final String ACTION_RSS = "RSS";
+	public static final String ACTION_SAVE_USER = "action_save_user";
+	public static final String ACTION_SEARCH = "action_search";
+	public static final String ACTION_UNLOCK = "action_unlock";
+	public static final String ACTION_VIEW_ATTACHMENT = "action_view_attachment";
+	public static final String ACTION_ALL_TOPICS = "all_topics";
+	public static final String ACTION_EDIT_USER = "edit_user";
+	public static final String ACTION_LOCKLIST = "locklist";
+	public static final String ACTION_ORPHANED_TOPICS = "orphaned_topics";
+	public static final String ACTION_PREVIEW = "preview";
+	public static final String ACTION_RECENT_CHANGES = "recent_changes";
+	public static final String ACTION_SAVE = "save";
+	public static final String ACTION_SEARCH_RESULTS = "search_results";
+	public static final String ACTION_TODO_TOPICS = "todo_topics";
+	public static final String ACTION_DELETE = "action_delete";
+	public static final String ACTION_VIRTUAL_WIKI_LIST = "action_virtual_wiki_list";
+	public static final String PARAMETER_ACTION = "action";
+	public static final String PARAMETER_SPECIAL = "special";
 	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
@@ -125,28 +159,32 @@ public abstract class JAMController extends HttpServlet {
 		}
 		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
-		String leftMenu = WikiServlet.getCachedContent(
+		String leftMenu = WikiBase.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMController.getMessage("specialpages.leftMenu", request.getLocale())
+			JAMController.getMessage("specialpages.leftMenu", request.getLocale()),
+			true
 		);
 		next.addObject("leftMenu", leftMenu);
-		String topArea = WikiServlet.getCachedContent(
+		String topArea = WikiBase.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMController.getMessage("specialpages.topArea", request.getLocale())
+			JAMController.getMessage("specialpages.topArea", request.getLocale()),
+			true
 		);
 		next.addObject("topArea", topArea);
-		String bottomArea = WikiServlet.getCachedContent(
+		String bottomArea = WikiBase.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMController.getMessage("specialpages.bottomArea", request.getLocale())
+			JAMController.getMessage("specialpages.bottomArea", request.getLocale()),
+			true
 		);
 		next.addObject("bottomArea", bottomArea);
-		String styleSheet = WikiServlet.getCachedRawContent(
+		String styleSheet = WikiBase.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMController.getMessage("specialpages.stylesheet", request.getLocale())
+			JAMController.getMessage("specialpages.stylesheet", request.getLocale()),
+			false
 		);
 		next.addObject("StyleSheet", styleSheet);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
@@ -217,7 +255,7 @@ public abstract class JAMController extends HttpServlet {
 	 *
 	 */
 	protected static boolean isAction(HttpServletRequest request, String key, String constant) {
-		String action = request.getParameter(WikiServlet.PARAMETER_ACTION);
+		String action = request.getParameter(JAMController.PARAMETER_ACTION);
 		if (action == null || action.length() == 0) {
 			return false;
 		}

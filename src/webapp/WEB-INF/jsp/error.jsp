@@ -1,7 +1,7 @@
 
 <%@ page import="
         org.jamwiki.WikiException,
-        org.jamwiki.servlets.WikiServlet,
+        org.jamwiki.servlets.JAMController,
         org.jamwiki.servlets.WikiServletException
     "
     isErrorPage="true"

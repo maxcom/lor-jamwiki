@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
-import org.jamwiki.servlets.WikiServlet;
+import org.jamwiki.servlets.JAMController;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -107,7 +107,7 @@ public abstract class AbstractNotify implements Notify {
 			buffer.append("\n\n\n----\n\n");
 			buffer.append(messages.getString("mail.unsubscribe") + " <");
 			buffer.append(rootPath);
-			buffer.append("Wiki?action=" + WikiServlet.ACTION_NOTIFY);
+			buffer.append("Wiki?action=" + JAMController.ACTION_NOTIFY);
 			buffer.append("&notify_action=notify_off&topic=" + Utilities.encodeURL(topicName));
 			buffer.append("&username=" + Utilities.encodeURL(aUsername) + ">");
 			logger.debug("Sending notification email to " + aMember.getEmail() + " for " + virtualWiki + "/" + topicName);

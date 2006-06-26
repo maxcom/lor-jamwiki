@@ -65,8 +65,8 @@ public class MemberServlet extends JAMController implements Controller {
 		if (user == null) {
 			user = Utilities.getUserFromRequest(request);
 		}
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_MEMBER);
 		next.addObject(JAMController.PARAMETER_TITLE, "Wiki Membership");
 		next.addObject("user", user);
 		WikiMembers members = null;
@@ -141,8 +141,8 @@ public class MemberServlet extends JAMController implements Controller {
 		} else if (user == null) {
 			// force user to create a username first
 			next.addObject("userList", usergroup.getListOfAllUsers());
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
-			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_MEMBER);
+			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		}
 		next.addObject("knownEmail", usergroup.getKnownEmailById(user));
@@ -153,8 +153,8 @@ public class MemberServlet extends JAMController implements Controller {
 	 */
 	// FIXME - shouldn't need to pass in response
 	private void username(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_MEMBER);
 		next.addObject(JAMController.PARAMETER_TITLE, "Wiki Membership");
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String user = null;

@@ -62,8 +62,8 @@ public class LockListServlet extends JAMController implements Controller {
 		}
 		next.addObject("locks", locks);
 		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("locklist.title", request.getLocale()));
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOCKLIST);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOCKLIST);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
@@ -75,8 +75,8 @@ public class LockListServlet extends JAMController implements Controller {
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
 			next.addObject("redirect", redirect);
-			next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
-			next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
+			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		}
 		try {

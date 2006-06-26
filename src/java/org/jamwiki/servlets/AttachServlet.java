@@ -75,7 +75,7 @@ public class AttachServlet extends JAMController implements Controller {
 			// FIXME - hard coding
 			throw new Exception("Failure while getting attachment topic info for " + topic + " " + e.getMessage());
 		}
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ATTACH);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ATTACH);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 }

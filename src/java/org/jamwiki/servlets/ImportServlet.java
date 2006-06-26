@@ -65,8 +65,8 @@ public class ImportServlet extends JAMController implements Controller {
 			logger.error("Failure while importing files", e);
 			throw new Exception("Failure while importing files" + e.getMessage());
 		}
-		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_IMPORT);
-		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_IMPORT);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**

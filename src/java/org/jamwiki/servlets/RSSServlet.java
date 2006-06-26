@@ -206,7 +206,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				//  PageHistory
 				itemBuffer.append("  <wiki:history>");
 				itemBuffer.append(format(baseURL + "Wiki?topic=" +
-					topic + "&action=" + WikiServlet.ACTION_HISTORY + "&type=all")
+					topic + "&action=" + JAMController.ACTION_HISTORY + "&type=all")
 				);
 				itemBuffer.append("</wiki:history>\n");
 				//  Close up.

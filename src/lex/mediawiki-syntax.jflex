@@ -34,7 +34,6 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.servlets.WikiServlet;
 import org.jamwiki.utils.Utilities;
 
 %%

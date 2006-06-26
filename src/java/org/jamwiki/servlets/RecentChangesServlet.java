@@ -67,8 +67,8 @@ public class RecentChangesServlet extends JAMController implements Controller {
 		}
 		request.setAttribute("changes", all);
 		request.setAttribute("num", new Integer(num));
-		request.setAttribute(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_RECENT_CHANGES);
-		request.setAttribute(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		request.setAttribute(JAMController.PARAMETER_ACTION, JAMController.ACTION_RECENT_CHANGES);
+		request.setAttribute(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**

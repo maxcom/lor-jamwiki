@@ -2,7 +2,7 @@
 <head>
 
 <%@ page import="
-	org.jamwiki.servlets.WikiServlet
+	org.jamwiki.servlets.JAMController
 " errorPage="/WEB-INF/jsp/error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/classes/jamwiki.tld" prefix="jamwiki" %>
@@ -25,7 +25,7 @@
   <div id="hideprint">
   <form action="Wiki" method="GET">
   <input type="hidden" name="topic" value="<c:out value="${topic}"/>">
-  <input type="hidden" name="action" value="<%= WikiServlet.ACTION_PRINT %>">
+  <input type="hidden" name="action" value="<%= JAMController.ACTION_PRINT %>">
   <f:message key="print.depth"/> <input type="text" name="depth" value="<c:out value="${depth}"/>">
   <input type="submit">
   <input type="hidden" name="hideform" value="true"/>
