@@ -16,9 +16,7 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collection;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -72,8 +70,7 @@ public class HistoryServlet extends JAMController implements Controller {
 					topicName,
 					topicVersionId
 				);
-				BufferedReader in = new BufferedReader(new StringReader(topicVersion.getVersionContent()));
-				String cookedContents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, in);
+				String cookedContents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topicVersion.getVersionContent());
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("numberOfVersions", new Integer(numberOfVersions));
 				next.addObject("cookedContents", cookedContents);

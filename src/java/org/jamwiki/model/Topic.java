@@ -285,7 +285,7 @@ public class Topic implements Serializable {
 				public int compare(Object o1, Object o2) {
 					TopicVersion bean1 = (TopicVersion) o1;
 					TopicVersion bean2 = (TopicVersion) o2;
-					return bean2.getRevisionDate().compareTo((Date)bean1.getRevisionDate());
+					return bean2.getEditDate().compareTo((Date)bean1.getEditDate());
 				}
 			});
 			logger.debug("Having " + allVersions.size() + " versions: " + allVersions);
@@ -293,10 +293,9 @@ public class Topic implements Serializable {
 			// go through all the versions
 			for (Iterator iter = allVersions.iterator(); iter.hasNext() && foundAuthor == null;) {
 				TopicVersion version = (TopicVersion) iter.next();
-				if (version.getRevisionDate() != null) {
-					logger.debug("Checking version date " + version.getRevisionDate());
+				if (version.getEditDate() != null) {
 					// get list of changes for that date
-					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, version.getRevisionDate());
+					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, version.getEditDate());
 					if (c != null) {
 						// remove all changes, which do not apply for this topic
 						logger.debug("Got " + c.size() + " changes for that date");
@@ -349,29 +348,11 @@ public class Topic implements Serializable {
 	}
 
 	/**
-	 * Make a topic read-only
-	 *
-	 * @param virtualWiki The virtualWiki, which contains the topic
-	 */
-	public synchronized void makeTopicReadOnly(String virtualWiki) throws Exception {
-		WikiBase.getInstance().addReadOnlyTopic(virtualWiki, name);
-	}
-
-	/**
 	 * Return whether a topic is read-only
 	 *
 	 * @param virtualWiki The virtualWiki, which contains the topic
 	 */
 	public boolean isReadOnlyTopic(String virtualWiki) throws Exception {
 		return WikiBase.getInstance().isTopicReadOnly(virtualWiki, name);
-	}
-
-	/**
-	 * Make a previously read-only topic writable
-	 *
-	 * @param virtualWiki The virtualWiki, which contains the topic
-	 */
-	public synchronized void makeTopicWritable(String virtualWiki) throws Exception {
-		WikiBase.getInstance().removeReadOnlyTopic(virtualWiki, name);
 	}
 }

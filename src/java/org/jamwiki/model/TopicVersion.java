@@ -16,13 +16,8 @@
  */
 package org.jamwiki.model;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.sql.Timestamp;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.jamwiki.WikiBase;
-import org.jamwiki.persistency.db.DBDate;
 
 /**
  *
@@ -160,66 +155,5 @@ public class TopicVersion {
 	 */
 	public void setVersionContent(String versionContent) {
 		this.versionContent = versionContent;
-	}
-
-	// ======================================
-	// DELETE THE CODE BELOW
-	// ======================================
-
-	private String virtualWiki;
-	private String topicName;
-	private DBDate revisionDate;
-
-	/**
-	 *
-	 */
-	public TopicVersion(String virtualWiki, String topicName, DBDate revisionDate, int topicVersionId) {
-		if (virtualWiki == null) virtualWiki = "";
-		this.topicVersionId = topicVersionId;
-		this.virtualWiki = virtualWiki;
-		this.topicName = topicName;
-		this.revisionDate = revisionDate;
-	}
-
-	/**
-	 *
-	 */
-	public String getTopicName() {
-		return topicName;
-	}
-
-	/**
-	 *
-	 */
-	public void setTopicName(String topicName) {
-		this.topicName = topicName;
-	}
-
-	/**
-	 *
-	 */
-	public DBDate getRevisionDate() {
-		return revisionDate;
-	}
-
-	/**
-	 *
-	 */
-	public void setRevisionDate(DBDate revisionDate) {
-		this.revisionDate = revisionDate;
-	}
-
-	/**
-	 *
-	 */
-	public String getVirtualWiki() {
-		return virtualWiki;
-	}
-
-	/**
-	 *
-	 */
-	public void setVirtualWiki(String virtualWiki) {
-		this.virtualWiki = virtualWiki;
 	}
 }

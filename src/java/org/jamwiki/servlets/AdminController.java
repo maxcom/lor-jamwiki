@@ -557,14 +557,14 @@ public class AdminController extends JAMController implements Controller {
 		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		if (request.getParameter("addReadOnly") != null) {
-			Topic t = new Topic(request.getParameter("readOnlyTopic"));
-			t.makeTopicReadOnly(virtualWiki);
+			String topicName = request.getParameter("readOnlyTopic");
+			WikiBase.getInstance().addReadOnlyTopic(virtualWiki, topicName);
 		}
 		if (request.getParameter("removeReadOnly") != null) {
 			String[] topics = request.getParameterValues("markRemove");
 			for (int i = 0; i < topics.length; i++) {
-				Topic t = new Topic(topics[i]);
-				t.makeTopicWritable(virtualWiki);
+				String topicName = topics[i];
+				WikiBase.getInstance().removeReadOnlyTopic(virtualWiki, topicName);
 			}
 		}
 	}

@@ -16,8 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -208,8 +206,12 @@ public class TopicController extends JAMController implements Controller {
 		String topicName = JAMController.getTopicFromURI(request);
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMController.PARAMETER_TITLE, topicName);
-		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getTopicContent())));
-		contents = highlight(request, contents);
+		// FIXME - what should the default be for topics that don't exist?
+		String contents = "";
+		if (topic != null) {
+			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+			contents = highlight(request, contents);
+		}
 		next.addObject("contents", contents);
 	}
 }

@@ -97,9 +97,9 @@ public class ImportServlet extends JAMController implements Controller {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
 					databaseHandler.addTopicVersion(
 						virtualWiki,
-						topicVersion.getTopicName(),
+						topicName,
 						topicVersion.getVersionContent(),
-						topicVersion.getRevisionDate(),
+						topicVersion.getEditDate(),
 						topicVersion.getAuthorIpAddress()
 					);
 				}

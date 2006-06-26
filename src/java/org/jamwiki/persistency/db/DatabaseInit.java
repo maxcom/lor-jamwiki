@@ -181,12 +181,12 @@ public class DatabaseInit {
 							virtualWiki,
 							topicName,
 							contents,
-							topicVersion.getRevisionDate(),
+							topicVersion.getEditDate(),
 							topicVersion.getAuthorIpAddress(),
 							topicVersion.getTopicVersionId()
 						);
 					} catch (Exception e) {
-						logger.error("Unable to convert topic version to file: " + topicVersion.getTopicName() + " / " + virtualWiki + ": " + e.getMessage());
+						logger.error("Unable to convert topic version to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
 					}
 				}
 			}

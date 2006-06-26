@@ -29,6 +29,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.PrintableEntry;
 import org.jamwiki.WikiBase;
 import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -103,17 +104,18 @@ public class PrintableServlet extends JAMController implements Controller {
 	 * @param depth The depth to go into
 	 * @return Collection of pages
 	 */
-	private Collection parsePage(HttpServletRequest request, String virtualWiki, String topic, int depth, Vector alreadyVisited)
+	private Collection parsePage(HttpServletRequest request, String virtualWiki, String topicName, int depth, Vector alreadyVisited)
 		throws Exception {
 		WikiBase base = WikiBase.getInstance();
-		String onepage = base.readCooked(request.getContextPath(), virtualWiki, topic);
+		Topic topic = base.getHandler().lookupTopic(virtualWiki, topicName);
+		String onepage = base.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
 		Collection result = new ArrayList();
 		if (onepage != null) {
 			PrintableEntry entry = new PrintableEntry();
-			entry.setTopic(topic);
+			entry.setTopic(topicName);
 			entry.setContent(onepage);
 			result.add(entry);
-			alreadyVisited.add(topic);
+			alreadyVisited.add(topicName);
 			if (depth > 0) {
 				String searchfor = "href=\"";
 				int iPos = onepage.indexOf(searchfor);

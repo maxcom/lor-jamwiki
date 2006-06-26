@@ -306,14 +306,17 @@ public class WikiBase {
 	/**
 	 * TODO: DOCUMENT ME!
 	 *
-	 * @param virtualWiki	TODO: DOCUMENT ME!
-	 * @param topicName	  TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
+	 * @param in		  TODO: DOCUMENT ME!
+	 * @param virtualWiki TODO: DOCUMENT ME!
+	 * @return				TODO: DOCUMENT ME!
+	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public synchronized String readCooked(String context, String virtualWiki, String topicName) throws Exception {
-		String s = handler.read(virtualWiki, topicName);
-		BufferedReader in = new BufferedReader(new StringReader(s));
+	public synchronized String cook(String context, String virtualWiki, String content) throws Exception {
+		if (content == null) {
+			// FIXME - return empty or something else?
+			return "";
+		}
+		BufferedReader in = new BufferedReader(new StringReader(content));
 		return cook(context, virtualWiki, in);
 	}
 

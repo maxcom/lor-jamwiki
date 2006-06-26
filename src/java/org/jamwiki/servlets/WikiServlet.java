@@ -496,8 +496,9 @@ public class WikiServlet extends JAMController implements Controller {
 	 *
 	 */
 	private static WikiReader cookedReader = new WikiReader() {
-		public String read(String context, String virtualWiki, String topic) throws Exception {
-			return WikiBase.getInstance().readCooked(context, virtualWiki, topic);
+		public String read(String context, String virtualWiki, String topicName) throws Exception {
+			String contents = WikiBase.getInstance().getHandler().read(virtualWiki, topicName);
+			return WikiBase.getInstance().cook(context, virtualWiki, contents);
 		}
 	};
 

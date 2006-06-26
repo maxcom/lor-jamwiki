@@ -16,9 +16,7 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -131,11 +129,7 @@ public class EditServlet extends JAMController implements Controller {
 		} else {
 			contents = WikiBase.getInstance().readRaw(virtualWiki, topicName);
 		}
-		preview = WikiBase.getInstance().cook(
-			request.getContextPath(),
-			virtualWiki,
-			new BufferedReader(new StringReader(contents))
-		);
+		preview = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, contents);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(JAMController.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
@@ -261,7 +255,11 @@ public class EditServlet extends JAMController implements Controller {
 		String topicName = request.getParameter(JAMController.PARAMETER_TOPIC);
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMController.PARAMETER_TITLE, topicName);
-		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getTopicContent())));
+		// FIXME - what should the default be for topics that don't exist?
+		String contents = "";
+		if (topic != null) {
+			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+		}
 		next.addObject("contents", contents);
 	}
 }
