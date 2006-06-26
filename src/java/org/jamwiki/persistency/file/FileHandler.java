@@ -195,8 +195,8 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
-		TopicVersion version1 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
-		TopicVersion version2 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
+		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
 		String contents1 = version1.getVersionContent();
 		String contents2 = version2.getVersionContent();
 		return DiffUtil.diff(contents1, contents2, useHtml);
@@ -319,13 +319,7 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-		String cookedContents = WikiBase.getInstance().cook(
-			context,
-			virtualWiki,
-			new BufferedReader(new StringReader(version.getVersionContent()))
-		);
-		version.setCookedContents(cookedContents);
+		TopicVersion version = lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 		return version;
 	}
 
@@ -446,26 +440,25 @@ public class FileHandler implements PersistencyHandler {
 	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
 		if (readOnlyTopics == null) {
 			return false;
-		} else {
-			if (readOnlyTopics.get(virtualWiki) == null) {
-				return false;
-			}
-			Collection readOnlyTopicsForVWiki = ((Collection) readOnlyTopics.get(virtualWiki));
-			for (Iterator iterator = readOnlyTopicsForVWiki.iterator(); iterator.hasNext();) {
-				String readOnlyTopicName = (String) iterator.next();
-				if (topicName.equalsIgnoreCase(readOnlyTopicName)) {
-					return true;
-				}
-			}
+		}
+		if (readOnlyTopics.get(virtualWiki) == null) {
 			return false;
 		}
+		Collection readOnlyTopicsForVWiki = ((Collection) readOnlyTopics.get(virtualWiki));
+		for (Iterator iterator = readOnlyTopicsForVWiki.iterator(); iterator.hasNext();) {
+			String readOnlyTopicName = (String) iterator.next();
+			if (topicName.equalsIgnoreCase(readOnlyTopicName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
 	 *
 	 */
 	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		TopicVersion version = WikiBase.getInstance().getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
 		return version.getEditDate();
 	}
 

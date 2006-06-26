@@ -618,8 +618,8 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
-		TopicVersion version1 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
-		TopicVersion version2 = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
+		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
 		String contents1 = version1.getVersionContent();
 		String contents2 = version2.getVersionContent();
 		if (contents1 == null && contents2 == null) {
@@ -702,13 +702,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public TopicVersion getTopicVersion(String context, String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		TopicVersion version = WikiBase.getInstance().getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-		String cookedContents = WikiBase.getInstance().cook(
-			context,
-			virtualWiki,
-			new BufferedReader(new StringReader(version.getVersionContent()))
-		);
-		version.setCookedContents(cookedContents);
+		TopicVersion version = lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 		return version;
 	}
 
@@ -754,14 +748,14 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
-		return topic.getReadOnly();
+		return (topic != null && topic.getReadOnly());
 	}
 
 	/**
 	 *
 	 */
 	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		TopicVersion version = WikiBase.getInstance().getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
 		return version.getEditDate();
 	}
 
@@ -822,6 +816,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		// FIXME - DELETE ABOVE
 
 		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) return true;
 		if (topic.getLockSessionKey() != null) {
 			// a lock still exists, see if it was taken by the current user
 			if (topic.getLockSessionKey().equals(key)) {

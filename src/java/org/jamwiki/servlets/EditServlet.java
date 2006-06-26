@@ -86,21 +86,25 @@ public class EditServlet extends JAMController implements Controller {
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next) throws Exception {
 		request.getSession().setMaxInactiveInterval(60 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
-		String topic = JAMController.getTopicFromRequest(request);
-		if (topic == null || topic.length() == 0) {
+		String topicName = JAMController.getTopicFromRequest(request);
+		if (topicName == null || topicName.length() == 0) {
 			// FIXME - hard coding
-			throw new Exception("Invalid or missing topic");
+			throw new Exception("Invalid or missing topic name");
 		}
-		if (PseudoTopicHandler.getInstance().isPseudoTopic(topic)) {
-			throw new Exception(topic + " " + JAMController.getMessage("edit.exception.pseudotopic", request.getLocale()));
+		if (PseudoTopicHandler.getInstance().isPseudoTopic(topicName)) {
+			throw new Exception(topicName + " " + JAMController.getMessage("edit.exception.pseudotopic", request.getLocale()));
 		}
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		Topic t = new Topic(topic);
-		if (t.isReadOnlyTopic(virtualWiki)) {
-			// FIXME - hard coding
-			throw new Exception("The topic " + topic + " is read only");
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic = new Topic();
+			topic.setName(topicName);
 		}
-		if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topic)) {
+		if (topic.isReadOnlyTopic(virtualWiki)) {
+			// FIXME - hard coding
+			throw new Exception("The topic " + topicName + " is read only");
+		}
+		if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topicName)) {
 			if (!Utilities.isAdmin(request)) {
 				next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("login.title", request.getLocale()));
 				String redirect = Utilities.buildInternalLink(
@@ -115,9 +119,9 @@ public class EditServlet extends JAMController implements Controller {
 			}
 		}
 		String key = request.getSession().getId();
-		if (!WikiBase.getInstance().lockTopic(virtualWiki, topic, key)) {
+		if (!WikiBase.getInstance().lockTopic(virtualWiki, topicName, key)) {
 			// FIXME - hard coding
-			throw new Exception("The topic " + topic + " is locked");
+			throw new Exception("The topic " + topicName + " is locked");
 		}
 		String contents = null;
 		String preview = null;
@@ -125,7 +129,7 @@ public class EditServlet extends JAMController implements Controller {
 			WikiServlet.removeCachedContents();
 			contents = (String)request.getParameter("contents");
 		} else {
-			contents = WikiBase.getInstance().readRaw(virtualWiki, topic);
+			contents = WikiBase.getInstance().readRaw(virtualWiki, topicName);
 		}
 		preview = WikiBase.getInstance().cook(
 			request.getContextPath(),
@@ -135,7 +139,7 @@ public class EditServlet extends JAMController implements Controller {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(JAMController.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
-		buffer.append(topic);
+		buffer.append(topicName);
 		next.addObject(JAMController.PARAMETER_TITLE, buffer.toString());
 		next.addObject("contents", contents);
 		next.addObject("preview", preview);
@@ -255,10 +259,9 @@ public class EditServlet extends JAMController implements Controller {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String topicName = request.getParameter(JAMController.PARAMETER_TOPIC);
-		Topic topic = new Topic(topicName);
-		topic.loadTopic(virtualWiki);
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMController.PARAMETER_TITLE, topicName);
-		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getRenderedContent())));
+		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getTopicContent())));
 		next.addObject("contents", contents);
 	}
 }

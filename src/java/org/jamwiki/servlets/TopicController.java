@@ -206,10 +206,9 @@ public class TopicController extends JAMController implements Controller {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String topicName = JAMController.getTopicFromURI(request);
-		Topic topic = new Topic(topicName);
-		topic.loadTopic(virtualWiki);
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMController.PARAMETER_TITLE, topicName);
-		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getRenderedContent())));
+		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getTopicContent())));
 		contents = highlight(request, contents);
 		next.addObject("contents", contents);
 	}

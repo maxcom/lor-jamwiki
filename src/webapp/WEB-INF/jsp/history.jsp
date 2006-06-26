@@ -62,7 +62,7 @@ function inactive(element) {
 </form>
 	</c:when>
 	<c:when test="${param.type=='version'}">
-<c:out value="${topicVersion.cookedContents}" escapeXml="${false}"/>
+<c:out value="${cookedContents}" escapeXml="${false}"/>
 <hr/>
 <form>
 <textarea readonly="true" cols="80" rows="26"><c:out value="${topicVersion.versionContent}" escapeXml="${false}"/></textarea>

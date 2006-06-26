@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.persistency.db.DBDate;
-// FIXME - remove this dependency
-import org.jamwiki.servlets.JAMController;
 
 /**
  *
@@ -171,7 +169,6 @@ public class TopicVersion {
 	private String virtualWiki;
 	private String topicName;
 	private DBDate revisionDate;
-	private String cookedContents;
 
 	/**
 	 *
@@ -182,7 +179,6 @@ public class TopicVersion {
 		this.virtualWiki = virtualWiki;
 		this.topicName = topicName;
 		this.revisionDate = revisionDate;
-		this.cookedContents = null;
 	}
 
 	/**
@@ -226,29 +222,4 @@ public class TopicVersion {
 	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
 	}
-
-	/**
-	 *
-	 */
-	public String getCookedContents() {
-		return this.cookedContents;
-	 }
-
-	/**
-	 *
-	 */
-	public void setCookedContents(String cookedContents) {
-		this.cookedContents = cookedContents;
-	 }
-
-	/**
-	 *
-	 */
-	 public String toString() {
-		 StringBuffer buffer = new StringBuffer();
-		 buffer.append(this.topicVersionId);
-		 buffer.append(":");
-		 buffer.append(this.revisionDate);
-		 return buffer.toString();
-	 }
 }
