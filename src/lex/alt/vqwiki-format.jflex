@@ -1,17 +1,17 @@
 /**
  *
  */
-package org.jmwiki.parser.alt;
+package org.jamwiki.parser.alt;
 
 import org.apache.log4j.Logger;
-import org.jmwiki.WikiBase;
+import org.jamwiki.WikiBase;
 
 %%
 
 %public
 %type String
 %unicode
-%implements org.jmwiki.parser.Lexer
+%implements org.jamwiki.parser.Lexer
 %class VQWikiFormatLex
 
 %init{

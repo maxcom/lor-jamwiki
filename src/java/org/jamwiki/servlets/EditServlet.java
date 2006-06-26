@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,22 +25,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.Change;
-import org.jmwiki.ChangeLog;
-import org.jmwiki.Environment;
-import org.jmwiki.PseudoTopicHandler;
-import org.jmwiki.SearchEngine;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.model.Topic;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Change;
+import org.jamwiki.ChangeLog;
+import org.jamwiki.Environment;
+import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.SearchEngine;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.model.Topic;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class EditServlet extends JMController implements Controller {
+public class EditServlet extends JAMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(EditServlet.class);
 
@@ -49,7 +49,7 @@ public class EditServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (mustLogin(request)) {
 			login(request, next);
 		} else if (isSave(request)) {
@@ -68,8 +68,8 @@ public class EditServlet extends JMController implements Controller {
 	 *
 	 */
 	private void cancel(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JMController.getTopicFromRequest(request);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String topic = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		try {
 			WikiBase.getInstance().unlockTopic(virtualWiki, topic);
 		} catch (Exception err) {
@@ -86,15 +86,15 @@ public class EditServlet extends JMController implements Controller {
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next) throws Exception {
 		request.getSession().setMaxInactiveInterval(60 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
-		String topic = JMController.getTopicFromRequest(request);
+		String topic = JAMController.getTopicFromRequest(request);
 		if (topic == null || topic.length() == 0) {
 			// FIXME - hard coding
 			throw new Exception("Invalid or missing topic");
 		}
 		if (PseudoTopicHandler.getInstance().isPseudoTopic(topic)) {
-			throw new Exception(topic + " " + JMController.getMessage("edit.exception.pseudotopic", request.getLocale()));
+			throw new Exception(topic + " " + JAMController.getMessage("edit.exception.pseudotopic", request.getLocale()));
 		}
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		Topic t = new Topic(topic);
 		if (t.isReadOnlyTopic(virtualWiki)) {
 			// FIXME - hard coding
@@ -102,7 +102,7 @@ public class EditServlet extends JMController implements Controller {
 		}
 		if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topic)) {
 			if (!Utilities.isAdmin(request)) {
-				next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
+				next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("login.title", request.getLocale()));
 				String redirect = Utilities.buildInternalLink(
 					request.getContextPath(),
 					virtualWiki,
@@ -133,10 +133,10 @@ public class EditServlet extends JMController implements Controller {
 			new BufferedReader(new StringReader(contents))
 		);
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(JMController.getMessage("edit", request.getLocale()));
+		buffer.append(JAMController.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
 		buffer.append(topic);
-		next.addObject(JMController.PARAMETER_TITLE, buffer.toString());
+		next.addObject(JAMController.PARAMETER_TITLE, buffer.toString());
 		next.addObject("contents", contents);
 		next.addObject("preview", preview);
 		if (request.getAttribute(WikiServlet.ACTION_PREVIEW) != null) {
@@ -175,8 +175,8 @@ public class EditServlet extends JMController implements Controller {
 			List users = WikiBase.getInstance().getUsergroupInstance().getListOfAllUsers();
 			next.addObject("userList", users);
 		} catch (Exception e) { }
-		String topic = request.getParameter(JMController.PARAMETER_TOPIC);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String topic = request.getParameter(JAMController.PARAMETER_TOPIC);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOGIN);
 		String redirect = Utilities.buildInternalLink(
@@ -203,8 +203,8 @@ public class EditServlet extends JMController implements Controller {
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
 		// a save request has been made
 		WikiServlet.removeCachedContents();
-		String topic = request.getParameter(JMController.PARAMETER_TOPIC);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String topic = request.getParameter(JAMController.PARAMETER_TOPIC);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);
@@ -253,11 +253,11 @@ public class EditServlet extends JMController implements Controller {
 	 */
 	// FIXME - duplicates the functionality in ViewController
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		String topicName = request.getParameter(JMController.PARAMETER_TOPIC);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String topicName = request.getParameter(JAMController.PARAMETER_TOPIC);
 		Topic topic = new Topic(topicName);
 		topic.loadTopic(virtualWiki);
-		next.addObject(JMController.PARAMETER_TITLE, topicName);
+		next.addObject(JAMController.PARAMETER_TITLE, topicName);
 		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getRenderedContent())));
 		next.addObject("contents", contents);
 	}

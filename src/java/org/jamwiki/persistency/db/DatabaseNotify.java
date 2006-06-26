@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.jmwiki.AbstractNotify;
-import org.jmwiki.Environment;
+import org.jamwiki.AbstractNotify;
+import org.jamwiki.Environment;
 
 /**
  *

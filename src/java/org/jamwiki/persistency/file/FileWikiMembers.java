@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.file;
+package org.jamwiki.persistency.file;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,11 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 import JSX.ObjIn;
 import JSX.ObjOut;
 import org.apache.log4j.Logger;
-import org.jmwiki.AbstractWikiMembers;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiException;
-import org.jmwiki.WikiMember;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.AbstractWikiMembers;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiException;
+import org.jamwiki.WikiMember;
+import org.jamwiki.utils.Utilities;
 
 /**
  * Stores a list of usernames and their registered email addresses so
@@ -122,9 +122,9 @@ public class FileWikiMembers extends AbstractWikiMembers {
 	 *
 	 * @param username  the name of the user for whom membership is requested
 	 * @param email  the email address of the user for whom membership is requested
-	 * in the confirmation email. For example, http://www.mybogusdomain.com/jmwiki/jsp/confirm.jsp
+	 * in the confirmation email. For example, http://www.mybogusdomain.com/jamwiki/jsp/confirm.jsp
 	 * @return boolean  true if the user account has been added, false if an account already exists for this username or the member file could not be written
-	 * @exception jmwiki.WikiException if the mailer could not be instantiated
+	 * @exception jamwiki.WikiException if the mailer could not be instantiated
 	 */
 	public synchronized boolean requestMembership(String username, String email, HttpServletRequest request) throws WikiException {
 		WikiMember aMember = createMember(username, email);
@@ -140,8 +140,8 @@ public class FileWikiMembers extends AbstractWikiMembers {
 	 *
 	 * @param username  the name of the user for whom membership is requested
 	 * @param email  the email address of the user for whom membership is requested
-	 * in the confirmation email. For example, http://www.mybogusdomain.com/jmwiki/jsp/confirm.jsp
-	 * @exception jmwiki.WikiException if the mailer could not be instantiated
+	 * in the confirmation email. For example, http://www.mybogusdomain.com/jamwiki/jsp/confirm.jsp
+	 * @exception jamwiki.WikiException if the mailer could not be instantiated
 	 */
 	public synchronized boolean createMembershipWithoutRequest(String username, String email) throws WikiException {
 		WikiMember aMember = createMember(username, email);

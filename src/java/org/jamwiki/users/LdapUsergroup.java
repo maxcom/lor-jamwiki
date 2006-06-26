@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.users;
+package org.jamwiki.users;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,8 +32,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.utils.Encryption;
+import org.jamwiki.Environment;
+import org.jamwiki.utils.Encryption;
 
 /**
  * Use an LDAP server as usergroup.
@@ -46,7 +46,7 @@ public class LdapUsergroup extends Usergroup {
 	 * Get the email address of an user by its user-ID
 	 * @param uid The user-ID of this user
 	 * @return The email address of this user
-	 * @see jmwiki.users.Usergroup#getKnownEmailById(java.lang.String)
+	 * @see jamwiki.users.Usergroup#getKnownEmailById(java.lang.String)
 	 */
 	public String getKnownEmailById(String id) {
 		if (id == null) {
@@ -59,7 +59,7 @@ public class LdapUsergroup extends Usergroup {
 	 * Get the full name of an user by its user-ID
 	 * @param uid The user-ID of this user
 	 * @return The full name of this user
-	 * @see jmwiki.users.Usergroup#getFullnameById(java.lang.String)
+	 * @see jamwiki.users.Usergroup#getFullnameById(java.lang.String)
 	 */
 	public String getFullnameById(String id) {
 		if (id == null) {
@@ -75,7 +75,7 @@ public class LdapUsergroup extends Usergroup {
 	/**
 	 * Get an instance of the user group class.
 	 * @return Instance to the user group class
-	 * @see jmwiki.users.Usergroup#getInstance()
+	 * @see jamwiki.users.Usergroup#getInstance()
 	 */
 	public static Usergroup getInstance() {
 		LdapUsergroup lug = new LdapUsergroup();
@@ -86,8 +86,8 @@ public class LdapUsergroup extends Usergroup {
 	 * Get a list of all users.
 	 * @return List of all users. The list contains SelectorBeans with the user-ID as key and the full
 	 * username as label.
-	 * @see jmwiki.servlets.beans.SelectorBean
-	 * @see jmwiki.users.Usergroup#getListOfAllUsers()
+	 * @see jamwiki.servlets.beans.SelectorBean
+	 * @see jamwiki.users.Usergroup#getListOfAllUsers()
 	 */
 	public List getListOfAllUsers() {
 		List list = new ArrayList();
@@ -131,7 +131,7 @@ public class LdapUsergroup extends Usergroup {
 	 * the user repository
 	 * @param uid The user-ID of this user
 	 * @return The user details section
-	 * @see jmwiki.users.Usergroup#getUserDetails(java.lang.String)
+	 * @see jamwiki.users.Usergroup#getUserDetails(java.lang.String)
 	 */
 	public String getUserDetails(String id) {
 		if (id == null) {
@@ -181,7 +181,7 @@ public class LdapUsergroup extends Usergroup {
 	 * Contains the repository valid (already confirmed) email addresses?
 	 * If yes, then we can skip the registration process and the user is automatically registered.
 	 * @return true, if so. false otherwise.
-	 * @see jmwiki.users.Usergroup#isEmailValidated()
+	 * @see jamwiki.users.Usergroup#isEmailValidated()
 	 */
 	public boolean isEmailValidated() {
 		return true;

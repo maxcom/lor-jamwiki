@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.users;
+package org.jamwiki.users;
 
 /**
  * Bean, which is used for a selector

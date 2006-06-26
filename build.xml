@@ -4,12 +4,12 @@
 
     <target name="cleanLexers" description="Cleans up after lexer generation">
         <!-- delete old generated lexer source files -->
-        <delete file="${dir.src.java}/org/jmwiki/parser/MediaWikiHTML.java"/>
-        <delete file="${dir.src.java}/org/jmwiki/parser/MediaWikiSyntax.java"/>
-        <delete file="${dir.src.java}/org/jmwiki/parser/alt/BackLinkLex.java"/>
-        <delete file="${dir.src.java}/org/jmwiki/parser/alt/VQWikiFormatLex.java"/>
-        <delete file="${dir.src.java}/org/jmwiki/parser/alt/VQWikiLayoutLex.java"/>
-        <delete file="${dir.src.java}/org/jmwiki/parser/alt/VQWikiLinkLex.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/MediaWikiHTML.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/MediaWikiSyntax.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/BackLinkLex.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiFormatLex.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLayoutLex.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLinkLex.java"/>
     </target>
 
     <target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">
@@ -40,7 +40,7 @@
     <target name="compile" depends="jflex" description="Compile source code">
         <javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="1.4" source="1.4">
             <src path="${dir.src.java}"/>
-            <include name="org/jmwiki/**"/>
+            <include name="org/jamwiki/**"/>
             <classpath>
                 <pathelement path="${dir.src.java}"/>
                 <pathelement path="${dir.lib}/log4j.jar"/>
@@ -67,7 +67,7 @@
 
     <target name="war" depends="compile" description="Construct the war file.">
         <war warfile="${dir.build}/${war.name}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml">
-            <classes dir="${dir.build.classes}" includes="org/jmwiki/**" />
+            <classes dir="${dir.build.classes}" includes="org/jamwiki/**" />
             <classes dir="${dir.src.properties}" />
             <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar" />
             <webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml" />

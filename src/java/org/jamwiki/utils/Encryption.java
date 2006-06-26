@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.utils;
+package org.jamwiki.utils;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -22,7 +22,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import org.apache.log4j.Logger;
 import org.apache.commons.codec.binary.Base64;
-import org.jmwiki.Environment;
+import org.jamwiki.Environment;
 
 /**
  * Provide capability for encrypting and decrypting values.  Inspired by an
@@ -32,7 +32,7 @@ public class Encryption {
 
 	private static Logger logger = Logger.getLogger(Encryption.class);
 	public static final String DES_ALGORITHM = "DES";
-	public static final String ENCRYPTION_KEY = "JMWiki Key 12345";
+	public static final String ENCRYPTION_KEY = "JAMWiki Key 12345";
 
 	/**
 	 * Hide the constructor by making it private.

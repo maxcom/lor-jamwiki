@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -30,8 +30,8 @@ import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDriver;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.utils.Encryption;
+import org.jamwiki.Environment;
+import org.jamwiki.utils.Encryption;
 
 /**
  *
@@ -63,7 +63,7 @@ public class DatabaseConnection {
 		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, userName, password);
 		new PoolableConnectionFactory(connectionFactory, connectionPool, null, Environment.getValue(Environment.PROP_DBCP_VALIDATION_QUERY), false, true);
 		PoolingDriver driver = new PoolingDriver();
-		driver.registerPool("jmwiki", connectionPool);
+		driver.registerPool("jamwiki", connectionPool);
 		poolInitialized = true;
 	}
 
@@ -152,7 +152,7 @@ public class DatabaseConnection {
 			if (!poolInitialized) {
 				setUpConnectionPool(url, userName, password);
 			}
-			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jmwiki");
+			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
 		} else {
 			// Use Reflection here to avoid a compile time dependency
 			// on the DataSource interface. It's not available by default

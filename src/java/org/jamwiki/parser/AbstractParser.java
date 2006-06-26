@@ -14,14 +14,14 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.parser;
+package org.jamwiki.parser;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-import org.jmwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInfo;
 
 /**
  * Abstract class to be used when implementing new lexers.  New lexers

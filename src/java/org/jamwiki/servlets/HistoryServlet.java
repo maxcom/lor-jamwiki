@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -22,17 +22,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.model.TopicVersion;
-import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.persistency.PersistencyHandler;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class HistoryServlet extends JMController implements Controller {
+public class HistoryServlet extends JAMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(HistoryServlet.class);
 
@@ -41,7 +41,7 @@ public class HistoryServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		history(request, next);
 		return next;
 	}
@@ -51,13 +51,13 @@ public class HistoryServlet extends JMController implements Controller {
 	 */
 	private void history(HttpServletRequest request, ModelAndView next) throws Exception {
 		PersistencyHandler handler;
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		String topicName = JMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String topicName = JAMController.getTopicFromRequest(request);
 		try {
 			handler = WikiBase.getInstance().getHandler();
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
-				next.addObject(JMController.PARAMETER_TITLE, "History for " + topicName);
+				next.addObject(JAMController.PARAMETER_TITLE, "History for " + topicName);
 				Collection versions = handler.getAllVersions(virtualWiki, topicName);
 				next.addObject("versions", versions);
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
@@ -72,7 +72,7 @@ public class HistoryServlet extends JMController implements Controller {
 				);
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("numberOfVersions", new Integer(numberOfVersions));
-				next.addObject(JMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
+				next.addObject(JAMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
 				next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_HISTORY);
 			}
 		} catch (Exception e) {

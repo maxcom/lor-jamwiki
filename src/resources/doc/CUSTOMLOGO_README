@@ -3,21 +3,21 @@ The custom logo image feature works as follows:
 By default, we use /images/logo.jpg.
 
 If the user specifies the URL of an alternate image in the deployment metadata,
-that image will be used instead.  In this case, a "Powered by JMWiki" image will
+that image will be used instead.  In this case, a "Powered by JAMWiki" image will
 be displayed on the footer of all pages that use the custom logo.
 
 E.g., in Tomcat server.xml, it would look like this (note the override attribute):
 
-        <Context path="" docBase="jmwiki-classic" debug="0" >
+        <Context path="" docBase="jamwiki-classic" debug="0" >
           <Environment name="logoImageName" type="java.lang.String"
                       value="/images/tomcat-power.png" override="false"/>
 		</Context>
 
 or
 
-          <Context path="/jmwiki/mikewiki" docBase="jmwiki-classic" debug="0" >
+          <Context path="/jamwiki/mikewiki" docBase="jamwiki-classic" debug="0" >
           	<Environment name="logoImageName" type="java.lang.String"
                       value="http://images.sourceforge.net/head_bg_new.gif" override="false"/>
 	      </Context>
 
-index.jsp and admin.jsp still display the JMWiki logo, as always.
+index.jsp and admin.jsp still display the JAMWiki logo, as always.

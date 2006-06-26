@@ -14,15 +14,15 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency;
+package org.jamwiki.persistency;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import org.jmwiki.model.Topic;
-import org.jmwiki.model.TopicVersion;
-import org.jmwiki.persistency.db.DBDate;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.persistency.db.DBDate;
 
 /**
  *

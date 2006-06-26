@@ -1,24 +1,24 @@
 /**
  *
  */
-package org.jmwiki.parser.alt;
+package org.jamwiki.parser.alt;
 
 import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.jmwiki.parser.Lexer;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.parser.Lexer;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 
 %%
 
 %public
 %type String
 %unicode
-%implements	org.jmwiki.parser.Lexer
+%implements	org.jamwiki.parser.Lexer
 %class BackLinkLex
 
 %init{

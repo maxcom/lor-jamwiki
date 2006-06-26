@@ -14,21 +14,21 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.model.Topic;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.model.Topic;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class AttachServlet extends JMController implements Controller {
+public class AttachServlet extends JAMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(AttachServlet.class);
 
@@ -37,7 +37,7 @@ public class AttachServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		attach(request, next);
 		return next;
 	}
@@ -46,10 +46,10 @@ public class AttachServlet extends JMController implements Controller {
 	 *
 	 */
 	private void attach(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JMController.getTopicFromRequest(request);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		next.addObject(JMController.PARAMETER_TITLE, "Attach Files to " + topic);
-		next.addObject(JMController.PARAMETER_TOPIC, topic);
+		String topic = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMController.PARAMETER_TITLE, "Attach Files to " + topic);
+		next.addObject(JAMController.PARAMETER_TOPIC, topic);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);

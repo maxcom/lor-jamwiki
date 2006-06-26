@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.jmwiki.utils.lucene;
+package org.jamwiki.utils.lucene;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;

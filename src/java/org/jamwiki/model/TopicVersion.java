@@ -14,17 +14,17 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.model;
+package org.jamwiki.model;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.sql.Timestamp;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.jmwiki.WikiBase;
-import org.jmwiki.persistency.db.DBDate;
+import org.jamwiki.WikiBase;
+import org.jamwiki.persistency.db.DBDate;
 // FIXME - remove this dependency
-import org.jmwiki.servlets.JMController;
+import org.jamwiki.servlets.JAMController;
 
 /**
  *

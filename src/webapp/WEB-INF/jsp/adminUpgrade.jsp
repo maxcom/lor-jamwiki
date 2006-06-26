@@ -5,7 +5,7 @@ function confirmSubmit() {
 }
 // -->
 </script>
-<form name="adminUpgrade" method="get" action="<jmwiki:link value="Special:Upgrade" />">
+<form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Upgrade" />">
 <table style="border:2px solid #333333;padding=1em;">
 <%-- FIXME: hard coding --%>
 <c:if test="${!empty errorMessage}"><tr><td colspan="2" align="center"><dive style="color:red;size=110%;"><c:out value="${errorMessage}" /></div></td></tr></c:if>

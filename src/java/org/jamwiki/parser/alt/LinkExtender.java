@@ -14,12 +14,12 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.parser.alt;
+package org.jamwiki.parser.alt;
 
 import java.io.IOException;
 import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
+import org.jamwiki.Environment;
 
 /**
  * Controls generation of external links based on the linking.properties file at the bottom

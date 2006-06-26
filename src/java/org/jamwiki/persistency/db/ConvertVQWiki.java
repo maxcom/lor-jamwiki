@@ -14,16 +14,16 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import org.apache.log4j.Logger;
-import org.jmwiki.utils.Encryption;
+import org.jamwiki.utils.Encryption;
 
 /**
- * Convert a VQWiki 2.7.8 database to JMWiki format.
+ * Convert a VQWiki 2.7.8 database to JAMWiki format.
  */
 public class ConvertVQWiki {
 

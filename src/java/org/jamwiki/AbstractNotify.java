@@ -14,16 +14,16 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
-import org.jmwiki.model.Topic;
-import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.model.Topic;
+import org.jamwiki.servlets.WikiServlet;
+import org.jamwiki.utils.Utilities;
 
 /**
  *

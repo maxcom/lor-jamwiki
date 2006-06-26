@@ -14,13 +14,13 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.util.Collection;
 import java.util.Locale;
 
 /**
- * Stores a list of usernames for each topic page in the JMWiki
+ * Stores a list of usernames for each topic page in the JAMWiki
  * system, so that an email can be sent to their registered
  * addresses when changes are made to the associated topic page.
  */

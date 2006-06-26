@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.Notify;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Notify;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -42,7 +42,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

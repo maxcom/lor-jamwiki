@@ -14,11 +14,11 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.tags;
+package org.jamwiki.tags;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import org.jmwiki.WikiBase;
+import org.jamwiki.WikiBase;
 
 /**
  *

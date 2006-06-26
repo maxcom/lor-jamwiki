@@ -14,12 +14,12 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import org.apache.log4j.Logger;
-import org.jmwiki.utils.Encryption;
+import org.jamwiki.utils.Encryption;
 
 /**
  *

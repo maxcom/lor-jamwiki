@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -37,28 +37,28 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
-import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.persistency.db.DBDate;
-import org.jmwiki.persistency.db.DatabaseChangeLog;
-import org.jmwiki.persistency.db.DatabaseHandler;
-import org.jmwiki.persistency.db.DatabaseNotify;
-import org.jmwiki.persistency.db.DatabaseSearchEngine;
-import org.jmwiki.persistency.db.DatabaseWikiMembers;
-import org.jmwiki.persistency.file.FileChangeLog;
-import org.jmwiki.persistency.file.FileExtensionFilter;
-import org.jmwiki.persistency.file.FileHandler;
-import org.jmwiki.persistency.file.FileNotify;
-import org.jmwiki.persistency.file.FileSearchEngine;
-import org.jmwiki.persistency.file.FileWikiMembers;
-import org.jmwiki.parser.AbstractParser;
-import org.jmwiki.parser.alt.BackLinkLex;
-import org.jmwiki.servlets.JMController;
-import org.jmwiki.users.LdapUsergroup;
-import org.jmwiki.users.NoUsergroup;
-import org.jmwiki.users.Usergroup;
+import org.jamwiki.persistency.PersistencyHandler;
+import org.jamwiki.persistency.db.DBDate;
+import org.jamwiki.persistency.db.DatabaseChangeLog;
+import org.jamwiki.persistency.db.DatabaseHandler;
+import org.jamwiki.persistency.db.DatabaseNotify;
+import org.jamwiki.persistency.db.DatabaseSearchEngine;
+import org.jamwiki.persistency.db.DatabaseWikiMembers;
+import org.jamwiki.persistency.file.FileChangeLog;
+import org.jamwiki.persistency.file.FileExtensionFilter;
+import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.persistency.file.FileNotify;
+import org.jamwiki.persistency.file.FileSearchEngine;
+import org.jamwiki.persistency.file.FileWikiMembers;
+import org.jamwiki.parser.AbstractParser;
+import org.jamwiki.parser.alt.BackLinkLex;
+import org.jamwiki.servlets.JAMController;
+import org.jamwiki.users.LdapUsergroup;
+import org.jamwiki.users.NoUsergroup;
+import org.jamwiki.users.Usergroup;
 
 /**
- * This class represents the core of JMWiki. It has some central methods, like parsing the URI, and keeps an
+ * This class represents the core of JAMWiki. It has some central methods, like parsing the URI, and keeps an
  * instance of the <code>Environment</code> class.
  */
 public class WikiBase {
@@ -638,7 +638,7 @@ public class WikiBase {
 	 * @return
 	 */
 	public boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
-		String adminOnlyTopics = readRaw(virtualWiki, JMController.getMessage("specialpages.adminonlytopics", locale));
+		String adminOnlyTopics = readRaw(virtualWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
 		StringTokenizer tokenizer = new StringTokenizer(adminOnlyTopics);
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

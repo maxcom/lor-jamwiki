@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -34,10 +34,10 @@ import javax.naming.InitialContext;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
-import org.jmwiki.utils.Encryption;
+import org.jamwiki.utils.Encryption;
 
 /**
- * Provides environmental information to the JMWiki system.
+ * Provides environmental information to the JAMWiki system.
  */
 public class Environment {
 
@@ -93,7 +93,7 @@ public class Environment {
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
 	public static final String PROP_SEARCH_TEMP_DIRECTORY = "search-temp-dir";
-	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jmwiki-list";
+	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jamwiki-list";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
 	public static final String PROP_TOPIC_EDIT_TIME_OUT = "editTimeOut";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
@@ -111,7 +111,7 @@ public class Environment {
 	public static final String PROP_USERGROUP_URL = "usergroupUrl";
 	public static final String PROP_USERGROUP_USERID_FIELD = "usergroupUseridField";
 	public static final String PROP_USERGROUP_USERNAME = "usergroupUsername";
-	private static final String PROPERTY_FILE_NAME = "jmwiki.properties";
+	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
 
 	private static Properties defaults = null;
 	private static Environment instance = null;
@@ -331,7 +331,7 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY, "false");
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
-		defaults.setProperty(PROP_PARSER_CLASS, "org.jmwiki.parser.MediaWikiParser");
+		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.MediaWikiParser");
 		defaults.setProperty(PROP_PARSER_NEW_LINE_BREAKS, "1");
 		defaults.setProperty(PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS, "false");
 		defaults.setProperty(PROP_PARSER_TOC, "false");

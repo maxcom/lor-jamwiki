@@ -14,11 +14,11 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.users;
+package org.jamwiki.users;
 
 import java.util.List;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiBase;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 
 /**
  * Abstract class to handle user groups
@@ -37,7 +37,7 @@ public abstract class Usergroup {
 	 * Get a list of all users.
 	 * @return List of all users. The list contains SelectorBeans with the user-ID as key and the full
 	 * username as label.
-	 * @see jmwiki.servlets.beans.SelectorBean
+	 * @see jamwiki.servlets.beans.SelectorBean
 	 */
 	public abstract List getListOfAllUsers();
 

@@ -14,15 +14,15 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.tags;
+package org.jamwiki.tags;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
-import org.jmwiki.servlets.JMController;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.servlets.JAMController;
+import org.jamwiki.utils.Utilities;
 
 /**
  *
@@ -59,9 +59,9 @@ public class LinkTag extends TagSupport {
 	 *
 	 */
 	private static String retrieveVirtualWiki(HttpServletRequest request) throws JspException {
-		String virtualWiki = request.getParameter(JMController.PARAMETER_VIRTUAL_WIKI);
+		String virtualWiki = request.getParameter(JAMController.PARAMETER_VIRTUAL_WIKI);
 		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(JMController.PARAMETER_VIRTUAL_WIKI);
+			virtualWiki = (String)request.getAttribute(JAMController.PARAMETER_VIRTUAL_WIKI);
 		}
 		if (virtualWiki == null) {
 			logger.error("No virtual wiki found for context path: " + request.getContextPath());

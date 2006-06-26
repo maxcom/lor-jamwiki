@@ -14,15 +14,15 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.servlets.WikiServlet;
+import org.jamwiki.utils.Utilities;
 
 /*
  *

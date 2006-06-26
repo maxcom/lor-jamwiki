@@ -29,7 +29,7 @@ CLASS="TOC"
 ><DT
 ><A
 HREF="#AEN2"
->Java MediaWiki Version-2.7.1 Administrator's Manual</A
+>JAMWiki Version-2.7.1 Administrator's Manual</A
 ></DT
 ></DL
 ></DIV
@@ -45,7 +45,7 @@ CLASS="title"
 ><A
 NAME="AEN3"
 ></A
->Java MediaWiki Version-2.7.1 Administrator's Manual</H1
+>JAMWiki Version-2.7.1 Administrator's Manual</H1
 ><H3
 CLASS="author"
 ><A
@@ -61,7 +61,7 @@ CLASS="copyright"
 CLASS="releaseinfo"
 >&#13;				<P
 CLASS="COMMENT"
->&#13;				Java MediaWiki can be downloaded from
+>&#13;				JAMWiki can be downloaded from
 				<A
 HREF="http://veryquickwiki.sourceforge.net/"
 TARGET="_top"
@@ -206,8 +206,8 @@ NAME="AEN16"
 >Preface</H1
 ><P
 >&#13;
-					This manual is intended for installers and administrators of JMWiki.  It may
-					also be of use to end users as it provides further detail about advanced functions of JMWiki.
+					This manual is intended for installers and administrators of JAMWiki.  It may
+					also be of use to end users as it provides further detail about advanced functions of JAMWiki.
 
 				</P
 ><P
@@ -253,11 +253,11 @@ TARGET="_top"
 
 				</P
 ><P
->	"Java MediaWiki" or "JMWiki" is a Wiki engine written using JSPs and servlets and is designed to run on Tomcat
+>	"JAMWiki" or "JAMWiki" is a Wiki engine written using JSPs and servlets and is designed to run on Tomcat
 					or any servlet container that supports Java Servlet 2.3 and JSP 1.2 specifications.
-					Gareth Cronin is the original developer of the JMWiki.
-					Thanks to the contributions of many, JMWiki has undergone numerous improvements.
-					JMWiki supports hyperlinks, topic or text-based searching, email notifications, and utilizes
+					Gareth Cronin is the original developer of the JAMWiki.
+					Thanks to the contributions of many, JAMWiki has undergone numerous improvements.
+					JAMWiki supports hyperlinks, topic or text-based searching, email notifications, and utilizes
 					a simple but powerful text syntax for creating topics and editing their content.
 					The first Wiki engine was developed in 1995 by Ward Cunningham.
 					Since then many <A
@@ -265,7 +265,7 @@ HREF="http://c2.com/cgi/wiki?WikiEngines"
 TARGET="_top"
 >Wiki engines</A
 >, such as
-					JMWiki,  have been developed.
+					JAMWiki,  have been developed.
 
 				</P
 ><DIV
@@ -325,12 +325,12 @@ CLASS="systemitem"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->The base URL for accessing JMWiki, e.g. <SPAN
+>The base URL for accessing JAMWiki, e.g. <SPAN
 CLASS="systemitem"
->http://localhost:8080/jmwiki-2.7.1</SPAN
+>http://localhost:8080/jamwiki-2.7.1</SPAN
 >.
-									  With a WAR name of "jmwiki-2.7.1.war", the default local URL for Tomcat will be
-									http://localhost:8080/jmwiki-2.7.1
+									  With a WAR name of "jamwiki-2.7.1.war", the default local URL for Tomcat will be
+									http://localhost:8080/jamwiki-2.7.1
 
 
 									</TD
@@ -386,7 +386,7 @@ NAME="AEN56"
 STYLE="list-style-type: opencircle"
 ><P
 >&#13;					A servlet container that supports Java Servlet 2.3 and JSP 1.2 specifications.
-					JMWiki is tested with Apache Tomcat 4.1.24<A
+					JAMWiki is tested with Apache Tomcat 4.1.24<A
 NAME="AEN62"
 HREF="#FTN.AEN62"
 >[3]</A
@@ -394,7 +394,7 @@ HREF="#FTN.AEN62"
 
 					Users have also reported successful implementation with the following servlet containers: JBoss/Jetty; JBoss/Tomcat 4.x,
 					Orion 1.6, Resin 2.1.9, Allaire JRun 4.x, BEA Weblogic 7.x, IBM Websphere 5, Oracle 9i Application Server.
-					Note: Tomcat 3.x is not recommended for use with JMWiki.
+					Note: Tomcat 3.x is not recommended for use with JAMWiki.
 					</P
 ></LI
 ><LI
@@ -412,7 +412,7 @@ STYLE="list-style-type: opencircle"
 ><LI
 STYLE="list-style-type: opencircle"
 ><P
->&#13;					By default, JMWiki runs with flat-file persistence. But an easy to configure database connectivity option is available.
+>&#13;					By default, JAMWiki runs with flat-file persistence. But an easy to configure database connectivity option is available.
 					</P
 ></LI
 ></UL
@@ -435,34 +435,34 @@ CLASS="BLOCKQUOTE"
 ><P
 >&#13;
 				First-time installation should be very simple on any application server.
-				Upgrading from an earlier version of JMWiki is a little more difficult, so we'll cover that later.
+				Upgrading from an earlier version of JAMWiki is a little more difficult, so we'll cover that later.
 
 			</P
 ><P
 >&#13;
-				JMWiki is designed to be a "drop and run" application. When you download JMWiki from a website, it will be available as a single "Web Archive File" or "WAR" for short. Most application servers (including Tomcat) are capable of automatically deploying an application directly from a WAR
+				JAMWiki is designed to be a "drop and run" application. When you download JAMWiki from a website, it will be available as a single "Web Archive File" or "WAR" for short. Most application servers (including Tomcat) are capable of automatically deploying an application directly from a WAR
 
 			</P
 ><P
 >&#13;
 				The following assumes you have installed Tomcat on a Windows machine at {$TOMCAT_HOME} and that it is running with the default stand-alone port 8080.
-				We will also assume that the JMWiki WAR file is named <TT
+				We will also assume that the JAMWiki WAR file is named <TT
 CLASS="filename"
->jmwiki-2.7.1.war</TT
+>jamwiki-2.7.1.war</TT
 >.
-				The name of the WAR file may be different in which case you should substitute your WAR file name for jmwiki-2.7.1.war.
+				The name of the WAR file may be different in which case you should substitute your WAR file name for jamwiki-2.7.1.war.
 				Finally, we will assume you have a Web browser available on the installation machine.
 			</P
 ><P
->&#13;				To install JMWiki, you should follow your application server instructions for deploying a WAR. Usually it's just a matter
+>&#13;				To install JAMWiki, you should follow your application server instructions for deploying a WAR. Usually it's just a matter
 				of plonking the WAR file into the webapps directory.
 				Then browse to <SPAN
 CLASS="systemitem"
->http://localhost:8080/jmwiki-2.7.1</SPAN
+>http://localhost:8080/jamwiki-2.7.1</SPAN
 >, and that's it!
 			</P
 ><P
->&#13;				For example, if you are using Tomcat 4.x or higher, one method to deploy JMWiki is to take the following steps:
+>&#13;				For example, if you are using Tomcat 4.x or higher, one method to deploy JAMWiki is to take the following steps:
 			</P
 ><P
 ></P
@@ -474,7 +474,7 @@ TYPE="1"
 ></LI
 ><LI
 ><P
->Move the downloaded WAR file (jmwiki-2.7.1.war) into the directory {$TOMCAT_HOME}/webapps</P
+>Move the downloaded WAR file (jamwiki-2.7.1.war) into the directory {$TOMCAT_HOME}/webapps</P
 ></LI
 ><LI
 ><P
@@ -484,7 +484,7 @@ TYPE="1"
 ><P
 >Browse to <SPAN
 CLASS="systemitem"
->http://localhost:8080/jmwiki-2.7.1</SPAN
+>http://localhost:8080/jamwiki-2.7.1</SPAN
 >
 
 							</P
@@ -508,10 +508,10 @@ CLASS="emphasis"
 			</P
 ><P
 >&#13;
-				By default, JMWiki runs with flat-file persistence and other default options.
+				By default, JAMWiki runs with flat-file persistence and other default options.
 				Choose the "Admin" link at the bottom of any topic to access administrative functions
-				where you can customise JMWiki.   In the chapters below we address setting up database persistence
-				and other JMWiki options.
+				where you can customise JAMWiki.   In the chapters below we address setting up database persistence
+				and other JAMWiki options.
 
 			</P
 ></BLOCKQUOTE
@@ -526,7 +526,7 @@ NAME="AEN95"
 >Wiki Functions</H1
 ><P
 >&#13;
-				This chapter will touch on the major mechanisms available in JMWiki. The more complex mechanisms receive their own chapters later on.
+				This chapter will touch on the major mechanisms available in JAMWiki. The more complex mechanisms receive their own chapters later on.
 
 			</P
 ><DIV
@@ -571,7 +571,7 @@ CLASS="BLOCKQUOTE"
 >
 					Examples of well-formed Wikinames are: WikiWord or GoodStyle.
 					When you type a WikiName, you establish a hyperlink. It's as easy as that.
-					JMWiki also allows topic-naming by surrounding a word or phrase in back-ticks, such as `Gareth Cronin`.
+					JAMWiki also allows topic-naming by surrounding a word or phrase in back-ticks, such as `Gareth Cronin`.
 				</P
 ></DIV
 ><DIV
@@ -662,7 +662,7 @@ CLASS="formalpara"
 ></B
 >
 
-					When writing Wiki topics it is often useful to be able to attach a file of some kind to the topic. A user can click the "Attach" link on any topic and be presented with a file upload page. Attached files can be referred to by a linking syntax (e.g. "att:myfile.txt"). JMWiki has its own MIME type mapping that can be customised to suit installations.
+					When writing Wiki topics it is often useful to be able to attach a file of some kind to the topic. A user can click the "Attach" link on any topic and be presented with a file upload page. Attached files can be referred to by a linking syntax (e.g. "att:myfile.txt"). JAMWiki has its own MIME type mapping that can be customised to suit installations.
 
 				</P
 ></DIV
@@ -682,7 +682,7 @@ CLASS="formalpara"
 ><B
 >Virtual Wikis. </B
 ></B
->The last part of the JMWiki URL ("jsp" by default) is the name of a "virtual wiki". It is possible to set up as many virtual wikis as you like, each one with its own completely independent contents.
+>The last part of the JAMWiki URL ("jsp" by default) is the name of a "virtual wiki". It is possible to set up as many virtual wikis as you like, each one with its own completely independent contents.
 				 Instruction for creating a virtual wiki follows:
 					<P
 ></P
@@ -702,7 +702,7 @@ TYPE="1"
 ></LI
 ><LI
 ><P
->Edit {$TOMCAT_HOME}/webapps/jmwiki-2.7.1/WEB-INF/web.xml</P
+>Edit {$TOMCAT_HOME}/webapps/jamwiki-2.7.1/WEB-INF/web.xml</P
 ></LI
 ><LI
 ><P
@@ -732,7 +732,7 @@ CLASS="BLOCKQUOTE"
 ></LI
 ><LI
 ><P
->Set a "friendly name" for the virtual wiki in {$TOMCAT_HOME}/webapps/jmwiki-2.7.1/WEB-INF/classes/ApplicationResources.properties.
+>Set a "friendly name" for the virtual wiki in {$TOMCAT_HOME}/webapps/jamwiki-2.7.1/WEB-INF/classes/ApplicationResources.properties.
 					The entry should be of the format:</P
 ><A
 NAME="AEN154"
@@ -778,7 +778,7 @@ CLASS="formalpara"
 ><B
 >Default Topics. </B
 ></B
->Several topics are created by default the first time JMWiki is run, or when a new virtual wiki is accessed.</P
+>Several topics are created by default the first time JAMWiki is run, or when a new virtual wiki is accessed.</P
 ></DIV
 ></DIV
 ><DIV
@@ -792,7 +792,7 @@ NAME="AEN168"
 >&#13;				The admin console is protected by a password that is shown to the first person to browse to a Wiki topic after installation. The admin username is "admin". If you have lost your password see the section on password recovery below.
 			</P
 ><P
->&#13;				At the bottom of any Wiki topic you will see the version of JMWiki you are using and an "Admin" link. Click this link.
+>&#13;				At the bottom of any Wiki topic you will see the version of JAMWiki you are using and an "Admin" link. Click this link.
 			</P
 ><P
 >&#13;				After you have logged in (username "admin"), you will find yourself looking at a list of text fields and check boxes, each representing some customisable feature of the Wiki. We'll present a table of these settings and refer you on to those that need their own chapters for further explanation.
@@ -988,7 +988,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->This is where the persistence mode can be set - either the default "Flat-File", or "Database" to use a MySQL database as the back end. If you select "Database", you will be presented with further fields in which to enter the JDBC database driver name, the database name and a user and password. JMWiki ships with the MM MySQL driver and its name will be the default value. See the chapter on MySQL for more information on setting this up.</TD
+>This is where the persistence mode can be set - either the default "Flat-File", or "Database" to use a MySQL database as the back end. If you select "Database", you will be presented with further fields in which to enter the JDBC database driver name, the database name and a user and password. JAMWiki ships with the MM MySQL driver and its name will be the default value. See the chapter on MySQL for more information on setting this up.</TD
 ></TR
 ><TR
 ><TD
@@ -1184,9 +1184,9 @@ NAME="AEN283"
 ></A
 >Admin Password Recovery</H1
 ><P
->If you misplace the admin password, you can force JMWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <TT
+>If you misplace the admin password, you can force JAMWiki to generate a new one and display it to you on the first topic browsed to (as with initial installation). Use a text editor to edit the <TT
 CLASS="filename"
->{installdir}/WEB-INF/classes/jmwiki.properties</TT
+>{installdir}/WEB-INF/classes/jamwiki.properties</TT
 > file (or another location if you have overridden the default) and change the key-value pair that reads <TT
 CLASS="computeroutput"
 >firstuse=false</TT
@@ -1206,11 +1206,11 @@ NAME="AEN289"
 ><P
 >&#13;				The Admin Console writes to a properties file called <TT
 CLASS="filename"
->jmwiki.properties</TT
+>jamwiki.properties</TT
 >. This file along with the other configuration files will be by default in <TT
 CLASS="filename"
 >{installdir}/WEB-INF/classes</TT
->. The files must be in the root of the classpath becuase they are searched for using the ClassLoader. The JMWiki environment also has hard-coded default values for the properties to ensure that it will always start regardless of whether or not a properties file is available. Here's a summary of all the resource and property files:
+>. The files must be in the root of the classpath becuase they are searched for using the ClassLoader. The JAMWiki environment also has hard-coded default values for the properties to ensure that it will always start regardless of whether or not a properties file is available. Here's a summary of all the resource and property files:
 			</P
 ><DIV
 CLASS="table"
@@ -1244,7 +1244,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->jmwiki.properties</TD
+>jamwiki.properties</TD
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
@@ -1308,7 +1308,7 @@ VALIGN="MIDDLE"
 ><TD
 ALIGN="LEFT"
 VALIGN="MIDDLE"
->This contains key-value mapping of action names to class names of classes that implement jmwiki.WikiAction. Plugins place mappings in this file.</TD
+>This contains key-value mapping of action names to class names of classes that implement jamwiki.WikiAction. Plugins place mappings in this file.</TD
 ></TR
 ></TBODY
 ></TABLE
@@ -1319,10 +1319,10 @@ VALIGN="MIDDLE"
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;        &#60;Context path="/jmwiki" docBase="jmwiki-2.0" debug="0" &#62;
+>&#13;        &#60;Context path="/jamwiki" docBase="jamwiki-2.0" debug="0" &#62;
         	&#60;!-- the rest of your context information --&#62;
         	&#60;env-entry&#62;
-        	  &#60;description&#62;JMWiki propertiesFile&#60;/description&#62;
+        	  &#60;description&#62;JAMWiki propertiesFile&#60;/description&#62;
         	  &#60;env-entry-name&#62;propertiesFile&#60;/env-entry-name&#62;
 	         &#60;env-entry-value&#62;c:/myproperties&#60;/env-entry-value&#62;
        	  &#60;env-entry-type&#62;java.lang.String&#60;/env-entry-type&#62;
@@ -1346,7 +1346,7 @@ NAME="AEN326"
 >&#13;By default, we use <TT
 CLASS="filename"
 >{installdir}/images/logo.jpg</TT
->. If the user specifies the URL of an alternate image in the deployment metadata, that image will be used instead.  In this case, a "Powered by JMWiki" image will be displayed on the footer of all pages that use the custom logo.
+>. If the user specifies the URL of an alternate image in the deployment metadata, that image will be used instead.  In this case, a "Powered by JAMWiki" image will be displayed on the footer of all pages that use the custom logo.
 </P
 ><P
 >&#13;E.g., in Tomcat <TT
@@ -1357,7 +1357,7 @@ CLASS="filename"
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;        &#60;Context path="" docBase="jmwiki-classic" debug="0" &#62;
+>&#13;        &#60;Context path="" docBase="jamwiki-classic" debug="0" &#62;
 		&#60;env-entry&#62;
          		&#60;description&#62;logoImageName&#60;/description&#62;
 		         &#60;env-entry-name&#62;logoImageName&#60;/env-entry-name&#62;
@@ -1375,7 +1375,7 @@ CLASS="computeroutput"
 >&#13;				<TT
 CLASS="computeroutput"
 >&#13;
-          &#60;Context path="/jmwiki/mikewiki" docBase="jmwiki-classic" debug="0" &#62;
+          &#60;Context path="/jamwiki/mikewiki" docBase="jamwiki-classic" debug="0" &#62;
           	&#60;Environment name="logoImageName" type="java.lang.String"
                       value="http://images.sourceforge.net/head_bg_new.gif" override="false"/&#62;
 	      &#60;/Context&#62;
@@ -1383,7 +1383,7 @@ CLASS="computeroutput"
 >
 			</P
 ><P
->&#13;The index page and admin console still display the JMWiki logo, as always.
+>&#13;The index page and admin console still display the JAMWiki logo, as always.
 </P
 ></DIV
 ><DIV
@@ -1394,14 +1394,14 @@ NAME="AEN339"
 ></A
 >Persistence - The Default File-System</H1
 ><P
->&#13;				JMWiki's major goal is to be as easy to deploy as possible, i.e. drop the WAR, start the server. It is for this reason that the default file system exists. The principles are very simple, but so is WikiWikiWeb, so it works:
+>&#13;				JAMWiki's major goal is to be as easy to deploy as possible, i.e. drop the WAR, start the server. It is for this reason that the default file system exists. The principles are very simple, but so is WikiWikiWeb, so it works:
 </P
 ><P
 ></P
 ><UL
 ><LI
 ><P
->By default, the file-system is set up in the user's home directory, in a sub-directory named "jmwiki". This location can be changed from the admin console.</P
+>By default, the file-system is set up in the user's home directory, in a sub-directory named "jamwiki". This location can be changed from the admin console.</P
 ></LI
 ><LI
 ><P
@@ -1435,23 +1435,23 @@ NAME="AEN357"
 ></A
 >Persistence - The MySQL Database Mode</H1
 ><P
->&#13;				Using MySQL as a back end turns JMWiki into a quick Wiki indeed. The development goal is still drop-and-go, so JMWiki will build its own tables when you first connect it to a database: no scripts to run (except for creating the database of course - it has to connect to something).
+>&#13;				Using MySQL as a back end turns JAMWiki into a quick Wiki indeed. The development goal is still drop-and-go, so JAMWiki will build its own tables when you first connect it to a database: no scripts to run (except for creating the database of course - it has to connect to something).
 			</P
 ><P
->&#13;The default settings are for a database called "jmwiki" with a user called "jmwiki" with
-password "jmwiki". If you were to use those settings, and the MySQL server is running on
+>&#13;The default settings are for a database called "jamwiki" with a user called "jamwiki" with
+password "jamwiki". If you were to use those settings, and the MySQL server is running on
 the same machine as the web container, the following two statements will prepare the database:
 </P
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;create database jmwiki;</TT
+>&#13;create database jamwiki;</TT
 >
 			</P
 ><P
 >&#13;				<TT
 CLASS="computeroutput"
->&#13;grant all on jmwiki.* to jmwiki@localhost identified by 'jmwiki';
+>&#13;grant all on jamwiki.* to jamwiki@localhost identified by 'jamwiki';
 </TT
 >
 			</P
@@ -1499,24 +1499,24 @@ NAME="AEN374"
 ><P
 >&#13;				As mentioned earlier, the format lexer is the class responsible for tokenizing the user input and formatting it appropriately - e.g. bold, italics, lists and tables. The link lexer is responsible for the automagic linking as described earlier. It is possible to write a single lexer that does both, in which case the link lexer should be set to "null'.			</P
 ><P
->&#13;				JMWiki is distributed with three default lexers: <SPAN
+>&#13;				JAMWiki is distributed with three default lexers: <SPAN
 CLASS="systemitem"
->jmwiki.lex.FormatLex</SPAN
+>jamwiki.lex.FormatLex</SPAN
 > and <SPAN
 CLASS="systemitem"
->jmwiki.lex.LinkLex</SPAN
+>jamwiki.lex.LinkLex</SPAN
 > are designed to work together and should be adequate for most purposes.
 </P
 ><P
->&#13;Another lexer shipped with JMWiki duplicates the syntax used by the popular Mediawiki software (see <a href="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</a>).  To use this lexer the Format lexer value should be set to jmwiki.lex.MediaWikiSyntax, the layout lexer should be set to jmwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".</P
+>&#13;Another lexer shipped with JAMWiki duplicates the syntax used by the popular Mediawiki software (see <a href="http://meta.wikimedia.org/wiki/Help:Editing">http://meta.wikimedia.org/wiki/Help:Editing</a>).  To use this lexer the Format lexer value should be set to jamwiki.lex.MediaWikiSyntax, the layout lexer should be set to jamwiki.lex.MediaWikiHTML, and the link lexer should be set to "null".</P
 ><P
->&#13;				The lexers that come with JMWiki are generating using the JLex<A
+>&#13;				The lexers that come with JAMWiki are generating using the JLex<A
 NAME="AEN383"
 HREF="#FTN.AEN383"
 >[5]</A
 > tool. However, you can write your lexer in any way you choose - so long as it implements the  <SPAN
 CLASS="systemitem"
->jmwiki.lex.Lexer</SPAN
+>jamwiki.lex.Lexer</SPAN
 > interface.
 			</P
 ></DIV
@@ -1528,24 +1528,24 @@ NAME="AEN387"
 ></A
 >Extensible Lexers</H1
 ><P
->&#13;				From version 2.4.0 onwards, JMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. The special tag format asks JMWiki to process all the text inside the tags using the class named as the value in the <TT
+>&#13;				From version 2.4.0 onwards, JAMWiki supports external lexers. These lexers are triggered from the standard lexers using special markup. The special tag format asks JAMWiki to process all the text inside the tags using the class named as the value in the <TT
 CLASS="filename"
 >{installdir}/WEB-INF/classes/externallex.properties</TT
 > file. The default entry in this file is: <TT
 CLASS="computeroutput"
->java=jmwiki.lex.JavaLex</TT
+>java=jamwiki.lex.JavaLex</TT
 >.
 			</P
 ><P
 >&#13;				To write your own external lexer, write a class that implements <TT
 CLASS="classname"
->jmwiki.lex.ExternalLex</TT
+>jamwiki.lex.ExternalLex</TT
 > interface (it's only one method) and put an entry with an appropriate tag name in the externallex.properties file.
 			</P
 ><P
->&#13;E.g. you might write a class called jmwiki.mylexers.CLex for formatting C code. You could then make an entry in the properties file of the form <TT
+>&#13;E.g. you might write a class called jamwiki.mylexers.CLex for formatting C code. You could then make an entry in the properties file of the form <TT
 CLASS="computeroutput"
->c=jmwiki.mylexers.CLex</TT
+>c=jamwiki.mylexers.CLex</TT
 >. Anything between the tags <TT
 CLASS="computeroutput"
 >[&#60;c&#62;][&#60;/c&#62;]</TT
@@ -1554,7 +1554,7 @@ CLASS="methodname"
 >process( String text )</TT
 > method in the class <TT
 CLASS="classname"
->jmwiki.mylexers.CLex</TT
+>jamwiki.mylexers.CLex</TT
 >.
 			</P
 ></DIV
@@ -1566,7 +1566,7 @@ NAME="AEN405"
 ></A
 >External Links - xx: Entries</H1
 ><P
->By default, JMWiki supports entries to make reference to the original C2 WikiWikiWeb, the Meatball Wiki and individual Microsoft Knowledge Base articles. The shorthand for these all take the form <TT
+>By default, JAMWiki supports entries to make reference to the original C2 WikiWikiWeb, the Meatball Wiki and individual Microsoft Knowledge Base articles. The shorthand for these all take the form <TT
 CLASS="computeroutput"
 >prefix:detail</TT
 >

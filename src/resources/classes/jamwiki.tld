@@ -4,10 +4,10 @@
 <taglib>
   <tlib-version>1.0</tlib-version>
   <jsp-version>1.1</jsp-version>
-  <short-name>jmwiki</short-name>
+  <short-name>jamwiki</short-name>
   <tag>
     <name>separate-words</name>
-    <tag-class>org.jmwiki.tags.SeparateWordsTag</tag-class>
+    <tag-class>org.jamwiki.tags.SeparateWordsTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -16,7 +16,7 @@
   </tag>
   <tag>
     <name>current-user</name>
-    <tag-class>org.jmwiki.tags.CurrentUserTag</tag-class>
+    <tag-class>org.jamwiki.tags.CurrentUserTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -25,7 +25,7 @@
   </tag>
   <tag>
     <name>encode</name>
-    <tag-class>org.jmwiki.tags.EncodeTag</tag-class>
+    <tag-class>org.jamwiki.tags.EncodeTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -38,7 +38,7 @@
   </tag>
   <tag>
     <name>decode</name>
-    <tag-class>org.jmwiki.tags.EncodeTag</tag-class>
+    <tag-class>org.jamwiki.tags.EncodeTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -51,12 +51,12 @@
   </tag>
   <tag>
     <name>setPageEncoding</name>
-    <tag-class>org.jmwiki.tags.PageEncodingTag</tag-class>
+    <tag-class>org.jamwiki.tags.PageEncodingTag</tag-class>
     <body-content>JSP</body-content>
   </tag>
   <tag>
     <name>wiki-version</name>
-    <tag-class>org.jmwiki.tags.WikiVersionTag</tag-class>
+    <tag-class>org.jamwiki.tags.WikiVersionTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -65,7 +65,7 @@
   </tag>
   <tag>
     <name>link</name>
-    <tag-class>org.jmwiki.tags.LinkTag</tag-class>
+    <tag-class>org.jamwiki.tags.LinkTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -74,7 +74,7 @@
   </tag>
   <tag>
     <name>wikibase</name>
-    <tag-class>org.jmwiki.tags.WikiBaseTag</tag-class>
+    <tag-class>org.jamwiki.tags.WikiBaseTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -83,7 +83,7 @@
   </tag>
   <tag>
     <name>current-member</name>
-    <tag-class>org.jmwiki.tags.MemberTag</tag-class>
+    <tag-class>org.jamwiki.tags.MemberTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -92,7 +92,7 @@
   </tag>
   <tag>
     <name>checked</name>
-    <tag-class>org.jmwiki.tags.CheckedTag</tag-class>
+    <tag-class>org.jamwiki.tags.CheckedTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>
@@ -101,7 +101,7 @@
   </tag>
   <tag>
     <name>notification</name>
-    <tag-class>org.jmwiki.tags.NotificationTag</tag-class>
+    <tag-class>org.jamwiki.tags.NotificationTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>var</name>

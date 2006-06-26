@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -24,17 +24,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.SearchEngine;
-import org.jmwiki.SearchResultEntry;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.SearchEngine;
+import org.jamwiki.SearchResultEntry;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class SearchServlet extends JMController implements Controller {
+public class SearchServlet extends JAMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SearchServlet.class);
 
@@ -43,7 +43,7 @@ public class SearchServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		String jumpto = request.getParameter("jumpto");
 		if (jumpto != null) {
 			jumpTo(request, response, next);
@@ -57,7 +57,7 @@ public class SearchServlet extends JMController implements Controller {
 	 *
 	 */
 	private void jumpTo(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String text = request.getParameter("text");
 		// FIXME - if topic doesn't exist, should probably go to an edit page
 		// or else give an error message
@@ -70,16 +70,16 @@ public class SearchServlet extends JMController implements Controller {
 	 *
 	 */
 	private void search(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		MessageFormat formatter = new MessageFormat("");
 		formatter.setLocale(request.getLocale());
 		try {
 			String searchField = request.getParameter("text");
 			if (request.getParameter("text") == null) {
-				next.addObject(JMController.PARAMETER_TITLE, "Special:Search");
+				next.addObject(JAMController.PARAMETER_TITLE, "Special:Search");
 			} else {
-				formatter.applyPattern(JMController.getMessage("searchresult.title", request.getLocale()));
-				next.addObject(JMController.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
+				formatter.applyPattern(JAMController.getMessage("searchresult.title", request.getLocale()));
+				next.addObject(JAMController.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
 			}
 			// forward back to the search page if the request is blank or null
 			if (searchField == null || searchField.length() == 0) {
@@ -131,7 +131,7 @@ public class SearchServlet extends JMController implements Controller {
 				contents.append("<p>");
 				formatter = new MessageFormat("");
 				formatter.setLocale(request.getLocale());
-				formatter.applyPattern(JMController.getMessage("searchresult.notfound", request.getLocale()));
+				formatter.applyPattern(JAMController.getMessage("searchresult.notfound", request.getLocale()));
 				contents.append(formatter.format(new Object[]{searchField}));
 				contents.append("</p>");
 			}

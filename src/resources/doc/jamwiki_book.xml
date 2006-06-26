@@ -3,11 +3,11 @@
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <book>
   <bookinfo>
-    <title>JMWiki Documentation</title>
+    <title>JAMWiki Documentation</title>
 
     <subtitle>for release 2.7.x</subtitle>
 
-    <graphic fileref="images/jmwiki_logo.gif" />
+    <graphic fileref="images/jamwiki_logo.gif" />
 
     <authorgroup>
       <author>
@@ -44,21 +44,21 @@
     <copyright>
       <year>2001-2006</year>
 
-      <holder role="mailto:contact@jmwiki.org">The JMWiki Project</holder>
+      <holder role="mailto:contact@jamwiki.org">The JAMWiki Project</holder>
     </copyright>
 
     <pubdate role="rcs">February 1st, 2006</pubdate>
 
-    <releaseinfo>JMWiki version 2.7.7 <remark>Java MediaWiki can be downloaded
-    from <ulink url="http://www.jmwiki.org/"> http://www.jmwiki.org/</ulink> .
+    <releaseinfo>JAMWiki version 2.7.7 <remark>JAMWiki can be downloaded
+    from <ulink url="http://www.jamwiki.org/"> http://www.jamwiki.org/</ulink> .
     This application is a work in progress - contributions and corrections are
     welcome and may be sent to:<email> <ulink
-    url="support@jmwiki.org">support@jmwiki.org</ulink></email></remark></releaseinfo>
+    url="support@jamwiki.org">support@jamwiki.org</ulink></email></remark></releaseinfo>
 
     <abstract>
-      <para>This book contains the complete documentation set for the JMWiki
-      project. The JMWiki project is licensed under the LGPL and can be
-      downloaded from http://www.jmwiki.org/.</para>
+      <para>This book contains the complete documentation set for the JAMWiki
+      project. The JAMWiki project is licensed under the LGPL and can be
+      downloaded from http://www.jamwiki.org/.</para>
     </abstract>
 
     <legalnotice>
@@ -75,10 +75,10 @@
     <title>Preface</title>
 
     <para>This manual is intended to assist with installing, administering,
-    customizing, and using JMWiki software. This document is a work in
+    customizing, and using JAMWiki software. This document is a work in
     progress. Please send corrections or suggestions to <link
     linkend="???"><ulink
-    url="mailto:support@jmwiki.org">support@jmwiki.org</ulink></link> or
+    url="mailto:support@jamwiki.org">support@jamwiki.org</ulink></link> or
     <ulink url="mailto:th@wdogsystems.com">Tim Howland</ulink></para>
 
     <para>This manual is presented using DocBook <footnote>
@@ -94,8 +94,8 @@
       </footnote></para>
   </preface>
 
-  <chapter id="about_jmwiki">
-    <title>About JMWiki</title>
+  <chapter id="about_jamwiki">
+    <title>About JAMWiki</title>
 
     <section>
       <title>Introduction</title>
@@ -107,17 +107,17 @@
       content itself. The first Wiki engine was developed in 1995 by Ward
       Cunningham. Since then many <ulink
       url="http://c2.com/cgi/wiki?WikiEngines">Wiki engines</ulink> , such as
-      JMWiki, have been developed. The etymology of Wiki is described <ulink
+      JAMWiki, have been developed. The etymology of Wiki is described <ulink
       url="http://c2.com/cgi/wiki?EtymologyOfWiki">here</ulink> . You can
       learn more about Wiki usage at <ulink
       url="http://www.wiki.org/wiki.cgi?WhatIsWiki">http://www.wiki.org/wiki.cgi?WhatIsWiki</ulink>
       .</para>
 
-      <para>"Java MediaWiki" or "JMWiki" is a Wiki engine written using JSPs
+      <para>"JAMWiki" or "JAMWiki" is a Wiki engine written using JSPs
       and servlets and is designed to run on Tomcat or any servlet container
       that supports Java Servlet 2.3 and JSP 1.2 specifications. Gareth Cronin
-      is the original developer of the JMWiki. Thanks to the contributions of
-      many, JMWiki has undergone numerous improvements. JMWiki supports
+      is the original developer of the JAMWiki. Thanks to the contributions of
+      many, JAMWiki has undergone numerous improvements. JAMWiki supports
       hyperlinks, topic or text-based searching, email notifications, and
       utilizes a simple but powerful text syntax for creating topics and
       editing their content.</para>
@@ -141,10 +141,10 @@
                 <row>
                   <entry><systemitem>{wikiurl}</systemitem></entry>
 
-                  <entry>The base URL for accessing JMWiki, e.g. <systemitem>
-                  http://localhost:8080/jmwiki</systemitem> . With a WAR name
-                  of "jmwiki.war", the default local URL for Tomcat will be
-                  <systemitem>http://localhost:8080/jmwiki</systemitem></entry>
+                  <entry>The base URL for accessing JAMWiki, e.g. <systemitem>
+                  http://localhost:8080/jamwiki</systemitem> . With a WAR name
+                  of "jamwiki.war", the default local URL for Tomcat will be
+                  <systemitem>http://localhost:8080/jamwiki</systemitem></entry>
                 </row>
 
                 <row>
@@ -164,7 +164,7 @@
     <section>
       <title>Features</title>
 
-      <para>Java MediaWiki is a WikiWikiWeb clone based on Java Server Pages.
+      <para>JAMWiki is a WikiWikiWeb clone based on Java Server Pages.
       It's goal is to be as lightweight but as functional as possible. It is
       deployed by dropping a single war file into any J2EE web container
       without any extra installation processes. It offers the standard
@@ -214,14 +214,14 @@
     </section>
 
     <section>
-      <title>JMWiki History</title>
+      <title>JAMWiki History</title>
 
       <para>Changes for version 2.7.7</para>
 
       <para>TO BE FILLED IN</para>
 
       <para>Previous changes are available at <ulink
-      url="http://jmwiki.org/docs/whatsnew.txt">http://jmwiki.org/docs/whatsnew.txt</ulink></para>
+      url="http://jamwiki.org/docs/whatsnew.txt">http://jamwiki.org/docs/whatsnew.txt</ulink></para>
 
       <section>
         <title>Contributors</title>
@@ -324,7 +324,7 @@
     <section>
       <title>License</title>
 
-      <para>JMWiki is free software; you can redistribute it and/or modify it
+      <para>JAMWiki is free software; you can redistribute it and/or modify it
       under the terms of the GNU Lesser General Public License as published by
       the Free Software Foundation; either version 2.1 of the License, or (at
       your option) any later version. This software is distributed in the hope
@@ -350,7 +350,7 @@
 
         <para>This document is intended to assist with all phases of
         installing, maintaining, and contributing to a site based on the
-        JMWiki software. The documentation is divided into four major
+        JAMWiki software. The documentation is divided into four major
         chapters:</para>
 
         <para></para>
@@ -359,7 +359,7 @@
 
         <itemizedlist>
           <listitem>
-            <para>Chapter 1: <link linkend="about_jmwiki">About JMWiki</link>
+            <para>Chapter 1: <link linkend="about_jamwiki">About JAMWiki</link>
             - describes the project, this documentation, and the resources
             that are available to administrators and users.</para>
           </listitem>
@@ -367,13 +367,13 @@
           <listitem>
             <para>Chapter 2: <link linkend="admin_guide">Administrator's
             Guide</link> - Covers how to install, configure, and maintain a
-            JMWiki installation</para>
+            JAMWiki installation</para>
           </listitem>
 
           <listitem>
-            <para>Chapter 3: <link linkend="users_guide">JMWiki User's
+            <para>Chapter 3: <link linkend="users_guide">JAMWiki User's
             Guide</link> - Guide to Wikis in general, and specific features of
-            JMWiki</para>
+            JAMWiki</para>
           </listitem>
         </itemizedlist>
 
@@ -385,9 +385,9 @@
       <section>
         <title>Getting the latest version of this document</title>
 
-        <para>This document will be available from the JMWiki website at
+        <para>This document will be available from the JAMWiki website at
         <ulink
-        url="http://www.jmwiki.org">http://www.jmwiki.org</ulink>.</para>
+        url="http://www.jamwiki.org">http://www.jamwiki.org</ulink>.</para>
       </section>
 
       <section>
@@ -396,7 +396,7 @@
         <section>
           <title>Mailing Lists</title>
 
-          <para>There are two lists available to support JMWiki users.</para>
+          <para>There are two lists available to support JAMWiki users.</para>
 
           <para>The Announcements list is a moderated low-volume list for new
           version announcements and bug fixes. Signup information and list
@@ -404,17 +404,17 @@
           url="http://lists.sourceforge.net/lists/listinfo/veryquickwiki-announce">http://lists.sourceforge.net/lists/listinfo/veryquickwiki-announce
           </ulink></para>
 
-          <para>The JMWiki User's list is for support, questions, and
+          <para>The JAMWiki User's list is for support, questions, and
           discussion of proposed new features. Signup information and list
           archives are available at:<ulink
-          url="http://croninsolutions.com/mailman/listinfo/jmwiki-users_croninsolutions.com">http://croninsolutions.com/mailman/listinfo/jmwiki-users_croninsolutions.com</ulink></para>
+          url="http://croninsolutions.com/mailman/listinfo/jamwiki-users_croninsolutions.com">http://croninsolutions.com/mailman/listinfo/jamwiki-users_croninsolutions.com</ulink></para>
         </section>
 
         <section>
-          <title>JMWiki Site</title>
+          <title>JAMWiki Site</title>
 
-          <para>The JMWiki site is located at <ulink
-          url="http://www.jmwiki.org">http://www.jmwiki.org</ulink> .
+          <para>The JAMWiki site is located at <ulink
+          url="http://www.jamwiki.org">http://www.jamwiki.org</ulink> .
           Resources there include a Wiki containing updated support
           information contributed from all users, the latest version of this
           document, additional plugins, issue tracking, and other
@@ -433,10 +433,10 @@
       <section>
         <title>Supported Systems</title>
 
-        <para>The JMWiki software runs on top of so-called application
+        <para>The JAMWiki software runs on top of so-called application
         servers. These are pieces of middleware software that provide a set of
         functionality to hosted applications. The following software
-        requirements are necessary for JMWiki:</para>
+        requirements are necessary for JAMWiki:</para>
 
         <itemizedlist>
           <listitem>
@@ -455,13 +455,13 @@
           </listitem>
 
           <listitem>
-            <para>By default, JMWiki runs with flat-file persistence. But an
+            <para>By default, JAMWiki runs with flat-file persistence. But an
             easy to configure database connectivity option is
             available.</para>
           </listitem>
         </itemizedlist>
 
-        <para>JMWiki is tested with Apache Tomcat 4.1.24 and JDK
+        <para>JAMWiki is tested with Apache Tomcat 4.1.24 and JDK
         1.4.X<footnote>
             <para>Apache Tomcat <ulink url="http://jakarta.apache.org/tomcat">
             http://jakarta.apache.org/tomcat</ulink></para>
@@ -513,7 +513,7 @@
         </itemizedlist>
 
         <remark>Note: Tomcat 3.x or earlier is not recommended for use with
-        JMWiki.</remark>
+        JAMWiki.</remark>
       </section>
 
       <section>
@@ -540,8 +540,8 @@
             </listitem>
 
             <listitem>
-              <para>Browse to your application server and access the JMWiki
-              URL: eg. http://localhost:8080/jmwiki-2.7.x</para>
+              <para>Browse to your application server and access the JAMWiki
+              URL: eg. http://localhost:8080/jamwiki-2.7.x</para>
             </listitem>
 
             <listitem>
@@ -556,7 +556,7 @@
         with common problems.</para>
 
         <para><emphasis role="bold">IMPORTANT: </emphasis>Before deploying
-        JMWiki to your production environment, be sure you review and
+        JAMWiki to your production environment, be sure you review and
         understand the section below on <link
         linkend="security_issues">Security Issues and
         Remediation</link>.</para>
@@ -565,8 +565,8 @@
       <section>
         <title>Basic Installation</title>
 
-        <para>JMWiki is designed to be a "drop and run" application. When you
-        download JMWiki from a website, it will be available as a single "Web
+        <para>JAMWiki is designed to be a "drop and run" application. When you
+        download JAMWiki from a website, it will be available as a single "Web
         Archive File" or "WAR" for short. Most application servers (including
         Tomcat) are capable of automatically deploying an application directly
         from a WAR.</para>
@@ -574,17 +574,17 @@
         <para>The following assumes you have installed Tomcat on a Windows
         machine at <systemitem>{$TOMCAT_HOME}</systemitem> and that it is
         running with the default stand-alone port 8080. We will also assume
-        that the JMWiki WAR file is named jmwiki-2.7.x.war. The name of the
+        that the JAMWiki WAR file is named jamwiki-2.7.x.war. The name of the
         WAR file may be different in which case you should substitute your WAR
-        file name for jmwiki-2.7.x.war. Finally, we will assume you have a Web
+        file name for jamwiki-2.7.x.war. Finally, we will assume you have a Web
         browser available on the installation machine.</para>
 
-        <para>To install JMWiki, you should follow your application server
+        <para>To install JAMWiki, you should follow your application server
         instructions for deploying a WAR. Usually it's just a matter of moving
         the WAR file into the webapps directory. You may need to restart your
         application server if it does not recognize the new war file and
         install it. Once the file is installed, browse to
-        http://localhost:8080/jmwiki-2.7.x, and that's it!</para>
+        http://localhost:8080/jamwiki-2.7.x, and that's it!</para>
 
         <para>For the tomcat 4.X series, the process is: <itemizedlist>
             <listitem>
@@ -602,12 +602,12 @@
             </listitem>
 
             <listitem>
-              <para>Browse to your application server and access the JMWiki
-              URL: eg. http://localhost:8080/jmwiki-2.7.x</para>
+              <para>Browse to your application server and access the JAMWiki
+              URL: eg. http://localhost:8080/jamwiki-2.7.x</para>
             </listitem>
           </itemizedlist></para>
 
-        <para>Now that JMWiki is installed, you should perform some basic
+        <para>Now that JAMWiki is installed, you should perform some basic
         configuration work. In order to do this, you'll need to retrieve the
         administrator's password from the system. On the opening screen,
         you'll see a list of links - the first one listed is StartingPoints.
@@ -617,24 +617,24 @@
         section on <link linkend="admin_reset">password
         recovery.</link></para>
 
-        <para>By default, JMWiki runs with flat-file persistence and other
+        <para>By default, JAMWiki runs with flat-file persistence and other
         default options. Choose the "Admin" link at the bottom of any topic to
-        access administrative functions where you can customise JMWiki. In the
+        access administrative functions where you can customise JAMWiki. In the
         chapters below we address setting up database persistence and other
-        JMWiki options.</para>
+        JAMWiki options.</para>
 
         <para><emphasis role="bold">IMPORTANT</emphasis>: Before deploying
-        JMWiki to your production environment, be sure you review and
+        JAMWiki to your production environment, be sure you review and
         understand the section below on <link
         linkend="security_issues">Security Issues and
         Remediation</link>.</para>
 
         <screenshot>
-          <screeninfo>JMWiki Main Page after installation</screeninfo>
+          <screeninfo>JAMWiki Main Page after installation</screeninfo>
 
           <mediaobject>
             <imageobject>
-              <imagedata fileref="images/jmwiki_homepage.gif" />
+              <imagedata fileref="images/jamwiki_homepage.gif" />
             </imageobject>
           </mediaobject>
         </screenshot>
@@ -646,11 +646,11 @@
         <section>
           <title>Overview</title>
 
-          <para>JMWiki is configured to use flat-file persistence by default.
+          <para>JAMWiki is configured to use flat-file persistence by default.
           This means that it stores all wiki pages and assets directly on the
           filesystem. This is fine for smaller implementations, but there are
           performance issues around searching, indexing, and cross-linking new
-          topics. JMWiki can be easily configured to use database persistence,
+          topics. JAMWiki can be easily configured to use database persistence,
           which leads to much better performance for larger wikis. These
           directions are oriented toward MySQL; see below for Oracle-specific
           notes.</para>
@@ -660,23 +660,23 @@
           <title>General Steps</title>
 
           <para>To use database persistence, you must start by creating a
-          database instance for jmwiki, as well as provisioning a userID and
+          database instance for jamwiki, as well as provisioning a userID and
           password for the system to use. If you are using MySQL, these steps
           would look something like: <itemizedlist>
               <listitem>
-                <para>create database jmwiki;</para>
+                <para>create database jamwiki;</para>
               </listitem>
 
               <listitem>
-                <para>grant all on jmwiki.* to jmwiki@localhost identified by
-                'jmwiki';</para>
+                <para>grant all on jamwiki.* to jamwiki@localhost identified by
+                'jamwiki';</para>
               </listitem>
 
               <listitem>
                 <para>flush privileges;</para>
               </listitem>
-            </itemizedlist> This will create a database called jmwiki on the
-          database machine, and will allow a user named 'jmwiki' full access
+            </itemizedlist> This will create a database called jamwiki on the
+          database machine, and will allow a user named 'jamwiki' full access
           to the system. Obviously, you may need to change the hostname from
           localhost to something else if you are running MySQL on a different
           machine to the one running the database, or if you have set MySQL to
@@ -687,9 +687,9 @@
           contain sensitive information. The root Mysql userid and password
           should not be used for security reasons.</para>
 
-          <para>JMWiki will generate it's own tables and copy data into them,
+          <para>JAMWiki will generate it's own tables and copy data into them,
           so once the database configuration is done, the remaining work can
-          be performed within the JMWiki Admin console. Click on the "Admin"
+          be performed within the JAMWiki Admin console. Click on the "Admin"
           link on the bottom of the page, and enter your administrator's
           password to view this page.</para>
 
@@ -715,8 +715,8 @@
               <listitem>
                 <para>Database URL or JNDI Datasource name - This is dependent
                 on your setup. By default, the URL is set to
-                jdbc:mysql://127.0.0.1/jmwiki , which translates to "The
-                database named jmwiki, installed on the mysql database that's
+                jdbc:mysql://127.0.0.1/jamwiki , which translates to "The
+                database named jamwiki, installed on the mysql database that's
                 running on the host with IP address 127.0.0.1". You may need
                 to edit this URL to connect to a different host, or to use a
                 different JDBC driver. You can also use this area to specify
@@ -741,12 +741,12 @@
           there are several items to try: <itemizedlist>
               <listitem>
                 <para>Make sure that you are allowed to connect from the host
-                that is running JMWiki to the host that is running the
+                that is running JAMWiki to the host that is running the
                 database. Most database systems are designed to be very
                 restrictive about what hosts are allowed to connect with them.
                 If you are using MySQL, try running it from the command line
-                on the JMWiki host, as in: mysql -u jmwiki -h localhost -p
-                jmwiki . If you cannot connect, then there may be a firewall
+                on the JAMWiki host, as in: mysql -u jamwiki -h localhost -p
+                jamwiki . If you cannot connect, then there may be a firewall
                 or other issue that needs to be resolved before you can
                 continue.</para>
               </listitem>
@@ -754,10 +754,10 @@
               <listitem>
                 <para>If you are using a database other than mysql, you may
                 need to put the database's JDBC drivers into a location that
-                JMWiki can access. For a development system, it may be
+                JAMWiki can access. For a development system, it may be
                 simplest to download the JDBC drivers that are designed for
                 your database, and copy them to
-                <systemitem>{$TOMCAT_HOME}/webapps/JMWiki-2.7.x/lib/</systemitem>
+                <systemitem>{$TOMCAT_HOME}/webapps/JAMWiki-2.7.x/lib/</systemitem>
                 . You should also obtain the JDBC driver name and URL format
                 from the documentation at the developer's website.</para>
               </listitem>
@@ -784,18 +784,18 @@
         <section id="jndi_config">
           <title>Configuring JNDI Data Sources</title>
 
-          <para>JMWiki can use a J2EE style DataSource retrieved through JNDI
+          <para>JAMWiki can use a J2EE style DataSource retrieved through JNDI
           as a source of database connections. The procedure is as
           follows:</para>
 
           <para>Configure a JDBC DataSource in your container and make it
           available through JNDI. Consult your container's documentation for
-          details. Note the JNDI name needed to look it up. JMWiki will look
+          details. Note the JNDI name needed to look it up. JAMWiki will look
           up the name from an InitialContext instance, so you'll probably have
           to prefix your JNDI name with "java:comp/env/". For example:
-          "java:comp/env/jdbc/JMWikiDb".</para>
+          "java:comp/env/jdbc/JAMWikiDb".</para>
 
-          <para>In the administration console, configure JMWiki for database
+          <para>In the administration console, configure JAMWiki for database
           persistence as above, but with the following changes:</para>
 
           <itemizedlist>
@@ -817,7 +817,7 @@
             </listitem>
 
             <listitem>
-              <para>Set the Database URL to the JNDI name. JMWiki
+              <para>Set the Database URL to the JNDI name. JAMWiki
               distinguishes between the two by looking at the URL. If it
               starts with "jdbc:", it's assumed to be a JDBC URL, otherwise,
               it is assumed to be a JNDI name.</para>
@@ -833,7 +833,7 @@
         <section id="conn_pool_config">
           <title>Connection Pool Tuning</title>
 
-          <para>JMWiki's Database persistence mode uses the Apache Commons
+          <para>JAMWiki's Database persistence mode uses the Apache Commons
           DBCP (Database Connection Pooling) to provide robust database
           performance.</para>
 
@@ -879,7 +879,7 @@
 
           <para>In order to use Oracle as your persistence layer, you will
           need the classes12.zip Oracle JDBC Thin driver. Either include it in
-          the WEB-INF/lib directory of the JMWiki webapp, or in a
+          the WEB-INF/lib directory of the JAMWiki webapp, or in a
           container-specific lib directory that is made available to your
           container's webapps. For Tomcat, that is
           <systemitem>${TOMCAT_HOME}/shared/lib</systemitem>. In the case of
@@ -894,7 +894,7 @@
           url="http://otn.oracle.com/software/tech/java/sqlj_jdbc/content.html">
           http://otn.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink></para>
 
-          <para>In the JMWiki Administration Console, specify the following:
+          <para>In the JAMWiki Administration Console, specify the following:
           <itemizedlist>
               <listitem>
                 <para>JDBC driver class:
@@ -925,13 +925,13 @@
           in as appropriate for your environment. Ask your database
           administrator.</para>
 
-          <para>JMWiki will automatically create the tables if it has the
+          <para>JAMWiki will automatically create the tables if it has the
           privileges to do so. If not, ask your database administrator to
           execute the create_oracle.sql script as the schema owner. This
           script is located in
-          <systemitem>${TOMCAT_HOME}/webapps/jmwiki-2.7.x/WEB-INF/classes</systemitem>.</para>
+          <systemitem>${TOMCAT_HOME}/webapps/jamwiki-2.7.x/WEB-INF/classes</systemitem>.</para>
 
-          <para>JMWiki will try to recreate the tables every time it starts
+          <para>JAMWiki will try to recreate the tables every time it starts
           up. This will cause errors such as: java.sql.SQLException:
           ORA-00955: name is already used by an existing object. These can be
           safely ignored.</para>
@@ -941,12 +941,12 @@
           database user must be able to see the tables without prefixing a
           schema name. You may need to create public synonyms for the tables
           if the schema owner is not the database user. Again, ask your
-          database administrator to create public synonyms for the JMWiki
+          database administrator to create public synonyms for the JAMWiki
           tables if this is the case.</para>
 
-          <para>If JMWiki doesn't create the tables, check the log files. If
+          <para>If JAMWiki doesn't create the tables, check the log files. If
           there are messages about SQL syntax errors, check the
-          jmwiki.properties file in WEB-INF/classes and the administration
+          jamwiki.properties file in WEB-INF/classes and the administration
           console to make sure the database-type is set to "oracle".</para>
         </section>
       </section>
@@ -1149,7 +1149,7 @@
                   database as the back end. If you select "Database", you will
                   be presented with further fields in which to enter the JDBC
                   database driver name, the database name and a user and
-                  password. JMWiki ships with the MM MySQL driver and its name
+                  password. JAMWiki ships with the MM MySQL driver and its name
                   will be the default value. See the chapter on MySQL for more
                   information on setting this up.</entry>
                 </row>
@@ -1300,7 +1300,7 @@
       <section>
         <title>Parameters in web.xml</title>
 
-        <para>The JMWiki application is constructed as a series of servlets.
+        <para>The JAMWiki application is constructed as a series of servlets.
         The mappings for these servlets is controlled by the web.xml file. For
         most sites, the relevant portion of this file is the portion that
         controls the provisioning of virtual wikis. See Administrative Tasks :
@@ -1313,10 +1313,10 @@
         <section>
           <title>VQwiki.properties file</title>
 
-          <para>The JMWiki.properties file contains many internal-only
+          <para>The JAMWiki.properties file contains many internal-only
           configuration settings. In most cases, these settings are identical
           to those configured by the administrative console. If you must edit
-          this file directly, you should restart the jmwiki application
+          this file directly, you should restart the jamwiki application
           context or the entire application server immediately to avoid
           over-writing your updates, or leaving the system in an inconsistent
           state.</para>
@@ -1329,7 +1329,7 @@
         <section>
           <title>linking.properties</title>
 
-          <para>By default, JMWiki supports entries to make reference to the
+          <para>By default, JAMWiki supports entries to make reference to the
           original C2 WikiWikiWeb, the Meatball Wiki and individual Microsoft
           Knowledge Base articles. The shorthand for these all take the form
           prefix:detail</para>
@@ -1349,7 +1349,7 @@
         <section>
           <title>Externallex.properties</title>
 
-          <para>From version 2.4.0 onwards, JMWiki supports external lexers.
+          <para>From version 2.4.0 onwards, JAMWiki supports external lexers.
           These lexers are triggered from the standard lexers using special
           markup.</para>
 
@@ -1358,22 +1358,22 @@
           [&lt;/java&gt;]</systemitem></para>
 
           <para>You should see neatly formatted Java source code. The special
-          tag format asks JMWiki to process all the text inside the tags using
+          tag format asks JAMWiki to process all the text inside the tags using
           the class named as the value for "java" in the
           <systemitem>{installdir}/WEB-INF/classes/externallex.properties</systemitem>
           file. The default entry in this file is:
-          java=jmwiki.lex.JavaLex.</para>
+          java=jamwiki.lex.JavaLex.</para>
 
           <para>To write your own external lexer, write a class that
-          implements jmwiki.lex.ExternalLex interface (it's only one method)
+          implements jamwiki.lex.ExternalLex interface (it's only one method)
           and put an entry with an appropriate tag name in the
           externallex.properties file.</para>
 
-          <para>E.g. you might write a class called jmwiki.mylexers.CLex for
+          <para>E.g. you might write a class called jamwiki.mylexers.CLex for
           formatting C code. You could then make an entry in the properties
-          file of the form c=jmwiki.mylexers.CLex. Anything between the tags
+          file of the form c=jamwiki.mylexers.CLex. Anything between the tags
           [&lt;c&gt;][&lt;/c&gt;] would then be passed to the process( String
-          text ) method in the class jmwiki.mylexers.CLex.</para>
+          text ) method in the class jamwiki.mylexers.CLex.</para>
         </section>
 
         <section>
@@ -1421,7 +1421,7 @@
           <title>actions.properties</title>
 
           <para>This contains key-value mapping of action names to class names
-          of classes that implement jmwiki.WikiAction. Plugins place mappings
+          of classes that implement jamwiki.WikiAction. Plugins place mappings
           in this file.</para>
         </section>
       </section>
@@ -1433,7 +1433,7 @@
       <section>
         <title>Creating Virtual Wikis</title>
 
-        <para>JMWiki supports multiple independent wikis on a single
+        <para>JAMWiki supports multiple independent wikis on a single
         application server. These "Virtual Wikis" allow the support of
         multiple independent content stores. Common applications include
         public / private wikis, project-specific wikis, and client-specific
@@ -1456,7 +1456,7 @@
 
             <listitem>
               <para>Edit
-              <systemitem>${TOMCAT_HOME}/webapps/JMWiki-2.7.x/WEB-INF/web.xml</systemitem></para>
+              <systemitem>${TOMCAT_HOME}/webapps/JAMWiki-2.7.x/WEB-INF/web.xml</systemitem></para>
             </listitem>
 
             <listitem>
@@ -1474,7 +1474,7 @@
 
             <listitem>
               <para>Set a "friendly name" for the virtual wiki in
-              <systemitem>${TOMCAT_HOME}/webapps/JMWiki-2.7.x/WEB-INF/classes/ApplicationResources.properties</systemitem>.
+              <systemitem>${TOMCAT_HOME}/webapps/JAMWiki-2.7.x/WEB-INF/classes/ApplicationResources.properties</systemitem>.
               The entry should be of the format: virtualwiki.other.name=Other
               Where "Other" is the name that will appear in the virtual wiki
               list.</para>
@@ -1488,7 +1488,7 @@
         <para>Normally, a wiki allows anybody to enter and modify text.
         However, this can create issues in a controlled environment (e.g.
         inside a company). In order to clearly distinguish the people who are
-        posting, JMWiki supports LDAP connectivity. In order to configure
+        posting, JAMWiki supports LDAP connectivity. In order to configure
         LDAP, access the Admin console, and set the following parameters:
         <itemizedlist>
             <listitem>
@@ -1598,7 +1598,7 @@
         <section>
           <title>Setting Read-only Topics</title>
 
-          <para>JMWiki allows the administrator to set certain topics as
+          <para>JAMWiki allows the administrator to set certain topics as
           read-only. This is useful for controlling key pages (main navigation
           nodes, etc), or for controlling pages that are subject to frequent
           vandalism. To mark a page as read only:</para>
@@ -1628,7 +1628,7 @@
       <section>
         <title>Panic Reset</title>
 
-        <para>In the unlikely event that JMWiki begins to misbehave in a
+        <para>In the unlikely event that JAMWiki begins to misbehave in a
         significant way, you can attempt a "panic reset" by navigating to the
         Admin console, logging in, and selecting "Panic Reset" at the bottom
         of the page.</para>
@@ -1643,10 +1643,10 @@
       <section id="admin_reset">
         <title>Administrator Password Reset</title>
 
-        <para>If you misplace the admin password, you can force JMWiki to
+        <para>If you misplace the admin password, you can force JAMWiki to
         generate a new one and display it to you on the first topic browsed to
         (as with initial installation). Use a text editor to edit the
-        <systemitem>${TOMCAT_HOME}/webapps/jmwiki-2.7.x/WEB-INF/classes/jmwiki.properties</systemitem>
+        <systemitem>${TOMCAT_HOME}/webapps/jamwiki-2.7.x/WEB-INF/classes/jamwiki.properties</systemitem>
         file (or another location if you have overridden the default) and
         change the key-value pair that reads firstuse=false to firstuse=true.
         Restart the application context or the application server and browse
@@ -1694,14 +1694,14 @@
         <para>By default, we use
         <systemitem>{installdir}/images/logo.jpg</systemitem>. If the user
         specifies the URL of an alternate image in the deployment metadata,
-        that image will be used instead. In this case, a "Powered by JMWiki"
+        that image will be used instead. In this case, a "Powered by JAMWiki"
         image will be displayed on the footer of all pages that use the custom
         logo.</para>
 
         <para>E.g., in Tomcat server.xml, it would look like this (note the
         override attribute):</para>
 
-        <para><code>&lt;Context path="" docBase="jmwiki-classic" debug="0"
+        <para><code>&lt;Context path="" docBase="jamwiki-classic" debug="0"
         &gt; &lt;env-entry&gt;
         &lt;description&gt;logoImageName&lt;/description&gt;
         &lt;env-entry-name&gt;logoImageName&lt;/env-entry-name&gt;
@@ -1711,20 +1711,20 @@
 
         <para>or</para>
 
-        <para><code>&lt;Context path="/jmwiki/mikewiki"
-        docBase="jmwiki-classic" debug="0" &gt; &lt;Environment
+        <para><code>&lt;Context path="/jamwiki/mikewiki"
+        docBase="jamwiki-classic" debug="0" &gt; &lt;Environment
         name="logoImageName" type="java.lang.String"
         value="http://images.sourceforge.net/head_bg_new.gif"
         override="false"/&gt; &lt;/Context&gt;</code></para>
 
-        <para>The index page and admin console still display the JMWiki logo,
+        <para>The index page and admin console still display the JAMWiki logo,
         as always.</para>
       </section>
 
       <section>
         <title>Customizing Page Layouts</title>
 
-        <para>JMWiki allows the site administrator to edit the look and feel
+        <para>JAMWiki allows the site administrator to edit the look and feel
         of the site directly through the application. The governing CSS files
         as well as the top, left, and bottom menus are all directly editable
         within the system.</para>
@@ -1842,7 +1842,7 @@
           <title>Page headers, footers, left navigation</title>
 
           <para>The left sidebar, page headers, and footers can also be
-          directly edited in the JMWiki environment. Please be cautious; it is
+          directly edited in the JAMWiki environment. Please be cautious; it is
           possible to make your wiki inoperable if you insert badly formed
           HTML. In particular, make sure that all HTML is well formed, and
           that any table or div tags are self-contained and closed.</para>
@@ -1854,8 +1854,8 @@
           <para>The TopArea and BottomArea files are wrapped in special
           "[&lt;html&gt;][&lt;/html&gt;]" tags. There should be one at the
           beginning of the file and one at the end. These tags are used to
-          signal JMWiki that the following content should be treated as
-          literal HTML. If these tags are not added, then JMWiki will
+          signal JAMWiki that the following content should be treated as
+          literal HTML. If these tags are not added, then JAMWiki will
           translate the html characters and the raw HTML source will be
           displayed.</para>
 
@@ -1869,9 +1869,9 @@
     <section>
       <title>Installing Plugins</title>
 
-      <para>Plugins add extra functionality to the JMWiki system. A list of
+      <para>Plugins add extra functionality to the JAMWiki system. A list of
       plugins is available at <ulink
-      url="http://jmwiki.org/downloads.php">http://jmwiki.org/downloads.php</ulink>.
+      url="http://jamwiki.org/downloads.php">http://jamwiki.org/downloads.php</ulink>.
       As of this writing, plugins exist to incorporate external RSS feeds and
       HTML, generate charts, and pretty-printers for HTML and SQL.</para>
 
@@ -1879,7 +1879,7 @@
 
       <orderedlist>
         <listitem>
-          <para>Identify your JMWiki file-system directory. This should be set
+          <para>Identify your JAMWiki file-system directory. This should be set
           by the "File-system directory" parameter on the admin
           console.</para>
         </listitem>
@@ -1912,14 +1912,14 @@
       <title>Security Issues and Remediation</title>
 
       <section>
-        <title>JMWiki File Storage Issues</title>
+        <title>JAMWiki File Storage Issues</title>
 
         <section>
           <title>Tomcat UserID</title>
 
-          <para>JMWiki stores all files (at least initially) on the local
+          <para>JAMWiki stores all files (at least initially) on the local
           filesystem. If an installation transitions to database persistence,
-          JMWiki continues to use the filesystem for images and other uploaded
+          JAMWiki continues to use the filesystem for images and other uploaded
           attachments. This has important security ramifications.</para>
 
           <para>All file access and the initial directory creation are
@@ -1934,7 +1934,7 @@
           strongly recommended that you do not run tomcat as root or other
           privileged user.</emphasis></para>
 
-          <para>The directory that JMWiki writes to is controlled by the
+          <para>The directory that JAMWiki writes to is controlled by the
           parameter "File-system directory" on the Admin console. This
           directory must be writable by the user that your application server
           is running under.</para>
@@ -1961,7 +1961,7 @@
           <para>Your archiving strategy depends on whether you have configured
           flatfile or database persistence.</para>
 
-          <para>For flatfile users, simply back up your JMWiki file-system
+          <para>For flatfile users, simply back up your JAMWiki file-system
           directory. This should be set by the "File-system directory"
           parameter on the admin console.</para>
 
@@ -1971,7 +1971,7 @@
 
           <para>Additionally, it is probably wise to create a snapshot backup
           of the contents of your
-          <systemitem>${TOMCAT_HOME}/webapps/jmwiki-2.7.x</systemitem> folder
+          <systemitem>${TOMCAT_HOME}/webapps/jamwiki-2.7.x</systemitem> folder
           as it will contain configuration settings that may be annoying to
           replicate at a later time.</para>
         </section>
@@ -1993,18 +1993,18 @@
         <section id="ldap_auth">
           <title>LDAP Authentication</title>
 
-          <para>JMWiki allows integration with an external LDAP store. This
+          <para>JAMWiki allows integration with an external LDAP store. This
           can be configured so that users are required to authenticate against
           LDAP before they are allowed to edit topics in the system. Note that
           anonymous users are still able to view the content on the site. To
           prevent this, you could try to implement an Apache module like
-          auth_ldap or mod_auth_ldap to look at the same ldap store as JMWiki.
+          auth_ldap or mod_auth_ldap to look at the same ldap store as JAMWiki.
           In this case, the auth_ldap module in Apache would either allow or
-          disallow viewers and the JMWiki installation itself would either
+          disallow viewers and the JAMWiki installation itself would either
           allow or disallow edits.</para>
 
           <para>Note: both Apache and the auth_ldap and mod_auth_ldap modules
-          are not part of the JMWiki installation and as such will not be
+          are not part of the JAMWiki installation and as such will not be
           supported by the project.</para>
 
           <para>LDAP Integration instructions are covered in the <link
@@ -2018,7 +2018,7 @@
           on the site, an authentication system should be enabled at the web
           tier. If the Apache httpd server is in use, there are a variety of
           modules that can be used to provide authentication services. While
-          these services will not be directly integrated with JMWiki - an
+          these services will not be directly integrated with JAMWiki - an
           authenticated user will be given access, but no special recognition
           by the system- they can be used to provide sophisticated access
           control to the wiki.</para>
@@ -2036,9 +2036,9 @@
   </chapter>
 
   <chapter id="users_guide">
-    <title>JMWiki User's Guide</title>
+    <title>JAMWiki User's Guide</title>
 
-    <para>This chapter is a brief overview of JMWiki from a user's
+    <para>This chapter is a brief overview of JAMWiki from a user's
     perspective..</para>
 
     <section>
@@ -2064,19 +2064,19 @@
     </section>
 
     <section>
-      <title>JMWiki Basics</title>
+      <title>JAMWiki Basics</title>
 
-      <para>This is what the main JMWiki page looks like when the system is
+      <para>This is what the main JAMWiki page looks like when the system is
       first installed:</para>
 
       <para></para>
 
       <screenshot>
-        <screeninfo>JMWiki Default Homepage</screeninfo>
+        <screeninfo>JAMWiki Default Homepage</screeninfo>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="images/jmwiki_homepage.gif" />
+            <imagedata fileref="images/jamwiki_homepage.gif" />
           </imageobject>
         </mediaobject>
       </screenshot>
@@ -2086,7 +2086,7 @@
       <section>
         <title>Editing a topic</title>
 
-        <para>Every individual page in JMWiki is called a "topic". In order to
+        <para>Every individual page in JAMWiki is called a "topic". In order to
         edit a topic, simply navigate to it and look for the link at the
         bottom of the page titled "EditPage". Clicking on this link will bring
         up the same topic, with all of the text in a big editable box. Your
@@ -2206,7 +2206,7 @@
         part of the site that should contain a link to your new content. Then,
         edit that page, and include a link.</para>
 
-        <para>A JMWiki link is specified in two ways- either as a
+        <para>A JAMWiki link is specified in two ways- either as a
         CamelCasedWord (a word with embedded capital letters and no spaces),
         or as a text label surrounded by BackTicks. To insert a link to my
         page about my model rocket collection, I can either add the text
@@ -2293,9 +2293,9 @@
     </section>
 
     <section>
-      <title>Advanced JMWiki</title>
+      <title>Advanced JAMWiki</title>
 
-      <para>JMWiki has many additional features for advanced users. You don't
+      <para>JAMWiki has many additional features for advanced users. You don't
       need to know any of this to contribute to the Wiki, but they can
       definitely help you find information in your wiki, and will allow you to
       extend the basic functionality of the system.</para>
@@ -2303,10 +2303,10 @@
       <section>
         <title>Special Pages</title>
 
-        <para>One of the core concepts in JMWiki is "Special Pages". These
+        <para>One of the core concepts in JAMWiki is "Special Pages". These
         look like regular pages in the Wiki, but actually map to functions of
         the underlying software. This section is a review of each of these
-        special pages. In a default JMWiki installation, these special pages
+        special pages. In a default JAMWiki installation, these special pages
         are accessible from links on the left sidebar.</para>
 
         <section>
@@ -2366,7 +2366,7 @@
       <section>
         <title>Advanced Formatting</title>
 
-        <para>JMWiki supports a reasonably rich set of formatting controls.
+        <para>JAMWiki supports a reasonably rich set of formatting controls.
         There are some fairly complex controls that only rarely come into
         play.</para>
 
@@ -2421,7 +2421,7 @@
         <section>
           <title>Links</title>
 
-          <para>Any fully qualified URL will be turned into a hotlink. JMWiki
+          <para>Any fully qualified URL will be turned into a hotlink. JAMWiki
           contains a number of shortcuts for adding external links to your
           site.</para>
 
@@ -2432,7 +2432,7 @@
           can easily define additional shortcuts; many organizations use them
           to link to bug reports, documents on the internal network, or
           intranet resources. The default set of shortcuts that comes with
-          JMWiki is:</para>
+          JAMWiki is:</para>
 
           <para></para>
 
@@ -2481,7 +2481,7 @@
                   <entry>edit:StartingPoints</entry>
 
                   <entry>Brings up &lt;topic&gt; in the edit window in this
-                  JMWiki installation</entry>
+                  JAMWiki installation</entry>
                 </row>
 
                 <row>
@@ -2571,12 +2571,12 @@
         <title>Using Plugins</title>
 
         <para>There are a variety of downloadable plugins available for
-        JMWiki. While an administrator must install them, they provide useful
+        JAMWiki. While an administrator must install them, they provide useful
         features to site authors. Each plugin has it's own documentation, so
         you are encouraged to review them for yourself. This list is probably
         out of date; please check <ulink
-        url="???">http://www.jmwiki.org/downloads.php for updates</ulink>. As
-        of this writing, known JMWiki plugins included:</para>
+        url="???">http://www.jamwiki.org/downloads.php for updates</ulink>. As
+        of this writing, known JAMWiki plugins included:</para>
 
         <para></para>
 
@@ -2597,7 +2597,7 @@
                 <entry>Include</entry>
 
                 <entry><ulink
-                url="???">http://www.jmwiki.org/plugins/include.zip</ulink></entry>
+                url="???">http://www.jamwiki.org/plugins/include.zip</ulink></entry>
 
                 <entry>Include one topic's content in another.</entry>
               </row>
@@ -2606,7 +2606,7 @@
                 <entry>GetHTML</entry>
 
                 <entry><ulink
-                url="???">http://www.jmwiki.org/plugins/sqlsrc.zip</ulink></entry>
+                url="???">http://www.jamwiki.org/plugins/sqlsrc.zip</ulink></entry>
 
                 <entry>Include external web page content in a topic.</entry>
               </row>
@@ -2615,7 +2615,7 @@
                 <entry>SQL Source</entry>
 
                 <entry><ulink
-                url="???">http://www.jmwiki.org/plugins/sqlsrc.zip</ulink></entry>
+                url="???">http://www.jamwiki.org/plugins/sqlsrc.zip</ulink></entry>
 
                 <entry>Pretty-print SQL source code in a topic.</entry>
               </row>
@@ -2624,7 +2624,7 @@
                 <entry>HTML Source</entry>
 
                 <entry><ulink
-                url="???">http://www.jmwiki.org/plugins/htmlsrc.zip</ulink></entry>
+                url="???">http://www.jamwiki.org/plugins/htmlsrc.zip</ulink></entry>
 
                 <entry>Pretty-print HTML source code in a topic.</entry>
               </row>
@@ -2633,7 +2633,7 @@
                 <entry>RSS</entry>
 
                 <entry><ulink
-                url="???">http://www.jmwiki.org/plugins/rss.zip</ulink></entry>
+                url="???">http://www.jamwiki.org/plugins/rss.zip</ulink></entry>
 
                 <entry>Include External RSS feeds in topics.</entry>
               </row>

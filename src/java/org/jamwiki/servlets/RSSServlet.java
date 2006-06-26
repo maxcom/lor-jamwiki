@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,10 +29,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import org.apache.log4j.Logger;
-import org.jmwiki.*;
-import org.jmwiki.model.Topic;
-import org.jmwiki.users.Usergroup;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.*;
+import org.jamwiki.model.Topic;
+import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -76,8 +76,8 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 * @param response What the servlet will send back as response
 	 */
 	private void rss(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String topic = JMController.getTopicFromRequest(request);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String topic = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		try {
 			// get the latest pages
 			int howManyDatesToGoBack = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);

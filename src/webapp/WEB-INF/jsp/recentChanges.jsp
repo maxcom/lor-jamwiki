@@ -1,4 +1,4 @@
-<form name="num-changes" method="get" action="<jmwiki:link value="Special:RecentChanges" />">
+<form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 <%-- FIXME: hard coding --%>
 <input type="hidden" name="<%= WikiServlet.PARAMETER_ACTION %>" value="<%= WikiServlet.ACTION_RECENT_CHANGES %>" />
 <table width="100%">
@@ -31,10 +31,10 @@
 <c:forEach items="${changes}" var="change">
 <tr>
 	<%-- FIXME: hard coding --%>
-	<td>(<a href="<jmwiki:link value="Special:Diff" />?action=<%= WikiServlet.ACTION_DIFF %>&topic=<jmwiki:encode value="${change.topic}" />">diff</a>)</td>
-	<td>(<a href="<jmwiki:link value="Special:History" />?action=<%= WikiServlet.ACTION_HISTORY %>&topic=<jmwiki:encode value="${change.topic}" />&type=all">history</a>)</td>
+	<td>(<a href="<jamwiki:link value="Special:Diff" />?action=<%= WikiServlet.ACTION_DIFF %>&topic=<jamwiki:encode value="${change.topic}" />">diff</a>)</td>
+	<td>(<a href="<jamwiki:link value="Special:History" />?action=<%= WikiServlet.ACTION_HISTORY %>&topic=<jamwiki:encode value="${change.topic}" />&type=all">history</a>)</td>
 	<td class="recent">
-		<a href='<jmwiki:encode value="${change.topic}"/>'><c:out value="${change.topic}"/></a>
+		<a href='<jamwiki:encode value="${change.topic}"/>'><c:out value="${change.topic}"/></a>
 	</td>
 	<td class="recent">
 		<c:out value="${change.username}"/>

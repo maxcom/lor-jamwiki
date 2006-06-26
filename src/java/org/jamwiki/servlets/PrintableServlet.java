@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,18 +25,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.PrintableEntry;
-import org.jmwiki.WikiBase;
-import org.jmwiki.PseudoTopicHandler;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.PrintableEntry;
+import org.jamwiki.WikiBase;
+import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class PrintableServlet extends JMController implements Controller {
+public class PrintableServlet extends JAMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(PrintableServlet.class);
 
@@ -45,7 +45,7 @@ public class PrintableServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("printable");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		print(request, next);
 		return next;
 	}
@@ -54,10 +54,10 @@ public class PrintableServlet extends JMController implements Controller {
 	 *
 	 */
 	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JMController.getTopicFromRequest(request);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		next.addObject(JMController.PARAMETER_TOPIC, topic);
-		next.addObject(JMController.PARAMETER_TITLE, topic);
+		String topic = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMController.PARAMETER_TOPIC, topic);
+		next.addObject(JAMController.PARAMETER_TITLE, topic);
 		String strDepth = request.getParameter("depth");
 		if (request.getParameter("hideform") != null) {
 			next.addObject("hideform", "true");
@@ -117,7 +117,7 @@ public class PrintableServlet extends JMController implements Controller {
 			if (depth > 0) {
 				String searchfor = "href=\"";
 				int iPos = onepage.indexOf(searchfor);
-				int iEndPos = onepage.indexOf(JMController.getMessage("topic.ismentionedon", request.getLocale()));
+				int iEndPos = onepage.indexOf(JAMController.getMessage("topic.ismentionedon", request.getLocale()));
 				if (iEndPos == -1) iEndPos = Integer.MAX_VALUE;
 				while (iPos > -1 && iPos < iEndPos) {
 					String link = onepage.substring(iPos + searchfor.length(),

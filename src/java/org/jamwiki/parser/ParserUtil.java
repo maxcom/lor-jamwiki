@@ -14,16 +14,16 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.parser;
+package org.jamwiki.parser;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;
 import java.util.Stack;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiBase;
-import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.servlets.WikiServlet;
+import org.jamwiki.utils.Utilities;
 
 /**
  * Utility methods used with the Mediawiki lexers.

@@ -1,18 +1,18 @@
---- README for Java MediaWiki v2.7.8 ---
+--- README for JAMWiki v2.7.8 ---
 
 If you don't know how to use a WikiWikiWeb, visit the original at http://c2.com/cgi/wiki and have a read.
 
-Please read the "UPGRADE" file for upgrading information if you are upgrading your existing JMWiki installation.
+Please read the "UPGRADE" file for upgrading information if you are upgrading your existing JAMWiki installation.
 
-You'll find the new JMWiki book in the doc directory of the WAR file which is therefore accessible from
-the wiki context root, (e.g. http://localhost:8080/jmwiki-2.7.8/doc/jmwiki_book.html) and on the website:
-http://www.jmwiki.org/docs/jmwiki_book.html
+You'll find the new JAMWiki book in the doc directory of the WAR file which is therefore accessible from
+the wiki context root, (e.g. http://localhost:8080/jamwiki-2.7.8/doc/jamwiki_book.html) and on the website:
+http://www.jamwiki.org/docs/jamwiki_book.html
 
-The DocBook version of the file is also supplied in the "doc" directory of the WAR file and is called jmwiki_book.xml
+The DocBook version of the file is also supplied in the "doc" directory of the WAR file and is called jamwiki_book.xml
 
-Installation instructions are in the "INSTALL" file - more detailed ones are in the new JMWiki book.
+Installation instructions are in the "INSTALL" file - more detailed ones are in the new JAMWiki book.
 
-App servers that users have said jmwiki works with:
+App servers that users have said jamwiki works with:
 Tomcat 4.1.x
 Tomcat 5.x
 Orion 1.6
@@ -24,5 +24,5 @@ BEA WebLogic 7.x
 IBM Websphere 5
 Oracle 9i Application Server
 
-Java MediaWiki requires JavaServlets 2.3 compatibility. It will not work properly with non-2.3 compatible
+JAMWiki requires JavaServlets 2.3 compatibility. It will not work properly with non-2.3 compatible
 containers, e.g. Tomcat 3.x, Orion 1.5.

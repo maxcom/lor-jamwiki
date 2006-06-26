@@ -14,21 +14,21 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.WikiBase;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class LockListServlet extends JMController implements Controller {
+public class LockListServlet extends JAMController implements Controller {
 
 	private static Logger logger = Logger.getLogger(LockListServlet.class);
 
@@ -37,7 +37,7 @@ public class LockListServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (isTopic(request, "Special:Unlock")) {
 			unlock(request, next);
 		} else {
@@ -50,8 +50,8 @@ public class LockListServlet extends JMController implements Controller {
 	 *
 	 */
 	private void lockList(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JMController.getTopicFromRequest(request);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String topic = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		List locks = null;
 		try {
 			locks = WikiBase.getInstance().getHandler().getLockList(virtualWiki);
@@ -61,7 +61,7 @@ public class LockListServlet extends JMController implements Controller {
 			throw new Exception("Error retrieving lock list " + e.getMessage());
 		}
 		next.addObject("locks", locks);
-		next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("locklist.title", request.getLocale()));
+		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("locklist.title", request.getLocale()));
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_LOCKLIST);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -70,8 +70,8 @@ public class LockListServlet extends JMController implements Controller {
 	 *
 	 */
 	private void unlock(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JMController.getTopicFromRequest(request);
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String topic = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
 			next.addObject("redirect", redirect);

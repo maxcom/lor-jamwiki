@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.model;
+package org.jamwiki.model;
 
 import java.io.BufferedReader;
 import java.io.Serializable;
@@ -29,10 +29,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import org.apache.log4j.Logger;
-import org.jmwiki.Change;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiBase;
-import org.jmwiki.persistency.PersistencyHandler;
+import org.jamwiki.Change;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.persistency.PersistencyHandler;
 
 /**
  *
@@ -420,7 +420,7 @@ public class Topic implements Serializable {
 
 
 		BufferedReader in = new BufferedReader(new StringReader(this.contents));
-//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jmwiki.parser.JMWikiFormatLex", "org.jmwiki.parser.JMWikiLayoutLex", "org.jmwiki.parser.LinkLex");
+//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jamwiki.parser.JAMWikiFormatLex", "org.jamwiki.parser.JAMWikiLayoutLex", "org.jamwiki.parser.LinkLex");
 		return this.contents;
 	}
 
@@ -434,7 +434,7 @@ public class Topic implements Serializable {
 	public String getRenderedContent(String parsername) {			   // FIXME!!
 
 		BufferedReader in = new BufferedReader(new StringReader(this.contents));
-//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jmwiki.parser.JMWikiFormatLex", "org.jmwiki.parser.JMWikiLayoutLex", "org.jmwiki.parser.LinkLex");
+//		return "Env prop: " + Environment.getValue("setup.dir.upload") + "\n Cooked: \n" + cook(in, "jsp", "org.jamwiki.parser.JAMWikiFormatLex", "org.jamwiki.parser.JAMWikiLayoutLex", "org.jamwiki.parser.LinkLex");
 		return this.contents;
 	}
 }

@@ -14,13 +14,13 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.parser.alt;
+package org.jamwiki.parser.alt;
 
 import java.io.IOException;
 import java.util.Properties;
 import java.security.AccessControlException;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
+import org.jamwiki.Environment;
 
 /**
  * Manager for lex extensions. Lex extensions are persisted as entries in a file at

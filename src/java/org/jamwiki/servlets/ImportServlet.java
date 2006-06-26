@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,24 +24,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
-import org.jmwiki.WikiMember;
-import org.jmwiki.WikiMembers;
-import org.jmwiki.model.Topic;
-import org.jmwiki.model.TopicVersion;
-import org.jmwiki.persistency.file.FileHandler;
-import org.jmwiki.persistency.file.FileNotify;
-import org.jmwiki.persistency.file.FileSearchEngine;
-import org.jmwiki.persistency.file.FileWikiMembers;
-import org.jmwiki.persistency.db.DatabaseHandler;
-import org.jmwiki.persistency.db.DatabaseWikiMembers;
-import org.jmwiki.persistency.db.DatabaseNotify;
+import org.jamwiki.WikiMember;
+import org.jamwiki.WikiMembers;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.persistency.file.FileNotify;
+import org.jamwiki.persistency.file.FileSearchEngine;
+import org.jamwiki.persistency.file.FileWikiMembers;
+import org.jamwiki.persistency.db.DatabaseHandler;
+import org.jamwiki.persistency.db.DatabaseWikiMembers;
+import org.jamwiki.persistency.db.DatabaseNotify;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class ImportServlet extends JMController implements Controller {
+public class ImportServlet extends JAMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(ImportServlet.class);
 
@@ -50,7 +50,7 @@ public class ImportServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		importFiles(request, next);
 		return next;
 	}

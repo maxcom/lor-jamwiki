@@ -14,12 +14,12 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import org.apache.log4j.Logger;
 
 /**
- * Represents a single user account in a JMWiki members list.
+ * Represents a single user account in a JAMWiki members list.
  */
 public class WikiMember implements java.io.Serializable {
 

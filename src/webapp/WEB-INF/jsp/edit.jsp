@@ -1,4 +1,4 @@
-<form name="form" method="post" action="<jmwiki:link value="Special:Edit" />">
+<form name="form" method="post" action="<jamwiki:link value="Special:Edit" />">
 <p>
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
 <input type="submit" name="action" value='<f:message key="edit.action.save"/>'/>

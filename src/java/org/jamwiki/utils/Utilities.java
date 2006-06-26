@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.utils;
+package org.jamwiki.utils;
 
 import java.lang.reflect.Method;
 import java.io.BufferedReader;
@@ -52,9 +52,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiBase;
-import org.jmwiki.persistency.file.FileHandler;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.persistency.file.FileHandler;
 
 /**
  *
@@ -404,7 +404,7 @@ public class Utilities {
 	 */
 	public static boolean isFirstUse() {
 		if (Environment.getBooleanValue(Environment.PROP_BASE_FIRST_USE)) {
-			logger.info("First use of JMWiki, creating admin password");
+			logger.info("First use of JAMWiki, creating admin password");
 			try {
 				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, generateNewAdminPassword());
 				Environment.setBooleanValue(Environment.PROP_BASE_FIRST_USE, false);

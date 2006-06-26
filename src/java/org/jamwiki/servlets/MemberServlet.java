@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -22,19 +22,19 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.PseudoTopicHandler;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiMember;
-import org.jmwiki.WikiMembers;
-import org.jmwiki.users.Usergroup;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMember;
+import org.jamwiki.WikiMembers;
+import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class MemberServlet extends JMController implements Controller {
+public class MemberServlet extends JAMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(MemberServlet.class);
 
@@ -43,7 +43,7 @@ public class MemberServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (false) {
 			// FIXME - used with email notifications
 			notify(request, response, next);
@@ -57,7 +57,7 @@ public class MemberServlet extends JMController implements Controller {
 	 */
 	// FIXME - shouldn't need to pass in response
 	private void notify(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String user = null;
 		if (request.getParameter("username") != null && request.getParameter("username").length() > 0) {
 			user = request.getParameter("username");
@@ -67,7 +67,7 @@ public class MemberServlet extends JMController implements Controller {
 		}
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
-		next.addObject(JMController.PARAMETER_TITLE, "Wiki Membership");
+		next.addObject(JAMController.PARAMETER_TITLE, "Wiki Membership");
 		next.addObject("user", user);
 		WikiMembers members = null;
 		Usergroup usergroup = null;
@@ -155,8 +155,8 @@ public class MemberServlet extends JMController implements Controller {
 	private void username(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_MEMBER);
-		next.addObject(JMController.PARAMETER_TITLE, "Wiki Membership");
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMController.PARAMETER_TITLE, "Wiki Membership");
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String user = null;
 		if (request.getParameter("username") != null && request.getParameter("username").length() > 0) {
 			user = request.getParameter("username");

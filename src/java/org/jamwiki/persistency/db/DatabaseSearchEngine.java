@@ -14,15 +14,15 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.jmwiki.AbstractSearchEngine;
-import org.jmwiki.WikiBase;
+import org.jamwiki.AbstractSearchEngine;
+import org.jamwiki.WikiBase;
 
 /**
  *
@@ -92,7 +92,7 @@ public class DatabaseSearchEngine extends AbstractSearchEngine {
 
 	/**
 	 * Get the filename of a topic file.
-	 * @see jmwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)
+	 * @see jamwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)
 	 */
 	protected String getFilename(String currentWiki, String topic) {
 		return null;

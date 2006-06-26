@@ -14,16 +14,16 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.file;
+package org.jamwiki.persistency.file;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.TreeSet;
-import org.jmwiki.AbstractSearchEngine;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.utils.TextFileFilter;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.AbstractSearchEngine;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.utils.TextFileFilter;
+import org.jamwiki.utils.Utilities;
 
 /**
  *
@@ -94,7 +94,7 @@ public class FileSearchEngine extends AbstractSearchEngine {
 
 	/**
 	 * Get the filename of a topic file.
-	 * @see jmwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)
+	 * @see jamwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)
 	 */
 	protected String getFilename(String currentWiki, String topic) {
 		return FileHandler.getPathFor(currentWiki, null, topic + FileHandler.EXT).getName();

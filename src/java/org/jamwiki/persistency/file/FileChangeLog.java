@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.file;
+package org.jamwiki.persistency.file;
 
 import java.io.*;
 import java.util.*;
@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import JSX.ObjIn;
 import JSX.ObjOut;
 import org.apache.log4j.Logger;
-import org.jmwiki.*;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.*;
+import org.jamwiki.utils.Utilities;
 
 /**
  *

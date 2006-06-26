@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,12 +25,12 @@ import java.util.Date;
 import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.jmwiki.Change;
-import org.jmwiki.ChangeLog;
-import org.jmwiki.Notify;
-import org.jmwiki.WikiBase;
-import org.jmwiki.Environment;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Change;
+import org.jamwiki.ChangeLog;
+import org.jamwiki.Notify;
+import org.jamwiki.WikiBase;
+import org.jamwiki.Environment;
+import org.jamwiki.utils.Utilities;
 
 /**
  *

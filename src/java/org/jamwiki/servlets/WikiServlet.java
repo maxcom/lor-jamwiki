@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,24 +33,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import org.jmwiki.ActionManager;
-import org.jmwiki.Environment;
-import org.jmwiki.PluginManager;
-import org.jmwiki.PseudoTopicHandler;
-import org.jmwiki.SearchEngine;
-import org.jmwiki.SearchResultEntry;
-import org.jmwiki.WikiAction;
-import org.jmwiki.WikiBase;
-import org.jmwiki.model.Topic;
-import org.jmwiki.users.Usergroup;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.ActionManager;
+import org.jamwiki.Environment;
+import org.jamwiki.PluginManager;
+import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.SearchEngine;
+import org.jamwiki.SearchResultEntry;
+import org.jamwiki.WikiAction;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
+import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /*
  *
  */
-public class WikiServlet extends JMController implements Controller {
+public class WikiServlet extends JAMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(WikiServlet.class);
 	// constants used as the action parameter in calls to this servlet
@@ -94,7 +94,7 @@ public class WikiServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {
@@ -124,8 +124,8 @@ public class WikiServlet extends JMController implements Controller {
 		String topic = null;
 		String virtualWiki = null;
 		try {
-			topic = JMController.getTopicFromURI(request);
-			virtualWiki = JMController.getVirtualWikiFromURI(request);
+			topic = JAMController.getTopicFromURI(request);
+			virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
@@ -186,7 +186,7 @@ public class WikiServlet extends JMController implements Controller {
 				} catch (Exception e) {
 					logger.error("error running action", e);
 					request.setAttribute("exception", e);
-					request.setAttribute(JMController.PARAMETER_TITLE, "Error");
+					request.setAttribute(JAMController.PARAMETER_TITLE, "Error");
 					log("Error in " + this.getClass(), e);
 					if (e instanceof WikiServletException) {
 						request.setAttribute("javax.servlet.jsp.jspException", e);
@@ -198,7 +198,7 @@ public class WikiServlet extends JMController implements Controller {
 		}
 		logger.debug("no action mappings, assuming topic");
 		request.setAttribute("topic", Utilities.decodeURL(topic));
-		request.setAttribute(JMController.PARAMETER_TITLE, Utilities.decodeURL(topic));
+		request.setAttribute(JAMController.PARAMETER_TITLE, Utilities.decodeURL(topic));
 		// make decision based on topic
 		response.setContentType("text/html");
 		String pseudotopicRedirect = PseudoTopicHandler.getInstance().getRedirectURL(topic);
@@ -231,28 +231,28 @@ public class WikiServlet extends JMController implements Controller {
 			request, "leftMenu", getCachedContent(
 				request.getContextPath(),
 				virtualWiki,
-				JMController.getMessage("specialpages.leftMenu", request.getLocale())
+				JAMController.getMessage("specialpages.leftMenu", request.getLocale())
 			)
 		);
 		request.setAttribute(
 			"topArea", getCachedContent(
 				request.getContextPath(),
 				virtualWiki,
-				JMController.getMessage("specialpages.topArea", request.getLocale())
+				JAMController.getMessage("specialpages.topArea", request.getLocale())
 			)
 		);
 		request.setAttribute(
 			"bottomArea", getCachedContent(
 				request.getContextPath(),
 				virtualWiki,
-				JMController.getMessage("specialpages.bottomArea", request.getLocale())
+				JAMController.getMessage("specialpages.bottomArea", request.getLocale())
 			)
 		);
 		request.setAttribute(
 			"StyleSheet", getCachedRawContent(
 				request.getContextPath(),
 				virtualWiki,
-				JMController.getMessage("specialpages.stylesheet", request.getLocale())
+				JAMController.getMessage("specialpages.stylesheet", request.getLocale())
 			)
 		);
 	}
@@ -269,7 +269,7 @@ public class WikiServlet extends JMController implements Controller {
 		try {
 			if (WikiBase.getInstance().isAdminOnlyTopic(request.getLocale(), virtualWiki, topic)) {
 				if (!Utilities.isAdmin(request)) {
-					request.setAttribute(JMController.PARAMETER_TITLE, JMController.getMessage("login.title", request.getLocale()));
+					request.setAttribute(JAMController.PARAMETER_TITLE, JAMController.getMessage("login.title", request.getLocale()));
 					logger.debug("Current URL: " + request.getRequestURL());
 					String rootPath = Utilities.createLocalRootPath(request, virtualWiki);
 					StringBuffer buffer = new StringBuffer();
@@ -361,7 +361,7 @@ public class WikiServlet extends JMController implements Controller {
 					buffer.append("<br /><br /><span class=\"backlinks\">");
 					buffer.append(topic);
 					buffer.append(" ");
-					buffer.append(JMController.getMessage("topic.ismentionedon", request.getLocale()));
+					buffer.append(JAMController.getMessage("topic.ismentionedon", request.getLocale()));
 					buffer.append(" ");
 					Iterator it = results.iterator();
 					String divider = "";
@@ -580,7 +580,7 @@ public class WikiServlet extends JMController implements Controller {
 		response.setContentType("text/html");
 		String virtualWiki = null;
 		try {
-			virtualWiki = JMController.getVirtualWikiFromURI(request);
+			virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
@@ -595,9 +595,9 @@ public class WikiServlet extends JMController implements Controller {
 			// first, convert locale-specific action into a constant.  this isn't
 			// terribly important with the current code, but if anything is to
 			// be done with action values in the future it will be helpful.
-			if (checkAction(action, JMController.getMessage("edit.action.preview", request.getLocale()))) {
+			if (checkAction(action, JAMController.getMessage("edit.action.preview", request.getLocale()))) {
 				action = ACTION_PREVIEW;
-			} else if (action.equals(JMController.getMessage("edit.action.cancel", request.getLocale()))) {
+			} else if (action.equals(JAMController.getMessage("edit.action.cancel", request.getLocale()))) {
 				action = ACTION_CANCEL;
 			}
 			if (actionRedirect != null) {

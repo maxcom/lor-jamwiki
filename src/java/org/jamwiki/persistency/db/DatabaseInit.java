@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -24,17 +24,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.model.TopicVersion;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiMember;
-import org.jmwiki.WikiMembers;
-import org.jmwiki.WikiVersion;
-import org.jmwiki.persistency.file.FileHandler;
-import org.jmwiki.persistency.file.FileNotify;
-import org.jmwiki.persistency.file.FileWikiMembers;
-import org.jmwiki.utils.Encryption;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMember;
+import org.jamwiki.WikiMembers;
+import org.jamwiki.WikiVersion;
+import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.persistency.file.FileNotify;
+import org.jamwiki.persistency.file.FileWikiMembers;
+import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 
 /**
  *
@@ -331,7 +331,7 @@ public class DatabaseInit {
 	}
 
 	/**
-	 * If the JMWiki version has changed update the database as needed.
+	 * If the JAMWiki version has changed update the database as needed.
 	 */
 	public void upgrade() throws Exception {
 		if (WikiVersion.getCurrentVersion().before(0, 0, 1)) {

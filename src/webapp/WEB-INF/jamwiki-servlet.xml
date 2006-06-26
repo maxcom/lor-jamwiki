@@ -36,24 +36,24 @@
 		</property>
 	</bean>
 
-	<bean id="topicController" class="org.jmwiki.servlets.TopicController" />
-	<bean id="adminController" class="org.jmwiki.servlets.AdminController" />
-	<bean id="Search" class="org.jmwiki.servlets.SearchServlet" />
-	<bean id="SaveAttachment" class="org.jmwiki.servlets.SaveAttachmentServlet" />
-	<bean id="Notify" class="org.jmwiki.servlets.NotifyServlet" />
-	<bean id="ViewAttachment" class="org.jmwiki.servlets.ViewAttachmentServlet" />
-	<bean id="Diff" class="org.jmwiki.servlets.DiffServlet" />
-	<bean id="Attach" class="org.jmwiki.servlets.AttachServlet" />
-	<bean id="Member" class="org.jmwiki.servlets.MemberServlet" />
-	<bean id="Printable" class="org.jmwiki.servlets.PrintableServlet" />
-	<bean id="Edit" class="org.jmwiki.servlets.EditServlet" />
-	<bean id="History" class="org.jmwiki.servlets.HistoryServlet" />
-	<bean id="LockList" class="org.jmwiki.servlets.LockListServlet" />
-	<bean id="Login" class="org.jmwiki.servlets.LoginServlet" />
-	<bean id="RecentChanges" class="org.jmwiki.servlets.RecentChangesServlet" />
-	<bean id="RSS" class="org.jmwiki.servlets.RSSServlet" />
-	<bean id="Import" class="org.jmwiki.servlets.ImportServlet" />
-	<bean id="VirtualWikiList" class="org.jmwiki.servlets.VirtualWikiServlet" />
+	<bean id="topicController" class="org.jamwiki.servlets.TopicController" />
+	<bean id="adminController" class="org.jamwiki.servlets.AdminController" />
+	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
+	<bean id="SaveAttachment" class="org.jamwiki.servlets.SaveAttachmentServlet" />
+	<bean id="Notify" class="org.jamwiki.servlets.NotifyServlet" />
+	<bean id="ViewAttachment" class="org.jamwiki.servlets.ViewAttachmentServlet" />
+	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
+	<bean id="Attach" class="org.jamwiki.servlets.AttachServlet" />
+	<bean id="Member" class="org.jamwiki.servlets.MemberServlet" />
+	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
+	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
+	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
+	<bean id="LockList" class="org.jamwiki.servlets.LockListServlet" />
+	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
+	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
+	<bean id="RSS" class="org.jamwiki.servlets.RSSServlet" />
+	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
+	<bean id="VirtualWikiList" class="org.jamwiki.servlets.VirtualWikiServlet" />
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass">
 		   <value>org.springframework.web.servlet.view.JstlView</value>

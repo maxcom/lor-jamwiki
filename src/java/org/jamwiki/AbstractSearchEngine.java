@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,11 +55,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.RAMDirectory;
-import org.jmwiki.parser.alt.BackLinkLex;
-import org.jmwiki.utils.Utilities;
-import org.jmwiki.utils.lucene.HTMLParser;
-import org.jmwiki.utils.lucene.LuceneTools;
-import org.jmwiki.utils.lucene.SimpleKeepNumbersAnalyzer;
+import org.jamwiki.parser.alt.BackLinkLex;
+import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.lucene.HTMLParser;
+import org.jamwiki.utils.lucene.LuceneTools;
+import org.jamwiki.utils.lucene.SimpleKeepNumbersAnalyzer;
 
 /*
  *
@@ -404,7 +404,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		}
 		try {
 			// check, if classes are here:
-			Class.forName("org.jmwiki.utils.lucene.HTMLParser");
+			Class.forName("org.jamwiki.utils.lucene.HTMLParser");
 			canParseHTML = true;
 		} catch (ClassNotFoundException e) {
 			canParseHTML = false;
@@ -596,7 +596,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				}
 				if (canParsePDF && ("pdf".equals(extension))) {
 					try {
-						Class pdfclass = Class.forName("org.jmwiki.utils.lucene.PDFDocument");
+						Class pdfclass = Class.forName("org.jamwiki.utils.lucene.PDFDocument");
 						Object pdfdocument = pdfclass.newInstance();
 						Method method = pdfclass.getMethod("getContentOfPDFFile", new Class[]{String.class, File.class});
 						Object result = method.invoke(pdfdocument, new Object[]{attachmentFileName, attachmentFile});

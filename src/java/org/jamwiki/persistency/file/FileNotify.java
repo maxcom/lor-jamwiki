@@ -14,14 +14,14 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.file;
+package org.jamwiki.persistency.file;
 
 import java.io.*;
 import java.util.*;
 import org.apache.log4j.Logger;
-import org.jmwiki.AbstractNotify;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiException;
+import org.jamwiki.AbstractNotify;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiException;
 
 /**
  * Implementation of Notify which stores notification records in text files.
@@ -44,7 +44,7 @@ public class FileNotify extends AbstractNotify {
 	 * Instantiates and reads in a Notify object.
 	 *
 	 * @param newTopicName  the topic name with which this notification is associated
-	 * @exception jmwiki.WikiException if the file could not be opened or read
+	 * @exception jamwiki.WikiException if the file could not be opened or read
 	 */
 	public FileNotify(String virtualWiki, String newTopicName) throws WikiException {
 		this.topicName = newTopicName;
@@ -121,7 +121,7 @@ public class FileNotify extends AbstractNotify {
 	 * Adds a user to the list of members to be notified when the associated topic changes.
 	 *
 	 * @param userName  the name of the user to add
-	 * @exception jmwiki.WikiException if the file could not be written
+	 * @exception jamwiki.WikiException if the file could not be written
 	 */
 	public void addMember(String userName) throws WikiException {
 		membersToNotify.add(userName);
@@ -132,7 +132,7 @@ public class FileNotify extends AbstractNotify {
 	 * Removes a user from the list of members to be notified when the associated topic changes.
 	 *
 	 * @param userName  the name of the user to remove
-	 * @exception jmwiki.WikiException if the file could not be written
+	 * @exception jamwiki.WikiException if the file could not be written
 	 */
 	public synchronized void removeMember(String userName) throws WikiException {
 		membersToNotify.remove(userName);
@@ -154,7 +154,7 @@ public class FileNotify extends AbstractNotify {
 	}
 
 	/**
-	 * Retrieves the home directory of the JMWiki installation.
+	 * Retrieves the home directory of the JAMWiki installation.
 	 *
 	 * @return String the home directory
 	 */

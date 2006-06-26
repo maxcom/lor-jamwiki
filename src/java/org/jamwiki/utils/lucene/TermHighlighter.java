@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.jmwiki.utils.lucene;
+package org.jamwiki.utils.lucene;
 
 /**
  *

@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +34,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.jmwiki.parser.alt.LexExtender;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.parser.alt.LexExtender;
+import org.jamwiki.utils.Utilities;
 
 /**
  * Manager for loading plugins from zip files. The plugins directory is a directory under

@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import java.util.Date;
 import java.util.Properties;
@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  * Sends mail via SMTP to the specified host. <b>REDISTRIBUTION:</b> you
  * will either have to hard-code your own SMTP host name into the constructor
  * function and recompile, or rewrite the Environment class to record
- * this information in the jmwiki.properties file.
+ * this information in the jamwiki.properties file.
  */
 public class WikiMail {
 

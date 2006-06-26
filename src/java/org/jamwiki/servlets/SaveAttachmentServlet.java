@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,20 +35,20 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
-import org.jmwiki.Change;
-import org.jmwiki.ChangeLog;
-import org.jmwiki.Environment;
-import org.jmwiki.model.Topic;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Change;
+import org.jamwiki.ChangeLog;
+import org.jamwiki.Environment;
+import org.jamwiki.model.Topic;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class SaveAttachmentServlet extends JMController implements Controller {
+public class SaveAttachmentServlet extends JAMController implements Controller {
 
 	/** Logger */
 	public static final Logger logger = Logger.getLogger(SaveAttachmentServlet.class);
@@ -60,7 +60,7 @@ public class SaveAttachmentServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

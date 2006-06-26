@@ -14,23 +14,23 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.utils.Encryption;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class LoginServlet extends JMController implements Controller {
+public class LoginServlet extends JAMController implements Controller {
 
 	/** Logger */
 	private static final Logger logger = Logger.getLogger(LoginServlet.class);
@@ -40,7 +40,7 @@ public class LoginServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (isAction(request, null, WikiServlet.ACTION_LOGOUT)) {
 			// FIXME - response is non-standard here
 			logout(request, response, next);
@@ -60,7 +60,7 @@ public class LoginServlet extends JMController implements Controller {
 	 *
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		request.getSession().invalidate();
 		String redirect = request.getParameter("redirect");
 		if (redirect == null || redirect.length() == 0) {
@@ -75,7 +75,7 @@ public class LoginServlet extends JMController implements Controller {
 	 *
 	 */
 	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");

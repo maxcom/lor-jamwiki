@@ -1,17 +1,17 @@
 /*
  * This class adds paragraph tags as appropriate.
  */
-package org.jmwiki.parser;
+package org.jamwiki.parser;
 
 import java.util.Stack;
 import org.apache.log4j.Logger;
-import org.jmwiki.WikiBase;
+import org.jamwiki.WikiBase;
 
 %%
 
 %public
 %class MediaWikiHTML
-%implements org.jmwiki.parser.Lexer
+%implements org.jamwiki.parser.Lexer
 %type String
 %unicode
 

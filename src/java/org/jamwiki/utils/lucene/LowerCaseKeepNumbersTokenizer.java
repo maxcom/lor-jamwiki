@@ -3,7 +3,7 @@
  * Changes as described in http://www.geocrawler.com/archives/3/2624/2000/11/0/4746798/
  */
 
-package org.jmwiki.utils.lucene;
+package org.jamwiki.utils.lucene;
 
 /* ====================================================================
  * The Apache Software License, Version 1.1

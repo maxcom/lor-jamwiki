@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -24,15 +24,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
  */
-public abstract class JMController extends HttpServlet {
+public abstract class JAMController extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(JMController.class);
+	private static final Logger logger = Logger.getLogger(JAMController.class);
 	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
@@ -42,7 +42,7 @@ public abstract class JMController extends HttpServlet {
 	 */
 	protected void error(HttpServletRequest request, HttpServletResponse response, Exception err) {
 		request.setAttribute("exception", err);
-		request.setAttribute(JMController.PARAMETER_TITLE, "Error");
+		request.setAttribute(JAMController.PARAMETER_TITLE, "Error");
 		logger.error(err.getMessage(), err);
 		if (err instanceof WikiServletException) {
 			request.setAttribute("javax.servlet.jsp.jspException", err);
@@ -115,38 +115,38 @@ public abstract class JMController extends HttpServlet {
 	 *
 	 */
 	public static void buildLayout(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		if (virtualWiki == null) {
 			throw new Exception("Invalid virtual wiki");
 		}
-		String topic = JMController.getTopicFromRequest(request);
+		String topic = JAMController.getTopicFromRequest(request);
 		if (topic == null) {
-			topic = JMController.getTopicFromURI(request);
+			topic = JAMController.getTopicFromURI(request);
 		}
 		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
 		String leftMenu = WikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JMController.getMessage("specialpages.leftMenu", request.getLocale())
+			JAMController.getMessage("specialpages.leftMenu", request.getLocale())
 		);
 		next.addObject("leftMenu", leftMenu);
 		String topArea = WikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JMController.getMessage("specialpages.topArea", request.getLocale())
+			JAMController.getMessage("specialpages.topArea", request.getLocale())
 		);
 		next.addObject("topArea", topArea);
 		String bottomArea = WikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JMController.getMessage("specialpages.bottomArea", request.getLocale())
+			JAMController.getMessage("specialpages.bottomArea", request.getLocale())
 		);
 		next.addObject("bottomArea", bottomArea);
 		String styleSheet = WikiServlet.getCachedRawContent(
 			request.getContextPath(),
 			virtualWiki,
-			JMController.getMessage("specialpages.stylesheet", request.getLocale())
+			JAMController.getMessage("specialpages.stylesheet", request.getLocale())
 		);
 		next.addObject("StyleSheet", styleSheet);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
@@ -184,9 +184,9 @@ public abstract class JMController extends HttpServlet {
 	 *
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		String topic = request.getParameter(JMController.PARAMETER_TOPIC);
+		String topic = request.getParameter(JAMController.PARAMETER_TOPIC);
 		if (topic == null) {
-			topic = (String)request.getAttribute(JMController.PARAMETER_TOPIC);
+			topic = (String)request.getAttribute(JAMController.PARAMETER_TOPIC);
 		}
 		if (topic == null) return null;
 		topic = Utilities.decodeURL(topic);
@@ -221,7 +221,7 @@ public abstract class JMController extends HttpServlet {
 		if (action == null || action.length() == 0) {
 			return false;
 		}
-		if (key != null &&  action.equals(JMController.getMessage(key, request.getLocale()))) {
+		if (key != null &&  action.equals(JAMController.getMessage(key, request.getLocale()))) {
 			return true;
 		}
 		if (constant != null && action.equals(constant)) {
@@ -235,7 +235,7 @@ public abstract class JMController extends HttpServlet {
 	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
-			String topic = JMController.getTopicFromURI(request);
+			String topic = JAMController.getTopicFromURI(request);
 			if (topic == null || topic.length() == 0) {
 				return false;
 			}

@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki;
+package org.jamwiki;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -35,7 +35,7 @@ public interface ChangeLog {
 
 	/**
 	 * Removes some changes along with the topic name. This happens if someone
-	 * purges topics from the jmwiki.
+	 * purges topics from the jamwiki.
 	 * @param virtualwiki the virtual wiki to delete the topics.
 	 * @param cl		  a collection of the topics to be deleted.
 	 * @throws Exception
@@ -48,7 +48,7 @@ public interface ChangeLog {
 	 * @param d		   the date of the recent changes.
 	 * @return			A collection of changes
 	 * @throws Exception
-	 * @see jmwiki.Change
+	 * @see jamwiki.Change
 	 */
 	public Collection getChanges(String virtualWiki, Date d) throws Exception;
 }

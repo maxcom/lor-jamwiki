@@ -1,10 +1,10 @@
-This file is here for historical purposes only. Please see the site at http://www.jmwiki.org
+This file is here for historical purposes only. Please see the site at http://www.jamwiki.org
 
----FAQ for the Java MediaWiki last updated 30 September 2002---
+---FAQ for the JAMWiki last updated 30 September 2002---
 
 ---General Questions---
 
-*How do I install Java MediaWiki?
+*How do I install JAMWiki?
 
 Follow your application server instructions for deploying a WAR. Usually it's just a matter
 of plonking the WAR file into the webapps directory.
@@ -18,8 +18,8 @@ server instructions for setting up users and roles (realms).
 
 *Why do I get a "method/symbol not found" error for getRequestURL()
 
-JMWiki uses the Servlets 2.3 API as release in 2000 and available with Tomcat 4.x, J2EE 1.3,
-JRun 4 etc. Servlets 2.2 won't work well with JMWiki.
+JAMWiki uses the Servlets 2.3 API as release in 2000 and available with Tomcat 4.x, J2EE 1.3,
+JRun 4 etc. Servlets 2.2 won't work well with JAMWiki.
 
 ---Config Questions---
 
@@ -43,7 +43,7 @@ back-ticks to do your linking.
 
 Thanks to Rod Morimoto:
 
-IE would handle the jmwiki pages fine but netscape wouldn't and instead
+IE would handle the jamwiki pages fine but netscape wouldn't and instead
 just show the html source.
 We modified DefaultType on httpd.conf from text/plain to text/html.
 Apparently Netscape interprets text/plain as simply that, while

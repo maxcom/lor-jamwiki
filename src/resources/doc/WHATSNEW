@@ -1,4 +1,4 @@
----WHAT'S NEW for Java MediaWiki V2.7.x---
+---WHAT'S NEW for JAMWiki V2.7.x---
 
 2.7.8
 
@@ -8,7 +8,7 @@
     - Fixed: Wrong special chars handling in RSSServlet
     - Fixed: Wrong special chars handling in search box
     - Fixed: Non localized messages in top navigation bar History page
-    - Fixed: jmwiki.PluginManager cannot find file
+    - Fixed: jamwiki.PluginManager cannot find file
     - Fixed: Lists break without spaces-to-tabs enabled
     - Fixed: System claims lock is taken by someone else even when it is not
     - Fixed: When I use [[UC 0002]] as an internal link it does not recognize it as a link.
@@ -24,13 +24,13 @@
     - Fixed: Diff.java license appears incompatible with LGPL
     - Fixed: Search in ExportHTML doesn't work.
     - Fixed: Issue with generating membership confirmation email
-    - Fixed: JMWiki crashes on first use on WebSphere 5 (used to work)
+    - Fixed: JAMWiki crashes on first use on WebSphere 5 (used to work)
     - Fixed: Deleted topic remains on recent changes
 
     Improvement / Patch
 
     - Added: Full support of Lucene Query Syntax
-    - Added: Adding prettylink in the form [http://www.jmwiki.org | the quicky wiki]
+    - Added: Adding prettylink in the form [http://www.jamwiki.org | the quicky wiki]
     - Added: Add style class to tables produced by ####
     - Added: Unsubscribe link in mail
     - Added: Spanish translation
@@ -47,14 +47,14 @@
     
     Special Notes on version 2.7.8:
     
-    1. A new security contraint was added to the web.xml file. This will implement basic authentication for JMWiki.
+    1. A new security contraint was added to the web.xml file. This will implement basic authentication for JAMWiki.
        It is turned off by default. To turn it on, uncomment the security-constraint section in web.xml and restart the application.
        Functionality: Shows a basic authentication pop-up so users can be authenticated against third party system.
                       (with auth-ldap for example) If it is turned off, the normal cookie method will be used.
     2. A new diff function was introduced. It uses stylesheet based layout, please also see the UPGRADE document.
     3. It is now possible to redirect to topics with spaces. If the first word in the content is redirect, the rest will be used
        as the destination topic.
-    4. Passwords in the jmwiki.properties file can be encrypted now, see the admin screen.
+    4. Passwords in the jamwiki.properties file can be encrypted now, see the admin screen.
 
 2.7.7
     - Fixed bug in RSS feed where partial html codes in the description broke the feed
@@ -65,7 +65,7 @@
     - Added Swedish translation
     - Updated German translation
     - Updated Dutch translation
-    - Added new documentation: the JMWiki Book, supplied in DocBook and HTML formats with the WAR file
+    - Added new documentation: the JAMWiki Book, supplied in DocBook and HTML formats with the WAR file
       and downloadable as a PDF from the site. This new document replaces the old admin guide.
 
 2.7.6
@@ -92,9 +92,9 @@ Will render the HTML: <a href="http://c2.com/cgi/wiki?StartingPoints>C2 Starting
 
 2.7.1
 
-Added support for actions to the plugin manager. Classes that implement jmwiki.WikiAction can be implemented and
+Added support for actions to the plugin manager. Classes that implement jamwiki.WikiAction can be implemented and
 placed in plugin zips. The WikiAction.doAction() method supplies the servlet request and response so there is now
-no need to write new servlets and add mappings to web.xml to extend JMWiki functionality, they can be created as
+no need to write new servlets and add mappings to web.xml to extend JAMWiki functionality, they can be created as
 plugins rather than in the main code stream.
 
 Altered menu so that it picks up the "StartingPoints" link from the default topic setting in the admin console. If
@@ -210,7 +210,7 @@ banner) and a "Bottom Area" (for sponsors etc.)
 "AdminOnlyTopics" special wiki topic contains a white-space separated list of topics that only admin should be allowed
 to read or edit. By default this includes AdminOnlyTopics, TopArea, BottomArea and LeftMenu.
 
-Back-porting of JFlex from JMWiki 3 Alpha to replace the ageing JLex based lexical analyser 
+Back-porting of JFlex from JAMWiki 3 Alpha to replace the ageing JLex based lexical analyser 
 generation. This together with the addition of UTF-8 encoding by Martin Kuba for flat-file mode should
 clear up problems with non-Latin characters.
 
@@ -335,7 +335,7 @@ Tobias also created an RSS feed: e.g. http://localhost:8080/wiki/jsp/Wiki?RSS
 
 For developers: reorganized package structure thanks to J Carlsson's suggestion.
 
-For users: the lexers now have the logical names jmwiki.lex.LinkLex etc when setting them
+For users: the lexers now have the logical names jamwiki.lex.LinkLex etc when setting them
 in the admin console. This means they will need setting on an upgrade, if you use your old
 properties file so set add the .lex bit to each of the lexers names (see UPGRADE for more
 lucid instructions).
@@ -351,7 +351,7 @@ Java2HTML upgrade - thankyou Markus Gebhard.
 Improved performance of RecentChanges in file mode.
 
 "ANSI-fied" the SQL used to create tables and to search the database. This means that
-JMWiki should now work with most databases. Added an admin console option for "database type".
+JAMWiki should now work with most databases. Added an admin console option for "database type".
 This defaults to "mysql", but can be set to "ansi" to use the ANSI SQL.
 
 Topic redirection. To make one topic automatically redirect to another, simply make the
@@ -361,7 +361,7 @@ to "TopicName". So, there is a forced edit format: "edit:TopicName" will link di
 to the edit of "TopicName".
 
 Internal security management. The web appliaction security context is no longer used
-for admin console authentication. The first time you run (or upgrade to 2.5.0) JMWiki
+for admin console authentication. The first time you run (or upgrade to 2.5.0) JAMWiki
 you will be shown a password on the first topic you access. This is the admin password.
 The admin username is "admin".
 
@@ -454,10 +454,10 @@ Extensible lexer system including Java source code formatting as an example. Sur
 Java code in [<java>] [</java>] to see the effects.
 
 Extensible lexer also provides full HTML include: surround HTML in [<html>] [</html>] and
-JMWiki will ignore the markup and output HTML exactly as entered.
+JAMWiki will ignore the markup and output HTML exactly as entered.
 
 Much of the scriptlet code in the JSPs has been replaced with common taglib tags and
-custom JMWiki tags. This makes the JSPs a lot easier to debug and enhance.
+custom JAMWiki tags. This makes the JSPs a lot easier to debug and enhance.
 
 2.3.6
 
@@ -530,7 +530,7 @@ Printable page link in topic menus brings up a page with just the header and con
 
 The number of line breaks to insert in the HTML on a new line in the text can be set
 from the admin console. This means you can squeeze everything up a bit by setting it to "1"
-rather than "2" (which is what JMWiki has been using until now - the default is 2).
+rather than "2" (which is what JAMWiki has been using until now - the default is 2).
 
 Extensible links. "links.properties" now holds expansions for prefix:url format links. This
 makes it easy to add extra linking to other Wikis or internal web systems like WebCVS.
@@ -616,7 +616,7 @@ Added supported for a deployer-defined logo image.
 2.0 BETA 2
 
 Change from GPL to LGPL for licence on advice of many people. Particularly because of
-the inclusion of non-GPL library code in JMWiki (log4j).
+the inclusion of non-GPL library code in JAMWiki (log4j).
 
 Added read-only topic support to database layer (previously only for flat-file mode).
 
@@ -704,9 +704,9 @@ by default.
 
 1.7.0
 Custom wiki directory can be set by placing a properties file called
-"jmwiki.properties" in the working directory for the web container and
+"jamwiki.properties" in the working directory for the web container and
 setting a property "dir" to a directory name (the directory will be
-created by jmwiki on startup).
+created by jamwiki on startup).
 
 Topics can be made read-only from the admin console.
 
@@ -741,4 +741,4 @@ Improved UI.
 Admin console.
 Search engine.
 
-Comments to jmwiki@veryquick.org
+Comments to jamwiki@veryquick.org

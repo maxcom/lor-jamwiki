@@ -2,13 +2,13 @@
 <head>
 
 <%@ page import="
-	org.jmwiki.servlets.WikiServlet
+	org.jamwiki.servlets.WikiServlet
 " errorPage="/WEB-INF/jsp/error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
+<%@ taglib uri="/WEB-INF/classes/jamwiki.tld" prefix="jamwiki" %>
 <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
 <f:setBundle basename="ApplicationResources"/>
-<link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/jmwiki.css' type="text/css" />
+<link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/jamwiki.css' type="text/css" />
 <style type="text/css">
     @media print { /* if the page is printed, hide the hr line */ 
 	  hr { width:0px; color:white; }

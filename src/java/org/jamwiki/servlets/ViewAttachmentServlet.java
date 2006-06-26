@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.*;
 import java.util.HashMap;
@@ -24,15 +24,15 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class ViewAttachmentServlet extends JMController implements Controller {
+public class ViewAttachmentServlet extends JAMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(ViewAttachmentServlet.class);
 

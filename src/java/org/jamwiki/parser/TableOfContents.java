@@ -14,14 +14,14 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.parser;
+package org.jamwiki.parser;
 
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
+import org.jamwiki.Environment;
 
 /**
  * Experimental class. This class may be used in two ways:

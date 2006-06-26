@@ -1,22 +1,22 @@
----MySQL README for Java MediaWiki V2.1---
+---MySQL README for JAMWiki V2.1---
 
 You must have the MySQL JDBC driver installed in the lib directory of your web container,
-or in the lib directory for the JMWiki webapp. On Tomcat, this would be 
-$TOMCAT_HOME/webapps/jmwiki-2.1/lib
-You can download the jmwiki distrbution with the MySQL driver already installed, or you
+or in the lib directory for the JAMWiki webapp. On Tomcat, this would be 
+$TOMCAT_HOME/webapps/jamwiki-2.1/lib
+You can download the jamwiki distrbution with the MySQL driver already installed, or you
 can download the latest driver from:
 http://sourceforge.net/project/showfiles.php?group_id=15923
 
-Java MediaWiki will setup its own tables on startup, provided that the connection settings
+JAMWiki will setup its own tables on startup, provided that the connection settings
 are correct, but before running it, you need to create the MySQL database and grant the 
-appropriate access rights to the jmwiki user.
+appropriate access rights to the jamwiki user.
 
-The default settings are for a database called "jmwiki" with a user called "jmwiki" with
-password "jmwiki". If you were to use those settings, and the MySQL server is running on
+The default settings are for a database called "jamwiki" with a user called "jamwiki" with
+password "jamwiki". If you were to use those settings, and the MySQL server is running on
 the same machine as the web container, the following two statements will prepare the database:
 
-create database jmwiki;
-grant all on jmwiki.* to jmwiki@localhost identified by 'jmwiki';
+create database jamwiki;
+grant all on jamwiki.* to jamwiki@localhost identified by 'jamwiki';
 
 The easiest way to do this is to find your MySQL binary - on Windows this is called "mysql.exe"
 and is in your <mysql-home>\bin directory. On Linux it's just called "mysql" and is usually in

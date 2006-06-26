@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.file;
+package org.jamwiki.persistency.file;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,18 +40,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.TopicLock;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.model.Topic;
-import org.jmwiki.model.TopicVersion;
-import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.persistency.db.DBDate;
-import org.jmwiki.servlets.JMController;
-import org.jmwiki.utils.DiffUtil;
-import org.jmwiki.utils.TextFileFilter;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.TopicLock;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.persistency.PersistencyHandler;
+import org.jamwiki.persistency.db.DBDate;
+import org.jamwiki.servlets.JAMController;
+import org.jamwiki.utils.DiffUtil;
+import org.jamwiki.utils.TextFileFilter;
+import org.jamwiki.utils.Utilities;
 
 /**
  *
@@ -168,12 +168,12 @@ public class FileHandler implements PersistencyHandler {
 				dummy = getPathFor(vWiki, null, "");
 				dummy = getPathFor(vWiki, null, VERSION_DIR);
 				// write out default topics
-				setupSpecialPage(vWiki, JMController.getMessage("specialpages.startingpoints", locale));
-				setupSpecialPage(vWiki, JMController.getMessage("specialpages.leftMenu", locale));
-				setupSpecialPage(vWiki, JMController.getMessage("specialpages.topArea", locale));
-				setupSpecialPage(vWiki, JMController.getMessage("specialpages.bottomArea", locale));
-				setupSpecialPage(vWiki, JMController.getMessage("specialpages.stylesheet", locale));
-				setupSpecialPage(vWiki, JMController.getMessage("specialpages.adminonlytopics", locale));
+				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.startingpoints", locale));
+				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.leftMenu", locale));
+				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.topArea", locale));
+				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.bottomArea", locale));
+				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.stylesheet", locale));
+				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
 				loadReadOnlyTopics(vWiki);
 			}
 			in.close();

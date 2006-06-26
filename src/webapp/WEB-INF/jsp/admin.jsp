@@ -1,9 +1,9 @@
 <%@ page import="
-    org.jmwiki.Environment,
-    org.jmwiki.WikiBase,
-    org.jmwiki.servlets.WikiServlet,
-    org.jmwiki.utils.Encryption,
-    org.jmwiki.users.Usergroup,
+    org.jamwiki.Environment,
+    org.jamwiki.WikiBase,
+    org.jamwiki.servlets.WikiServlet,
+    org.jamwiki.utils.Encryption,
+    org.jamwiki.users.Usergroup,
     java.util.ArrayList,
     java.util.Collection,
     java.util.Iterator,
@@ -86,7 +86,7 @@ function onUserGroupType() {
 }
 </script>
 
-<form action="<jmwiki:link value="Special:Login" />" method="get">
+<form action="<jamwiki:link value="Special:Login" />" method="get">
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_LOGOUT %>"/>
   <table>
     <tr>
@@ -94,7 +94,7 @@ function onUserGroupType() {
     </tr>
   </table>
 </form>
-<form name="form1" method="post" action="<jmwiki:link value="Special:Admin" />">
+<form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
 <c:if test="${!empty message}"><p class="red"><c:out value="${message}" /></p></c:if>
   <p class="subHeader"><f:message key="admin.title.settings"/></p>
   <table border="0" class="contents">
@@ -552,7 +552,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.refresh"/></p>
-<form name="refreshform" method="post" action="<jmwiki:link value="Special:Admin" />">
+<form name="refreshform" method="post" action="<jamwiki:link value="Special:Admin" />">
   <input type="submit" name="submit" value="<f:message key="admin.action.refresh"/>"/>
   <f:message key="admin.message.filemodeonly"/>
   <input type="hidden" name="function" value="refreshIndex"/>
@@ -560,7 +560,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.purge"/></p>
-<form name="purgeform" method="post" action="<jmwiki:link value="Special:Admin" />">
+<form name="purgeform" method="post" action="<jamwiki:link value="Special:Admin" />">
 <f:message key="admin.caption.virtualwiki"/>
 <select name="virtualWiki">
 <option value="jsp"><f:message key="common.default"/></option>
@@ -586,7 +586,7 @@ function onUserGroupType() {
 <hr/>
 <%-- FIXME - restore virtual wiki --%>
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
-<form name="readOnlyTopics" method="post" action="<jmwiki:link value="Special:Admin" />">
+<form name="readOnlyTopics" method="post" action="<jamwiki:link value="Special:Admin" />">
   <input type="hidden" name="action" value="<%= WikiServlet.ACTION_ADMIN %>"/>
   <input type="hidden" name="function" value="readOnly">
   <table border="0">
@@ -622,7 +622,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.virtualwiki"/></p>
-<form action="<jmwiki:link value="Special:Admin" />" method="post">
+<form action="<jamwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
       <td><p><f:message key="common.name"/></p></td><td><input type="textfield" name="newVirtualWiki"/></td>
@@ -634,7 +634,7 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.changepassword"/></p>
-<form action="<jmwiki:link value="Special:Admin" />" method="post">
+<form action="<jamwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
       <td><f:message key="admin.caption.oldpassword"/></td>
@@ -657,10 +657,10 @@ function onUserGroupType() {
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.import"/></p>
-<a href="<jmwiki:link value="Special:Import" />"><f:message key="admin.caption.startimport"/></a>
+<a href="<jamwiki:link value="Special:Import" />"><f:message key="admin.caption.startimport"/></a>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
-<form action="<jmwiki:link value="Special:Admin" />" method="post">
+<form action="<jamwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
       <td><f:message key="admin.caption.panic"/></td>

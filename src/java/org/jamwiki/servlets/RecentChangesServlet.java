@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,16 +24,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.ChangeLog;
-import org.jmwiki.Environment;
-import org.jmwiki.WikiBase;
+import org.jamwiki.ChangeLog;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class RecentChangesServlet extends JMController implements Controller {
+public class RecentChangesServlet extends JAMController implements Controller {
 
 	private static final Logger logger = Logger.getLogger(RecentChangesServlet.class);
 
@@ -42,7 +42,7 @@ public class RecentChangesServlet extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		recentChanges(request, next);
 		return next;
 	}
@@ -51,8 +51,8 @@ public class RecentChangesServlet extends JMController implements Controller {
 	 *
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		next.addObject(JMController.PARAMETER_TITLE, JMController.getMessage("recentchanges.title", request.getLocale()));
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("recentchanges.title", request.getLocale()));
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number

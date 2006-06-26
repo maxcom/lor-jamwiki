@@ -1,4 +1,4 @@
-package org.jmwiki.utils.lucene;
+package org.jamwiki.utils.lucene;
 
 /* ====================================================================
  * The Apache Software License, Version 1.1

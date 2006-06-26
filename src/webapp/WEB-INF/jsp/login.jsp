@@ -1,4 +1,4 @@
-<form method="post" action="<jmwiki:link value="Special:Login" />">
+<form method="post" action="<jamwiki:link value="Special:Login" />">
 <input type="hidden" name="redirect" value="<c:out value="${redirect}"/>" />
 <table>
 <c:if test="${loginFailure}">

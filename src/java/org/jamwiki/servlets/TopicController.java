@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.servlets;
+package org.jamwiki.servlets;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -22,17 +22,17 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jmwiki.WikiBase;
-import org.jmwiki.model.Topic;
-import org.jmwiki.servlets.WikiServlet;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
+import org.jamwiki.servlets.WikiServlet;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class TopicController extends JMController implements Controller {
+public class TopicController extends JAMController implements Controller {
 
 	/** Logger for this class and subclasses. */
 	private static Logger logger = Logger.getLogger(TopicController.class.getName());
@@ -47,7 +47,7 @@ public class TopicController extends JMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JMController.buildLayout(request, next);
+		JAMController.buildLayout(request, next);
 		if (isTopic(request, "Special:AllTopics")) {
 			allTopics(request, next);
 		} else if (isTopic(request, "Special:OrphanedTopics")) {
@@ -64,12 +64,12 @@ public class TopicController extends JMController implements Controller {
 	 *
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getInstance().getSearchEngineInstance().getAllTopicNames(virtualWiki);
 		String title = "Special:AllTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject(JMController.PARAMETER_TITLE, title);
+		next.addObject(JAMController.PARAMETER_TITLE, title);
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ALL_TOPICS);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -162,12 +162,12 @@ public class TopicController extends JMController implements Controller {
 	 *
 	 */
 	private void orphanedTopics(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getInstance().getOrphanedTopics(virtualWiki);
 		String title = "Special:OrphanedTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject(JMController.PARAMETER_TITLE, title);
+		next.addObject(JAMController.PARAMETER_TITLE, title);
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_ORPHANED_TOPICS);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -190,12 +190,12 @@ public class TopicController extends JMController implements Controller {
 	 *
 	 */
 	private void toDoTopics(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getInstance().getToDoWikiTopics(virtualWiki);
 		String title = "Special:ToDoTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject(JMController.PARAMETER_TITLE, title);
+		next.addObject(JAMController.PARAMETER_TITLE, title);
 		next.addObject(WikiServlet.PARAMETER_ACTION, WikiServlet.ACTION_TODO_TOPICS);
 		next.addObject(WikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
@@ -204,11 +204,11 @@ public class TopicController extends JMController implements Controller {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JMController.getVirtualWikiFromURI(request);
-		String topicName = JMController.getTopicFromURI(request);
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String topicName = JAMController.getTopicFromURI(request);
 		Topic topic = new Topic(topicName);
 		topic.loadTopic(virtualWiki);
-		next.addObject(JMController.PARAMETER_TITLE, topicName);
+		next.addObject(JAMController.PARAMETER_TITLE, topicName);
 		String contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, new BufferedReader(new StringReader(topic.getRenderedContent())));
 		contents = highlight(request, contents);
 		next.addObject("contents", contents);

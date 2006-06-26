@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.persistency.db;
+package org.jamwiki.persistency.db;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
@@ -36,16 +36,16 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import org.apache.log4j.Logger;
-import org.jmwiki.Environment;
-import org.jmwiki.persistency.PersistencyHandler;
-import org.jmwiki.TopicLock;
-import org.jmwiki.WikiBase;
-import org.jmwiki.WikiException;
-import org.jmwiki.PseudoTopicHandler;
-import org.jmwiki.model.Topic;
-import org.jmwiki.model.TopicVersion;
-import org.jmwiki.utils.DiffUtil;
-import org.jmwiki.utils.Utilities;
+import org.jamwiki.Environment;
+import org.jamwiki.persistency.PersistencyHandler;
+import org.jamwiki.TopicLock;
+import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.utils.DiffUtil;
+import org.jamwiki.utils.Utilities;
 
 /**
  *

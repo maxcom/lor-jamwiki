@@ -1,4 +1,4 @@
----VIRTUALWIKI_README for Java MediaWiki V2.x---
+---VIRTUALWIKI_README for JAMWiki V2.x---
 
 This document is intended to give instructions on creating new virtual wikis.
 
@@ -25,4 +25,4 @@ This document is intended to give instructions on creating new virtual wikis.
    virtualwiki.other.name=Other
    Where "Other" is the name that will appear in the virtual wiki list.
 
-Questions: jmwiki@veryquick.org
+Questions: jamwiki@veryquick.org

@@ -1,14 +1,14 @@
 <%@ page import="
-    org.jmwiki.Environment,
-    org.jmwiki.WikiBase,
-    org.jmwiki.servlets.WikiServlet,
-    org.jmwiki.utils.Utilities
+    org.jamwiki.Environment,
+    org.jamwiki.WikiBase,
+    org.jamwiki.servlets.WikiServlet,
+    org.jamwiki.utils.Utilities
 " %>
 <%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
 <%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/jmwiki.tld" prefix="jmwiki" %>
+<%@ taglib uri="/WEB-INF/classes/jamwiki.tld" prefix="jamwiki" %>
 <%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
-<jmwiki:setPageEncoding />
+<jamwiki:setPageEncoding />
 <html>
   <head>
     <f:setBundle basename="ApplicationResources"/>

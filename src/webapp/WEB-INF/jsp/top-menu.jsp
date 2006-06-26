@@ -16,29 +16,29 @@ try {
 if (!special) {
 %>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="${topic}" />"><f:message key="menu.article" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="${topic}" />"><f:message key="menu.article" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Comments:${topic}" />"><f:message key="menu.comments" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Comments:${topic}" />"><f:message key="menu.comments" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Edit" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.editpage" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Edit" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.editpage" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>
 	<c:if test="${!readOnly}">
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:History" />?topic=<jmwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Upload" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.attach" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Upload" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.attach" /></a></td>
 	</c:if>
 	<%-- FIXME: admin only --%>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Delete" />?topic=<jmwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="Special:Print" />?topic=<jmwiki:encode value="${topic}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${topic}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
 <%
 } else {
 %>
-	<td class="menu-tab-nonselected"><a href="<jmwiki:link value="${topic}" />"><f:message key="menu.special" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="${topic}" />"><f:message key="menu.special" /></a></td>
 <%
 }
 %>

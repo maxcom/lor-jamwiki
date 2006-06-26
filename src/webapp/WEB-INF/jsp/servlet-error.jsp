@@ -1,6 +1,6 @@
 <%@ include file="top.jsp"%>
-<%@ page import="org.jmwiki.WikiException,
-                 org.jmwiki.servlets.WikiServletException"%>
+<%@ page import="org.jamwiki.WikiException,
+                 org.jamwiki.servlets.WikiServletException"%>
 <script language="JavaScript">
   function cancel(){
     history.go(-1);

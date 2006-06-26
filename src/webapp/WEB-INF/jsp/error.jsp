@@ -1,8 +1,8 @@
 
 <%@ page import="
-        org.jmwiki.WikiException,
-        org.jmwiki.servlets.WikiServlet,
-        org.jmwiki.servlets.WikiServletException
+        org.jamwiki.WikiException,
+        org.jamwiki.servlets.WikiServlet,
+        org.jamwiki.servlets.WikiServletException
     "
     isErrorPage="true"
 %>

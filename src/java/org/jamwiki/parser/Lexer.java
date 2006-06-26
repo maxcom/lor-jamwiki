@@ -14,7 +14,7 @@
  * along with this program (gpl.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jmwiki.parser;
+package org.jamwiki.parser;
 
 /**
  * This interface can be implemented in any way you like, it doesn't have to be for
