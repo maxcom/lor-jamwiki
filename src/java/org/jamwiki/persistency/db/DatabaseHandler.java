@@ -159,50 +159,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
-
-		// FIXME - DELETE BELOW
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement addStatement;
-			if (DatabaseHandler.isOracle()) {
-				boolean savedAutoCommit = conn.getAutoCommit();
-				conn.setAutoCommit(false);
-				addStatement = conn.prepareStatement(STATEMENT_ADD_VERSION_ORACLE1);
-				addStatement.setString(1, virtualWiki);
-				addStatement.setString(2, topicName);
-				addStatement.setTimestamp(3, new DBDate(at).asTimestamp());
-				addStatement.execute();
-				addStatement.close();
-				conn.commit();
-				addStatement = conn.prepareStatement(
-					STATEMENT_ADD_VERSION_ORACLE2,
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_UPDATABLE
-				);
-				addStatement.setString(1, topicName);
-				addStatement.setString(2, virtualWiki);
-				ResultSet rs = addStatement.executeQuery();
-				rs.next();
-				OracleClobHelper.setClobValue(rs.getClob(1), contents);
-				rs.close();
-				addStatement.close();
-				conn.commit();
-				conn.setAutoCommit(savedAutoCommit);
-			} else {
-				addStatement = conn.prepareStatement(STATEMENT_ADD_VERSION);
-				addStatement.setString(1, virtualWiki);
-				addStatement.setString(2, topicName);
-				addStatement.setString(3, contents);
-				addStatement.setTimestamp(4, new DBDate(at).asTimestamp());
-				addStatement.execute();
-				addStatement.close();
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		// FIXME - DELETE ABOVE
-
 		TopicVersion version = new TopicVersion();
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -525,35 +481,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	// ======================================
 
 
-	// FIXME - DELETE BELOW
-	protected final static String STATEMENT_UPDATE =
-		"UPDATE Topic SET contents = ? WHERE name = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_UPDATE_ORACLE1 =
-		"UPDATE Topic SET contents = EMPTY_CLOB() WHERE name = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_UPDATE_ORACLE2 =
-		"SELECT contents FROM Topic WHERE name = ? AND virtualwiki = ? FOR UPDATE";
-	protected final static String STATEMENT_INSERT =
-		"INSERT INTO Topic( name, contents, virtualwiki ) VALUES ( ?, ?, ? )";
-	protected final static String STATEMENT_INSERT_ORACLE =
-		"INSERT INTO Topic( name, contents, virtualwiki ) VALUES ( ?, EMPTY_CLOB(), ? )";
-	protected final static String STATEMENT_SET_LOCK =
-		"INSERT INTO TopicLock( topic, sessionkey, lockat, virtualwiki ) VALUES( ?, ?, ?, ? )";
-	protected final static String STATEMENT_CHECK_LOCK =
-		"SELECT lockat, sessionkey FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_REMOVE_LOCK =
-		"DELETE FROM TopicLock WHERE topic = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_READONLY_INSERT =
-		"INSERT INTO TopicReadOnly( topic, virtualwiki ) VALUES ( ?, ? )";
-	protected final static String STATEMENT_READONLY_DELETE =
-		"DELETE FROM TopicReadOnly WHERE topic = ? AND virtualwiki = ?";
-	protected final static String STATEMENT_ADD_VERSION =
-		"INSERT INTO TopicVersion (virtualwiki, name, contents, versionat) VALUES( ?, ?, ?, ?)";
-	protected final static String STATEMENT_ADD_VERSION_ORACLE1 =
-		"INSERT INTO TopicVersion (virtualwiki, name, contents, versionat) VALUES( ?, ?, EMPTY_CLOB(), ?)";
-	protected final static String STATEMENT_ADD_VERSION_ORACLE2 =
-		"SELECT contents FROM TopicVersion WHERE name = ?  AND virtualwiki = ? ORDER BY versionat DESC FOR UPDATE";
-	// FIXME - DELETE ABOVE
-
 	protected static final String STATEMENT_PURGE_DELETES =
 		"DELETE FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
 	protected static final String STATEMENT_PURGE_TOPIC =
@@ -583,21 +510,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(true);
 		updateTopic(topic);
-
-		// FIXME - DELETE BELOW
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement addReadOnlyStatement = conn.prepareStatement(STATEMENT_READONLY_INSERT);
-			addReadOnlyStatement.setString(1, topicName);
-			addReadOnlyStatement.setString(2, virtualWiki);
-			addReadOnlyStatement.execute();
-			addReadOnlyStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		// FIXME - DELETE ABOVE
-
 	}
 
 	/**
@@ -756,58 +668,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
-
-		// FIXME - DELETE BELOW
-		boolean addLock = true;
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement checkLockStatement = conn.prepareStatement(STATEMENT_CHECK_LOCK);
-			checkLockStatement.setString(1, topicName);
-			checkLockStatement.setString(2, virtualWiki);
-			ResultSet rs = checkLockStatement.executeQuery();
-			if (rs.next()) {
-				DBDate date = new DBDate(rs.getTimestamp("lockat"));
-				DBDate now = new DBDate();
-				logger.info("Already locked at " + date);
-				long fiveMinutesAgo = now.getTime() - 60000 *
-				Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT);
-				if (date.getTime() < fiveMinutesAgo) {
-					logger.debug("Lock expired");
-					PreparedStatement removeLockStatement = conn.prepareStatement(STATEMENT_REMOVE_LOCK);
-					removeLockStatement.setString(1, topicName);
-					removeLockStatement.setString(2, virtualWiki);
-					removeLockStatement.execute();
-					removeLockStatement.close();
-				} else {
-					addLock = false;
-					String existingKey = rs.getString("sessionkey");
-					rs.close();
-					checkLockStatement.close();
-					// if the key being locked with is the existing lock, then the user still has
-					// the lock, otherwise, it must be locked by someone else
-					boolean sameKey = existingKey.equals(key);
-					logger.debug("Same key: " + sameKey);
-//					return sameKey;
-				}
-			}
-			if (addLock) {
-				logger.debug("Setting lock");
-				PreparedStatement setLockStatement = conn.prepareStatement(STATEMENT_SET_LOCK);
-				setLockStatement.setString(1, topicName);
-				setLockStatement.setString(2, key);
-				setLockStatement.setTimestamp(3, (new DBDate()).asTimestamp());
-				setLockStatement.setString(4, virtualWiki);
-				setLockStatement.execute();
-				setLockStatement.close();
-				rs.close();
-				checkLockStatement.close();
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		// FIXME - DELETE ABOVE
-
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) return true;
 		if (topic.getLockSessionKey() != null) {
@@ -963,21 +823,6 @@ public class DatabaseHandler implements PersistencyHandler {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(false);
 		updateTopic(topic);
-
-		// FIXME - DELETE BELOW
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement deleteReadOnlyStatement = conn.prepareStatement(STATEMENT_READONLY_DELETE);
-			deleteReadOnlyStatement.setString(1, topicName);
-			deleteReadOnlyStatement.setString(2, virtualWiki);
-			deleteReadOnlyStatement.execute();
-			deleteReadOnlyStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		// FIXME - DELETE ABOVE
-
 	}
 
 	/**
@@ -1074,21 +919,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public void unlockTopic(String virtualWiki, String topicName) throws Exception {
-
-		// FIXME - DELETE BELOW
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement removeAnyLockStatement = conn.prepareStatement(STATEMENT_REMOVE_LOCK);
-			removeAnyLockStatement.setString(1, topicName);
-			removeAnyLockStatement.setString(2, virtualWiki);
-			removeAnyLockStatement.execute();
-			removeAnyLockStatement.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		// FIXME - DELETE ABOVE
-
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setLockSessionKey(null);
 		topic.setLockedDate(null);
