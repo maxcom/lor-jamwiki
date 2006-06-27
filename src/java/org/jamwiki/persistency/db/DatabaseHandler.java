@@ -959,18 +959,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public String read(String virtualWiki, String topicName) throws Exception {
-		// FIXME - virtualWiki should never be empty, fix callers
-		if (virtualWiki == null || virtualWiki.length() == 0) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		return (topic == null) ? "" : topic.getTopicContent();
-	}
-
-	/**
-	 *
-	 */
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(false);
@@ -1048,21 +1036,22 @@ public class DatabaseHandler implements PersistencyHandler {
 			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		}
 		while (rs.next()) {
-			String vWiki = rs.getString("virtual_wiki_name");
+			String virtualWiki = rs.getString("virtual_wiki_name");
 			// starting points
-			setupSpecialPage(vWiki, messages.getString("specialpages.startingpoints"));
+			setupSpecialPage(virtualWiki, messages.getString("specialpages.startingpoints"));
 			// leftMenu
-			setupSpecialPage(vWiki, messages.getString("specialpages.leftMenu"));
+			setupSpecialPage(virtualWiki, messages.getString("specialpages.leftMenu"));
 			// topArea
-			setupSpecialPage(vWiki, messages.getString("specialpages.topArea"));
+			setupSpecialPage(virtualWiki, messages.getString("specialpages.topArea"));
 			// bottomArea
-			setupSpecialPage(vWiki, messages.getString("specialpages.bottomArea"));
+			setupSpecialPage(virtualWiki, messages.getString("specialpages.bottomArea"));
 			// stylesheet
-			setupSpecialPage(vWiki, messages.getString("specialpages.stylesheet"));
+			setupSpecialPage(virtualWiki, messages.getString("specialpages.stylesheet"));
 			// list of topics that only admin is allowed to edit/view by themselves
-			setupSpecialPage(vWiki, messages.getString("specialpages.adminonlytopics"));
-			if (!exists(vWiki, "SetUsername")) {
-				write(vWiki, "", "SetUsername", DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
+			setupSpecialPage(virtualWiki, messages.getString("specialpages.adminonlytopics"));
+			if (!exists(virtualWiki, "SetUsername")) {
+				Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, "SetUsername");
+				write(virtualWiki, "", "SetUsername", DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
 			}
 		}
 	}
@@ -1070,11 +1059,15 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
-		if (!exists(vWiki, specialPage)) {
-			logger.debug("Setting up " + specialPage);
-			write(vWiki, WikiBase.readDefaultTopic(specialPage), specialPage, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
+	private void setupSpecialPage(String virtualWiki, String topicName) throws Exception {
+		if (exists(virtualWiki, topicName)) {
+			return;
 		}
+		Topic topic = new Topic();
+		topic.setName(topicName);
+		topic.setVirtualWiki(virtualWiki);
+		topic.setTopicContent(WikiBase.readDefaultTopic(topicName));
+		write(virtualWiki, WikiBase.readDefaultTopic(topicName), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
 	}
 
 	/**
@@ -1106,86 +1099,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(String virtualWiki, String contents, String topicName, String ipAddress) throws Exception {
-
-		// FIXME - DELETE BELOW
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			if (!exists(virtualWiki, topicName)) {
-				logger.debug("Inserting into topic " + topicName + ", " + contents);
-				PreparedStatement insertStatement;
-				if (DatabaseHandler.isOracle()) {
-					boolean savedAutoCommit = conn.getAutoCommit();
-					conn.setAutoCommit(false);
-					insertStatement = conn.prepareStatement(STATEMENT_INSERT_ORACLE);
-					insertStatement.setString(1, topicName);
-					insertStatement.setString(2, virtualWiki);
-					insertStatement.execute();
-					insertStatement.close();
-					conn.commit();
-					insertStatement = conn.prepareStatement(
-						STATEMENT_UPDATE_ORACLE2,
-						ResultSet.TYPE_SCROLL_INSENSITIVE,
-						ResultSet.CONCUR_UPDATABLE
-					);
-					insertStatement.setString(1, topicName);
-					insertStatement.setString(2, virtualWiki);
-					ResultSet rs = insertStatement.executeQuery();
-					rs.next();
-					OracleClobHelper.setClobValue(rs.getClob(1), contents);
-					rs.close();
-					insertStatement.close();
-					conn.setAutoCommit(savedAutoCommit);
-				} else {
-					insertStatement = conn.prepareStatement(STATEMENT_INSERT);
-					insertStatement.setString(1, topicName);
-					insertStatement.setString(2, contents);
-					insertStatement.setString(3, virtualWiki);
-					insertStatement.execute();
-					insertStatement.close();
-				}
-			} else {
-				logger.debug("Updating topic " + topicName + " to " + contents);
-				PreparedStatement updateStatement;
-				if (DatabaseHandler.isOracle()) {
-					boolean savedAutoCommit = conn.getAutoCommit();
-					conn.setAutoCommit(false);
-					updateStatement = conn.prepareStatement(STATEMENT_UPDATE_ORACLE1);
-					updateStatement.setString(1, topicName);
-					updateStatement.setString(2, virtualWiki);
-					updateStatement.execute();
-					updateStatement.close();
-					conn.commit();
-					updateStatement = conn.prepareStatement(
-						STATEMENT_UPDATE_ORACLE2,
-						ResultSet.TYPE_SCROLL_INSENSITIVE,
-						ResultSet.CONCUR_UPDATABLE
-					);
-					updateStatement.setString(1, topicName);
-					updateStatement.setString(2, virtualWiki);
-					ResultSet rs = updateStatement.executeQuery();
-					rs.next();
-					OracleClobHelper.setClobValue(rs.getClob(1), contents);
-					rs.close();
-					updateStatement.close();
-					conn.commit();
-					conn.setAutoCommit(savedAutoCommit);
-				} else {
-					updateStatement = conn.prepareStatement(STATEMENT_UPDATE);
-					updateStatement.setString(2, topicName);
-					updateStatement.setString(1, contents);
-					updateStatement.setString(3, virtualWiki);
-					updateStatement.execute();
-					updateStatement.close();
-				}
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		// FIXME - DELETE ABOVE
-
-		Topic topic = lookupTopic(virtualWiki, topicName);
+	public void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception {
 		if (topic == null) {
 			topic = new Topic();
 			topic.setName(topicName);

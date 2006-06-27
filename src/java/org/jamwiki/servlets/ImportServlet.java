@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
 import org.jamwiki.WikiMembers;
 import org.jamwiki.model.Topic;
@@ -107,10 +108,11 @@ public class ImportServlet extends JAMController implements Controller {
 			// Topics
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
+				Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 				logger.info("importing topic " + topicName);
 				buffer.append("imported topic " + topicName);
 				buffer.append("<br/>");
-				databaseHandler.write(virtualWiki, fileHandler.read(virtualWiki, topicName), topicName, request.getRemoteAddr());
+				databaseHandler.write(virtualWiki, topic.getTopicContent(), topicName, request.getRemoteAddr(), topic);
 			}
 			// Read-only topics
 			Collection readOnlys = fileHandler.getReadOnlyTopics(virtualWiki);

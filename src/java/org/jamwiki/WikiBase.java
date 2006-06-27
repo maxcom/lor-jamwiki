@@ -287,7 +287,8 @@ public class WikiBase {
 	 * Reads a file and returns the raw contents. Used for the editing version.
 	 */
 	public synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
-		return handler.read(virtualWiki, topicName);
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		return topic.getTopicContent();
 	}
 
 	/**
@@ -378,14 +379,14 @@ public class WikiBase {
 	 * @param topicName   TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public synchronized void write(String virtualWiki, String contents, String topicName, String user, String ipAddress) throws Exception {
+	public synchronized void write(String virtualWiki, String contents, String topicName, String user, String ipAddress, Topic topic) throws Exception {
 		// If the last line is not a return value, the parser can be tricked out.
 		// (got this from wikipedia)
 		if (!contents.endsWith("\n")) {
 			contents += "\n";
 		}
 		fireTopicSaved(virtualWiki, topicName, contents, user, new Date());
-		handler.write(virtualWiki, contents, topicName, ipAddress);
+		handler.write(virtualWiki, contents, topicName, ipAddress, topic);
 	}
 
 	/**
@@ -501,7 +502,8 @@ public class WikiBase {
 		Set topicNames = new HashSet();
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
-			String content = handler.read(virtualWiki, topicName);
+			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			String content = topic.getTopicContent();
 			StringReader reader = new StringReader(content);
 			BackLinkLex lexer = new BackLinkLex(reader);
 			while (lexer.yylex() != null) {

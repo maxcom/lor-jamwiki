@@ -147,7 +147,9 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 				}
 				Change change = new Change(virtualWiki, topicName, user, new java.util.Date());
 				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-				base.write(virtualWiki, contents.toString(), topicName, user, request.getRemoteAddr());
+				topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+				topic.setTopicContent(contents.toString());
+				base.write(virtualWiki, contents.toString(), topicName, user, request.getRemoteAddr(), topic);
 				cl.logChange(change, request);
 			}
 			// Unlock and return

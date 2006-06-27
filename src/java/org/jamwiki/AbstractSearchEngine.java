@@ -56,6 +56,7 @@ import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.RAMDirectory;
 import org.jamwiki.parser.alt.BackLinkLex;
+import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.lucene.HTMLParser;
 import org.jamwiki.utils.lucene.LuceneTools;
@@ -421,9 +422,9 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			logger.debug("indexing virtual wiki " + currentWiki);
 			File indexFile = new File(indexPath, "index" + currentWiki);
 			logger.debug("Index file path = " + indexFile);
-			if (currentWiki.equals(WikiBase.DEFAULT_VWIKI)) {
-				currentWiki = "";
-			}
+//			if (currentWiki.equals(WikiBase.DEFAULT_VWIKI)) {
+//				currentWiki = "";
+//			}
 			int retrycounter = 0;
 			do {
 				// initially create index in ram
@@ -551,10 +552,10 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 * @param topic Name of the topic to add
 	 * @return The document to add
 	 */
-	protected Document createDocument(String currentWiki, String topic) throws Exception {
+	protected Document createDocument(String virtualWiki, String topicName) throws Exception {
 		// get content
-		StringBuffer contents = new StringBuffer(WikiBase.getInstance().getHandler().read(currentWiki,
-			topic));
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		StringBuffer contents = new StringBuffer(topic.getTopicContent());
 		// find attachments
 		List attachments = extractByKeyword(contents, "attach:", true);
 		// find links
@@ -574,7 +575,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				if (attachmentFileName.lastIndexOf('.') != -1) {
 					extension = attachmentFileName.substring(attachmentFileName.lastIndexOf('.') + 1).toLowerCase();
 				}
-				File attachmentFile = Utilities.uploadPath(currentWiki, attachmentFileName);
+				File attachmentFile = Utilities.uploadPath(virtualWiki, attachmentFileName);
 				if ("txt".equals(extension) || "asc".equals(extension)) {
 					StringBuffer textFileBuffer = Utilities.readFile(attachmentFile);
 					contents.append(" ").append(textFileBuffer);
@@ -657,15 +658,15 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			}
 		}
 		// add remaining information
-		String fileName = getFilename(currentWiki, topic);
+		String fileName = getFilename(virtualWiki, topicName);
 		if (fileName != null) {
-			logger.debug("Indexing topic " + topic + " in file " + fileName);
+			logger.debug("Indexing topic " + topicName + " in file " + fileName);
 		} else {
-			logger.debug("Indexing topic " + topic);
+			logger.debug("Indexing topic " + topicName);
 		}
 		Document doc = new Document();
-		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic)));
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic, Store.YES, Index.UN_TOKENIZED));
+		doc.add(new Field(ITYPE_TOPIC, new StringReader(topicName)));
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topicName, Store.YES, Index.UN_TOKENIZED));
 		if (fileName != null) {
 			doc.add(new Field(ITYPE_FILE, fileName, Store.YES, Index.NO));
 		}

@@ -71,12 +71,7 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	public String read(String virtualWiki, String topicName) throws Exception;
-
-	/**
-	 *
-	 */
-	public void write(String virtualWiki, String contents, String topicName, String ipAddress) throws Exception;
+	public void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception;
 
 	/**
 	 *

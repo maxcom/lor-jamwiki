@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.Writer;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,6 +53,10 @@ import org.jamwiki.servlets.JAMController;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.XMLUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -61,13 +66,23 @@ public class FileHandler implements PersistencyHandler {
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
 	public static final String VERSION_DIR = "versions";
-	public final static String EXT = ".txt";
+	public final static String EXT = ".xml";
 	// the read-only topics
 	protected Map readOnlyTopics;
 	// file used for storing read-only topics
 	private final static String READ_ONLY_FILE = "ReadOnlyTopics";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
-	private File file;
+	protected static final String XML_TOPIC_ROOT = "page";
+	protected static final String XML_TOPIC_TITLE = "title";
+	protected static final String XML_TOPIC_ID = "id";
+	protected static final String XML_TOPIC_VIRTUAL_WIKI = "virtualwiki";
+	protected static final String XML_TOPIC_TEXT = "text";
+	protected static final String XML_TOPIC_ADMIN_ONLY = "admin";
+	protected static final String XML_TOPIC_LOCKED_BY = "lockedby";
+	protected static final String XML_TOPIC_LOCK_DATE = "lockdate";
+	protected static final String XML_TOPIC_LOCK_KEY = "lockkey";
+	protected static final String XML_TOPIC_READ_ONLY = "readonly";
+	protected static final String XML_TOPIC_TYPE = "type";
 	private static final String LOCK_EXTENSION = ".lock";
 	private static final String TOPIC_VERSION_ID_FILE = "topic_version.id";
 	private static int NEXT_TOPIC_VERSION_ID = -1;
@@ -87,6 +102,49 @@ public class FileHandler implements PersistencyHandler {
 		Collection roTopics = (Collection) this.readOnlyTopics.get(virtualWiki);
 		roTopics.add(topicName);
 		this.saveReadOnlyTopics(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	public void addTopic(Topic topic) throws Exception {
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_TOPIC_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_TITLE, topic.getName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_ID, topic.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VIRTUAL_WIKI, topic.getVirtualWiki(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_TEXT, topic.getTopicContent(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_ADMIN_ONLY, topic.getAdminOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_LOCKED_BY, topic.getLockedBy()));
+		content.append("\n");
+		if (topic.getLockedDate() != null) {
+			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_DATE, topic.getLockedDate()));
+			content.append("\n");
+		}
+		if (topic.getLockSessionKey() != null) {
+			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_KEY, topic.getLockSessionKey(), true));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_TYPE, topic.getTopicType()));
+		content.append("\n");
+		content.append("</").append(XML_TOPIC_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = topicFilename(topic.getName());
+		File file = FileHandler.getPathFor(topic.getVirtualWiki(), null, filename);
+		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(content.toString());
+		writer.close();
 	}
 
 	/**
@@ -353,35 +411,43 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static Topic initTopic(String virtualWiki, File file) {
+	protected static Topic initTopic(File file) {
 		try {
-			// FIXME - clean this up.
-			// get topic name
-			if (!file.exists() || file.getName() == null) {
-				return null;
-			}
-			int pos = file.getName().lastIndexOf(EXT);
-			if (pos < 0) {
-				return null;
-			}
-			String topicName = file.getName().substring(0, pos);
 			Topic topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
-			topic.setTopicContent(read(file).toString());
-			// FIXME - set these
-			/*
-			topic.setAdminOnly(boolean);
-			topic.setTopicId(int);
-			topic.setLockedBy(int);
-			topic.setLockedDate(Timestamp);
-			topic.setLockSessionKey(String);
-			topic.setReadOnly(boolean);
-			topic.setTopicType(int);
-			*/
+			Document document = XMLUtil.parseXML(file, false);
+			// get page node
+			Node pageNode = document.getElementsByTagName(XML_TOPIC_ROOT).item(0);
+			NodeList pageChildren = pageNode.getChildNodes();
+			Node pageChild = null;
+			String childName = null;
+			for (int i=0; i < pageChildren.getLength(); i++) {
+				pageChild = pageChildren.item(i);
+				childName = pageChild.getNodeName();
+				if (childName.equals(XML_TOPIC_TITLE)) {
+					topic.setName(pageChild.getTextContent());
+				} else if (childName.equals(XML_TOPIC_ID)) {
+					topic.setTopicId(new Integer(pageChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_TOPIC_VIRTUAL_WIKI)) {
+					topic.setVirtualWiki(pageChild.getTextContent());
+				} else if (childName.equals(XML_TOPIC_TEXT)) {
+					topic.setTopicContent(pageChild.getTextContent());
+				} else if (childName.equals(XML_TOPIC_ADMIN_ONLY)) {
+					topic.setAdminOnly(new Boolean(pageChild.getTextContent()).booleanValue());
+				} else if (childName.equals(XML_TOPIC_LOCKED_BY)) {
+					topic.setLockedBy(new Integer(pageChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_TOPIC_LOCK_DATE)) {
+					topic.setLockedDate(Timestamp.valueOf(pageChild.getTextContent()));
+				} else if (childName.equals(XML_TOPIC_LOCK_KEY)) {
+					topic.setLockSessionKey(pageChild.getTextContent());
+				} else if (childName.equals(XML_TOPIC_READ_ONLY)) {
+					topic.setReadOnly(new Boolean(pageChild.getTextContent()).booleanValue());
+				} else if (childName.equals(XML_TOPIC_TYPE)) {
+					topic.setTopicType(new Integer(pageChild.getTextContent()).intValue());
+				}
+			}
 			return topic;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic", e);
+			logger.error("Failure while initializing topic for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -545,7 +611,7 @@ public class FileHandler implements PersistencyHandler {
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		String filename = topicFilename(topicName);
 		File file = getPathFor(virtualWiki, null, filename);
-		return initTopic(virtualWiki, file);
+		return initTopic(file);
 	}
 
 	/**
@@ -585,7 +651,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public Collection purgeDeletes(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
-		file = getPathFor(virtualWiki, null, "");
+		File file = getPathFor(virtualWiki, null, "");
 		File[] files = file.listFiles(new TextFileFilter());
 		for (int i = 0; i < files.length; i++) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i]), Environment.getValue(Environment.PROP_FILE_ENCODING)));
@@ -607,19 +673,6 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
 		throw new UnsupportedOperationException("New version purging available for file handler yet");
-	}
-
-	/**
-	 * Reads a file from disk
-	 */
-	public String read(String virtualWiki, String topicName) throws Exception {
-		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
-			throw new WikiException("WikiNames may not contain special characters:" + topicName);
-		}
-		String filename = topicFilename(topicName);
-		File file = getPathFor(virtualWiki, null, filename);
-		StringBuffer contents = read(file);
-		return contents.toString();
 	}
 
 	/**
@@ -690,13 +743,15 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	private void setupSpecialPage(String vWiki, String specialPage) throws Exception {
-		File dummy = getPathFor(vWiki, null, specialPage + ".txt");
-		if (!dummy.exists()) {
-			Writer writer = new OutputStreamWriter(new FileOutputStream(dummy), Environment.getValue(Environment.PROP_FILE_ENCODING));
-			writer.write(WikiBase.readDefaultTopic(specialPage));
-			writer.close();
+	private void setupSpecialPage(String virtualWiki, String topicName) throws Exception {
+		if (exists(virtualWiki, topicName)) {
+			return;
 		}
+		Topic topic = new Topic();
+		topic.setName(topicName);
+		topic.setVirtualWiki(virtualWiki);
+		topic.setTopicContent(WikiBase.readDefaultTopic(topicName));
+		addTopic(topic);
 	}
 
 	/**
@@ -728,19 +783,14 @@ public class FileHandler implements PersistencyHandler {
 	 * Write contents to file
 	 * Write to version file if versioning is on
 	 */
-	public synchronized void write(String virtualWiki, String contents, String topicName, String ipAddress) throws Exception {
+	public synchronized void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception {
 		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
 			throw new WikiException("WikiNames may not contain special characters:" + topicName);
 		}
-		String filename = topicFilename(topicName);
-		File file = getPathFor(virtualWiki, null, filename);
-		PrintWriter writer = getNewPrintWriter(file, true);
+		addTopic(topic);
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			addTopicVersion(virtualWiki, topicName, contents, new Date(), ipAddress);
 		}
-		logger.debug("Writing topic: " + file);
-		writer.print(contents);
-		writer.close();
 	}
 
 	/**

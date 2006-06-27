@@ -532,12 +532,23 @@ public class Utilities {
 	 */
 	public static String replaceString(String text, String find, String replace) {
 		StringBuffer buffer = new StringBuffer(text);
+		return replaceString(buffer, find, replace).toString();
+	}
+
+	/**
+	 * Replaces occurences of the find string with the replace string in the given text
+	 * @param text
+	 * @param find
+	 * @param replace
+	 * @return the altered string
+	 */
+	public static StringBuffer replaceString(StringBuffer buffer, String find, String replace) {
 		int i = 0;
 		while ((i = buffer.indexOf(find, i)) != -1) {
 			buffer.replace(i, i + find.length(), replace);
 			i = i + replace.length();
 		}
-		return buffer.toString();
+		return buffer;
 	}
 
 	/**

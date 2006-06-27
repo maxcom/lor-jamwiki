@@ -30,6 +30,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
 import org.jamwiki.WikiMembers;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileWikiMembers;
@@ -194,9 +195,11 @@ public class DatabaseInit {
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
 				try {
-					fileHandler.write(virtualWiki, databaseHandler.read(virtualWiki, topicName), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
+					Topic topic = databaseHandler.lookupTopic(virtualWiki, topicName);
+					fileHandler.addTopic(topic);
+					fileHandler.write(virtualWiki, topic.getTopicContent(), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
 				} catch (Exception e) {
-					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
+					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki, e);
 				}
 			}
 			// Read-only topics
