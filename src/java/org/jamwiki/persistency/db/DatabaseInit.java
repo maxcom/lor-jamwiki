@@ -168,8 +168,19 @@ public class DatabaseInit {
 			} catch (Exception e) {
 				logger.error("Unable to convert virtual wiki to file: " + virtualWiki + ": " + e.getMessage());
 			}
-			// Versions
+			// Topics
 			Collection topics = databaseSearchEngine.getAllTopicNames(virtualWiki);
+			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
+				String topicName = (String) topicIterator.next();
+				try {
+					Topic topic = databaseHandler.lookupTopic(virtualWiki, topicName);
+					fileHandler.addTopic(topic);
+					fileHandler.write(virtualWiki, topic.getTopicContent(), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
+				} catch (Exception e) {
+					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki, e);
+				}
+			}
+			// Versions
 			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
 				List versions = databaseHandler.getAllVersions(virtualWiki, topicName);
@@ -189,17 +200,6 @@ public class DatabaseInit {
 					} catch (Exception e) {
 						logger.error("Unable to convert topic version to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
 					}
-				}
-			}
-			// Topics
-			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
-				String topicName = (String) topicIterator.next();
-				try {
-					Topic topic = databaseHandler.lookupTopic(virtualWiki, topicName);
-					fileHandler.addTopic(topic);
-					fileHandler.write(virtualWiki, topic.getTopicContent(), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
-				} catch (Exception e) {
-					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki, e);
 				}
 			}
 			// Read-only topics

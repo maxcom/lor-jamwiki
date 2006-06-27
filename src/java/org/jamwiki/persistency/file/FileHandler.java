@@ -83,6 +83,16 @@ public class FileHandler implements PersistencyHandler {
 	protected static final String XML_TOPIC_LOCK_KEY = "lockkey";
 	protected static final String XML_TOPIC_READ_ONLY = "readonly";
 	protected static final String XML_TOPIC_TYPE = "type";
+	protected static final String XML_TOPIC_VERSION_ROOT = "revision";
+	protected static final String XML_TOPIC_VERSION_ID = "id";
+	protected static final String XML_TOPIC_VERSION_TOPIC_ID = "topicid";
+	protected static final String XML_TOPIC_VERSION_AUTHOR = "contributor";
+	protected static final String XML_TOPIC_VERSION_AUTHOR_ID = "id";
+	protected static final String XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS = "ip";
+	protected static final String XML_TOPIC_VERSION_EDIT_COMMENT = "comment";
+	protected static final String XML_TOPIC_VERSION_EDIT_DATE = "timestamp";
+	protected static final String XML_TOPIC_VERSION_EDIT_TYPE = "edittype";
+	protected static final String XML_TOPIC_VERSION_TEXT = "text";
 	private static final String LOCK_EXTENSION = ".lock";
 	private static final String TOPIC_VERSION_ID_FILE = "topic_version.id";
 	private static int NEXT_TOPIC_VERSION_ID = -1;
@@ -150,7 +160,7 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
+	public void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress) throws Exception {
 		int topicVersionId = nextTopicVersionId();
 		addTopicVersion(virtualWiki, topicName, contents, at, ipAddress, topicVersionId);
 	}
@@ -158,14 +168,64 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress, int topicVersionId) throws Exception {
+	public void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress, int topicVersionId) throws Exception {
 		if (topicVersionId > NEXT_TOPIC_VERSION_ID) {
 			NEXT_TOPIC_VERSION_ID = topicVersionId;
 		}
-		String filename = topicVersionFilename(topicVersionId);
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		TopicVersion topicVersion = new TopicVersion();
+		topicVersion.setTopicVersionId(topicVersionId);
+		topicVersion.setVersionContent(contents);
+		topicVersion.setEditDate(at);
+		topicVersion.setAuthorIpAddress(ipAddress);
+		topicVersion.setTopicId(topic.getTopicId());
+		addTopicVersion(virtualWiki, topicName, topicVersion);
+	}
+
+	/**
+	 *
+	 */
+	public void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+		if (topicVersion.getTopicVersionId() <= 0) {
+			topicVersion.setTopicVersionId(nextTopicVersionId());
+		}
+		if (topicVersion.getTopicVersionId() > NEXT_TOPIC_VERSION_ID) {
+			NEXT_TOPIC_VERSION_ID = topicVersion.getTopicVersionId();
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_TOPIC_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_ID, topicVersion.getTopicVersionId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_TOPIC_ID, topicVersion.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_DATE, topicVersion.getEditDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_TEXT, topicVersion.getVersionContent(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_TYPE, topicVersion.getEditType()));
+		content.append("\n");
+		content.append("<").append(XML_TOPIC_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_AUTHOR_ID, topicVersion.getAuthorId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS, topicVersion.getAuthorIpAddress(), true));
+		content.append("\n");
+		content.append("</").append(XML_TOPIC_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		if (topicVersion.getEditComment() != null) {
+			content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_COMMENT, topicVersion.getEditComment(), true));
+			content.append("\n");
+		}
+		content.append("</").append(XML_TOPIC_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = topicVersionFilename(topicVersion.getTopicVersionId());
 		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(versionFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(contents);
+		writer.write(content.toString());
 		writer.close();
 	}
 
@@ -457,33 +517,47 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	protected static TopicVersion initTopicVersion(File file) {
 		try {
-			// FIXME - clean this up.
 			// get topic version id
 			if (!file.exists() || file.getName() == null) {
 				return null;
 			}
-			int pos = file.getName().lastIndexOf(EXT);
-			if (pos < 0) {
-				return null;
-			}
-			int topicVersionId = new Integer(file.getName().substring(0, pos)).intValue();
-			// get version content
-			String contents = read(file).toString();
 			TopicVersion topicVersion = new TopicVersion();
-			topicVersion.setTopicVersionId(topicVersionId);
-			topicVersion.setVersionContent(contents);
-			// FIXME - set these
-			/*
-			topicVersion.setTopicId(rs.getInt("topic_id"));
-			topicVersion.setEditComment(rs.getString("edit_comment"));
-			topicVersion.setAuthorId(rs.getInt("author_id"));
-			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
-			topicVersion.setEditType(rs.getInt("edit_type"));
-			topicVersion.setAuthorIpAddress(rs.getString("author_ip_address"));
-			*/
+			Document document = XMLUtil.parseXML(file, false);
+			// get page node
+			Node revisionNode = document.getElementsByTagName(XML_TOPIC_VERSION_ROOT).item(0);
+			NodeList revisionChildren = revisionNode.getChildNodes();
+			Node revisionChild = null;
+			String childName = null;
+			for (int i=0; i < revisionChildren.getLength(); i++) {
+				revisionChild = revisionChildren.item(i);
+				childName = revisionChild.getNodeName();
+				if (childName.equals(XML_TOPIC_VERSION_ID)) {
+					topicVersion.setTopicVersionId(new Integer(revisionChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_TOPIC_VERSION_TOPIC_ID)) {
+					topicVersion.setTopicId(new Integer(revisionChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_COMMENT)) {
+					topicVersion.setEditComment(revisionChild.getTextContent());
+				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_DATE)) {
+					topicVersion.setEditDate(Timestamp.valueOf(revisionChild.getTextContent()));
+				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_TYPE)) {
+					topicVersion.setEditType(new Integer(revisionChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_TOPIC_VERSION_TEXT)) {
+					topicVersion.setVersionContent(revisionChild.getTextContent());
+				} else if (childName.equals(XML_TOPIC_VERSION_AUTHOR)) {
+					NodeList authorChildren = revisionChild.getChildNodes();
+					for (int j=0; j < authorChildren.getLength(); j++) {
+						Node authorChild = authorChildren.item(j);
+						if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_ID)) {
+							topicVersion.setAuthorId(new Integer(authorChild.getTextContent()).intValue());
+						} else if (childName.equals(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS)) {
+							topicVersion.setAuthorIpAddress(authorChild.getTextContent());
+						}
+					}
+				}
+			}
 			return topicVersion;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic version", e);
+			logger.error("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -784,12 +858,9 @@ public class FileHandler implements PersistencyHandler {
 	 * Write to version file if versioning is on
 	 */
 	public synchronized void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception {
-		if (topicName.indexOf(System.getProperty("file.separator")) >= 0) {
-			throw new WikiException("WikiNames may not contain special characters:" + topicName);
-		}
 		addTopic(topic);
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			addTopicVersion(virtualWiki, topicName, contents, new Date(), ipAddress);
+			addTopicVersion(virtualWiki, topicName, contents, new Timestamp(System.currentTimeMillis()), ipAddress);
 		}
 	}
 

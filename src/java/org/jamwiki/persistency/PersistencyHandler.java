@@ -16,8 +16,8 @@
  */
 package org.jamwiki.persistency;
 
+import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.jamwiki.model.Topic;
@@ -32,7 +32,17 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception;
+	void addTopic(Topic topic) throws Exception;
+
+	/**
+	 *
+	 */
+	void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception;
+
+	/**
+	 *
+	 */
+	void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress) throws Exception;
 
 	/**
 	 *

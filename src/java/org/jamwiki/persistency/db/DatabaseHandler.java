@@ -125,7 +125,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	private void addTopic(Topic topic) throws Exception {
+	public void addTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(topic.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -158,7 +158,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(String virtualWiki, String topicName, String contents, Date at, String ipAddress) throws Exception {
+	public void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress) throws Exception {
 		TopicVersion version = new TopicVersion();
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -167,13 +167,14 @@ public class DatabaseHandler implements PersistencyHandler {
 		version.setTopicId(topic.getTopicId());
 		version.setVersionContent(contents);
 		version.setAuthorIpAddress(ipAddress);
-		addTopicVersion(version);
+		version.setEditDate(at);
+		addTopicVersion(virtualWiki, topicName, version);
 	}
 
 	/**
 	 *
 	 */
-	private void addTopicVersion(TopicVersion topicVersion) throws Exception {
+	public void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
@@ -946,7 +947,7 @@ public class DatabaseHandler implements PersistencyHandler {
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version
-			addTopicVersion(virtualWiki, topicName, contents, new DBDate(), ipAddress);
+			addTopicVersion(virtualWiki, topicName, contents, new Timestamp(System.currentTimeMillis()), ipAddress);
 		}
 	}
 }
