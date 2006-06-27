@@ -16,28 +16,13 @@
  */
 package org.jamwiki.model;
 
-import java.io.BufferedReader;
-import java.io.Serializable;
-import java.io.StringReader;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 import org.apache.log4j.Logger;
-import org.jamwiki.Change;
-import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
-import org.jamwiki.persistency.PersistencyHandler;
 
 /**
  *
  */
-public class Topic implements Serializable {
+public class Topic {
 
 	private static final int TYPE_ARTICLE = 1;
 	private static final int TYPE_REDIRECT = 2;
