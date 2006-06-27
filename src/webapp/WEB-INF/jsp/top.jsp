@@ -5,9 +5,9 @@
     org.jamwiki.utils.Utilities
 " %>
 <%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
-<%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/jamwiki.tld" prefix="jamwiki" %>
-<%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
+<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
+<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
+<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
 <jamwiki:setPageEncoding />
 <html>
   <head>

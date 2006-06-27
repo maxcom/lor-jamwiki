@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     "
     errorPage="error.jsp"
 %>
-<%@ taglib uri="/WEB-INF/classes/c.tld" prefix="c" %>
+<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 
 <c:set var="defaultTopic"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
 <c:choose>

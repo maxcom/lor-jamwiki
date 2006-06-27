@@ -4,9 +4,9 @@
 <%@ page import="
 	org.jamwiki.servlets.JAMController
 " errorPage="/WEB-INF/jsp/error.jsp" %>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/classes/jamwiki.tld" prefix="jamwiki" %>
-<%@ taglib uri="/WEB-INF/classes/fmt.tld" prefix="f" %>
+<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
+<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
+<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
 <f:setBundle basename="ApplicationResources"/>
 <link rel="stylesheet" href='<c:out value="${pageContext.request.contextPath}"/>/jamwiki.css' type="text/css" />
 <style type="text/css">
