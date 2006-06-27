@@ -69,7 +69,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	private static final String STATEMENT_INSERT_TOPIC_VERSION =
 		"insert into jmw_topic_version ("
 		+   "topic_version_id, topic_id, edit_comment, version_content, "
-		+   "author_id, edit_date, edit_type, author_ip_address "
+		+   "author_id, edit_type, author_ip_address, edit_date "
 		+ ") values ( "
 		+   "?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
@@ -158,22 +158,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress) throws Exception {
-		TopicVersion version = new TopicVersion();
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
-			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
-		}
-		version.setTopicId(topic.getTopicId());
-		version.setVersionContent(contents);
-		version.setAuthorIpAddress(ipAddress);
-		version.setEditDate(at);
-		addTopicVersion(virtualWiki, topicName, version);
-	}
-
-	/**
-	 *
-	 */
 	public void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -181,16 +165,19 @@ public class DatabaseHandler implements PersistencyHandler {
 			conn = DatabaseConnection.getConnection();
 			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, conn);
 			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+			Timestamp editDate = new Timestamp(System.currentTimeMillis());
+			if (topicVersion.getEditDate() != null) {
+				editDate = topicVersion.getEditDate();
+			}
 			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_VERSION);
 			stmt.setInt(1, topicVersion.getTopicVersionId());
 			stmt.setInt(2, topicVersion.getTopicId());
 			stmt.setString(3, topicVersion.getEditComment());
 			stmt.setString(4, topicVersion.getVersionContent());
 			stmt.setInt(5, topicVersion.getAuthorId());
-			// FIXME - it would be better to let this default to CURRENT_TIMESTAMP...
-			stmt.setTimestamp(6, topicVersion.getEditDate());
-			stmt.setInt(7, topicVersion.getEditType());
-			stmt.setString(8, topicVersion.getAuthorIpAddress());
+			stmt.setInt(6, topicVersion.getEditType());
+			stmt.setString(7, topicVersion.getAuthorIpAddress());
+			stmt.setTimestamp(8, editDate);
 			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
@@ -895,10 +882,6 @@ public class DatabaseHandler implements PersistencyHandler {
 			setupSpecialPage(virtualWiki, messages.getString("specialpages.stylesheet"));
 			// list of topics that only admin is allowed to edit/view by themselves
 			setupSpecialPage(virtualWiki, messages.getString("specialpages.adminonlytopics"));
-			if (!exists(virtualWiki, "SetUsername")) {
-				Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, "SetUsername");
-				write(virtualWiki, "", "SetUsername", DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
-			}
 		}
 	}
 
@@ -909,11 +892,15 @@ public class DatabaseHandler implements PersistencyHandler {
 		if (exists(virtualWiki, topicName)) {
 			return;
 		}
+		String contents = WikiBase.readDefaultTopic(topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
-		topic.setTopicContent(WikiBase.readDefaultTopic(topicName));
-		write(virtualWiki, WikiBase.readDefaultTopic(topicName), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
+		topic.setTopicContent(contents);
+		TopicVersion topicVersion = new TopicVersion();
+		topicVersion.setVersionContent(contents);
+		topicVersion.setAuthorIpAddress(DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
+		write(topic, topicVersion);
 	}
 
 	/**
@@ -930,24 +917,20 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception {
-		if (topic == null) {
-			topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
-			topic.setTopicContent(contents);
+	public void write(Topic topic, TopicVersion topicVersion) throws Exception {
+		if (topic.getTopicId() <= 0) {
 			this.addTopic(topic);
 		} else {
-			topic.setTopicContent(contents);
 			// release any lock that is held by setting lock fields null
 			topic.setLockedBy(-1);
 			topic.setLockedDate(null);
 			topic.setLockSessionKey(null);
 			this.updateTopic(topic);
 		}
+		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version
-			addTopicVersion(virtualWiki, topicName, contents, new Timestamp(System.currentTimeMillis()), ipAddress);
+			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
 		}
 	}
 }

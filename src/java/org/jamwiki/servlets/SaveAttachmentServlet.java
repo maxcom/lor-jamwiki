@@ -38,9 +38,10 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Change;
 import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
-import org.jamwiki.model.Topic;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -104,6 +105,7 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 		String topicName = null;
 		String user = null;
 		Topic topic = null;
+		TopicVersion topicVersion = null;
 		boolean cancel = false;
 		try {
 			for (Iterator iterator = fileList.iterator(); iterator.hasNext();) {
@@ -149,7 +151,10 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
 				topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 				topic.setTopicContent(contents.toString());
-				base.write(virtualWiki, contents.toString(), topicName, user, request.getRemoteAddr(), topic);
+				topicVersion = new TopicVersion();
+				topicVersion.setVersionContent(contents.toString());
+				topicVersion.setAuthorIpAddress(request.getRemoteAddr());
+				base.getHandler().write(topic, topicVersion);
 				cl.logChange(change, request);
 			}
 			// Unlock and return

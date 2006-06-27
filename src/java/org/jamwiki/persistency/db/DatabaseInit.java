@@ -175,7 +175,6 @@ public class DatabaseInit {
 				try {
 					Topic topic = databaseHandler.lookupTopic(virtualWiki, topicName);
 					fileHandler.addTopic(topic);
-					fileHandler.write(virtualWiki, topic.getTopicContent(), topicName, DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS, topic);
 				} catch (Exception e) {
 					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki, e);
 				}
@@ -186,17 +185,8 @@ public class DatabaseInit {
 				List versions = databaseHandler.getAllVersions(virtualWiki, topicName);
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
-					String contents = topicVersion.getVersionContent();
-					if (contents == null) contents = "";
 					try {
-						fileHandler.addTopicVersion(
-							virtualWiki,
-							topicName,
-							contents,
-							topicVersion.getEditDate(),
-							topicVersion.getAuthorIpAddress(),
-							topicVersion.getTopicVersionId()
-						);
+						fileHandler.addTopicVersion(virtualWiki, topicName, topicVersion);
 					} catch (Exception e) {
 						logger.error("Unable to convert topic version to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
 					}

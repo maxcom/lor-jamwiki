@@ -96,13 +96,7 @@ public class ImportServlet extends JAMController implements Controller {
 				buffer.append("<br/>");
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
-					databaseHandler.addTopicVersion(
-						virtualWiki,
-						topicName,
-						topicVersion.getVersionContent(),
-						topicVersion.getEditDate(),
-						topicVersion.getAuthorIpAddress()
-					);
+					databaseHandler.addTopicVersion(virtualWiki, topicName, topicVersion);
 				}
 			}
 			// Topics
@@ -112,7 +106,7 @@ public class ImportServlet extends JAMController implements Controller {
 				logger.info("importing topic " + topicName);
 				buffer.append("imported topic " + topicName);
 				buffer.append("<br/>");
-				databaseHandler.write(virtualWiki, topic.getTopicContent(), topicName, request.getRemoteAddr(), topic);
+				databaseHandler.addTopic(topic);
 			}
 			// Read-only topics
 			Collection readOnlys = fileHandler.getReadOnlyTopics(virtualWiki);

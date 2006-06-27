@@ -31,6 +31,7 @@ import org.jamwiki.SearchEngine;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -213,9 +214,11 @@ public class EditServlet extends JAMController implements Controller {
 			throw new Exception("Topic must be specified");
 		}
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		TopicVersion topicVersion = new TopicVersion();
 		if (topic == null) {
 			topic = new Topic();
 			topic.setName(topicName);
+			topic.setVirtualWiki(virtualWiki);
 		}
 		if (topic.getReadOnly()) {
 			logger.warn("The topic " + topicName + " is read only and cannot be saved");
@@ -235,7 +238,10 @@ public class EditServlet extends JAMController implements Controller {
 			throw new Exception("The topic " + topicName + " has no content");
 		}
 		topic.setTopicContent(contents);
-		WikiBase.getInstance().write(virtualWiki, contents, topicName, user, request.getRemoteAddr(), topic);
+		topicVersion.setVersionContent(contents);
+		topicVersion.setEditComment(request.getParameter("editComment"));
+		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
+		WikiBase.getInstance().getHandler().write(topic, topicVersion);
 		if (request.getParameter("minorEdit") == null) {
 			Change change = new Change();
 			change.setTopic(topicName);

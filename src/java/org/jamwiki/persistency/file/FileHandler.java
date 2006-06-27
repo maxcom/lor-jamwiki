@@ -95,7 +95,9 @@ public class FileHandler implements PersistencyHandler {
 	protected static final String XML_TOPIC_VERSION_TEXT = "text";
 	private static final String LOCK_EXTENSION = ".lock";
 	private static final String TOPIC_VERSION_ID_FILE = "topic_version.id";
+	private static final String TOPIC_ID_FILE = "topic.id";
 	private static int NEXT_TOPIC_VERSION_ID = -1;
+	private static int NEXT_TOPIC_ID = -1;
 
 	/**
 	 *
@@ -118,6 +120,12 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public void addTopic(Topic topic) throws Exception {
+		if (topic.getTopicId() <= 0) {
+			topic.setTopicId(nextTopicId());
+		}
+		if (topic.getTopicId() > NEXT_TOPIC_ID) {
+			NEXT_TOPIC_ID = topic.getTopicId();
+		}
 		StringBuffer content = new StringBuffer();
 		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
 		content.append("\n");
@@ -155,31 +163,6 @@ public class FileHandler implements PersistencyHandler {
 		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		writer.write(content.toString());
 		writer.close();
-	}
-
-	/**
-	 *
-	 */
-	public void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress) throws Exception {
-		int topicVersionId = nextTopicVersionId();
-		addTopicVersion(virtualWiki, topicName, contents, at, ipAddress, topicVersionId);
-	}
-
-	/**
-	 *
-	 */
-	public void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress, int topicVersionId) throws Exception {
-		if (topicVersionId > NEXT_TOPIC_VERSION_ID) {
-			NEXT_TOPIC_VERSION_ID = topicVersionId;
-		}
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		TopicVersion topicVersion = new TopicVersion();
-		topicVersion.setTopicVersionId(topicVersionId);
-		topicVersion.setVersionContent(contents);
-		topicVersion.setEditDate(at);
-		topicVersion.setAuthorIpAddress(ipAddress);
-		topicVersion.setTopicId(topic.getTopicId());
-		addTopicVersion(virtualWiki, topicName, topicVersion);
 	}
 
 	/**
@@ -563,30 +546,6 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
-	 * Makes check to see if the specified topic is read-only. The check is case-insensitive.
-	 * @param virtualWiki the virtual wiki it appears in
-	 * @param topicName the name of the topic
-	 * @return
-	 * @throws Exception
-	 */
-//	public boolean isTopicReadOnly(String virtualWiki, String topicName) throws Exception {
-//		if (readOnlyTopics == null) {
-//			return false;
-//		}
-//		if (readOnlyTopics.get(virtualWiki) == null) {
-//			return false;
-//		}
-//		Collection readOnlyTopicsForVWiki = ((Collection) readOnlyTopics.get(virtualWiki));
-//		for (Iterator iterator = readOnlyTopicsForVWiki.iterator(); iterator.hasNext();) {
-//			String readOnlyTopicName = (String) iterator.next();
-//			if (topicName.equalsIgnoreCase(readOnlyTopicName)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
-	/**
 	 *
 	 */
 	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
@@ -707,6 +666,23 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	private static int nextTopicId() throws Exception {
+		if (NEXT_TOPIC_ID < 0) {
+			// read value from file
+			File topicIdFile = getPathFor(null, null, TOPIC_ID_FILE);
+			if (!topicIdFile.exists()) {
+				NEXT_TOPIC_ID = 0;
+			} else {
+				NEXT_TOPIC_ID = new Integer(read(topicIdFile).toString()).intValue();
+			}
+		}
+		// FIXME - need to update topic.id file
+		return NEXT_TOPIC_ID++;
+	}
+
+	/**
+	 *
+	 */
 	private static int nextTopicVersionId() throws Exception {
 		if (NEXT_TOPIC_VERSION_ID < 0) {
 			// read value from file
@@ -717,6 +693,7 @@ public class FileHandler implements PersistencyHandler {
 				NEXT_TOPIC_VERSION_ID = new Integer(read(topicVersionIdFile).toString()).intValue();
 			}
 		}
+		// FIXME - need to update topic-version.id file
 		return NEXT_TOPIC_VERSION_ID++;
 	}
 
@@ -857,10 +834,16 @@ public class FileHandler implements PersistencyHandler {
 	 * Write contents to file
 	 * Write to version file if versioning is on
 	 */
-	public synchronized void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception {
-		addTopic(topic);
+	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
+		// release any lock that is held by setting lock fields null
+		topic.setLockedBy(-1);
+		topic.setLockedDate(null);
+		topic.setLockSessionKey(null);
+		this.addTopic(topic);
+		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			addTopicVersion(virtualWiki, topicName, contents, new Timestamp(System.currentTimeMillis()), ipAddress);
+			// write version
+			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
 		}
 	}
 

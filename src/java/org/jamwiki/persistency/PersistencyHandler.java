@@ -42,11 +42,6 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	void addTopicVersion(String virtualWiki, String topicName, String contents, Timestamp at, String ipAddress) throws Exception;
-
-	/**
-	 *
-	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception;
 
 	/**
@@ -81,7 +76,7 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(String virtualWiki, String contents, String topicName, String ipAddress, Topic topic) throws Exception;
+	public void write(Topic topic, TopicVersion topicVersion) throws Exception;
 
 	/**
 	 *

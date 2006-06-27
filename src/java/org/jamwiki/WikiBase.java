@@ -354,22 +354,21 @@ public class WikiBase {
 	 * @param topicName   TODO: DOCUMENT ME!
 	 * @param contents	TODO: DOCUMENT ME!
 	 */
-	private void fireTopicSaved(String virtualWiki, String topicName,
-		String contents, String user, Date time) {
-		logger.debug("topic saved event: " + topicListeners);
-		if (topicListeners == null) {
-			return;
-		}
-		for (Iterator iterator = topicListeners.iterator(); iterator.hasNext();) {
-			TopicListener listener = (TopicListener) iterator.next();
-			listener.topicSaved(
-				new TopicSavedEvent(
-					virtualWiki, topicName,
-					contents, user, time
-				)
-			);
-		}
-	}
+//	private void fireTopicSaved(String virtualWiki, String topicName, String contents, String user, Date time) {
+//		logger.debug("topic saved event: " + topicListeners);
+//		if (topicListeners == null) {
+//			return;
+//		}
+//		for (Iterator iterator = topicListeners.iterator(); iterator.hasNext();) {
+//			TopicListener listener = (TopicListener) iterator.next();
+//			listener.topicSaved(
+//				new TopicSavedEvent(
+//					virtualWiki, topicName,
+//					contents, user, time
+//				)
+//			);
+//		}
+//	}
 
 	/**
 	 * TODO: DOCUMENT ME!
@@ -379,15 +378,15 @@ public class WikiBase {
 	 * @param topicName   TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public synchronized void write(String virtualWiki, String contents, String topicName, String user, String ipAddress, Topic topic) throws Exception {
-		// If the last line is not a return value, the parser can be tricked out.
-		// (got this from wikipedia)
-		if (!contents.endsWith("\n")) {
-			contents += "\n";
-		}
-		fireTopicSaved(virtualWiki, topicName, contents, user, new Date());
-		handler.write(virtualWiki, contents, topicName, ipAddress, topic);
-	}
+//	public synchronized void write(String virtualWiki, String contents, String topicName, String user, String ipAddress, Topic topic) throws Exception {
+//		// If the last line is not a return value, the parser can be tricked out.
+//		// (got this from wikipedia)
+//		if (!contents.endsWith("\n")) {
+//			contents += "\n";
+//		}
+//		fireTopicSaved(virtualWiki, topicName, contents, user, new Date());
+//		handler.write(virtualWiki, contents, topicName, ipAddress, topic);
+//	}
 
 	/**
 	 * TODO: DOCUMENT ME!

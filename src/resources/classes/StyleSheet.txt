@@ -116,6 +116,11 @@ li {
 	font-size: 100%;
 }
 
+textarea {
+	width: 100%;
+	padding: .1em;
+}
+
 /* main content area */
 
 #contents {
