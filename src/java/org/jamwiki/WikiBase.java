@@ -71,7 +71,7 @@ public class WikiBase {
 	public static final int FILE = 0;					   /** The topics are stored in a flat file */
 	public static final int DATABASE = 1;				   /** The topics are stored in a database */
 	public static final int LDAP = 2;					   /** Members are retrieved from LDAP */
-	public static final String DEFAULT_VWIKI = "jsp";	   /** Name of the default wiki */
+	public static final String DEFAULT_VWIKI = "en";	   /** Name of the default wiki */
 	public static final String PLUGINS_DIR = "plugins";	 /** Name of the Plugins-Directory */
 	private static final Logger logger = Logger.getLogger(WikiBase.class);  /** Log output */
 	protected PersistencyHandler handler;				   /** The handler that looks after read/write operations for a persitence type */

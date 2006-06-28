@@ -230,5 +230,3 @@ specialpages.stylesheet=StyleSheet
 
 topic.ismentionedon=je zmínìno na:
 unlock.exception.notadmin=Musíte být administrátor pro odemykání témat
-virtualwiki.jsp.name=Implicitní
-virtualwiki.other.name=Jiná
