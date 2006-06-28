@@ -169,7 +169,7 @@ public class DatabaseHandler implements PersistencyHandler {
 			if (change.getPreviousTopicVersionId() > 0) {
 				stmt.setInt(2, change.getPreviousTopicVersionId());
 			} else {
-				stmt.setNull(7, Types.INTEGER);
+				stmt.setNull(2, Types.INTEGER);
 			}
 			stmt.setInt(3, change.getTopicId());
 			stmt.setString(4, change.getTopicName());
