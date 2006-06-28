@@ -82,22 +82,22 @@ public class RSSServlet extends HttpServlet implements Controller {
 			// get the latest pages
 			int howManyDatesToGoBack = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 			if (howManyDatesToGoBack == 0) howManyDatesToGoBack = 5;
-			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
 			Collection changed = new ArrayList();
-			if (cl != null) {
-				Calendar historycal = Calendar.getInstance();
-				for (int i = 0; i < howManyDatesToGoBack; i++) {
-					try {
-						Collection col = cl.getChanges(virtualWiki, historycal.getTime());
-						if (col != null) {
-							changed.addAll(col);
-						}
-					} catch (Exception e) {
-						logger.fatal("Cannot get changes", e);
-					}
-					historycal.add(Calendar.DATE, -1);
-				}
-			}
+//			if (cl != null) {
+//				Calendar historycal = Calendar.getInstance();
+//				for (int i = 0; i < howManyDatesToGoBack; i++) {
+//					try {
+//						Collection col = cl.getChanges(virtualWiki, historycal.getTime());
+//						if (col != null) {
+//							changed.addAll(col);
+//						}
+//					} catch (Exception e) {
+//						logger.fatal("Cannot get changes", e);
+//					}
+//					historycal.add(Calendar.DATE, -1);
+//				}
+//			}
 			String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
 			String baseURL = Utilities.createRootPath(request, virtualWiki, wikiServerHostname);
 			// generate rss
@@ -132,9 +132,10 @@ public class RSSServlet extends HttpServlet implements Controller {
 			Usergroup usergroup = WikiBase.getInstance().getUsergroupInstance();
 			int items = 0;
 			for (Iterator i = changed.iterator(); i.hasNext() && items < 15; items++) {
-				Change change = (Change) i.next();
-				topicName = change.getTopic();
-				String userid = change.getUser();
+//				Change change = (Change) i.next();
+//				topicName = change.getTopic();
+//				String userid = change.getUser();
+				String userid = null;
 				String author = null;
 				if (userid != null) {
 					author = usergroup.getFullnameById(userid);

@@ -23,8 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.Change;
-import org.jamwiki.ChangeLog;
+//import org.jamwiki.Change;
+//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.SearchEngine;
@@ -242,15 +242,15 @@ public class EditServlet extends JAMController implements Controller {
 		topicVersion.setEditComment(request.getParameter("editComment"));
 		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
 		WikiBase.getInstance().getHandler().write(topic, topicVersion);
-		if (request.getParameter("minorEdit") == null) {
-			Change change = new Change();
-			change.setTopic(topicName);
-			change.setUser(user);
-			change.setTime(new java.util.Date());
-			change.setVirtualWiki(virtualWiki);
-			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-			cl.logChange(change, request);
-		}
+//		if (request.getParameter("minorEdit") == null) {
+//			Change change = new Change();
+//			change.setTopic(topicName);
+//			change.setUser(user);
+//			change.setTime(new java.util.Date());
+//			change.setVirtualWiki(virtualWiki);
+//			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//			cl.logChange(change, request);
+//		}
 		SearchEngine sedb = WikiBase.getInstance().getSearchEngineInstance();
 		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
 		WikiBase.getInstance().unlockTopic(virtualWiki, topicName);

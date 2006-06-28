@@ -25,7 +25,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.ChangeLog;
+//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.model.Topic;
 import org.jamwiki.WikiBase;
@@ -513,8 +513,8 @@ public class AdminController extends JAMController implements Controller {
 		try {
 			Collection purged = WikiBase.getInstance().purgeDeletes(virtualWiki);
 			StringBuffer buffer = new StringBuffer();
-			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-			cl.removeChanges(virtualWiki, purged);
+//			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//			cl.removeChanges(virtualWiki, purged);
 			buffer.append("Purged: ");
 			for (Iterator iterator = purged.iterator(); iterator.hasNext();) {
 				String topicName = (String) iterator.next();

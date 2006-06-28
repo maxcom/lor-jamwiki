@@ -35,8 +35,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
-import org.jamwiki.Change;
-import org.jamwiki.ChangeLog;
+//import org.jamwiki.Change;
+//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -147,15 +147,15 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 						contents.append("\n");
 					}
 				}
-				Change change = new Change(virtualWiki, topicName, user, new java.util.Date());
-				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//				Change change = new Change(virtualWiki, topicName, user, new java.util.Date());
+//				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
 				topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 				topic.setTopicContent(contents.toString());
 				topicVersion = new TopicVersion();
 				topicVersion.setVersionContent(contents.toString());
 				topicVersion.setAuthorIpAddress(request.getRemoteAddr());
 				base.getHandler().write(topic, topicVersion);
-				cl.logChange(change, request);
+//				cl.logChange(change, request);
 			}
 			// Unlock and return
 			base.unlockTopic(virtualWiki, topicName);

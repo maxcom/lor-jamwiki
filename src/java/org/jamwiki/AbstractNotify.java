@@ -91,16 +91,16 @@ public abstract class AbstractNotify implements Notify {
 				lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName);
 				if (lastRevisionDate != null) {
 					buffer.append(messages.getString("mail.notification.body.revision") + Utilities.formatDateTime(lastRevisionDate) + "\n");
-					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, lastRevisionDate);
-					if (c != null) {
-						Iterator it = c.iterator();
-						while (it.hasNext()) {
-							Change thischange = (Change) it.next();
-							if (thischange.getTopic().equals(topicName)) {
-								author = thischange.getUser();
-							}
-						}
-					}
+//					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, lastRevisionDate);
+//					if (c != null) {
+//						Iterator it = c.iterator();
+//						while (it.hasNext()) {
+//							Change thischange = (Change) it.next();
+//							if (thischange.getTopic().equals(topicName)) {
+//								author = thischange.getUser();
+//							}
+//						}
+//					}
 				}
 			}
 			if (author != null) {

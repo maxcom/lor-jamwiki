@@ -41,12 +41,12 @@ import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DBDate;
-import org.jamwiki.persistency.db.DatabaseChangeLog;
+//import org.jamwiki.persistency.db.DatabaseChangeLog;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.db.DatabaseWikiMembers;
-import org.jamwiki.persistency.file.FileChangeLog;
+//import org.jamwiki.persistency.file.FileChangeLog;
 import org.jamwiki.persistency.file.FileExtensionFilter;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
@@ -177,16 +177,16 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public ChangeLog getChangeLogInstance() throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return FileChangeLog.getInstance();
-			case DATABASE:
-				return DatabaseChangeLog.getInstance();
-			default:
-				return FileChangeLog.getInstance();
-		}
-	}
+//	public ChangeLog getChangeLogInstance() throws Exception {
+//		switch (WikiBase.getPersistenceType()) {
+//			case FILE:
+//				return FileChangeLog.getInstance();
+//			case DATABASE:
+//				return DatabaseChangeLog.getInstance();
+//			default:
+//				return FileChangeLog.getInstance();
+//		}
+//	}
 
 	/**
 	 * TODO: DOCUMENT ME!
