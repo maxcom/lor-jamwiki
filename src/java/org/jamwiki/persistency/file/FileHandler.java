@@ -66,6 +66,7 @@ public class FileHandler implements PersistencyHandler {
 
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
+	public static final String TOPIC_DIR = "topics";
 	public static final String VERSION_DIR = "versions";
 	public static final String RECENT_CHANGE_DIR = "changes";
 	public final static String EXT = ".xml";
@@ -215,7 +216,7 @@ public class FileHandler implements PersistencyHandler {
 		content.append("\n");
 		content.append("</mediawiki>");
 		String filename = topicFilename(topic.getName());
-		File file = FileHandler.getPathFor(topic.getVirtualWiki(), null, filename);
+		File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_DIR, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		writer.write(content.toString());
 		writer.close();
@@ -380,7 +381,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
 		String filename = topicFilename(topicName);
-		File checkFile = getPathFor(virtualWiki, null, filename);
+		File checkFile = getPathFor(virtualWiki, FileHandler.TOPIC_DIR, filename);
 		return checkFile.exists();
 	}
 
@@ -782,7 +783,7 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		String filename = topicFilename(topicName);
-		File file = getPathFor(virtualWiki, null, filename);
+		File file = getPathFor(virtualWiki, FileHandler.TOPIC_DIR, filename);
 		return initTopic(file);
 	}
 
