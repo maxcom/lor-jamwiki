@@ -238,7 +238,7 @@ public abstract class JAMController extends HttpServlet {
 		String uri = request.getRequestURI().trim();
 		String contextPath = request.getContextPath().trim();
 		String virtualWiki = null;
-		if ((uri == null || uri.length() <= 0) || (contextPath == null || contextPath.length() <= 0)) {
+		if (uri == null || uri.length() == 0 || contextPath == null) {
 			return null;
 		}
 		uri = uri.substring(contextPath.length() + 1);
