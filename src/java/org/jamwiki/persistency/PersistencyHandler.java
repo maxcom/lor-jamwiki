@@ -16,10 +16,9 @@
  */
 package org.jamwiki.persistency;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.db.DBDate;
@@ -28,6 +27,11 @@ import org.jamwiki.persistency.db.DBDate;
  *
  */
 public interface PersistencyHandler {
+
+	/**
+	 *
+	 */
+	public void addRecentChange(RecentChange change) throws Exception;
 
 	/**
 	 *
@@ -56,7 +60,17 @@ public interface PersistencyHandler {
 	/**
 	 *
 	 */
+	public List getAllTopicNames(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
 	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
+	public Collection getRecentChanges(String virtualWiki, int numChanges) throws Exception;
 
 	/**
 	 *

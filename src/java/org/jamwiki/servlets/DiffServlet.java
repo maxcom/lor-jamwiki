@@ -76,7 +76,9 @@ public class DiffServlet extends JAMController implements Controller {
 					next.addObject("diff", diff);
 				}
 			} else {
-				String diff = WikiBase.getInstance().getHandler().diff(virtualWiki, topicName, 0, 1, true);
+				int topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
+				int topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+				String diff = WikiBase.getInstance().getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2, true);
 				next.addObject("diff", diff);
 			}
 		} catch (Exception e) {

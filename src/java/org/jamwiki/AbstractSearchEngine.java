@@ -436,7 +436,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 					for (Iterator iter = topics.iterator(); iter.hasNext();) {
 						String topic = (String) iter.next();
 						Document doc = createDocument(currentWiki, topic);
-						writer.addDocument(doc);
+						if (doc != null) writer.addDocument(doc);
 					}
 				} catch (IOException ex) {
 					logger.error(ex);
@@ -555,6 +555,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	protected Document createDocument(String virtualWiki, String topicName) throws Exception {
 		// get content
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) return null;
 		StringBuffer contents = new StringBuffer(topic.getTopicContent());
 		// find attachments
 		List attachments = extractByKeyword(contents, "attach:", true);

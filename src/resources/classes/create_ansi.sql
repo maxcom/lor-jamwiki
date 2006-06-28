@@ -82,9 +82,11 @@ CREATE SEQUENCE jmw_recent_change_seq;
 CREATE TABLE jmw_recent_change (
   recent_change_id INTEGER NOT NULL DEFAULT NEXTVAL('jmw_recent_change_seq'),
   topic_version_id INTEGER NOT NULL,
+  previous_topic_version_id INTEGER,
   topic_id INTEGER NOT NULL,
   topic_name VARCHAR(200) NOT NULL,
   edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  edit_comment VARCHAR(200),
   author_id INTEGER NOT NULL,
   display_name VARCHAR(200) NOT NULL,
   edit_type INTEGER NOT NULL,
@@ -92,6 +94,7 @@ CREATE TABLE jmw_recent_change (
   virtual_wiki_name VARCHAR(100) NOT NULL,
   CONSTRAINT jmw_pk_recent_change PRIMARY KEY (recent_change_id),
   CONSTRAINT jmw_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jmw_topic_version,
+  CONSTRAINT jmw_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jmw_topic_version,
   CONSTRAINT jmw_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jmw_topic,
   CONSTRAINT jmw_fk_recent_change_author FOREIGN KEY (author_id) REFERENCES jmw_author,
   CONSTRAINT jmw_fk_recent_change_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jmw_virtual_wiki

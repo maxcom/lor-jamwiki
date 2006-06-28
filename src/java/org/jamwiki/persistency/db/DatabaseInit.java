@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
-import org.jamwiki.model.TopicVersion;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
 import org.jamwiki.WikiMembers;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileWikiMembers;
@@ -159,7 +160,6 @@ public class DatabaseInit {
 		// language does not matter here
 		FileHandler fileHandler = new FileHandler();
 		DatabaseHandler databaseHandler = new DatabaseHandler();
-		DatabaseSearchEngine databaseSearchEngine = DatabaseSearchEngine.getInstance();
 		Collection virtualWikis = databaseHandler.getVirtualWikiList();
 		for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
 			String virtualWiki = (String) virtualWikiIterator.next();
@@ -169,8 +169,8 @@ public class DatabaseInit {
 				logger.error("Unable to convert virtual wiki to file: " + virtualWiki + ": " + e.getMessage());
 			}
 			// Topics
-			Collection topics = databaseSearchEngine.getAllTopicNames(virtualWiki);
-			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
+			Collection topicNames = databaseHandler.getAllTopicNames(virtualWiki);
+			for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
 				try {
 					Topic topic = databaseHandler.lookupTopic(virtualWiki, topicName);
@@ -180,7 +180,7 @@ public class DatabaseInit {
 				}
 			}
 			// Versions
-			for (Iterator topicIterator = topics.iterator(); topicIterator.hasNext();) {
+			for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
 				List versions = databaseHandler.getAllVersions(virtualWiki, topicName);
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
@@ -231,6 +231,16 @@ public class DatabaseInit {
 					} catch (Exception e) {
 						logger.error("Unable to convert notify member to file: " + memberName + ": " + e.getMessage());
 					}
+				}
+			}
+			// recent changes
+			Collection changes = databaseHandler.getRecentChanges(virtualWiki, 1000);
+			for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
+				RecentChange change = (RecentChange)changeIterator.next();
+				try {
+					fileHandler.addRecentChange(change);
+				} catch (Exception e) {
+					logger.error("Unable to convert recent change to file: " + virtualWiki + ": " + e.getMessage());
 				}
 			}
 		}

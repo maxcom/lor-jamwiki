@@ -288,6 +288,8 @@ public class WikiBase {
 	 */
 	public synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		// FIXME - return null or empty?
+		if (topic == null) return "";
 		return topic.getTopicContent();
 	}
 

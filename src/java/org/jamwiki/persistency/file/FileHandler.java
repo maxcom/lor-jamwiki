@@ -45,6 +45,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.TopicLock;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.PersistencyHandler;
@@ -66,12 +67,24 @@ public class FileHandler implements PersistencyHandler {
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
 	public static final String VERSION_DIR = "versions";
+	public static final String RECENT_CHANGE_DIR = "changes";
 	public final static String EXT = ".xml";
 	// the read-only topics
 	protected Map readOnlyTopics;
 	// file used for storing read-only topics
 	private final static String READ_ONLY_FILE = "ReadOnlyTopics";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
+	protected static final String XML_RECENT_CHANGE_ROOT = "change";
+	protected static final String XML_RECENT_CHANGE_TOPIC_ID = "topicid";
+	protected static final String XML_RECENT_CHANGE_TOPIC_NAME = "topicname";
+	protected static final String XML_RECENT_CHANGE_TOPIC_VERSION_ID = "topicversionid";
+	protected static final String XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID = "previoustopicversionid";
+	protected static final String XML_RECENT_CHANGE_AUTHOR_ID = "authorid";
+	protected static final String XML_RECENT_CHANGE_AUTHOR_NAME = "authorname";
+	protected static final String XML_RECENT_CHANGE_EDIT_COMMENT = "editcomment";
+	protected static final String XML_RECENT_CHANGE_EDIT_DATE = "editdate";
+	protected static final String XML_RECENT_CHANGE_EDIT_TYPE = "edittype";
+	protected static final String XML_RECENT_CHANGE_VIRTUAL_WIKI = "virtualwiki";
 	protected static final String XML_TOPIC_ROOT = "page";
 	protected static final String XML_TOPIC_TITLE = "title";
 	protected static final String XML_TOPIC_ID = "id";
@@ -114,6 +127,49 @@ public class FileHandler implements PersistencyHandler {
 		Collection roTopics = (Collection) this.readOnlyTopics.get(virtualWiki);
 		roTopics.add(topicName);
 		this.saveReadOnlyTopics(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	public void addRecentChange(RecentChange change) throws Exception {
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_RECENT_CHANGE_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_ID, change.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_NAME, change.getTopicName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_VERSION_ID, change.getTopicVersionId()));
+		content.append("\n");
+		if (change.getPreviousTopicVersionId() > 0) {
+			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID, change.getPreviousTopicVersionId()));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_ID, change.getAuthorId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_NAME, change.getAuthorName(), true));
+		content.append("\n");
+		if (change.getEditComment() != null) {
+			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_COMMENT, change.getEditComment(), true));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_DATE, change.getEditDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_TYPE, change.getEditType()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_VIRTUAL_WIKI, change.getVirtualWiki(), true));
+		content.append("\n");
+		content.append("</").append(XML_RECENT_CHANGE_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = recentChangeFilename(change.getTopicVersionId());
+		File file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
+		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(content.toString());
+		writer.close();
 	}
 
 	/**
@@ -298,8 +354,24 @@ public class FileHandler implements PersistencyHandler {
 	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
 		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
 		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
-		String contents1 = version1.getVersionContent();
-		String contents2 = version2.getVersionContent();
+		if (version1 == null && version2 == null) {
+			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
+			logger.error(msg);
+			throw new Exception(msg);
+		}
+		String contents1 = null;
+		if (version1 != null) {
+			contents1 = version1.getVersionContent();
+		}
+		String contents2 = null;
+		if (version2 != null) {
+			contents2 = version2.getVersionContent();
+		}
+		if (contents1 == null && contents2 == null) {
+			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
+			logger.error(msg);
+			throw new Exception(msg);
+		}
 		return DiffUtil.diff(contents1, contents2, useHtml);
 	}
 
@@ -317,6 +389,15 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	public static String fileBase(String virtualWiki) {
 		return Environment.getValue(Environment.PROP_FILE_HOME_DIR) + Utilities.sep() + virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public List getAllTopicNames(String virtualWiki) throws Exception {
+		List all = new ArrayList();
+		// FIXME - implement
+		return all;
 	}
 
 	/**
@@ -419,6 +500,21 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection getRecentChanges(String virtualWiki, int numChanges) throws Exception {
+		List all = new LinkedList();
+		File[] files = retrieveRecentChangeFiles(virtualWiki);
+		if (files == null) return all;
+		for (int i = 0; i < files.length; i++) {
+			if (i >= numChanges) break;
+			RecentChange change = initRecentChange(files[i]);
+			all.add(change);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getVirtualWikiList() throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
@@ -454,38 +550,84 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static RecentChange initRecentChange(File file) {
+		if (!file.exists()) return null;
+		try {
+			RecentChange change = new RecentChange();
+			Document document = XMLUtil.parseXML(file, false);
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_RECENT_CHANGE_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
+			String childName = null;
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
+				if (childName.equals(XML_RECENT_CHANGE_TOPIC_ID)) {
+					change.setTopicId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_NAME)) {
+					change.setTopicName(rootChild.getTextContent());
+				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_VERSION_ID)) {
+					change.setTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID)) {
+					change.setPreviousTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_ID)) {
+					change.setAuthorId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_NAME)) {
+					change.setAuthorName(rootChild.getTextContent());
+				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_COMMENT)) {
+					change.setEditComment(rootChild.getTextContent());
+				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_DATE)) {
+					change.setEditDate(Timestamp.valueOf(rootChild.getTextContent()));
+				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_TYPE)) {
+					change.setEditType(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_RECENT_CHANGE_VIRTUAL_WIKI)) {
+					change.setVirtualWiki(rootChild.getTextContent());
+				}
+			}
+			return change;
+		} catch (Exception e) {
+			logger.error("Failure while initializing recent changes for file " + file.getAbsolutePath(), e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected static Topic initTopic(File file) {
+		if (!file.exists()) return null;
 		try {
 			Topic topic = new Topic();
 			Document document = XMLUtil.parseXML(file, false);
-			// get page node
-			Node pageNode = document.getElementsByTagName(XML_TOPIC_ROOT).item(0);
-			NodeList pageChildren = pageNode.getChildNodes();
-			Node pageChild = null;
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_TOPIC_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
 			String childName = null;
-			for (int i=0; i < pageChildren.getLength(); i++) {
-				pageChild = pageChildren.item(i);
-				childName = pageChild.getNodeName();
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
 				if (childName.equals(XML_TOPIC_TITLE)) {
-					topic.setName(pageChild.getTextContent());
+					topic.setName(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_ID)) {
-					topic.setTopicId(new Integer(pageChild.getTextContent()).intValue());
+					topic.setTopicId(new Integer(rootChild.getTextContent()).intValue());
 				} else if (childName.equals(XML_TOPIC_VIRTUAL_WIKI)) {
-					topic.setVirtualWiki(pageChild.getTextContent());
+					topic.setVirtualWiki(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_TEXT)) {
-					topic.setTopicContent(pageChild.getTextContent());
+					topic.setTopicContent(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_ADMIN_ONLY)) {
-					topic.setAdminOnly(new Boolean(pageChild.getTextContent()).booleanValue());
+					topic.setAdminOnly(new Boolean(rootChild.getTextContent()).booleanValue());
 				} else if (childName.equals(XML_TOPIC_LOCKED_BY)) {
-					topic.setLockedBy(new Integer(pageChild.getTextContent()).intValue());
+					topic.setLockedBy(new Integer(rootChild.getTextContent()).intValue());
 				} else if (childName.equals(XML_TOPIC_LOCK_DATE)) {
-					topic.setLockedDate(Timestamp.valueOf(pageChild.getTextContent()));
+					topic.setLockedDate(Timestamp.valueOf(rootChild.getTextContent()));
 				} else if (childName.equals(XML_TOPIC_LOCK_KEY)) {
-					topic.setLockSessionKey(pageChild.getTextContent());
+					topic.setLockSessionKey(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_READ_ONLY)) {
-					topic.setReadOnly(new Boolean(pageChild.getTextContent()).booleanValue());
+					topic.setReadOnly(new Boolean(rootChild.getTextContent()).booleanValue());
 				} else if (childName.equals(XML_TOPIC_TYPE)) {
-					topic.setTopicType(new Integer(pageChild.getTextContent()).intValue());
+					topic.setTopicType(new Integer(rootChild.getTextContent()).intValue());
 				}
 			}
 			return topic;
@@ -499,35 +641,32 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	protected static TopicVersion initTopicVersion(File file) {
+		if (!file.exists()) return null;
 		try {
-			// get topic version id
-			if (!file.exists() || file.getName() == null) {
-				return null;
-			}
 			TopicVersion topicVersion = new TopicVersion();
 			Document document = XMLUtil.parseXML(file, false);
-			// get page node
-			Node revisionNode = document.getElementsByTagName(XML_TOPIC_VERSION_ROOT).item(0);
-			NodeList revisionChildren = revisionNode.getChildNodes();
-			Node revisionChild = null;
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_TOPIC_VERSION_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
 			String childName = null;
-			for (int i=0; i < revisionChildren.getLength(); i++) {
-				revisionChild = revisionChildren.item(i);
-				childName = revisionChild.getNodeName();
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
 				if (childName.equals(XML_TOPIC_VERSION_ID)) {
-					topicVersion.setTopicVersionId(new Integer(revisionChild.getTextContent()).intValue());
+					topicVersion.setTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
 				} else if (childName.equals(XML_TOPIC_VERSION_TOPIC_ID)) {
-					topicVersion.setTopicId(new Integer(revisionChild.getTextContent()).intValue());
+					topicVersion.setTopicId(new Integer(rootChild.getTextContent()).intValue());
 				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_COMMENT)) {
-					topicVersion.setEditComment(revisionChild.getTextContent());
+					topicVersion.setEditComment(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_DATE)) {
-					topicVersion.setEditDate(Timestamp.valueOf(revisionChild.getTextContent()));
+					topicVersion.setEditDate(Timestamp.valueOf(rootChild.getTextContent()));
 				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_TYPE)) {
-					topicVersion.setEditType(new Integer(revisionChild.getTextContent()).intValue());
+					topicVersion.setEditType(new Integer(rootChild.getTextContent()).intValue());
 				} else if (childName.equals(XML_TOPIC_VERSION_TEXT)) {
-					topicVersion.setVersionContent(revisionChild.getTextContent());
+					topicVersion.setVersionContent(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_VERSION_AUTHOR)) {
-					NodeList authorChildren = revisionChild.getChildNodes();
+					NodeList authorChildren = rootChild.getChildNodes();
 					for (int j=0; j < authorChildren.getLength(); j++) {
 						Node authorChild = authorChildren.item(j);
 						if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_ID)) {
@@ -634,7 +773,7 @@ public class FileHandler implements PersistencyHandler {
 		// get all files, sorted.  last one is last version.
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
 		if (files == null) return null;
-		File file = files[files.length - 1];
+		File file = files[0];
 		return initTopicVersion(file);
 	}
 
@@ -759,9 +898,28 @@ public class FileHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static String recentChangeFilename(int topicVersionId) {
+		return topicVersionId + EXT;
+	}
+
+	/**
+	 *
+	 */
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		((Collection) this.readOnlyTopics.get(virtualWiki)).remove(topicName);
 		this.saveReadOnlyTopics(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	private File[] retrieveRecentChangeFiles(String virtualWiki) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.RECENT_CHANGE_DIR);
+		File[] files = file.listFiles();
+		if (files == null) return null;
+		Comparator comparator = new WikiFileComparator();
+		Arrays.sort(files, comparator);
+		return files;
 	}
 
 	/**
@@ -771,7 +929,7 @@ public class FileHandler implements PersistencyHandler {
 		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName);
 		File[] files = file.listFiles();
 		if (files == null) return null;
-		Comparator comparator = new TopicVersionComparator();
+		Comparator comparator = new WikiFileComparator();
 		Arrays.sort(files, comparator);
 		return files;
 	}
@@ -835,6 +993,11 @@ public class FileHandler implements PersistencyHandler {
 	 * Write to version file if versioning is on
 	 */
 	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
+		int previousTopicVersionId = 0;
+		if (topic.getTopicId() > 0) {
+			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
+			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
+		}
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(-1);
 		topic.setLockedDate(null);
@@ -845,12 +1008,25 @@ public class FileHandler implements PersistencyHandler {
 			// write version
 			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
 		}
+		RecentChange change = new RecentChange();
+		change.setTopicId(topic.getTopicId());
+		change.setTopicName(topic.getName());
+		change.setTopicVersionId(topicVersion.getTopicVersionId());
+		change.setPreviousTopicVersionId(previousTopicVersionId);
+		change.setAuthorId(topicVersion.getAuthorId());
+		// FIXME - should be the actual author name
+		change.setAuthorName(topicVersion.getAuthorIpAddress());
+		change.setEditComment(topicVersion.getEditComment());
+		change.setEditDate(topicVersion.getEditDate());
+		change.setEditType(topicVersion.getEditType());
+		change.setVirtualWiki(topic.getVirtualWiki());
+		addRecentChange(change);
 	}
 
 	/**
 	 *
 	 */
-	class TopicVersionComparator implements Comparator {
+	class WikiFileComparator implements Comparator {
 
 		/**
 		 *
@@ -862,7 +1038,7 @@ public class FileHandler implements PersistencyHandler {
 			int arg1 = new Integer(one.substring(0, pos)).intValue();
 			pos = two.lastIndexOf(EXT);
 			int arg2 = new Integer(two.substring(0, pos)).intValue();
-			return arg1 - arg2;
+			return arg2 - arg1;
 		}
 	}
 }

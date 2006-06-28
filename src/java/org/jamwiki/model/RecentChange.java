@@ -25,17 +25,49 @@ import org.apache.log4j.Logger;
 public class RecentChange {
 
 	private static Logger logger = Logger.getLogger(RecentChange.class);
+	private int authorId = -1;
+	private String authorName = null;
 	private String editComment = null;
 	private Timestamp editDate = null;
 	private int editType = -1;
+	private int previousTopicVersionId = -1;
 	private int topicId = -1;
 	private String topicName = null;
 	private int topicVersionId = -1;
+	private String virtualWiki = null;
 
 	/**
 	 *
 	 */
 	public RecentChange() {
+	}
+
+	/**
+	 *
+	 */
+	public int getAuthorId() {
+		return this.authorId;
+	}
+
+	/**
+	 *
+	 */
+	public void setAuthorId(int authorId) {
+		this.authorId = authorId;
+	}
+
+	/**
+	 *
+	 */
+	public String getAuthorName() {
+		return this.authorName;
+	}
+
+	/**
+	 *
+	 */
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
 	}
 
 	/**
@@ -83,6 +115,20 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public int getPreviousTopicVersionId() {
+		return this.previousTopicVersionId;
+	}
+
+	/**
+	 *
+	 */
+	public void setPreviousTopicVersionId(int previousTopicVersionId) {
+		this.previousTopicVersionId = previousTopicVersionId;
+	}
+
+	/**
+	 *
+	 */
 	public int getTopicId() {
 		return this.topicId;
 	}
@@ -120,5 +166,19 @@ public class RecentChange {
 	 */
 	public void setTopicVersionId(int topicVersionId) {
 		this.topicVersionId = topicVersionId;
+	}
+
+	/**
+	 *
+	 */
+	public String getVirtualWiki() {
+		return this.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String virtualWiki) {
+		this.virtualWiki = virtualWiki;
 	}
 }

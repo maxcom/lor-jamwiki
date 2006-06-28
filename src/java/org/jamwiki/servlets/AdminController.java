@@ -76,6 +76,8 @@ public class AdminController extends JAMController implements Controller {
 				upgradePurge(request, next);
 			} else if (function.equals("Convert to File")) {
 				upgradeConvertToFile(request, next);
+			} else if (function.equals("Load Recent Changes")) {
+				upgradeRecentChanges(request, next);
 			} else {
 				upgradeView(request, next);
 			}
@@ -684,6 +686,22 @@ public class AdminController extends JAMController implements Controller {
 		} catch (Exception e) {
 			logger.error("Failure while executing database cleanup", e);
 			next.addObject("errorMessage", "Failure while executing database cleanup: " + e.getMessage());
+		}
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
+	private void upgradeRecentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			org.jamwiki.persistency.db.DatabaseHandler.loadRecentChanges();
+			next.addObject("message", "Recent changes successfully loaded");
+		} catch (Exception e) {
+			logger.error("Failure while loading recent changes", e);
+			next.addObject("errorMessage", "Failure while loading recent changes: " + e.getMessage());
 		}
 		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
 		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));

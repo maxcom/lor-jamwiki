@@ -42,6 +42,7 @@ import org.jamwiki.TopicLock;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.PseudoTopicHandler;
+import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.DiffUtil;
@@ -73,16 +74,48 @@ public class DatabaseHandler implements PersistencyHandler {
 		+ ") values ( "
 		+   "?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
+	private static final String STATEMENT_INSERT_RECENT_CHANGE =
+		"insert into jmw_recent_change ("
+		+   "topic_version_id, previous_topic_version_id, topic_id, "
+		+   "topic_name, edit_date, edit_comment, author_id, "
+		+   "display_name, edit_type, virtual_wiki_id, virtual_wiki_name "
+		+ ") values ( "
+		+   "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
+		+ ") ";
+	private static final String STATEMENT_INSERT_RECENT_CHANGES =
+		"INSERT INTO jmw_recent_change ( "
+		+   "topic_version_id, topic_id, "
+		+   "topic_name, edit_date, author_id, display_name, "
+		+   "edit_type, virtual_wiki_id, virtual_wiki_name, edit_comment "
+		+ ") "
+		+ "SELECT "
+		+   "jmw_topic_version.topic_version_id, jmw_topic.topic_id, "
+		+   "jmw_topic.topic_name, jmw_topic_version.edit_date, "
+		+   "jmw_topic_version.author_id, jmw_author.display_name, "
+		+   "jmw_topic_version.edit_type, jmw_virtual_wiki.virtual_wiki_id, "
+		+   "jmw_virtual_wiki.virtual_wiki_name, jmw_topic_version.edit_comment "
+		+ "FROM jmw_topic, jmw_topic_version, jmw_author, jmw_virtual_wiki "
+		+ "WHERE jmw_topic.topic_id = jmw_topic_version.topic_id "
+		+ "AND jmw_topic_version.author_id = jmw_author.author_id "
+		+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id ";
 	private static final String STATEMENT_INSERT_VIRTUAL_WIKI =
 		"insert into jmw_virtual_wiki ("
 		+   "virtual_wiki_id, virtual_wiki_name "
 		+ ") values ( "
 		+   "?, ? "
 		+ ") ";
+	private static final String STATEMENT_SELECT_RECENT_CHANGES =
+		"select * from jmw_recent_change "
+		+ "where virtual_wiki_name = ? "
+		+ "order by edit_date desc "
+		+ "limit ? ";
 	private static final String STATEMENT_SELECT_TOPIC =
 		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_name = ? ";
+	private static final String STATEMENT_SELECT_TOPICS =
+		"select * from jmw_topic "
+		+ "where virtual_wiki_id = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_READ_ONLY =
 		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
@@ -121,6 +154,43 @@ public class DatabaseHandler implements PersistencyHandler {
 		+ "topic_content = ?, "
 		+ "topic_lock_session_key = ? "
 		+ "where topic_id = ? ";
+
+	/**
+	 *
+	 */
+	public void addRecentChange(RecentChange change) throws Exception {
+		int virtualWikiId = lookupVirtualWikiId(change.getVirtualWiki());
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_INSERT_RECENT_CHANGE);
+			stmt.setInt(1, change.getTopicVersionId());
+			if (change.getPreviousTopicVersionId() > 0) {
+				stmt.setInt(2, change.getPreviousTopicVersionId());
+			} else {
+				stmt.setNull(7, Types.INTEGER);
+			}
+			stmt.setInt(3, change.getTopicId());
+			stmt.setString(4, change.getTopicName());
+			stmt.setTimestamp(5, change.getEditDate());
+			stmt.setString(6, change.getEditComment());
+			if (change.getAuthorId() > 0) {
+				stmt.setInt(7, change.getAuthorId());
+			} else {
+				stmt.setNull(7, Types.INTEGER);
+			}
+			stmt.setString(8, change.getAuthorName());
+			stmt.setInt(9, change.getEditType());
+			stmt.setInt(10, virtualWikiId);
+			stmt.setString(11, change.getVirtualWiki());
+			stmt.executeUpdate();
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt);
+			}
+		}
+	}
 
 	/**
 	 *
@@ -217,6 +287,29 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	public List getAllTopicNames(String virtualWiki) throws Exception {
+		List all = new ArrayList();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			int virtualWikiId = lookupVirtualWikiId(virtualWiki);
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS);
+			stmt.setInt(1, virtualWikiId);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				all.add(rs.getString("topic_name"));
+			}
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
 		List all = new ArrayList();
 		Connection conn = null;
@@ -267,6 +360,54 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection getRecentChanges(String virtualWiki, int numChanges) throws Exception {
+		ArrayList all = new ArrayList();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
+			stmt.setString(1, virtualWiki);
+			stmt.setInt(2, numChanges);
+			rs = stmt.executeQuery();
+			WikiResultSet wrs = new WikiResultSet(rs);
+			while (wrs.next()) {
+				RecentChange change = initRecentChange(wrs);
+				all.add(change);
+			}
+			return all;
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static RecentChange initRecentChange(WikiResultSet rs) {
+		try {
+			RecentChange change = new RecentChange();
+			change.setTopicVersionId(rs.getInt("topic_version_id"));
+			change.setPreviousTopicVersionId(rs.getInt("previous_topic_version_id"));
+			change.setTopicId(rs.getInt("topic_id"));
+			change.setTopicName(rs.getString("topic_name"));
+			change.setEditDate(rs.getTimestamp("edit_date"));
+			change.setEditComment(rs.getString("edit_comment"));
+			change.setAuthorId(rs.getInt("author_id"));
+			change.setAuthorName(rs.getString("display_name"));
+			change.setEditType(rs.getInt("edit_type"));
+			change.setVirtualWiki(rs.getString("virtual_wiki_name"));
+			return change;
+		} catch (Exception e) {
+			logger.error("Failure while initializing recent change", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected static Topic initTopic(WikiResultSet rs) {
 		try {
 			int virtualWikiId = rs.getInt("virtual_wiki_id");
@@ -307,6 +448,33 @@ public class DatabaseHandler implements PersistencyHandler {
 		} catch (Exception e) {
 			logger.error("Failure while initializing topic version", e);
 			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	public static void loadRecentChanges() throws Exception {
+		String sql;
+		sql = "DELETE from jmw_recent_change";
+		DatabaseConnection.executeUpdate(sql);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
+		// FIXME - slow
+		sql = "SELECT topic_id, topic_version_id from jmw_recent_change "
+		    + "WHERE previous_topic_version_id is null ";
+		WikiResultSet rs = DatabaseConnection.executeQuery(sql);
+		while (rs.next()) {
+			// FIXME - postgres specific
+			sql = "UPDATE jmw_recent_change SET "
+			    + "previous_topic_version_id = ( "
+			    +   "select max(jmw_topic_version.topic_version_id) "
+			    +   "from jmw_topic_version "
+			    +   "where jmw_topic_version.topic_id = " + rs.getInt("topic_id") + " "
+			    +   "and jmw_topic_version.topic_version_id < " + rs.getInt("topic_version_id") + " "
+			    + ") "
+			    + "where topic_id = " + rs.getInt("topic_id") + " "
+			    + "and topic_version_id = " + rs.getInt("topic_version_id") + " ";
+			DatabaseConnection.executeUpdate(sql);
 		}
 	}
 
@@ -520,13 +688,19 @@ public class DatabaseHandler implements PersistencyHandler {
 	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
 		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
 		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
-		if (version1 == null || version2 == null) {
+		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
 			logger.error(msg);
 			throw new Exception(msg);
 		}
-		String contents1 = version1.getVersionContent();
-		String contents2 = version2.getVersionContent();
+		String contents1 = null;
+		if (version1 != null) {
+			contents1 = version1.getVersionContent();
+		}
+		String contents2 = null;
+		if (version2 != null) {
+			contents2 = version2.getVersionContent();
+		}
 		if (contents1 == null && contents2 == null) {
 			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
 			logger.error(msg);
@@ -619,6 +793,10 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			// new topic
+			return true;
+		}
 		if (topic.getLockSessionKey() == null) {
 			return lockTopic(virtualWiki, topicName, key);
 		}
@@ -918,6 +1096,7 @@ public class DatabaseHandler implements PersistencyHandler {
 	 *
 	 */
 	public void write(Topic topic, TopicVersion topicVersion) throws Exception {
+		int previousTopicVersionId = 0;
 		if (topic.getTopicId() <= 0) {
 			this.addTopic(topic);
 		} else {
@@ -926,11 +1105,27 @@ public class DatabaseHandler implements PersistencyHandler {
 			topic.setLockedDate(null);
 			topic.setLockSessionKey(null);
 			this.updateTopic(topic);
+			// get previous topic version id (if any)
+			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
+			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
 		}
 		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version
 			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
 		}
+		RecentChange change = new RecentChange();
+		change.setTopicId(topic.getTopicId());
+		change.setTopicName(topic.getName());
+		change.setTopicVersionId(topicVersion.getTopicVersionId());
+		change.setPreviousTopicVersionId(previousTopicVersionId);
+		change.setAuthorId(topicVersion.getAuthorId());
+		// FIXME - should be the actual author name
+		change.setAuthorName(topicVersion.getAuthorIpAddress());
+		change.setEditComment(topicVersion.getEditComment());
+		change.setEditDate(topicVersion.getEditDate());
+		change.setEditType(topicVersion.getEditType());
+		change.setVirtualWiki(topic.getVirtualWiki());
+		addRecentChange(change);
 	}
 }

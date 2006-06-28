@@ -25,23 +25,21 @@
 <tr>
 	<th colspan="2">&#160;</th>
 	<th><f:message key="common.topic"/></th>
-	<th><f:message key="common.user"/></th>
 	<th><f:message key="common.date"/></th>
+	<th><f:message key="common.user"/></th>
 </tr>
 <c:forEach items="${changes}" var="change">
 <tr>
 	<%-- FIXME: hard coding --%>
-	<td>(<a href="<jamwiki:link value="Special:Diff" />?action=<%= JAMController.ACTION_DIFF %>&topic=<jamwiki:encode value="${change.topic}" />">diff</a>)</td>
-	<td>(<a href="<jamwiki:link value="Special:History" />?action=<%= JAMController.ACTION_HISTORY %>&topic=<jamwiki:encode value="${change.topic}" />&type=all">history</a>)</td>
+	<td>(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&version2=<c:out value="${change.previousTopicVersionId}" />&version1=<c:out value="${change.topicVersionId}" />">diff</a>)</td>
+	<td>(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />&type=all">history</a>)</td>
 	<td class="recent">
-		<a href='<jamwiki:encode value="${change.topic}"/>'><c:out value="${change.topic}"/></a>
+		<a href='<jamwiki:encode value="${change.topicName}"/>'><c:out value="${change.topicName}"/></a>
 	</td>
 	<td class="recent">
-		<c:out value="${change.username}"/>
+		<f:formatDate value="${change.editDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" />
 	</td>
-	<td class="recent">
-		<f:formatDate value="${change.time}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" />
-	</td>
+	<td class="recent"><c:out value="${change.authorName}" /><c:if test="${!empty change.editComment}">&#160;(<c:out value="${change.editComment}" />)</c:if></td>
 </tr>
 </c:forEach>
 </table>

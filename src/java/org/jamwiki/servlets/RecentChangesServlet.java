@@ -24,7 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.ChangeLog;
+//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.springframework.web.servlet.ModelAndView;
@@ -58,9 +58,9 @@ public class RecentChangesServlet extends JAMController implements Controller {
 			// FIXME - verify it's a number
 			num = new Integer(request.getParameter("num")).intValue();
 		}
-		ArrayList all = null;
+		Collection all = null;
 		try {
-			all = reload(virtualWiki, num);
+			all = WikiBase.getInstance().getHandler().getRecentChanges(virtualWiki, num);
 		} catch (Exception e) {
 			logger.error(e);
 			throw e;
@@ -74,18 +74,18 @@ public class RecentChangesServlet extends JAMController implements Controller {
 	/**
 	 *
 	 */
-	private ArrayList reload(String virtualWiki, int num) throws Exception {
-		// FIXME - this is hugely inefficient as it gets too many changes at once
-		Calendar cal = Calendar.getInstance();
-		ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-		ArrayList all = new ArrayList();
-		for (int i = 0; i < num; i++) {
-			Collection col = cl.getChanges(virtualWiki, cal.getTime());
-			if (col != null) {
-				all.addAll(col);
-			}
-			cal.add(Calendar.DATE, -1);
-		}
-		return (all.size() > num) ? new ArrayList(all.subList(0, num)) : all;
-	}
+//	private ArrayList getRecentChanges(String virtualWiki, int num) throws Exception {
+//		// FIXME - this is hugely inefficient as it gets too many changes at once
+//		Calendar cal = Calendar.getInstance();
+//		ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//		ArrayList all = new ArrayList();
+//		for (int i = 0; i < num; i++) {
+//			Collection col = cl.getChanges(virtualWiki, cal.getTime());
+//			if (col != null) {
+//				all.addAll(col);
+//			}
+//			cal.add(Calendar.DATE, -1);
+//		}
+//		return (all.size() > num) ? new ArrayList(all.subList(0, num)) : all;
+//	}
 }
