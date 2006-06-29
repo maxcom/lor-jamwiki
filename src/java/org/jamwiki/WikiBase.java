@@ -272,67 +272,6 @@ public class WikiBase {
 	/**
 	 * TODO: DOCUMENT ME!
 	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @param key		 TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public synchronized boolean holdsLock(String virtualWiki, String topicName,
-		String key) throws Exception {
-		return handler.holdsLock(virtualWiki, topicName, key);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @param key		 TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public synchronized boolean lockTopic(String virtualWiki, String topicName,
-		String key) throws Exception {
-		return handler.lockTopic(virtualWiki, topicName, key);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
-		return this.handler.getReadOnlyTopics(virtualWiki);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		this.handler.addReadOnlyTopic(virtualWiki, topicName);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		this.handler.removeReadOnlyTopic(virtualWiki, topicName);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
 	public static void initialise() throws Exception {

@@ -514,8 +514,6 @@ public class AdminController extends JAMController implements Controller {
 		try {
 			Collection purged = WikiBase.getInstance().purgeDeletes(virtualWiki);
 			StringBuffer buffer = new StringBuffer();
-//			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-//			cl.removeChanges(virtualWiki, purged);
 			buffer.append("Purged: ");
 			for (Iterator iterator = purged.iterator(); iterator.hasNext();) {
 				String topicName = (String) iterator.next();
@@ -560,13 +558,13 @@ public class AdminController extends JAMController implements Controller {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		if (request.getParameter("addReadOnly") != null) {
 			String topicName = request.getParameter("readOnlyTopic");
-			WikiBase.getInstance().addReadOnlyTopic(virtualWiki, topicName);
+			WikiBase.getInstance().getHandler().addReadOnlyTopic(virtualWiki, topicName);
 		}
 		if (request.getParameter("removeReadOnly") != null) {
 			String[] topics = request.getParameterValues("markRemove");
 			for (int i = 0; i < topics.length; i++) {
 				String topicName = topics[i];
-				WikiBase.getInstance().removeReadOnlyTopic(virtualWiki, topicName);
+				WikiBase.getInstance().getHandler().removeReadOnlyTopic(virtualWiki, topicName);
 			}
 		}
 	}
@@ -578,7 +576,7 @@ public class AdminController extends JAMController implements Controller {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		Collection readOnlyTopics = new ArrayList();
 		try {
-			readOnlyTopics = WikiBase.getInstance().getReadOnlyTopics(virtualWiki);
+			readOnlyTopics = WikiBase.getInstance().getHandler().getReadOnlyTopics(virtualWiki);
 			next.addObject("readOnlyTopics", readOnlyTopics);
 		} catch (Exception e) {
 			// Ignore database error - probably just an invalid setting, the

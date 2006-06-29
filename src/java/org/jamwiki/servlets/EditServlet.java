@@ -119,7 +119,7 @@ public class EditServlet extends JAMController implements Controller {
 			}
 		}
 		String key = request.getSession().getId();
-		if (!WikiBase.getInstance().lockTopic(virtualWiki, topicName, key)) {
+		if (!WikiBase.getInstance().getHandler().lockTopic(virtualWiki, topicName, key)) {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topicName + " is locked");
 		}
@@ -227,7 +227,7 @@ public class EditServlet extends JAMController implements Controller {
 			throw new Exception("The topic " + topicName + " is read only and cannot be saved");
 		}
 		String key = request.getSession().getId();
-		if (!WikiBase.getInstance().holdsLock(virtualWiki, topicName, key)) {
+		if (!WikiBase.getInstance().getHandler().holdsLock(virtualWiki, topicName, key)) {
 			logger.warn("The lock on " + topicName + " has timed out");
 			// FIXME - hard coding
 			throw new Exception("The lock on " + topicName + " has timed out");

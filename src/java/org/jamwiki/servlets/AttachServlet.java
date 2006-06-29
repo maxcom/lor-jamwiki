@@ -66,7 +66,7 @@ public class AttachServlet extends JAMController implements Controller {
 				throw new Exception("Topic " + topicName + " is read only");
 			}
 			String key = request.getSession().getId();
-			if (!WikiBase.getInstance().lockTopic(virtualWiki, topicName, key)) {
+			if (!WikiBase.getInstance().getHandler().lockTopic(virtualWiki, topicName, key)) {
 				// FIXME - hard coding
 				throw new Exception("Topic " + topicName + " is locked");
 			}
