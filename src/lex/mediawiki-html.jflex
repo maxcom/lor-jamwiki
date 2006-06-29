@@ -33,7 +33,7 @@ import org.jamwiki.WikiBase;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger log = Logger.getLogger(MediaWikiHTML.class.getName());
+    protected static Logger logger = Logger.getLogger(MediaWikiHTML.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
     protected String virtualWiki;
@@ -83,7 +83,7 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 %%
 
 <NORMAL, P, NONPARAGRAPH>{nonparagraphstart} {
-    log.debug("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
+    logger.debug("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     if (yystate() == P) {
         output.append("</p>");
@@ -94,7 +94,7 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 }
 
 <NONPARAGRAPH>{nonparagraphend} {
-    log.debug("nonparagraphend: " + yytext() + " (" + yystate() + ")");
+    logger.debug("nonparagraphend: " + yytext() + " (" + yystate() + ")");
     endState();
     if (yystate() != NONPARAGRAPH) {
         // if not non-paragraph, roll back to allow potential paragraph start
@@ -104,7 +104,7 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 }
 
 <NORMAL>{paragraphstart} {
-    log.debug("paragraphstart: " + yytext() + " (" + yystate() + ")");
+    logger.debug("paragraphstart: " + yytext() + " (" + yystate() + ")");
     beginState(P);
     // start paragraph, then rollback to allow normal processing
     yypushback(1);
@@ -112,7 +112,7 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 }
 
 <NORMAL>^{paragraphstart2} {
-    log.debug("paragraphstart2: " + yytext() + " (" + yystate() + ")");
+    logger.debug("paragraphstart2: " + yytext() + " (" + yystate() + ")");
     beginState(P);
     // start paragraph, then rollback to allow normal processing
     yypushback(yytext().length());
@@ -120,17 +120,17 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 }
 
 <P>{paragraphend} {
-    log.debug("end of paragraph: " + yytext() + " (" + yystate() + ")");
+    logger.debug("end of paragraph: " + yytext() + " (" + yystate() + ")");
     endState();
     return "</p>" + yytext();
 }
 
 <NORMAL, NONPARAGRAPH, P>{whitespace} {
-    log.debug("{whitespace}: " + yytext() + " (" + yystate() + ")");
+    logger.debug("{whitespace}: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 <NORMAL, NONPARAGRAPH, P>. {
-    log.debug("default: " + yytext() + " (" + yystate() + ")");
+    logger.debug("default: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }

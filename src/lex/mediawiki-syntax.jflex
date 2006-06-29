@@ -734,7 +734,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 /* ----- other ----- */
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{ampersand} {
-    logger.debug("htmltagopen: " + yytext() + " (" + yystate() + ")");
+    logger.debug("ampersand: " + yytext() + " (" + yystate() + ")");
     // if html not allowed, escape it
     return (allowHtml()) ? yytext() : "&amp;";
 }
@@ -752,11 +752,11 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 }
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{whitespace} {
-    logger.debug("{whitespace}: " + yytext() + " (" + yystate() + ")");
+    // no need to log this
     return yytext();
 }
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>. {
-    logger.debug("default: " + yytext() + " (" + yystate() + ")");
+    // no need to log this
     return yytext();
 }
