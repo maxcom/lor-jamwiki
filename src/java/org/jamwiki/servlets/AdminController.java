@@ -30,9 +30,12 @@ import org.jamwiki.Environment;
 import org.jamwiki.model.Topic;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMembers;
+import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
+import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DBDate;
 import org.jamwiki.persistency.db.DatabaseInit;
+import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
@@ -632,7 +635,9 @@ public class AdminController extends JAMController implements Controller {
 	 */
 	private void upgradeConvertToFile(HttpServletRequest request, ModelAndView next) throws Exception {
 		try {
-			DatabaseInit.convertToFile();
+			FileHandler fileHandler = new FileHandler();
+			DatabaseHandler databaseHandler = new DatabaseHandler();
+			PersistencyHandler.convert(databaseHandler, fileHandler);
 			next.addObject("message", "Database values successfully written to files");
 		} catch (Exception e) {
 			logger.error("Failure while executing database-to-file conversion", e);
