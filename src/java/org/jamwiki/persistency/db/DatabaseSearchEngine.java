@@ -21,9 +21,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import org.jamwiki.AbstractSearchEngine;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.search.AbstractSearchEngine;
 
 /**
  *

@@ -46,6 +46,8 @@ import org.jamwiki.persistency.file.FileSearchEngine;
 import org.jamwiki.persistency.file.FileWikiMembers;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.alt.BackLinkLex;
+import org.jamwiki.search.SearchEngine;
+import org.jamwiki.search.SearchRefreshThread;
 import org.jamwiki.servlets.JAMController;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;

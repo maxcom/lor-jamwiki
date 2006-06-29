@@ -3,7 +3,7 @@
  * Changes as described in http://www.geocrawler.com/archives/3/2624/2000/11/0/4746798/
  */
 
-package org.jamwiki.utils.lucene;
+package org.jamwiki.search.lucene;
 
 /* ====================================================================
  * The Apache Software License, Version 1.1
@@ -61,33 +61,13 @@ package org.jamwiki.utils.lucene;
 
 import java.io.Reader;
 
-import org.apache.lucene.analysis.LetterTokenizer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 
-/**
- * LowerCaseKeepNumbersTokenizer performs the function of LetterTokenizer
- * and LowerCaseFilter together.  It divides text at non-letters and converts
- * them to lower case.  While it is functionally equivalent to the combination
- * of LetterTokenizer and LowerCaseFilter, there is a performance advantage
- * to doing the two tasks at once, hence this (redundant) implementation.
- * <P>
- * Note: this does a decent job for most European languages, but does a terrible
- * job for some Asian languages, where words are not separated by spaces.
- */
-public final class LowerCaseKeepNumbersTokenizer extends LetterTokenizer {
-  /** Construct a new LowerCaseKeepNumbersTokenizer. */
-  public LowerCaseKeepNumbersTokenizer(Reader in) {
-	super(in);
-  }
+/** An Analyzer that filters LetterTokenizer with LowerCaseFilter. */
 
-  /** Collects only characters which satisfy
-   * {@link Character#isLetter(char)}.*/
-  protected char normalize(char c) {
-	return Character.toLowerCase(c);
-  }
-
-  /** Collects only characters which satisfy
-   * {@link Character#isLetter(char)}.*/
-  protected boolean isTokenChar(char c) {
-	  return Character.isLetterOrDigit(c);
+public final class SimpleKeepNumbersAnalyzer extends Analyzer {
+  public final TokenStream tokenStream(String fieldName, Reader reader) {
+	return new LowerCaseKeepNumbersTokenizer(reader);
   }
 }

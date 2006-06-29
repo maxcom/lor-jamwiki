@@ -1,4 +1,4 @@
-package org.jamwiki.utils.lucene;
+package org.jamwiki.search.lucene;
 
 /* ====================================================================
  * The Apache Software License, Version 1.1

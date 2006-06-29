@@ -19,10 +19,10 @@ package org.jamwiki.persistency.file;
 import java.io.File;
 import java.util.Collection;
 import java.util.TreeSet;
-import org.jamwiki.AbstractSearchEngine;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.search.AbstractSearchEngine;
 import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
 
