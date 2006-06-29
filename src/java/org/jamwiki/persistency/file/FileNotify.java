@@ -168,17 +168,17 @@ public class FileNotify extends AbstractNotify {
 	public static Collection getAll(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
 		File path = FileHandler.getPathFor(virtualWiki, null, "");
-		File[] list = path.listFiles(new FileExtensionFilter("ntf"));
-		for (int i = 0; i < list.length; i++) {
-			File file = list[i];
-			String fileName = file.getName();
-			all.add(
-				new FileNotify(
-					virtualWiki,
-					fileName.substring(0, fileName.length() - 4)
-				)
-			);
-		}
+//		File[] list = path.listFiles(new FileExtensionFilter("ntf"));
+//		for (int i = 0; i < list.length; i++) {
+//			File file = list[i];
+//			String fileName = file.getName();
+//			all.add(
+//				new FileNotify(
+//					virtualWiki,
+//					fileName.substring(0, fileName.length() - 4)
+//				)
+//			);
+//		}
 		return all;
 	}
 }

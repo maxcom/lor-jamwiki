@@ -38,7 +38,6 @@ import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.db.DatabaseWikiMembers;
-import org.jamwiki.persistency.file.FileExtensionFilter;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileSearchEngine;
@@ -396,19 +395,6 @@ public class WikiBase {
 			if (WikiBase.getPersistenceType() != DATABASE) {
 				try {
 					FileHandler.getPathFor(virtualWikiName, null, "recent.xml").delete();
-				} catch (Exception e) {
-					logger.error("error removing recent.xml", e);
-				}
-			}
-			// failsafe
-			if (WikiBase.getPersistenceType() != DATABASE) {
-				try {
-					File wikiDir = FileHandler.getPathFor(virtualWikiName, null, null);
-					File[] locks = wikiDir.listFiles(new FileExtensionFilter(".lock"));
-					for (int i = 0; i < locks.length; i++) {
-						File lock = locks[i];
-						lock.delete();
-					}
 				} catch (Exception e) {
 					logger.error("error removing recent.xml", e);
 				}
