@@ -236,8 +236,38 @@ public abstract class PersistencyHandler {
 	 */
 	public abstract void unlockTopic(String virtualWiki, String topicName) throws Exception;
 
+
 	/**
 	 *
 	 */
-	public abstract void write(Topic topic, TopicVersion topicVersion) throws Exception;
+	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
+		int previousTopicVersionId = 0;
+		if (topic.getTopicId() > 0) {
+			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
+			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
+		}
+		// release any lock that is held by setting lock fields null
+		topic.setLockedBy(-1);
+		topic.setLockedDate(null);
+		topic.setLockSessionKey(null);
+		this.addTopic(topic);
+		topicVersion.setTopicId(topic.getTopicId());
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
+			// write version
+			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
+		}
+		RecentChange change = new RecentChange();
+		change.setTopicId(topic.getTopicId());
+		change.setTopicName(topic.getName());
+		change.setTopicVersionId(topicVersion.getTopicVersionId());
+		change.setPreviousTopicVersionId(previousTopicVersionId);
+		change.setAuthorId(topicVersion.getAuthorId());
+		// FIXME - should be the actual author name
+		change.setAuthorName(topicVersion.getAuthorIpAddress());
+		change.setEditComment(topicVersion.getEditComment());
+		change.setEditDate(topicVersion.getEditDate());
+		change.setEditType(topicVersion.getEditType());
+		change.setVirtualWiki(topic.getVirtualWiki());
+		addRecentChange(change);
+	}
 }

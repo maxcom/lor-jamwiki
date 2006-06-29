@@ -186,7 +186,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(true);
-		updateTopic(topic);
+		addTopic(topic);
 	}
 
 	/**
@@ -235,23 +235,43 @@ public class DatabaseHandler extends PersistencyHandler {
 		PreparedStatement stmt = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
-			topic.setTopicId(rs.getInt("topic_id"));
-			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC);
-			stmt.setInt(1, topic.getTopicId());
-			stmt.setInt(2, virtualWikiId);
-			stmt.setString(3, topic.getName());
-			stmt.setInt(4, topic.getTopicType());
-			if (topic.getLockedBy() > 0) {
-				stmt.setInt(5, topic.getLockedBy());
+			if (topic.getTopicId() <= 0) {
+				// add
+				WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
+				topic.setTopicId(rs.getInt("topic_id"));
+				stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC);
+				stmt.setInt(1, topic.getTopicId());
+				stmt.setInt(2, virtualWikiId);
+				stmt.setString(3, topic.getName());
+				stmt.setInt(4, topic.getTopicType());
+				if (topic.getLockedBy() > 0) {
+					stmt.setInt(5, topic.getLockedBy());
+				} else {
+					stmt.setNull(5, Types.INTEGER);
+				}
+				stmt.setTimestamp(6, topic.getLockedDate());
+				stmt.setBoolean(7, topic.getReadOnly());
+				stmt.setString(8, topic.getTopicContent());
+				stmt.setString(9, topic.getLockSessionKey());
+				stmt.executeUpdate();
 			} else {
-				stmt.setNull(5, Types.INTEGER);
+				// update
+				stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
+				stmt.setInt(1, virtualWikiId);
+				stmt.setString(2, topic.getName());
+				stmt.setInt(3, topic.getTopicType());
+				if (topic.getLockedBy() > 0) {
+					stmt.setInt(4, topic.getLockedBy());
+				} else {
+					stmt.setNull(4, Types.INTEGER);
+				}
+				stmt.setTimestamp(5, topic.getLockedDate());
+				stmt.setBoolean(6, topic.getReadOnly());
+				stmt.setString(7, topic.getTopicContent());
+				stmt.setString(8, topic.getLockSessionKey());
+				stmt.setInt(9, topic.getTopicId());
+				stmt.executeUpdate();
 			}
-			stmt.setTimestamp(6, topic.getLockedDate());
-			stmt.setBoolean(7, topic.getReadOnly());
-			stmt.setString(8, topic.getTopicContent());
-			stmt.setString(9, topic.getLockSessionKey());
-			stmt.executeUpdate();
 		} finally {
 			if (conn != null) {
 				DatabaseConnection.closeConnection(conn, stmt);
@@ -678,7 +698,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
 		// FIXME - save author
 		//topic.setLockedBy(authorId);
-		updateTopic(topic);
+		addTopic(topic);
 		return true;
 	}
 
@@ -910,7 +930,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(false);
-		updateTopic(topic);
+		addTopic(topic);
 	}
 
 	/**
@@ -993,74 +1013,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		topic.setLockSessionKey(null);
 		topic.setLockedDate(null);
 		topic.setLockedBy(-1);
-		updateTopic(topic);
-	}
-
-	/**
-	 *
-	 */
-	private void updateTopic(Topic topic) throws Exception {
-		int virtualWikiId = lookupVirtualWikiId(topic.getVirtualWiki());
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setString(2, topic.getName());
-			stmt.setInt(3, topic.getTopicType());
-			if (topic.getLockedBy() > 0) {
-				stmt.setInt(4, topic.getLockedBy());
-			} else {
-				stmt.setNull(4, Types.INTEGER);
-			}
-			stmt.setTimestamp(5, topic.getLockedDate());
-			stmt.setBoolean(6, topic.getReadOnly());
-			stmt.setString(7, topic.getTopicContent());
-			stmt.setString(8, topic.getLockSessionKey());
-			stmt.setInt(9, topic.getTopicId());
-			stmt.executeUpdate();
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void write(Topic topic, TopicVersion topicVersion) throws Exception {
-		int previousTopicVersionId = 0;
-		if (topic.getTopicId() <= 0) {
-			this.addTopic(topic);
-		} else {
-			// release any lock that is held by setting lock fields null
-			topic.setLockedBy(-1);
-			topic.setLockedDate(null);
-			topic.setLockSessionKey(null);
-			this.updateTopic(topic);
-			// get previous topic version id (if any)
-			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
-			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
-		}
-		topicVersion.setTopicId(topic.getTopicId());
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			// write version
-			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
-		}
-		RecentChange change = new RecentChange();
-		change.setTopicId(topic.getTopicId());
-		change.setTopicName(topic.getName());
-		change.setTopicVersionId(topicVersion.getTopicVersionId());
-		change.setPreviousTopicVersionId(previousTopicVersionId);
-		change.setAuthorId(topicVersion.getAuthorId());
-		// FIXME - should be the actual author name
-		change.setAuthorName(topicVersion.getAuthorIpAddress());
-		change.setEditComment(topicVersion.getEditComment());
-		change.setEditDate(topicVersion.getEditDate());
-		change.setEditType(topicVersion.getEditType());
-		change.setVirtualWiki(topic.getVirtualWiki());
-		addRecentChange(change);
+		addTopic(topic);
 	}
 }
