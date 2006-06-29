@@ -40,6 +40,7 @@ CREATE TABLE jmw_topic (
   topic_locked_by INTEGER,
   topic_lock_date TIMESTAMP,
   topic_lock_session_key VARCHAR(100),
+  topic_deleted BOOLEAN DEFAULT FALSE,
   topic_read_only BOOLEAN DEFAULT FALSE,
   topic_admin_only BOOLEAN DEFAULT FALSE,
   topic_content TEXT,

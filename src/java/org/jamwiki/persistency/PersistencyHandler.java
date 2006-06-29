@@ -207,6 +207,15 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public void delete(Topic topic) throws Exception {
+		topic.setDeleted(true);
+		// update recent changes
+		addTopic(topic);
+	}
+
+	/**
+	 *
+	 */
 	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
 		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
 		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
@@ -232,10 +241,11 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
-	 *
+	 * See if a topic exists and if it has not been deleted.
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		return (lookupTopic(virtualWiki, topicName) != null);
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		return (topic != null && !topic.getDeleted());
 	}
 
 	/**

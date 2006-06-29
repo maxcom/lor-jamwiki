@@ -195,10 +195,9 @@ public class AdminController extends JAMController implements Controller {
 		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		try {
-			WikiBase base = WikiBase.getInstance();
 			String topicName = request.getParameter("topic");
-			Topic topic = base.getHandler().lookupTopic(virtualWiki, topicName);
-			base.getHandler().unlockTopic(topic);
+			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			WikiBase.getInstance().getHandler().unlockTopic(topic);
 			String message = JAMController.getMessage("admin.message.lockcleared", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
@@ -213,19 +212,24 @@ public class AdminController extends JAMController implements Controller {
 	 */
 	private void delete(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMController.getTopicFromRequest(request);
-		try {
-			if (topicName == null) {
-				next.addObject("errorMessage", "No topic found");
-			}
-			next.addObject("message", "Test successful");
-		} catch (Exception e) {
-			logger.error("Failure while deleting topic " + topicName, e);
-			next.addObject("errorMessage", "Failure while deleting topic " + topicName + ": " + e.getMessage());
-		}
+		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
 		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_DELETE);
 		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMController.PARAMETER_TITLE, "Delete " + topicName);
+		try {
+			if (topicName == null) {
+				next.addObject("errorMessage", "No topic found");
+				return;
+			}
+			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			WikiBase.getInstance().getHandler().delete(topic);
+			// FIXME - hard coding
+			next.addObject("message", "Topic " + topicName + " deleted successfully");
+		} catch (Exception e) {
+			logger.error("Failure while deleting topic " + topicName, e);
+			next.addObject("errorMessage", "Failure while deleting topic " + topicName + ": " + e.getMessage());
+		}
 	}
 
 	/**

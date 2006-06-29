@@ -29,6 +29,7 @@ public class Topic {
 	public static final int TYPE_TALK_PAGE = 3;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
+	private boolean deleted = false;
 	private int lockedBy = -1;
 	private Timestamp lockedDate = null;
 	private String lockSessionKey = null;
@@ -58,6 +59,20 @@ public class Topic {
 	 */
 	public void setAdminOnly(boolean adminOnly) {
 		this.adminOnly = adminOnly;
+	}
+
+	/**
+	 *
+	 */
+	public boolean getDeleted() {
+		return this.deleted;
+	}
+
+	/**
+	 *
+	 */
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	/**

@@ -95,7 +95,8 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "FROM jmw_topic, jmw_topic_version, jmw_author, jmw_virtual_wiki "
 		+ "WHERE jmw_topic.topic_id = jmw_topic_version.topic_id "
 		+ "AND jmw_topic_version.author_id = jmw_author.author_id "
-		+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id ";
+		+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id "
+		+ "AND jmw_topic.topic_deleted = FALSE ";
 	private static final String STATEMENT_INSERT_VIRTUAL_WIKI =
 		"insert into jmw_virtual_wiki ("
 		+   "virtual_wiki_id, virtual_wiki_name "
@@ -113,15 +114,18 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "and topic_name = ? ";
 	private static final String STATEMENT_SELECT_TOPICS =
 		"select * from jmw_topic "
-		+ "where virtual_wiki_id = ? ";
+		+ "where virtual_wiki_id = ? "
+		+ "and topic_deleted = FALSE ";
 	private static final String STATEMENT_SELECT_TOPIC_READ_ONLY =
 		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
-		+ "and topic_read_only = ? ";
+		+ "and topic_read_only = ? "
+		+ "and topic_deleted = FALSE ";
 	private static final String STATEMENT_SELECT_TOPIC_LOCKED =
 		"select * from jmw_topic "
 		+ "where virtual_wiki_id = ? "
-		+ "and topic_lock_session_key is not null ";
+		+ "and topic_lock_session_key is not null "
+		+ "and topic_deleted = FALSE ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select nextval('jmw_topic_seq') as topic_id ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION =
@@ -150,7 +154,8 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "topic_lock_date = ?, "
 		+ "topic_read_only = ?, "
 		+ "topic_content = ?, "
-		+ "topic_lock_session_key = ? "
+		+ "topic_lock_session_key = ?, "
+		+ "topic_deleted = ? "
 		+ "where topic_id = ? ";
 
 	// ======================================
@@ -169,8 +174,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
 	protected final static String STATEMENT_PURGE_VERSIONS =
 		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
-	protected final static String STATEMENT_VERSION_FIND_ONE =
-		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
 
 	/**
 	 *
@@ -259,7 +262,8 @@ public class DatabaseHandler extends PersistencyHandler {
 				stmt.setBoolean(6, topic.getReadOnly());
 				stmt.setString(7, topic.getTopicContent());
 				stmt.setString(8, topic.getLockSessionKey());
-				stmt.setInt(9, topic.getTopicId());
+				stmt.setBoolean(9, topic.getDeleted());
+				stmt.setInt(10, topic.getTopicId());
 				stmt.executeUpdate();
 			}
 		} finally {
@@ -565,6 +569,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			topic.setLockedDate(rs.getTimestamp("topic_lock_date"));
 			topic.setLockSessionKey(rs.getString("topic_lock_session_key"));
 			topic.setReadOnly(rs.getBoolean("topic_read_only"));
+			topic.setDeleted(rs.getBoolean("topic_deleted"));
 			topic.setTopicType(rs.getInt("topic_type"));
 			return topic;
 		} catch (Exception e) {
@@ -880,38 +885,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
-	}
-
-	/**
-	 *
-	 */
-	public String revisionContents(String virtualWiki, String topicName, Timestamp date) throws Exception {
-		Connection conn = null;
-		String contents;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement versionFindStatementOne = conn.prepareStatement(STATEMENT_VERSION_FIND_ONE);
-			versionFindStatementOne.setString(1, topicName);
-			versionFindStatementOne.setString(2, virtualWiki);
-			versionFindStatementOne.setTimestamp(3, date);
-			ResultSet rs = versionFindStatementOne.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				versionFindStatementOne.close();
-				return null;
-			}
-			if (DatabaseHandler.isOracle()) {
-				contents = OracleClobHelper.getClobValue(rs.getClob("contents"));
-			} else {
-				contents = rs.getString("contents");
-			}
-			logger.debug("Contents @" + date + ": " + contents);
-			rs.close();
-			versionFindStatementOne.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return contents;
 	}
 
 	/**
