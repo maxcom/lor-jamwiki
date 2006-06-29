@@ -51,7 +51,6 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DBDate;
 import org.jamwiki.servlets.JAMController;
-import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
@@ -62,7 +61,7 @@ import org.w3c.dom.NodeList;
 /**
  *
  */
-public class FileHandler implements PersistencyHandler {
+public class FileHandler extends PersistencyHandler {
 
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
@@ -347,33 +346,6 @@ public class FileHandler implements PersistencyHandler {
 		PrintWriter writer = getNewPrintWriter(virtualList, true);
 		writer.println(WikiBase.DEFAULT_VWIKI);
 		writer.close();
-	}
-
-	/**
-	 *
-	 */
-	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
-		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
-		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
-		if (version1 == null && version2 == null) {
-			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-		String contents1 = null;
-		if (version1 != null) {
-			contents1 = version1.getVersionContent();
-		}
-		String contents2 = null;
-		if (version2 != null) {
-			contents2 = version2.getVersionContent();
-		}
-		if (contents1 == null && contents2 == null) {
-			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-		return DiffUtil.diff(contents1, contents2, useHtml);
 	}
 
 	/**
@@ -686,17 +658,6 @@ public class FileHandler implements PersistencyHandler {
 	}
 
 	/**
-	 *
-	 */
-	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			return null;
-		}
-		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
-		return version.getEditDate();
-	}
-
-	/**
 	 * Read the read-only topics from disk
 	 */
 	protected synchronized void loadReadOnlyTopics(String virtualWiki) {
@@ -948,25 +909,6 @@ public class FileHandler implements PersistencyHandler {
 		}
 		out.close();
 		logger.debug("Saved read-only topics: " + this.readOnlyTopics);
-	}
-
-	/**
-	 *
-	 */
-	private void setupSpecialPage(String virtualWiki, String topicName) throws Exception {
-		if (exists(virtualWiki, topicName)) {
-			return;
-		}
-		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-		if (baseFileDir == null || baseFileDir.length() == 0) {
-			// do not set up special pages until initial property values set
-			return;
-		}
-		Topic topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
-		topic.setTopicContent(WikiBase.readDefaultTopic(topicName));
-		addTopic(topic);
 	}
 
 	/**

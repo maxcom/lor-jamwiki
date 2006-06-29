@@ -45,13 +45,12 @@ import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 
 /**
  *
  */
-public class DatabaseHandler implements PersistencyHandler {
+public class DatabaseHandler extends PersistencyHandler {
 
 	public static final String DB_TYPE_ORACLE = "oracle";
 	public static final String DB_TYPE_MYSQL = "mysql";
@@ -685,33 +684,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	/**
 	 *
 	 */
-	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml) throws Exception {
-		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
-		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
-		if (version1 == null && version2 == null) {
-			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-		String contents1 = null;
-		if (version1 != null) {
-			contents1 = version1.getVersionContent();
-		}
-		String contents2 = null;
-		if (version2 != null) {
-			contents2 = version2.getVersionContent();
-		}
-		if (contents1 == null && contents2 == null) {
-			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
-			logger.error(msg);
-			throw new Exception(msg);
-		}
-		return DiffUtil.diff(contents1, contents2, useHtml);
-	}
-
-	/**
-	 *
-	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
 		return (lookupTopic(virtualWiki, topicName) != null);
 	}
@@ -817,17 +789,6 @@ public class DatabaseHandler implements PersistencyHandler {
 	 */
 	public static boolean isOracle() {
 		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE);
-	}
-
-	/**
-	 *
-	 */
-	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			return null;
-		}
-		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
-		return version.getEditDate();
 	}
 
 	/**
@@ -1061,24 +1022,6 @@ public class DatabaseHandler implements PersistencyHandler {
 			// list of topics that only admin is allowed to edit/view by themselves
 			setupSpecialPage(virtualWiki, messages.getString("specialpages.adminonlytopics"));
 		}
-	}
-
-	/**
-	 *
-	 */
-	private void setupSpecialPage(String virtualWiki, String topicName) throws Exception {
-		if (exists(virtualWiki, topicName)) {
-			return;
-		}
-		String contents = WikiBase.readDefaultTopic(topicName);
-		Topic topic = new Topic();
-		topic.setName(topicName);
-		topic.setVirtualWiki(virtualWiki);
-		topic.setTopicContent(contents);
-		TopicVersion topicVersion = new TopicVersion();
-		topicVersion.setVersionContent(contents);
-		topicVersion.setAuthorIpAddress(DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS);
-		write(topic, topicVersion);
 	}
 
 	/**

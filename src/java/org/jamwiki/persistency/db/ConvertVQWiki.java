@@ -20,6 +20,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import org.apache.log4j.Logger;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Encryption;
 
 /**
@@ -35,13 +38,6 @@ public class ConvertVQWiki {
 	private static final String DATABASE_POSTGRES = "postgres";
 	private static final String INIT_SCRIPT_ANSI = "create_ansi.sql";
 	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
-
-	// FIXME - move to more logical location
-	private static final String DEFAULT_PASSWORD = "password";
-	private static final String DEFAULT_AUTHOR_LOGIN = "unknown_author";
-	private static final String DEFAULT_AUTHOR_NAME = "Unknown Author";
-	private static final int TOPIC_TYPE_DEFAULT = 1;
-	private static final int EDIT_TYPE_DEFAULT = 1;
 
 	/**
 	 *
@@ -67,9 +63,9 @@ public class ConvertVQWiki {
 				+ ") "
 				+ "SELECT WikiMember.wikiuser, jmw_virtual_wiki.virtual_wiki_id, "
 				+ "WikiMember.userkey, WikiMember.email, WikiMember.wikiuser, "
-				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "', "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
+				+ "'" + Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD) + "', "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM WikiMember, jmw_virtual_wiki "
 				+ "WHERE WikiMember.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
 			st.executeUpdate(sql);
@@ -79,9 +75,9 @@ public class ConvertVQWiki {
 				+ ") "
 				+ "SELECT DISTINCT TopicChange.username, jmw_virtual_wiki.virtual_wiki_id, "
 				+ "TopicChange.username, "
-				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "', "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
+				+ "'" + Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD) + "', "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM TopicChange, jmw_virtual_wiki "
 				+ "WHERE TopicChange.virtualwiki = jmw_virtual_wiki.virtual_wiki_name "
 				+ "AND NOT EXISTS ( "
@@ -95,7 +91,7 @@ public class ConvertVQWiki {
 				+   "virtual_wiki_id, topic_name, topic_type, topic_content "
 				+ ") "
 				+ "SELECT jmw_virtual_wiki.virtual_wiki_id, Topic.name, "
-				+ DatabaseInit.TOPIC_TYPE_DEFAULT + ", "
+				+ Topic.TYPE_ARTICLE + ", "
 				+ "Topic.contents "
 				+ "FROM Topic, jmw_virtual_wiki "
 				+ "WHERE Topic.virtualwiki = jmw_virtual_wiki.virtual_wiki_name ";
@@ -130,16 +126,16 @@ public class ConvertVQWiki {
 				+   "login, virtual_wiki_id, display_name, "
 				+   "encoded_password, initial_ip_address, last_ip_address "
 				+ ") "
-				+ "SELECT '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "', "
-				+ "virtual_wiki_id, '" + DatabaseInit.DEFAULT_AUTHOR_NAME + "', "
-				+ "'" + Encryption.encrypt(DEFAULT_PASSWORD) + "', "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "', "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
+				+ "SELECT '" + PersistencyHandler.DEFAULT_AUTHOR_LOGIN + "', "
+				+ "virtual_wiki_id, '" + PersistencyHandler.DEFAULT_AUTHOR_NAME + "', "
+				+ "'" + Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD) + "', "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM jmw_virtual_wiki ";
 			st.executeUpdate(sql);
 			// get default author (will update later)
 			sql = "SELECT author_id FROM jmw_author "
-				+ "WHERE login = '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "' ";
+				+ "WHERE login = '" + PersistencyHandler.DEFAULT_AUTHOR_LOGIN + "' ";
 			rs  = results.executeQuery(sql);
 			int authorId = 0;
 			while (rs.next()) {
@@ -152,8 +148,8 @@ public class ConvertVQWiki {
 				+ "SELECT jmw_topic.topic_id, TopicVersion.contents, "
 				+ authorId + ", "
 				+ "TopicVersion.versionat, "
-				+ DatabaseInit.EDIT_TYPE_DEFAULT + ", "
-				+ "'" + DatabaseInit.DEFAULT_AUTHOR_IP_ADDRESS + "' "
+				+ TopicVersion.EDIT_NORMAL + ", "
+				+ "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "' "
 				+ "FROM TopicVersion, jmw_topic, jmw_virtual_wiki "
 				+ "WHERE jmw_topic.topic_name = TopicVersion.name "
 				+ "AND jmw_topic.virtual_wiki_id = jmw_virtual_wiki.virtual_wiki_id "
@@ -180,7 +176,7 @@ public class ConvertVQWiki {
 			// update articles still using default author
 			sql = "SELECT author_id, topic_id "
 				+ "FROM jmw_author, jmw_topic "
-				+ "WHERE jmw_author.login = '" + DatabaseInit.DEFAULT_AUTHOR_LOGIN + "' "
+				+ "WHERE jmw_author.login = '" + PersistencyHandler.DEFAULT_AUTHOR_LOGIN + "' "
 				+ "AND jmw_author.virtual_wiki_id = jmw_topic.virtual_wiki_id ";
 			rs  = results.executeQuery(sql);
 			while (rs.next()) {

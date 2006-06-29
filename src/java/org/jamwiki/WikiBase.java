@@ -16,14 +16,8 @@
  */
 package org.jamwiki;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -41,12 +35,10 @@ import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DBDate;
-//import org.jamwiki.persistency.db.DatabaseChangeLog;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.db.DatabaseWikiMembers;
-//import org.jamwiki.persistency.file.FileChangeLog;
 import org.jamwiki.persistency.file.FileExtensionFilter;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
@@ -175,23 +167,6 @@ public class WikiBase {
 	/**
 	 * TODO: DOCUMENT ME!
 	 *
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-//	public ChangeLog getChangeLogInstance() throws Exception {
-//		switch (WikiBase.getPersistenceType()) {
-//			case FILE:
-//				return FileChangeLog.getInstance();
-//			case DATABASE:
-//				return DatabaseChangeLog.getInstance();
-//			default:
-//				return FileChangeLog.getInstance();
-//		}
-//	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
 	 * @param virtualWiki TODO: DOCUMENT ME!
 	 * @param topic	   TODO: DOCUMENT ME!
 	 * @return TODO: DOCUMENT ME!
@@ -224,64 +199,6 @@ public class WikiBase {
 			default:
 				return new FileWikiMembers(virtualWiki);
 		}
-	}
-
-	/**
-	 * Finds a default topic file and returns the contents
-	 *
-	 * FIXME - this doesn't belong here
-	 */
-	public static String readDefaultTopic(String topicName) throws Exception {
-		String resourceName = "/" + topicName + ".txt";
-		java.net.URL resource = WikiBase.class.getResource(resourceName);
-		if (resource == null) {
-			throw new IllegalArgumentException("unknown default topic: " + topicName);
-		}
-		File f = new File(WikiBase.class.getResource(resourceName).getFile());
-		logger.debug("Found the default topic: " + f);
-		// Previous implementation using Readers (UTF-8) was adding a \n to the end
-		// of the file resulting in an unwanted <br> in pages, and causing problems
-		// when rendering them in a layout of composed wiki pages
-		// (top-area, bottom-area, etc).
-		InputStream in = WikiBase.class.getResourceAsStream(resourceName);
-		BufferedInputStream is = new BufferedInputStream(in);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		BufferedOutputStream os = new BufferedOutputStream(baos);
-		String output = null;
-		try {
-			int c;
-			while ((c = is.read()) != -1) {
-				os.write(c); // also... it uses the buffers
-			}
-			os.flush();
-			output = baos.toString();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			// Closes the streams, if necessary
-			if (is != null) {
-				try {
-					is.close();
-				} catch (Exception ignore) {
-					logger.warn(
-						"exception closing file (you can ignore this warning)",
-						ignore
-					);
-				}
-			}
-			if (os != null) {
-				try {
-					os.close();
-				} catch (Exception ignore) {
-					logger.warn(
-						"exception closing output stream (you can ignore this warning)",
-						ignore
-					);
-				}
-			}
-			in.close();
-		}
-		return output;
 	}
 
 	/**

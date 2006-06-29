@@ -52,14 +52,6 @@ public class DatabaseInit {
 	private static final String INIT_SCRIPT_ANSI = "create_ansi.sql";
 	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
 
-	// FIXME - move to more logical location
-	public static final String DEFAULT_PASSWORD = "password";
-	public static final String DEFAULT_AUTHOR_LOGIN = "unknown_author";
-	public static final String DEFAULT_AUTHOR_NAME = "Unknown Author";
-	public static final String DEFAULT_AUTHOR_IP_ADDRESS = "0.0.0.0";
-	public static final int TOPIC_TYPE_DEFAULT = 1;
-	public static final int EDIT_TYPE_DEFAULT = 1;
-
 	/**
 	 * FIXME: temporary
 	 */

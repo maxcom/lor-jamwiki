@@ -24,9 +24,9 @@ import org.apache.log4j.Logger;
  */
 public class Topic {
 
-	private static final int TYPE_ARTICLE = 1;
-	private static final int TYPE_REDIRECT = 2;
-	private static final int TYPE_TALK_PAGE = 3;
+	public static final int TYPE_ARTICLE = 1;
+	public static final int TYPE_REDIRECT = 2;
+	public static final int TYPE_TALK_PAGE = 3;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private int lockedBy = -1;

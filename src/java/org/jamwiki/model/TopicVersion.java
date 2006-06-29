@@ -24,10 +24,10 @@ import org.apache.log4j.Logger;
  */
 public class TopicVersion {
 
-	private static final int EDIT_NORMAL = 1;
-	private static final int EDIT_MINOR = 2;
-	private static final int EDIT_REVERT = 3;
-	private static final int EDIT_MOVE = 4;
+	public static final int EDIT_NORMAL = 1;
+	public static final int EDIT_MINOR = 2;
+	public static final int EDIT_REVERT = 3;
+	public static final int EDIT_MOVE = 4;
 	// FIXME - change back to -1 once author handling works
 	private int authorId = 1;
 	private String authorIpAddress = null;
