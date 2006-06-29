@@ -904,7 +904,7 @@ public class FileHandler extends PersistencyHandler {
 	public synchronized void unlockTopic(Topic topic) throws Exception {
 		super.unlockTopic(topic);
 		String filename = lockFilename(topic.getName());
-		File lockFile = getPathFor(topic.getVirtualWiki(), null, filename);
+		File lockFile = getPathFor(topic.getVirtualWiki(), LOCK_DIR, filename);
 		if (!lockFile.exists()) {
 			logger.warn("No lockfile to unlock topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
