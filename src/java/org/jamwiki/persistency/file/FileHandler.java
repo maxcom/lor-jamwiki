@@ -290,36 +290,17 @@ public class FileHandler extends PersistencyHandler {
 	 * Set up the file system and default topics if necessary
 	 */
 	public void createDefaults(Locale locale) {
-		// create wiki home if necessary
-		File dirCheck = new File(fileBase(""));
-		dirCheck.mkdir();
-		// create default virtual wiki versions directory if necessary
-		File versionDirCheck = getPathFor(null, null, VERSION_DIR);
 		// create the virtual wiki list file if necessary
-		File virtualList = getPathFor(null, null, VIRTUAL_WIKI_LIST);
+		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		// get the virtual wiki list and set up the file system
 		try {
 			if (!virtualList.exists()) {
 				createVirtualWikiList(virtualList);
 			}
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(virtualList), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-			boolean lastOne = false;
-			while (true) {
-				String vWiki = in.readLine();
-				if (vWiki == null) {
-					if (lastOne) {
-						break;
-					} else {
-						// default Wiki (no sub-directory)
-						vWiki = "";
-						lastOne = true;
-					}
-				}
+			Collection all = getVirtualWikiList();
+			for (Iterator iterator = all.iterator(); iterator.hasNext();) {
+				String vWiki = (String)iterator.next();
 				logger.debug("Creating defaults for " + vWiki);
-				File dummy;
-				// create the directories for the virtual wiki
-				dummy = getPathFor(vWiki, null, "");
-				dummy = getPathFor(vWiki, null, VERSION_DIR);
 				// write out default topics
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.startingpoints", locale));
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.leftMenu", locale));
@@ -328,9 +309,8 @@ public class FileHandler extends PersistencyHandler {
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.stylesheet", locale));
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
 			}
-			in.close();
-		} catch (Exception ex) {
-			logger.error(ex);
+		} catch (Exception e) {
+			logger.error(e);
 		}
 	}
 
@@ -422,7 +402,9 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	public static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
 		StringBuffer buffer = new StringBuffer();
-		if (virtualWiki == null || virtualWiki.equals(WikiBase.DEFAULT_VWIKI)) {
+		if (virtualWiki == null || virtualWiki.length() == 0) {
+			// this is questionable, but the virtual wiki list does it
+			logger.info("Attempting to write file with empty virtual wiki for file " + fileName);
 			virtualWiki = "";
 		}
 		buffer.append(fileBase(virtualWiki));
