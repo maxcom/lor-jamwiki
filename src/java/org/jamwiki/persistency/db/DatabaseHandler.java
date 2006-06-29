@@ -154,6 +154,41 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "topic_lock_session_key = ? "
 		+ "where topic_id = ? ";
 
+	// ======================================
+	// DELETE THE CODE BELOW
+	// ======================================
+
+	protected static final String STATEMENT_PURGE_DELETES =
+		"DELETE FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
+	protected static final String STATEMENT_PURGE_TOPIC =
+		"DELETE FROM Topic WHERE virtualwiki = ? AND name = ?";
+	protected static final String STATEMENT_TOPICS_TO_PURGE =
+		"SELECT name FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
+	protected static final String STATEMENT_ALL_TOPICS =
+		"SELECT name, contents FROM Topic WHERE virtualwiki = ?";
+	protected static final String STATEMENT_ALL_OLDER_TOPICS =
+		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
+	protected final static String STATEMENT_PURGE_VERSIONS =
+		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
+	protected final static String STATEMENT_VERSION_FIND_ONE =
+		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
+
+	/**
+	 *
+	 */
+	public DatabaseHandler() throws Exception {
+		setDefaults(Locale.ENGLISH);
+	}
+
+	/**
+	 *
+	 */
+	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(true);
+		updateTopic(topic);
+	}
+
 	/**
 	 *
 	 */
@@ -286,6 +321,20 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	private static boolean dbInitialized() {
+		String sql = "select 1 from Topic ";
+		try {
+			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
+			return rs.next();
+		} catch (Exception e) {
+			// thrown if table doesn't exist, so safe to ignore
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		Connection conn = null;
@@ -336,6 +385,42 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public static String getDatabaseType() {
+		return Environment.getValue(Environment.PROP_DB_TYPE);
+	}
+
+	/**
+	 *
+	 */
+	public List getLockList(String virtualWiki) throws Exception {
+		List all = new ArrayList();
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOCKED);
+			stmt.setInt(1, virtualWikiId);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				TopicLock lock = new TopicLock(
+					virtualWiki,
+					rs.getString("topic_name"),
+					new DBDate(rs.getTimestamp("topic_lock_date")),
+					rs.getString("topic_lock_session_key")
+				);
+				all.add(lock);
+			}
+		} finally {
+			DatabaseConnection.closeConnection(conn, stmt, rs);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -354,6 +439,32 @@ public class DatabaseHandler extends PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
+		Collection all = new ArrayList();
+		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setBoolean(2, true);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				all.add(rs.getString("topic_name"));
+			}
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
+		}
+		return all;
 	}
 
 	/**
@@ -379,6 +490,33 @@ public class DatabaseHandler extends PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public Collection getVirtualWikiList() throws Exception {
+		if (virtualWikiNameHash == null) {
+			loadVirtualWikiHashes();
+		}
+		return virtualWikiNameHash.keySet();
+	}
+
+	/**
+	 *
+	 */
+	public boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			// new topic
+			return true;
+		}
+		if (topic.getLockSessionKey() == null) {
+			return lockTopic(virtualWiki, topicName, key);
+		}
+		// FIXME - old code included a check to see if last version was made after the time
+		// the lock was taken.  that should be impossible with the new code.
+		return true;
 	}
 
 	/**
@@ -453,6 +591,20 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public static boolean isMySQL() {
+		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL);
+	}
+
+	/**
+	 *
+	 */
+	public static boolean isOracle() {
+		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE);
+	}
+
+	/**
+	 *
+	 */
 	public static void loadRecentChanges() throws Exception {
 		String sql;
 		sql = "DELETE from jmw_recent_change";
@@ -500,6 +652,34 @@ public class DatabaseHandler extends PersistencyHandler {
 			virtualWikiIdHash = null;
 			throw e;
 		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) return true;
+		if (topic.getLockSessionKey() != null) {
+			// a lock still exists, see if it was taken by the current user
+			if (topic.getLockSessionKey().equals(key)) {
+				// same user still has the lock, return true
+				return true;
+			}
+			// see if the existing lock has expired
+			Timestamp expireDate = new Timestamp(topic.getLockedDate().getTime() + (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			if (now.before(expireDate)) {
+				// lock is still valid, return false
+				return false;
+			}
+		}
+		topic.setLockSessionKey(key);
+		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
+		// FIXME - save author
+		//topic.setLockedBy(authorId);
+		updateTopic(topic);
+		return true;
 	}
 
 	/**
@@ -598,225 +778,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
 		}
 		return virtualWikiName;
-	}
-
-	/**
-	 *
-	 */
-	private void updateTopic(Topic topic) throws Exception {
-		int virtualWikiId = lookupVirtualWikiId(topic.getVirtualWiki());
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setString(2, topic.getName());
-			stmt.setInt(3, topic.getTopicType());
-			if (topic.getLockedBy() > 0) {
-				stmt.setInt(4, topic.getLockedBy());
-			} else {
-				stmt.setNull(4, Types.INTEGER);
-			}
-			stmt.setTimestamp(5, topic.getLockedDate());
-			stmt.setBoolean(6, topic.getReadOnly());
-			stmt.setString(7, topic.getTopicContent());
-			stmt.setString(8, topic.getLockSessionKey());
-			stmt.setInt(9, topic.getTopicId());
-			stmt.executeUpdate();
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
-			}
-		}
-	}
-
-	// ======================================
-	// DELETE THE CODE BELOW
-	// ======================================
-
-
-	protected static final String STATEMENT_PURGE_DELETES =
-		"DELETE FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
-	protected static final String STATEMENT_PURGE_TOPIC =
-		"DELETE FROM Topic WHERE virtualwiki = ? AND name = ?";
-	protected static final String STATEMENT_TOPICS_TO_PURGE =
-		"SELECT name FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
-	protected static final String STATEMENT_ALL_TOPICS =
-		"SELECT name, contents FROM Topic WHERE virtualwiki = ?";
-	protected static final String STATEMENT_ALL_OLDER_TOPICS =
-		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
-	protected final static String STATEMENT_PURGE_VERSIONS =
-		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
-	protected final static String STATEMENT_VERSION_FIND_ONE =
-		"SELECT * FROM TopicVersion WHERE name = ?  AND virtualwiki = ? AND versionAt = ?";
-
-	/**
-	 *
-	 */
-	public DatabaseHandler() throws Exception {
-		setDefaults(Locale.ENGLISH);
-	}
-
-	/**
-	 *
-	 */
-	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		topic.setReadOnly(true);
-		updateTopic(topic);
-	}
-
-	/**
-	 *
-	 */
-	private static boolean dbInitialized() {
-		String sql = "select 1 from Topic ";
-		try {
-			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
-			return rs.next();
-		} catch (Exception e) {
-			// thrown if table doesn't exist, so safe to ignore
-		}
-		return false;
-	}
-
-	/**
-	 *
-	 */
-	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		return (lookupTopic(virtualWiki, topicName) != null);
-	}
-
-	/**
-	 *
-	 */
-	public static String getDatabaseType() {
-		return Environment.getValue(Environment.PROP_DB_TYPE);
-	}
-
-	/**
-	 *
-	 */
-	public List getLockList(String virtualWiki) throws Exception {
-		List all = new ArrayList();
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOCKED);
-			stmt.setInt(1, virtualWikiId);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				TopicLock lock = new TopicLock(
-					virtualWiki,
-					rs.getString("topic_name"),
-					new DBDate(rs.getTimestamp("topic_lock_date")),
-					rs.getString("topic_lock_session_key")
-				);
-				all.add(lock);
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
-		Collection all = new ArrayList();
-		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setBoolean(2, true);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				all.add(rs.getString("topic_name"));
-			}
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public Collection getVirtualWikiList() throws Exception {
-		if (virtualWikiNameHash == null) {
-			loadVirtualWikiHashes();
-		}
-		return virtualWikiNameHash.keySet();
-	}
-
-	/**
-	 *
-	 */
-	public boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
-			// new topic
-			return true;
-		}
-		if (topic.getLockSessionKey() == null) {
-			return lockTopic(virtualWiki, topicName, key);
-		}
-		// FIXME - old code included a check to see if last version was made after the time
-		// the lock was taken.  that should be impossible with the new code.
-		return true;
-	}
-
-	/**
-	 *
-	 */
-	public static boolean isMySQL() {
-		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL);
-	}
-
-	/**
-	 *
-	 */
-	public static boolean isOracle() {
-		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE);
-	}
-
-	/**
-	 *
-	 */
-	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) return true;
-		if (topic.getLockSessionKey() != null) {
-			// a lock still exists, see if it was taken by the current user
-			if (topic.getLockSessionKey().equals(key)) {
-				// same user still has the lock, return true
-				return true;
-			}
-			// see if the existing lock has expired
-			Timestamp expireDate = new Timestamp(topic.getLockedDate().getTime() + (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
-			Timestamp now = new Timestamp(System.currentTimeMillis());
-			if (now.before(expireDate)) {
-				// lock is still valid, return false
-				return false;
-			}
-		}
-		topic.setLockSessionKey(key);
-		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
-		// FIXME - save author
-		//topic.setLockedBy(authorId);
-		updateTopic(topic);
-		return true;
 	}
 
 	/**
@@ -1033,6 +994,37 @@ public class DatabaseHandler extends PersistencyHandler {
 		topic.setLockedDate(null);
 		topic.setLockedBy(-1);
 		updateTopic(topic);
+	}
+
+	/**
+	 *
+	 */
+	private void updateTopic(Topic topic) throws Exception {
+		int virtualWikiId = lookupVirtualWikiId(topic.getVirtualWiki());
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topic.getName());
+			stmt.setInt(3, topic.getTopicType());
+			if (topic.getLockedBy() > 0) {
+				stmt.setInt(4, topic.getLockedBy());
+			} else {
+				stmt.setNull(4, Types.INTEGER);
+			}
+			stmt.setTimestamp(5, topic.getLockedDate());
+			stmt.setBoolean(6, topic.getReadOnly());
+			stmt.setString(7, topic.getTopicContent());
+			stmt.setString(8, topic.getLockSessionKey());
+			stmt.setInt(9, topic.getTopicId());
+			stmt.executeUpdate();
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt);
+			}
+		}
 	}
 
 	/**

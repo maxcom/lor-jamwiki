@@ -351,15 +351,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		String filename = topicFilename(topicName);
-		File checkFile = getPathFor(virtualWiki, FileHandler.TOPIC_DIR, filename);
-		return checkFile.exists();
-	}
-
-	/**
-	 *
-	 */
 	public static String fileBase(String virtualWiki) {
 		return Environment.getValue(Environment.PROP_BASE_FILE_DIR) + Utilities.sep() + virtualWiki;
 	}

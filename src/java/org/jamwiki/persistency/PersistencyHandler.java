@@ -97,7 +97,9 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract boolean exists(String virtualWiki, String topicName) throws Exception;
+	public boolean exists(String virtualWiki, String topicName) throws Exception {
+		return (lookupTopic(virtualWiki, topicName) != null);
+	}
 
 	/**
 	 * Returns all versions of the given topic in reverse chronological order
