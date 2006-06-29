@@ -233,19 +233,19 @@ public class PluginManager {
 				}
 			}
 		}
-		NodeList topicListeners = root.getElementsByTagName(TAG_TOPIC_LISTENER);
-		for (int i = 0; i < topicListeners.getLength(); i++) {
-			Element topicListenerElement = (Element) topicListeners.item(i);
-			String className = topicListenerElement.getAttribute(ATTR_CLASS);
-			logger.debug("registering topic listener: " + className);
-			try {
-				Class clazz = Class.forName(className);
-				TopicListener listener = (TopicListener) clazz.newInstance();
-				this.topicListeners.add(listener);
-			} catch (Exception e) {
-				logger.error("error creating topic listener and registering it", e);
-			}
-		}
+//		NodeList topicListeners = root.getElementsByTagName(TAG_TOPIC_LISTENER);
+//		for (int i = 0; i < topicListeners.getLength(); i++) {
+//			Element topicListenerElement = (Element) topicListeners.item(i);
+//			String className = topicListenerElement.getAttribute(ATTR_CLASS);
+//			logger.debug("registering topic listener: " + className);
+//			try {
+//				Class clazz = Class.forName(className);
+//				TopicListener listener = (TopicListener) clazz.newInstance();
+//				this.topicListeners.add(listener);
+//			} catch (Exception e) {
+//				logger.error("error creating topic listener and registering it", e);
+//			}
+//		}
 	}
 
 	/**
