@@ -34,7 +34,6 @@ import org.jamwiki.WikiMembers;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.db.DBDate;
 import org.jamwiki.persistency.db.DatabaseInit;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.utils.Encryption;
@@ -102,12 +101,6 @@ public class AdminController extends JAMController implements Controller {
 		}
 		if (function.equals("refreshIndex")) {
 			refreshIndex(request, next);
-		}
-		if (function.equals("purge")) {
-			purge(request, next);
-		}
-		if (function.equals("purge-versions")) {
-			purgeVersions(request, next);
 		}
 		if (function.equals("properties")) {
 			properties(request, next);
@@ -553,51 +546,6 @@ public class AdminController extends JAMController implements Controller {
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
 			String message = "Failure while processing property values: " + e.getMessage();
-			next.addObject("message", message);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void purge(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		try {
-			Collection purged = WikiBase.getInstance().purgeDeletes(virtualWiki);
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("Purged: ");
-			for (Iterator iterator = purged.iterator(); iterator.hasNext();) {
-				String topicName = (String) iterator.next();
-				buffer.append(topicName);
-				buffer.append("; ");
-			}
-			String message = buffer.toString();
-			next.addObject("message", message);
-		} catch (Exception e) {
-			logger.error("Failure while purging topics", e);
-			String message = "Failure while purging topics: " + e.getMessage();
-			next.addObject("message", message);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void purgeVersions(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		try {
-			DateFormat dateFormat = DateFormat.getInstance();
-			DBDate date = new DBDate(dateFormat.parse(request.getParameter("purgedate")));
-			WikiBase.getInstance().purgeVersionsOlderThan(virtualWiki, date);
-		} catch (Exception e) {
-			logger.error("Failure while purging versions", e);
-			String message = "Failure while purging versions: " + e.getMessage();
 			next.addObject("message", message);
 		}
 	}

@@ -16,31 +16,24 @@
  */
 package org.jamwiki.persistency.db;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
-import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -157,23 +150,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "topic_lock_session_key = ?, "
 		+ "topic_deleted = ? "
 		+ "where topic_id = ? ";
-
-	// ======================================
-	// DELETE THE CODE BELOW
-	// ======================================
-
-	protected static final String STATEMENT_PURGE_DELETES =
-		"DELETE FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
-	protected static final String STATEMENT_PURGE_TOPIC =
-		"DELETE FROM Topic WHERE virtualwiki = ? AND name = ?";
-	protected static final String STATEMENT_TOPICS_TO_PURGE =
-		"SELECT name FROM Topic WHERE virtualwiki = ? AND (contents = 'delete\n' or contents = '\n' or contents = '')";
-	protected static final String STATEMENT_ALL_TOPICS =
-		"SELECT name, contents FROM Topic WHERE virtualwiki = ?";
-	protected static final String STATEMENT_ALL_OLDER_TOPICS =
-		"SELECT name, contents FROM Topic WHERE virtualwiki = ? AND versionat < ?";
-	protected final static String STATEMENT_PURGE_VERSIONS =
-		"DELETE FROM TopicVersion WHERE versionat < ? AND virtualwiki = ?";
 
 	/**
 	 *
@@ -761,130 +737,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
 		}
 		return virtualWikiName;
-	}
-
-	/**
-	 *
-	 */
-	public Collection purgeDeletes(String virtualWiki) throws Exception {
-		if (DatabaseHandler.isOracle()) {
-			return purgeDeletesOracle(virtualWiki);
-		}
-		Collection all = new ArrayList();
-		// get list of stuff to be purged
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(STATEMENT_TOPICS_TO_PURGE);
-			stmt.setString(1, virtualWiki);
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				String topicName = rs.getString("name");
-				if (!PseudoTopicHandler.getInstance().isPseudoTopic(topicName)) {
-					all.add(topicName);
-				}
-			}
-			stmt.close();
-			stmt = conn.prepareStatement(STATEMENT_PURGE_DELETES);
-			stmt.setString(1, virtualWiki);
-			stmt.execute();
-			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public Collection purgeDeletesOracle(String virtualWiki) throws Exception {
-		PreparedStatement stmt;
-		ResultSet rs;
-		Vector names = new Vector();
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_ALL_TOPICS);
-			stmt.setString(1, virtualWiki);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				String contents = OracleClobHelper.getClobValue(rs.getClob(2));
-				if (contents.length() == 0 || contents.equals("delete\n") || contents.equals("\n")) {
-					names.add(rs.getString(1));
-				}
-			}
-			rs.close();
-			stmt.close();
-			stmt = conn.prepareStatement(STATEMENT_PURGE_TOPIC);
-			Iterator i = names.iterator();
-			while (i.hasNext()) {
-				String name = (String) i.next();
-				stmt.setString(1, virtualWiki);
-				stmt.setString(2, name);
-				stmt.execute();
-			}
-			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-		return names;
-	}
-
-	/**
-	 *
-	 */
-	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
-		if (DatabaseHandler.isOracle()) {
-			purgeVersionsOlderThanOracle(virtualWiki, date);
-		}
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			PreparedStatement stmt = conn.prepareStatement(STATEMENT_PURGE_VERSIONS);
-			stmt.setTimestamp(1, date.asTimestamp());
-			stmt.setString(2, virtualWiki);
-			stmt.execute();
-			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void purgeVersionsOlderThanOracle(String virtualWiki, DBDate date) throws Exception {
-		PreparedStatement stmt;
-		ResultSet rs;
-		Vector names = new Vector();
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_ALL_OLDER_TOPICS);
-			stmt.setString(1, virtualWiki);
-			stmt.setTimestamp(2, date.asTimestamp());
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				String contents = OracleClobHelper.getClobValue(rs.getClob(2));
-				if (contents.length() == 0 || contents.equals("delete\n") || contents.equals("\n")) {
-					names.add(rs.getString(1));
-				}
-			}
-			rs.close();
-			stmt.close();
-			stmt = conn.prepareStatement(STATEMENT_PURGE_TOPIC);
-			Iterator i = names.iterator();
-			while (i.hasNext()) {
-				String name = (String) i.next();
-				stmt.setString(1, virtualWiki);
-				stmt.setString(2, name);
-				stmt.execute();
-			}
-			stmt.close();
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
 	}
 
 	/**

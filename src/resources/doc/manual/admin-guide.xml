@@ -668,10 +668,6 @@
 							<entry>This forces the flat-file mode search indexer to run. As mentioned earlier, the indexer is run automatically at the interval specified above.</entry>
 						</row>
 						<row>
-							<entry>Purge Deleted Topics</entry>
-							<entry>This will delete any topics that contain only the word "delete".</entry>
-						</row>
-						<row>
 							<entry>Clear Edit Lock on Topic</entry>
 							<entry>To use this, enter a topic name and click the "Go" button, any lock that is held on the topic will be cleared.</entry>
 						</row>

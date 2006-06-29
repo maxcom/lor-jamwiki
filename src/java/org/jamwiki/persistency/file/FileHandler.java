@@ -47,7 +47,6 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.PersistencyHandler;
-import org.jamwiki.persistency.db.DBDate;
 import org.jamwiki.servlets.JAMController;
 import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
@@ -734,35 +733,6 @@ public class FileHandler extends PersistencyHandler {
 		}
 		// FIXME - need to update topic-version.id file
 		return NEXT_TOPIC_VERSION_ID++;
-	}
-
-	/**
-	 *
-	 */
-	public Collection purgeDeletes(String virtualWiki) throws Exception {
-		Collection all = new ArrayList();
-		File file = getPathFor(virtualWiki, null, "");
-		File[] files = file.listFiles(new TextFileFilter());
-		for (int i = 0; i < files.length; i++) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(files[i]), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-			String line = reader.readLine();
-			reader.close();
-			if (line != null) {
-				if (line.trim().equals("delete")) {
-					files[i].delete();
-					String name = files[i].getName();
-					all.add(Utilities.decodeSafeFileName(name.substring(0, name.length() - 4)));
-				}
-			}
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
-		throw new UnsupportedOperationException("New version purging available for file handler yet");
 	}
 
 	/**

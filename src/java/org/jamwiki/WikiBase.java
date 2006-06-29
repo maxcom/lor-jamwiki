@@ -34,7 +34,6 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.PersistencyHandler;
-import org.jamwiki.persistency.db.DBDate;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
@@ -340,26 +339,10 @@ public class WikiBase {
 	}
 
 	/**
-	 * Purge deleted files
-	 *
-	 * @return a collection of strings that are the deleted topic names
-	 */
-	public Collection purgeDeletes(String virtualWiki) throws Exception {
-		return this.handler.purgeDeletes(virtualWiki);
-	}
-
-	/**
 	 * Add virtual wiki
 	 */
 	public void addVirtualWiki(String virtualWiki) throws Exception {
 		this.handler.addVirtualWiki(virtualWiki);
-	}
-
-	/**
-	 * purge versions older than a certain date
-	 */
-	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
-		this.handler.purgeVersionsOlderThan(virtualWiki, date);
 	}
 
 	/**

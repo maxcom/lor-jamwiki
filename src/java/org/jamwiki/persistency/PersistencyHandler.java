@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
@@ -29,7 +30,6 @@ import org.jamwiki.WikiMembers;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.persistency.db.DBDate;
 // FIXME - get rid of these imports
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
@@ -39,7 +39,6 @@ import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileWikiMembers;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -345,16 +344,6 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
-
-	/**
-	 *
-	 */
-	public abstract Collection purgeDeletes(String virtualWiki) throws Exception;
-
-	/**
-	 *
-	 */
-	public abstract void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception;
 
 	/**
 	 * Finds a default topic file and returns the contents

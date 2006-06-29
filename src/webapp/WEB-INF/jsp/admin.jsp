@@ -550,31 +550,6 @@ function onUserGroupType() {
   <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
 </form>
 <hr/>
-<p class="subHeader"><f:message key="admin.title.purge"/></p>
-<form name="purgeform" method="post" action="<jamwiki:link value="Special:Admin" />">
-<f:message key="admin.caption.virtualwiki"/>
-<select name="virtualWiki">
-<option value="jsp"><f:message key="common.default"/></option>
-<%
-  Collection virtualWikis = null;
-  try {
-    virtualWikis = WikiBase.getInstance().getVirtualWikiList();
-  } catch (Exception e) {
-    virtualWikis = new ArrayList();
-  }
-  for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-    String wikiName = (String) iterator.next();
-%>
-  <option value='<%=wikiName%>'><%=wikiName%></option>
-<%
-  }
-%>
-  </select>
-  <input type="submit" name="submit" value="<f:message key="admin.action.purge"/>"/>
-  <input type="hidden" name="function" value="purge"/>
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
-</form>
-<hr/>
 <%-- FIXME - restore virtual wiki --%>
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
 <form name="readOnlyTopics" method="post" action="<jamwiki:link value="Special:Admin" />">
