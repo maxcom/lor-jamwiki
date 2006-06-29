@@ -422,8 +422,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOCKED);
 			stmt.setInt(1, virtualWikiId);
 			rs = stmt.executeQuery();
-			while (rs.next()) {
-				WikiResultSet wrs = new WikiResultSet(rs);
+			WikiResultSet wrs = new WikiResultSet(rs);
+			while (wrs.next()) {
 				Topic topic = initTopic(wrs);
 				all.add(topic);
 			}
@@ -667,34 +667,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			virtualWikiIdHash = null;
 			throw e;
 		}
-	}
-
-	/**
-	 *
-	 */
-	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) return true;
-		if (topic.getLockSessionKey() != null) {
-			// a lock still exists, see if it was taken by the current user
-			if (topic.getLockSessionKey().equals(key)) {
-				// same user still has the lock, return true
-				return true;
-			}
-			// see if the existing lock has expired
-			Timestamp expireDate = new Timestamp(topic.getLockedDate().getTime() + (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
-			Timestamp now = new Timestamp(System.currentTimeMillis());
-			if (now.before(expireDate)) {
-				// lock is still valid, return false
-				return false;
-			}
-		}
-		topic.setLockSessionKey(key);
-		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
-		// FIXME - save author
-		//topic.setLockedBy(authorId);
-		addTopic(topic);
-		return true;
 	}
 
 	/**
@@ -998,15 +970,5 @@ public class DatabaseHandler extends PersistencyHandler {
 			// list of topics that only admin is allowed to edit/view by themselves
 			setupSpecialPage(virtualWiki, messages.getString("specialpages.adminonlytopics"));
 		}
-	}
-
-	/**
-	 *
-	 */
-	public void unlockTopic(Topic topic) throws Exception {
-		topic.setLockSessionKey(null);
-		topic.setLockedDate(null);
-		topic.setLockedBy(-1);
-		addTopic(topic);
 	}
 }

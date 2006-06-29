@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -67,6 +66,8 @@ public class FileHandler extends PersistencyHandler {
 	public static final String TOPIC_DIR = "topics";
 	public static final String VERSION_DIR = "versions";
 	public static final String RECENT_CHANGE_DIR = "changes";
+	public static final String READ_ONLY_DIR = "readonly";
+	public static final String LOCK_DIR = "locks";
 	public final static String EXT = ".xml";
 	// the read-only topics
 	protected Map readOnlyTopics;
@@ -105,7 +106,6 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_VERSION_EDIT_DATE = "timestamp";
 	protected static final String XML_TOPIC_VERSION_EDIT_TYPE = "edittype";
 	protected static final String XML_TOPIC_VERSION_TEXT = "text";
-	private static final String LOCK_EXTENSION = ".lock";
 	private static final String TOPIC_VERSION_ID_FILE = "topic_version.id";
 	private static final String TOPIC_ID_FILE = "topic.id";
 	private static int NEXT_TOPIC_VERSION_ID = -1;
@@ -341,7 +341,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	private void createVirtualWikiList(File virtualList) throws IOException {
+	private void createVirtualWikiList(File virtualList) throws Exception {
 		PrintWriter writer = getNewPrintWriter(virtualList, true);
 		writer.println(WikiBase.DEFAULT_VWIKI);
 		writer.close();
@@ -384,19 +384,13 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public List getLockList(String virtualWiki) throws Exception {
-		if (virtualWiki == null) virtualWiki = "";
-		List all = new ArrayList();
-		File path = getPathFor(virtualWiki, null, "");
-		File[] files = path.listFiles(new FileExtensionFilter(LOCK_EXTENSION));
+		List all = new LinkedList();
+		File[] files = retrieveLockFiles(virtualWiki);
 		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
-			String fileName = file.getName();
-			logger.debug("filename: " + fileName);
-			String topicName = fileName.substring(0, fileName.indexOf("."));
-			DBDate lockedAt = new DBDate(new Date(file.lastModified()));
+			String topicName = Utilities.decodeURL(files[i].getName());
 			Topic topic = lookupTopic(virtualWiki, topicName);
 			if (topic == null) {
-				logger.error("Unable to find locked topic " + virtualWiki + " / " + topicName);
+				logger.error("Unable to find topic for locked file " + virtualWiki + " / " + topicName);
 				continue;
 			}
 			all.add(topic);
@@ -408,7 +402,7 @@ public class FileHandler extends PersistencyHandler {
 	 *  returns a printwriter using utf-8 encoding
 	 *
 	 */
-	private PrintWriter getNewPrintWriter(File file, boolean autoflush) throws IOException {
+	private PrintWriter getNewPrintWriter(File file, boolean autoflush) throws Exception {
 		return new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)), autoflush);
 	}
 
@@ -500,17 +494,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 * Checks if lock exists
 	 */
-	public synchronized boolean holdsLock(String virtualWiki, String topicName, String key) throws IOException {
-		File lockFile = makeLockFile(virtualWiki, topicName);
-		if (lockFile.exists()) {
-			String lockKey = readLockFileKey(lockFile);
-			// key is guaranteed non-null, but lockKey might not be (backwards compatibility), so compare this way
-			if (key.equals(lockKey)) return true;
-		} else {
-			// File is not locked, so user can save content without problems.. lock it now and return outcome.
-			return lockTopic(virtualWiki, topicName, key);
+	public synchronized boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
+		String filename = lockFilename(topicName);
+		File lockFile = getPathFor(virtualWiki, LOCK_DIR, filename);
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (lockFile.exists() && topic != null) {
+			String lockKey = topic.getLockSessionKey();
+			return (lockKey != null && key.equals(lockKey));
 		}
-		return false;
+		return lockTopic(virtualWiki, topicName, key);
 	}
 
 	/**
@@ -670,14 +662,14 @@ public class FileHandler extends PersistencyHandler {
 		try {
 			roFile.createNewFile();
 			in = new BufferedReader(new InputStreamReader(new FileInputStream(roFile), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e);
 		}
 		while (true) {
 			String line = null;
 			try {
 				line = in.readLine();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				logger.error(e);
 			}
 			if (line == null) break;
@@ -685,7 +677,7 @@ public class FileHandler extends PersistencyHandler {
 		}
 		try {
 			in.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error(e);
 		}
 		if (virtualWiki.equals("")) {
@@ -695,26 +687,21 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	protected static String lockFilename(String topicName) {
+		return topicName;
+	}
+
+	/**
 	 * Locks a file for editing
 	 */
-	public synchronized boolean lockTopic(String virtualWiki, String topicName, String key) throws IOException {
-		File lockFile = makeLockFile(virtualWiki, topicName);
-		Date currentDate = new Date();
-		logger.debug("Edit timeout in minutes is " + Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
-		long fiveMinutesAgo = currentDate.getTime() - 60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT);
-		if (lockFile.exists()) {
-			long mDate = lockFile.lastModified();
-			logger.debug("Lock exists for " + topicName + " modified " + mDate);
-			if (mDate < fiveMinutesAgo) {
-				logger.debug("Lock has expired (timeout " + fiveMinutesAgo + ")");
-				lockFile.delete();
-			} else {
-				String lockKey = readLockFileKey(lockFile);
-				// key is guaranteed non-null, but lockKey might not be (backwards compatibility), so compare this way
-				if (key.equals(lockKey)) lockFile.delete();
-			}
+	public synchronized boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
+		if (!super.lockTopic(virtualWiki, topicName, key)) {
+			return false;
 		}
-		if (!lockFile.createNewFile()) return false;
+		String filename = lockFilename(topicName);
+		File lockFile = getPathFor(virtualWiki, LOCK_DIR, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(lockFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		writer.write(key);
 		writer.close();
@@ -748,13 +735,6 @@ public class FileHandler extends PersistencyHandler {
 		String filename = topicVersionFilename(topicVersionId);
 		File file = getPathFor(virtualWiki, VERSION_DIR, topicName, filename);
 		return initTopicVersion(file);
-	}
-
-	/**
-	 * Create a lock file of the format topicName.lock
-	 */
-	private File makeLockFile(String virtualWiki, String topicName) {
-		return getPathFor(virtualWiki, null, topicName + LOCK_EXTENSION);
 	}
 
 	/**
@@ -823,7 +803,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public static StringBuffer read(File file) throws IOException {
+	public static StringBuffer read(File file) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		if (file.exists()) {
 			FileReader reader = new FileReader(file);
@@ -841,16 +821,6 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
-	 * Reads the key from a lockFile
-	 */
-	private synchronized String readLockFileKey(File lockFile) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(lockFile), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-		String lockKey = reader.readLine();
-		reader.close();
-		return lockKey;
-	}
-
-	/**
 	 *
 	 */
 	protected static String recentChangeFilename(int topicVersionId) {
@@ -863,6 +833,16 @@ public class FileHandler extends PersistencyHandler {
 	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		((Collection) this.readOnlyTopics.get(virtualWiki)).remove(topicName);
 		this.saveReadOnlyTopics(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	private File[] retrieveLockFiles(String virtualWiki) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.LOCK_DIR);
+		File[] files = file.listFiles();
+		if (files == null) return null;
+		return files;
 	}
 
 	/**
@@ -892,7 +872,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 * Write the read-only list out to disk
 	 */
-	protected synchronized void saveReadOnlyTopics(String virtualWiki) throws IOException {
+	protected synchronized void saveReadOnlyTopics(String virtualWiki) throws Exception {
 		File roFile = getPathFor(virtualWiki, null, READ_ONLY_FILE);
 		logger.debug("Saving read-only topics to " + roFile);
 		Writer out = new OutputStreamWriter(new FileOutputStream(roFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
@@ -921,12 +901,22 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 * Unlocks a locked file
 	 */
-	public synchronized void unlockTopic(Topic topic) throws IOException {
-		File lockFile = getPathFor(topic.getVirtualWiki(), null, topic.getName() + LOCK_EXTENSION);
+	public synchronized void unlockTopic(Topic topic) throws Exception {
+		super.unlockTopic(topic);
+		String filename = lockFilename(topic.getName());
+		File lockFile = getPathFor(topic.getVirtualWiki(), null, filename);
 		if (!lockFile.exists()) {
-			logger.warn("attempt to unlock topic by deleting lock file failed (file does not exist): " + lockFile);
+			logger.warn("No lockfile to unlock topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
 		lockFile.delete();
+	}
+
+	/**
+	 *
+	 */
+	public void write(Topic topic, TopicVersion topicVersion) throws Exception {
+		super.write(topic, topicVersion);
+		unlockTopic(topic);
 	}
 
 	/**

@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -121,6 +122,17 @@ public abstract class PersistencyHandler {
 					toHandler.addReadOnlyTopic(virtualWiki, topicName);
 				} catch (Exception e) {
 					logger.error("Unable to convert read-only topic to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
+				}
+			}
+			// Locks
+			Collection locks = fromHandler.getLockList(virtualWiki);
+			for (Iterator lockIterator = locks.iterator(); lockIterator.hasNext();) {
+				Topic topic = (Topic)lockIterator.next();
+				String topicName = topic.getName();
+				try {
+					toHandler.lockTopic(virtualWiki, topicName, topic.getLockSessionKey());
+				} catch (Exception e) {
+					logger.error("Unable to write lock file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
 				}
 			}
 			// Members
@@ -259,7 +271,30 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception;
+	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) return true;
+		if (topic.getLockSessionKey() != null) {
+			// a lock still exists, see if it was taken by the current user
+			if (topic.getLockSessionKey().equals(key)) {
+				// same user still has the lock, return true
+				return true;
+			}
+			// see if the existing lock has expired
+			Timestamp expireDate = new Timestamp(topic.getLockedDate().getTime() + (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			if (now.before(expireDate)) {
+				// lock is still valid, return false
+				return false;
+			}
+		}
+		topic.setLockSessionKey(key);
+		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
+		// FIXME - save author
+		//topic.setLockedBy(authorId);
+		addTopic(topic);
+		return true;
+	}
 
 	/**
 	 *
@@ -334,7 +369,12 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract void unlockTopic(Topic topic) throws Exception;
+	public void unlockTopic(Topic topic) throws Exception {
+		topic.setLockSessionKey(null);
+		topic.setLockedDate(null);
+		topic.setLockedBy(-1);
+		addTopic(topic);
+	}
 
 
 	/**
@@ -350,10 +390,6 @@ public abstract class PersistencyHandler {
 		topic.setLockedBy(-1);
 		topic.setLockedDate(null);
 		topic.setLockSessionKey(null);
-		// FIXME - this is ugly
-		if (WikiBase.getInstance().getHandler() instanceof FileHandler) {
-			unlockTopic(topic);
-		}
 		addTopic(topic);
 		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
