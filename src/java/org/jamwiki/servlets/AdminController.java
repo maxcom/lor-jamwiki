@@ -22,10 +22,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.model.Topic;
 import org.jamwiki.WikiBase;
@@ -79,6 +79,8 @@ public class AdminController extends JAMController implements Controller {
 				upgradePurge(request, next);
 			} else if (function.equals("Convert to File")) {
 				upgradeConvertToFile(request, next);
+			} else if (function.equals("Convert to Database")) {
+				upgradeConvertToDatabase(request, next);
 			} else if (function.equals("Load Recent Changes")) {
 				upgradeRecentChanges(request, next);
 			} else {
@@ -633,12 +635,32 @@ public class AdminController extends JAMController implements Controller {
 	/**
 	 *
 	 */
+	private void upgradeConvertToDatabase(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			FileHandler fromHandler = new FileHandler();
+			DatabaseHandler toHandler = new DatabaseHandler();
+			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
+			next.addObject("message", "Database values successfully written to files");
+			next.addObject("messages", messages);
+		} catch (Exception e) {
+			logger.error("Failure while executing database-to-file conversion", e);
+			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
+		}
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+	}
+
+	/**
+	 *
+	 */
 	private void upgradeConvertToFile(HttpServletRequest request, ModelAndView next) throws Exception {
 		try {
-			FileHandler fileHandler = new FileHandler();
-			DatabaseHandler databaseHandler = new DatabaseHandler();
-			PersistencyHandler.convert(databaseHandler, fileHandler);
+			FileHandler toHandler = new FileHandler();
+			DatabaseHandler fromHandler = new DatabaseHandler();
+			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
 			next.addObject("message", "Database values successfully written to files");
+			next.addObject("messages", messages);
 		} catch (Exception e) {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());

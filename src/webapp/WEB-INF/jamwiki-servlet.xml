@@ -25,7 +25,6 @@
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:RSS">RSS</prop>
-				<prop key="/**/Special:Import">Import</prop>
 				<prop key="/**/Special:ToDoTopics">topicController</prop>
 				<prop key="/**/Special:AllTopics">topicController</prop>
 				<prop key="/**/Special:OrphanedTopics">topicController</prop>
@@ -52,7 +51,6 @@
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
 	<bean id="RSS" class="org.jamwiki.servlets.RSSServlet" />
-	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
 	<bean id="VirtualWikiList" class="org.jamwiki.servlets.VirtualWikiServlet" />
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass">

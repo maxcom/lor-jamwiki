@@ -43,7 +43,6 @@ public abstract class JAMController extends HttpServlet {
 	public static final String ACTION_EDIT = "action_edit";
 	public static final String ACTION_FIRST_USE = "action_firstuse";
 	public static final String ACTION_HISTORY = "action_history";
-	public static final String ACTION_IMPORT = "action_import";
 	public static final String ACTION_LOGIN = "action_login";
 	public static final String ACTION_LOGOUT = "action_logout";
 	public static final String ACTION_MEMBER = "action_member";

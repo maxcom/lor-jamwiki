@@ -70,10 +70,6 @@ if (action.equals(JAMController.ACTION_ADMIN)) {
 %>
 		<%@ include file="history.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_IMPORT)) {
-%>
-		<%@ include file="afterImport.jsp" %>
-<%
 } else if (action.equals(JAMController.ACTION_LOCKLIST)) {
 %>
 		<%@ include file="locklist.jsp" %>

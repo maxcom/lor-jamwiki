@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
@@ -85,14 +86,18 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public static void convert(PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
+	public static Vector convert(PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
+		Vector messages = new Vector();
 		Collection virtualWikis = fromHandler.getVirtualWikiList();
 		for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
 			String virtualWiki = (String) virtualWikiIterator.next();
 			try {
 				toHandler.addVirtualWiki(virtualWiki);
+				messages.add("Added virtual wiki " + virtualWiki);
 			} catch (Exception e) {
-				logger.error("Unable to convert virtual wiki to file: " + virtualWiki + ": " + e.getMessage());
+				String msg = "Unable to convert virtual wiki " + virtualWiki;
+				logger.error(msg, e);
+				messages.add(msg + ": " + e.getMessage());
 			}
 			// Topics
 			Collection topicNames = fromHandler.getAllTopicNames(virtualWiki);
@@ -101,8 +106,11 @@ public abstract class PersistencyHandler {
 				try {
 					Topic topic = fromHandler.lookupTopic(virtualWiki, topicName);
 					toHandler.addTopic(topic);
+					messages.add("Added topic " + virtualWiki + " / " + topicName);
 				} catch (Exception e) {
-					logger.error("Unable to convert topic to file: " + topicName + " / " + virtualWiki, e);
+					String msg = "Unable to convert topic: " + virtualWiki + " / " + topicName;
+					logger.error(msg, e);
+					messages.add(msg + ": " + e.getMessage());
 				}
 			}
 			// Versions
@@ -113,8 +121,11 @@ public abstract class PersistencyHandler {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
 					try {
 						toHandler.addTopicVersion(virtualWiki, topicName, topicVersion);
+						messages.add("Added topic version " + virtualWiki + " / " + topicName + " / " + topicVersion.getTopicVersionId());
 					} catch (Exception e) {
-						logger.error("Unable to convert topic version to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
+						String msg = "Unable to convert topic version: " + virtualWiki + " / " + topicName;
+						logger.error(msg, e);
+						messages.add(msg + ": " + e.getMessage());
 					}
 				}
 			}
@@ -124,8 +135,11 @@ public abstract class PersistencyHandler {
 				String topicName = (String) readOnlyIterator.next();
 				try {
 					toHandler.addReadOnlyTopic(virtualWiki, topicName);
+					messages.add("Added read-only topic " + virtualWiki + " / " + topicName);
 				} catch (Exception e) {
-					logger.error("Unable to convert read-only topic to file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
+					String msg = "Unable to convert read-only topic: " + virtualWiki + " / " + topicName;
+					logger.error(msg, e);
+					messages.add(msg + ": " + e.getMessage());
 				}
 			}
 			// Locks
@@ -135,52 +149,59 @@ public abstract class PersistencyHandler {
 				String topicName = topic.getName();
 				try {
 					toHandler.lockTopic(virtualWiki, topicName, topic.getLockSessionKey());
+					messages.add("Added locked topic " + virtualWiki + " / " + topicName);
 				} catch (Exception e) {
-					logger.error("Unable to write lock file: " + topicName + " / " + virtualWiki + ": " + e.getMessage());
+					String msg = "Unable to convert locked topic: " + virtualWiki + " / " + topicName;
+					logger.error(msg, e);
+					messages.add(msg + ": " + e.getMessage());
 				}
 			}
-			// Members
-			WikiMembers fileMembers = new FileWikiMembers(virtualWiki);
-			WikiMembers databaseMembers = new DatabaseWikiMembers(virtualWiki);
-			Collection members = databaseMembers.getAllMembers();
-			for (Iterator memberIterator = members.iterator(); memberIterator.hasNext();) {
-				WikiMember wikiMember = (WikiMember) memberIterator.next();
-				try {
-					fileMembers.addMember(
-						wikiMember.getUserName(),
-						wikiMember.getEmail(),
-						wikiMember.getKey()
-					);
-				} catch (Exception e) {
-					logger.error("Unable to convert wiki member to file: " + wikiMember.getUserName() + ": " + e.getMessage());
-				}
-			}
-			// Notifications
-			Collection databaseNotifications = DatabaseNotify.getAllNotifications(virtualWiki);
-			for (Iterator iterator = databaseNotifications.iterator(); iterator.hasNext();) {
-				DatabaseNotify databaseNotify = (DatabaseNotify) iterator.next();
-				FileNotify fileNotify = new FileNotify(virtualWiki, databaseNotify.getTopicName());
-				Collection notifyMembers = databaseNotify.getMembers();
-				for (Iterator notifyMemberIterator = notifyMembers.iterator(); notifyMemberIterator.hasNext();) {
-					String memberName = (String) notifyMemberIterator.next();
-					try {
-						fileNotify.addMember(memberName);
-					} catch (Exception e) {
-						logger.error("Unable to convert notify member to file: " + memberName + ": " + e.getMessage());
-					}
-				}
-			}
+//			// Members
+//			WikiMembers fileMembers = new FileWikiMembers(virtualWiki);
+//			WikiMembers databaseMembers = new DatabaseWikiMembers(virtualWiki);
+//			Collection members = databaseMembers.getAllMembers();
+//			for (Iterator memberIterator = members.iterator(); memberIterator.hasNext();) {
+//				WikiMember wikiMember = (WikiMember) memberIterator.next();
+//				try {
+//					fileMembers.addMember(
+//						wikiMember.getUserName(),
+//						wikiMember.getEmail(),
+//						wikiMember.getKey()
+//					);
+//				} catch (Exception e) {
+//					logger.error("Unable to convert wiki member to file: " + wikiMember.getUserName() + ": " + e.getMessage());
+//				}
+//			}
+//			// Notifications
+//			Collection databaseNotifications = DatabaseNotify.getAllNotifications(virtualWiki);
+//			for (Iterator iterator = databaseNotifications.iterator(); iterator.hasNext();) {
+//				DatabaseNotify databaseNotify = (DatabaseNotify) iterator.next();
+//				FileNotify fileNotify = new FileNotify(virtualWiki, databaseNotify.getTopicName());
+//				Collection notifyMembers = databaseNotify.getMembers();
+//				for (Iterator notifyMemberIterator = notifyMembers.iterator(); notifyMemberIterator.hasNext();) {
+//					String memberName = (String) notifyMemberIterator.next();
+//					try {
+//						fileNotify.addMember(memberName);
+//					} catch (Exception e) {
+//						logger.error("Unable to convert notify member to file: " + memberName + ": " + e.getMessage());
+//					}
+//				}
+//			}
 			// recent changes
 			Collection changes = fromHandler.getRecentChanges(virtualWiki, 1000);
 			for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
 				RecentChange change = (RecentChange)changeIterator.next();
 				try {
 					toHandler.addRecentChange(change);
+					messages.add("Added recent change " + virtualWiki + " / " + change.getTopicName());
 				} catch (Exception e) {
-					logger.error("Unable to convert recent change to file: " + virtualWiki + ": " + e.getMessage());
+					String msg = "Unable to convert recent change: " + virtualWiki + " / " + change.getTopicName();
+					logger.error(msg, e);
+					messages.add(msg + ": " + e.getMessage());
 				}
 			}
 		}
+		return messages;
 	}
 
 	/**

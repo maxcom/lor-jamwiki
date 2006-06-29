@@ -647,9 +647,6 @@ function onUserGroupType() {
   <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
 </form>
 <hr/>
-<p class="subHeader"><f:message key="admin.title.import"/></p>
-<a href="<jamwiki:link value="Special:Import" />"><f:message key="admin.caption.startimport"/></a>
-<hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
