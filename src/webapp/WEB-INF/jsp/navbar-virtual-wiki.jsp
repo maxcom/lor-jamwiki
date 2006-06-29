@@ -19,6 +19,5 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && Wiki
 }
 %>
 :
-<a href="<jamwiki:link value="StartingPoints" />">
-<c:out value="${wikiname}"/></a></b> :
+<a href="<jamwiki:link value="StartingPoints" />"><c:out value="${virtualWiki}"/></a></b> :
 </c:if>
