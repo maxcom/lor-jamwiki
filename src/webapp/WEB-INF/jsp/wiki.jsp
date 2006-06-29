@@ -42,6 +42,10 @@ if (action.equals(JAMController.ACTION_ADMIN)) {
 %>
 		<%@ include file="admin.jsp" %>
 <%
+} else if (action.equals(JAMController.ACTION_ADMIN_DELETE)) {
+%>
+		<%@ include file="adminDelete.jsp" %>
+<%
 } else if (action.equals(JAMController.ACTION_ADMIN_UPGRADE)) {
 %>
 		<%@ include file="adminUpgrade.jsp" %>

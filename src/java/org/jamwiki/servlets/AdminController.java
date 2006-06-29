@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,6 +86,14 @@ public class AdminController extends JAMController implements Controller {
 				upgradeRecentChanges(request, next);
 			} else {
 				upgradeView(request, next);
+			}
+			return next;
+		}
+		if (isTopic(request, "Special:Delete")) {
+			if (function.equals("Delete")) {
+				delete(request, next);
+			} else {
+				deleteView(request, next);
 			}
 			return next;
 		}
@@ -202,13 +211,49 @@ public class AdminController extends JAMController implements Controller {
 	/**
 	 *
 	 */
+	private void delete(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topicName = JAMController.getTopicFromRequest(request);
+		try {
+			if (topicName == null) {
+				next.addObject("errorMessage", "No topic found");
+			}
+			next.addObject("message", "Test successful");
+		} catch (Exception e) {
+			logger.error("Failure while deleting topic " + topicName, e);
+			next.addObject("errorMessage", "Failure while deleting topic " + topicName + ": " + e.getMessage());
+		}
+		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_DELETE);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_TITLE, "Delete " + topicName);
+	}
+
+	/**
+	 *
+	 */
+	private void deleteView(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topicName = JAMController.getTopicFromRequest(request);
+		if (topicName == null) {
+			next.addObject("errorMessage", "No topic found");
+		}
+		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
+		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_DELETE);
+		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMController.PARAMETER_TITLE, "Delete " + topicName);
+	}
+
+	/**
+	 *
+	 */
 	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		String page = JAMController.getTopicFromURI(request);
 		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("login.title", request.getLocale()));
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page));
-		next.addObject("redirect", buffer.toString());
+		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
+		if (request.getQueryString() != null) {
+			redirect += "?" + request.getQueryString();
+		}
+		next.addObject("redirect", redirect);
 		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
 		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMController.PARAMETER_TITLE, "Special:Login");
@@ -723,6 +768,7 @@ public class AdminController extends JAMController implements Controller {
 	 */
 	private void upgradeRecentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
 		try {
+			// FIXME - database specific
 			org.jamwiki.persistency.db.DatabaseHandler.loadRecentChanges();
 			next.addObject("message", "Recent changes successfully loaded");
 		} catch (Exception e) {
