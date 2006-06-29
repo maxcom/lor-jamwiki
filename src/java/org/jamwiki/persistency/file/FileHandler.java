@@ -716,7 +716,7 @@ public class FileHandler extends PersistencyHandler {
 		String filename = lockFilename(topicName);
 		File lockFile = getPathFor(virtualWiki, LOCK_DIR, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(lockFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(key);
+		writer.write(topicName);
 		writer.close();
 		return true;
 	}
@@ -760,7 +760,8 @@ public class FileHandler extends PersistencyHandler {
 			if (!topicIdFile.exists()) {
 				NEXT_TOPIC_ID = 0;
 			} else {
-				NEXT_TOPIC_ID = new Integer(read(topicIdFile).toString()).intValue();
+				String integer = Utilities.readFile(topicIdFile).toString();
+				NEXT_TOPIC_ID = new Integer(integer).intValue();
 			}
 		}
 		// FIXME - need to update topic.id file
@@ -777,7 +778,8 @@ public class FileHandler extends PersistencyHandler {
 			if (!topicVersionIdFile.exists()) {
 				NEXT_TOPIC_VERSION_ID = 0;
 			} else {
-				NEXT_TOPIC_VERSION_ID = new Integer(read(topicVersionIdFile).toString()).intValue();
+				String integer = Utilities.readFile(topicVersionIdFile).toString();
+				NEXT_TOPIC_VERSION_ID = new Integer(integer).intValue();
 			}
 		}
 		// FIXME - need to update topic-version.id file
@@ -811,26 +813,6 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	public void purgeVersionsOlderThan(String virtualWiki, DBDate date) throws Exception {
 		throw new UnsupportedOperationException("New version purging available for file handler yet");
-	}
-
-	/**
-	 *
-	 */
-	public static StringBuffer read(File file) throws Exception {
-		StringBuffer contents = new StringBuffer();
-		if (file.exists()) {
-			FileReader reader = new FileReader(file);
-			char[] buf = new char[4096];
-			int c;
-			while ((c = reader.read(buf, 0, buf.length)) != -1) {
-				contents.append(buf, 0, c);
-			}
-			reader.close();
-		} else {
-			logger.debug("File does not exist, returning default contents: " + file);
-			contents.append("This is a new topic");
-		}
-		return contents;
 	}
 
 	/**
