@@ -25,6 +25,8 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.db.DBDate;
+// FIXME - get rid of this import
+import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 import org.apache.log4j.Logger;
@@ -246,12 +248,15 @@ public abstract class PersistencyHandler {
 			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
 			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
 		}
-		// FIXME - file lock not released
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(-1);
 		topic.setLockedDate(null);
 		topic.setLockSessionKey(null);
-		this.addTopic(topic);
+		// FIXME - this is ugly
+		if (WikiBase.getInstance().getHandler() instanceof FileHandler) {
+			unlockTopic(topic);
+		}
+		addTopic(topic);
 		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version
