@@ -157,8 +157,6 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 				base.getHandler().write(topic, topicVersion);
 //				cl.logChange(change, request);
 			}
-			// Unlock and return
-			base.unlockTopic(virtualWiki, topicName);
 			StringBuffer next = new StringBuffer();
 			next.append(Utilities.createLocalRootPath(request, virtualWiki));
 			next.append("Wiki?");

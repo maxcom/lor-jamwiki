@@ -38,7 +38,6 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.persistency.PersistencyHandler;
-import org.jamwiki.TopicLock;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.PseudoTopicHandler;
@@ -424,13 +423,9 @@ public class DatabaseHandler extends PersistencyHandler {
 			stmt.setInt(1, virtualWikiId);
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				TopicLock lock = new TopicLock(
-					virtualWiki,
-					rs.getString("topic_name"),
-					new DBDate(rs.getTimestamp("topic_lock_date")),
-					rs.getString("topic_lock_session_key")
-				);
-				all.add(lock);
+				WikiResultSet wrs = new WikiResultSet(rs);
+				Topic topic = initTopic(wrs);
+				all.add(topic);
 			}
 		} finally {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
@@ -1008,8 +1003,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void unlockTopic(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
+	public void unlockTopic(Topic topic) throws Exception {
 		topic.setLockSessionKey(null);
 		topic.setLockedDate(null);
 		topic.setLockedBy(-1);

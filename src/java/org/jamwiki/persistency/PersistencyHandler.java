@@ -234,7 +234,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract void unlockTopic(String virtualWiki, String topicName) throws Exception;
+	public abstract void unlockTopic(Topic topic) throws Exception;
 
 
 	/**
@@ -246,6 +246,7 @@ public abstract class PersistencyHandler {
 			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
 			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
 		}
+		// FIXME - file lock not released
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(-1);
 		topic.setLockedDate(null);

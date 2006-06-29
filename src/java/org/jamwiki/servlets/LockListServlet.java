@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -70,8 +71,9 @@ public class LockListServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void unlock(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JAMController.getTopicFromRequest(request);
+		String topicName = JAMController.getTopicFromRequest(request);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
 			next.addObject("redirect", redirect);
@@ -80,7 +82,7 @@ public class LockListServlet extends JAMController implements Controller {
 			return;
 		}
 		try {
-			WikiBase.getInstance().unlockTopic(virtualWiki, topic);
+			WikiBase.getInstance().getHandler().unlockTopic(topic);
 		} catch (Exception e) {
 			logger.error("Failure while unlocking " + topic, e);
 			// FIXME - hard coding

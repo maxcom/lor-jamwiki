@@ -182,7 +182,9 @@ public class AdminController extends JAMController implements Controller {
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
 		try {
 			WikiBase base = WikiBase.getInstance();
-			base.unlockTopic(virtualWiki, request.getParameter("topic"));
+			String topicName = request.getParameter("topic");
+			Topic topic = base.getHandler().lookupTopic(virtualWiki, topicName);
+			base.getHandler().unlockTopic(topic);
 			String message = JAMController.getMessage("admin.message.lockcleared", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {

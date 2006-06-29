@@ -301,17 +301,6 @@ public class WikiBase {
 	 * TODO: DOCUMENT ME!
 	 *
 	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public synchronized void unlockTopic(String virtualWiki, String topicName) throws Exception {
-		handler.unlockTopic(virtualWiki, topicName);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
@@ -475,8 +464,8 @@ public class WikiBase {
 			try {
 				List lockList = handler.getLockList(virtualWikiName);
 				for (Iterator lockIterator = lockList.iterator(); lockIterator.hasNext();) {
-					TopicLock lock = (TopicLock) lockIterator.next();
-					handler.unlockTopic(virtualWikiName, lock.getTopicName());
+					Topic topic = (Topic)lockIterator.next();
+					handler.unlockTopic(topic);
 				}
 			} catch (Exception e) {
 				logger.error("", e);

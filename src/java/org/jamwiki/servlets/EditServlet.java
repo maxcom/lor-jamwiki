@@ -67,13 +67,14 @@ public class EditServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void cancel(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JAMController.getTopicFromRequest(request);
+		String topicName = JAMController.getTopicFromRequest(request);
 		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		try {
-			WikiBase.getInstance().unlockTopic(virtualWiki, topic);
+			WikiBase.getInstance().getHandler().unlockTopic(topic);
 		} catch (Exception err) {
 			// FIXME - hard coding
-			throw new Exception("Unable to unlock topic " + virtualWiki + "/" + topic);
+			throw new Exception("Unable to unlock topic " + virtualWiki + "/" + topicName);
 		}
 		// FIXME - the caching needs to be simplified
 		WikiBase.removeCachedContents();
@@ -242,18 +243,8 @@ public class EditServlet extends JAMController implements Controller {
 		topicVersion.setEditComment(request.getParameter("editComment"));
 		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
 		WikiBase.getInstance().getHandler().write(topic, topicVersion);
-//		if (request.getParameter("minorEdit") == null) {
-//			Change change = new Change();
-//			change.setTopic(topicName);
-//			change.setUser(user);
-//			change.setTime(new java.util.Date());
-//			change.setVirtualWiki(virtualWiki);
-//			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-//			cl.logChange(change, request);
-//		}
 		SearchEngine sedb = WikiBase.getInstance().getSearchEngineInstance();
 		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
-		WikiBase.getInstance().unlockTopic(virtualWiki, topicName);
 		view(request, next);
 	}
 

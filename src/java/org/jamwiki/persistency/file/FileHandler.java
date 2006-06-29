@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
-import org.jamwiki.TopicLock;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.model.RecentChange;
@@ -395,9 +394,12 @@ public class FileHandler extends PersistencyHandler {
 			logger.debug("filename: " + fileName);
 			String topicName = fileName.substring(0, fileName.indexOf("."));
 			DBDate lockedAt = new DBDate(new Date(file.lastModified()));
-			all.add(new TopicLock(
-				virtualWiki, topicName, lockedAt, readLockFileKey(file)
-			));
+			Topic topic = lookupTopic(virtualWiki, topicName);
+			if (topic == null) {
+				logger.error("Unable to find locked topic " + virtualWiki + " / " + topicName);
+				continue;
+			}
+			all.add(topic);
 		}
 		return all;
 	}
@@ -919,8 +921,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 * Unlocks a locked file
 	 */
-	public synchronized void unlockTopic(String virtualWiki, String topicName) throws IOException {
-		File lockFile = getPathFor(virtualWiki, null, topicName + LOCK_EXTENSION);
+	public synchronized void unlockTopic(Topic topic) throws IOException {
+		File lockFile = getPathFor(topic.getVirtualWiki(), null, topic.getName() + LOCK_EXTENSION);
 		if (!lockFile.exists()) {
 			logger.warn("attempt to unlock topic by deleting lock file failed (file does not exist): " + lockFile);
 		}
