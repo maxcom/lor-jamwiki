@@ -67,6 +67,8 @@ import org.jamwiki.utils.lucene.SimpleKeepNumbersAnalyzer;
  */
 public abstract class AbstractSearchEngine implements SearchEngine {
 
+	/** Directory for search index files */
+	protected static final String SEARCH_DIR = "search";
 	/** Index type "File" */
 	protected static final String ITYPE_FILE = "file";
 	/** Index type "topic" */
@@ -191,8 +193,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		// FIXME - need a unique temp directory even if multiple wiki installations
 		// running on the same system.
 		try {
-			String dir = Environment.getValue(Environment.PROP_SEARCH_TEMP_DIRECTORY);
-			File tmpDir = new File("e:/tmp/wiki/search");
+			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + File.separator + SEARCH_DIR;
+			File tmpDir = new File(dir);
 			indexPath = tmpDir.getPath();
 		} catch (Exception e) {
 			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);

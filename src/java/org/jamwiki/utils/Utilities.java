@@ -251,7 +251,7 @@ public class Utilities {
 	 *
 	 */
 	public static String dir() {
-		return Environment.getValue(Environment.PROP_FILE_HOME_DIR) + System.getProperty("file.separator");
+		return Environment.getValue(Environment.PROP_BASE_FILE_DIR) + System.getProperty("file.separator");
 	}
 
 	/**

@@ -258,7 +258,6 @@ public class AdminController extends JAMController implements Controller {
 				Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL,
 				Integer.parseInt(request.getParameter(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL))
 			);
-			Environment.setValue(Environment.PROP_SEARCH_TEMP_DIRECTORY, request.getParameter(Environment.PROP_SEARCH_TEMP_DIRECTORY));
 			Environment.setIntValue(
 				Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL,
 				Integer.parseInt(request.getParameter(Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL))
@@ -316,8 +315,8 @@ public class AdminController extends JAMController implements Controller {
 				request.getParameter(Environment.PROP_ATTACH_UPLOAD_DIR)
 			);
 			Environment.setValue(
-				Environment.PROP_FILE_HOME_DIR,
-				request.getParameter(Environment.PROP_FILE_HOME_DIR)
+				Environment.PROP_BASE_FILE_DIR,
+				request.getParameter(Environment.PROP_BASE_FILE_DIR)
 			);
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 			if (persistenceType == WikiBase.FILE) {
@@ -476,10 +475,10 @@ public class AdminController extends JAMController implements Controller {
 					}
 				}
 			}
-			if (Environment.getValue(Environment.PROP_FILE_HOME_DIR) == null) {
+			if (Environment.getValue(Environment.PROP_BASE_FILE_DIR) == null) {
 				// if home directory set empty, use system home directory
 				String dir = System.getProperty("user.home") + System.getProperty("file.separator") + "wiki";
-				Environment.setValue(Environment.PROP_FILE_HOME_DIR, dir);
+				Environment.setValue(Environment.PROP_BASE_FILE_DIR, dir);
 			}
 			if (WikiBase.getPersistenceType() == WikiBase.DATABASE) {
 				// initialize connection pool in its own try-catch to avoid an error

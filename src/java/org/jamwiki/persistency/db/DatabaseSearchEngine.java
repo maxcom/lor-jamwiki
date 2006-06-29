@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.jamwiki.AbstractSearchEngine;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 
 /**
@@ -51,6 +52,11 @@ public class DatabaseSearchEngine extends AbstractSearchEngine {
 	 * @throws Exception If something really goes wrong
 	 */
 	public static synchronized DatabaseSearchEngine getInstance() throws Exception {
+		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+		if (baseFileDir == null || baseFileDir.length() == 0) {
+			// system not initialized yet
+			return null;
+		}
 		if (instance == null) {
 			instance = new DatabaseSearchEngine();
 			instance.initSearchEngine();

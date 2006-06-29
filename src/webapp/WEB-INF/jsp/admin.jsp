@@ -181,12 +181,6 @@ function onUserGroupType() {
         <input type="text" name="<%= Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL %>" size="5" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL) %>">
       </td>
     </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.tmpdir" /></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_SEARCH_TEMP_DIRECTORY %>" size="20" maxlength="100" value="<%= Environment.getValue(Environment.PROP_SEARCH_TEMP_DIRECTORY) %>">
-      </td>
-    </tr>
 
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr>
@@ -301,7 +295,7 @@ function onUserGroupType() {
    <tr>
       <td class="normal"><f:message key="admin.caption.filedir"/></td>
       <td class="normal">
-        <input type="text" name="<%= Environment.PROP_FILE_HOME_DIR %>" value="<%= Environment.getValue(Environment.PROP_FILE_HOME_DIR) %>" size="50">
+        <input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= Environment.getValue(Environment.PROP_BASE_FILE_DIR) %>" size="50">
       </td>
     </tr>
    <tr>

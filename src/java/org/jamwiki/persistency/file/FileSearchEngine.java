@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.TreeSet;
 import org.jamwiki.AbstractSearchEngine;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.utils.TextFileFilter;
@@ -49,6 +50,11 @@ public class FileSearchEngine extends AbstractSearchEngine {
 	 * @throws java.lang.Exception
 	 */
 	public static synchronized FileSearchEngine getInstance() throws Exception {
+		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+		if (baseFileDir == null || baseFileDir.length() == 0) {
+			// system not initialized yet
+			return null;
+		}
 		if (instance == null) {
 			instance = new FileSearchEngine();
 			instance.initSearchEngine();

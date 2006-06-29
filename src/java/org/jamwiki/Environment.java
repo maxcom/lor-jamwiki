@@ -52,6 +52,7 @@ public class Environment {
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_ENCODE_PASSWORDS = "encode-passwords";
+	public static final String PROP_BASE_FILE_DIR = "homeDir";
 	public static final String PROP_BASE_FIRST_USE = "firstUse";
 	public static final String PROP_BASE_FORCE_ENCODING = "force-encoding";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
@@ -81,7 +82,6 @@ public class Environment {
 	public static final String PROP_EMAIL_SMTP_USERNAME = "smtp-username";
 	public static final String PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY = "supress-notify-within-same-day";
 	public static final String PROP_FILE_ENCODING = "file-encoding";
-	public static final String PROP_FILE_HOME_DIR = "homeDir";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_NEW_LINE_BREAKS = "new-line-breaks";
@@ -92,7 +92,6 @@ public class Environment {
 	public static final String PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED = "attachment-indexing";
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
-	public static final String PROP_SEARCH_TEMP_DIRECTORY = "search-temp-dir";
 	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jamwiki-list";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
 	public static final String PROP_TOPIC_EDIT_TIME_OUT = "editTimeOut";
@@ -295,6 +294,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_ENCODE_PASSWORDS, "true");
+		defaults.setProperty(PROP_BASE_FILE_DIR, "");
 		defaults.setProperty(PROP_BASE_FIRST_USE, "true");
 		// Tomcat assumes ISO-8859-1 in URI's. That's the reason why all Latin-1 languages can't handle special characters.
 		// However, even worse, there is no standard J2EE-way to handle this. We must set this here to ISO-8859-1.
@@ -309,7 +309,7 @@ public class Environment {
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
 		defaults.setProperty(PROP_DB_TYPE, "postgres");
-		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/user");
+		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/database");
 		defaults.setProperty(PROP_DB_USERNAME, "");
 		defaults.setProperty(PROP_DBCP_LOG_ABANDONED, "true");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");
@@ -324,7 +324,7 @@ public class Environment {
 		defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
 		defaults.setProperty(PROP_DBCP_VALIDATION_QUERY, "SELECT 1");
 		defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
-		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "user@hostname");
+		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
@@ -335,13 +335,11 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_NEW_LINE_BREAKS, "1");
 		defaults.setProperty(PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS, "false");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
-		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "25");
+		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
 		defaults.setProperty(PROP_RECENT_CHANGES_REFRESH_INTERVAL, "1");
 		defaults.setProperty(PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_EXTLINKS_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
-		// FIXME - make sure this is set
-		defaults.setProperty(PROP_SEARCH_TEMP_DIRECTORY, "");
 		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");
 		defaults.setProperty(PROP_TOPIC_EDIT_TIME_OUT, "10");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");

@@ -389,7 +389,7 @@ public class FileHandler implements PersistencyHandler {
 	 *
 	 */
 	public static String fileBase(String virtualWiki) {
-		return Environment.getValue(Environment.PROP_FILE_HOME_DIR) + Utilities.sep() + virtualWiki;
+		return Environment.getValue(Environment.PROP_BASE_FILE_DIR) + Utilities.sep() + virtualWiki;
 	}
 
 	/**
@@ -955,6 +955,11 @@ public class FileHandler implements PersistencyHandler {
 	 */
 	private void setupSpecialPage(String virtualWiki, String topicName) throws Exception {
 		if (exists(virtualWiki, topicName)) {
+			return;
+		}
+		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+		if (baseFileDir == null || baseFileDir.length() == 0) {
+			// do not set up special pages until initial property values set
 			return;
 		}
 		Topic topic = new Topic();

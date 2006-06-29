@@ -159,7 +159,7 @@ public class FileNotify extends AbstractNotify {
 	 * @return String the home directory
 	 */
 	protected String fileBase() {
-		return Environment.getValue(Environment.PROP_FILE_HOME_DIR);
+		return Environment.getValue(Environment.PROP_BASE_FILE_DIR);
 	}
 
 	/**

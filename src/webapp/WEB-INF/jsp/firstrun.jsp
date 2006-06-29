@@ -7,3 +7,5 @@
 <p>
 <f:message key="firstuse.message.warning"/>
 </p>
+<%-- FIXME: hard coding --%>
+<a href="<jamwiki:link value="Special:Admin" />">Admin Page</a>

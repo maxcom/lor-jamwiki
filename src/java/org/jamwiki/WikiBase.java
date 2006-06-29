@@ -58,6 +58,7 @@ import org.jamwiki.servlets.JAMController;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.Utilities;
 
 /**
  * This class represents the core of JAMWiki. It has some central methods, like parsing the URI, and keeps an
@@ -652,8 +653,15 @@ public class WikiBase {
 		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
 		if (content == null) {
 			try {
-				Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
-				content = topic.getTopicContent();
+				String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+				if (baseFileDir == null || baseFileDir.length() == 0) {
+					// system not set up yet, just read the default file
+					// FIXME - filename should be set better
+					content = Utilities.readFile(topicName + ".txt");
+				} else {
+					Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+					content = topic.getTopicContent();
+				}
 				if (cook) {
 					content = WikiBase.getInstance().cook(context, virtualWiki, content);
 				}
