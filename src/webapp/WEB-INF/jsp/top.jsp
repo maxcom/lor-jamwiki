@@ -25,9 +25,6 @@ if (Utilities.isFirstUse()) {
 %>
     <title><c:out value="${title}"/></title>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-<c:if test="${!empty lastAuthor}">	<meta name="author" content="<c:out value="${lastAuthor}"/>" >
-</c:if><c:if test="${!empty lastRevisionDate}">	<meta name="version" content="<c:out value="${lastRevisionDate}"/>" />
-</c:if>	
 <%
 if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC).length() > 0) {
 %>
