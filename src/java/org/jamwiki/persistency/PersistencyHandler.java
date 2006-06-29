@@ -56,7 +56,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception;
+	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(true);
+		addTopic(topic);
+	}
 
 	/**
 	 *
@@ -341,7 +345,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception;
+	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(false);
+		addTopic(topic);
+	}
 
 	/**
 	 *

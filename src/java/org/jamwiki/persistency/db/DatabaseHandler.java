@@ -182,15 +182,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		topic.setReadOnly(true);
-		addTopic(topic);
-	}
-
-	/**
-	 *
-	 */
 	public void addRecentChange(RecentChange change) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(change.getVirtualWiki());
 		Connection conn = null;
@@ -889,15 +880,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		} finally {
 			DatabaseConnection.closeConnection(conn);
 		}
-	}
-
-	/**
-	 *
-	 */
-	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		topic.setReadOnly(false);
-		addTopic(topic);
 	}
 
 	/**
