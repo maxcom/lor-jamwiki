@@ -69,10 +69,6 @@ public class FileHandler extends PersistencyHandler {
 	public static final String READ_ONLY_DIR = "readonly";
 	public static final String LOCK_DIR = "locks";
 	public final static String EXT = ".xml";
-	// the read-only topics
-	protected Map readOnlyTopics;
-	// file used for storing read-only topics
-	private final static String READ_ONLY_FILE = "ReadOnlyTopics";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
 	protected static final String XML_RECENT_CHANGE_ROOT = "change";
 	protected static final String XML_RECENT_CHANGE_TOPIC_ID = "topicid";
@@ -115,7 +111,6 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public FileHandler() {
-		this.readOnlyTopics = new HashMap();
 		createDefaults(Locale.ENGLISH);
 	}
 
@@ -333,7 +328,6 @@ public class FileHandler extends PersistencyHandler {
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.bottomArea", locale));
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.stylesheet", locale));
 				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
-				loadReadOnlyTopics(vWiki);
 			}
 			in.close();
 		} catch (Exception ex) {
@@ -653,50 +647,6 @@ public class FileHandler extends PersistencyHandler {
 			logger.error("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
 			return null;
 		}
-	}
-
-	/**
-	 * Read the read-only topics from disk
-	 */
-	protected synchronized void loadReadOnlyTopics(String virtualWiki) {
-		logger.debug("Loading read only topics for " + virtualWiki);
-		Collection roTopics = new ArrayList();
-		File roFile = getPathFor(virtualWiki, null, READ_ONLY_FILE);
-		if (!roFile.exists()) {
-			logger.debug("Empty read only topics for " + virtualWiki);
-			if (virtualWiki == null || virtualWiki.equals("")) {
-				virtualWiki = WikiBase.DEFAULT_VWIKI;
-			}
-			this.readOnlyTopics.put(virtualWiki, roTopics);
-			return;
-		}
-		logger.debug("Loading read-only topics from " + roFile);
-		BufferedReader in = null;
-		try {
-			roFile.createNewFile();
-			in = new BufferedReader(new InputStreamReader(new FileInputStream(roFile), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		while (true) {
-			String line = null;
-			try {
-				line = in.readLine();
-			} catch (Exception e) {
-				logger.error(e);
-			}
-			if (line == null) break;
-			roTopics.add(line);
-		}
-		try {
-			in.close();
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		if (virtualWiki.equals("")) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		this.readOnlyTopics.put(virtualWiki, roTopics);
 	}
 
 	/**
