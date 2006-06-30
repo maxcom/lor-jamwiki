@@ -46,7 +46,6 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.PersistencyHandler;
-import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
 import org.w3c.dom.Document;

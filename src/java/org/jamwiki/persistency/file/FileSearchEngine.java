@@ -22,7 +22,6 @@ import java.util.TreeSet;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.search.AbstractSearchEngine;
-import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
 
 /**
