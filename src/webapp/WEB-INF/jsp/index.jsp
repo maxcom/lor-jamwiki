@@ -20,14 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 %>
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 
+<c:set var="initialized"><%= Environment.getValue(Environment.PROP_BASE_INITIALIZED) %></c:set>
 <c:set var="defaultTopic"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
 <c:choose>
-	<c:when test="${!empty defaultTopic}">
+	<c:when test="${!initialized && !empty defaultTopic}">
 		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
 		<c:redirect url="en/${defaultTopic}" />
 	</c:when>
 	<c:otherwise>
 		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
-		<c:redirect url="en/Special:Admin" />
+		<c:redirect url="en/Special:Setup" />
 	</c:otherwise>
 </c:choose>

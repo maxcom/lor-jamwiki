@@ -36,6 +36,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -150,8 +151,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public DatabaseHandler() throws Exception {
-		createDefaults(Locale.ENGLISH);
+	public DatabaseHandler() {
 	}
 
 	/**
@@ -302,44 +302,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (virtualWikiIdHash != null) {
 			virtualWikiIdHash.put(new Integer(virtualWikiId), virtualWikiName);
 		}
-	}
-
-	/**
-	 *
-	 */
-	protected void createDefaults(Locale locale) throws Exception {
-		logger.debug("Setting defaults");
-		if (!DatabaseHandler.dbInitialized()) {
-			//set up tables
-			DatabaseInit.initialize();
-		}
-		String sql = null;
-		WikiResultSet rs = null;
-		sql = "select * from jmw_virtual_wiki ";
-		try {
-			rs = DatabaseConnection.executeQuery(sql);
-		} catch (Exception e) {
-			// return, tables not set up yet
-			return;
-		}
-		if (rs.size() == 0) {
-			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
-		}
-		super.createDefaults(locale);
-	}
-
-	/**
-	 *
-	 */
-	private static boolean dbInitialized() {
-		String sql = "select 1 from Topic ";
-		try {
-			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
-			return rs.next();
-		} catch (Exception e) {
-			// thrown if table doesn't exist, so safe to ignore
-		}
-		return false;
 	}
 
 	/**
@@ -500,6 +462,46 @@ public class DatabaseHandler extends PersistencyHandler {
 		// FIXME - old code included a check to see if last version was made after the time
 		// the lock was taken.  that should be impossible with the new code.
 		return true;
+	}
+
+	/**
+	 *
+	 */
+	public void initialize(Locale locale) throws Exception {
+		String sql = null;
+		WikiResultSet rs = null;
+		boolean tablesExist = false;
+		sql = "select 1 from jmw_virtual_wiki ";
+		try {
+			rs = DatabaseConnection.executeQuery(sql);
+			tablesExist = rs.next();
+		} catch (Exception e) {
+			// thrown if table doesn't exist, so safe to ignore
+		}
+		if (!tablesExist) {
+			// set up tables
+			DatabaseInit.initialize();
+		}
+		sql = "select * from jmw_virtual_wiki ";
+		rs = DatabaseConnection.executeQuery(sql);
+		if (rs.size() == 0) {
+			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
+		}
+		// add default author
+		// FIXME - use prepared statement
+		sql = "insert into jmw_author ( "
+		    +   "login, virtual_wiki_id, display_name, encoded_password, "
+		    +   "initial_ip_address, last_ip_address "
+		    + ") values ( "
+		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_LOGIN + "', "
+		    +   "1, "
+		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_NAME + "', "
+		    +   "'" + Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD) + "', "
+		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "', "
+		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "' "
+		    + ") ";
+		DatabaseConnection.executeUpdate(sql);
+		super.initialize(locale);
 	}
 
 	/**
@@ -734,5 +736,22 @@ public class DatabaseHandler extends PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
 		}
 		return virtualWikiName;
+	}
+
+	/**
+	 *
+	 */
+	public static boolean testDatabase() {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+		} catch (Exception e) {
+			// database settings incorrect
+			logger.error("Invalid database settings", e);
+			return false;
+		} finally {
+			if (conn != null) DatabaseConnection.closeConnection(conn);
+		}
+		return true;
 	}
 }

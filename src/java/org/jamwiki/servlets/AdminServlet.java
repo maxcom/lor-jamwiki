@@ -139,7 +139,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			WikiBase.getInstance().addVirtualWiki(newWiki);
 			String message = JAMWikiServlet.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
-			WikiBase.initialise();
+			WikiBase.initialise(request.getLocale());
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
 			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
@@ -538,7 +538,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 				}
 			}
 			Environment.saveProperties();
-			WikiBase.initialise();
+			WikiBase.initialise(request.getLocale());
 			String message = JAMWikiServlet.getMessage("admin.message.changessaved", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {

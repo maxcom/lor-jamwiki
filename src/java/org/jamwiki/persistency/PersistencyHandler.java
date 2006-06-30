@@ -206,24 +206,6 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
-	 * Set up defaults if necessary
-	 */
-	protected void createDefaults(Locale locale) throws Exception {
-		Collection all = getVirtualWikiList();
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			String virtualWiki = (String)iterator.next();
-			logger.info("Creating defaults for " + virtualWiki);
-			// create the default topics
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.startingpoints", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.leftMenu", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.topArea", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.bottomArea", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.stylesheet", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.adminonlytopics", locale));
-		}
-	}
-
-	/**
 	 *
 	 */
 	public void delete(Topic topic) throws Exception {
@@ -305,6 +287,24 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception;
+
+	/**
+	 * Set up defaults if necessary
+	 */
+	public void initialize(Locale locale) throws Exception {
+		Collection all = getVirtualWikiList();
+		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
+			String virtualWiki = (String)iterator.next();
+			logger.info("Creating defaults for " + virtualWiki);
+			// create the default topics
+			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.startingpoints", locale));
+			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.leftMenu", locale));
+			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.topArea", locale));
+			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.bottomArea", locale));
+			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.stylesheet", locale));
+			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.adminonlytopics", locale));
+		}
+	}
 
 	/**
 	 *

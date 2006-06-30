@@ -272,10 +272,12 @@ public class WikiBase {
 	 *
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public static void initialise() throws Exception {
+	public static void initialise(Locale locale) throws Exception {
 		int persistenceType = WikiBase.getPersistenceType();
 		WikiMail.init();
 		instance = new WikiBase(persistenceType);
+		instance.getHandler().initialize(locale);
+		WikiBase.removeCachedContents();
 	}
 
 	/**

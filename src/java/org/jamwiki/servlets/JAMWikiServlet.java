@@ -42,7 +42,6 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	public static final String ACTION_CANCEL = "Cancel";
 	public static final String ACTION_DIFF = "action_diff";
 	public static final String ACTION_EDIT = "action_edit";
-	public static final String ACTION_FIRST_USE = "action_firstuse";
 	public static final String ACTION_HISTORY = "action_history";
 	public static final String ACTION_LOGIN = "action_login";
 	public static final String ACTION_LOGOUT = "action_logout";
@@ -52,6 +51,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	public static final String ACTION_RSS = "RSS";
 	public static final String ACTION_SAVE_USER = "action_save_user";
 	public static final String ACTION_SEARCH = "action_search";
+	public static final String ACTION_SETUP = "action_setup";
 	public static final String ACTION_UNLOCK = "action_unlock";
 	public static final String ACTION_VIEW_ATTACHMENT = "action_view_attachment";
 	public static final String ACTION_ALL_TOPICS = "all_topics";

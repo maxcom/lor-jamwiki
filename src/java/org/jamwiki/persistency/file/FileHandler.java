@@ -109,8 +109,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public FileHandler() throws Exception {
-		createDefaults(Locale.ENGLISH);
+	public FileHandler() {
 	}
 
 	/**
@@ -286,19 +285,6 @@ public class FileHandler extends PersistencyHandler {
 		}
 		writer.println(virtualWiki);
 		writer.close();
-	}
-
-	/**
-	 * Set up defaults if necessary
-	 */
-	protected void createDefaults(Locale locale) throws Exception {
-		// create the virtual wiki list file if necessary
-		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
-		// get the virtual wiki list and set up the file system
-		if (!virtualList.exists()) {
-			createVirtualWikiList(virtualList);
-		}
-		super.createDefaults(locale);
 	}
 
 	/**
@@ -484,6 +470,19 @@ public class FileHandler extends PersistencyHandler {
 			return (lockKey != null && key.equals(lockKey));
 		}
 		return lockTopic(virtualWiki, topicName, key);
+	}
+
+	/**
+	 * Set up defaults if necessary
+	 */
+	public void initialize(Locale locale) throws Exception {
+		// create the virtual wiki list file if necessary
+		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
+		// get the virtual wiki list and set up the file system
+		if (!virtualList.exists()) {
+			createVirtualWikiList(virtualList);
+		}
+		super.initialize(locale);
 	}
 
 	/**

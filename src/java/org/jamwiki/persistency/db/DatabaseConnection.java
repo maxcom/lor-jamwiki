@@ -40,17 +40,19 @@ public class DatabaseConnection {
 
 	private static final Logger logger = Logger.getLogger(DatabaseConnection.class);
 	private static boolean poolInitialized = false;
+	private static GenericObjectPool connectionPool = null;
 
 	/**
 	 *
 	 */
 	public static void setUpConnectionPool(String url, String userName, String password) throws Exception {
+		closeConnectionPool();
 		Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER));
 		AbandonedConfig config = new AbandonedConfig();
 		config.setRemoveAbandoned(Environment.getBooleanValue(Environment.PROP_DBCP_REMOVE_ABANDONED));
 		config.setLogAbandoned(Environment.getBooleanValue(Environment.PROP_DBCP_LOG_ABANDONED));
 		config.setRemoveAbandonedTimeout(Environment.getIntValue(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT));
-		GenericObjectPool connectionPool = new AbandonedObjectPool(null, config);
+		connectionPool = new AbandonedObjectPool(null, config);
 		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
 		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
 		connectionPool.setMinEvictableIdleTimeMillis(Environment.getIntValue(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) * 1000);
@@ -64,7 +66,31 @@ public class DatabaseConnection {
 		new PoolableConnectionFactory(connectionFactory, connectionPool, null, Environment.getValue(Environment.PROP_DBCP_VALIDATION_QUERY), false, true);
 		PoolingDriver driver = new PoolingDriver();
 		driver.registerPool("jamwiki", connectionPool);
+		Connection conn = null;
+		try {
+			// try to get a test connection
+			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
+		} finally {
+			if (conn != null) closeConnection(conn);
+		}
 		poolInitialized = true;
+	}
+
+	/**
+	 *
+	 */
+	public static void closeConnectionPool() throws Exception {
+		if (connectionPool == null) {
+			return;
+		}
+		connectionPool.clear();
+		try {
+			connectionPool.close();
+		} catch (Exception e) {
+			logger.error("Unable to close connection pool", e);
+			throw e;
+		}
+		poolInitialized = false;
 	}
 
 	/**

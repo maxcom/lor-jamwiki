@@ -16,16 +16,13 @@
  */
 package org.jamwiki;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -53,8 +50,8 @@ public class Environment {
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_ENCODE_PASSWORDS = "encode-passwords";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
-	public static final String PROP_BASE_FIRST_USE = "firstUse";
 	public static final String PROP_BASE_FORCE_ENCODING = "force-encoding";
+	public static final String PROP_BASE_INITIALIZED = "props-initialized";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_SERVER_HOSTNAME = "wiki-server-hostname";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
@@ -230,11 +227,10 @@ public class Environment {
 	 * @param comments A comment to save in the properties file.
 	 */
 	public static void saveProperties(String propertyFile, Properties properties, String comments) throws IOException {
-		String file = null;
-		file = getPropertyFileLocation("properties", propertyFile);
-		OutputStream out = null;
+		File file = findProperties(propertyFile);
+		FileOutputStream out = null;
 		try {
-			out = new FileOutputStream(new File(file));
+			out = new FileOutputStream(file);
 			props.store(out, comments);
 		} finally {
 			if (out != null) {
@@ -269,13 +265,13 @@ public class Environment {
 		if (def != null) {
 			properties = new Properties(def);
 		}
-		String file = null;
+		File file = null;
 		try {
-			file = getPropertyFileLocation("properties", propertyFile);
-			logger.info("Loading properties from " + file);
-			properties.load(new BufferedInputStream(new FileInputStream(file)));
+			file = findProperties(propertyFile);
+			logger.info("Loading properties from " + file.toString());
+			properties.load(new FileInputStream(file));
 		} catch (Exception e) {
-			logger.error("Failure while trying to load properties file " + file, e);
+			logger.error("Failure while trying to load properties file " + file.toString(), e);
 		}
 		return properties;
 	}
@@ -295,7 +291,6 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_ENCODE_PASSWORDS, "true");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
-		defaults.setProperty(PROP_BASE_FIRST_USE, "true");
 		// Tomcat assumes ISO-8859-1 in URI's. That's the reason why all Latin-1 languages can't handle special characters.
 		// However, even worse, there is no standard J2EE-way to handle this. We must set this here to ISO-8859-1.
 		// If someone needs UTF-8 URI's, he should configure URIEncoding="UTF-8" in Tomcats connector settings (server.xml)
@@ -303,6 +298,7 @@ public class Environment {
 		// also see http://weblogs.java.net/blog/joconner/archive/2005/07/charset_traps.html
 		// Note: according to RFC 3986, URL's should be encoded to UTF-8 by default. Unfortunatly, many systems don't comply
 		defaults.setProperty(PROP_BASE_FORCE_ENCODING, "ISO-8859-1");
+		defaults.setProperty(PROP_BASE_INITIALIZED, "false");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "FILE");
 		defaults.setProperty(PROP_BASE_SERVER_HOSTNAME, "");
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
@@ -360,51 +356,70 @@ public class Environment {
 	}
 
 	/**
-	 * This method attempts to determine the correct path for a specified property file. It does so through
-	 * three different methods. These are, in order of precedence:
-	 * - Determine correct path based on an environment setting.
-	 * - Determine correct path based on the classpath.
-	 * - Assume the user's home directory and use that.
+	 * Load a property file.  First check for the file in the path from which
+	 * the application was started, then check other classpath locations.
 	 *
-	 * @param contextName
-	 * @param filename
-	 * @return A valid location for a properties file
+	 * @param filename The name of the property file to be loaded.  This name can be
+	 *  either absolute or relative; if relative then the file will be loaded from
+	 *  the class path or from the directory from which the JVM was loaded.
 	 */
-	public static String getPropertyFileLocation(String contextName, String filename) {
-		String file = null;
-		// Try to retrieve the properties file from the context environment entry identified by contextName
+	private static File findProperties(String filename) throws FileNotFoundException {
+		// read in properties file
+		File file = new File(filename);
+		if (file.exists()) {
+			return file;
+		}
+		URL url = Environment.getURL(filename);
+		if (url == null) {
+			throw new FileNotFoundException("Unable to find property file " + filename);
+		}
 		try {
-			InitialContext ictx = new InitialContext();
-			file = (String) ictx.lookup("java:comp/env/" + contextName);
-			logger.debug("Properties file path as retrieved from context: " + file);
-		} catch (Exception e) {
-			logger.info("No entry found for properties in context " + contextName + ": " + e.getMessage());
-		}
-		// We couldn't get the properties file from the context, so let's try the classpath way
-		if (file == null) {
-			URL resource = Environment.class.getResource("/" + filename);
-			logger.debug("Properties file as resource: " + resource);
-			if (resource != null) {
-				try {
-					file = URLDecoder.decode(resource.getFile(), "iso-8859-2");
-				} catch(UnsupportedEncodingException e) {
-					logger.debug("File encoding type is not supported", e);
-				}
-			}
-		}
-		/* Emergency measures...
-		 * We couldn't get it from the context, nor from classpath...
-		 * so try to read a file from the user's home directory.
-		 * (NOT nice and we should never be needing this!)
-		 */
-		if (file == null) {
-			logger.debug("Attempting to load properties file from user home! NOT Good!!");
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(System.getProperty("user.home"));
-			buffer.append(System.getProperty("file.separator"));
-			buffer.append(filename);
-			file = buffer.toString();
+			file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new FileNotFoundException("Unsupported encoding UTF-8 for file " + filename);
 		}
 		return file;
+	}
+
+	/**
+	 * Utility methods for retrieving property files from the class path, taken from
+	 * the org.apache.log4j.helpers.Loader class.
+	 *
+	 * @param filename Given a filename return a URL object for the file.  The filename
+	 *  may be relative to the class path or the directory from which the JVM was
+	 *  initialized.
+	 */
+	private static URL getURL(String filename) {
+		Method method = null;
+		ClassLoader loader = null;
+		URL url = null;
+		try {
+			// first try to use the standard class loader path
+			method = Thread.class.getMethod("getContextClassLoader", null);
+		} catch (NoSuchMethodException e) {
+			logger.error("Error while searching for resource " + filename, e);
+			return null;
+		}
+		try {
+			loader = (ClassLoader)method.invoke(Thread.currentThread(), null);
+		} catch (IllegalAccessException e) {
+			logger.error("Error while searching for resource " + filename, e);
+			return null;
+		} catch (InvocationTargetException e) {
+			logger.error("Error while searching for resource " + filename, e);
+			return null;
+		}
+		if (loader != null) {
+			url = loader.getResource(filename);
+			if (url != null) return url;
+		}
+		// now attempt the the class loader that loaded this class
+		loader = Environment.class.getClassLoader();
+		if (loader != null) {
+			url = loader.getResource(filename);
+			if (url != null) return url;
+		}
+		// last attempt with the class path
+		return ClassLoader.getSystemResource(filename);
 	}
 }

@@ -354,19 +354,6 @@ public class Utilities {
 	/**
 	 *
 	 */
-	private static String generateNewAdminPassword() {
-		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < 5; i++) {
-			int n = (int) (Math.random() * 26 + 65);
-			buffer.append((char) n);
-		}
-		String value = buffer.toString();
-		return value;
-	}
-
-	/**
-	 *
-	 */
 	public static String getUserFromRequest(HttpServletRequest request) {
 		if (request.getRemoteUser() != null) {
 			return request.getRemoteUser();
@@ -403,18 +390,7 @@ public class Utilities {
 	 *
 	 */
 	public static boolean isFirstUse() {
-		if (Environment.getBooleanValue(Environment.PROP_BASE_FIRST_USE)) {
-			logger.info("First use of JAMWiki, creating admin password");
-			try {
-				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, generateNewAdminPassword());
-				Environment.setBooleanValue(Environment.PROP_BASE_FIRST_USE, false);
-				Environment.saveProperties();
-			} catch (Exception e) {
-				logger.error(e);
-			}
-			return true;
-		}
-		return false;
+		return !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED);
 	}
 
 	/**

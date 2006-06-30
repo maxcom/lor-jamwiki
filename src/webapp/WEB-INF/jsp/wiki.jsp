@@ -1,3 +1,14 @@
+<%@ page import="
+    org.jamwiki.Environment,
+    org.jamwiki.WikiBase,
+    org.jamwiki.servlets.JAMWikiServlet,
+    org.jamwiki.utils.Utilities
+" %>
+<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
+<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
+<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
+<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+<jamwiki:setPageEncoding />
 <% response.setLocale(request.getLocale()); %>
 <%@ include file="top.jsp"%>
 <%
@@ -7,6 +18,13 @@ if (action == null) {
 	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
 }
 if (action == null) action = "";
+if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP)) {
+      // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
+      String firstUseUrl = "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
+%>
+      <jsp:forward page="<%= firstUseUrl %>" />
+<%
+}
 %>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -66,10 +84,6 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="createUser.jsp" %>
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_FIRST_USE)) {
-%>
-		<%@ include file="firstrun.jsp" %>
-<%
 } else if (action.equals(JAMWikiServlet.ACTION_HISTORY)) {
 %>
 		<%@ include file="history.jsp" %>
@@ -97,6 +111,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 } else if (action.equals(JAMWikiServlet.ACTION_SEARCH_RESULTS)) {
 %>
 		<%@ include file="searchResults.jsp" %>
+<%
+} else if (action.equals(JAMWikiServlet.ACTION_SETUP)) {
+%>
+		<%@ include file="setup.jsp" %>
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>

@@ -1,28 +1,6 @@
-<%@ page import="
-    org.jamwiki.Environment,
-    org.jamwiki.WikiBase,
-    org.jamwiki.servlets.JAMWikiServlet,
-    org.jamwiki.utils.Utilities
-" %>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
-<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
-<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
-<jamwiki:setPageEncoding />
 <html>
   <head>
     <f:setBundle basename="ApplicationResources"/>
-<%
-if (Utilities.isFirstUse()) {
-%>
-      <%
-      // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
-      String firstUseUrl = "/en/Wiki?action=" + JAMWikiServlet.ACTION_FIRST_USE;
-      %>
-      <jsp:forward page="<%= firstUseUrl %>" />
-<%
-}
-%>
     <title><c:out value="${title}"/></title>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
 <%
