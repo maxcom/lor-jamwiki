@@ -1,8 +1,6 @@
 
 <%@ page import="
-        org.jamwiki.WikiException,
-        org.jamwiki.servlets.JAMWikiServlet,
-        org.jamwiki.servlets.WikiServletException
+        org.jamwiki.servlets.JAMWikiServlet
     "
     isErrorPage="true"
 %>
@@ -18,44 +16,6 @@
 
   if( exception == null ){
       contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.noexception");
-  }
-  else if( exception instanceof WikiException ){
-    WikiException wException = (WikiException)exception;
-    switch( wException.getType() ){
-      case WikiException.UNKNOWN:
-        contents = wException.getMessage();
-        break;
-      case WikiException.LOCK_TIMEOUT:
-        contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.locktimeout");
-        break;
-      case WikiException.READ_ONLY:
-        contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.readonly");
-        break;
-      case WikiException.TOPIC_LOCKED:
-        contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.topiclocked");
-        break;
-      default:
-        contents = wException.getMessage();
-    }
-  }
-  else if( exception instanceof WikiServletException ){
-    WikiServletException wException = (WikiServletException)exception;
-    switch( wException.getType() ){
-      case WikiException.UNKNOWN:
-        contents = wException.getMessage();
-        break;
-      case WikiException.LOCK_TIMEOUT:
-        contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.locktimeout");
-        break;
-      case WikiException.READ_ONLY:
-        contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.readonly");
-        break;
-      case WikiException.TOPIC_LOCKED:
-        contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.topiclocked");
-        break;
-      default:
-        contents = wException.getMessage();
-    }
   }
   else{
     exception.printStackTrace();

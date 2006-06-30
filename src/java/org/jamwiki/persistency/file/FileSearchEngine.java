@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.TreeSet;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
 import org.jamwiki.search.AbstractSearchEngine;
 import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
@@ -79,7 +78,7 @@ public class FileSearchEngine extends AbstractSearchEngine {
 	 * @return A List of Topic Names (Collection of Strings).
 	 *
 	 * @throws Exception Exception during search
-	 * @throws WikiException Virtual wiki cannot be found
+	 * @throws Exception Virtual wiki cannot be found
 	 */
 	public Collection getAllTopicNames(String virtualWiki) throws Exception {
 		Collection all = new TreeSet();
@@ -88,7 +87,7 @@ public class FileSearchEngine extends AbstractSearchEngine {
 		}
 		File file = new File(dir(virtualWiki));
 		if (!file.exists()) {
-			throw new WikiException("Directory can not be accessed: " + file);
+			throw new Exception("Directory can not be accessed: " + file);
 		}
 		File[] files = file.listFiles(new TextFileFilter());
 		for (int i = 0; i < files.length; i++) {

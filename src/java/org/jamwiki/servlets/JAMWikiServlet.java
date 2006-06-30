@@ -78,9 +78,6 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		request.setAttribute("exception", err);
 		request.setAttribute(JAMWikiServlet.PARAMETER_TITLE, "Error");
 		logger.error(err.getMessage(), err);
-		if (err instanceof WikiServletException) {
-			request.setAttribute("javax.servlet.jsp.jspException", err);
-		}
 		dispatch("/WEB-INF/jsp/servlet-error.jsp", request, response);
 	}
 

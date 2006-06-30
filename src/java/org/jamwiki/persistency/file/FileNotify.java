@@ -21,7 +21,6 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.jamwiki.AbstractNotify;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiException;
 
 /**
  * Implementation of Notify which stores notification records in text files.
@@ -44,9 +43,9 @@ public class FileNotify extends AbstractNotify {
 	 * Instantiates and reads in a Notify object.
 	 *
 	 * @param newTopicName  the topic name with which this notification is associated
-	 * @exception jamwiki.WikiException if the file could not be opened or read
+	 * @exception Exception if the file could not be opened or read
 	 */
-	public FileNotify(String virtualWiki, String newTopicName) throws WikiException {
+	public FileNotify(String virtualWiki, String newTopicName) throws Exception {
 		this.topicName = newTopicName;
 		this.virtualWiki = virtualWiki;
 		this.notifyFile = makeNotifyFile();
@@ -63,19 +62,19 @@ public class FileNotify extends AbstractNotify {
 	/**
 	 *
 	 */
-	private synchronized boolean createNotifyFile() throws WikiException {
+	private synchronized boolean createNotifyFile() throws Exception {
 		try {
 			notifyFile.createNewFile();
 			if (notifyFile.exists()) return true;
 		} catch (IOException e) {
 		}
-		throw new WikiException("Notify File could not be created.");
+		throw new Exception("Notify File could not be created.");
 	}
 
 	/**
 	 *
 	 */
-	private synchronized boolean readNotifyFile() throws WikiException {
+	private synchronized boolean readNotifyFile() throws Exception {
 		try {
 			String aMember;
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(notifyFile)));
@@ -85,7 +84,7 @@ public class FileNotify extends AbstractNotify {
 			} while (aMember != null);
 			reader.close();
 		} catch (IOException e) {
-			throw new WikiException("Notify File could not be read.");
+			throw new Exception("Notify File could not be read.");
 		}
 		return true;
 	}
@@ -100,7 +99,7 @@ public class FileNotify extends AbstractNotify {
 	/**
 	 *
 	 */
-	private synchronized boolean writeNotifyFile() throws WikiException {
+	private synchronized boolean writeNotifyFile() throws Exception {
 		try {
 			if (!notifyFile.exists()) createNotifyFile();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(notifyFile), Environment.getValue(Environment.PROP_FILE_ENCODING)));
@@ -112,7 +111,7 @@ public class FileNotify extends AbstractNotify {
 			}
 			writer.close();
 		} catch (IOException e) {
-			throw new WikiException("Notify File could not be written");
+			throw new Exception("Notify File could not be written");
 		}
 		return true;
 	}
@@ -121,9 +120,9 @@ public class FileNotify extends AbstractNotify {
 	 * Adds a user to the list of members to be notified when the associated topic changes.
 	 *
 	 * @param userName  the name of the user to add
-	 * @exception jamwiki.WikiException if the file could not be written
+	 * @exception Exception if the file could not be written
 	 */
-	public void addMember(String userName) throws WikiException {
+	public void addMember(String userName) throws Exception {
 		membersToNotify.add(userName);
 		writeNotifyFile();
 	}
@@ -132,9 +131,9 @@ public class FileNotify extends AbstractNotify {
 	 * Removes a user from the list of members to be notified when the associated topic changes.
 	 *
 	 * @param userName  the name of the user to remove
-	 * @exception jamwiki.WikiException if the file could not be written
+	 * @exception Exception if the file could not be written
 	 */
-	public synchronized void removeMember(String userName) throws WikiException {
+	public synchronized void removeMember(String userName) throws Exception {
 		membersToNotify.remove(userName);
 		if (membersToNotify.isEmpty()) {
 			notifyFile.delete();

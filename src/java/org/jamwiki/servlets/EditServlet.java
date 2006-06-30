@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.search.SearchEngine;

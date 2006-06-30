@@ -28,7 +28,6 @@ import JSX.ObjOut;
 import org.apache.log4j.Logger;
 import org.jamwiki.AbstractWikiMembers;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiException;
 import org.jamwiki.WikiMember;
 import org.jamwiki.utils.Utilities;
 
@@ -124,9 +123,9 @@ public class FileWikiMembers extends AbstractWikiMembers {
 	 * @param email  the email address of the user for whom membership is requested
 	 * in the confirmation email. For example, http://www.mybogusdomain.com/jamwiki/jsp/confirm.jsp
 	 * @return boolean  true if the user account has been added, false if an account already exists for this username or the member file could not be written
-	 * @exception jamwiki.WikiException if the mailer could not be instantiated
+	 * @exception Exception if the mailer could not be instantiated
 	 */
-	public synchronized boolean requestMembership(String username, String email, HttpServletRequest request) throws WikiException {
+	public synchronized boolean requestMembership(String username, String email, HttpServletRequest request) throws Exception {
 		WikiMember aMember = createMember(username, email);
 		mailMember(username, request, aMember, email);
 		// Add the request to the members table
@@ -141,9 +140,9 @@ public class FileWikiMembers extends AbstractWikiMembers {
 	 * @param username  the name of the user for whom membership is requested
 	 * @param email  the email address of the user for whom membership is requested
 	 * in the confirmation email. For example, http://www.mybogusdomain.com/jamwiki/jsp/confirm.jsp
-	 * @exception jamwiki.WikiException if the mailer could not be instantiated
+	 * @exception Exception if the mailer could not be instantiated
 	 */
-	public synchronized boolean createMembershipWithoutRequest(String username, String email) throws WikiException {
+	public synchronized boolean createMembershipWithoutRequest(String username, String email) throws Exception {
 		WikiMember aMember = createMember(username, email);
 		aMember.confirm();
 		// Add the request to the members table

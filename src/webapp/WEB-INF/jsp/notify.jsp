@@ -1,7 +1,7 @@
 <%
 String action = request.getParameter("action");
 String topic = request.getParameter("topic");
-if (topic == null || topic.equals("")) throw new WikiException("Topic must be specified");
+if (topic == null || topic.equals("")) throw new Exception("Topic must be specified");
 String user = "";
 Cookie[] cookies = request.getCookies();
 if (cookies != null && cookies.length > 0) {
@@ -12,7 +12,7 @@ if (cookies != null && cookies.length > 0) {
 	}
 }
 if (user == null || user.equals("")) {
-	throw new WikiException("User name not found.");
+	throw new Exception("User name not found.");
 }
 Notify notifier = new FileNotify(virtualWiki, topic);
 if (action == null || action.equals("Notify Me")) {

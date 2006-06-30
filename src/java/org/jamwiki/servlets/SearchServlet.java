@@ -140,9 +140,9 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SEARCH_RESULTS);
 			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			return;
-		} catch (Exception err) {
-			logger.error(err);
-			throw new WikiServletException(err.toString());
+		} catch (Exception e) {
+			logger.error(e);
+			throw e;
 		}
 	}
 }

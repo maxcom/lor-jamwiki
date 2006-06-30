@@ -39,7 +39,6 @@ import org.apache.log4j.Logger;
 //import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.Utilities;
@@ -98,7 +97,7 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 		try {
 			fileList = upload.parseRequest(request);
 		} catch (FileUploadException e) {
-			error(request, response, new WikiServletException(e.getMessage()));
+			error(request, response, e);
 			return;
 		}
 		String virtualWiki = null;
@@ -115,7 +114,7 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 						topicName = item.getString();
 						topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 						if (topic.getReadOnly()) {
-							throw new WikiException(WikiException.READ_ONLY);
+							throw new Exception("Topic is read only");
 						}
 					} else if (item.getFieldName().equals("user")) {
 						user = item.getString();
@@ -163,8 +162,8 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 			next.append(topicName);
 			response.sendRedirect(response.encodeRedirectURL(next.toString()));
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new WikiServletException(e.toString());
+			logger.error("Failure in SaveAttachmentServlet", e);
+			throw new ServletException(e);
 		}
 	}
 

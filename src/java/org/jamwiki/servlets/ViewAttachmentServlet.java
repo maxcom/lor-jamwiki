@@ -74,7 +74,7 @@ public class ViewAttachmentServlet extends JAMWikiServlet implements Controller 
 						response.setContentType(mimetype);
 					}
 				} catch (Exception e) {
-					error(request, response, new WikiServletException(e.getMessage()));
+					error(request, response, e);
 					return;
 				}
 			}

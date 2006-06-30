@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Notify;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -62,7 +61,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 			String action = request.getParameter("notify_action");
 			topic = request.getParameter("topic");
 			if (topic == null || topic.equals("")) {
-				throw new WikiException("Topic must be specified");
+				throw new Exception("Topic must be specified");
 			}
 			String user = "";
 			user = request.getParameter("username");
@@ -79,7 +78,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 				}
 			}
 			if (user == null || user.equals("")) {
-				throw new WikiException("User name not found.");
+				throw new Exception("User name not found.");
 			}
 			Notify notifier = WikiBase.getInstance().getNotifyInstance(virtualWiki, topic);
 			if (action == null || action.equals("notify_on")) {
