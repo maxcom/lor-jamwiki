@@ -28,7 +28,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -124,9 +123,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String STATEMENT_SELECT_TOPIC_VERSION =
 		"select * from jmw_topic_version "
 		+ "where topic_version_id = ? ";
-	private static final String STATEMENT_SELECT_TOPIC_VERSION_COUNT =
-		"select count(*) as total from jmw_topic_version "
-		+ "where topic_version_id = ? ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSIONS =
 		"select * from jmw_topic_version "
 		+ "where topic_id = ? "
@@ -155,13 +151,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public DatabaseHandler() throws Exception {
-		setDefaults(Locale.ENGLISH);
+		createDefaults(Locale.ENGLISH);
 	}
 
 	/**
 	 *
 	 */
-	public void addRecentChange(RecentChange change) throws Exception {
+	protected void addRecentChange(RecentChange change) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(change.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -198,7 +194,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopic(Topic topic) throws Exception {
+	protected void addTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(topic.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -252,7 +248,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
@@ -306,6 +302,30 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (virtualWikiIdHash != null) {
 			virtualWikiIdHash.put(new Integer(virtualWikiId), virtualWikiName);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected void createDefaults(Locale locale) throws Exception {
+		logger.debug("Setting defaults");
+		if (!DatabaseHandler.dbInitialized()) {
+			//set up tables
+			DatabaseInit.initialize();
+		}
+		String sql = null;
+		WikiResultSet rs = null;
+		sql = "select * from jmw_virtual_wiki ";
+		try {
+			rs = DatabaseConnection.executeQuery(sql);
+		} catch (Exception e) {
+			// return, tables not set up yet
+			return;
+		}
+		if (rs.size() == 0) {
+			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
+		}
+		super.createDefaults(locale);
 	}
 
 	/**
@@ -402,29 +422,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 		return all;
-	}
-
-	/**
-	 *
-	 */
-	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
-			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
-		}
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION_COUNT);
-			stmt.setInt(1, topic.getTopicId());
-			rs = stmt.executeQuery();
-			rs.next();
-			return rs.getInt("total");
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
-		}
 	}
 
 	/**
@@ -644,7 +641,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
+	protected TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -737,45 +734,5 @@ public class DatabaseHandler extends PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
 		}
 		return virtualWikiName;
-	}
-
-	/**
-	 *
-	 */
-	public void setDefaults(Locale locale) throws Exception {
-		logger.debug("Setting defaults");
-		// resources for i18n
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		if (!DatabaseHandler.dbInitialized()) {
-			//set up tables
-			DatabaseInit.initialize();
-		}
-		String sql = null;
-		WikiResultSet rs = null;
-		sql = "select * from jmw_virtual_wiki ";
-		try {
-			rs = DatabaseConnection.executeQuery(sql);
-		} catch (Exception e) {
-			// return, tables not set up yet
-			return;
-		}
-		if (rs.size() == 0) {
-			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
-		}
-		while (rs.next()) {
-			String virtualWiki = rs.getString("virtual_wiki_name");
-			// starting points
-			setupSpecialPage(virtualWiki, messages.getString("specialpages.startingpoints"));
-			// leftMenu
-			setupSpecialPage(virtualWiki, messages.getString("specialpages.leftMenu"));
-			// topArea
-			setupSpecialPage(virtualWiki, messages.getString("specialpages.topArea"));
-			// bottomArea
-			setupSpecialPage(virtualWiki, messages.getString("specialpages.bottomArea"));
-			// stylesheet
-			setupSpecialPage(virtualWiki, messages.getString("specialpages.stylesheet"));
-			// list of topics that only admin is allowed to edit/view by themselves
-			setupSpecialPage(virtualWiki, messages.getString("specialpages.adminonlytopics"));
-		}
 	}
 }

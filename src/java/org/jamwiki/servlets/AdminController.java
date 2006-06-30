@@ -274,7 +274,7 @@ public class AdminController extends JAMController implements Controller {
 		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
 		try {
-			WikiBase.getInstance().panic();
+			WikiBase.getInstance().getHandler().panic();
 		} catch (Exception e) {
 			logger.error("Failure during panic reset", e);
 			String message = "Failure during panic reset: " + e.getMessage();

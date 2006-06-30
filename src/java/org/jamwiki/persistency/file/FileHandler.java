@@ -47,7 +47,6 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.persistency.PersistencyHandler;
-import org.jamwiki.servlets.JAMController;
 import org.jamwiki.utils.TextFileFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
@@ -109,7 +108,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public FileHandler() {
+	public FileHandler() throws Exception {
 		createDefaults(Locale.ENGLISH);
 	}
 
@@ -128,7 +127,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addRecentChange(RecentChange change) throws Exception {
+	protected void addRecentChange(RecentChange change) throws Exception {
 		StringBuffer content = new StringBuffer();
 		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
 		content.append("\n");
@@ -171,7 +170,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopic(Topic topic) throws Exception {
+	protected void addTopic(Topic topic) throws Exception {
 		if (topic.getTopicId() <= 0) {
 			topic.setTopicId(nextTopicId());
 		}
@@ -220,7 +219,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
 		if (topicVersion.getTopicVersionId() <= 0) {
 			topicVersion.setTopicVersionId(nextTopicVersionId());
 		}
@@ -287,31 +286,16 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
-	 * Set up the file system and default topics if necessary
+	 * Set up defaults if necessary
 	 */
-	public void createDefaults(Locale locale) {
+	protected void createDefaults(Locale locale) throws Exception {
 		// create the virtual wiki list file if necessary
 		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		// get the virtual wiki list and set up the file system
-		try {
-			if (!virtualList.exists()) {
-				createVirtualWikiList(virtualList);
-			}
-			Collection all = getVirtualWikiList();
-			for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-				String vWiki = (String)iterator.next();
-				logger.debug("Creating defaults for " + vWiki);
-				// write out default topics
-				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.startingpoints", locale));
-				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.leftMenu", locale));
-				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.topArea", locale));
-				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.bottomArea", locale));
-				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.stylesheet", locale));
-				setupSpecialPage(vWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
-			}
-		} catch (Exception e) {
-			logger.error(e);
+		if (!virtualList.exists()) {
+			createVirtualWikiList(virtualList);
 		}
+		super.createDefaults(locale);
 	}
 
 	/**
@@ -385,22 +369,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public int getNumberOfVersions(String virtualWiki, String topicName) throws Exception {
-		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
-		return (files != null) ? files.length : -1;
-	}
-
-	/**
-	 *
-	 */
-	public static File getPathFor(String virtualWiki, String dir, String fileName) {
+	protected static File getPathFor(String virtualWiki, String dir, String fileName) {
 		return getPathFor(virtualWiki, dir, null, fileName);
 	}
 
 	/**
 	 *
 	 */
-	public static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
+	protected static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
 		StringBuffer buffer = new StringBuffer();
 		if (virtualWiki == null || virtualWiki.length() == 0) {
 			// this is questionable, but the virtual wiki list does it
@@ -655,7 +631,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
+	protected synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		// get all files, sorted.  last one is last version.
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
 		if (files == null) return null;
@@ -685,9 +661,9 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	private static int nextTopicId() throws Exception {
+		File topicIdFile = getPathFor(null, null, TOPIC_ID_FILE);
 		if (NEXT_TOPIC_ID < 0) {
 			// read value from file
-			File topicIdFile = getPathFor(null, null, TOPIC_ID_FILE);
 			if (!topicIdFile.exists()) {
 				NEXT_TOPIC_ID = 0;
 			} else {
@@ -695,17 +671,20 @@ public class FileHandler extends PersistencyHandler {
 				NEXT_TOPIC_ID = new Integer(integer).intValue();
 			}
 		}
-		// FIXME - need to update topic.id file
-		return NEXT_TOPIC_ID++;
+		int nextTopicId = NEXT_TOPIC_ID++;
+		Writer writer = new OutputStreamWriter(new FileOutputStream(topicIdFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(new Integer(nextTopicId).toString());
+		writer.close();
+		return nextTopicId;
 	}
 
 	/**
 	 *
 	 */
 	private static int nextTopicVersionId() throws Exception {
+		File topicVersionIdFile = getPathFor(null, null, TOPIC_VERSION_ID_FILE);
 		if (NEXT_TOPIC_VERSION_ID < 0) {
 			// read value from file
-			File topicVersionIdFile = getPathFor(null, null, TOPIC_VERSION_ID_FILE);
 			if (!topicVersionIdFile.exists()) {
 				NEXT_TOPIC_VERSION_ID = 0;
 			} else {
@@ -713,8 +692,11 @@ public class FileHandler extends PersistencyHandler {
 				NEXT_TOPIC_VERSION_ID = new Integer(integer).intValue();
 			}
 		}
-		// FIXME - need to update topic-version.id file
-		return NEXT_TOPIC_VERSION_ID++;
+		int nextTopicVersionId = NEXT_TOPIC_VERSION_ID++;
+		Writer writer = new OutputStreamWriter(new FileOutputStream(topicVersionIdFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(new Integer(nextTopicVersionId).toString());
+		writer.close();
+		return nextTopicVersionId;
 	}
 
 	/**

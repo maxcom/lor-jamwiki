@@ -63,11 +63,9 @@ public class HistoryServlet extends JAMController implements Controller {
 				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_HISTORY);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
-				int numberOfVersions = handler.getNumberOfVersions(virtualWiki, topicName);
 				TopicVersion topicVersion = handler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 				String cookedContents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topicVersion.getVersionContent());
 				next.addObject("topicVersion", topicVersion);
-				next.addObject("numberOfVersions", new Integer(numberOfVersions));
 				next.addObject("cookedContents", cookedContents);
 				next.addObject(JAMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
 				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_HISTORY);

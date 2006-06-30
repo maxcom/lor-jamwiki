@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -37,6 +38,7 @@ import org.jamwiki.persistency.db.DatabaseWikiMembers;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileWikiMembers;
+import org.jamwiki.servlets.JAMController;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 
@@ -65,17 +67,17 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract void addRecentChange(RecentChange change) throws Exception;
+	protected abstract void addRecentChange(RecentChange change) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract void addTopic(Topic topic) throws Exception;
+	protected abstract void addTopic(Topic topic) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception;
+	protected abstract void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception;
 
 	/**
 	 *
@@ -204,6 +206,24 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
+	 * Set up defaults if necessary
+	 */
+	protected void createDefaults(Locale locale) throws Exception {
+		Collection all = getVirtualWikiList();
+		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
+			String virtualWiki = (String)iterator.next();
+			logger.info("Creating defaults for " + virtualWiki);
+			// create the default topics
+			setupSpecialPage(virtualWiki, JAMController.getMessage("specialpages.startingpoints", locale));
+			setupSpecialPage(virtualWiki, JAMController.getMessage("specialpages.leftMenu", locale));
+			setupSpecialPage(virtualWiki, JAMController.getMessage("specialpages.topArea", locale));
+			setupSpecialPage(virtualWiki, JAMController.getMessage("specialpages.bottomArea", locale));
+			setupSpecialPage(virtualWiki, JAMController.getMessage("specialpages.stylesheet", locale));
+			setupSpecialPage(virtualWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
+		}
+	}
+
+	/**
 	 *
 	 */
 	public void delete(Topic topic) throws Exception {
@@ -269,11 +289,6 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract int getNumberOfVersions(String virtualWiki, String topicName) throws Exception;
-
-	/**
-	 *
-	 */
 	public abstract Collection getReadOnlyTopics(String virtualWiki) throws Exception;
 
 	/**
@@ -333,7 +348,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception;
+	protected abstract TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception;
 
 	/**
 	 *
@@ -344,6 +359,22 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
+
+	/**
+	 * Do emergency repairs by clearing all locks and deleting recent changes files
+	 */
+	public void panic() throws Exception {
+		// FIXME - this needs a lot of work to be useful
+		Collection wikis = getVirtualWikiList();
+		for (Iterator iterator = wikis.iterator(); iterator.hasNext();) {
+			String virtualWikiName = (String) iterator.next();
+			List lockList = getLockList(virtualWikiName);
+			for (Iterator lockIterator = lockList.iterator(); lockIterator.hasNext();) {
+				Topic topic = (Topic)lockIterator.next();
+				unlockTopic(topic);
+			}
+		}
+	}
 
 	/**
 	 * Finds a default topic file and returns the contents

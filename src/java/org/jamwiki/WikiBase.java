@@ -370,39 +370,6 @@ public class WikiBase {
 	}
 
 	/**
-	 * Do emergency repairs by clearing all locks and deleting recent changes files
-	 */
-	public void panic() {
-		Collection wikis = null;
-		try {
-			wikis = getVirtualWikiList();
-		} catch (Exception e) {
-			logger.error("problem getting the virtual wiki list", e);
-			return;
-		}
-		for (Iterator iterator = wikis.iterator(); iterator.hasNext();) {
-			String virtualWikiName = (String) iterator.next();
-			try {
-				List lockList = handler.getLockList(virtualWikiName);
-				for (Iterator lockIterator = lockList.iterator(); lockIterator.hasNext();) {
-					Topic topic = (Topic)lockIterator.next();
-					handler.unlockTopic(topic);
-				}
-			} catch (Exception e) {
-				logger.error("", e);
-			}
-			// destroy recent changes
-			if (WikiBase.getPersistenceType() != DATABASE) {
-				try {
-					FileHandler.getPathFor(virtualWikiName, null, "recent.xml").delete();
-				} catch (Exception e) {
-					logger.error("error removing recent.xml", e);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Return true if the given topic is marked as "admin only", i.e. it is present in the admin only topics topic
 	 *
 	 * @param virtualWiki
