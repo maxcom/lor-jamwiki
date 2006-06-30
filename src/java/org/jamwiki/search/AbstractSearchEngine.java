@@ -436,7 +436,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				Analyzer analyzer = new SimpleKeepNumbersAnalyzer();
 				IndexWriter writer = new IndexWriter(ram, analyzer, true);
 				try {
-					Collection topics = getAllTopicNames(currentWiki);
+					Collection topics = WikiBase.getInstance().getHandler().getAllTopicNames(currentWiki);
 					for (Iterator iter = topics.iterator(); iter.hasNext();) {
 						String topic = (String) iter.next();
 						Document doc = createDocument(currentWiki, topic);

@@ -53,11 +53,6 @@ public interface SearchEngine {
 	public Collection findMultiple(String virtualWiki, String text, boolean fuzzy) throws Exception;
 
 	/**
-	 * Get all topics
-	 */
-	public Collection getAllTopicNames(String virtualWiki) throws Exception;
-
-	/**
 	 * Get the path, which holds all index files
 	 */
 	public String getSearchIndexPath(String vrtualWiki);

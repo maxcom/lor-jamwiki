@@ -322,7 +322,16 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
-		// FIXME - implement
+		File[] files = retrieveTopicFiles(virtualWiki);
+		for (int i = 0; i < files.length; i++) {
+			String topicName = files[i].getName();
+			// strip extension
+			int pos = topicName.lastIndexOf(EXT);
+			if (pos != -1) topicName = topicName.substring(0, pos);
+			// decode
+			topicName = Utilities.decodeURL(topicName);
+			all.add(topicName);
+		}
 		return all;
 	}
 
@@ -773,6 +782,16 @@ public class FileHandler extends PersistencyHandler {
 		if (files == null) return null;
 		Comparator comparator = new WikiFileComparator();
 		Arrays.sort(files, comparator);
+		return files;
+	}
+
+	/**
+	 *
+	 */
+	private File[] retrieveTopicFiles(String virtualWiki) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.TOPIC_DIR);
+		File[] files = file.listFiles();
+		if (files == null) return null;
 		return files;
 	}
 

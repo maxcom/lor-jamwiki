@@ -62,7 +62,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection all = WikiBase.getInstance().getSearchEngineInstance().getAllTopicNames(virtualWiki);
+		Collection all = WikiBase.getInstance().getHandler().getAllTopicNames(virtualWiki);
 		String title = "Special:AllTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));

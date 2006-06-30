@@ -285,7 +285,7 @@ public class WikiBase {
 	 */
 	public Collection getOrphanedTopics(String virtualWiki) throws Exception {
 		Collection results = new HashSet();
-		Collection all = getSearchEngineInstance().getAllTopicNames(virtualWiki);
+		Collection all = getHandler().getAllTopicNames(virtualWiki);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
 			Collection matches = getSearchEngineInstance().findLinkedTo(
@@ -306,7 +306,7 @@ public class WikiBase {
 	 */
 	public Collection getToDoWikiTopics(String virtualWiki) throws Exception {
 		Collection results = new TreeSet();
-		Collection all = getSearchEngineInstance().getAllTopicNames(virtualWiki);
+		Collection all = getHandler().getAllTopicNames(virtualWiki);
 		Set topicNames = new HashSet();
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
