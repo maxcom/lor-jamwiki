@@ -14,7 +14,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 --%>
 
 <%@ page import="
-        org.jamwiki.Environment
+        org.jamwiki.Environment,
+        org.jamwiki.WikiBase
     "
     errorPage="error.jsp"
 %>
@@ -22,13 +23,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <c:set var="initialized"><%= Environment.getValue(Environment.PROP_BASE_INITIALIZED) %></c:set>
 <c:set var="defaultTopic"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
+<c:set var="defaultVirtualWiki"><%= WikiBase.DEFAULT_VWIKI %></c:set>
 <c:choose>
-	<c:when test="${!initialized && !empty defaultTopic}">
-		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
-		<c:redirect url="en/${defaultTopic}" />
+	<c:when test="${initialized && !empty defaultTopic}">
+		<%-- FIXME - URL escape defaultTopic --%>
+		<c:redirect url="${defaultVirtualWiki}/${defaultTopic}" />
 	</c:when>
 	<c:otherwise>
 		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
-		<c:redirect url="en/Special:Setup" />
+		<c:redirect url="${defaultVirtualWiki}/Special:Setup" />
 	</c:otherwise>
 </c:choose>

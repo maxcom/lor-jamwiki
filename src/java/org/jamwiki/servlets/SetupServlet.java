@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,7 +50,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 		if (function == null) function = "";
 		// FIXME - hard coding of "function" values
 		if (function == null || function.length() == 0) {
-			view(request, next);
+			setup(request, next);
 		} else {
 			initialize(request, next);
 		}
@@ -60,17 +61,18 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void initialize(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Setup");
 		setProperties(request, next);
 		Vector errors = validate(request, next);
 		if (errors.size() > 0) {
+			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
+			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Setup");
 			next.addObject("errors", errors);
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
 			WikiBase.initialise(request.getLocale());
+			view(request, next);
 		}
 	}
 
@@ -92,6 +94,15 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD));
 		}
 		Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, request.getParameter(Environment.PROP_BASE_ADMIN_PASSWORD));
+	}
+
+	/**
+	 *
+	 */
+	private void setup(HttpServletRequest request, ModelAndView next) throws Exception {
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Setup");
 	}
 
 	/**
@@ -123,9 +134,17 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	/**
 	 *
 	 */
+	// FIXME - duplicates the functionality in ViewController
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Setup");
+		String virtualWiki = WikiBase.DEFAULT_VWIKI;
+		String topicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
+		// FIXME - what should the default be for topics that don't exist?
+		String contents = "";
+		if (topic != null) {
+			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+		}
+		next.addObject("contents", contents);
 	}
 }
