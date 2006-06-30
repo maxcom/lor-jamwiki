@@ -49,7 +49,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class SaveAttachmentServlet extends JAMController implements Controller {
+public class SaveAttachmentServlet extends JAMWikiServlet implements Controller {
 
 	/** Logger */
 	public static final Logger logger = Logger.getLogger(SaveAttachmentServlet.class);
@@ -61,7 +61,7 @@ public class SaveAttachmentServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

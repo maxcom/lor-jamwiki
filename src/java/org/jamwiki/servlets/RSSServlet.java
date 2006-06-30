@@ -76,8 +76,8 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 * @param response What the servlet will send back as response
 	 */
 	private void rss(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String topicName = JAMController.getTopicFromRequest(request);
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		try {
 			// get the latest pages
 			int howManyDatesToGoBack = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
@@ -195,7 +195,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				//  PageHistory
 				itemBuffer.append("  <wiki:history>");
 				itemBuffer.append(format(baseURL + "Wiki?topic=" +
-					topicName + "&action=" + JAMController.ACTION_HISTORY + "&type=all")
+					topicName + "&action=" + JAMWikiServlet.ACTION_HISTORY + "&type=all")
 				);
 				itemBuffer.append("</wiki:history>\n");
 				//  Close up.

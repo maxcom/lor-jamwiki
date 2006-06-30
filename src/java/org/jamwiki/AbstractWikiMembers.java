@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 import java.net.MalformedURLException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
-import org.jamwiki.servlets.JAMController;
+import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.Utilities;
 
 /*
@@ -70,7 +70,7 @@ public abstract class AbstractWikiMembers implements WikiMembers {
 		buffer.append(Utilities.encodeURL(username));
 		buffer.append("&key=");
 		buffer.append(aMember.getKey());
-		buffer.append("&action=").append(JAMController.ACTION_MEMBER);
+		buffer.append("&action=").append(JAMWikiServlet.ACTION_MEMBER);
 		WikiMail mailer = WikiMail.getInstance();
 		String replyAddress = Environment.getValue(Environment.PROP_EMAIL_REPLY_ADDRESS);
 		mailer.sendMail(

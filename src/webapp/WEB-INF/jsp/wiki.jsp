@@ -2,9 +2,9 @@
 <%@ include file="top.jsp"%>
 <%
 // FIXME - this needs to be cleaned up
-String action = (String)request.getAttribute(JAMController.PARAMETER_ACTION);
+String action = (String)request.getAttribute(JAMWikiServlet.PARAMETER_ACTION);
 if (action == null) {
-	action = request.getParameter(JAMController.PARAMETER_ACTION);
+	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
 }
 if (action == null) action = "";
 %>
@@ -38,71 +38,71 @@ if (action == null) action = "";
 		<%@ include file="navbar-history-list.jsp"%>
 		<div id="contents-header"><c:out value="${title}"/></div>
 <%
-if (action.equals(JAMController.ACTION_ADMIN)) {
+if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="admin.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_ADMIN_DELETE)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_DELETE)) {
 %>
 		<%@ include file="adminDelete.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_ADMIN_UPGRADE)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_UPGRADE)) {
 %>
 		<%@ include file="adminUpgrade.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_ATTACH)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ATTACH)) {
 %>
 		<%@ include file="attach.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_DIFF)) {
+} else if (action.equals(JAMWikiServlet.ACTION_DIFF)) {
 %>
 		<%@ include file="diff.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_EDIT) || action.equals(JAMController.ACTION_PREVIEW)) {
+} else if (action.equals(JAMWikiServlet.ACTION_EDIT) || action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
 		<%@ include file="edit.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_EDIT_USER)) {
+} else if (action.equals(JAMWikiServlet.ACTION_EDIT_USER)) {
 %>
 		<%@ include file="createUser.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_FIRST_USE)) {
+} else if (action.equals(JAMWikiServlet.ACTION_FIRST_USE)) {
 %>
 		<%@ include file="firstrun.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_HISTORY)) {
+} else if (action.equals(JAMWikiServlet.ACTION_HISTORY)) {
 %>
 		<%@ include file="history.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_LOCKLIST)) {
+} else if (action.equals(JAMWikiServlet.ACTION_LOCKLIST)) {
 %>
 		<%@ include file="locklist.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_LOGIN)) {
+} else if (action.equals(JAMWikiServlet.ACTION_LOGIN)) {
 %>
 		<%@ include file="login.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_MEMBER)) {
+} else if (action.equals(JAMWikiServlet.ACTION_MEMBER)) {
 %>
 		<%@ include file="createUser.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_RECENT_CHANGES)) {
+} else if (action.equals(JAMWikiServlet.ACTION_RECENT_CHANGES)) {
 %>
 		<%@ include file="recentChanges.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_SEARCH)) {
+} else if (action.equals(JAMWikiServlet.ACTION_SEARCH)) {
 %>
 		<%@ include file="search.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_SEARCH_RESULTS)) {
+} else if (action.equals(JAMWikiServlet.ACTION_SEARCH_RESULTS)) {
 %>
 		<%@ include file="searchResults.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_ALL_TOPICS) || action.equals(JAMController.ACTION_TODO_TOPICS) || action.equals(JAMController.ACTION_ORPHANED_TOPICS)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>
 		<%@ include file="allTopics.jsp" %>
 <%
-} else if (action.equals(JAMController.ACTION_VIRTUAL_WIKI_LIST)) {
+} else if (action.equals(JAMWikiServlet.ACTION_VIRTUAL_WIKI_LIST)) {
 %>
 		<%@ include file="virtualwikilist.jsp" %>
 <%
@@ -124,7 +124,7 @@ if (action.equals(JAMController.ACTION_ADMIN)) {
 		<a href="<jamwiki:link value="Special:Admin" />?username=admin"><f:message key="admin.title"/></a>
 		</font>
 		<c:if test="${not empty pageContext.request.userPrincipal}">|
-		<font size="-3"><a href='Wiki?action=<%= JAMController.ACTION_LOGIN %>&logout=true&redirect=Wiki%3F<c:out value="${topic}"/>'><f:message key="general.logout"/></a></font>
+		<font size="-3"><a href='Wiki?action=<%= JAMWikiServlet.ACTION_LOGIN %>&logout=true&redirect=Wiki%3F<c:out value="${topic}"/>'><f:message key="general.logout"/></a></font>
 		</c:if>
 	</td>
 </tr>

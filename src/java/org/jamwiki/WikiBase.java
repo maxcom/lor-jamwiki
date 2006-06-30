@@ -46,7 +46,7 @@ import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.search.SearchRefreshThread;
-import org.jamwiki.servlets.JAMController;
+import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
@@ -377,7 +377,7 @@ public class WikiBase {
 	 * @return
 	 */
 	public boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
-		String adminOnlyTopics = readRaw(virtualWiki, JAMController.getMessage("specialpages.adminonlytopics", locale));
+		String adminOnlyTopics = readRaw(virtualWiki, JAMWikiServlet.getMessage("specialpages.adminonlytopics", locale));
 		StringTokenizer tokenizer = new StringTokenizer(adminOnlyTopics);
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

@@ -46,7 +46,7 @@ function inactive(element) {
 <c:choose>
 	<c:when test="${param.type=='all'}">
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="historyForm">
-<input type="hidden" name="action" value="<%= JAMController.ACTION_DIFF %>"/>
+<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_DIFF %>"/>
 <input type="hidden" name="type" value="arbitrary"/>
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
 <table>

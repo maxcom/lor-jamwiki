@@ -34,7 +34,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class SearchServlet extends JAMController implements Controller {
+public class SearchServlet extends JAMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(SearchServlet.class);
 
@@ -43,7 +43,7 @@ public class SearchServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		String jumpto = request.getParameter("jumpto");
 		if (jumpto != null) {
 			jumpTo(request, response, next);
@@ -57,7 +57,7 @@ public class SearchServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void jumpTo(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String text = request.getParameter("text");
 		// FIXME - if topic doesn't exist, should probably go to an edit page
 		// or else give an error message
@@ -70,21 +70,21 @@ public class SearchServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void search(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		MessageFormat formatter = new MessageFormat("");
 		formatter.setLocale(request.getLocale());
 		try {
 			String searchField = request.getParameter("text");
 			if (request.getParameter("text") == null) {
-				next.addObject(JAMController.PARAMETER_TITLE, "Special:Search");
+				next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Search");
 			} else {
-				formatter.applyPattern(JAMController.getMessage("searchresult.title", request.getLocale()));
-				next.addObject(JAMController.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
+				formatter.applyPattern(JAMWikiServlet.getMessage("searchresult.title", request.getLocale()));
+				next.addObject(JAMWikiServlet.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
 			}
 			// forward back to the search page if the request is blank or null
 			if (searchField == null || searchField.length() == 0) {
-				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_SEARCH);
-				next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SEARCH);
+				next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				return;
 			}
 			// grab search engine instance and find
@@ -131,14 +131,14 @@ public class SearchServlet extends JAMController implements Controller {
 				contents.append("<p>");
 				formatter = new MessageFormat("");
 				formatter.setLocale(request.getLocale());
-				formatter.applyPattern(JAMController.getMessage("searchresult.notfound", request.getLocale()));
+				formatter.applyPattern(JAMWikiServlet.getMessage("searchresult.notfound", request.getLocale()));
 				contents.append(formatter.format(new Object[]{searchField}));
 				contents.append("</p>");
 			}
 			next.addObject("results", contents.toString());
 			next.addObject("titlelink", "Special:Search");
-			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_SEARCH_RESULTS);
-			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SEARCH_RESULTS);
+			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		} catch (Exception err) {
 			logger.error(err);

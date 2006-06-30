@@ -84,7 +84,7 @@ function onUserGroupType() {
 </script>
 
 <form action="<jamwiki:link value="Special:Login" />" method="get">
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_LOGOUT %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_LOGOUT %>"/>
   <table>
     <tr>
       <td><input type="submit" value="<f:message key="admin.action.logout"/>"/></td>
@@ -532,7 +532,7 @@ function onUserGroupType() {
     </tr>
   </table>
   <input type="hidden" name="function" value="properties">
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
   <%--
   Include a hidden (display:none) password field to prevent Firefox from trying to change the
   admin password.  There is currently (version 1.5 and before) an issue with Firefox where
@@ -547,13 +547,13 @@ function onUserGroupType() {
   <input type="submit" name="submit" value="<f:message key="admin.action.refresh"/>"/>
   <f:message key="admin.message.filemodeonly"/>
   <input type="hidden" name="function" value="refreshIndex"/>
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
 <hr/>
 <%-- FIXME - restore virtual wiki --%>
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
 <form name="readOnlyTopics" method="post" action="<jamwiki:link value="Special:Admin" />">
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
   <input type="hidden" name="function" value="readOnly">
   <table border="0">
     <tr>
@@ -596,7 +596,7 @@ function onUserGroupType() {
     </tr>
   </table>
   <input type="hidden" name="function" value="addVirtualWiki">
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.changepassword"/></p>
@@ -619,7 +619,7 @@ function onUserGroupType() {
     </tr>
   </table>
   <input type="hidden" name="function" value="changePassword">
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
@@ -633,6 +633,6 @@ function onUserGroupType() {
     </tr>
   </table>
   <input type="hidden" name="function" value="panic">
-  <input type="hidden" name="action" value="<%= JAMController.ACTION_ADMIN %>"/>
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
 <hr/>

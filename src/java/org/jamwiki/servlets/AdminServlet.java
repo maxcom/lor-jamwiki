@@ -42,12 +42,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 /**
- * The <code>AdminController</code> servlet is the servlet which allows the administrator
+ * The <code>AdminServlet</code> servlet is the servlet which allows the administrator
  * to perform administrative actions on the wiki.
  */
-public class AdminController extends JAMController implements Controller {
+public class AdminServlet extends JAMWikiServlet implements Controller {
 
-	private static Logger logger = Logger.getLogger(AdminController.class.getName());
+	private static Logger logger = Logger.getLogger(AdminServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -58,7 +58,7 @@ public class AdminController extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		String function = request.getParameter("function");
 		if (function == null) function = "";
 		// FIXME - hard coding of "function" values
@@ -133,13 +133,13 @@ public class AdminController extends JAMController implements Controller {
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) throws Exception {
 		String newWiki = request.getParameter("newVirtualWiki");
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
 			WikiBase.getInstance().addVirtualWiki(newWiki);
-			String message = JAMController.getMessage("admin.message.virtualwikiadded", request.getLocale());
+			String message = JAMWikiServlet.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
 			WikiBase.initialise();
 		} catch (Exception e) {
@@ -153,23 +153,23 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void changePassword(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			String oldPassword = request.getParameter("oldPassword");
 			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
 			if (!Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(oldPassword)) {
-				String message = JAMController.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
+				String message = JAMWikiServlet.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
 				next.addObject("message", message);
 			} else if (!newPassword.equals(confirmPassword)) {
-				String message = JAMController.getMessage("admin.message.passwordsnomatch", request.getLocale());
+				String message = JAMWikiServlet.getMessage("admin.message.passwordsnomatch", request.getLocale());
 				next.addObject("message", message);
 			} else {
 				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, newPassword);
 				Environment.saveProperties();
-				String message = JAMController.getMessage("admin.message.passwordchanged", request.getLocale());
+				String message = JAMWikiServlet.getMessage("admin.message.passwordchanged", request.getLocale());
 				next.addObject("message", message);
 			}
 		} catch (Exception e) {
@@ -183,15 +183,15 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void clearEditLock(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		try {
 			String topicName = request.getParameter("topic");
 			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 			WikiBase.getInstance().getHandler().unlockTopic(topic);
-			String message = JAMController.getMessage("admin.message.lockcleared", request.getLocale());
+			String message = JAMWikiServlet.getMessage("admin.message.lockcleared", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while clearing locks", e);
@@ -204,12 +204,12 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void delete(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMController.getTopicFromRequest(request);
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_DELETE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Delete " + topicName);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_DELETE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Delete " + topicName);
 		try {
 			if (topicName == null) {
 				next.addObject("errorMessage", "No topic found");
@@ -229,31 +229,31 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void deleteView(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMController.getTopicFromRequest(request);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		if (topicName == null) {
 			next.addObject("errorMessage", "No topic found");
 		}
-		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_DELETE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Delete " + topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_DELETE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Delete " + topicName);
 	}
 
 	/**
 	 *
 	 */
 	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		String page = JAMController.getTopicFromURI(request);
-		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("login.title", request.getLocale()));
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String page = JAMWikiServlet.getTopicFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("login.title", request.getLocale()));
 		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
 		if (request.getQueryString() != null) {
 			redirect += "?" + request.getQueryString();
 		}
 		next.addObject("redirect", redirect);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Login");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Login");
 	}
 
 	/**
@@ -261,18 +261,18 @@ public class AdminController extends JAMController implements Controller {
 	 */
 	private void logout(HttpServletRequest request, ModelAndView next) throws Exception {
 		request.getSession().removeAttribute("admin");
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Login");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Login");
 	}
 
 	/**
 	 *
 	 */
 	private void panic(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase.getInstance().getHandler().panic();
 		} catch (Exception e) {
@@ -286,9 +286,9 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void properties(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			Encryption.togglePropertyEncryption(request.getParameter(Environment.PROP_BASE_ENCODE_PASSWORDS) != null);
 			Environment.setIntValue(
@@ -541,7 +541,7 @@ public class AdminController extends JAMController implements Controller {
 			}
 			Environment.saveProperties();
 			WikiBase.initialise();
-			String message = JAMController.getMessage("admin.message.changessaved", request.getLocale());
+			String message = JAMWikiServlet.getMessage("admin.message.changessaved", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
@@ -554,10 +554,10 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void readOnly(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (request.getParameter("addReadOnly") != null) {
 			String topicName = request.getParameter("readOnlyTopic");
 			WikiBase.getInstance().getHandler().addReadOnlyTopic(virtualWiki, topicName);
@@ -575,7 +575,7 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void readOnlyList(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection readOnlyTopics = new ArrayList();
 		try {
 			readOnlyTopics = WikiBase.getInstance().getHandler().getReadOnlyTopics(virtualWiki);
@@ -590,12 +590,12 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void refreshIndex(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
-			String message = JAMController.getMessage("admin.message.indexrefreshed", request.getLocale());
+			String message = JAMWikiServlet.getMessage("admin.message.indexrefreshed", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
@@ -608,18 +608,18 @@ public class AdminController extends JAMController implements Controller {
 	 *
 	 */
 	private void removeUser(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String user = request.getParameter("userName");
 		try {
 			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
 			if (members.removeMember(user)) {
-				String message = user + JAMController.getMessage("admin.message.userremoved.success", request.getLocale());
+				String message = user + JAMWikiServlet.getMessage("admin.message.userremoved.success", request.getLocale());
 				next.addObject("message", message);
 			} else {
-				String message = user + JAMController.getMessage("admin.message.userremoved.failure", request.getLocale());
+				String message = user + JAMWikiServlet.getMessage("admin.message.userremoved.failure", request.getLocale());
 				next.addObject("message", message);
 			}
 		} catch (Exception e) {
@@ -643,9 +643,9 @@ public class AdminController extends JAMController implements Controller {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
@@ -662,9 +662,9 @@ public class AdminController extends JAMController implements Controller {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
@@ -678,9 +678,9 @@ public class AdminController extends JAMController implements Controller {
 			logger.error("Failure while executing database creation", e);
 			next.addObject("errorMessage", "Failure while executing database creation: " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
@@ -694,9 +694,9 @@ public class AdminController extends JAMController implements Controller {
 			logger.error("Failure while executing database import", e);
 			next.addObject("errorMessage", "Failure while executing database import: " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
@@ -710,9 +710,9 @@ public class AdminController extends JAMController implements Controller {
 			logger.error("Failure while executing database cleanup", e);
 			next.addObject("errorMessage", "Failure while executing database cleanup: " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
@@ -727,26 +727,26 @@ public class AdminController extends JAMController implements Controller {
 			logger.error("Failure while loading recent changes", e);
 			next.addObject("errorMessage", "Failure while loading recent changes: " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
 	 *
 	 */
 	private void upgradeView(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Upgrade");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
 	}
 
 	/**
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ADMIN);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:Admin");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 	}
 }

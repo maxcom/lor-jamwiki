@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class DiffServlet extends JAMController implements Controller {
+public class DiffServlet extends JAMWikiServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(DiffServlet.class);
 
@@ -39,7 +39,7 @@ public class DiffServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		diff(request, next);
 		return next;
 	}
@@ -48,10 +48,10 @@ public class DiffServlet extends JAMController implements Controller {
 	 *
 	 */
 	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		String topicName = JAMController.getTopicFromRequest(request);
-		next.addObject(JAMController.PARAMETER_TITLE, "Diff " + topicName);
-		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Diff " + topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
 		try {
 			String diffType = request.getParameter("type");
 			if (diffType != null && diffType.equals("arbitrary")) {
@@ -85,6 +85,6 @@ public class DiffServlet extends JAMController implements Controller {
 			logger.error(e);
 			throw e;
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_DIFF);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_DIFF);
 	}
 }

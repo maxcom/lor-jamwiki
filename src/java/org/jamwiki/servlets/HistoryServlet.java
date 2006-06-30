@@ -32,7 +32,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class HistoryServlet extends JAMController implements Controller {
+public class HistoryServlet extends JAMWikiServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(HistoryServlet.class);
 
@@ -41,7 +41,7 @@ public class HistoryServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		history(request, next);
 		return next;
 	}
@@ -51,24 +51,24 @@ public class HistoryServlet extends JAMController implements Controller {
 	 */
 	private void history(HttpServletRequest request, ModelAndView next) throws Exception {
 		PersistencyHandler handler;
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		String topicName = JAMController.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		try {
 			handler = WikiBase.getInstance().getHandler();
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
-				next.addObject(JAMController.PARAMETER_TITLE, "History for " + topicName);
+				next.addObject(JAMWikiServlet.PARAMETER_TITLE, "History for " + topicName);
 				Collection versions = handler.getAllVersions(virtualWiki, topicName);
 				next.addObject("versions", versions);
-				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_HISTORY);
+				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_HISTORY);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 				TopicVersion topicVersion = handler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 				String cookedContents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topicVersion.getVersionContent());
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("cookedContents", cookedContents);
-				next.addObject(JAMController.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
-				next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_HISTORY);
+				next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
+				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_HISTORY);
 			}
 		} catch (Exception e) {
 			logger.error(e);

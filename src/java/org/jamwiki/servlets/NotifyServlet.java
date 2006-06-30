@@ -42,7 +42,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);
 		} else {

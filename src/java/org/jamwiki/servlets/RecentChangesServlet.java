@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class RecentChangesServlet extends JAMController implements Controller {
+public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(RecentChangesServlet.class);
 
@@ -42,7 +42,7 @@ public class RecentChangesServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		recentChanges(request, next);
 		return next;
 	}
@@ -51,8 +51,8 @@ public class RecentChangesServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("recentchanges.title", request.getLocale()));
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("recentchanges.title", request.getLocale()));
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number
@@ -67,8 +67,8 @@ public class RecentChangesServlet extends JAMController implements Controller {
 		}
 		request.setAttribute("changes", all);
 		request.setAttribute("num", new Integer(num));
-		request.setAttribute(JAMController.PARAMETER_ACTION, JAMController.ACTION_RECENT_CHANGES);
-		request.setAttribute(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		request.setAttribute(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_RECENT_CHANGES);
+		request.setAttribute(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**

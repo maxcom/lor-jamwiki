@@ -29,7 +29,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class LockListServlet extends JAMController implements Controller {
+public class LockListServlet extends JAMWikiServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(LockListServlet.class);
 
@@ -38,7 +38,7 @@ public class LockListServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		if (isTopic(request, "Special:Unlock")) {
 			unlock(request, next);
 		} else {
@@ -51,8 +51,8 @@ public class LockListServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void lockList(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JAMController.getTopicFromRequest(request);
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String topic = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		List locks = null;
 		try {
 			locks = WikiBase.getInstance().getHandler().getLockList(virtualWiki);
@@ -62,23 +62,23 @@ public class LockListServlet extends JAMController implements Controller {
 			throw new Exception("Error retrieving lock list " + e.getMessage());
 		}
 		next.addObject("locks", locks);
-		next.addObject(JAMController.PARAMETER_TITLE, JAMController.getMessage("locklist.title", request.getLocale()));
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOCKLIST);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("locklist.title", request.getLocale()));
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOCKLIST);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
 	 *
 	 */
 	private void unlock(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMController.getTopicFromRequest(request);
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
 			next.addObject("redirect", redirect);
-			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
-			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
+			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		}
 		try {

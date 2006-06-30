@@ -27,17 +27,17 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class VirtualWikiServlet extends JAMController implements Controller {
+public class VirtualWikiServlet extends JAMWikiServlet implements Controller {
 
 	/** Logger for this class and subclasses. */
-	private static Logger logger = Logger.getLogger(TopicController.class.getName());
+	private static Logger logger = Logger.getLogger(TopicServlet.class.getName());
 
 	/**
 	 *
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		list(request, next);
 		return next;
 	}
@@ -49,8 +49,8 @@ public class VirtualWikiServlet extends JAMController implements Controller {
 		Collection virtualWikiList = WikiBase.getInstance().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		// FIXME - hard coding
-		next.addObject(JAMController.PARAMETER_TITLE, "Special:VirtualWikiList");
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_VIRTUAL_WIKI_LIST);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:VirtualWikiList");
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_VIRTUAL_WIKI_LIST);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 }

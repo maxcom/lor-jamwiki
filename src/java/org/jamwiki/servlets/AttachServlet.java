@@ -28,7 +28,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class AttachServlet extends JAMController implements Controller {
+public class AttachServlet extends JAMWikiServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(AttachServlet.class);
 
@@ -37,7 +37,7 @@ public class AttachServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		attach(request, next);
 		return next;
 	}
@@ -46,10 +46,10 @@ public class AttachServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void attach(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMController.getTopicFromRequest(request);
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		next.addObject(JAMController.PARAMETER_TITLE, "Attach Files to " + topicName);
-		next.addObject(JAMController.PARAMETER_TOPIC, topicName);
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Attach Files to " + topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
 		String user = request.getRemoteAddr();
 		if (Utilities.getUserFromRequest(request) != null) {
 			user = Utilities.getUserFromRequest(request);
@@ -75,7 +75,7 @@ public class AttachServlet extends JAMController implements Controller {
 			// FIXME - hard coding
 			throw new Exception("Failure while getting attachment topic info for " + topicName + " " + e.getMessage());
 		}
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ATTACH);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ATTACH);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 }

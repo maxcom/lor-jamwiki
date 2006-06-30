@@ -1,6 +1,6 @@
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 <%-- FIXME: hard coding --%>
-<input type="hidden" name="<%= JAMController.PARAMETER_ACTION %>" value="<%= JAMController.ACTION_RECENT_CHANGES %>" />
+<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_ACTION %>" value="<%= JAMWikiServlet.ACTION_RECENT_CHANGES %>" />
 <table width="100%">
 <tr>
 	<td colspan="5">

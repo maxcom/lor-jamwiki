@@ -29,10 +29,10 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class TopicController extends JAMController implements Controller {
+public class TopicServlet extends JAMWikiServlet implements Controller {
 
 	/** Logger for this class and subclasses. */
-	private static Logger logger = Logger.getLogger(TopicController.class.getName());
+	private static Logger logger = Logger.getLogger(TopicServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control. It gets the topic's name and the
@@ -44,7 +44,7 @@ public class TopicController extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		if (isTopic(request, "Special:AllTopics")) {
 			allTopics(request, next);
 		} else if (isTopic(request, "Special:OrphanedTopics")) {
@@ -61,14 +61,14 @@ public class TopicController extends JAMController implements Controller {
 	 *
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getInstance().getSearchEngineInstance().getAllTopicNames(virtualWiki);
 		String title = "Special:AllTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject(JAMController.PARAMETER_TITLE, title);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ALL_TOPICS);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, title);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ALL_TOPICS);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
@@ -159,14 +159,14 @@ public class TopicController extends JAMController implements Controller {
 	 *
 	 */
 	private void orphanedTopics(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getInstance().getOrphanedTopics(virtualWiki);
 		String title = "Special:OrphanedTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject(JAMController.PARAMETER_TITLE, title);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_ORPHANED_TOPICS);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, title);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ORPHANED_TOPICS);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
@@ -187,24 +187,24 @@ public class TopicController extends JAMController implements Controller {
 	 *
 	 */
 	private void toDoTopics(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getInstance().getToDoWikiTopics(virtualWiki);
 		String title = "Special:ToDoTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		next.addObject(JAMController.PARAMETER_TITLE, title);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_TODO_TOPICS);
-		next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, title);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_TODO_TOPICS);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}
 
 	/**
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		String topicName = JAMController.getTopicFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = JAMWikiServlet.getTopicFromURI(request);
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
-		next.addObject(JAMController.PARAMETER_TITLE, topicName);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {

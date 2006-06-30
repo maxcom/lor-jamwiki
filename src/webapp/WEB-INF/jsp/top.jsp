@@ -1,7 +1,7 @@
 <%@ page import="
     org.jamwiki.Environment,
     org.jamwiki.WikiBase,
-    org.jamwiki.servlets.JAMController,
+    org.jamwiki.servlets.JAMWikiServlet,
     org.jamwiki.utils.Utilities
 " %>
 <%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
@@ -17,7 +17,7 @@ if (Utilities.isFirstUse()) {
 %>
       <%
       // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
-      String firstUseUrl = "/en/Wiki?action=" + JAMController.ACTION_FIRST_USE;
+      String firstUseUrl = "/en/Wiki?action=" + JAMWikiServlet.ACTION_FIRST_USE;
       %>
       <jsp:forward page="<%= firstUseUrl %>" />
 <%

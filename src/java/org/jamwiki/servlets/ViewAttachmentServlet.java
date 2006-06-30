@@ -32,7 +32,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class ViewAttachmentServlet extends JAMController implements Controller {
+public class ViewAttachmentServlet extends JAMWikiServlet implements Controller {
 
 	private static final Logger logger = Logger.getLogger(ViewAttachmentServlet.class);
 

@@ -37,7 +37,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class PrintableServlet extends JAMController implements Controller {
+public class PrintableServlet extends JAMWikiServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(PrintableServlet.class);
 
@@ -46,7 +46,7 @@ public class PrintableServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("printable");
-		JAMController.buildLayout(request, next);
+		JAMWikiServlet.buildLayout(request, next);
 		print(request, next);
 		return next;
 	}
@@ -55,10 +55,10 @@ public class PrintableServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JAMController.getTopicFromRequest(request);
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
-		next.addObject(JAMController.PARAMETER_TOPIC, topic);
-		next.addObject(JAMController.PARAMETER_TITLE, topic);
+		String topic = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topic);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topic);
 		String strDepth = request.getParameter("depth");
 		if (request.getParameter("hideform") != null) {
 			next.addObject("hideform", "true");
@@ -94,7 +94,7 @@ public class PrintableServlet extends JAMController implements Controller {
 		}
 		// put the result in the request
 		next.addObject("contentList", result);
-		next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_PRINT);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_PRINT);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class PrintableServlet extends JAMController implements Controller {
 			if (depth > 0) {
 				String searchfor = "href=\"";
 				int iPos = onepage.indexOf(searchfor);
-				int iEndPos = onepage.indexOf(JAMController.getMessage("topic.ismentionedon", request.getLocale()));
+				int iEndPos = onepage.indexOf(JAMWikiServlet.getMessage("topic.ismentionedon", request.getLocale()));
 				if (iEndPos == -1) iEndPos = Integer.MAX_VALUE;
 				while (iPos > -1 && iPos < iEndPos) {
 					String link = onepage.substring(iPos + searchfor.length(),

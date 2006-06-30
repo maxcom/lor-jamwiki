@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class LoginServlet extends JAMController implements Controller {
+public class LoginServlet extends JAMWikiServlet implements Controller {
 
 	/** Logger */
 	private static final Logger logger = Logger.getLogger(LoginServlet.class);
@@ -40,8 +40,8 @@ public class LoginServlet extends JAMController implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMController.buildLayout(request, next);
-		if (isAction(request, null, JAMController.ACTION_LOGOUT)) {
+		JAMWikiServlet.buildLayout(request, next);
+		if (isAction(request, null, JAMWikiServlet.ACTION_LOGOUT)) {
 			// FIXME - response is non-standard here
 			logout(request, response, next);
 			return null;
@@ -60,7 +60,7 @@ public class LoginServlet extends JAMController implements Controller {
 	 *
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		request.getSession().invalidate();
 		String redirect = request.getParameter("redirect");
 		if (redirect == null || redirect.length() == 0) {
@@ -75,7 +75,7 @@ public class LoginServlet extends JAMController implements Controller {
 	 *
 	 */
 	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JAMController.getVirtualWikiFromURI(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
@@ -87,8 +87,8 @@ public class LoginServlet extends JAMController implements Controller {
 			// should this return a specific message instead?
 			next.addObject("loginFailure", "true");
 			next.addObject("redirect", redirect);
-			next.addObject(JAMController.PARAMETER_SPECIAL, new Boolean(true));
-			next.addObject(JAMController.PARAMETER_ACTION, JAMController.ACTION_LOGIN);
+			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
 			return false;
 		}
 		request.getSession().setAttribute("admin", "true");

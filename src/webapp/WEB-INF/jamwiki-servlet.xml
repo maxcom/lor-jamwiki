@@ -36,8 +36,8 @@
 		</property>
 	</bean>
 
-	<bean id="topicController" class="org.jamwiki.servlets.TopicController" />
-	<bean id="adminController" class="org.jamwiki.servlets.AdminController" />
+	<bean id="topicController" class="org.jamwiki.servlets.TopicServlet" />
+	<bean id="adminController" class="org.jamwiki.servlets.AdminServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="SaveAttachment" class="org.jamwiki.servlets.SaveAttachmentServlet" />
 	<bean id="Notify" class="org.jamwiki.servlets.NotifyServlet" />
