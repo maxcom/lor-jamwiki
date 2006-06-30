@@ -1,1 +1,1 @@
-<a class="logo" href="Wiki"><img border="0" src="../images/logo.jpg" width="137" height="35" alt="" /></a>
+<a class="logo" href="Wiki"><img border="0" src="../images/logo.jpg" width="147" height="35" alt="" /></a>
