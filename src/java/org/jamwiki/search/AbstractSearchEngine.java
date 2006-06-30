@@ -582,8 +582,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				}
 				File attachmentFile = Utilities.uploadPath(virtualWiki, attachmentFileName);
 				if ("txt".equals(extension) || "asc".equals(extension)) {
-					StringBuffer textFileBuffer = Utilities.readFile(attachmentFile);
-					contents.append(" ").append(textFileBuffer);
+					String textFile = Utilities.readFile(attachmentFile);
+					contents.append(" ").append(textFile);
 				}
 				if (canParseHTML && ("htm".equals(extension) || "html".equals(extension))) {
 					HTMLParser parser = new HTMLParser(attachmentFile);

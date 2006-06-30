@@ -458,7 +458,7 @@ public class Utilities {
 	 * @param file The file to read
 	 * @return a Stringbuffer with the content of this file or an empty StringBuffer, if an error has occured
 	 */
-	public static StringBuffer readFile(File file) {
+	public static String readFile(File file) {
 		char[] buf = new char[1024];
 		StringBuffer content = new StringBuffer((int)file.length());
 		try {
@@ -471,7 +471,7 @@ public class Utilities {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		return content;
+		return content.toString();
 	}
 
 	/**

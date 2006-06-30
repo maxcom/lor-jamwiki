@@ -66,6 +66,7 @@ public class FileHandler extends PersistencyHandler {
 	public static final String RECENT_CHANGE_DIR = "changes";
 	public static final String READ_ONLY_DIR = "readonly";
 	public static final String LOCK_DIR = "locks";
+	public static final String DELETE_DIR = "deletes";
 	public final static String EXT = ".xml";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
 	protected static final String XML_RECENT_CHANGE_ROOT = "change";
@@ -89,6 +90,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_LOCK_DATE = "lockdate";
 	protected static final String XML_TOPIC_LOCK_KEY = "lockkey";
 	protected static final String XML_TOPIC_READ_ONLY = "readonly";
+	protected static final String XML_TOPIC_DELETED = "deleted";
 	protected static final String XML_TOPIC_TYPE = "type";
 	protected static final String XML_TOPIC_VERSION_ROOT = "revision";
 	protected static final String XML_TOPIC_VERSION_ID = "id";
@@ -204,6 +206,8 @@ public class FileHandler extends PersistencyHandler {
 		}
 		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
 		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_DELETED, topic.getDeleted()));
+		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_TYPE, topic.getTopicType()));
 		content.append("\n");
 		content.append("</").append(XML_TOPIC_ROOT).append(">");
@@ -305,6 +309,20 @@ public class FileHandler extends PersistencyHandler {
 		PrintWriter writer = getNewPrintWriter(virtualList, true);
 		writer.println(WikiBase.DEFAULT_VWIKI);
 		writer.close();
+	}
+
+	/**
+	 *
+	 */
+	public void delete(Topic topic) throws Exception {
+		super.delete(topic);
+		String filename = topicFilename(topic.getName());
+		// move file from topic directory to delete directory
+		File oldFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
+		File newFile = getPathFor(topic.getVirtualWiki(), DELETE_DIR, filename);
+		if (!oldFile.renameTo(newFile)) {
+			throw new Exception("Unable to move file to delete directory for topic " + topic.getVirtualWiki() + " / " + topic.getName());
+		}
 	}
 
 	/**
@@ -548,6 +566,8 @@ public class FileHandler extends PersistencyHandler {
 					topic.setLockSessionKey(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_READ_ONLY)) {
 					topic.setReadOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+				} else if (childName.equals(XML_TOPIC_DELETED)) {
+					topic.setDeleted(new Boolean(rootChild.getTextContent()).booleanValue());
 				} else if (childName.equals(XML_TOPIC_TYPE)) {
 					topic.setTopicType(new Integer(rootChild.getTextContent()).intValue());
 				}
@@ -667,7 +687,7 @@ public class FileHandler extends PersistencyHandler {
 			if (!topicIdFile.exists()) {
 				NEXT_TOPIC_ID = 0;
 			} else {
-				String integer = Utilities.readFile(topicIdFile).toString();
+				String integer = Utilities.readFile(topicIdFile);
 				NEXT_TOPIC_ID = new Integer(integer).intValue();
 			}
 		}
@@ -688,7 +708,7 @@ public class FileHandler extends PersistencyHandler {
 			if (!topicVersionIdFile.exists()) {
 				NEXT_TOPIC_VERSION_ID = 0;
 			} else {
-				String integer = Utilities.readFile(topicVersionIdFile).toString();
+				String integer = Utilities.readFile(topicVersionIdFile);
 				NEXT_TOPIC_VERSION_ID = new Integer(integer).intValue();
 			}
 		}
