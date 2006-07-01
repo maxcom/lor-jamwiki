@@ -23,8 +23,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-//import org.jamwiki.Change;
-//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.WikiBase;
@@ -123,10 +121,14 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			throw new Exception("The topic " + topicName + " is locked");
 		}
 		String contents = null;
+		String editComment = null;
+		boolean minorEdit = false;
 		String preview = null;
 		if (isPreview(request)) {
 			WikiBase.removeCachedContents();
 			contents = (String)request.getParameter("contents");
+			editComment = (String)request.getParameter("editComment");
+			minorEdit = (request.getParameter("minorEdit") != null);
 		} else {
 			contents = WikiBase.getInstance().readRaw(virtualWiki, topicName);
 		}
@@ -137,6 +139,8 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		buffer.append(topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, buffer.toString());
 		next.addObject("contents", contents);
+		next.addObject("editComment", editComment);
+		next.addObject("minorEdit", new Boolean(minorEdit));
 		next.addObject("preview", preview);
 		if (request.getAttribute(JAMWikiServlet.ACTION_PREVIEW) != null) {
 			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_PREVIEW);

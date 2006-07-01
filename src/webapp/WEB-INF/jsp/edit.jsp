@@ -6,7 +6,7 @@
 <textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="false"/></textarea>
 </p>
 <%-- FIXME - hard coding --%>
-<p>Edit Comment: <input type="text" name="editComment" value="" size="60" /></p>
+<p>Edit Comment: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" /></p>
 <p>
 <input type="submit" name="action" value="<f:message key="edit.action.save"/>"/>
 <%
@@ -18,7 +18,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
 <input type="submit" name="action" value="<f:message key="edit.action.cancel"/>"/>
 &nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="minorEdit"/>
+<input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> />
 <f:message key="edit.isMinorEdit"/>
 </p>
 </form>
