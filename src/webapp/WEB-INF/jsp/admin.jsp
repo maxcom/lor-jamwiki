@@ -218,6 +218,12 @@ function onUserGroupType() {
       </td>
     </tr>
     <tr>
+      <td class="normal"><f:message key="admin.caption.tableofcontents"/></td>
+      <td class="normal">
+        <input type="checkbox" name="<%= Environment.PROP_PARSER_TOC %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_TOC) ? " checked" : "" %>>
+      </td>
+    </tr>
+    <tr>
       <td class="normal"><f:message key="admin.caption.allowhtml"/></td>
       <td class="normal">
         <input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML) ? " checked" : "" %>>

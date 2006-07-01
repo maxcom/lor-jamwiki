@@ -485,6 +485,10 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 				request.getParameter(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS) != null
 			);
 			Environment.setBooleanValue(
+				Environment.PROP_PARSER_TOC,
+				request.getParameter(Environment.PROP_PARSER_TOC) != null
+			);
+			Environment.setBooleanValue(
 				Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY,
 				request.getParameter(Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY) != null
 			);

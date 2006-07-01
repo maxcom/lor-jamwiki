@@ -73,6 +73,7 @@ admin.caption.dbcp.validationquery=Ovìøovací dotaz pro test spojení
 admin.caption.dbcp.removeabandoned=Odstranit opu¹tìná spojení
 admin.caption.dbcp.logabandoned=Zaznamenat výpisy zásobníku pro opu¹tìná spojení
 admin.caption.dbcp.removeabandonedtimeout=Timeout v sekundách pro opu¹tìná spojení
+admin.caption.tableofcontents=Use table of contents
 admin.message.changessaved=Zmìny ulo¾eny
 admin.message.filemodeonly=(Jen pøi pou¾ití souborù, nemá efekt pøi pou¾ití databáze)
 admin.message.indexrefreshed=Index obèerstven
