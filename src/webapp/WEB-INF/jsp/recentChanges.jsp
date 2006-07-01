@@ -34,7 +34,7 @@
 	<td>(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&version2=<c:out value="${change.previousTopicVersionId}" />&version1=<c:out value="${change.topicVersionId}" />">diff</a>)</td>
 	<td>(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />&type=all">history</a>)</td>
 	<td class="recent">
-		<a href='<jamwiki:encode value="${change.topicName}"/>'><c:out value="${change.topicName}"/></a>
+		<a href='<jamwiki:link value="${change.topicName}"/>'><c:out value="${change.topicName}"/></a>
 	</td>
 	<td class="recent">
 		<f:formatDate value="${change.editDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" />
