@@ -10,4 +10,5 @@
 * [[Special:SetUsername|Set Username]]
 * [[AdminOnlyTopics]]
 ----
-* [http://mediawiki.org MediaWiki]
+* [http://jamwiki.org/ JAMWiki]
+* [http://mediawiki.org/ MediaWiki]
