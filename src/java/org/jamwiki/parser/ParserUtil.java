@@ -161,32 +161,26 @@ public class ParserUtil {
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if  (linkLower.startsWith("https://")) {
-			text += "&hArr;";
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("ftp://")) {
-			text += "&hArr;";
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("mailto://")) {
-			text += "&hArr;";
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("news://")) {
-			text += "&hArr;";
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("telnet://")) {
-			text += "&hArr;";
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("file://")) {
-			text += "&hArr;";
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
