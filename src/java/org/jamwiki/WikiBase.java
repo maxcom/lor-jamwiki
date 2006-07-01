@@ -65,7 +65,6 @@ public class WikiBase {
 	public static final int DATABASE = 1;				   /** The topics are stored in a database */
 	public static final int LDAP = 2;					   /** Members are retrieved from LDAP */
 	public static final String DEFAULT_VWIKI = "en";	   /** Name of the default wiki */
-	public static final String PLUGINS_DIR = "plugins";	 /** Name of the Plugins-Directory */
 	private static final Logger logger = Logger.getLogger(WikiBase.class);  /** Log output */
 	protected PersistencyHandler handler;				   /** The handler that looks after read/write operations for a persitence type */
 	private List topicListeners;							/** Listeners for topic changes */
@@ -91,10 +90,6 @@ public class WikiBase {
 		new SearchRefreshThread(
 			Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL)
 		);
-
-//		PluginManager.getInstance().installAll();
-//		this.topicListeners = new ArrayList();
-//		this.topicListeners.addAll(PluginManager.getInstance().getTopicListeners());
 	}
 
 
