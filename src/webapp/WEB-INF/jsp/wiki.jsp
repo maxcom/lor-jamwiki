@@ -138,7 +138,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 		<hr width="99%" />
 		<c:out value="${bottomArea}" escapeXml="false"/>
 		<br/>
-		<font size="-3">JAMWiki Version <jamwiki:wiki-version/> |
+		<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> Version <jamwiki:wiki-version/> |
 		<a href="<jamwiki:link value="Special:Admin" />?username=admin"><f:message key="admin.title"/></a>
 		</font>
 		<c:if test="${not empty pageContext.request.userPrincipal}">|
