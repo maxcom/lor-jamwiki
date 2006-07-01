@@ -102,7 +102,14 @@ public class ParserUtil {
 			text = topic.substring(pos+1).trim();
 			topic = topic.substring(0, pos).trim();
 		}
-		String url = Utilities.buildInternalLink(context, virtualWiki, topic);
+		// search for hash mark
+		String section = "";
+		pos = topic.indexOf('#');
+		if (pos > 0) {
+			section = topic.substring(pos+1).trim();
+			topic = topic.substring(0, pos).trim();
+		}
+		String url = Utilities.buildInternalLink(context, virtualWiki, topic, section);
 		if (!exists(topic, virtualWiki)) {
 			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
 			url += "?topic=" + Utilities.encodeURL(topic);

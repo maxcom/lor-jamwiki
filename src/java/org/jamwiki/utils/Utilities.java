@@ -71,6 +71,13 @@ public class Utilities {
 	 *
 	 */
 	public static String buildInternalLink(String context, String virtualWiki, String page) {
+		return buildInternalLink(context, virtualWiki, page, null);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLink(String context, String virtualWiki, String page, String section) {
 		String url = context;
 		// context never ends with a "/" per servlet specification
 		url += "/";
@@ -78,6 +85,12 @@ public class Utilities {
 		url += Utilities.encodeURL(virtualWiki);
 		url += "/";
 		url += Utilities.encodeURL(page);
+		if (section != null && section.length() > 0) {
+			if (section.startsWith("#")) {
+				section = section.substring(1);
+			}
+			url += "#" + Utilities.encodeURL(section);
+		}
 		return url;
 	}
 
