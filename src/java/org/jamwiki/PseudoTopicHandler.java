@@ -16,9 +16,7 @@
  */
 package org.jamwiki;
 
-import java.io.IOException;
 import java.util.Properties;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 
 /**
@@ -71,19 +69,6 @@ public class PseudoTopicHandler {
 	}
 
 	/**
-	 * Add a mapping and persist it to the properties file. Used by the plugin manager for actions that
-	 * need a pseudotopic.
-	 *
-	 * @param pseudoTopicName topic name
-	 * @param redirectUrl	 url to redirect to
-	 */
-	public void addMapping(String pseudoTopicName, String redirectUrl) throws IOException {
-		logger.debug("adding mapping: " + pseudoTopicName + "->'" + redirectUrl + "'");
-		this.mapping.setProperty(pseudoTopicName, redirectUrl);
-		Environment.saveProperties(RESOURCE_NAME, this.mapping, "pseudotopics");
-	}
-
-	/**
 	 * Return a redirect URL for the given topic
 	 *
 	 * @param pseudotopicName topic
@@ -107,34 +92,5 @@ public class PseudoTopicHandler {
 	 */
 	public boolean isPseudoTopic(String pseudotopicName) {
 		return getRedirectURL(pseudotopicName) != null;
-	}
-
-	/**
-	 * Add parameters defined in the mapping to the servlet request
-	 *
-	 * @param pseudotopicName topic name
-	 * @param request		 incoming request
-	 */
-	public void setAttributes(String pseudotopicName, HttpServletRequest request) {
-		for (int i = 0; ; i++) {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(pseudotopicName);
-			buffer.append(".param.");
-			buffer.append(i);
-			String pair = this.mapping.getProperty(buffer.toString());
-			if (pair == null) {
-				break;
-			}
-			logger.debug("setting attribute on " + pseudotopicName + ": " + pair);
-			request.setAttribute(
-				pair.substring(0, pair.indexOf('=')),
-				pair.substring(pair.indexOf("=") - 1)
-			);
-		}
-		if ("SetUsername".equals(pseudotopicName)) {
-			try {
-				request.setAttribute("userList", WikiBase.getInstance().getUsergroupInstance().getListOfAllUsers());
-			} catch (Exception e) { }
-		}
 	}
 }
