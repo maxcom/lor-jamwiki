@@ -89,7 +89,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			throw new Exception("Invalid or missing topic name");
 		}
 		if (PseudoTopicHandler.getInstance().isPseudoTopic(topicName)) {
-			throw new Exception(topicName + " " + JAMWikiServlet.getMessage("edit.exception.pseudotopic", request.getLocale()));
+			throw new Exception(topicName + " " + Utilities.getMessage("edit.exception.pseudotopic", request.getLocale()));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
@@ -103,7 +103,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		}
 		if (topic.getAdminOnly()) {
 			if (!Utilities.isAdmin(request)) {
-				next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("login.title", request.getLocale()));
+				next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("login.title", request.getLocale()));
 				String redirect = Utilities.buildInternalLink(
 					request.getContextPath(),
 					virtualWiki,
@@ -134,7 +134,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		}
 		preview = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, contents);
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(JAMWikiServlet.getMessage("edit", request.getLocale()));
+		buffer.append(Utilities.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
 		buffer.append(topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, buffer.toString());

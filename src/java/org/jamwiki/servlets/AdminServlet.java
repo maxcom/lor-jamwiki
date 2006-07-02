@@ -137,7 +137,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
 			WikiBase.getInstance().addVirtualWiki(newWiki);
-			String message = JAMWikiServlet.getMessage("admin.message.virtualwikiadded", request.getLocale());
+			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
 			WikiBase.initialise(request.getLocale());
 		} catch (Exception e) {
@@ -159,15 +159,15 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
 			if (!Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(oldPassword)) {
-				String message = JAMWikiServlet.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
+				String message = Utilities.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
 				next.addObject("message", message);
 			} else if (!newPassword.equals(confirmPassword)) {
-				String message = JAMWikiServlet.getMessage("admin.message.passwordsnomatch", request.getLocale());
+				String message = Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale());
 				next.addObject("message", message);
 			} else {
 				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, newPassword);
 				Environment.saveProperties();
-				String message = JAMWikiServlet.getMessage("admin.message.passwordchanged", request.getLocale());
+				String message = Utilities.getMessage("admin.message.passwordchanged", request.getLocale());
 				next.addObject("message", message);
 			}
 		} catch (Exception e) {
@@ -189,7 +189,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			String topicName = request.getParameter("topic");
 			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
 			WikiBase.getInstance().getHandler().unlockTopic(topic);
-			String message = JAMWikiServlet.getMessage("admin.message.lockcleared", request.getLocale());
+			String message = Utilities.getMessage("admin.message.lockcleared", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while clearing locks", e);
@@ -243,7 +243,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String page = JAMWikiServlet.getTopicFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("login.title", request.getLocale()));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("login.title", request.getLocale()));
 		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
 		if (request.getQueryString() != null) {
 			redirect += "?" + request.getQueryString();
@@ -543,7 +543,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			}
 			Environment.saveProperties();
 			WikiBase.initialise(request.getLocale());
-			String message = JAMWikiServlet.getMessage("admin.message.changessaved", request.getLocale());
+			String message = Utilities.getMessage("admin.message.changessaved", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
@@ -597,7 +597,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
-			String message = JAMWikiServlet.getMessage("admin.message.indexrefreshed", request.getLocale());
+			String message = Utilities.getMessage("admin.message.indexrefreshed", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
@@ -618,10 +618,10 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		try {
 			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
 			if (members.removeMember(user)) {
-				String message = user + JAMWikiServlet.getMessage("admin.message.userremoved.success", request.getLocale());
+				String message = user + Utilities.getMessage("admin.message.userremoved.success", request.getLocale());
 				next.addObject("message", message);
 			} else {
-				String message = user + JAMWikiServlet.getMessage("admin.message.userremoved.failure", request.getLocale());
+				String message = user + Utilities.getMessage("admin.message.userremoved.failure", request.getLocale());
 				next.addObject("message", message);
 			}
 		} catch (Exception e) {

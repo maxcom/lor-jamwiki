@@ -119,7 +119,7 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 			if (depth > 0) {
 				String searchfor = "href=\"";
 				int iPos = onepage.indexOf(searchfor);
-				int iEndPos = onepage.indexOf(JAMWikiServlet.getMessage("topic.ismentionedon", request.getLocale()));
+				int iEndPos = onepage.indexOf(Utilities.getMessage("topic.ismentionedon", request.getLocale()));
 				if (iEndPos == -1) iEndPos = Integer.MAX_VALUE;
 				while (iPos > -1 && iPos < iEndPos) {
 					String link = onepage.substring(iPos + searchfor.length(),

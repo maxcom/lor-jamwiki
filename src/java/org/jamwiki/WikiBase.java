@@ -373,7 +373,7 @@ public class WikiBase {
 	 * @return
 	 */
 	public boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
-		String adminOnlyTopics = readRaw(virtualWiki, JAMWikiServlet.getMessage("specialpages.adminonlytopics", locale));
+		String adminOnlyTopics = readRaw(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale));
 		StringTokenizer tokenizer = new StringTokenizer(adminOnlyTopics);
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

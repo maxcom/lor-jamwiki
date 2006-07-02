@@ -62,7 +62,7 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 			throw new Exception("Error retrieving lock list " + e.getMessage());
 		}
 		next.addObject("locks", locks);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("locklist.title", request.getLocale()));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("locklist.title", request.getLocale()));
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOCKLIST);
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 	}

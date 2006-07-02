@@ -1,9 +1,5 @@
 
-<%@ page import="
-        org.jamwiki.servlets.JAMWikiServlet
-    "
-    isErrorPage="true"
-%>
+<%@ page isErrorPage="true" %>
 <c:out value="${topArea}" escapeXml="false"/>
 <script language="JavaScript">
   function cancel(){

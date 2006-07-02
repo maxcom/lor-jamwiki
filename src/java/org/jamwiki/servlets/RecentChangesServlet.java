@@ -24,9 +24,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -52,7 +52,7 @@ public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, JAMWikiServlet.getMessage("recentchanges.title", request.getLocale()));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("recentchanges.title", request.getLocale()));
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number

@@ -78,7 +78,7 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 			if (request.getParameter("text") == null) {
 				next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Search");
 			} else {
-				formatter.applyPattern(JAMWikiServlet.getMessage("searchresult.title", request.getLocale()));
+				formatter.applyPattern(Utilities.getMessage("searchresult.title", request.getLocale()));
 				next.addObject(JAMWikiServlet.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
 			}
 			// forward back to the search page if the request is blank or null
@@ -131,7 +131,7 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 				contents.append("<p>");
 				formatter = new MessageFormat("");
 				formatter.setLocale(request.getLocale());
-				formatter.applyPattern(JAMWikiServlet.getMessage("searchresult.notfound", request.getLocale()));
+				formatter.applyPattern(Utilities.getMessage("searchresult.notfound", request.getLocale()));
 				contents.append(formatter.format(new Object[]{searchField}));
 				contents.append("</p>");
 			}

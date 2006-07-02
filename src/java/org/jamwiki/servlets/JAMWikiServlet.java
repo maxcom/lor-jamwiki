@@ -17,8 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.ResourceBundle;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,42 +100,32 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		String leftMenu = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMWikiServlet.getMessage("specialpages.leftMenu", request.getLocale()),
+			Utilities.getMessage("specialpages.leftMenu", request.getLocale()),
 			true
 		);
 		next.addObject("leftMenu", leftMenu);
 		String topArea = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMWikiServlet.getMessage("specialpages.topArea", request.getLocale()),
+			Utilities.getMessage("specialpages.topArea", request.getLocale()),
 			true
 		);
 		next.addObject("topArea", topArea);
 		String bottomArea = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMWikiServlet.getMessage("specialpages.bottomArea", request.getLocale()),
+			Utilities.getMessage("specialpages.bottomArea", request.getLocale()),
 			true
 		);
 		next.addObject("bottomArea", bottomArea);
 		String styleSheet = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
-			JAMWikiServlet.getMessage("specialpages.stylesheet", request.getLocale()),
+			Utilities.getMessage("specialpages.stylesheet", request.getLocale()),
 			false
 		);
 		next.addObject("StyleSheet", styleSheet);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
-	}
-
-	/**
-	 * Get messages for the given locale
-	 * @param locale locale
-	 * @return
-	 */
-	public static String getMessage(String key, Locale locale) {
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		return messages.getString(key);
 	}
 
 	/**
@@ -199,7 +187,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		if (action == null || action.length() == 0) {
 			return false;
 		}
-		if (key != null &&  action.equals(JAMWikiServlet.getMessage(key, request.getLocale()))) {
+		if (key != null &&  action.equals(Utilities.getMessage(key, request.getLocale()))) {
 			return true;
 		}
 		if (constant != null && action.equals(constant)) {

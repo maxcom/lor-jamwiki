@@ -26,6 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -120,7 +121,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (!newPassword.equals(confirmPassword)) {
 			// admin password invalid
-			errors.add(JAMWikiServlet.getMessage("admin.message.passwordsnomatch", request.getLocale()));
+			errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
 		}
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			// test database

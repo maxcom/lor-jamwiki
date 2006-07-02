@@ -31,14 +31,12 @@ import org.jamwiki.WikiMembers;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-// FIXME - get rid of these imports
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseWikiMembers;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileWikiMembers;
-import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 
@@ -297,12 +295,12 @@ public abstract class PersistencyHandler {
 			String virtualWiki = (String)iterator.next();
 			logger.info("Creating defaults for " + virtualWiki);
 			// create the default topics
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.startingpoints", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.leftMenu", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.topArea", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.bottomArea", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.stylesheet", locale));
-			setupSpecialPage(virtualWiki, JAMWikiServlet.getMessage("specialpages.adminonlytopics", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.startingpoints", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.leftMenu", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.topArea", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.bottomArea", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale));
 		}
 	}
 

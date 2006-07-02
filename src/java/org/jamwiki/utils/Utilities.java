@@ -40,6 +40,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -362,6 +364,16 @@ public class Utilities {
 	 */
 	public static String formatDateTime(Date date) {
 		return DateFormat.getDateTimeInstance().format(date);
+	}
+
+	/**
+	 * Get messages for the given locale
+	 * @param locale locale
+	 * @return
+	 */
+	public static String getMessage(String key, Locale locale) {
+		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
+		return messages.getString(key);
 	}
 
 	/**
