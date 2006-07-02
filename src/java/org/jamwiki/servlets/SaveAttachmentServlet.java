@@ -35,8 +35,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
-//import org.jamwiki.Change;
-//import org.jamwiki.ChangeLog;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
@@ -97,8 +95,8 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 		try {
 			fileList = upload.parseRequest(request);
 		} catch (FileUploadException e) {
-			error(request, response, e);
-			return;
+			logger.error("Failure while parsing upload request", e);
+			throw new ServletException(e);
 		}
 		String virtualWiki = null;
 		String topicName = null;
