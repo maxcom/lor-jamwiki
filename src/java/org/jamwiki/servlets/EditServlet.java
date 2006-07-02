@@ -74,7 +74,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			throw new Exception("Unable to unlock topic " + virtualWiki + "/" + topicName);
 		}
 		// FIXME - the caching needs to be simplified
-		WikiBase.removeCachedContents();
+		JAMWikiServlet.removeCachedContents();
 		view(request, next);
 	}
 
@@ -125,7 +125,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		boolean minorEdit = false;
 		String preview = null;
 		if (isPreview(request)) {
-			WikiBase.removeCachedContents();
+			JAMWikiServlet.removeCachedContents();
 			contents = (String)request.getParameter("contents");
 			editComment = (String)request.getParameter("editComment");
 			minorEdit = (request.getParameter("minorEdit") != null);
@@ -205,7 +205,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
 		// a save request has been made
-		WikiBase.removeCachedContents();
+		JAMWikiServlet.removeCachedContents();
 		String topicName = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String user = request.getRemoteAddr();

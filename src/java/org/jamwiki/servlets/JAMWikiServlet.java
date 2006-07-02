@@ -16,13 +16,16 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -68,6 +71,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
+	private static HashMap cachedContents = new HashMap();
 
 	/**
 	 *
@@ -95,28 +99,28 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		}
 		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
-		String leftMenu = WikiBase.getCachedContent(
+		String leftMenu = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
 			JAMWikiServlet.getMessage("specialpages.leftMenu", request.getLocale()),
 			true
 		);
 		next.addObject("leftMenu", leftMenu);
-		String topArea = WikiBase.getCachedContent(
+		String topArea = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
 			JAMWikiServlet.getMessage("specialpages.topArea", request.getLocale()),
 			true
 		);
 		next.addObject("topArea", topArea);
-		String bottomArea = WikiBase.getCachedContent(
+		String bottomArea = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
 			JAMWikiServlet.getMessage("specialpages.bottomArea", request.getLocale()),
 			true
 		);
 		next.addObject("bottomArea", bottomArea);
-		String styleSheet = WikiBase.getCachedContent(
+		String styleSheet = JAMWikiServlet.getCachedContent(
 			request.getContextPath(),
 			virtualWiki,
 			JAMWikiServlet.getMessage("specialpages.stylesheet", request.getLocale()),
@@ -218,5 +222,44 @@ public abstract class JAMWikiServlet extends HttpServlet {
 			}
 		} catch (Exception e) {}
 		return false;
+	}
+
+	/**
+	 *
+	 */
+	public static String getCachedContent(String context, String virtualWiki, String topicName, boolean cook) {
+		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
+		if (content == null) {
+			try {
+				String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+				if (baseFileDir == null || baseFileDir.length() == 0) {
+					// system not set up yet, just read the default file
+					// FIXME - filename should be set better
+					content = Utilities.readFile(topicName + ".txt");
+				} else {
+					Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+					content = topic.getTopicContent();
+				}
+				if (cook) {
+					content = WikiBase.getInstance().cook(context, virtualWiki, content);
+				}
+				synchronized (cachedContents) {
+					cachedContents.put(virtualWiki + "-" + topicName, content);
+				}
+			} catch (Exception e) {
+				logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
+				return null;
+			}
+		}
+		return content;
+	}
+
+	/**
+	 * Clears cached contents including the top area, left nav, bottom area, etc.
+	 * This method should be called when the contents of these areas may have been
+	 * modified.
+	 */
+	public static void removeCachedContents() {
+		cachedContents.clear();
 	}
 }

@@ -69,7 +69,6 @@ public class WikiBase {
 	protected PersistencyHandler handler;				   /** The handler that looks after read/write operations for a persitence type */
 	private List topicListeners;							/** Listeners for topic changes */
 	private int virtualWikiCount;						   /** Number of virtual wikis */
-	private static HashMap cachedContents = new HashMap();
 
 	/**
 	 * Creates an instance of <code>WikiBase</code> with a specified persistency sub-system.
@@ -272,7 +271,7 @@ public class WikiBase {
 		WikiMail.init();
 		instance = new WikiBase(persistenceType);
 		instance.getHandler().initialize(locale);
-		WikiBase.removeCachedContents();
+		JAMWikiServlet.removeCachedContents();
 	}
 
 	/**
@@ -383,49 +382,5 @@ public class WikiBase {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 *
-	 */
-	public static String getCachedContent(String context, String virtualWiki, String topicName, boolean cook) {
-		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
-		if (content == null) {
-			try {
-				String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-				if (baseFileDir == null || baseFileDir.length() == 0) {
-					// system not set up yet, just read the default file
-					// FIXME - filename should be set better
-					content = Utilities.readFile(topicName + ".txt");
-				} else {
-					Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
-					content = topic.getTopicContent();
-				}
-				if (cook) {
-					content = WikiBase.getInstance().cook(context, virtualWiki, content);
-				}
-				synchronized (cachedContents) {
-					cachedContents.put(virtualWiki + "-" + topicName, content);
-				}
-			} catch (Exception e) {
-				logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
-				return null;
-			}
-		}
-		return content;
-	}
-
-	/**
-	 * Clears the cached content
-	 * This method is called when a "edit-save" or "edit-cancel" is invoked.
-	 * <p/>
-	 * Clearing all cached contents forces to reload.
-	 */
-	public static void removeCachedContents() {
-		logger.debug(
-			"Removing Cached Contents; " +
-			"cachedContents.size() = " + cachedContents.size()
-		);
-		cachedContents.clear();
 	}
 }
