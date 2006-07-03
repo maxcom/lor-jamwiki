@@ -38,7 +38,8 @@ CREATE TABLE jam_wiki_user_info (
   first_name VARCHAR(100),
   last_name VARCHAR(100),
   encoded_password VARCHAR(100) NOT NULL,
-  CONSTRAINT jam_pk_wiki_user_info PRIMARY KEY (wiki_user_id)
+  CONSTRAINT jam_pk_wiki_user_info PRIMARY KEY (wiki_user_id),
+  CONSTRAINT jam_fk_wiki_user_info_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user
 );
 
 CREATE OR REPLACE TRIGGER jam_trig_wiki_user_id
