@@ -491,7 +491,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		// FIXME - use prepared statement
 		sql = "insert into jam_wiki_user ( "
 		    +   "login, virtual_wiki_id, display_name, "
-		    +   "initial_ip_address, last_ip_address "
+		    +   "create_ip_address, last_ip_address "
 		    + ") values ( "
 		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_LOGIN + "', "
 		    +   "1, "

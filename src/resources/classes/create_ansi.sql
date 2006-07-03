@@ -17,7 +17,7 @@ CREATE TABLE jam_wiki_user (
   display_name VARCHAR(200) NOT NULL,
   create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  initial_ip_address VARCHAR(15) NOT NULL,
+  create_ip_address VARCHAR(15) NOT NULL,
   last_ip_address VARCHAR(15) NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
   is_blocked BOOLEAN NOT NULL DEFAULT FALSE,
