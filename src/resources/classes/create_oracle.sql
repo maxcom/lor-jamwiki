@@ -22,7 +22,6 @@ CREATE TABLE jam_wiki_user (
   wiki_user_id INTEGER,
   login VARCHAR(100) NOT NULL,
   virtual_wiki_id INTEGER NOT NULL,
-  confirmation_key VARCHAR(100),
   display_name VARCHAR(200) NOT NULL,
   create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_update_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
