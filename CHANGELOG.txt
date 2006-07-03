@@ -1,0 +1,17 @@
+
+0.0.2
+=====
+
+* [FEATURE] Add admin page option for "Use table of contents".
+* [FEATURE] Code cleanups including deletion of unused code.
+* [BUG] Hash mark in a URL or topic (Topic#Section) was not being interpreted
+  as a page section.
+* [BUG] Error creating topic link on recent changes page.
+* [BUG] Edit comment was being lost during preview.
+* [FEATURE] Add links to jamwiki.org in default setup.
+* [BUG] Fix link from logo.
+* [BUG] Background of external link image not transparent.
+* [BUG] Editing cached topic was not viewable until the second page view
+  after the edit.
+* [FEATURE] Rename and reorganize database tables.  BREAKS ANY EXISTING
+  INSTALLATION!
