@@ -73,6 +73,8 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
 			WikiBase.initialise(request.getLocale());
+			// refresh layout
+			JAMWikiServlet.buildLayout(request, next);
 			view(request, next);
 		}
 	}

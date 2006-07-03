@@ -75,6 +75,8 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		}
 		// FIXME - the caching needs to be simplified
 		JAMWikiServlet.removeCachedContents();
+		// refresh layout
+		JAMWikiServlet.buildLayout(request, next);
 		view(request, next);
 	}
 
@@ -126,6 +128,8 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		String preview = null;
 		if (isPreview(request)) {
 			JAMWikiServlet.removeCachedContents();
+			// refresh layout
+			JAMWikiServlet.buildLayout(request, next);
 			contents = (String)request.getParameter("contents");
 			editComment = (String)request.getParameter("editComment");
 			minorEdit = (request.getParameter("minorEdit") != null);
@@ -204,8 +208,6 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
-		// a save request has been made
-		JAMWikiServlet.removeCachedContents();
 		String topicName = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String user = request.getRemoteAddr();
@@ -246,6 +248,10 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		topicVersion.setEditComment(request.getParameter("editComment"));
 		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
 		WikiBase.getInstance().getHandler().write(topic, topicVersion);
+		// a save request has been made
+		JAMWikiServlet.removeCachedContents();
+		// refresh layout
+		JAMWikiServlet.buildLayout(request, next);
 		SearchEngine sedb = WikiBase.getInstance().getSearchEngineInstance();
 		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
 		view(request, next);
