@@ -45,6 +45,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
@@ -65,6 +66,7 @@ public class FileHandler extends PersistencyHandler {
 	public static final String READ_ONLY_DIR = "readonly";
 	public static final String LOCK_DIR = "locks";
 	public static final String DELETE_DIR = "deletes";
+	public static final String USER_DIR = "users";
 	public final static String EXT = ".xml";
 	public static final String VIRTUAL_WIKI_LIST = "virtualwikis.lst";
 	protected static final String XML_RECENT_CHANGE_ROOT = "change";
@@ -284,6 +286,13 @@ public class FileHandler extends PersistencyHandler {
 		}
 		writer.println(virtualWiki);
 		writer.close();
+	}
+
+	/**
+	 *
+	 */
+	protected void addWikiUser(WikiUser user) throws Exception {
+		// FIXME - implement
 	}
 
 	/**
@@ -635,6 +644,22 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static WikiUser initWikiUser(File file) {
+		if (!file.exists()) return null;
+		try {
+			WikiUser user = new WikiUser();
+			Document document = XMLUtil.parseXML(file, false);
+			// FIXME - implement
+			return user;
+		} catch (Exception e) {
+			logger.error("Failure while initializing user for file " + file.getAbsolutePath(), e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected static String lockFilename(String topicName) {
 		return topicName;
 	}
@@ -681,6 +706,15 @@ public class FileHandler extends PersistencyHandler {
 		String filename = topicVersionFilename(topicVersionId);
 		File file = getPathFor(virtualWiki, VERSION_DIR, topicName, filename);
 		return initTopicVersion(file);
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(int userId) throws Exception {
+		String filename = wikiUserFilename(userId);
+		File file = getPathFor(null, USER_DIR, filename);
+		return initWikiUser(file);
 	}
 
 	/**
@@ -831,6 +865,13 @@ public class FileHandler extends PersistencyHandler {
 			logger.warn("No lockfile to unlock topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
 		lockFile.delete();
+	}
+
+	/**
+	 *
+	 */
+	protected static String wikiUserFilename(int userId) {
+		return userId + EXT;
 	}
 
 	/**

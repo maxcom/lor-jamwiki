@@ -36,8 +36,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.utils.Encryption;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.model.WikiUser;
 
 /**
  *
@@ -96,6 +95,20 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ ") values ( "
 		+   "?, ? "
 		+ ") ";
+	private static final String STATEMENT_INSERT_WIKI_USER =
+		"insert into jam_wiki_user ("
+		+   "user_id, login, virtual_wiki_id, display_name, create_date, "
+		+   "last_login_date, create_ip_address, last_ip_address, "
+		+   "is_admin "
+		+ ") values ( "
+		+   "?, ?, ?, ?, ?, ?, ?, ?, ? "
+		+ ") ";
+	private static final String STATEMENT_INSERT_WIKI_USER_INFO =
+		"insert into jam_wiki_user_info ("
+		+   "wiki_user_id, email, first_name, last_name, encoded_password "
+		+ ") values ( "
+		+   "?, ?, ?, ?, ? "
+		+ ") ";
 	private static final String STATEMENT_SELECT_RECENT_CHANGES =
 		"select * from jam_recent_change "
 		+ "where virtual_wiki_name = ? "
@@ -135,6 +148,20 @@ public class DatabaseHandler extends PersistencyHandler {
 		"select nextval('jam_topic_version_seq') as topic_version_id ";
 	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
 		"select nextval('jam_virtual_wiki_seq') as virtual_wiki_id ";
+	private static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
+		"select nextval('jam_wiki_user_seq') as user_id ";
+	private static final String STATEMENT_SELECT_WIKI_USER =
+	    "select jam_wiki_user.wiki_user_id, jam_wiki_user.login, "
+	    +   "jam_wiki_user.virtual_wiki_id, jam_wiki_user.display_name, "
+	    +   "jam_wiki_user.create_date, jam_wiki_user.last_login_date, "
+	    +   "jam_wiki_user.create_ip_address, jam_wiki_user.last_ip_address, "
+	    +   "jam_wiki_user.is_admin, jam_wiki_user_info.email, "
+	    +   "jam_wiki_user_info.first_name, jam_wiki_user_info.last_name, "
+	    +   "jam_wiki_user_info.encoded_password "
+	    + "from jam_wiki_user "
+	    + "left outer join jam_wiki_user_info "
+	    + "on (jam_wiki_user.user_id = jam_wiki_user_info.user_id) "
+	    + "where jam_wiki_user.user_id = ? ";
 	private static final String STATEMENT_UPDATE_TOPIC =
 		"update jam_topic set "
 		+ "virtual_wiki_id = ?, "
@@ -147,6 +174,22 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "topic_lock_session_key = ?, "
 		+ "topic_deleted = ? "
 		+ "where topic_id = ? ";
+	private static final String STATEMENT_UPDATE_WIKI_USER =
+		"update jam_wiki_user set "
+		+ "login = ?, "
+		+ "virtual_wiki_id = ?, "
+		+ "display_name = ?, "
+		+ "last_login_date = ?, "
+		+ "last_ip_address = ?, "
+		+ "is_admin = ? "
+		+ "where user_id = ? ";
+	private static final String STATEMENT_UPDATE_WIKI_USER_INFO =
+		"update jam_wiki_user_info set "
+		+ "email = ?, "
+		+ "first_name = ?, "
+		+ "last_name = ?, "
+		+ "encoded_password = ? "
+		+ "where user_id = ? ";
 
 	/**
 	 *
@@ -301,6 +344,65 @@ public class DatabaseHandler extends PersistencyHandler {
 		}
 		if (virtualWikiIdHash != null) {
 			virtualWikiIdHash.put(new Integer(virtualWikiId), virtualWikiName);
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected void addWikiUser(WikiUser user) throws Exception {
+		int virtualWikiId = lookupVirtualWikiId(user.getVirtualWiki());
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			if (user.getUserId() <= 0) {
+				// add
+				WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
+				user.setUserId(rs.getInt("user_id"));
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER);
+				stmt.setInt(1, user.getUserId());
+				stmt.setString(2, user.getLogin());
+				stmt.setInt(3, virtualWikiId);
+				stmt.setString(4, user.getDisplayName());
+				stmt.setTimestamp(5, user.getCreateDate());
+				stmt.setTimestamp(6, user.getLastLoginDate());
+				stmt.setString(7, user.getCreateIpAddress());
+				stmt.setString(8, user.getLastLoginIpAddress());
+				stmt.setBoolean(9, user.getAdmin());
+				stmt.executeUpdate();
+				// FIXME - may be in LDAP
+				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER_INFO);
+				stmt.setInt(1, user.getUserId());
+				stmt.setString(2, user.getEmail());
+				stmt.setString(3, user.getFirstName());
+				stmt.setString(4, user.getLastName());
+				stmt.setString(5, user.getEncodedPassword());
+				stmt.executeUpdate();
+			} else {
+				// update
+				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER);
+				stmt.setString(1, user.getLogin());
+				stmt.setInt(2, virtualWikiId);
+				stmt.setString(3, user.getDisplayName());
+				stmt.setTimestamp(4, user.getLastLoginDate());
+				stmt.setString(5, user.getLastLoginIpAddress());
+				stmt.setBoolean(6, user.getAdmin());
+				stmt.setInt(7, user.getUserId());
+				stmt.executeUpdate();
+				// FIXME - may be in LDAP
+				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
+				stmt.setString(1, user.getEmail());
+				stmt.setString(2, user.getFirstName());
+				stmt.setString(3, user.getLastName());
+				stmt.setString(4, user.getEncodedPassword());
+				stmt.setInt(5, user.getUserId());
+				stmt.executeUpdate();
+			}
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt);
+			}
 		}
 	}
 
@@ -487,27 +589,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (rs.size() == 0) {
 			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		}
-		// add default author
-		// FIXME - use prepared statement
-		sql = "insert into jam_wiki_user ( "
-		    +   "login, virtual_wiki_id, display_name, "
-		    +   "create_ip_address, last_ip_address "
-		    + ") values ( "
-		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_LOGIN + "', "
-		    +   "1, "
-		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_NAME + "', "
-		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "', "
-		    +   "'" + PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS + "' "
-		    + ") ";
-		DatabaseConnection.executeUpdate(sql);
-		// FIXME - need wiki_user_id
-		sql = "insert into jam_wiki_user_info ( "
-		    +   "wiki_user_id, encoded_password "
-		    + ") values ( "
-		    +   "1, "
-		    +   "'" + Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD) + "' "
-		    + ") ";
-		DatabaseConnection.executeUpdate(sql);
 		super.initialize(locale);
 	}
 
@@ -577,6 +658,34 @@ public class DatabaseHandler extends PersistencyHandler {
 			return topicVersion;
 		} catch (Exception e) {
 			logger.error("Failure while initializing topic version", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static WikiUser initWikiUser(WikiResultSet rs) {
+		try {
+			int virtualWikiId = rs.getInt("virtual_wiki_id");
+			String virtualWiki = lookupVirtualWikiName(virtualWikiId);
+			WikiUser user = new WikiUser();
+			user.setUserId(rs.getInt("wiki_user_id"));
+			user.setLogin(rs.getString("login"));
+			user.setDisplayName(rs.getString("display_name"));
+			user.setCreateDate(rs.getTimestamp("create_date"));
+			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
+			user.setCreateIpAddress(rs.getString("create_ip_address"));
+			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
+			user.setAdmin(rs.getBoolean("is_admin"));
+			// FIXME - may be in LDAP
+			user.setEmail(rs.getString("email"));
+			user.setFirstName(rs.getString("first_name"));
+			user.setLastName(rs.getString("last_name"));
+			user.setEncodedPassword(rs.getString("encoded_password"));
+			return user;
+		} catch (Exception e) {
+			logger.error("Failure while initializing user", e);
 			return null;
 		}
 	}
@@ -743,6 +852,28 @@ public class DatabaseHandler extends PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
 		}
 		return virtualWikiName;
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(int userId) throws Exception {
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER);
+			stmt.setInt(1, userId);
+			rs = stmt.executeQuery();
+			WikiResultSet wrs = new WikiResultSet(rs);
+			if (wrs.size() == 0) return null;
+			return initWikiUser(wrs);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
+		}
 	}
 
 	/**

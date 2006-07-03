@@ -31,6 +31,7 @@ import org.jamwiki.WikiMembers;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseWikiMembers;
@@ -38,6 +39,7 @@ import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileWikiMembers;
 import org.jamwiki.utils.DiffUtil;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -81,6 +83,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract void addVirtualWiki(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
+	protected abstract void addWikiUser(WikiUser user) throws Exception;
 
 	/**
 	 *
@@ -291,6 +298,15 @@ public abstract class PersistencyHandler {
 	 */
 	public void initialize(Locale locale) throws Exception {
 		Collection all = getVirtualWikiList();
+		// add default author
+		WikiUser user = new WikiUser();
+		user.setLogin(PersistencyHandler.DEFAULT_AUTHOR_LOGIN);
+		user.setVirtualWiki(WikiBase.DEFAULT_VWIKI);
+		user.setDisplayName(PersistencyHandler.DEFAULT_AUTHOR_NAME);
+		user.setCreateIpAddress(PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS);
+		user.setLastLoginIpAddress(PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS);
+		user.setEncodedPassword(Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD));
+		addWikiUser(user);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String virtualWiki = (String)iterator.next();
 			logger.info("Creating defaults for " + virtualWiki);
@@ -357,6 +373,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract WikiUser lookupWikiUser(int userId) throws Exception;
 
 	/**
 	 * Do emergency repairs by clearing all locks and deleting recent changes files
