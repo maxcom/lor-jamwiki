@@ -58,73 +58,79 @@ public class DatabaseInit {
 			Statement st = conn.createStatement();
 			// FIXME - temporary during testing
 			try {
-				sql = "DROP TABLE jmw_recent_change";
+				sql = "DROP TABLE jam_recent_change";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP TABLE jmw_notification";
+				sql = "DROP TABLE jam_notification";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP TABLE jmw_topic_version";
+				sql = "DROP TABLE jam_topic_version";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP TABLE jmw_topic";
+				sql = "DROP TABLE jam_topic";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP TABLE jmw_author";
+				sql = "DROP TABLE jam_wiki_user_info";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP TABLE jmw_virtual_wiki";
+				sql = "DROP TABLE jam_wiki_user";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP SEQUENCE jmw_virtual_wiki_seq";
+				sql = "DROP TABLE jam_virtual_wiki";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP SEQUENCE jmw_author_seq";
+				sql = "DROP SEQUENCE jam_virtual_wiki_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP SEQUENCE jmw_topic_seq";
+				sql = "DROP SEQUENCE jam_wiki_user_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP SEQUENCE jmw_topic_version_seq";
+				sql = "DROP SEQUENCE jam_topic_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP SEQUENCE jmw_notification_seq";
+				sql = "DROP SEQUENCE jam_topic_version_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
 			}
 			try {
-				sql = "DROP SEQUENCE jmw_recent_change_seq";
+				sql = "DROP SEQUENCE jam_notification_seq";
+				st.executeUpdate(sql);
+			} catch (Exception e) {
+				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
+			}
+			try {
+				sql = "DROP SEQUENCE jam_recent_change_seq";
 				st.executeUpdate(sql);
 			} catch (Exception e) {
 				logger.warn("Failure while executing " + sql + " : " + e.getMessage());
