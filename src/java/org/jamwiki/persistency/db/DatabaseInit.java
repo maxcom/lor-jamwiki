@@ -158,15 +158,6 @@ public class DatabaseInit {
 	}
 
 	/**
-	 *
-	 */
-	// FIXME - temporary
-	public static void convert() throws Exception {
-		ConvertVQWiki.convertFromDatabase();
-		DatabaseHandler.loadVirtualWikiHashes();
-	}
-
-	/**
 	 * Run the create tables script
 	 * Ignore SQL exceptions as these may just be the result of existing tables getting in the
 	 * way of create table calls

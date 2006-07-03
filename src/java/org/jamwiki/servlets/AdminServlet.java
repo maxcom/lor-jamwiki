@@ -71,8 +71,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		if (isTopic(request, "Special:Upgrade")) {
 			if (function.equals("Create")) {
 				upgradeCreate(request, next);
-			} else if (function.equals("Import")) {
-				upgradeImport(request, next);
 			} else if (function.equals("Purge")) {
 				upgradePurge(request, next);
 			} else if (function.equals("Convert to File")) {
@@ -683,22 +681,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		} catch (Exception e) {
 			logger.error("Failure while executing database creation", e);
 			next.addObject("errorMessage", "Failure while executing database creation: " + e.getMessage());
-		}
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
-	}
-
-	/**
-	 *
-	 */
-	private void upgradeImport(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			DatabaseInit.convert();
-			next.addObject("message", "Database tables successfully imported");
-		} catch (Exception e) {
-			logger.error("Failure while executing database import", e);
-			next.addObject("errorMessage", "Failure while executing database import: " + e.getMessage());
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
