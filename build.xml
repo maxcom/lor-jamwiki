@@ -77,6 +77,7 @@
             <zipfileset file="${dir.src.jsp}/index.jsp" prefix="" />
             <zipfileset file="${basedir}/README.txt" prefix="" />
             <zipfileset file="${basedir}/CHANGELOG.txt" prefix="" />
+            <zipfileset file="${basedir}/LICENSE.txt" prefix="" />
         </war>
     </target>
 
