@@ -98,7 +98,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String STATEMENT_INSERT_WIKI_USER =
 		"insert into jam_wiki_user ("
 		+   "user_id, login, virtual_wiki_id, display_name, create_date, "
-		+   "last_login_date, create_ip_address, last_ip_address, "
+		+   "last_login_date, create_ip_address, last_login_ip_address, "
 		+   "is_admin "
 		+ ") values ( "
 		+   "?, ?, ?, ?, ?, ?, ?, ?, ? "
@@ -154,7 +154,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	    "select jam_wiki_user.wiki_user_id, jam_wiki_user.login, "
 	    +   "jam_wiki_user.virtual_wiki_id, jam_wiki_user.display_name, "
 	    +   "jam_wiki_user.create_date, jam_wiki_user.last_login_date, "
-	    +   "jam_wiki_user.create_ip_address, jam_wiki_user.last_ip_address, "
+	    +   "jam_wiki_user.create_ip_address, jam_wiki_user.last_login_ip_address, "
 	    +   "jam_wiki_user.is_admin, jam_wiki_user_info.email, "
 	    +   "jam_wiki_user_info.first_name, jam_wiki_user_info.last_name, "
 	    +   "jam_wiki_user_info.encoded_password "
@@ -180,7 +180,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "virtual_wiki_id = ?, "
 		+ "display_name = ?, "
 		+ "last_login_date = ?, "
-		+ "last_ip_address = ?, "
+		+ "last_login_ip_address = ?, "
 		+ "is_admin = ? "
 		+ "where user_id = ? ";
 	private static final String STATEMENT_UPDATE_WIKI_USER_INFO =

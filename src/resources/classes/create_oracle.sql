@@ -26,7 +26,7 @@ CREATE TABLE jam_wiki_user (
   create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   create_ip_address VARCHAR(15) NOT NULL,
-  last_ip_address VARCHAR(15) NOT NULL,
+  last_login_ip_address VARCHAR(15) NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
   CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id),
   CONSTRAINT jam_fk_wiki_user_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki
