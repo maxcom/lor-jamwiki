@@ -105,7 +105,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		+   "last_login_date, create_ip_address, last_login_ip_address, "
 		+   "is_admin "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_INSERT_WIKI_USER_INFO =
 		"insert into jam_wiki_user_info ("

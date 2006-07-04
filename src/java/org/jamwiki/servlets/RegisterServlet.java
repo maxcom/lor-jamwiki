@@ -21,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
 import org.jamwiki.WikiMembers;
@@ -48,7 +49,11 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 			// FIXME - used with email notifications
 			notify(request, response, next);
 		} else if (request.getParameter("function") != null) {
-			register(request, response, next);
+			if (register(request, response, next)) {
+				// FIXME - use Spring
+				// register successful, non-Spring redirect
+				return null;
+			}
 		} else {
 			view(request, next);
 		}
@@ -164,7 +169,7 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	// FIXME - shouldn't need to pass in response
-	private void register(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
@@ -187,9 +192,15 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
 			if (newPassword != null) next.addObject("newPassword", newPassword);
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
+			return false;
 		} else {
 			WikiBase.getInstance().getHandler().addWikiUser(user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			// FIXME - can a redirect be done with Spring?
+			redirect(redirect, response);
+			return true;
 		}
 	}
 

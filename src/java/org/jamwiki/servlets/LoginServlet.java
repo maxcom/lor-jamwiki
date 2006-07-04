@@ -82,7 +82,8 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
 		if (redirect == null || redirect.length() == 0) {
-			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Admin");
+			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 		}
 		WikiUser user = WikiBase.getInstance().getHandler().lookupWikiUser(username, password);
 		if (user == null) {
