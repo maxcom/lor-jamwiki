@@ -34,7 +34,12 @@ public class XMLUtil {
 	public static final Logger logger = Logger.getLogger(XMLUtil.class);
 
 	/**
+	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param escape If <code>true</code> then any less than, greater than, quotation mark,
+	 *  apostrophe or ampersands in tagValue will be XML-escaped.
 	 */
 	public static String buildTag(String tagName, String tagValue, boolean escape) {
 		if (tagValue == null) return "";

@@ -264,8 +264,8 @@ public class DatabaseHandler extends PersistencyHandler {
 				stmt.setInt(2, virtualWikiId);
 				stmt.setString(3, topic.getName());
 				stmt.setInt(4, topic.getTopicType());
-				if (topic.getLockedBy() > 0) {
-					stmt.setInt(5, topic.getLockedBy());
+				if (topic.getLockedBy() != null) {
+					stmt.setInt(5, topic.getLockedBy().intValue());
 				} else {
 					stmt.setNull(5, Types.INTEGER);
 				}
@@ -280,8 +280,8 @@ public class DatabaseHandler extends PersistencyHandler {
 				stmt.setInt(1, virtualWikiId);
 				stmt.setString(2, topic.getName());
 				stmt.setInt(3, topic.getTopicType());
-				if (topic.getLockedBy() > 0) {
-					stmt.setInt(4, topic.getLockedBy());
+				if (topic.getLockedBy() != null) {
+					stmt.setInt(4, topic.getLockedBy().intValue());
 				} else {
 					stmt.setNull(4, Types.INTEGER);
 				}
@@ -699,7 +699,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			topic.setVirtualWiki(virtualWiki);
 			topic.setTopicContent(rs.getString("topic_content"));
 			topic.setTopicId(rs.getInt("topic_id"));
-			topic.setLockedBy(rs.getInt("topic_locked_by"));
+			int lockedBy = rs.getInt("topic_locked_by");
+			if (lockedBy > 0) topic.setLockedBy(new Integer(lockedBy));
 			topic.setLockedDate(rs.getTimestamp("topic_lock_date"));
 			topic.setLockSessionKey(rs.getString("topic_lock_session_key"));
 			topic.setReadOnly(rs.getBoolean("topic_read_only"));

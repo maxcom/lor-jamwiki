@@ -478,7 +478,7 @@ public abstract class PersistencyHandler {
 	public void unlockTopic(Topic topic) throws Exception {
 		topic.setLockSessionKey(null);
 		topic.setLockedDate(null);
-		topic.setLockedBy(-1);
+		topic.setLockedBy(null);
 		addTopic(topic);
 	}
 
@@ -493,7 +493,7 @@ public abstract class PersistencyHandler {
 			if (oldVersion != null) previousTopicVersionId = new Integer(oldVersion.getTopicVersionId());
 		}
 		// release any lock that is held by setting lock fields null
-		topic.setLockedBy(-1);
+		topic.setLockedBy(null);
 		topic.setLockedDate(null);
 		topic.setLockSessionKey(null);
 		addTopic(topic);
