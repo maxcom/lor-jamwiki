@@ -53,18 +53,19 @@ function inactive(element) {
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
 <input type="submit" value='<f:message key="history.diff"/>'/>
 
-<br />
+<br /><br />
 
 <ul>
 		<c:forEach items="${versions}" var="version">
 <li>
-	<input type="checkbox" name='<c:out value="diff:${version.topicVersionId}"/>' onclick="inactive(this)" />
-	&#160;&#160;
-	<a href="<jamwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${version.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${version.editDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" /></a>
-	&#160;&#160;
-	<c:out value="${version.authorIpAddress}" />
 	&#160;
-	<c:if test="${!empty version.editComment}">&#160;(<c:out value="${version.editComment}" />)</c:if>
+	<input type="checkbox" name='<c:out value="diff:${version.topicVersionId}"/>' onclick="inactive(this)" />
+	&#160;
+	<%-- FIXME: do not hardcode date pattern --%>
+	<a href="<jamwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${version.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${version.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+	&#160;.&#160;.&#160;
+	<c:out value="${version.authorIpAddress}" />
+	<c:if test="${!empty version.editComment}">&#160;(<i><c:out value="${version.editComment}" /></i>)</c:if>
 		</c:forEach>
 </ul>
 
