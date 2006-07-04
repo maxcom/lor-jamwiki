@@ -106,9 +106,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		if (function.equals("addVirtualWiki")) {
 			addVirtualWiki(request, next);
 		}
-		if (function.equals("changePassword")) {
-			changePassword(request, next);
-		}
 		if (function.equals("panic")) {
 			panic(request, next);
 		}
@@ -133,42 +130,12 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			WikiBase.getInstance().addVirtualWiki(newWiki);
 			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
-			WikiBase.initialise(request.getLocale());
+			WikiBase.initialise(request.getLocale(), null);
 			// refresh layout
 			JAMWikiServlet.buildLayout(request, next);
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
 			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
-			next.addObject("message", message);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void changePassword(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
-		try {
-			String oldPassword = request.getParameter("oldPassword");
-			String newPassword = request.getParameter("newPassword");
-			String confirmPassword = request.getParameter("confirmPassword");
-			if (!Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(oldPassword)) {
-				String message = Utilities.getMessage("admin.message.oldpasswordincorrect", request.getLocale());
-				next.addObject("message", message);
-			} else if (!newPassword.equals(confirmPassword)) {
-				String message = Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale());
-				next.addObject("message", message);
-			} else {
-				Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, newPassword);
-				Environment.saveProperties();
-				String message = Utilities.getMessage("admin.message.passwordchanged", request.getLocale());
-				next.addObject("message", message);
-			}
-		} catch (Exception e) {
-			logger.error("Failure while changing password", e);
-			String message = "Failure while changing password: " + e.getMessage();
 			next.addObject("message", message);
 		}
 	}
@@ -528,7 +495,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 				}
 			}
 			Environment.saveProperties();
-			WikiBase.initialise(request.getLocale());
+			WikiBase.initialise(request.getLocale(), null);
 			// refresh layout
 			JAMWikiServlet.buildLayout(request, next);
 			String message = Utilities.getMessage("admin.message.changessaved", request.getLocale());

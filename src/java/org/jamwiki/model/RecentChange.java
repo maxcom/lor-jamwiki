@@ -25,12 +25,12 @@ import org.apache.log4j.Logger;
 public class RecentChange {
 
 	private static Logger logger = Logger.getLogger(RecentChange.class);
-	private int authorId = -1;
+	private Integer authorId = null;
 	private String authorName = null;
 	private String editComment = null;
 	private Timestamp editDate = null;
 	private int editType = -1;
-	private int previousTopicVersionId = -1;
+	private Integer previousTopicVersionId = null;
 	private int topicId = -1;
 	private String topicName = null;
 	private int topicVersionId = -1;
@@ -45,14 +45,14 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getAuthorId() {
+	public Integer getAuthorId() {
 		return this.authorId;
 	}
 
 	/**
 	 *
 	 */
-	public void setAuthorId(int authorId) {
+	public void setAuthorId(Integer authorId) {
 		this.authorId = authorId;
 	}
 
@@ -115,14 +115,14 @@ public class RecentChange {
 	/**
 	 *
 	 */
-	public int getPreviousTopicVersionId() {
+	public Integer getPreviousTopicVersionId() {
 		return this.previousTopicVersionId;
 	}
 
 	/**
 	 *
 	 */
-	public void setPreviousTopicVersionId(int previousTopicVersionId) {
+	public void setPreviousTopicVersionId(Integer previousTopicVersionId) {
 		this.previousTopicVersionId = previousTopicVersionId;
 	}
 

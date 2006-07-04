@@ -537,7 +537,7 @@ function onUserGroupType() {
   anytime two or more password fields are in a form it assumes the password is being
   changed if the last password is different from the saved password.
   --%>
-  <input type="password" name="<%= Environment.PROP_BASE_ADMIN_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD) %>" style="display:none" />
+  <input type="password" name="fakePassword" value="" style="display:none" />
 </form>
 <hr/>
 <p class="subHeader"><f:message key="admin.title.refresh"/></p>
@@ -594,29 +594,6 @@ function onUserGroupType() {
     </tr>
   </table>
   <input type="hidden" name="function" value="addVirtualWiki">
-  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
-</form>
-<hr/>
-<p class="subHeader"><f:message key="admin.title.changepassword"/></p>
-<form action="<jamwiki:link value="Special:Admin" />" method="post">
-  <table class="contents">
-    <tr>
-      <td><f:message key="admin.caption.oldpassword"/></td>
-      <td><input type="password" name="oldPassword"/></td>
-    </tr>
-    <tr>
-      <td><f:message key="admin.caption.newpassword"/></td>
-      <td><input type="password" name="newPassword"/></td>
-    </tr>
-    <tr>
-      <td><f:message key="admin.caption.confirmpassword"/></td>
-      <td><input type="password" name="confirmPassword"/></td>
-    </tr>
-    <tr>
-    <td><input type="submit" value='<f:message key="common.change"/>'/></td>
-    </tr>
-  </table>
-  <input type="hidden" name="function" value="changePassword">
   <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
 <hr/>

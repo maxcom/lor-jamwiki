@@ -69,13 +69,19 @@ function onPersistenceType() {
 	<td><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="15"></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
+<%-- FIXME - hard coding --%>
+
 <tr>
-	<td><f:message key="admin.caption.newpassword"/></td>
-	<td><input type="password" name="<%= Environment.PROP_BASE_ADMIN_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD) %>" /></td>
+	<td>Admin User Login:</td>
+	<td><input type="text" name="login" value="<c:out value="${user.login}" />" /></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.confirmpassword"/></td>
-	<td><input type="password" name="confirmPassword"/></td>
+	<td><f:message key="admin.caption.newpassword"/></td>
+	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" /></td>
+</tr>
+<tr>
+	<td><f:message key="admin.caption.confirmpassword" /></td>
+	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="Commit" /></td></tr>

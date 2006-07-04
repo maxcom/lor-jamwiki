@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,8 +59,8 @@ public class HistoryServlet extends JAMWikiServlet implements Controller {
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
 				next.addObject(JAMWikiServlet.PARAMETER_TITLE, "History for " + topicName);
-				Collection versions = handler.getAllVersions(virtualWiki, topicName);
-				next.addObject("versions", versions);
+				Vector changes = handler.getRecentChanges(virtualWiki, topicName);
+				next.addObject("changes", changes);
 				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_HISTORY);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));

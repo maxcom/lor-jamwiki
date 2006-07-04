@@ -45,7 +45,6 @@ public class Environment {
 	public static final String PROP_ATTACH_TIMESTAMP = "attachment-timestamp";
 	public static final String PROP_ATTACH_TYPE = "attachment-type";
 	public static final String PROP_ATTACH_UPLOAD_DIR = "uploadDir";
-	public static final String PROP_BASE_ADMIN_PASSWORD = "admin-password";
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_ENCODE_PASSWORDS = "encode-passwords";

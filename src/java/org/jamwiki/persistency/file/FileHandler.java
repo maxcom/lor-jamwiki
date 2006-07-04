@@ -140,7 +140,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_VERSION_ID, change.getTopicVersionId()));
 		content.append("\n");
-		if (change.getPreviousTopicVersionId() > 0) {
+		if (change.getPreviousTopicVersionId() != null) {
 			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID, change.getPreviousTopicVersionId()));
 			content.append("\n");
 		}
@@ -492,14 +492,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 * Set up defaults if necessary
 	 */
-	public void initialize(Locale locale) throws Exception {
+	public void initialize(Locale locale, WikiUser user) throws Exception {
 		// create the virtual wiki list file if necessary
 		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		// get the virtual wiki list and set up the file system
 		if (!virtualList.exists()) {
 			createVirtualWikiList(virtualList);
 		}
-		super.initialize(locale);
+		super.initialize(locale, user);
 	}
 
 	/**
@@ -525,9 +525,9 @@ public class FileHandler extends PersistencyHandler {
 				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_VERSION_ID)) {
 					change.setTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
 				} else if (childName.equals(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID)) {
-					change.setPreviousTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
+					change.setPreviousTopicVersionId(new Integer(rootChild.getTextContent()));
 				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_ID)) {
-					change.setAuthorId(new Integer(rootChild.getTextContent()).intValue());
+					change.setAuthorId(new Integer(rootChild.getTextContent()));
 				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_NAME)) {
 					change.setAuthorName(rootChild.getTextContent());
 				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_COMMENT)) {
@@ -627,7 +627,7 @@ public class FileHandler extends PersistencyHandler {
 					for (int j=0; j < authorChildren.getLength(); j++) {
 						Node authorChild = authorChildren.item(j);
 						if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_ID)) {
-							topicVersion.setAuthorId(new Integer(authorChild.getTextContent()).intValue());
+							topicVersion.setAuthorId(new Integer(authorChild.getTextContent()));
 						} else if (childName.equals(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS)) {
 							topicVersion.setAuthorIpAddress(authorChild.getTextContent());
 						}

@@ -29,7 +29,7 @@ public class TopicVersion {
 	public static final int EDIT_REVERT = 3;
 	public static final int EDIT_MOVE = 4;
 	// FIXME - change back to -1 once author handling works
-	private int authorId = 1;
+	private Integer authorId = null;
 	private String authorIpAddress = null;
 	private String editComment = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
@@ -48,14 +48,14 @@ public class TopicVersion {
 	/**
 	 *
 	 */
-	public int getAuthorId() {
+	public Integer getAuthorId() {
 		return this.authorId;
 	}
 
 	/**
 	 *
 	 */
-	public void setAuthorId(int authorId) {
+	public void setAuthorId(Integer authorId) {
 		this.authorId = authorId;
 	}
 

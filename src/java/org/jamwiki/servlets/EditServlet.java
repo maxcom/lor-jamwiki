@@ -246,7 +246,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
 		WikiUser user = Utilities.currentUser(request);
 		if (user != null) {
-			topicVersion.setAuthorId(user.getUserId());
+			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}
 		WikiBase.getInstance().getHandler().write(topic, topicVersion);
 		// a save request has been made

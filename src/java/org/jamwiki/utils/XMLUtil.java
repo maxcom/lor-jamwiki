@@ -37,6 +37,7 @@ public class XMLUtil {
 	 *
 	 */
 	public static String buildTag(String tagName, String tagValue, boolean escape) {
+		if (tagValue == null) return "";
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<").append(tagName).append(">");
 		if (escape) {
@@ -57,6 +58,14 @@ public class XMLUtil {
 	/**
 	 *
 	 */
+	public static String buildTag(String tagName, Integer tagValue) {
+		if (tagValue == null) return "";
+		return XMLUtil.buildTag(tagName, tagValue.toString(), false);
+	}
+
+	/**
+	 *
+	 */
 	public static String buildTag(String tagName, boolean tagValue) {
 		return XMLUtil.buildTag(tagName, new Boolean(tagValue).toString(), false);
 	}
@@ -65,6 +74,7 @@ public class XMLUtil {
 	 *
 	 */
 	public static String buildTag(String tagName, Timestamp tagValue) {
+		if (tagValue == null) return "";
 		return XMLUtil.buildTag(tagName, tagValue.toString(), false);
 	}
 

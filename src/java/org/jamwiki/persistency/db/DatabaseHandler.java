@@ -25,7 +25,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -214,8 +213,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			conn = DatabaseConnection.getConnection();
 			stmt = conn.prepareStatement(STATEMENT_INSERT_RECENT_CHANGE);
 			stmt.setInt(1, change.getTopicVersionId());
-			if (change.getPreviousTopicVersionId() > 0) {
-				stmt.setInt(2, change.getPreviousTopicVersionId());
+			if (change.getPreviousTopicVersionId() != null) {
+				stmt.setInt(2, change.getPreviousTopicVersionId().intValue());
 			} else {
 				stmt.setNull(2, Types.INTEGER);
 			}
@@ -223,8 +222,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			stmt.setString(4, change.getTopicName());
 			stmt.setTimestamp(5, change.getEditDate());
 			stmt.setString(6, change.getEditComment());
-			if (change.getAuthorId() > 0) {
-				stmt.setInt(7, change.getAuthorId());
+			if (change.getAuthorId() != null) {
+				stmt.setInt(7, change.getAuthorId().intValue());
 			} else {
 				stmt.setNull(7, Types.INTEGER);
 			}
@@ -313,7 +312,11 @@ public class DatabaseHandler extends PersistencyHandler {
 			stmt.setInt(2, topicVersion.getTopicId());
 			stmt.setString(3, topicVersion.getEditComment());
 			stmt.setString(4, topicVersion.getVersionContent());
-			stmt.setInt(5, topicVersion.getAuthorId());
+			if (topicVersion.getAuthorId() != null) {
+				stmt.setInt(5, topicVersion.getAuthorId().intValue());
+			} else {
+				stmt.setNull(5, Types.INTEGER);
+			}
 			stmt.setInt(6, topicVersion.getEditType());
 			stmt.setString(7, topicVersion.getAuthorIpAddress());
 			stmt.setTimestamp(8, editDate);
@@ -577,7 +580,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void initialize(Locale locale) throws Exception {
+	public void initialize(Locale locale, WikiUser user) throws Exception {
 		String sql = null;
 		WikiResultSet rs = null;
 		boolean tablesExist = false;
@@ -597,7 +600,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (rs.size() == 0) {
 			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		}
-		super.initialize(locale);
+		super.initialize(locale, user);
 	}
 
 	/**
@@ -607,12 +610,14 @@ public class DatabaseHandler extends PersistencyHandler {
 		try {
 			RecentChange change = new RecentChange();
 			change.setTopicVersionId(rs.getInt("topic_version_id"));
-			change.setPreviousTopicVersionId(rs.getInt("previous_topic_version_id"));
+			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
+			if (previousTopicVersionId > 0) change.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
 			change.setTopicId(rs.getInt("topic_id"));
 			change.setTopicName(rs.getString("topic_name"));
 			change.setEditDate(rs.getTimestamp("edit_date"));
 			change.setEditComment(rs.getString("edit_comment"));
-			change.setAuthorId(rs.getInt("wiki_user_id"));
+			int userId = rs.getInt("wiki_user_id");
+			if (userId > 0) change.setAuthorId(new Integer(userId));
 			change.setAuthorName(rs.getString("display_name"));
 			change.setEditType(rs.getInt("edit_type"));
 			change.setVirtualWiki(rs.getString("virtual_wiki_name"));
@@ -659,7 +664,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			topicVersion.setTopicId(rs.getInt("topic_id"));
 			topicVersion.setEditComment(rs.getString("edit_comment"));
 			topicVersion.setVersionContent(rs.getString("version_content"));
-			topicVersion.setAuthorId(rs.getInt("wiki_user_id"));
+			int userId = rs.getInt("wiki_user_id");
+			if (userId > 0) topicVersion.setAuthorId(new Integer(userId));
 			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
 			topicVersion.setEditType(rs.getInt("edit_type"));
 			topicVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));

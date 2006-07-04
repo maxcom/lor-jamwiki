@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -63,7 +64,9 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void initialize(HttpServletRequest request, ModelAndView next) throws Exception {
 		setProperties(request, next);
-		Vector errors = validate(request, next);
+		WikiUser user = new WikiUser();
+		setAdminUser(request, next, user);
+		Vector errors = validate(request, next, user);
 		if (errors.size() > 0) {
 			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
 			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
@@ -72,11 +75,24 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
-			WikiBase.initialise(request.getLocale());
+			WikiBase.initialise(request.getLocale(), user);
 			// refresh layout
 			JAMWikiServlet.buildLayout(request, next);
 			view(request, next);
 		}
+	}
+
+	/**
+	 *
+	 */
+	private void setAdminUser(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
+		user.setVirtualWiki(WikiBase.DEFAULT_VWIKI);
+		user.setLogin(request.getParameter("login"));
+		user.setEncodedPassword(Encryption.encrypt(request.getParameter("newPassword")));
+		user.setCreateIpAddress(request.getRemoteAddr());
+		user.setLastLoginIpAddress(request.getRemoteAddr());
+		user.setAdmin(true);
+		next.addObject("user", user);
 	}
 
 	/**
@@ -96,7 +112,6 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			Environment.setValue(Environment.PROP_DB_USERNAME, request.getParameter(Environment.PROP_DB_USERNAME));
 			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD));
 		}
-		Encryption.setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, request.getParameter(Environment.PROP_BASE_ADMIN_PASSWORD));
 	}
 
 	/**
@@ -111,7 +126,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	/**
 	 *
 	 */
-	private Vector validate(HttpServletRequest request, ModelAndView next) throws Exception {
+	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		File baseDir = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
 		if (!baseDir.exists()) {
@@ -119,11 +134,21 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			// FIXME - hard coding
 			errors.add(Environment.getValue(Environment.PROP_BASE_FILE_DIR) + " is not a valid directory");
 		}
-		String newPassword = request.getParameter(Environment.PROP_BASE_ADMIN_PASSWORD);
+		if (user.getLogin() == null || user.getLogin().length() == 0) {
+			user.setLogin("");
+			errors.add("Login cannot be empty");
+		}
+		String oldPassword = request.getParameter("oldPassword");
+		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
-		if (!newPassword.equals(confirmPassword)) {
-			// admin password invalid
-			errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
+		if (newPassword != null || confirmPassword != null) {
+			if (newPassword == null) {
+				errors.add("New password field must be entered");
+			} else if (confirmPassword == null) {
+				errors.add("Password confirmation must be entered");
+			} else if (!newPassword.equals(confirmPassword)) {
+				errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
+			}
 		}
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			// test database

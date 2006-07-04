@@ -33,6 +33,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
@@ -266,11 +267,11 @@ public class WikiBase {
 	 *
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public static void initialise(Locale locale) throws Exception {
+	public static void initialise(Locale locale, WikiUser user) throws Exception {
 		int persistenceType = WikiBase.getPersistenceType();
 		WikiMail.init();
 		instance = new WikiBase(persistenceType);
-		instance.getHandler().initialize(locale);
+		instance.getHandler().initialize(locale, user);
 		JAMWikiServlet.removeCachedContents();
 	}
 

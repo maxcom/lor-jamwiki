@@ -147,14 +147,12 @@ public class Encryption {
 	 */
 	public static void togglePropertyEncryption(boolean encrypt) throws Exception {
 		// get passwords prior to changing encryption
-		String adminPassword = getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD);
 		String dbPassword = getEncryptedProperty(Environment.PROP_DB_PASSWORD);
 		String smtpPassword = getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD);
 		String userGroupPassword = getEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD);
 		// change encryption
 		Environment.setBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS, encrypt);
 		// re-set passwords with changed encryption
-		setEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD, adminPassword);
 		setEncryptedProperty(Environment.PROP_DB_PASSWORD, dbPassword);
 		setEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD, smtpPassword);
 		setEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD, userGroupPassword);

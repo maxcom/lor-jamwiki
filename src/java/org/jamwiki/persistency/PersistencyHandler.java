@@ -49,12 +49,6 @@ public abstract class PersistencyHandler {
 
 	private static Logger logger = Logger.getLogger(PersistencyHandler.class);
 
-	// FIXME - move to more logical location
-	public static final String DEFAULT_PASSWORD = "password";
-	public static final String DEFAULT_AUTHOR_LOGIN = "unknown_author";
-	public static final String DEFAULT_AUTHOR_NAME = "Unknown Author";
-	public static final String DEFAULT_AUTHOR_IP_ADDRESS = "0.0.0.0";
-
 	/**
 	 *
 	 */
@@ -255,11 +249,7 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
-	 * Returns all versions of the given topic in reverse chronological order
-	 * @param virtualWiki
-	 * @param topicName
-	 * @return
-	 * @throws Exception
+	 *
 	 */
 	public abstract List getAllVersions(String virtualWiki, String topicName) throws Exception;
 
@@ -286,6 +276,40 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public Vector getRecentChanges(String virtualWiki, String topicName) throws Exception {
+		Vector results = new Vector();
+		Collection versions = getAllVersions(virtualWiki, topicName);
+		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
+			TopicVersion version = (TopicVersion)iterator.next();
+			RecentChange change = new RecentChange();
+			Integer authorId = version.getAuthorId();
+			change.setAuthorId(authorId);
+			if (authorId != null) {
+				WikiUser user = lookupWikiUser(authorId.intValue());
+				if (user.getDisplayName() != null) {
+					change.setAuthorName(user.getDisplayName());
+				} else {
+					change.setAuthorName(user.getLogin());
+				}
+			} else {
+				change.setAuthorName(version.getAuthorIpAddress());
+			}
+			change.setEditComment(version.getEditComment());
+			change.setEditDate(version.getEditDate());
+			change.setEditType(version.getEditType());
+			// NOTE! previous topic version not set!
+			change.setTopicId(version.getTopicId());
+			// NOTE! topic name not set!
+			change.setTopicVersionId(version.getTopicVersionId());
+			change.setVirtualWiki(virtualWiki);
+			results.add(change);
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public abstract Collection getVirtualWikiList() throws Exception;
 
 	/**
@@ -296,27 +320,19 @@ public abstract class PersistencyHandler {
 	/**
 	 * Set up defaults if necessary
 	 */
-	public void initialize(Locale locale) throws Exception {
+	public void initialize(Locale locale, WikiUser user) throws Exception {
 		Collection all = getVirtualWikiList();
-		// add default author
-		WikiUser user = new WikiUser();
-		user.setLogin(PersistencyHandler.DEFAULT_AUTHOR_LOGIN);
-		user.setVirtualWiki(WikiBase.DEFAULT_VWIKI);
-		user.setDisplayName(PersistencyHandler.DEFAULT_AUTHOR_NAME);
-		user.setCreateIpAddress(PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS);
-		user.setLastLoginIpAddress(PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS);
-		user.setEncodedPassword(Encryption.encrypt(PersistencyHandler.DEFAULT_PASSWORD));
-		addWikiUser(user);
+		if (user != null && user.getUserId() < 1) addWikiUser(user);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String virtualWiki = (String)iterator.next();
 			logger.info("Creating defaults for " + virtualWiki);
 			// create the default topics
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.startingpoints", locale));
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.leftMenu", locale));
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.topArea", locale));
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.bottomArea", locale));
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale));
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale));
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.startingpoints", locale), user);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.leftMenu", locale), user);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.topArea", locale), user);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.bottomArea", locale), user);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale), user);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale), user);
 		}
 	}
 
@@ -429,7 +445,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void setupSpecialPage(String virtualWiki, String topicName) throws Exception {
+	protected void setupSpecialPage(String virtualWiki, String topicName, WikiUser user) throws Exception {
 		if (exists(virtualWiki, topicName)) {
 			return;
 		}
@@ -445,7 +461,10 @@ public abstract class PersistencyHandler {
 		topic.setTopicContent(contents);
 		TopicVersion topicVersion = new TopicVersion();
 		topicVersion.setVersionContent(contents);
-		topicVersion.setAuthorIpAddress(PersistencyHandler.DEFAULT_AUTHOR_IP_ADDRESS);
+		topicVersion.setAuthorIpAddress(user.getLastLoginIpAddress());
+		topicVersion.setAuthorId(new Integer(user.getUserId()));
+		// FIXME - hard coding
+		topicVersion.setEditComment("Automatically created by system setup");
 		write(topic, topicVersion);
 	}
 
@@ -464,10 +483,10 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
-		int previousTopicVersionId = 0;
+		Integer previousTopicVersionId = null;
 		if (topic.getTopicId() > 0) {
 			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
-			if (oldVersion != null) previousTopicVersionId = oldVersion.getTopicVersionId();
+			if (oldVersion != null) previousTopicVersionId = new Integer(oldVersion.getTopicVersionId());
 		}
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(-1);
@@ -480,8 +499,8 @@ public abstract class PersistencyHandler {
 			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
 		}
 		String authorName = topicVersion.getAuthorIpAddress();
-		if (topicVersion.getAuthorId() > 1) {
-			WikiUser user = lookupWikiUser(topicVersion.getAuthorId());
+		if (topicVersion.getAuthorId() != null) {
+			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue());
 			authorName = user.getDisplayName();
 			if (authorName == null || authorName.length() == 0) authorName = user.getLogin();
 		}
