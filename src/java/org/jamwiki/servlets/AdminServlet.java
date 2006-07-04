@@ -31,7 +31,6 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.db.DatabaseInit;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -64,11 +63,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			return next;
 		}
 		if (isTopic(request, "Special:Upgrade")) {
-			if (function.equals("Create")) {
-				upgradeCreate(request, next);
-			} else if (function.equals("Purge")) {
-				upgradePurge(request, next);
-			} else if (function.equals("Convert to File")) {
+			if (function.equals("Convert to File")) {
 				upgradeConvertToFile(request, next);
 			} else if (function.equals("Convert to Database")) {
 				upgradeConvertToDatabase(request, next);
@@ -589,38 +584,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		} catch (Exception e) {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
-		}
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
-	}
-
-	/**
-	 *
-	 */
-	private void upgradeCreate(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			DatabaseInit.initialize();
-			next.addObject("message", "Database tables successfully created");
-		} catch (Exception e) {
-			logger.error("Failure while executing database creation", e);
-			next.addObject("errorMessage", "Failure while executing database creation: " + e.getMessage());
-		}
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Upgrade");
-	}
-
-	/**
-	 *
-	 */
-	private void upgradePurge(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			DatabaseInit.cleanup();
-			next.addObject("message", "Database tables successfully purged");
-		} catch (Exception e) {
-			logger.error("Failure while executing database cleanup", e);
-			next.addObject("errorMessage", "Failure while executing database cleanup: " + e.getMessage());
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN_UPGRADE);
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));

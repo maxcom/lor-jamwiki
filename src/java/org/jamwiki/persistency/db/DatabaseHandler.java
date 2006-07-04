@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -37,6 +38,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 
 /**
  *
@@ -45,6 +47,8 @@ public class DatabaseHandler extends PersistencyHandler {
 
 	public static final String DB_TYPE_ORACLE = "oracle";
 	public static final String DB_TYPE_MYSQL = "mysql";
+	private static final String INIT_SCRIPT_ANSI = "create_ansi.sql";
+	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
 	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
 	private static Hashtable virtualWikiIdHash = null;
 	private static Hashtable virtualWikiNameHash = null;
@@ -420,6 +424,48 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	private static String createScript() {
+		String databaseType = DatabaseHandler.getDatabaseType();
+		if (databaseType.equals(DB_TYPE_ORACLE)) {
+			return INIT_SCRIPT_ORACLE;
+		}
+		return INIT_SCRIPT_ANSI;
+	}
+
+	/**
+	 * Run the create tables script
+	 * Ignore SQL exceptions as these may just be the result of existing tables getting in the
+	 * way of create table calls
+	 *
+	 * @throws java.lang.Exception
+	 */
+	private static void createTables() throws Exception {
+		String script = DatabaseHandler.createScript();
+		String contents = Utilities.readFile(script);
+		StringTokenizer tokens = new StringTokenizer(contents, ";");
+		String sql = null;
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			Statement st = conn.createStatement();
+			while (tokens.hasMoreTokens()) {
+				sql = tokens.nextToken();
+				st.executeUpdate(sql);
+			}
+			st.close();
+		} catch (Exception e) {
+			if (sql != null) {
+				throw new Exception("Failure while executing SQL: " + sql, e);
+			}
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		Connection conn = null;
@@ -605,7 +651,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		}
 		if (!tablesExist) {
 			// set up tables
-			DatabaseInit.initialize();
+			DatabaseHandler.createTables();
 		}
 		sql = "select * from jam_virtual_wiki ";
 		rs = DatabaseConnection.executeQuery(sql);
