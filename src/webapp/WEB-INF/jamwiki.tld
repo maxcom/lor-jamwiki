@@ -82,15 +82,6 @@
     </attribute>
   </tag>
   <tag>
-    <name>current-member</name>
-    <tag-class>org.jamwiki.tags.MemberTag</tag-class>
-    <body-content>JSP</body-content>
-    <attribute>
-      <name>var</name>
-      <required>true</required>
-    </attribute>
-  </tag>
-  <tag>
     <name>checked</name>
     <tag-class>org.jamwiki.tags.CheckedTag</tag-class>
     <body-content>JSP</body-content>
