@@ -6,15 +6,6 @@
   <jsp-version>1.1</jsp-version>
   <short-name>jamwiki</short-name>
   <tag>
-    <name>separate-words</name>
-    <tag-class>org.jamwiki.tags.SeparateWordsTag</tag-class>
-    <body-content>JSP</body-content>
-    <attribute>
-      <name>value</name>
-      <required>true</required>
-    </attribute>
-  </tag>
-  <tag>
     <name>current-user</name>
     <tag-class>org.jamwiki.tags.CurrentUserTag</tag-class>
     <body-content>JSP</body-content>
