@@ -2,6 +2,22 @@
 0.0.3
 =====
 
+* [FEATURE] Add support for user accounts.
+* [FEATURE] Added user registration and login pages.
+* [FEATURE] Record user information when editing for logged-in users.
+* [FEATURE] Setup now requires creation of a default admin account.
+* [FEATURE] Remove admin password option from admin pages.
+* [FEATURE] Top navigation now shows login/logout option.
+* [FEATURE] Code cleanups including deletion of unused code.  War file
+  size should now be about 200K smaller.
+* [FEATURE] Remove and update several database field values.  BREAKS ANY
+  EXISTING INSTALLATION!
+* [FEATURE] Include copy of LGPL in WAR file distribution.
+* [FEATURE] History page now displays author & edit comment.
+* [FEATURE] History & recent changes organization is now more like MediaWiki.
+* [FEATURE] Remove database setup options from Special:Upgrade.
+* [BUG] File handling of next_id values could sometimes cause error.
+* [BUG] Miscellaneous bugfixes.
 
 0.0.2
 =====
