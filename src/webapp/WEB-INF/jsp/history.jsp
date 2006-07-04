@@ -43,21 +43,33 @@ function inactive(element) {
 }
 </script>
 
+<br />
+
 <c:choose>
 	<c:when test="${param.type=='all'}">
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="historyForm">
 <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_DIFF %>"/>
 <input type="hidden" name="type" value="arbitrary"/>
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
-<table>
+<input type="submit" value='<f:message key="history.diff"/>'/>
+
+<br />
+
+<ul>
 		<c:forEach items="${versions}" var="version">
-		<f:formatDate value="${version.editDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" var="editDate" />
-<tr>
-	<td><a href="<jamwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${version.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><c:out value="${editDate}"/></a></td>
-	<td><input type="checkbox" name='<c:out value="diff:${version.topicVersionId}"/>' onclick="inactive(this)" /></td>
-</tr>
+<li>
+	<input type="checkbox" name='<c:out value="diff:${version.topicVersionId}"/>' onclick="inactive(this)" />
+	&#160;&#160;
+	<a href="<jamwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${version.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${version.editDate}" type="both" dateStyle="MEDIUM" timeStyle="MEDIUM" /></a>
+	&#160;&#160;
+	<c:out value="${version.authorIpAddress}" />
+	&#160;
+	<c:if test="${!empty version.editComment}">&#160;(<c:out value="${version.editComment}" />)</c:if>
 		</c:forEach>
-</table>
+</ul>
+
+<br />
+
 <input type="submit" value='<f:message key="history.diff"/>'/>
 </form>
 	</c:when>
