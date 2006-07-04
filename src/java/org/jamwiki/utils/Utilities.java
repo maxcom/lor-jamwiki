@@ -116,31 +116,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Convert the filename-friendly date format back to a Java date
-	 */
-	public static Date convertFileFriendlyDate(String filename) {
-		Calendar cal = Calendar.getInstance();
-		int position = filename.lastIndexOf(FileHandler.EXT) + FileHandler.EXT.length();
-		if (position != -1) {
-			// plus one to get rid of the point before the date.
-			filename = filename.substring(position + 1);
-		} else {
-			logger.error("Didn't found Extension " + FileHandler.EXT + " in " + filename);
-			return null;
-		}
-		StringTokenizer tokens = new StringTokenizer(filename, ".");
-		cal.set(
-			Integer.parseInt(tokens.nextToken()),
-			Integer.parseInt(tokens.nextToken()) - 1,
-			Integer.parseInt(tokens.nextToken()),
-			Integer.parseInt(tokens.nextToken()),
-			Integer.parseInt(tokens.nextToken()),
-			Integer.parseInt(tokens.nextToken())
-		);
-		return cal.getTime();
-	}
-
-	/**
 	 *
 	 */
 	public static String convertToHTML(char character) {
