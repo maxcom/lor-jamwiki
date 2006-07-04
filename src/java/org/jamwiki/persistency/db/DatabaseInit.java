@@ -189,42 +189,6 @@ public class DatabaseInit {
 	}
 
 	/**
-	 * Optionally purge obsolete data from the database.
-	 */
-	private void purgeVQWiki278() throws Exception {
-		Connection conn = null;
-		String sql = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			Statement st = conn.createStatement();
-			sql = "DROP TABLE WikiMember";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE Notification";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE VirtualWiki";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE TopicReadOnly";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE TopicLock";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE TopicChange";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE TopicVersion";
-			st.executeUpdate(sql);
-			sql = "DROP TABLE Topic";
-			st.executeUpdate(sql);
-			st.close();
-		} catch (Exception e) {
-			if (sql != null) {
-				throw new Exception("Failure while executing SQL: " + sql, e);
-			}
-			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
-		}
-	}
-
-	/**
 	 * If the JAMWiki version has changed update the database as needed.
 	 */
 	public void upgrade() throws Exception {

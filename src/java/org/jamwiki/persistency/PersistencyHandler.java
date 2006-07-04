@@ -26,18 +26,14 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiMember;
-import org.jamwiki.WikiMembers;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
-import org.jamwiki.persistency.db.DatabaseWikiMembers;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
-import org.jamwiki.persistency.file.FileWikiMembers;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -88,6 +84,20 @@ public abstract class PersistencyHandler {
 	 */
 	public static Vector convert(PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
 		Vector messages = new Vector();
+		// Users
+		Collection userNames = fromHandler.getAllWikiUserLogins();
+		for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
+			String userName = (String)userIterator.next();
+			try {
+				WikiUser user = fromHandler.lookupWikiUser(userName);
+				toHandler.addWikiUser(user);
+				messages.add("Added user " + userName);
+			} catch (Exception e) {
+				String msg = "Unable to convert user: " + userName;
+				logger.error(msg, e);
+				messages.add(msg + ": " + e.getMessage());
+			}
+		}
 		Collection virtualWikis = fromHandler.getVirtualWikiList();
 		for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
 			String virtualWiki = (String) virtualWikiIterator.next();
@@ -156,22 +166,6 @@ public abstract class PersistencyHandler {
 					messages.add(msg + ": " + e.getMessage());
 				}
 			}
-//			// Members
-//			WikiMembers fileMembers = new FileWikiMembers(virtualWiki);
-//			WikiMembers databaseMembers = new DatabaseWikiMembers(virtualWiki);
-//			Collection members = databaseMembers.getAllMembers();
-//			for (Iterator memberIterator = members.iterator(); memberIterator.hasNext();) {
-//				WikiMember wikiMember = (WikiMember) memberIterator.next();
-//				try {
-//					fileMembers.addMember(
-//						wikiMember.getUserName(),
-//						wikiMember.getEmail(),
-//						wikiMember.getKey()
-//					);
-//				} catch (Exception e) {
-//					logger.error("Unable to convert wiki member to file: " + wikiMember.getUserName() + ": " + e.getMessage());
-//				}
-//			}
 //			// Notifications
 //			Collection databaseNotifications = DatabaseNotify.getAllNotifications(virtualWiki);
 //			for (Iterator iterator = databaseNotifications.iterator(); iterator.hasNext();) {
@@ -257,6 +251,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract List getAllTopicNames(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract List getAllWikiUserLogins() throws Exception;
 
 	/**
 	 *
@@ -399,6 +398,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract WikiUser lookupWikiUser(String login, String password) throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract WikiUser lookupWikiUser(String login) throws Exception;
 
 	/**
 	 * Do emergency repairs by clearing all locks and deleting recent changes files

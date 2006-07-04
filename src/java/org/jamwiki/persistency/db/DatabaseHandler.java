@@ -168,6 +168,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String STATEMENT_SELECT_WIKI_USER_LOGIN =
 	    "select wiki_user_id from jam_wiki_user_info "
 	    + "where login = ? ";
+	private static final String STATEMENT_SELECT_WIKI_USER_LOGINS =
+	    "select login from jam_wiki_user_info ";
 	private static final String STATEMENT_UPDATE_TOPIC =
 		"update jam_topic set "
 		+ "virtual_wiki_id = ?, "
@@ -469,8 +471,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public List getAllWikiUserLogins() throws Exception {
-		// FIXME - implement
-		return null;
+		List all = new ArrayList();
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_LOGINS);
+		while (rs.next()) {
+			all.add(rs.getString("login"));
+		}
+		return all;
 	}
 
 	/**

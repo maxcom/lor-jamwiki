@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiMembers;
 import org.jamwiki.model.Topic;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
@@ -99,9 +98,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		}
 		if (function.equals("clearEditLock")) {
 			clearEditLock(request, next);
-		}
-		if (function.equals("removeUser")) {
-			removeUser(request, next);
 		}
 		if (function.equals("addVirtualWiki")) {
 			addVirtualWiki(request, next);
@@ -557,31 +553,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		} catch (Exception e) {
 			logger.error("Failure while refreshing search index", e);
 			String message = "Failure while refreshing search index: " + e.getMessage();
-			next.addObject("message", message);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void removeUser(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ADMIN);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String user = request.getParameter("userName");
-		try {
-			WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
-			if (members.removeMember(user)) {
-				String message = user + Utilities.getMessage("admin.message.userremoved.success", request.getLocale());
-				next.addObject("message", message);
-			} else {
-				String message = user + Utilities.getMessage("admin.message.userremoved.failure", request.getLocale());
-				next.addObject("message", message);
-			}
-		} catch (Exception e) {
-			logger.error("Failure while removing user " + user, e);
-			String message = "Failure while removing user " + user + ": " + e.getMessage();
 			next.addObject("message", message);
 		}
 	}

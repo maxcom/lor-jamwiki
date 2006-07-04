@@ -363,6 +363,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public List getAllWikiUserLogins() throws Exception {
+		// FIXME - implement
+		return null;
+	}
+
+	/**
+	 *
+	 */
 	public List getLockList(String virtualWiki) throws Exception {
 		List all = new LinkedList();
 		File[] files = retrieveLockFiles(virtualWiki);
@@ -719,7 +727,18 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public WikiUser lookupWikiUser(String login) throws Exception {
+		// FIXME - implement this
+		String filename = wikiUserFilename(login);
+		File file = getPathFor(null, USER_DIR, filename);
+		return initWikiUser(file);
+	}
+
+	/**
+	 *
+	 */
 	public WikiUser lookupWikiUser(String login, String password) throws Exception {
+		// FIXME - implement
 		String filename = wikiUserFilename(login);
 		File file = getPathFor(null, USER_DIR, filename);
 		return initWikiUser(file);
