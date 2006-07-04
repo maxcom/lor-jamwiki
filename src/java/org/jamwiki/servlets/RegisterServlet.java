@@ -170,7 +170,6 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
-		user.setVirtualWiki(virtualWiki);
 		user.setLogin(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
 		user.setEmail(request.getParameter("email"));

@@ -37,7 +37,6 @@ public class WikiUser {
 	private String lastName = null;
 	private String login = null;
 	private int userId = -1;
-	private String virtualWiki = null;
 	private static Logger logger = Logger.getLogger(WikiUser.class);
 
 	/**
@@ -212,19 +211,5 @@ public class WikiUser {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
-	}
-
-	/**
-	 *
-	 */
-	public String getVirtualWiki() {
-		return this.virtualWiki;
-	}
-
-	/**
-	 *
-	 */
-	public void setVirtualWiki(String virtualWiki) {
-		this.virtualWiki = virtualWiki;
 	}
 }

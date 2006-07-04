@@ -97,7 +97,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ ") ";
 	private static final String STATEMENT_INSERT_WIKI_USER =
 		"insert into jam_wiki_user ("
-		+   "wiki_user_id, login, virtual_wiki_id, display_name, create_date, "
+		+   "wiki_user_id, login, display_name, create_date, "
 		+   "last_login_date, create_ip_address, last_login_ip_address, "
 		+   "is_admin "
 		+ ") values ( "
@@ -152,20 +152,22 @@ public class DatabaseHandler extends PersistencyHandler {
 		"select nextval('jam_wiki_user_seq') as wiki_user_id ";
 	private static final String STATEMENT_SELECT_WIKI_USER =
 	    "select jam_wiki_user.wiki_user_id, jam_wiki_user.login, "
-	    +   "jam_wiki_user.virtual_wiki_id, jam_wiki_user.display_name, "
-	    +   "jam_wiki_user.create_date, jam_wiki_user.last_login_date, "
-	    +   "jam_wiki_user.create_ip_address, jam_wiki_user.last_login_ip_address, "
-	    +   "jam_wiki_user.is_admin, jam_wiki_user_info.email, "
-	    +   "jam_wiki_user_info.first_name, jam_wiki_user_info.last_name, "
-	    +   "jam_wiki_user_info.encoded_password "
+	    +   "jam_wiki_user.display_name, jam_wiki_user.create_date, "
+	    +   "jam_wiki_user.last_login_date, jam_wiki_user.create_ip_address, "
+	    +   "jam_wiki_user.last_login_ip_address, jam_wiki_user.is_admin, "
+	    +   "jam_wiki_user_info.email, jam_wiki_user_info.first_name, "
+	    +   "jam_wiki_user_info.last_name, jam_wiki_user_info.encoded_password "
 	    + "from jam_wiki_user "
 	    + "left outer join jam_wiki_user_info "
 	    + "on (jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) "
 	    + "where jam_wiki_user.wiki_user_id = ? ";
-	private static final String STATEMENT_SELECT_WIKI_USER_ID =
+	private static final String STATEMENT_SELECT_WIKI_USER_PASSWORD =
 	    "select wiki_user_id from jam_wiki_user_info "
 	    + "where login = ? "
 	    + "and encoded_password = ? ";
+	private static final String STATEMENT_SELECT_WIKI_USER_LOGIN =
+	    "select wiki_user_id from jam_wiki_user_info "
+	    + "where login = ? ";
 	private static final String STATEMENT_UPDATE_TOPIC =
 		"update jam_topic set "
 		+ "virtual_wiki_id = ?, "
@@ -181,7 +183,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String STATEMENT_UPDATE_WIKI_USER =
 		"update jam_wiki_user set "
 		+ "login = ?, "
-		+ "virtual_wiki_id = ?, "
 		+ "display_name = ?, "
 		+ "last_login_date = ?, "
 		+ "last_login_ip_address = ?, "
@@ -360,7 +361,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public void addWikiUser(WikiUser user) throws Exception {
-		int virtualWikiId = lookupVirtualWikiId(user.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		try {
@@ -372,13 +372,12 @@ public class DatabaseHandler extends PersistencyHandler {
 				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER);
 				stmt.setInt(1, user.getUserId());
 				stmt.setString(2, user.getLogin());
-				stmt.setInt(3, virtualWikiId);
-				stmt.setString(4, user.getDisplayName());
-				stmt.setTimestamp(5, user.getCreateDate());
-				stmt.setTimestamp(6, user.getLastLoginDate());
-				stmt.setString(7, user.getCreateIpAddress());
-				stmt.setString(8, user.getLastLoginIpAddress());
-				stmt.setBoolean(9, user.getAdmin());
+				stmt.setString(3, user.getDisplayName());
+				stmt.setTimestamp(4, user.getCreateDate());
+				stmt.setTimestamp(5, user.getLastLoginDate());
+				stmt.setString(6, user.getCreateIpAddress());
+				stmt.setString(7, user.getLastLoginIpAddress());
+				stmt.setBoolean(8, user.getAdmin());
 				stmt.executeUpdate();
 				// FIXME - may be in LDAP
 				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER_INFO);
@@ -393,12 +392,11 @@ public class DatabaseHandler extends PersistencyHandler {
 				// update
 				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER);
 				stmt.setString(1, user.getLogin());
-				stmt.setInt(2, virtualWikiId);
-				stmt.setString(3, user.getDisplayName());
-				stmt.setTimestamp(4, user.getLastLoginDate());
-				stmt.setString(5, user.getLastLoginIpAddress());
-				stmt.setBoolean(6, user.getAdmin());
-				stmt.setInt(7, user.getUserId());
+				stmt.setString(2, user.getDisplayName());
+				stmt.setTimestamp(3, user.getLastLoginDate());
+				stmt.setString(4, user.getLastLoginIpAddress());
+				stmt.setBoolean(5, user.getAdmin());
+				stmt.setInt(6, user.getUserId());
 				stmt.executeUpdate();
 				// FIXME - may be in LDAP
 				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
@@ -465,6 +463,14 @@ public class DatabaseHandler extends PersistencyHandler {
 			DatabaseConnection.closeConnection(conn, stmt, rs);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	public List getAllWikiUserLogins() throws Exception {
+		// FIXME - implement
+		return null;
 	}
 
 	/**
@@ -681,8 +687,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected static WikiUser initWikiUser(WikiResultSet rs) {
 		try {
-			int virtualWikiId = rs.getInt("virtual_wiki_id");
-			String virtualWiki = lookupVirtualWikiName(virtualWikiId);
 			WikiUser user = new WikiUser();
 			user.setUserId(rs.getInt("wiki_user_id"));
 			user.setLogin(rs.getString("login"));
@@ -893,6 +897,29 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public WikiUser lookupWikiUser(String login) throws Exception {
+		// FIXME - handle LDAP
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
+			stmt.setString(1, login);
+			rs = stmt.executeQuery();
+			if (!rs.next()) return null;
+			int userId = rs.getInt("wiki_user_id");
+			return lookupWikiUser(userId);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
 	public WikiUser lookupWikiUser(String login, String password) throws Exception {
 		// FIXME - handle LDAP
 		Connection conn = null;
@@ -900,7 +927,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		ResultSet rs = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_ID);
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
 			stmt.setString(1, login);
 			stmt.setString(2, Encryption.encrypt(password));
 			rs = stmt.executeQuery();

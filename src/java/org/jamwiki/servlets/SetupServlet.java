@@ -86,7 +86,6 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void setAdminUser(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
-		user.setVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		user.setLogin(request.getParameter("login"));
 		user.setEncodedPassword(Encryption.encrypt(request.getParameter("newPassword")));
 		user.setCreateIpAddress(request.getRemoteAddr());

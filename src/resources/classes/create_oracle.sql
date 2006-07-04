@@ -21,15 +21,13 @@ CREATE SEQUENCE jam_wiki_user_seq;
 CREATE TABLE jam_wiki_user (
   wiki_user_id INTEGER,
   login VARCHAR(100) NOT NULL,
-  virtual_wiki_id INTEGER NOT NULL,
   display_name VARCHAR(100),
   create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   create_ip_address VARCHAR(15) NOT NULL,
   last_login_ip_address VARCHAR(15) NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE,
-  CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id),
-  CONSTRAINT jam_fk_wiki_user_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki
+  CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id)
 );
 
 CREATE TABLE jam_wiki_user_info (
