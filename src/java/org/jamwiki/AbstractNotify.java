@@ -18,11 +18,12 @@ package org.jamwiki;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.Utilities;
 
@@ -59,23 +60,20 @@ public abstract class AbstractNotify implements Notify {
 	 *
 	 */
 	public boolean sendNotifications(String rootPath, Locale locale) throws Exception {
-		logger.debug("sending notifications for path " + rootPath);
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		WikiMembers members = WikiBase.getInstance().getWikiMembersInstance(virtualWiki);
-		logger.debug(members.getAllMembers().size() + " members found");
+		// FIXME - this is broken now.  get only users who want a notification.
+		List members = WikiBase.getInstance().getHandler().getAllWikiUserLogins();
 		WikiMail mailer = WikiMail.getInstance();
 		Iterator anIterator = getMembers().iterator();
 		while (anIterator.hasNext()) {
-			String aUsername = (String) anIterator.next();
-			logger.debug("notification for " + aUsername);
-			WikiMember aMember = members.findMemberByName(aUsername);
+			String login = (String)anIterator.next();
+			WikiUser user = WikiBase.getInstance().getHandler().lookupWikiUser(login);
 			String replyAddress = Environment.getValue(Environment.PROP_EMAIL_REPLY_ADDRESS);
 			StringBuffer buffer = new StringBuffer();
-			buffer.append(messages.getString("mail.notification.body.line1"));
+			buffer.append(Utilities.getMessage("mail.notification.body.line1", locale));
 			buffer.append(topicName);
 			buffer.append("\n");
 			if (!this.virtualWiki.equals(WikiBase.DEFAULT_VWIKI)) {
-				buffer.append(messages.getString("mail.notification.body.line2"));
+				buffer.append(Utilities.getMessage("mail.notification.body.line2", locale));
 				buffer.append(this.virtualWiki);
 				buffer.append("\n");
 			}
@@ -90,7 +88,7 @@ public abstract class AbstractNotify implements Notify {
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 				lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName);
 				if (lastRevisionDate != null) {
-					buffer.append(messages.getString("mail.notification.body.revision") + Utilities.formatDateTime(lastRevisionDate) + "\n");
+					buffer.append(Utilities.getMessage("mail.notification.body.revision", locale) + Utilities.formatDateTime(lastRevisionDate) + "\n");
 //					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, lastRevisionDate);
 //					if (c != null) {
 //						Iterator it = c.iterator();
@@ -104,22 +102,22 @@ public abstract class AbstractNotify implements Notify {
 				}
 			}
 			if (author != null) {
-				buffer.append(messages.getString("mail.notification.body.author") + author + "\n");
+				buffer.append(Utilities.getMessage("mail.notification.body.author", locale) + author + "\n");
 			}
 			String diff = WikiBase.getInstance().getHandler().diff(this.virtualWiki, topic.getName(), 0, 1, false);
-			buffer.append("\n" + messages.getString("mail.notification.body.diff") + "\n" + diff);
+			buffer.append("\n" + Utilities.getMessage("mail.notification.body.diff", locale) + "\n" + diff);
 			buffer.append("\n\n\n----\n\n");
-			buffer.append(messages.getString("mail.unsubscribe") + " <");
+			buffer.append(Utilities.getMessage("mail.unsubscribe", locale) + " <");
 			buffer.append(rootPath);
 			buffer.append("Wiki?action=" + JAMWikiServlet.ACTION_NOTIFY);
 			buffer.append("&notify_action=notify_off&topic=" + Utilities.encodeURL(topicName));
-			buffer.append("&username=" + Utilities.encodeURL(aUsername) + ">");
-			logger.debug("Sending notification email to " + aMember.getEmail() + " for " + virtualWiki + "/" + topicName);
+			buffer.append("&username=" + Utilities.encodeURL(login) + ">");
+			logger.debug("Sending notification email to " + user.getEmail() + " for " + virtualWiki + "/" + topicName);
 			String mailTopicName = topicName;
 			if (mailTopicName.length() > 25) {
 				mailTopicName = topicName.substring(0,25);
 			}
-			mailer.sendMail(replyAddress, aMember.getEmail(), messages.getString("mail.notification.subject") + mailTopicName, buffer.toString());
+			mailer.sendMail(replyAddress, user.getEmail(), Utilities.getMessage("mail.notification.subject", locale) + mailTopicName, buffer.toString());
 		}
 		return true;
 	}

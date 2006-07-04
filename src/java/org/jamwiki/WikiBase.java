@@ -38,11 +38,9 @@ import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
-import org.jamwiki.persistency.db.DatabaseWikiMembers;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileSearchEngine;
-import org.jamwiki.persistency.file.FileWikiMembers;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.search.SearchEngine;
@@ -175,24 +173,6 @@ public class WikiBase {
 				return new DatabaseNotify(virtualWiki, topic);
 			default:
 				return new FileNotify();
-		}
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public WikiMembers getWikiMembersInstance(String virtualWiki) throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return new FileWikiMembers(virtualWiki);
-			case DATABASE:
-				return new DatabaseWikiMembers(virtualWiki);
-			default:
-				return new FileWikiMembers(virtualWiki);
 		}
 	}
 
