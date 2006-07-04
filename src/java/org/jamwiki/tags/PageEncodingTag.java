@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class PageEncodingTag extends TagSupport {
 
-	private static final Logger logger = Logger.getLogger(CurrentUserTag.class);
+	private static final Logger logger = Logger.getLogger(PageEncodingTag.class);
 
 	/**
 	 *
