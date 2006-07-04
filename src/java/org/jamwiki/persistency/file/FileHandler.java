@@ -291,7 +291,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user) throws Exception {
+	public void addWikiUser(WikiUser user) throws Exception {
 		// FIXME - implement
 	}
 
@@ -712,7 +712,15 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public WikiUser lookupWikiUser(int userId) throws Exception {
-		String filename = wikiUserFilename(userId);
+		// FIXME - implement this
+		return null;
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(String login, String password) throws Exception {
+		String filename = wikiUserFilename(login);
 		File file = getPathFor(null, USER_DIR, filename);
 		return initWikiUser(file);
 	}
@@ -870,8 +878,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static String wikiUserFilename(int userId) {
-		return userId + EXT;
+	protected static String wikiUserFilename(String login) {
+		return login + EXT;
 	}
 
 	/**

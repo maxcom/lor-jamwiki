@@ -276,6 +276,7 @@ td.menu-user {
 	font-size: 85%;
 	margin: 0;
 	padding: 0.4em 0.8em 0.4em 0.8em;
+	white-space: nowrap;
 	width: 5px;
 }
 

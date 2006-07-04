@@ -14,7 +14,7 @@
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td><input type="submit" name="submit" value='<f:message key="login.submit"/>'/></td>
+	<td><input type="submit" name="function" value='<f:message key="login.submit"/>'/></td>
 </tr>
 </table>
 </form>

@@ -16,6 +16,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 <table class="menu-user-table">
 <tr>
 	<%-- FIXME: do not hardcode --%>
-	<td class="menu-user"><a href="<jamwiki:link value="Special:SetUsername" />">Username</a></td>
+<c:choose>
+<c:when test="${empty user}">
+	<td class="menu-user"><a href="<jamwiki:link value="Special:Login" />">Login</a> / <a href="<jamwiki:link value="Special:Register" />">Register</a></td>
+</c:when>
+<c:otherwise>
+	<td class="menu-user"><c:out value="${user.displayName}" /></td>
+	<td class="menu-user"><a href="<jamwiki:link value="Special:Logout" />">Logout</a></td>
+</c:otherwise>
+</c:choose>
 </tr>
 </table>

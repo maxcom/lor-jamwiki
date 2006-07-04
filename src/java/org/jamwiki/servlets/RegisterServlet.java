@@ -16,17 +16,17 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
+import java.util.Vector;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMember;
 import org.jamwiki.WikiMembers;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -34,9 +34,9 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class MemberServlet extends JAMWikiServlet implements Controller {
+public class RegisterServlet extends JAMWikiServlet implements Controller {
 
-	private static final Logger logger = Logger.getLogger(MemberServlet.class);
+	private static final Logger logger = Logger.getLogger(RegisterServlet.class);
 
 	/**
 	 *
@@ -47,8 +47,11 @@ public class MemberServlet extends JAMWikiServlet implements Controller {
 		if (false) {
 			// FIXME - used with email notifications
 			notify(request, response, next);
+		} else if (request.getParameter("function") != null) {
+			register(request, response, next);
+		} else {
+			view(request, next);
 		}
-		username(request, response, next);
 		return next;
 	}
 
@@ -66,7 +69,7 @@ public class MemberServlet extends JAMWikiServlet implements Controller {
 			user = Utilities.getUserFromRequest(request);
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_MEMBER);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
 		next.addObject("user", user);
 		WikiMembers members = null;
@@ -141,7 +144,7 @@ public class MemberServlet extends JAMWikiServlet implements Controller {
 		} else if (user == null) {
 			// force user to create a username first
 			next.addObject("userList", usergroup.getListOfAllUsers());
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_MEMBER);
+			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
 			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 			return;
 		}
@@ -151,25 +154,68 @@ public class MemberServlet extends JAMWikiServlet implements Controller {
 	/**
 	 *
 	 */
-	// FIXME - shouldn't need to pass in response
-	private void username(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_MEMBER);
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
+	}
+
+	/**
+	 *
+	 */
+	// FIXME - shouldn't need to pass in response
+	private void register(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String user = null;
-		if (request.getParameter("username") != null && request.getParameter("username").length() > 0) {
-			user = request.getParameter("username");
+		WikiUser user = new WikiUser();
+		user.setVirtualWiki(virtualWiki);
+		user.setLogin(request.getParameter("login"));
+		user.setDisplayName(request.getParameter("displayName"));
+		user.setEmail(request.getParameter("email"));
+		user.setEncodedPassword(Encryption.encrypt(request.getParameter("newPassword")));
+		// FIXME - need to distinguish between add & update
+		user.setCreateIpAddress(request.getRemoteAddr());
+		user.setLastLoginIpAddress(request.getRemoteAddr());
+		next.addObject("user", user);
+		Vector errors = validate(request, next, user);
+		if (errors.size() > 0) {
+			next.addObject("errors", errors);
+			String oldPassword = request.getParameter("oldPassword");
+			String newPassword = request.getParameter("newPassword");
+			String confirmPassword = request.getParameter("confirmPassword");
+			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
+			if (newPassword != null) next.addObject("newPassword", newPassword);
+			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
+		} else {
+			WikiBase.getInstance().getHandler().addWikiUser(user);
+			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 		}
-		if (user == null) {
-			user = Utilities.getUserFromRequest(request);
+	}
+
+	/**
+	 *
+	 */
+	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
+		Vector errors = new Vector();
+		// FIXME - hard coding
+		if (user.getLogin() == null || user.getLogin().length() == 0) {
+			user.setLogin("");
+			errors.add("Login cannot be empty");
 		}
-		Cookie c = Utilities.createUsernameCookie(user);
-		try {
-			response.addCookie(c);
-		} catch (Exception e) {
-			logger.error("Unable to set cookie " + c.getName() + " with value " + c.getValue());
-			throw e;
+		String oldPassword = request.getParameter("oldPassword");
+		String newPassword = request.getParameter("newPassword");
+		String confirmPassword = request.getParameter("confirmPassword");
+		if (newPassword != null || confirmPassword != null) {
+			if (newPassword == null) {
+				errors.add("New password field must be entered");
+			} else if (confirmPassword == null) {
+				errors.add("Password confirmation must be entered");
+			} else if (!newPassword.equals(confirmPassword)) {
+				errors.add("Passwords do not match, please re-enter");
+			}
 		}
+		return errors;
 	}
 }

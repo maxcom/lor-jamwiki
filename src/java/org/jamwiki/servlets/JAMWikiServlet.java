@@ -44,7 +44,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	public static final String ACTION_HISTORY = "action_history";
 	public static final String ACTION_LOGIN = "action_login";
 	public static final String ACTION_LOGOUT = "action_logout";
-	public static final String ACTION_MEMBER = "action_member";
+	public static final String ACTION_REGISTER = "action_member";
 	public static final String ACTION_NOTIFY = "action_notify";
 	public static final String ACTION_PRINT = "action_printable";
 	public static final String ACTION_RSS = "RSS";
@@ -68,6 +68,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	public static final String PARAMETER_SPECIAL = "special";
 	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
+	public static final String PARAMETER_USER = "user";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	private static HashMap cachedContents = new HashMap();
 

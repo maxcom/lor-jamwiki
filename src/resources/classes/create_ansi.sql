@@ -26,6 +26,7 @@ CREATE TABLE jam_wiki_user (
 
 CREATE TABLE jam_wiki_user_info (
   wiki_user_id INTEGER NOT NULL,
+  login VARCHAR(100) NOT NULL,
   email VARCHAR(100),
   first_name VARCHAR(100),
   last_name VARCHAR(100),

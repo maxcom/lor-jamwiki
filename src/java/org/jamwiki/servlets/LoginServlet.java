@@ -16,13 +16,12 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.IOException;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
-import org.jamwiki.utils.Encryption;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -41,17 +40,20 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		JAMWikiServlet.buildLayout(request, next);
-		if (isAction(request, null, JAMWikiServlet.ACTION_LOGOUT)) {
+		if (isTopic(request, "Special:Logout")) {
 			// FIXME - response is non-standard here
 			logout(request, response, next);
 			return null;
-		} else {
+		}
+		if (request.getParameter("function") != null) {
 			// FIXME - response is non-standard here
 			if (login(request, response, next)) {
 				// FIXME - use Spring
 				// login successful, non-Spring redirect
 				return null;
 			}
+		} else {
+			view(request, next);
 		}
 		return next;
 	}
@@ -82,8 +84,8 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 		if (redirect == null || redirect.length() == 0) {
 			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Admin");
 		}
-		// FIXME - hard coding
-		if (!username.equals("admin") || !Encryption.getEncryptedProperty(Environment.PROP_BASE_ADMIN_PASSWORD).equals(password)) {
+		WikiUser user = WikiBase.getInstance().getHandler().lookupWikiUser(username, password);
+		if (user == null) {
 			// should this return a specific message instead?
 			next.addObject("loginFailure", "true");
 			next.addObject("redirect", redirect);
@@ -91,9 +93,24 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
 			return false;
 		}
-		request.getSession().setAttribute("admin", "true");
+		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 		// FIXME - can a redirect be done with Spring?
 		redirect(redirect, response);
 		return true;
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String redirect = request.getParameter("redirect");
+		if (redirect == null || redirect.length() == 0) {
+			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+		}
+		next.addObject("redirect", redirect);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
 	}
 }

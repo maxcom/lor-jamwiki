@@ -56,7 +56,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.servlets.JAMWikiServlet;
 
 /**
  *
@@ -215,6 +217,14 @@ public class Utilities {
 		Cookie c = new Cookie("username", username);
 		c.setMaxAge(Environment.getIntValue(Environment.PROP_BASE_COOKIE_EXPIRE));
 		return c;
+	}
+
+	/**
+	 *
+	 */
+	public static WikiUser currentUser(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		return (WikiUser)session.getAttribute(JAMWikiServlet.PARAMETER_USER);
 	}
 
 	/**
@@ -399,9 +409,8 @@ public class Utilities {
 	 *
 	 */
 	public static boolean isAdmin(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		String value = (String) session.getAttribute("admin");
-		return "true".equals(value);
+		WikiUser user = currentUser(request);
+		return (user != null && user.getAdmin());
 	}
 
 	/**

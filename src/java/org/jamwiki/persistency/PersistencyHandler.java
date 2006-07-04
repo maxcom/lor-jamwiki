@@ -87,7 +87,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected abstract void addWikiUser(WikiUser user) throws Exception;
+	public abstract void addWikiUser(WikiUser user) throws Exception;
 
 	/**
 	 *
@@ -380,6 +380,11 @@ public abstract class PersistencyHandler {
 	public abstract WikiUser lookupWikiUser(int userId) throws Exception;
 
 	/**
+	 *
+	 */
+	public abstract WikiUser lookupWikiUser(String login, String password) throws Exception;
+
+	/**
 	 * Do emergency repairs by clearing all locks and deleting recent changes files
 	 */
 	public void panic() throws Exception {
@@ -474,14 +479,19 @@ public abstract class PersistencyHandler {
 			// write version
 			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion);
 		}
+		String authorName = topicVersion.getAuthorIpAddress();
+		if (topicVersion.getAuthorId() > 1) {
+			WikiUser user = lookupWikiUser(topicVersion.getAuthorId());
+			authorName = user.getDisplayName();
+			if (authorName == null || authorName.length() == 0) authorName = user.getLogin();
+		}
 		RecentChange change = new RecentChange();
 		change.setTopicId(topic.getTopicId());
 		change.setTopicName(topic.getName());
 		change.setTopicVersionId(topicVersion.getTopicVersionId());
 		change.setPreviousTopicVersionId(previousTopicVersionId);
 		change.setAuthorId(topicVersion.getAuthorId());
-		// FIXME - should be the actual author name
-		change.setAuthorName(topicVersion.getAuthorIpAddress());
+		change.setAuthorName(authorName);
 		change.setEditComment(topicVersion.getEditComment());
 		change.setEditDate(topicVersion.getEditDate());
 		change.setEditType(topicVersion.getEditType());

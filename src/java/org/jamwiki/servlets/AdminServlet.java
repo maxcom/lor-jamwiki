@@ -64,10 +64,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			login(request, next);
 			return next;
 		}
-		if (function.equals("logout")) {
-			logout(request, next);
-			return next;
-		}
 		if (isTopic(request, "Special:Upgrade")) {
 			if (function.equals("Create")) {
 				upgradeCreate(request, next);
@@ -249,16 +245,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			redirect += "?" + request.getQueryString();
 		}
 		next.addObject("redirect", redirect);
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Login");
-	}
-
-	/**
-	 *
-	 */
-	private void logout(HttpServletRequest request, ModelAndView next) throws Exception {
-		request.getSession().removeAttribute("admin");
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Login");

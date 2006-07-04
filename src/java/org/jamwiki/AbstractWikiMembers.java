@@ -70,7 +70,7 @@ public abstract class AbstractWikiMembers implements WikiMembers {
 		buffer.append(Utilities.encodeURL(username));
 		buffer.append("&key=");
 		buffer.append(aMember.getKey());
-		buffer.append("&action=").append(JAMWikiServlet.ACTION_MEMBER);
+		buffer.append("&action=").append(JAMWikiServlet.ACTION_REGISTER);
 		WikiMail mailer = WikiMail.getInstance();
 		String replyAddress = Environment.getValue(Environment.PROP_EMAIL_REPLY_ADDRESS);
 		mailer.sendMail(

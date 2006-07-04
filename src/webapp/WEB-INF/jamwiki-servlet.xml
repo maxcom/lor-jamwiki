@@ -17,15 +17,16 @@
 				<prop key="/**/Special:History">History</prop>
 				<prop key="/**/Special:LockList">LockList</prop>
 				<prop key="/**/Special:Login">Login</prop>
+				<prop key="/**/Special:Logout">Login</prop>
 				<prop key="/**/Special:Notify">Notify</prop>
 				<prop key="/**/Special:OrphanedTopics">Topic</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
+				<prop key="/**/Special:Register">Register</prop>
 				<prop key="/**/Special:RSS">RSS</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
-				<prop key="/**/Special:SetUsername">Member</prop>
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
 				<prop key="/**/Special:Unlock">LockList</prop>
 				<prop key="/**/Special:Upgrade">Admin</prop>
@@ -44,10 +45,10 @@
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
 	<bean id="LockList" class="org.jamwiki.servlets.LockListServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
-	<bean id="Member" class="org.jamwiki.servlets.MemberServlet" />
 	<bean id="Notify" class="org.jamwiki.servlets.NotifyServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
+	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />
 	<bean id="RSS" class="org.jamwiki.servlets.RSSServlet" />
 	<bean id="SaveAttachment" class="org.jamwiki.servlets.SaveAttachmentServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />

@@ -37,6 +37,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Encryption;
 
 /**
  *
@@ -97,7 +98,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ ") ";
 	private static final String STATEMENT_INSERT_WIKI_USER =
 		"insert into jam_wiki_user ("
-		+   "user_id, login, virtual_wiki_id, display_name, create_date, "
+		+   "wiki_user_id, login, virtual_wiki_id, display_name, create_date, "
 		+   "last_login_date, create_ip_address, last_login_ip_address, "
 		+   "is_admin "
 		+ ") values ( "
@@ -105,9 +106,9 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ ") ";
 	private static final String STATEMENT_INSERT_WIKI_USER_INFO =
 		"insert into jam_wiki_user_info ("
-		+   "wiki_user_id, email, first_name, last_name, encoded_password "
+		+   "wiki_user_id, login, email, first_name, last_name, encoded_password "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_SELECT_RECENT_CHANGES =
 		"select * from jam_recent_change "
@@ -149,7 +150,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
 		"select nextval('jam_virtual_wiki_seq') as virtual_wiki_id ";
 	private static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
-		"select nextval('jam_wiki_user_seq') as user_id ";
+		"select nextval('jam_wiki_user_seq') as wiki_user_id ";
 	private static final String STATEMENT_SELECT_WIKI_USER =
 	    "select jam_wiki_user.wiki_user_id, jam_wiki_user.login, "
 	    +   "jam_wiki_user.virtual_wiki_id, jam_wiki_user.display_name, "
@@ -160,8 +161,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	    +   "jam_wiki_user_info.encoded_password "
 	    + "from jam_wiki_user "
 	    + "left outer join jam_wiki_user_info "
-	    + "on (jam_wiki_user.user_id = jam_wiki_user_info.user_id) "
-	    + "where jam_wiki_user.user_id = ? ";
+	    + "on (jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) "
+	    + "where jam_wiki_user.wiki_user_id = ? ";
+	private static final String STATEMENT_SELECT_WIKI_USER_ID =
+	    "select wiki_user_id from jam_wiki_user_info "
+	    + "where login = ? "
+	    + "and encoded_password = ? ";
 	private static final String STATEMENT_UPDATE_TOPIC =
 		"update jam_topic set "
 		+ "virtual_wiki_id = ?, "
@@ -182,14 +187,15 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "last_login_date = ?, "
 		+ "last_login_ip_address = ?, "
 		+ "is_admin = ? "
-		+ "where user_id = ? ";
+		+ "where wiki_user_id = ? ";
 	private static final String STATEMENT_UPDATE_WIKI_USER_INFO =
 		"update jam_wiki_user_info set "
+		+ "login = ?, "
 		+ "email = ?, "
 		+ "first_name = ?, "
 		+ "last_name = ?, "
 		+ "encoded_password = ? "
-		+ "where user_id = ? ";
+		+ "where wiki_user_id = ? ";
 
 	/**
 	 *
@@ -350,7 +356,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user) throws Exception {
+	public void addWikiUser(WikiUser user) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(user.getVirtualWiki());
 		Connection conn = null;
 		PreparedStatement stmt = null;
@@ -359,7 +365,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			if (user.getUserId() <= 0) {
 				// add
 				WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
-				user.setUserId(rs.getInt("user_id"));
+				user.setUserId(rs.getInt("wiki_user_id"));
 				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER);
 				stmt.setInt(1, user.getUserId());
 				stmt.setString(2, user.getLogin());
@@ -374,10 +380,11 @@ public class DatabaseHandler extends PersistencyHandler {
 				// FIXME - may be in LDAP
 				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER_INFO);
 				stmt.setInt(1, user.getUserId());
-				stmt.setString(2, user.getEmail());
-				stmt.setString(3, user.getFirstName());
-				stmt.setString(4, user.getLastName());
-				stmt.setString(5, user.getEncodedPassword());
+				stmt.setString(2, user.getLogin());
+				stmt.setString(3, user.getEmail());
+				stmt.setString(4, user.getFirstName());
+				stmt.setString(5, user.getLastName());
+				stmt.setString(6, user.getEncodedPassword());
 				stmt.executeUpdate();
 			} else {
 				// update
@@ -392,11 +399,12 @@ public class DatabaseHandler extends PersistencyHandler {
 				stmt.executeUpdate();
 				// FIXME - may be in LDAP
 				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
-				stmt.setString(1, user.getEmail());
-				stmt.setString(2, user.getFirstName());
-				stmt.setString(3, user.getLastName());
-				stmt.setString(4, user.getEncodedPassword());
-				stmt.setInt(5, user.getUserId());
+				stmt.setString(1, user.getLogin());
+				stmt.setString(2, user.getEmail());
+				stmt.setString(3, user.getFirstName());
+				stmt.setString(4, user.getLastName());
+				stmt.setString(5, user.getEncodedPassword());
+				stmt.setInt(6, user.getUserId());
 				stmt.executeUpdate();
 			}
 		} finally {
@@ -869,6 +877,30 @@ public class DatabaseHandler extends PersistencyHandler {
 			WikiResultSet wrs = new WikiResultSet(rs);
 			if (wrs.size() == 0) return null;
 			return initWikiUser(wrs);
+		} finally {
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn, stmt, rs);
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(String login, String password) throws Exception {
+		// FIXME - handle LDAP
+		Connection conn = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_ID);
+			stmt.setString(1, login);
+			stmt.setString(2, Encryption.encrypt(password));
+			rs = stmt.executeQuery();
+			if (!rs.next()) return null;
+			int userId = rs.getInt("wiki_user_id");
+			return lookupWikiUser(userId);
 		} finally {
 			if (conn != null) {
 				DatabaseConnection.closeConnection(conn, stmt, rs);

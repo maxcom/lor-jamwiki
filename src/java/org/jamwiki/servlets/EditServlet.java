@@ -28,6 +28,7 @@ import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
@@ -210,10 +211,6 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String user = request.getRemoteAddr();
-		if (Utilities.getUserFromRequest(request) != null) {
-			user = Utilities.getUserFromRequest(request);
-		}
 		if (topicName == null) {
 			logger.warn("Attempt to save null topic");
 			// FIXME - hard coding
@@ -247,6 +244,10 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		topicVersion.setVersionContent(contents);
 		topicVersion.setEditComment(request.getParameter("editComment"));
 		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) {
+			topicVersion.setAuthorId(user.getUserId());
+		}
 		WikiBase.getInstance().getHandler().write(topic, topicVersion);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();

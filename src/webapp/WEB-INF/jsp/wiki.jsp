@@ -82,7 +82,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_EDIT_USER)) {
 %>
-		<%@ include file="createUser.jsp" %>
+		<%@ include file="register.jsp" %>
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_HISTORY)) {
 %>
@@ -96,13 +96,13 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="login.jsp" %>
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_MEMBER)) {
-%>
-		<%@ include file="createUser.jsp" %>
-<%
 } else if (action.equals(JAMWikiServlet.ACTION_RECENT_CHANGES)) {
 %>
 		<%@ include file="recentChanges.jsp" %>
+<%
+} else if (action.equals(JAMWikiServlet.ACTION_REGISTER)) {
+%>
+		<%@ include file="register.jsp" %>
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_SEARCH)) {
 %>
@@ -126,7 +126,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else {
 %>
-		<div id="content-article"><c:out value="${contents}" escapeXml="false"/></div>
+		<div id="content-article"><c:out value="${contents}" escapeXml="false" /></div>
 <%
 }
 %>
@@ -136,14 +136,11 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <tr>
 	<td colspan="2" class="footer">
 		<hr width="99%" />
-		<c:out value="${bottomArea}" escapeXml="false"/>
+		<c:out value="${bottomArea}" escapeXml="false" />
 		<br/>
 		<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> Version <jamwiki:wiki-version/> |
-		<a href="<jamwiki:link value="Special:Admin" />?username=admin"><f:message key="admin.title"/></a>
+		<a href="<jamwiki:link value="Special:Admin" />"><f:message key="admin.title" /></a>
 		</font>
-		<c:if test="${not empty pageContext.request.userPrincipal}">|
-		<font size="-3"><a href='Wiki?action=<%= JAMWikiServlet.ACTION_LOGIN %>&logout=true&redirect=Wiki%3F<c:out value="${topic}"/>'><f:message key="general.logout"/></a></font>
-		</c:if>
 	</td>
 </tr>
 </table>

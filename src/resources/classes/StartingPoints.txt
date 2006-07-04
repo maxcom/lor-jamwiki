@@ -9,7 +9,7 @@ Some potentially useful functions:
 * [[Special:LockList|Lock List]] - currently locked topics
 * [[Special:RSS|RSS]] - a RSS news stream of this Wiki
 * [[Special:Search|Search]] - search the Wiki
-* [[Special:SetUsername|Set Username]] - set a name to appear in the RecentChanges
+* [[Special:Register|Register]] - set a name to appear in the RecentChanges
 
 There are also several [[AdminOnlyTopics]] including:
 

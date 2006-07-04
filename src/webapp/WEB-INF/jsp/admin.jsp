@@ -83,14 +83,6 @@ function onUserGroupType() {
 }
 </script>
 
-<form action="<jamwiki:link value="Special:Login" />" method="get">
-  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_LOGOUT %>"/>
-  <table>
-    <tr>
-      <td><input type="submit" value="<f:message key="admin.action.logout"/>"/></td>
-    </tr>
-  </table>
-</form>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
 <c:if test="${!empty message}"><p class="red"><c:out value="${message}" /></p></c:if>
   <p class="subHeader"><f:message key="admin.title.settings"/></p>

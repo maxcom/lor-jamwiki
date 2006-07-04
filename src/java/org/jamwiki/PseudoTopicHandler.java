@@ -20,12 +20,14 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 /**
- * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to a redirect URL rather
- * than a real Wiki topic. Examples are RecentChanges and SetUsername. The mappings of topic names
- * to redirect URLs are persisted in WEB-INF/classes/pseudotopics.properties
+ * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to
+ * a redirect URL rather than a real Wiki topic. Examples are Special:RecentChanges
+ * and Special:Edit. The mappings of topic names to redirect URLs are persisted
+ * in WEB-INF/classes/pseudotopics.properties
  * <p/>
- * Pseudotopics can also have permanent parameters associated with them by making appropriate entries in
- * pseudotopics.properties. E.g. the entries for ToDoWikiTopics looks like this:
+ * Pseudotopics can also have permanent parameters associated with them by making
+ * appropriate entries in pseudotopics.properties. E.g. the entries for
+ * ToDoWikiTopics looks like this:
  * <pre>
  * ToDoWikiTopics=/WEB-INF/jsp/allTopics.jsp
  * ToDoWikiTopics.param.0=todo=true
@@ -33,8 +35,6 @@ import org.apache.log4j.Logger;
  * this means that when ToDoWikiTopics is redirected to the allTopics.jsp a parameter named "todo" with
  * the value "true" is also passed. In this way more than one pseudotopic can be mapped to a single
  * redirect URL.
- * <p/>
- * Subject to LGPL
  */
 public class PseudoTopicHandler {
 

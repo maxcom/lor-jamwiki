@@ -7,7 +7,6 @@
 * [[Special:ToDoTopics|To Do Topics]]
 * [[Special:LockList|Lock List]]
 * [[Special:RSS|RSS]]
-* [[Special:SetUsername|Set Username]]
 * [[AdminOnlyTopics]]
 ----
 * [http://jamwiki.org/ JAMWiki]
