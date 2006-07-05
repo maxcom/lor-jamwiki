@@ -17,9 +17,6 @@
 package org.jamwiki.persistency.db;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -214,36 +211,27 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected void addRecentChange(RecentChange change) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(change.getVirtualWiki());
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_INSERT_RECENT_CHANGE);
-			stmt.setInt(1, change.getTopicVersionId());
-			if (change.getPreviousTopicVersionId() != null) {
-				stmt.setInt(2, change.getPreviousTopicVersionId().intValue());
-			} else {
-				stmt.setNull(2, Types.INTEGER);
-			}
-			stmt.setInt(3, change.getTopicId());
-			stmt.setString(4, change.getTopicName());
-			stmt.setTimestamp(5, change.getEditDate());
-			stmt.setString(6, change.getEditComment());
-			if (change.getAuthorId() != null) {
-				stmt.setInt(7, change.getAuthorId().intValue());
-			} else {
-				stmt.setNull(7, Types.INTEGER);
-			}
-			stmt.setString(8, change.getAuthorName());
-			stmt.setInt(9, change.getEditType());
-			stmt.setInt(10, virtualWikiId);
-			stmt.setString(11, change.getVirtualWiki());
-			stmt.executeUpdate();
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
-			}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
+		stmt.setInt(1, change.getTopicVersionId());
+		if (change.getPreviousTopicVersionId() != null) {
+			stmt.setInt(2, change.getPreviousTopicVersionId().intValue());
+		} else {
+			stmt.setNull(2, Types.INTEGER);
 		}
+		stmt.setInt(3, change.getTopicId());
+		stmt.setString(4, change.getTopicName());
+		stmt.setTimestamp(5, change.getEditDate());
+		stmt.setString(6, change.getEditComment());
+		if (change.getAuthorId() != null) {
+			stmt.setInt(7, change.getAuthorId().intValue());
+		} else {
+			stmt.setNull(7, Types.INTEGER);
+		}
+		stmt.setString(8, change.getAuthorName());
+		stmt.setInt(9, change.getEditType());
+		stmt.setInt(10, virtualWikiId);
+		stmt.setString(11, change.getVirtualWiki());
+		stmt.executeUpdate();
 	}
 
 	/**
@@ -251,52 +239,43 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected void addTopic(Topic topic) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(topic.getVirtualWiki());
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			if (topic.getTopicId() <= 0) {
-				// add
-				WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
-				topic.setTopicId(rs.getInt("topic_id"));
-				stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC);
-				stmt.setInt(1, topic.getTopicId());
-				stmt.setInt(2, virtualWikiId);
-				stmt.setString(3, topic.getName());
-				stmt.setInt(4, topic.getTopicType());
-				if (topic.getLockedBy() != null) {
-					stmt.setInt(5, topic.getLockedBy().intValue());
-				} else {
-					stmt.setNull(5, Types.INTEGER);
-				}
-				stmt.setTimestamp(6, topic.getLockedDate());
-				stmt.setBoolean(7, topic.getReadOnly());
-				stmt.setString(8, topic.getTopicContent());
-				stmt.setString(9, topic.getLockSessionKey());
-				stmt.executeUpdate();
+		if (topic.getTopicId() <= 0) {
+			// add
+			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
+			topic.setTopicId(rs.getInt("topic_id"));
+			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
+			stmt.setInt(1, topic.getTopicId());
+			stmt.setInt(2, virtualWikiId);
+			stmt.setString(3, topic.getName());
+			stmt.setInt(4, topic.getTopicType());
+			if (topic.getLockedBy() != null) {
+				stmt.setInt(5, topic.getLockedBy().intValue());
 			} else {
-				// update
-				stmt = conn.prepareStatement(STATEMENT_UPDATE_TOPIC);
-				stmt.setInt(1, virtualWikiId);
-				stmt.setString(2, topic.getName());
-				stmt.setInt(3, topic.getTopicType());
-				if (topic.getLockedBy() != null) {
-					stmt.setInt(4, topic.getLockedBy().intValue());
-				} else {
-					stmt.setNull(4, Types.INTEGER);
-				}
-				stmt.setTimestamp(5, topic.getLockedDate());
-				stmt.setBoolean(6, topic.getReadOnly());
-				stmt.setString(7, topic.getTopicContent());
-				stmt.setString(8, topic.getLockSessionKey());
-				stmt.setBoolean(9, topic.getDeleted());
-				stmt.setInt(10, topic.getTopicId());
-				stmt.executeUpdate();
+				stmt.setNull(5, Types.INTEGER);
 			}
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
+			stmt.setTimestamp(6, topic.getLockedDate());
+			stmt.setBoolean(7, topic.getReadOnly());
+			stmt.setString(8, topic.getTopicContent());
+			stmt.setString(9, topic.getLockSessionKey());
+			stmt.executeUpdate();
+		} else {
+			// update
+			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC);
+			stmt.setInt(1, virtualWikiId);
+			stmt.setString(2, topic.getName());
+			stmt.setInt(3, topic.getTopicType());
+			if (topic.getLockedBy() != null) {
+				stmt.setInt(4, topic.getLockedBy().intValue());
+			} else {
+				stmt.setNull(4, Types.INTEGER);
 			}
+			stmt.setTimestamp(5, topic.getLockedDate());
+			stmt.setBoolean(6, topic.getReadOnly());
+			stmt.setString(7, topic.getTopicContent());
+			stmt.setString(8, topic.getLockSessionKey());
+			stmt.setBoolean(9, topic.getDeleted());
+			stmt.setInt(10, topic.getTopicId());
+			stmt.executeUpdate();
 		}
 	}
 
@@ -304,57 +283,38 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, conn);
-			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
-			Timestamp editDate = new Timestamp(System.currentTimeMillis());
-			if (topicVersion.getEditDate() != null) {
-				editDate = topicVersion.getEditDate();
-			}
-			stmt = conn.prepareStatement(STATEMENT_INSERT_TOPIC_VERSION);
-			stmt.setInt(1, topicVersion.getTopicVersionId());
-			stmt.setInt(2, topicVersion.getTopicId());
-			stmt.setString(3, topicVersion.getEditComment());
-			stmt.setString(4, topicVersion.getVersionContent());
-			if (topicVersion.getAuthorId() != null) {
-				stmt.setInt(5, topicVersion.getAuthorId().intValue());
-			} else {
-				stmt.setNull(5, Types.INTEGER);
-			}
-			stmt.setInt(6, topicVersion.getEditType());
-			stmt.setString(7, topicVersion.getAuthorIpAddress());
-			stmt.setTimestamp(8, editDate);
-			stmt.executeUpdate();
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
-			}
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
+		topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+		Timestamp editDate = new Timestamp(System.currentTimeMillis());
+		if (topicVersion.getEditDate() != null) {
+			editDate = topicVersion.getEditDate();
 		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
+		stmt.setInt(1, topicVersion.getTopicVersionId());
+		stmt.setInt(2, topicVersion.getTopicId());
+		stmt.setString(3, topicVersion.getEditComment());
+		stmt.setString(4, topicVersion.getVersionContent());
+		if (topicVersion.getAuthorId() != null) {
+			stmt.setInt(5, topicVersion.getAuthorId().intValue());
+		} else {
+			stmt.setNull(5, Types.INTEGER);
+		}
+		stmt.setInt(6, topicVersion.getEditType());
+		stmt.setString(7, topicVersion.getAuthorIpAddress());
+		stmt.setTimestamp(8, editDate);
+		stmt.executeUpdate();
 	}
 
 	/**
 	 *
 	 */
 	public void addVirtualWiki(String virtualWikiName) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		int virtualWikiId;
-		try {
-			conn = DatabaseConnection.getConnection();
-			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE, conn);
-			virtualWikiId = rs.getInt("virtual_wiki_id");
-			stmt = conn.prepareStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setString(2, virtualWikiName);
-			stmt.executeUpdate();
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
-			}
-		}
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
+		int virtualWikiId = rs.getInt("virtual_wiki_id");
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setString(2, virtualWikiName);
+		stmt.executeUpdate();
 		if (virtualWikiNameHash != null) {
 			virtualWikiNameHash.put(virtualWikiName, new Integer(virtualWikiId));
 		}
@@ -367,57 +327,48 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public void addWikiUser(WikiUser user) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			if (user.getUserId() <= 0) {
-				// add
-				WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
-				user.setUserId(rs.getInt("wiki_user_id"));
-				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER);
-				stmt.setInt(1, user.getUserId());
-				stmt.setString(2, user.getLogin());
-				stmt.setString(3, user.getDisplayName());
-				stmt.setTimestamp(4, user.getCreateDate());
-				stmt.setTimestamp(5, user.getLastLoginDate());
-				stmt.setString(6, user.getCreateIpAddress());
-				stmt.setString(7, user.getLastLoginIpAddress());
-				stmt.setBoolean(8, user.getAdmin());
-				stmt.executeUpdate();
-				// FIXME - may be in LDAP
-				stmt = conn.prepareStatement(STATEMENT_INSERT_WIKI_USER_INFO);
-				stmt.setInt(1, user.getUserId());
-				stmt.setString(2, user.getLogin());
-				stmt.setString(3, user.getEmail());
-				stmt.setString(4, user.getFirstName());
-				stmt.setString(5, user.getLastName());
-				stmt.setString(6, user.getEncodedPassword());
-				stmt.executeUpdate();
-			} else {
-				// update
-				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER);
-				stmt.setString(1, user.getLogin());
-				stmt.setString(2, user.getDisplayName());
-				stmt.setTimestamp(3, user.getLastLoginDate());
-				stmt.setString(4, user.getLastLoginIpAddress());
-				stmt.setBoolean(5, user.getAdmin());
-				stmt.setInt(6, user.getUserId());
-				stmt.executeUpdate();
-				// FIXME - may be in LDAP
-				stmt = conn.prepareStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
-				stmt.setString(1, user.getLogin());
-				stmt.setString(2, user.getEmail());
-				stmt.setString(3, user.getFirstName());
-				stmt.setString(4, user.getLastName());
-				stmt.setString(5, user.getEncodedPassword());
-				stmt.setInt(6, user.getUserId());
-				stmt.executeUpdate();
-			}
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt);
-			}
+		if (user.getUserId() <= 0) {
+			// add
+			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
+			user.setUserId(rs.getInt("wiki_user_id"));
+			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
+			stmt.setInt(1, user.getUserId());
+			stmt.setString(2, user.getLogin());
+			stmt.setString(3, user.getDisplayName());
+			stmt.setTimestamp(4, user.getCreateDate());
+			stmt.setTimestamp(5, user.getLastLoginDate());
+			stmt.setString(6, user.getCreateIpAddress());
+			stmt.setString(7, user.getLastLoginIpAddress());
+			stmt.setBoolean(8, user.getAdmin());
+			stmt.executeUpdate();
+			// FIXME - may be in LDAP
+			stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
+			stmt.setInt(1, user.getUserId());
+			stmt.setString(2, user.getLogin());
+			stmt.setString(3, user.getEmail());
+			stmt.setString(4, user.getFirstName());
+			stmt.setString(5, user.getLastName());
+			stmt.setString(6, user.getEncodedPassword());
+			stmt.executeUpdate();
+		} else {
+			// update
+			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER);
+			stmt.setString(1, user.getLogin());
+			stmt.setString(2, user.getDisplayName());
+			stmt.setTimestamp(3, user.getLastLoginDate());
+			stmt.setString(4, user.getLastLoginIpAddress());
+			stmt.setBoolean(5, user.getAdmin());
+			stmt.setInt(6, user.getUserId());
+			stmt.executeUpdate();
+			// FIXME - may be in LDAP
+			stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
+			stmt.setString(1, user.getLogin());
+			stmt.setString(2, user.getEmail());
+			stmt.setString(3, user.getFirstName());
+			stmt.setString(4, user.getLastName());
+			stmt.setString(5, user.getEncodedPassword());
+			stmt.setInt(6, user.getUserId());
+			stmt.executeUpdate();
 		}
 	}
 
@@ -444,22 +395,16 @@ public class DatabaseHandler extends PersistencyHandler {
 		String contents = Utilities.readFile(script);
 		StringTokenizer tokens = new StringTokenizer(contents, ";");
 		String sql = null;
-		Connection conn = null;
 		try {
-			conn = DatabaseConnection.getConnection();
-			Statement st = conn.createStatement();
 			while (tokens.hasMoreTokens()) {
 				sql = tokens.nextToken();
-				st.executeUpdate(sql);
+				DatabaseConnection.executeUpdate(sql);
 			}
-			st.close();
 		} catch (Exception e) {
 			if (sql != null) {
 				throw new Exception("Failure while executing SQL: " + sql, e);
 			}
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
 		}
 	}
 
@@ -468,20 +413,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			int virtualWikiId = lookupVirtualWikiId(virtualWiki);
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPICS);
-			stmt.setInt(1, virtualWikiId);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				all.add(rs.getString("topic_name"));
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
+		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS);
+		stmt.setInt(1, virtualWikiId);
+		WikiResultSet rs = stmt.executeQuery();
+		while (rs.next()) {
+			all.add(rs.getString("topic_name"));
 		}
 		return all;
 	}
@@ -491,24 +428,15 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
 		List all = new ArrayList();
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
 		}
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSIONS);
-			stmt.setInt(1, topic.getTopicId());
-			rs = stmt.executeQuery();
-			WikiResultSet wrs = new WikiResultSet(rs);
-			while (wrs.next()) {
-				all.add(initTopicVersion(wrs));
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSIONS);
+		stmt.setInt(1, topic.getTopicId());
+		WikiResultSet rs = stmt.executeQuery();
+		while (rs.next()) {
+			all.add(initTopicVersion(rs));
 		}
 		return all;
 	}
@@ -537,22 +465,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public List getLockList(String virtualWiki) throws Exception {
 		List all = new ArrayList();
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_LOCKED);
-			stmt.setInt(1, virtualWikiId);
-			rs = stmt.executeQuery();
-			WikiResultSet wrs = new WikiResultSet(rs);
-			while (wrs.next()) {
-				Topic topic = initTopic(wrs);
-				all.add(topic);
-			}
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_LOCKED);
+		stmt.setInt(1, virtualWikiId);
+		WikiResultSet rs = stmt.executeQuery();
+		while (rs.next()) {
+			Topic topic = initTopic(rs);
+			all.add(topic);
 		}
 		return all;
 	}
@@ -563,22 +482,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
 		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setBoolean(2, true);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				all.add(rs.getString("topic_name"));
-			}
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setBoolean(2, true);
+		WikiResultSet rs = stmt.executeQuery();
+		while (rs.next()) {
+			all.add(rs.getString("topic_name"));
 		}
 		return all;
 	}
@@ -588,24 +497,15 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public Collection getRecentChanges(String virtualWiki, int numChanges) throws Exception {
 		ArrayList all = new ArrayList();
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_RECENT_CHANGES);
-			stmt.setString(1, virtualWiki);
-			stmt.setInt(2, numChanges);
-			rs = stmt.executeQuery();
-			WikiResultSet wrs = new WikiResultSet(rs);
-			while (wrs.next()) {
-				RecentChange change = initRecentChange(wrs);
-				all.add(change);
-			}
-			return all;
-		} finally {
-			DatabaseConnection.closeConnection(conn, stmt, rs);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
+		stmt.setString(1, virtualWiki);
+		stmt.setInt(2, numChanges);
+		WikiResultSet rs = stmt.executeQuery();
+		while (rs.next()) {
+			RecentChange change = initRecentChange(rs);
+			all.add(change);
 		}
+		return all;
 	}
 
 	/**
@@ -831,24 +731,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		Topic topic = lookupTopic(virtualWiki, topicName);
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
-			stmt.setInt(1, topic.getTopicId());
-			rs = stmt.executeQuery();
-			if (rs == null) return null;
-			rs.next();
-			int topicVersionId = rs.getInt("topic_version_id");
-			return lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
+		stmt.setInt(1, topic.getTopicId());
+		WikiResultSet rs = stmt.executeQuery();
+		if (rs.size() == 0) return null;
+		int topicVersionId = rs.getInt("topic_version_id");
+		return lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 	}
 
 	/**
@@ -856,45 +745,23 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC);
-			stmt.setInt(1, virtualWikiId);
-			stmt.setString(2, topicName);
-			rs = stmt.executeQuery();
-			WikiResultSet wrs = new WikiResultSet(rs);
-			if (wrs.size() == 0) return null;
-			return initTopic(wrs);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setString(2, topicName);
+		WikiResultSet rs = stmt.executeQuery();
+		if (rs.size() == 0) return null;
+		return initTopic(rs);
 	}
 
 	/**
 	 *
 	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_TOPIC_VERSION);
-			stmt.setInt(1, topicVersionId);
-			rs = stmt.executeQuery();
-			WikiResultSet wrs = new WikiResultSet(rs);
-			if (wrs.size() == 0) return null;
-			return initTopicVersion(wrs);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION);
+		stmt.setInt(1, topicVersionId);
+		WikiResultSet rs = stmt.executeQuery();
+		if (rs.size() == 0) return null;
+		return initTopicVersion(rs);
 	}
 
 	/**
@@ -929,22 +796,11 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public WikiUser lookupWikiUser(int userId) throws Exception {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER);
-			stmt.setInt(1, userId);
-			rs = stmt.executeQuery();
-			WikiResultSet wrs = new WikiResultSet(rs);
-			if (wrs.size() == 0) return null;
-			return initWikiUser(wrs);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER);
+		stmt.setInt(1, userId);
+		WikiResultSet rs = stmt.executeQuery();
+		if (rs.size() == 0) return null;
+		return initWikiUser(rs);
 	}
 
 	/**
@@ -952,22 +808,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public WikiUser lookupWikiUser(String login) throws Exception {
 		// FIXME - handle LDAP
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
-			stmt.setString(1, login);
-			rs = stmt.executeQuery();
-			if (!rs.next()) return null;
-			int userId = rs.getInt("wiki_user_id");
-			return lookupWikiUser(userId);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
+		stmt.setString(1, login);
+		WikiResultSet rs = stmt.executeQuery();
+		if (rs.size() == 0) return null;
+		int userId = rs.getInt("wiki_user_id");
+		return lookupWikiUser(userId);
 	}
 
 	/**
@@ -975,23 +821,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public WikiUser lookupWikiUser(String login, String password) throws Exception {
 		// FIXME - handle LDAP
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			stmt = conn.prepareStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
-			stmt.setString(1, login);
-			stmt.setString(2, Encryption.encrypt(password));
-			rs = stmt.executeQuery();
-			if (!rs.next()) return null;
-			int userId = rs.getInt("wiki_user_id");
-			return lookupWikiUser(userId);
-		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn, stmt, rs);
-			}
-		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
+		stmt.setString(1, login);
+		stmt.setString(2, Encryption.encrypt(password));
+		WikiResultSet rs = stmt.executeQuery();
+		if (rs.size() == 0) return null;
+		int userId = rs.getInt("wiki_user_id");
+		return lookupWikiUser(userId);
 	}
 
 	/**

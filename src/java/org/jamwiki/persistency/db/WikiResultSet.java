@@ -29,8 +29,9 @@ import org.apache.log4j.Logger;
  * This class is a wrapper around the java.sql.ResultSet class, allowing the data
  * from a SQL query to be accessed without requiring that a database connection be
  * held.  The main advantage of this approach is that all connection handling can
- * be done by low-level database functions, and only the user can be returned query
- * data without any need to close a connection after the data is processed.
+ * be done by low-level database functions, and the user can process a result set
+ * without the need to ensure that the connection is properly closed after the
+ * data is processed.
  */
 public class WikiResultSet {
 
