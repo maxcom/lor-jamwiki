@@ -436,6 +436,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 				Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY,
 				request.getParameter(Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY) != null
 			);
+			/*
 			int membershipType = Integer.parseInt(request.getParameter(Environment.PROP_USERGROUP_TYPE));
 			String usergroupType;
 			if (membershipType == WikiBase.LDAP) {
@@ -470,6 +471,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 					}
 				}
 			}
+			*/
 			if (Environment.getValue(Environment.PROP_BASE_FILE_DIR) == null) {
 				// if home directory set empty, use system home directory
 				String dir = System.getProperty("user.home") + System.getProperty("file.separator") + "wiki";

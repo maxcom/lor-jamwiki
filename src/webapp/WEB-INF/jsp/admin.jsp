@@ -55,7 +55,8 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=false
 	}
 }
-
+<%--
+FIXME - LDAP not supported at the moment, comment this out
 function onUserGroupType() {
 	if (document.getElementById("<%= Environment.PROP_USERGROUP_TYPE %>").options[document.getElementById("<%= Environment.PROP_USERGROUP_TYPE %>").selectedIndex].value == "0") {
 		document.getElementById("<%= Environment.PROP_USERGROUP_FACTORY %>").disabled=true
@@ -81,6 +82,7 @@ function onUserGroupType() {
 		document.getElementById("<%= Environment.PROP_USERGROUP_DETAILVIEW %>").disabled=false
 	}
 }
+--%>
 </script>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
@@ -440,6 +442,8 @@ function onUserGroupType() {
 	</tr>
 <!-- END DATABASE-PERSISTENCE -->
 
+<%--
+FIXME - LDAP not supported at the moment, comment this out
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr>
       <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.dbcp.usergroupheader"/></td>
@@ -517,10 +521,14 @@ function onUserGroupType() {
       </td>
     </tr>
 <!-- END USERGROUP-TYPE -->
+--%>
 <script>
 	<!-- call it initially -->
 	onPersistenceType()
+<%--
+FIXME - LDAP not supported at the moment, comment this out
 	onUserGroupType()
+--%>
 </script>
     <tr>
       <td class="normal">
