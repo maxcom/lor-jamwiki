@@ -123,14 +123,6 @@ public class Environment {
 	}
 
 	/**
-	 * Retrieves the singleton instance
-	 */
-	public static Environment getInstance() {
-		// this method is no longer needed.
-		return instance;
-	}
-
-	/**
 	 * Returns the value of a property.
 	 *
 	 * @param name The name of the property whose value is to be retrieved.
