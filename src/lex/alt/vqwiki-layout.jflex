@@ -279,8 +279,7 @@ externalend = (\[<\/[:letter:]+>\])
 <NORMAL, OFF>{newline} {
   cat.debug( "{newline}" );
   StringBuffer buffer = new StringBuffer();
-  for( int i = 0; i < Environment.getIntValue( Environment.PROP_PARSER_NEW_LINE_BREAKS ); i++ )
-    buffer.append( "<br/>" );
+  buffer.append( "<br/>" );
   buffer.append( "\n" );
   return buffer.toString();
 }

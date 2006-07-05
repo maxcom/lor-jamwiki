@@ -80,11 +80,8 @@ public class Environment {
 	public static final String PROP_FILE_ENCODING = "file-encoding";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_CLASS = "parser";
-	public static final String PROP_PARSER_NEW_LINE_BREAKS = "new-line-breaks";
-	public static final String PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS = "separate-wiki-title-words";
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
-	public static final String PROP_RECENT_CHANGES_REFRESH_INTERVAL = "recentChangesRefreshInterval";
 	public static final String PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED = "attachment-indexing";
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
@@ -92,7 +89,6 @@ public class Environment {
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
 	public static final String PROP_TOPIC_EDIT_TIME_OUT = "editTimeOut";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
-	public static final String PROP_TOPIC_MAXIMUM_BACKLINKS = "maximum-backlinks";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
 	public static final String PROP_TOPIC_VERSIONING_ON = "versioningOn";
 	public static final String PROP_USERGROUP_BASIC_SEARCH = "usergroupBasicSearch";
@@ -327,18 +323,14 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.MediaWikiParser");
-		defaults.setProperty(PROP_PARSER_NEW_LINE_BREAKS, "1");
-		defaults.setProperty(PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS, "false");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
 		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
-		defaults.setProperty(PROP_RECENT_CHANGES_REFRESH_INTERVAL, "1");
 		defaults.setProperty(PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_EXTLINKS_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
 		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");
 		defaults.setProperty(PROP_TOPIC_EDIT_TIME_OUT, "10");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
-		defaults.setProperty(PROP_TOPIC_MAXIMUM_BACKLINKS, "20");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
 		defaults.setProperty(PROP_TOPIC_VERSIONING_ON, "true");
 		defaults.setProperty(PROP_USERGROUP_BASIC_SEARCH, "ou=users,dc=mycompany,dc=com");

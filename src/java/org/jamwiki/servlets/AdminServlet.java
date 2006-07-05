@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.persistency.db.DatabaseHandler;
@@ -241,17 +242,9 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 				Environment.PROP_RECENT_CHANGES_DAYS,
 				request.getParameter(Environment.PROP_RECENT_CHANGES_DAYS)
 			);
-			Environment.setValue(
-				Environment.PROP_TOPIC_MAXIMUM_BACKLINKS,
-				request.getParameter(Environment.PROP_TOPIC_MAXIMUM_BACKLINKS)
-			);
 			Environment.setIntValue(
 				Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL,
 				Integer.parseInt(request.getParameter(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL))
-			);
-			Environment.setIntValue(
-				Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL,
-				Integer.parseInt(request.getParameter(Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL))
 			);
 			Environment.setValue(
 				Environment.PROP_EMAIL_SMTP_HOST,
@@ -268,10 +261,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			Environment.setValue(
 				Environment.PROP_EMAIL_REPLY_ADDRESS,
 				request.getParameter(Environment.PROP_EMAIL_REPLY_ADDRESS)
-			);
-			Environment.setValue(
-				Environment.PROP_PARSER_NEW_LINE_BREAKS,
-				request.getParameter(Environment.PROP_PARSER_NEW_LINE_BREAKS)
 			);
 			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_VERSIONING_ON,
@@ -423,10 +412,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			Environment.setValue(
 				Environment.PROP_FILE_ENCODING,
 				request.getParameter(Environment.PROP_FILE_ENCODING)
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS,
-				request.getParameter(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS) != null
 			);
 			Environment.setBooleanValue(
 				Environment.PROP_PARSER_TOC,

@@ -119,12 +119,6 @@ function onUserGroupType() {
       </td>
     </tr>
     <tr>
-      <td class="normal"><f:message key="admin.caption.maxbacklinks"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_TOPIC_MAXIMUM_BACKLINKS %>" size="3" maxlength="3" value="<%= Environment.getIntValue(Environment.PROP_TOPIC_MAXIMUM_BACKLINKS) %>">
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.encodepasswords"/></td>
       <td class="normal">
         <input type="checkbox" name="<%= Environment.PROP_BASE_ENCODE_PASSWORDS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS) ? " checked" : "" %>>
@@ -145,12 +139,6 @@ function onUserGroupType() {
         <input type="text" name="<%= Environment.PROP_RECENT_CHANGES_DAYS %>" size="3" maxlength="3" value="<%= Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS) %>">
       </td>
     </tr>
-    <tr>
-	  <td class="normal"><f:message key="admin.caption.recentchangesinterval"/></td>
-	  <td class="normal">
-	    <input type="text" name="<%= Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL %>" size="5" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_RECENT_CHANGES_REFRESH_INTERVAL) %>">
-	  </td>    
-    </tr>    
 
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr>
@@ -206,12 +194,6 @@ function onUserGroupType() {
       </td>
     </tr>
     <tr>
-      <td class="normal"><f:message key="admin.caption.separatewikititlewords"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_SEPARATE_WIKI_TITLE_WORDS) ? " checked" : "" %>>
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.tableofcontents"/></td>
       <td class="normal">
         <input type="checkbox" name="<%= Environment.PROP_PARSER_TOC %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_TOC) ? " checked" : "" %>>
@@ -221,12 +203,6 @@ function onUserGroupType() {
       <td class="normal"><f:message key="admin.caption.allowhtml"/></td>
       <td class="normal">
         <input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML) ? " checked" : "" %>>
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.newlinebreaks"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_PARSER_NEW_LINE_BREAKS %>" size="2" maxlength="2" value="<%= Environment.getIntValue(Environment.PROP_PARSER_NEW_LINE_BREAKS) %>">
       </td>
     </tr>
 
