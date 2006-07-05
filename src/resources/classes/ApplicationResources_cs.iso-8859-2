@@ -31,7 +31,6 @@ admin.caption.databaseurl=Database URL or JNDI DataSource name
 admin.caption.databaseuser=U¾ivatelské jméno do databáze
 admin.caption.defaulttopic=Implicitní téma
 admin.caption.edittimeout=Doba vypr¹ení zámku pro editování (minuty)
-admin.caption.encodepasswords=Encode passwords in property file
 admin.caption.filedir=Adresáø se soubory
 admin.caption.fileEncoding=kódování znakù v souborech
 admin.caption.forceusername=Vynutit nastavení u¾ivatelského jména

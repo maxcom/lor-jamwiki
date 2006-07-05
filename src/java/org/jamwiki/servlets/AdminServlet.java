@@ -233,7 +233,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
-			Encryption.togglePropertyEncryption(request.getParameter(Environment.PROP_BASE_ENCODE_PASSWORDS) != null);
 			Environment.setIntValue(
 				Environment.PROP_TOPIC_EDIT_TIME_OUT,
 				Integer.parseInt(request.getParameter(Environment.PROP_TOPIC_EDIT_TIME_OUT))

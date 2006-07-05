@@ -47,7 +47,6 @@ public class Environment {
 	public static final String PROP_ATTACH_UPLOAD_DIR = "uploadDir";
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
-	public static final String PROP_BASE_ENCODE_PASSWORDS = "encode-passwords";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
 	public static final String PROP_BASE_FORCE_ENCODING = "force-encoding";
 	public static final String PROP_BASE_INITIALIZED = "props-initialized";
@@ -284,7 +283,6 @@ public class Environment {
 		defaults.setProperty(PROP_ATTACH_UPLOAD_DIR, "upload");
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
-		defaults.setProperty(PROP_BASE_ENCODE_PASSWORDS, "true");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
 		// Tomcat assumes ISO-8859-1 in URI's. That's the reason why all Latin-1 languages can't handle special characters.
 		// However, even worse, there is no standard J2EE-way to handle this. We must set this here to ISO-8859-1.

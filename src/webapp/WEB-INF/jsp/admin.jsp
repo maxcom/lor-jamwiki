@@ -119,12 +119,6 @@ function onUserGroupType() {
       </td>
     </tr>
     <tr>
-      <td class="normal"><f:message key="admin.caption.encodepasswords"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_BASE_ENCODE_PASSWORDS %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS) ? " checked" : "" %>>
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.wikiserverhostname"/></td>
       <td class="normal"><input type="text" name="<%= Environment.PROP_BASE_SERVER_HOSTNAME %>" value='<%= Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME) == null ? "" : Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME) %>' size="10"></td>
     </tr>

@@ -120,10 +120,7 @@ public class Encryption {
 	 * @return The unencrypted value of the property.
 	 */
 	public static String getEncryptedProperty(String name) {
-		if (Environment.getBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS)) {
-			return Encryption.decrypt(Environment.getValue(name));
-		}
-		return Environment.getValue(name);
+		return Encryption.decrypt(Environment.getValue(name));
 	}
 
 	/**
@@ -133,28 +130,7 @@ public class Encryption {
 	 * @value The enencrypted value of the property.
 	 */
 	public static void setEncryptedProperty(String name, String value) throws Exception {
-		if (Environment.getBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS)) {
-			value = Encryption.encrypt(value);
-		}
+		value = Encryption.encrypt(value);
 		Environment.setValue(name, value);
-	}
-
-	/**
-	 * Change whether or not passwords are encrypted in property files.
-	 *
-	 * @param encrypt Set to <code>true</code> if passwords should be
-	 *  encrypted in property files.
-	 */
-	public static void togglePropertyEncryption(boolean encrypt) throws Exception {
-		// get passwords prior to changing encryption
-		String dbPassword = getEncryptedProperty(Environment.PROP_DB_PASSWORD);
-		String smtpPassword = getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD);
-		String userGroupPassword = getEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD);
-		// change encryption
-		Environment.setBooleanValue(Environment.PROP_BASE_ENCODE_PASSWORDS, encrypt);
-		// re-set passwords with changed encryption
-		setEncryptedProperty(Environment.PROP_DB_PASSWORD, dbPassword);
-		setEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD, smtpPassword);
-		setEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD, userGroupPassword);
 	}
 }
