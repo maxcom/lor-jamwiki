@@ -24,7 +24,7 @@
     <!-- Targets related to the LEXERS -->
     <taskdef classname="JFlex.anttask.JFlexTask" name="jflex" description="Create lexers for default lex plugin">
         <classpath>
-            <pathelement location="${dir.lib}/JFlex.jar"/>
+            <pathelement location="${dir.lib}/jflex-1.4.1.jar"/>
         </classpath>
     </taskdef>
     <target name="jflex" depends="init,cleanLexers">
@@ -67,7 +67,7 @@
         <war warfile="${dir.build}/${war.name}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml">
             <classes dir="${dir.build.classes}" includes="org/jamwiki/**" />
             <classes dir="${dir.src.properties}" />
-            <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar,JFlex.jar" />
+            <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar,jflex-1.4.1.jar" />
             <webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml,**/index.jsp" />
             <zipfileset dir="${dir.src.resources}/images" prefix="images" />
             <zipfileset dir="${dir.src.resources}/js" prefix="js" />

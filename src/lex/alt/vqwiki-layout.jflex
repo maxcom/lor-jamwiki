@@ -23,7 +23,7 @@ import org.jamwiki.WikiBase;
 
 %eofval{
     cat.debug( "Ending at list level: " + listLevel );
-    if( yy_lexical_state == LIST ){
+    if (yystate() == LIST ){
       yybegin( NORMAL );
       StringBuffer buffer = new StringBuffer();
       for( int i = listLevel; i > 0; i-- ){
@@ -36,7 +36,7 @@ import org.jamwiki.WikiBase;
       }
     return buffer.toString();
     }
-    if( yy_lexical_state == TABLE ){
+    if (yystate() == TABLE ){
       yybegin( NORMAL );
       return "</tr></table>";
     }
