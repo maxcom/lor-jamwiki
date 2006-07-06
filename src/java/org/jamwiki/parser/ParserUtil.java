@@ -105,6 +105,9 @@ public class ParserUtil {
 			}
 			String url = Utilities.buildWikiLink(context, virtualWiki, topic);
 			String css = "";
+			// strip out any section indicator (#) from the topic
+			// FIXME - probably better handled in a utility method
+			if ((pos = topic.indexOf("#")) != -1) topic = topic.substring(0, pos);
 			// FIXME - exists triggers a database call, bad for performance
 			if (!WikiBase.exists(virtualWiki, topic)) {
 				css = " class=\"edit\"";
