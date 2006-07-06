@@ -43,8 +43,8 @@ if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP)) {
 		<form method="POST" action="<jamwiki:link value="Special:Search" />">
 		<input type="text" name="text" size="20" value="" />
 		<br />
-		<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
 		<input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
+		<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
 		</form>
 		</div>
 	</td>
