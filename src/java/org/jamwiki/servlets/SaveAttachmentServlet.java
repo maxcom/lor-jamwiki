@@ -50,28 +50,14 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 
 	/** Logger */
 	public static final Logger logger = Logger.getLogger(SaveAttachmentServlet.class);
-	/** The servlet config for this servlet (initialised during the overriden servlet init()) */
-	private ServletConfig config;
 
 	/**
 	 *
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
-		}
+		this.doPost(request, response);
 		return null;
-	}
-
-	/**
-	 * Init the servlet
-	 */
-	final public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		this.config = config;
 	}
 
 	/**
@@ -176,7 +162,7 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 		List names = new ArrayList();
 		for (Iterator iterator = fileList.iterator(); iterator.hasNext(); i++) {
 			FileItem item = (FileItem) iterator.next();
-			log("FileItem: " + item);
+			logger.info("FileItem: " + item);
 			if (!item.isFormField() && !item.getName().equals("")) {
 				String name = getNameOnly(item, i);
 				names.add(name);

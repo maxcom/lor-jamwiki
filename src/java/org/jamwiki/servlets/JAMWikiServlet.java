@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.util.HashMap;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -31,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  *
  */
-public abstract class JAMWikiServlet extends HttpServlet {
+public abstract class JAMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(JAMWikiServlet.class);
 	// constants used as the action parameter in calls to this servlet

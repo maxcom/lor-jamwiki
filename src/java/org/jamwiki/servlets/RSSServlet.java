@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -55,7 +54,7 @@ import org.springframework.web.servlet.mvc.Controller;
  *  We use the 1.0 spec, including the wiki-specific extensions.  Wiki extensions
  *  have been defined in <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
  */
-public class RSSServlet extends HttpServlet implements Controller {
+public class RSSServlet extends JAMWikiServlet implements Controller {
 
 	/** Logging */
 	private static final Logger logger = Logger.getLogger(RSSServlet.class);

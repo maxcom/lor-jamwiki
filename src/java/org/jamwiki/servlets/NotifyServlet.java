@@ -19,7 +19,6 @@ package org.jamwiki.servlets;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -32,7 +31,7 @@ import org.springframework.web.servlet.mvc.Controller;
 /**
  *
  */
-public class NotifyServlet extends HttpServlet implements Controller {
+public class NotifyServlet extends JAMWikiServlet implements Controller {
 
 	private static Logger logger = Logger.getLogger(NotifyServlet.class);
 
