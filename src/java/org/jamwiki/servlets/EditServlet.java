@@ -180,29 +180,24 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			List users = WikiBase.getInstance().getUsergroupInstance().getListOfAllUsers();
-			next.addObject("userList", users);
-		} catch (Exception e) { }
-		String topic = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
-		String redirect = Utilities.buildInternalLink(
-			request.getContextPath(),
-			virtualWiki,
-			"Special:Edit"
-		);
-		redirect += "?topic=" + Utilities.encodeURL(topic);
+		String page = JAMWikiServlet.getTopicFromURI(request);
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("login.title", request.getLocale()));
+		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
+		if (request.getQueryString() != null) {
+			redirect += "?" + request.getQueryString();
+		}
 		next.addObject("redirect", redirect);
-		return;
+		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
+		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Login");
 	}
 
 	/**
 	 *
 	 */
 	private boolean mustLogin(HttpServletRequest request) {
-		return (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.getUserFromRequest(request) == null);
+		return (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null);
 	}
 
 
