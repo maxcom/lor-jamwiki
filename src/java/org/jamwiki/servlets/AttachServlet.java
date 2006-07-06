@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
@@ -51,8 +52,10 @@ public class AttachServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Attach Files to " + topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
 		String user = request.getRemoteAddr();
-		if (Utilities.getUserFromRequest(request) != null) {
-			user = Utilities.getUserFromRequest(request);
+		if (Utilities.currentUser(request) != null) {
+			// FIXME - handle this better
+			WikiUser wikiUser = Utilities.currentUser(request);
+			user = wikiUser.getLogin();
 		}
 		next.addObject("user", user);
 		try {

@@ -34,23 +34,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -58,8 +52,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -70,7 +62,6 @@ public class Utilities {
 	private static final int STATE_NO_ENTITY = 0;
 	private static final int STATE_AMPERSAND = 1;
 	private static final int STATE_AMPERSAND_HASH = 2;
-	private static DecimalFormat decFormat = new DecimalFormat("0.00");
 
 	/**
 	 *
@@ -134,7 +125,7 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
+	private static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[1024];
 		int len;
 		while ((len = in.read(buffer)) >= 0) {
@@ -204,13 +195,6 @@ public class Utilities {
 	}
 
 	/**
-	 *
-	 */
-	public static String decimalFormat(double number) {
-		return decFormat.format(number);
-	}
-
-	/**
 	 * Converts back file name encoded by encodeSafeFileName().
 	 */
 	public static String decodeSafeFileName(String name) {
@@ -251,16 +235,8 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String dir() {
+	private static String dir() {
 		return Environment.getValue(Environment.PROP_BASE_FILE_DIR) + System.getProperty("file.separator");
-	}
-
-	/**
-	 *
-	 */
-	public static boolean emailAvailable() {
-		String smtpHost = Environment.getValue(Environment.PROP_EMAIL_SMTP_HOST);
-		return (smtpHost != null && smtpHost.length() > 0);
 	}
 
 	/**
@@ -325,20 +301,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Convert Java date to a file-friendly date
-	 */
-	public static String fileFriendlyDate(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return String.valueOf(cal.get(Calendar.YEAR)) + "." +
-			padTensWithZero(cal.get(Calendar.MONTH) + 1) + "." +
-			padTensWithZero(cal.get(Calendar.DATE)) + "." +
-			padTensWithZero(cal.get(Calendar.HOUR_OF_DAY)) + "." +
-			padTensWithZero(cal.get(Calendar.MINUTE)) + "." +
-			padTensWithZero(cal.get(Calendar.SECOND));
-	}
-
-	/**
 	 * Localised
 	 */
 	public static String formatDate(Date date) {
@@ -365,25 +327,6 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String getUserFromRequest(HttpServletRequest request) {
-		if (request.getRemoteUser() != null) {
-			return request.getRemoteUser();
-		}
-		Cookie[] cookies = request.getCookies();
-		if (cookies == null) return null;
-		if (cookies.length > 0) {
-			for (int i = 0; i < cookies.length; i++) {
-				if (cookies[i].getName().equals("username")) {
-					return cookies[i].getValue();
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 *
-	 */
 	public static boolean isAdmin(HttpServletRequest request) {
 		WikiUser user = currentUser(request);
 		return (user != null && user.getAdmin());
@@ -394,42 +337,6 @@ public class Utilities {
 	 */
 	public static boolean isFirstUse() {
 		return !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED);
-	}
-
-	/**
-	 *
-	 */
-	protected static String padTensWithZero(int n) {
-		if (n < 10) {
-			return "0" + n;
-		} else {
-			return String.valueOf(n);
-		}
-	}
-
-	/**
-	 * Use standard factory to create DocumentBuilder and parse a file
-	 */
-	public static Document parseDocumentFromFile(String fileName) throws Exception {
-		File file = new File(fileName);
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		return builder.parse(file);
-	}
-
-	/**
-	 * Parse DOM document from XML in input stream
-	 * @param xmlIn
-	 * @return
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
-	 */
-	public static Document parseDocumentFromInputStream(InputStream xmlIn) throws IOException,
-		SAXException, ParserConfigurationException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		return builder.parse(xmlIn);
 	}
 
 	/**
@@ -500,34 +407,6 @@ public class Utilities {
 			return new File(Utilities.dir(), path).getAbsolutePath();
 		}
 		return path;
-	}
-
-	/**
-	 * Converts CamelCase to seperate words.
-	 */
-	public static String separateWords(String text) {
-		// Do not try to separateWords if there are spaces in the text.
-		if (text.indexOf(" ") != -1) return text ;
-		// Allocate enough space for the new string, plus
-		// magic number (5) for a guess at the likely max
-		// number of words.
-		StringBuffer sb = new StringBuffer(text.length() + 5) ;
-		int offset = 0 ;  // points to the start of each word.
-		// Loop through the CamelCase text, at each capital letter
-		// concatenate the previous word text to the result
-		// and append a space.
-		// The first character is assumed to be a "capital".
-		for (int i=1; i < text.length(); i++) {
-			if ((text.charAt(i) >= 'A') && (text.charAt(i) <= 'Z')) {
-				// Append the current word and a trailing space.
-				sb.append (text.substring(offset, i)).append (" ") ;
-				// Start of the next word.
-				offset = i ;
-			}
-		}
-		// Append the last word.
-		sb.append (text.substring (offset)) ;
-		return sb.toString () ;
 	}
 
 	/**
