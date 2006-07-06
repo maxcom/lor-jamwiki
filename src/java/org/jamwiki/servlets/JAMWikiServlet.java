@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -256,16 +257,31 @@ public abstract class JAMWikiServlet extends AbstractController {
 		} catch (Exception e) {
 			logger.error("Unable to build default page layout", e);
 		}
+		// add link to user page and comments page
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) {
+			next.addObject("userpage", "User:" + user.getLogin());
+			next.addObject("usercomments", "User comments:" + user.getLogin());
+		}
 		// FIXME - this is really ugly
 		String article = this.pageInfo.getTopicName();
+		String comments = "Comments:" + article;
 		if (article != null && article.startsWith("Comments:")) {
 			int pos = "Comments:".length();
 			article = article.substring(pos);
+			comments = "Comments:" + article;
 		} else if (article != null && article.startsWith("Special:")) {
 			int pos = "Special:".length();
 			article = article.substring(pos);
+			comments = "Comments:" + article;
+		} else if (article != null && article.startsWith("User comments:")) {
+			int pos = "User comments:".length();
+			comments = article;
+			article = "User:" + article.substring(pos);
+		} else if (article != null && article.startsWith("User:")) {
+			int pos = "User:".length();
+			comments = "User comments:" + article.substring(pos);
 		}
-		String comments = "Comments:" + article;
 		next.addObject("article", article);
 		next.addObject("comments", comments);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
@@ -274,24 +290,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, this.pageInfo.getPageAction());
 		// reset pageInfo object - seems not to reset with each servlet call
 		this.pageInfo = new WikiPageInfo();
-	}
-
-	/**
-	 *
-	 */
-	protected void loadTabs(HttpServletRequest request, ModelAndView next, String topicName) throws Exception {
-		// FIXME - this is really ugly
-		if (topicName != null && topicName.startsWith("Comments:")) {
-			int pos = "Comments:".length();
-			topicName = topicName.substring(pos);
-		} else if (topicName != null && topicName.startsWith("Special:")) {
-			int pos = "Special:".length();
-			topicName = topicName.substring(pos);
-		}
-		String article = topicName;
-		String comments = "Comments:" + topicName;
-		next.addObject("article", article);
-		next.addObject("comments", comments);
 	}
 
 	/**
@@ -368,6 +366,5 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject("contents", contents);
 		this.pageInfo.setPageTitle(topicName);
 		this.pageInfo.setTopicName(topicName);
-		loadTabs(request, next, topicName);
 	}
 }

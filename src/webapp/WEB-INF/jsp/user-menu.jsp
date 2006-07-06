@@ -25,7 +25,8 @@
 	<td class="menu-user"><a href="<jamwiki:link value="Special:Login" />">Login</a> / <a href="<jamwiki:link value="Special:Account" />">Register</a></td>
 </c:when>
 <c:otherwise>
-	<td class="menu-user"><c:out value="${user.displayName}" /></td>
+	<td class="menu-user"><jamwiki:link value="${userpage}"><c:out value="${user.displayName}" /></jamwiki:link></td>
+	<td class="menu-user"><jamwiki:link value="${usercomments}">User Comments</jamwiki:link></td>
 	<td class="menu-user"><a href="<jamwiki:link value="Special:Account" />">Account</a></td>
 	<td class="menu-user"><a href="<jamwiki:link value="Special:Logout" />">Logout</a></td>
 </c:otherwise>
