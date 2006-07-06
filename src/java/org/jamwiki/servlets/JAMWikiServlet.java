@@ -183,39 +183,6 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	}
 
 	/**
-	 * The search servlet offers the opportunity to highlight search results in a page.
-	 */
-	// FIXME - this is not a good class to have this method in.
-	private String highlight(HttpServletRequest request, String contents) {
-		// highlight search result
-		if (request.getParameter("highlight") == null) {
-			return contents;
-		}
-		String highlightparam = request.getParameter("highlight");
-		String highlighttext = "<b style=\"color:black;background-color:#ffff66\">###</b>";
-		contents = markToReplaceOutsideHTML(contents, highlightparam);
-		for (int i = 0; i < highlightparam.length(); i++) {
-			String myhighlightparam = highlightparam.substring(0, i)
-				+ highlightparam.substring(i, i + 1).toUpperCase();
-			if ((i + 1) < highlightparam.length()) {
-				myhighlightparam += highlightparam.substring(i + 1);
-			}
-			String highlight = highlighttext;
-			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
-			contents = replaceMarked(contents, myhighlightparam, highlight);
-			myhighlightparam = highlightparam.substring(0, i)
-				+ highlightparam.substring(i, i + 1).toLowerCase();
-			if ((i + 1) < highlightparam.length()) {
-				myhighlightparam += highlightparam.substring(i + 1);
-			}
-			highlight = highlighttext;
-			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
-			contents = replaceMarked(contents, myhighlightparam, highlight);
-		}
-		return contents;
-	}
-
-	/**
 	 *
 	 */
 	protected static boolean isAction(HttpServletRequest request, String key, String constant) {
@@ -323,79 +290,12 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	}
 
 	/**
-	 * Mark all needles in a haystack, so that they can be replaced later. Take special care on HTML,
-	 * so that no needle is replaced inside a HTML tag.
-	 *
-	 * @param haystack The haystack to go through.
-	 * @param needle   The needle to search.
-	 * @return The haystack with all needles (outside HTML) marked with the char \u0000
-	 */
-	// FIXME - not a good class to keep this in
-	private static String markToReplaceOutsideHTML(String haystack, String needle) {
-		if (needle.length() == 0) {
-			return haystack;
-		}
-		StringBuffer sb = new StringBuffer();
-		boolean inHTMLmode = false;
-		int l = haystack.length();
-		for (int j = 0; j < l; j++) {
-			char c = haystack.charAt(j);
-			switch (c) {
-				case '<':
-					if (((j + 1) < l) && (haystack.charAt(j + 1) != ' ')) {
-						inHTMLmode = true;
-					}
-					break;
-				case '>':
-					if (inHTMLmode) {
-						inHTMLmode = false;
-					}
-					break;
-			}
-			if ((c == needle.charAt(0) || Math.abs(c - needle.charAt(0)) == 32) &&
-				!inHTMLmode) {
-				boolean ok = true;
-				if ((j + needle.length()) > l ||
-					!haystack.substring(j, j + needle.length()).equalsIgnoreCase(needle)) {
-					ok = false;
-				}
-				if (ok) {
-					sb.append('\u0000');
-					for (int k = 0; k < needle.length(); k++) {
-						sb.append(haystack.charAt(j + k));
-					}
-					j = j + needle.length() - 1;
-				} else {
-					sb.append(c);
-				}
-			} else {
-				sb.append(c);
-			}
-		}
-		return sb.toString();
-	}
-
-	/**
 	 * Clears cached contents including the top area, left nav, bottom area, etc.
 	 * This method should be called when the contents of these areas may have been
 	 * modified.
 	 */
 	public static void removeCachedContents() {
 		cachedContents.clear();
-	}
-
-	/**
-	 * Replace all needles inside the text with their replacements.
-	 *
-	 * @param text		The text or haystack, where all needles are already marked with the unicode character \u0000
-	 * @param needle	  The needle to search
-	 * @param replacement The text, which replaces the needle
-	 * @return String containing the text with the needle replaced by the replacement.
-	 */
-	private static String replaceMarked(String text, String needle, String replacement) {
-		needle = '\u0000' + needle;
-		text = StringUtils.replace(text, needle, replacement);
-		return text;
 	}
 
 	/**
@@ -442,7 +342,8 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		String contents = "";
 		if (topic != null) {
 			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
-			contents = highlight(request, contents);
+			// search servlet highlights search terms, so add that here
+			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
 		}
 		next.addObject("contents", contents);
 		this.pageInfo.setPageTitle(topicName);
