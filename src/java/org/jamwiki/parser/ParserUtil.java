@@ -104,7 +104,12 @@ public class ParserUtil {
 				topic = topic.substring(0, pos).trim();
 			}
 			String url = Utilities.buildWikiLink(context, virtualWiki, topic);
-			return "<a title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
+			String css = "";
+			// FIXME - exists triggers a database call, bad for performance
+			if (!WikiBase.exists(virtualWiki, topic)) {
+				css = " class=\"edit\"";
+			}
+			return "<a title=\"" + text + "\" href=\"" + url + "\"" + css + ">" + text + "</a>";
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw);
 			return "";
