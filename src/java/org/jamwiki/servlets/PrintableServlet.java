@@ -44,9 +44,13 @@ public class PrintableServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("printable");
-		print(request, next);
+		try {
+			print(request, next);
+		} catch (Exception e) {
+			viewError(request, next, e);
+		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}

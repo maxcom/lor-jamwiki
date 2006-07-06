@@ -44,18 +44,22 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		if (mustLogin(request)) {
-			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
-		} else if (isSave(request)) {
-			save(request, next);
-		} else if (isCancel(request)) {
-			cancel(request, next);
-		} else if (isPreview(request)) {
-			edit(request, next);
-		} else {
-			edit(request, next);
+		try {
+			if (mustLogin(request)) {
+				viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
+			} else if (isSave(request)) {
+				save(request, next);
+			} else if (isCancel(request)) {
+				cancel(request, next);
+			} else if (isPreview(request)) {
+				edit(request, next);
+			} else {
+				edit(request, next);
+			}
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

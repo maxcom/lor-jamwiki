@@ -37,22 +37,26 @@ public class LoginServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		if (isTopic(request, "Special:Logout")) {
-			// FIXME - response is non-standard here
-			logout(request, response, next);
-			return null;
-		}
-		if (request.getParameter("function") != null) {
-			// FIXME - response is non-standard here
-			if (login(request, response, next)) {
-				// FIXME - use Spring
-				// login successful, non-Spring redirect
+		try {
+			if (isTopic(request, "Special:Logout")) {
+				// FIXME - response is non-standard here
+				logout(request, response, next);
 				return null;
 			}
-		} else {
-			viewLogin(request, next, null);
+			if (request.getParameter("function") != null) {
+				// FIXME - response is non-standard here
+				if (login(request, response, next)) {
+					// FIXME - use Spring
+					// login successful, non-Spring redirect
+					return null;
+				}
+			} else {
+				viewLogin(request, next, null);
+			}
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

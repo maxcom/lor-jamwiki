@@ -38,16 +38,20 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getParameter("function") != null) {
-			if (register(request, response, next)) {
-				// FIXME - use Spring
-				// register successful, non-Spring redirect
-				return null;
+		try {
+			if (request.getParameter("function") != null) {
+				if (register(request, response, next)) {
+					// FIXME - use Spring
+					// register successful, non-Spring redirect
+					return null;
+				}
+			} else {
+				view(request, next);
 			}
-		} else {
-			view(request, next);
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

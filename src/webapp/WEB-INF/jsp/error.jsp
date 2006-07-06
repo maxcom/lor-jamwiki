@@ -17,33 +17,48 @@
 
 --%>
 
-<%@ page isErrorPage="true" %>
-<c:out value="${topArea}" escapeXml="false"/>
-<script language="JavaScript">
-  function cancel(){
-    history.go(-1);
-  }
-</script>
-<%
-  String title = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.title");
-  String contents = "";
+<%--
+Note: This page handles errors that occur during processing of a JSP page.  Servlet
+errors should be caught by the servlet and handled more cleanly.  If this page is
+called it means that a catastrophic error has occurred.
+--%>
 
-  if( exception == null ){
-      contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.noexception");
-  }
-  else{
-    exception.printStackTrace();
-    if( exception.getMessage() == null )
-      contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.exception") + " " + exception;
-    else {
-      contents = javax.servlet.jsp.jstl.fmt.LocaleSupport.getLocalizedMessage(pageContext, "error.exception") + " " + exception.toString();
-    }
-  }
+<%@ page import="
+	org.apache.log4j.Logger
+"
+isErrorPage="true" %>
+
+<html>
+<head>
+<title>JAMWiki System Error</title>
+<script language="JavaScript">
+function cancel() {
+	history.go(-1);
+}
+</script>
+</head>
+<body>
+<%
+// FIXME - hard coding
+Logger logger = Logger.getLogger("org.jamwiki.jsp");
+String errorMessage = "No message available";
+if (exception != null) {
+	logger.error("Error in JSP page", exception);
+	errorMessage = exception.toString();
+}
 %>
 
-<div class="contents">
-      <p><%=contents%></p>
-      <input type="button" onClick="cancel();" value="<f:message key="common.back"/>">
-</div>
-<%@ include file="close-document.jsp"%>
+<%-- FIXME - hard coding --%>
+<p>A system error has occurred.  The error message is:</p>
+<p><font style="color: red;font-weight:bold"><%= errorMessage %></font></p>
+<%
+if (exception != null) {
+%>
+<p><% exception.printStackTrace(); %></p>
+<%
+}
+%>
+<form><input type="button" onClick="cancel();" value="Back" /></form>
 
+</body>
+</html>

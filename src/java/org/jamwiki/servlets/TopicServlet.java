@@ -41,16 +41,20 @@ public class TopicServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		if (isTopic(request, "Special:AllTopics")) {
-			allTopics(request, next);
-		} else if (isTopic(request, "Special:OrphanedTopics")) {
-			orphanedTopics(request, next);
-		} else if (isTopic(request, "Special:ToDoTopics")) {
-			toDoTopics(request, next);
-		} else {
-			viewTopic(request, next, JAMWikiServlet.getTopicFromURI(request));
+		try {
+			if (isTopic(request, "Special:AllTopics")) {
+				allTopics(request, next);
+			} else if (isTopic(request, "Special:OrphanedTopics")) {
+				orphanedTopics(request, next);
+			} else if (isTopic(request, "Special:ToDoTopics")) {
+				toDoTopics(request, next);
+			} else {
+				viewTopic(request, next, JAMWikiServlet.getTopicFromURI(request));
+			}
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

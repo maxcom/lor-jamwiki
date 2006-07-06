@@ -39,9 +39,13 @@ public class HistoryServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		history(request, next);
+		try {
+			history(request, next);
+		} catch (Exception e) {
+			viewError(request, next, e);
+		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}

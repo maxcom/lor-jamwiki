@@ -53,61 +53,65 @@ public class AdminServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		String function = request.getParameter("function");
-		if (function == null) function = "";
-		// FIXME - hard coding of "function" values
-		if (!Utilities.isAdmin(request)) {
-			viewLogin(request, next, "Special:Admin");
-			loadDefaults(request, next, this.pageInfo);
-			return next;
-		}
-		if (isTopic(request, "Special:Upgrade")) {
-			if (function.equals("Convert to File")) {
-				upgradeConvertToFile(request, next);
-			} else if (function.equals("Convert to Database")) {
-				upgradeConvertToDatabase(request, next);
-			} else if (function.equals("Load Recent Changes")) {
-				upgradeRecentChanges(request, next);
-			} else {
-				upgradeView(request, next);
+		try {
+			String function = request.getParameter("function");
+			if (function == null) function = "";
+			// FIXME - hard coding of "function" values
+			if (!Utilities.isAdmin(request)) {
+				viewLogin(request, next, "Special:Admin");
+				loadDefaults(request, next, this.pageInfo);
+				return next;
 			}
-			loadDefaults(request, next, this.pageInfo);
-			return next;
-		}
-		if (isTopic(request, "Special:Delete")) {
-			if (function.equals("Delete")) {
-				delete(request, next);
-			} else {
-				deleteView(request, next);
+			if (isTopic(request, "Special:Upgrade")) {
+				if (function.equals("Convert to File")) {
+					upgradeConvertToFile(request, next);
+				} else if (function.equals("Convert to Database")) {
+					upgradeConvertToDatabase(request, next);
+				} else if (function.equals("Load Recent Changes")) {
+					upgradeRecentChanges(request, next);
+				} else {
+					upgradeView(request, next);
+				}
+				loadDefaults(request, next, this.pageInfo);
+				return next;
 			}
-			loadDefaults(request, next, this.pageInfo);
-			return next;
+			if (isTopic(request, "Special:Delete")) {
+				if (function.equals("Delete")) {
+					delete(request, next);
+				} else {
+					deleteView(request, next);
+				}
+				loadDefaults(request, next, this.pageInfo);
+				return next;
+			}
+			if (!StringUtils.hasText(function)) {
+				view(request, next);
+			}
+			if (function.equals("refreshIndex")) {
+				refreshIndex(request, next);
+			}
+			if (function.equals("properties")) {
+				properties(request, next);
+			}
+			if (function.equals("clearEditLock")) {
+				clearEditLock(request, next);
+			}
+			if (function.equals("addVirtualWiki")) {
+				addVirtualWiki(request, next);
+			}
+			if (function.equals("panic")) {
+				panic(request, next);
+			}
+			if (function.equals("readOnly")) {
+				readOnly(request, next);
+			}
+			// FIXME - remove this
+			readOnlyList(request, next);
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
-		if (!StringUtils.hasText(function)) {
-			view(request, next);
-		}
-		if (function.equals("refreshIndex")) {
-			refreshIndex(request, next);
-		}
-		if (function.equals("properties")) {
-			properties(request, next);
-		}
-		if (function.equals("clearEditLock")) {
-			clearEditLock(request, next);
-		}
-		if (function.equals("addVirtualWiki")) {
-			addVirtualWiki(request, next);
-		}
-		if (function.equals("panic")) {
-			panic(request, next);
-		}
-		if (function.equals("readOnly")) {
-			readOnly(request, next);
-		}
-		// FIXME - remove this
-		readOnlyList(request, next);
 		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}

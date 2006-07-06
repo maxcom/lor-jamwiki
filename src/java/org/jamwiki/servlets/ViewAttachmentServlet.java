@@ -38,10 +38,15 @@ public class ViewAttachmentServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		this.doGet(request, response);
-		return null;
+		try {
+			this.doGet(request, response);
+			return null;
+		} catch (Exception e) {
+			viewError(request, next, e);
+		}
+		return next;
 	}
 
 	/**

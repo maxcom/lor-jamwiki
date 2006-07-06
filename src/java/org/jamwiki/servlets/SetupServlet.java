@@ -45,15 +45,19 @@ public class SetupServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		String function = request.getParameter("function");
-		if (function == null) function = "";
-		// FIXME - hard coding of "function" values
-		if (!StringUtils.hasText(function)) {
-			setup(request, next);
-		} else {
-			initialize(request, next);
+		try {
+			String function = request.getParameter("function");
+			if (function == null) function = "";
+			// FIXME - hard coding of "function" values
+			if (!StringUtils.hasText(function)) {
+				setup(request, next);
+			} else {
+				initialize(request, next);
+			}
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

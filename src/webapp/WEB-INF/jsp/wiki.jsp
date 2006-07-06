@@ -21,11 +21,13 @@
     org.jamwiki.WikiBase,
     org.jamwiki.servlets.JAMWikiServlet,
     org.jamwiki.utils.Utilities
-" %>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
+"
+errorPage="/WEB-INF/jsp/error.jsp" %>
+
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 <%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
 <%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+
 <jamwiki:setPageEncoding />
 <% response.setLocale(request.getLocale()); %>
 <%@ include file="top.jsp"%>
@@ -101,6 +103,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 } else if (action.equals(JAMWikiServlet.ACTION_EDIT_USER)) {
 %>
 		<%@ include file="register.jsp" %>
+<%
+} else if (action.equals(JAMWikiServlet.ACTION_ERROR)) {
+%>
+		<%@ include file="error-display.jsp" %>
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_HISTORY)) {
 %>

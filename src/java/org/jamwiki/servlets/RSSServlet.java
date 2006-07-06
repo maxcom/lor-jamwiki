@@ -61,10 +61,16 @@ public class RSSServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		rss(request, response, next);
-		return null;
+		try {
+			rss(request, response, next);
+			return null;
+		} catch (Exception e) {
+			viewError(request, next, e);
+		}
+		loadDefaults(request, next, this.pageInfo);
+		return next;
 	}
 
 	/**

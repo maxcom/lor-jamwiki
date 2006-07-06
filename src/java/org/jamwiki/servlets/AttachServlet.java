@@ -35,9 +35,13 @@ public class AttachServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		attach(request, next);
+		try {
+			attach(request, next);
+		} catch (Exception e) {
+			viewError(request, next, e);
+		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}

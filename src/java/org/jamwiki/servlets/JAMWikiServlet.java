@@ -42,6 +42,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String ACTION_CANCEL = "Cancel";
 	public static final String ACTION_DIFF = "action_diff";
 	public static final String ACTION_EDIT = "action_edit";
+	public static final String ACTION_ERROR = "action_error";
 	public static final String ACTION_HISTORY = "action_history";
 	public static final String ACTION_LOGIN = "action_login";
 	public static final String ACTION_LOGOUT = "action_logout";
@@ -248,9 +249,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	protected void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	protected void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
 		// load cached top area, nav bar, etc.
-		this.buildLayout(request, next);
+		try {
+			this.buildLayout(request, next);
+		} catch (Exception e) {
+			logger.error("Unable to build default page layout", e);
+		}
 		// FIXME - this is really ugly
 		String article = this.pageInfo.getTopicName();
 		if (article != null && article.startsWith("Comments:")) {
@@ -296,6 +301,21 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	public static void removeCachedContents() {
 		cachedContents.clear();
+	}
+
+	/**
+	 * Action used when redirecting to an error page.
+	 *
+	 * @param request The servlet request object.
+	 * @param next The Spring ModelAndView object.
+	 * @param e The exception that is the source of the error.
+	 */
+	protected void viewError(HttpServletRequest request, ModelAndView next, Exception e) {
+		logger.error("Servlet error", e);
+		this.pageInfo.setPageTitle("System Error");
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ERROR);
+		this.pageInfo.setSpecial(true);
+		next.addObject("errorMessage", e.getMessage());
 	}
 
 	/**

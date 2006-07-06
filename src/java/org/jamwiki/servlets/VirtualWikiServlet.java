@@ -34,10 +34,14 @@ public class VirtualWikiServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		list(request, next);
-		loadDefaults(request, next, this.pageInfo);
+		try {
+			list(request, next);
+			loadDefaults(request, next, this.pageInfo);
+		} catch (Exception e) {
+			viewError(request, next, e);
+		}
 		return next;
 	}
 

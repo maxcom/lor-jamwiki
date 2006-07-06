@@ -35,12 +35,16 @@ public class LockListServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		if (isTopic(request, "Special:Unlock")) {
-			unlock(request, next);
-		} else {
-			lockList(request, next);
+		try {
+			if (isTopic(request, "Special:Unlock")) {
+				unlock(request, next);
+			} else {
+				lockList(request, next);
+			}
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

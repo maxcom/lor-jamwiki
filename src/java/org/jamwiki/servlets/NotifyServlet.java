@@ -37,14 +37,20 @@ public class NotifyServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
-		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
-			this.doGet(request, response);
-		} else {
-			this.doPost(request, response);
+		try {
+			if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
+				this.doGet(request, response);
+			} else {
+				this.doPost(request, response);
+			}
+			return null;
+		} catch (Exception e) {
+			viewError(request, next, e);
 		}
-		return null;
+		loadDefaults(request, next, this.pageInfo);
+		return next;
 	}
 
 	/**
