@@ -6,15 +6,6 @@
   <jsp-version>1.1</jsp-version>
   <short-name>jamwiki</short-name>
   <tag>
-    <name>current-user</name>
-    <tag-class>org.jamwiki.tags.CurrentUserTag</tag-class>
-    <body-content>JSP</body-content>
-    <attribute>
-      <name>var</name>
-      <required>true</required>
-    </attribute>
-  </tag>
-  <tag>
     <name>encode</name>
     <tag-class>org.jamwiki.tags.EncodeTag</tag-class>
     <body-content>JSP</body-content>
