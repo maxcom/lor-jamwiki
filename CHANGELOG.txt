@@ -3,6 +3,11 @@
 =====
 
 * [FEATURE] Add option to update user account information.
+* [FEATURE] Change navbar search to default "Search", not "Jump to".
+* [FEATURE] "Comments" link works now and is colored to reflect
+  whether a comments page exists yet or not.
+* [FEATURE] Error handling added to avoid ugly stack traces being
+  shown to end users and ensure that errors are logged.
 * [FEATURE] Change Special:Registration URL to Special:Account.
 * [FEATURE] Add "Account" link to user navigation bar.
 * [BUG] If user login required actually check for logged in user prior
@@ -12,6 +17,12 @@
   unencoded passwords.
 * [FEATURE] Code cleanups including deletion of unused code.
 * [FEATURE] New utility class for handling prepared statements.
+* [FEATURE] Added new WikiPageInfo class to hold basic page data.
+* [FEATURE] Added JAMWikiServlet.loadDefaults method to handle required
+  page data.
+* [FEATURE] Utilize more of the Spring framework functionality, should
+  ensure that cache headers always get set properly.
+* [BUG] "Article" link from comments pages fixed.
 
 0.0.3
 =====
