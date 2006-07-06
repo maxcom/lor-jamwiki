@@ -399,10 +399,44 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	}
 
 	/**
+	 * Action used when redirecting to a login page.
 	 *
+	 * @param request The servlet request object.
+	 * @param next The Spring ModelAndView object.
+	 * @param topic The topic to be redirected to.  Valid examples are "Special:Admin",
+	 *  "StartingPoints", etc.
+	 */
+	protected void viewLogin(HttpServletRequest request, ModelAndView next, String topic) throws Exception {
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String redirect = request.getParameter("redirect");
+		if (!StringUtils.hasText(redirect)) {
+			if (!StringUtils.hasText(topic)) {
+				topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+			}
+			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			if (request.getQueryString() != null) {
+				redirect += "?" + request.getQueryString();
+			}
+		}
+		next.addObject("redirect", redirect);
+		this.pageInfo.setPageTitle(Utilities.getMessage("login.title", request.getLocale()));
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+		this.pageInfo.setSpecial(true);
+	}
+
+	/**
+	 * Action used when viewing a topic.
+	 *
+	 * @param request The servlet request object.
+	 * @param next The Spring ModelAndView object.
+	 * @param topicName The topic being viewed.  This value must be a valid topic that
+	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, String topicName) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		if (!StringUtils.hasText(virtualWiki)) {
+			virtualWiki = WikiBase.DEFAULT_VWIKI;
+		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";

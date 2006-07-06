@@ -77,7 +77,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
 			WikiBase.initialise(request.getLocale(), user);
-			view(request, next);
+			viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
 	}
 
@@ -155,22 +155,5 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			}
 		}
 		return errors;
-	}
-
-	/**
-	 *
-	 */
-	// FIXME - duplicates the functionality in ViewController
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = WikiBase.DEFAULT_VWIKI;
-		String topicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
-		// FIXME - what should the default be for topics that don't exist?
-		String contents = "";
-		if (topic != null) {
-			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
-		}
-		next.addObject("contents", contents);
 	}
 }

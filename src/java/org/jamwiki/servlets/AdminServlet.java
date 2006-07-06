@@ -60,7 +60,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		if (function == null) function = "";
 		// FIXME - hard coding of "function" values
 		if (!Utilities.isAdmin(request)) {
-			login(request, next);
+			viewLogin(request, next, "Special:Admin");
 			loadDefaults(request, next, this.pageInfo);
 			return next;
 		}
@@ -190,22 +190,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
 		this.pageInfo.setPageTitle("Delete " + topicName);
-	}
-
-	/**
-	 *
-	 */
-	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String page = JAMWikiServlet.getTopicFromURI(request);
-		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
-		if (request.getQueryString() != null) {
-			redirect += "?" + request.getQueryString();
-		}
-		next.addObject("redirect", redirect);
-		this.pageInfo.setPageTitle(Utilities.getMessage("login.title", request.getLocale()));
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
-		this.pageInfo.setSpecial(true);
 	}
 
 	/**

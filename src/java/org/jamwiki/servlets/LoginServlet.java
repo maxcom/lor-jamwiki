@@ -53,7 +53,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 				return null;
 			}
 		} else {
-			view(request, next);
+			viewLogin(request, next, null);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;
@@ -99,20 +99,5 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 		// FIXME - can a redirect be done with Spring?
 		redirect(redirect, response);
 		return true;
-	}
-
-	/**
-	 *
-	 */
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String redirect = request.getParameter("redirect");
-		if (!StringUtils.hasText(redirect)) {
-			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
-		}
-		next.addObject("redirect", redirect);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
 	}
 }

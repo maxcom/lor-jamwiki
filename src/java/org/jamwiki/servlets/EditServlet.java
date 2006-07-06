@@ -48,7 +48,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		if (mustLogin(request)) {
-			login(request, next);
+			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
 		} else if (isSave(request)) {
 			save(request, next);
 		} else if (isCancel(request)) {
@@ -168,22 +168,6 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	 */
 	private boolean isSave(HttpServletRequest request) {
 		return isAction(request, "edit.action.save", JAMWikiServlet.ACTION_SAVE);
-	}
-
-	/**
-	 *
-	 */
-	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String page = JAMWikiServlet.getTopicFromURI(request);
-		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
-		if (request.getQueryString() != null) {
-			redirect += "?" + request.getQueryString();
-		}
-		next.addObject("redirect", redirect);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle(Utilities.getMessage("login.title", request.getLocale()));
 	}
 
 	/**
