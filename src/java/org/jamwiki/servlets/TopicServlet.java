@@ -51,7 +51,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 		} else if (isTopic(request, "Special:ToDoTopics")) {
 			toDoTopics(request, next);
 		} else {
-			viewTopic(request, next);
+			viewTopic(request, next, JAMWikiServlet.getTopicFromURI(request));
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;

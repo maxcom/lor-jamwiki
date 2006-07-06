@@ -77,7 +77,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		}
 		// FIXME - the caching needs to be simplified
 		JAMWikiServlet.removeCachedContents();
-		viewTopic(request, next);
+		viewTopic(request, next, topic.getName());
 	}
 
 	/**
@@ -136,6 +136,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		buffer.append(" ");
 		buffer.append(topicName);
 		this.pageInfo.setPageTitle(buffer.toString());
+		this.pageInfo.setTopicName(topicName);
 		next.addObject("contents", contents);
 		next.addObject("editComment", editComment);
 		next.addObject("minorEdit", new Boolean(minorEdit));
@@ -241,6 +242,6 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		JAMWikiServlet.removeCachedContents();
 		SearchEngine sedb = WikiBase.getSearchEngineInstance();
 		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
-		viewTopic(request, next);
+		viewTopic(request, next, topicName);
 	}
 }

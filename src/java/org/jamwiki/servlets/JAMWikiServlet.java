@@ -298,7 +298,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		next.addObject("comments", comments);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(this.pageInfo.getSpecial()));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, this.pageInfo.getPageTitle());
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "JAMWiki - " + this.pageInfo.getPageTitle());
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, this.pageInfo.getPageAction());
 		// reset pageInfo object - seems not to reset with each servlet call
 		this.pageInfo = new WikiPageInfo();
@@ -401,9 +401,8 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	/**
 	 *
 	 */
-	protected void viewTopic(HttpServletRequest request, ModelAndView next) throws Exception {
+	protected void viewTopic(HttpServletRequest request, ModelAndView next, String topicName) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = JAMWikiServlet.getTopicFromURI(request);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
