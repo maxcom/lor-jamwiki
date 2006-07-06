@@ -503,13 +503,6 @@ public class Utilities {
 	}
 
 	/**
-	 *
-	 */
-	public static String sep() {
-		return System.getProperty("file.separator");
-	}
-
-	/**
 	 * Converts CamelCase to seperate words.
 	 */
 	public static String separateWords(String text) {

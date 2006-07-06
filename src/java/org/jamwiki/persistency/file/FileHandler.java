@@ -398,7 +398,11 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public static String fileBase(String virtualWiki) {
-		return Environment.getValue(Environment.PROP_BASE_FILE_DIR) + Utilities.sep() + virtualWiki;
+		String path = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+		if (StringUtils.hasText(virtualWiki)) {
+			path += File.separator + virtualWiki;
+		}
+		return path;
 	}
 
 	/**
