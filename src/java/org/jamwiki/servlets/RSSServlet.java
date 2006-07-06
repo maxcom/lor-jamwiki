@@ -98,7 +98,8 @@ public class RSSServlet extends JAMWikiServlet implements Controller {
 //					historycal.add(Calendar.DATE, -1);
 //				}
 //			}
-			String wikiServerHostname = Environment.getValue(Environment.PROP_BASE_SERVER_HOSTNAME);
+			// FIXME - should this be configurable?
+			String wikiServerHostname = request.getServerName();
 			String baseURL = Utilities.createRootPath(request, virtualWiki, wikiServerHostname);
 			// generate rss
 			// --------- BEGIN CODE BY Janne Jalken ---------------

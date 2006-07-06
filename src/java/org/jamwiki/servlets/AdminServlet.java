@@ -383,14 +383,6 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 					request.getParameter(Environment.PROP_DB_TYPE)
 				);
 			}
-			if (request.getParameter(Environment.PROP_BASE_SERVER_HOSTNAME) !=  null && !request.getParameter(Environment.PROP_BASE_SERVER_HOSTNAME).equals("")) {
-				Environment.setValue(
-					Environment.PROP_BASE_SERVER_HOSTNAME,
-					request.getParameter(Environment.PROP_BASE_SERVER_HOSTNAME)
-				);
-			} else {
-				Environment.setValue(Environment.PROP_BASE_SERVER_HOSTNAME, "");
-			}
 			Environment.setValue(
 				Environment.PROP_FILE_ENCODING,
 				request.getParameter(Environment.PROP_FILE_ENCODING)
