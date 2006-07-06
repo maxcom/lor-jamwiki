@@ -2,6 +2,16 @@
 0.0.4
 =====
 
+* [FEATURE] Add option to update user account information.
+* [FEATURE] Change Special:Registration URL to Special:Account.
+* [FEATURE] Add "Account" link to user navigation bar.
+* [BUG] If user login required actually check for logged in user prior
+  to editing.
+* [FEATURE] Hide LDAP and other unused / unsupported options in admin tool.
+* [FEATURE] Always encode passwords by default, remove option to have
+  unencoded passwords.
+* [FEATURE] Code cleanups including deletion of unused code.
+* [FEATURE] New utility class for handling prepared statements.
 
 0.0.3
 =====
