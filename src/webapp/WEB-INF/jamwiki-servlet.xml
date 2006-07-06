@@ -22,7 +22,7 @@
 				<prop key="/**/Special:OrphanedTopics">Topic</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
-				<prop key="/**/Special:Register">Register</prop>
+				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:RSS">RSS</prop>
 				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:Search">Search</prop>

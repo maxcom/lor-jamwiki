@@ -18,10 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<%-- FIXME: do not hardcode --%>
 <c:choose>
 <c:when test="${empty user}">
-	<td class="menu-user"><a href="<jamwiki:link value="Special:Login" />">Login</a> / <a href="<jamwiki:link value="Special:Register" />">Register</a></td>
+	<td class="menu-user"><a href="<jamwiki:link value="Special:Login" />">Login</a> / <a href="<jamwiki:link value="Special:Account" />">Register</a></td>
 </c:when>
 <c:otherwise>
 	<td class="menu-user"><c:out value="${user.displayName}" /></td>
+	<td class="menu-user"><a href="<jamwiki:link value="Special:Account" />">Account</a></td>
 	<td class="menu-user"><a href="<jamwiki:link value="Special:Logout" />">Logout</a></td>
 </c:otherwise>
 </c:choose>

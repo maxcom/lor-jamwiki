@@ -25,6 +25,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -72,10 +73,18 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
+		String userIdString = request.getParameter("userId");
+		if (StringUtils.hasText(userIdString)) {
+			int userId = new Integer(userIdString).intValue();
+			if (userId > 0) user = WikiBase.getInstance().getHandler().lookupWikiUser(userId);
+		}
 		user.setLogin(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
 		user.setEmail(request.getParameter("email"));
-		user.setEncodedPassword(Encryption.encrypt(request.getParameter("newPassword")));
+		String newPassword = request.getParameter("newPassword");
+		if (StringUtils.hasText(newPassword)) {
+			user.setEncodedPassword(Encryption.encrypt(newPassword));
+		}
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
@@ -84,7 +93,6 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 		if (errors.size() > 0) {
 			next.addObject("errors", errors);
 			String oldPassword = request.getParameter("oldPassword");
-			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
 			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
 			if (newPassword != null) next.addObject("newPassword", newPassword);
@@ -107,17 +115,22 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		// FIXME - hard coding
-		if (user.getLogin() == null || user.getLogin().length() == 0) {
-			user.setLogin("");
+		if (!StringUtils.hasText(user.getLogin())) {
 			errors.add("Login cannot be empty");
 		}
 		String oldPassword = request.getParameter("oldPassword");
+		if (user.getUserId() > 0 && WikiBase.getInstance().getHandler().lookupWikiUser(user.getLogin(), oldPassword) == null) {
+			errors.add("Invalid old password");
+		}
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
-		if (newPassword != null || confirmPassword != null) {
-			if (newPassword == null) {
+		if (user.getUserId() < 1 && !StringUtils.hasText(newPassword)) {
+			errors.add("Password cannot be empty");
+		}
+		if (StringUtils.hasText(newPassword) || StringUtils.hasText(confirmPassword)) {
+			if (!StringUtils.hasText(newPassword)) {
 				errors.add("New password field must be entered");
-			} else if (confirmPassword == null) {
+			} else if (!StringUtils.hasText(confirmPassword)) {
 				errors.add("Password confirmation must be entered");
 			} else if (!newPassword.equals(confirmPassword)) {
 				errors.add("Passwords do not match, please re-enter");

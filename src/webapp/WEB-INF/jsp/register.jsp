@@ -1,9 +1,6 @@
 <p><f:message key="createuser.info.text1"/></p>
-<form name="form1" method="post" action="<jamwiki:link value="Special:Register" />">
-<input type="hidden" name="saved" value="true">
-<c:if test="${!empty param.topic}">
-<input type="hidden" name="topic" value='<c:out value="${param.topic}"/>'/>
-</c:if>
+<form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
+<input type="hidden" name="userId" value="<c:out value="${user.userId}" />" />
 <table>
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center">
