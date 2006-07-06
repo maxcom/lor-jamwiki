@@ -22,12 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class VirtualWikiServlet extends JAMWikiServlet implements Controller {
+public class VirtualWikiServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
 	private static Logger logger = Logger.getLogger(TopicServlet.class.getName());
@@ -35,7 +34,7 @@ public class VirtualWikiServlet extends JAMWikiServlet implements Controller {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		list(request, next);
 		loadDefaults(request, next, this.pageInfo);

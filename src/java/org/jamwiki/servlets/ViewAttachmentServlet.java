@@ -27,19 +27,18 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class ViewAttachmentServlet extends JAMWikiServlet implements Controller {
+public class ViewAttachmentServlet extends JAMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(ViewAttachmentServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		this.doGet(request, response);
 		return null;

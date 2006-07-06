@@ -27,19 +27,18 @@ import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class RegisterServlet extends JAMWikiServlet implements Controller {
+public class RegisterServlet extends JAMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(RegisterServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		if (request.getParameter("function") != null) {
 			if (register(request, response, next)) {

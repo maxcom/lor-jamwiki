@@ -33,19 +33,18 @@ import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class EditServlet extends JAMWikiServlet implements Controller {
+public class EditServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(EditServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		if (mustLogin(request)) {
 			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));

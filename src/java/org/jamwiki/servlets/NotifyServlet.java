@@ -26,19 +26,18 @@ import org.jamwiki.Notify;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class NotifyServlet extends JAMWikiServlet implements Controller {
+public class NotifyServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(NotifyServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		if (request.getMethod() != null && request.getMethod().equalsIgnoreCase("GET")) {
 			this.doGet(request, response);

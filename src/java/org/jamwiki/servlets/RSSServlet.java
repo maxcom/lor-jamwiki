@@ -34,7 +34,6 @@ import org.jamwiki.users.Usergroup;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  * This servlet generates a RSS Stream for the default wiki.
@@ -54,7 +53,7 @@ import org.springframework.web.servlet.mvc.Controller;
  *  We use the 1.0 spec, including the wiki-specific extensions.  Wiki extensions
  *  have been defined in <A HREF="http://usemod.com/cgi-bin/mb.pl?ModWiki">UseMod:ModWiki</A>.
  */
-public class RSSServlet extends JAMWikiServlet implements Controller {
+public class RSSServlet extends JAMWikiServlet {
 
 	/** Logging */
 	private static final Logger logger = Logger.getLogger(RSSServlet.class);
@@ -62,7 +61,7 @@ public class RSSServlet extends JAMWikiServlet implements Controller {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		rss(request, response, next);
 		return null;

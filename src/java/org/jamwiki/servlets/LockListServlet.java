@@ -24,19 +24,18 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class LockListServlet extends JAMWikiServlet implements Controller {
+public class LockListServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(LockListServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		if (isTopic(request, "Special:Unlock")) {
 			unlock(request, next);

@@ -24,19 +24,18 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class AttachServlet extends JAMWikiServlet implements Controller {
+public class AttachServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(AttachServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		attach(request, next);
 		loadDefaults(request, next, this.pageInfo);

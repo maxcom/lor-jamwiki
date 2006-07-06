@@ -26,11 +26,12 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  *
  */
-public abstract class JAMWikiServlet {
+public abstract class JAMWikiServlet extends AbstractController {
 
 	private static final Logger logger = Logger.getLogger(JAMWikiServlet.class);
 	// constants used as the action parameter in calls to this servlet

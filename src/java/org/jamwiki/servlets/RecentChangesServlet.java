@@ -28,19 +28,18 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class RecentChangesServlet extends JAMWikiServlet implements Controller {
+public class RecentChangesServlet extends JAMWikiServlet {
 
 	private static final Logger logger = Logger.getLogger(RecentChangesServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		recentChanges(request, next);
 		loadDefaults(request, next, this.pageInfo);

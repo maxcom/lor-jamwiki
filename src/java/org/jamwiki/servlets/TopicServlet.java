@@ -24,12 +24,11 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class TopicServlet extends JAMWikiServlet implements Controller {
+public class TopicServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
 	private static Logger logger = Logger.getLogger(TopicServlet.class.getName());
@@ -42,7 +41,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		if (isTopic(request, "Special:AllTopics")) {
 			allTopics(request, next);

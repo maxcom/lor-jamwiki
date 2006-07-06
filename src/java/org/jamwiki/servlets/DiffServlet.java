@@ -25,19 +25,18 @@ import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class DiffServlet extends JAMWikiServlet implements Controller {
+public class DiffServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(DiffServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		diff(request, next);
 		loadDefaults(request, next, this.pageInfo);

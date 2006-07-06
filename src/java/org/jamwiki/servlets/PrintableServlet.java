@@ -33,19 +33,18 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class PrintableServlet extends JAMWikiServlet implements Controller {
+public class PrintableServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(PrintableServlet.class);
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("printable");
 		print(request, next);
 		loadDefaults(request, next, this.pageInfo);
