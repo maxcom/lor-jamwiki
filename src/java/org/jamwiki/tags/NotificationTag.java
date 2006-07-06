@@ -43,7 +43,7 @@ public class NotificationTag extends TagSupport {
 		String topic = (String) this.pageContext.findAttribute(topicVar);
 		String user = (String) this.pageContext.findAttribute(userVar);
 		try {
-			notifier = WikiBase.getInstance().getNotifyInstance(virtualWiki, topic);
+			notifier = WikiBase.getNotifyInstance(virtualWiki, topic);
 		} catch (Exception e) {
 			throw new JspException(e);
 		}

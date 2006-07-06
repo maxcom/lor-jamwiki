@@ -86,7 +86,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 		}
-		WikiUser user = WikiBase.getInstance().getHandler().lookupWikiUser(username, password);
+		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password);
 		if (user == null) {
 			// should this return a specific message instead?
 			next.addObject("loginFailure", "true");

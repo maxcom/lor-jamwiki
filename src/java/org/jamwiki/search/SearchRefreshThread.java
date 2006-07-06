@@ -54,7 +54,7 @@ public class SearchRefreshThread extends Thread {
 				logger.warn(e);
 			}
 			try {
-				WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
+				WikiBase.getSearchEngineInstance().refreshIndex();
 				refreshNow = false;
 			} catch (java.io.IOException err) {
 				logger.error(err);

@@ -105,9 +105,8 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 	 */
 	private Collection parsePage(HttpServletRequest request, String virtualWiki, String topicName, int depth, Vector alreadyVisited)
 		throws Exception {
-		WikiBase base = WikiBase.getInstance();
-		Topic topic = base.getHandler().lookupTopic(virtualWiki, topicName);
-		String onepage = base.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		String onepage = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
 		Collection result = new ArrayList();
 		if (onepage != null) {
 			PrintableEntry entry = new PrintableEntry();

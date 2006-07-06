@@ -150,7 +150,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			if (!topicName.equalsIgnoreCase(topicFoundIn)) {
 				logger.debug("checking links in topic " + topicFoundIn + " to " + topicName);
 				// read the raw content of the topic the hit was in
-				String topicContents = WikiBase.getInstance().readRaw(virtualWiki, topicFoundIn);
+				String topicContents = WikiBase.readRaw(virtualWiki, topicFoundIn);
 				StringReader reader = new StringReader(topicContents);
 				BackLinkLex backLinkLex = new BackLinkLex(reader);
 				// lex the whole file with a back link lexer that simply catalogues all the valid intrawiki links
@@ -403,7 +403,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 */
 	public synchronized void rebuild() throws Exception {
 		logger.info("Building index");
-		Collection allWikis = WikiBase.getInstance().getVirtualWikiList();
+		Collection allWikis = WikiBase.getVirtualWikiList();
 		if (!allWikis.contains(WikiBase.DEFAULT_VWIKI)) {
 			allWikis.add(WikiBase.DEFAULT_VWIKI);
 		}
@@ -436,7 +436,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				Analyzer analyzer = new SimpleKeepNumbersAnalyzer();
 				IndexWriter writer = new IndexWriter(ram, analyzer, true);
 				try {
-					Collection topics = WikiBase.getInstance().getHandler().getAllTopicNames(currentWiki);
+					Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
 					for (Iterator iter = topics.iterator(); iter.hasNext();) {
 						String topic = (String) iter.next();
 						Document doc = createDocument(currentWiki, topic);
@@ -558,7 +558,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 */
 	protected Document createDocument(String virtualWiki, String topicName) throws Exception {
 		// get content
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
 		StringBuffer contents = new StringBuffer(topic.getTopicContent());
 		// find attachments

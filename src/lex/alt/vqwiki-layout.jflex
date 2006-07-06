@@ -53,7 +53,7 @@ import org.jamwiki.WikiBase;
 
 	protected boolean exists( String topic ){
 	  try{
-	    return WikiBase.getInstance().exists( virtualWiki, topic );
+	    return WikiBase.exists( virtualWiki, topic );
 	  }catch( Exception err ){
 	    cat.error( err );
 	  }

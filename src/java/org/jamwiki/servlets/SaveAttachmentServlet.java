@@ -110,7 +110,7 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 				if (item.isFormField()) {
 					if (item.getFieldName().equals("topic")) {
 						topicName = item.getString();
-						topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+						topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 						if (topic.getReadOnly()) {
 							throw new Exception("Topic is read only");
 						}
@@ -123,13 +123,12 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 					}
 				}
 			}
-			WikiBase base = WikiBase.getInstance();
 			if (!cancel) {
 				// store the files
 				String[] names = storeFiles(fileList, virtualWiki);
 				int nameIndex = 0;
 				// Update the topic
-				StringBuffer contents = new StringBuffer(base.readRaw(virtualWiki, topicName));
+				StringBuffer contents = new StringBuffer(WikiBase.readRaw(virtualWiki, topicName));
 				for (Iterator iterator = fileList.iterator(); iterator.hasNext();) {
 					FileItem item = (FileItem) iterator.next();
 					if (!item.isFormField() && !item.getName().equals("")) {
@@ -145,13 +144,13 @@ public class SaveAttachmentServlet extends JAMWikiServlet implements Controller 
 					}
 				}
 //				Change change = new Change(virtualWiki, topicName, user, new java.util.Date());
-//				ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
-				topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+//				ChangeLog cl = WikiBase.getChangeLogInstance();
+				topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 				topic.setTopicContent(contents.toString());
 				topicVersion = new TopicVersion();
 				topicVersion.setVersionContent(contents.toString());
 				topicVersion.setAuthorIpAddress(request.getRemoteAddr());
-				base.getHandler().write(topic, topicVersion);
+				WikiBase.getHandler().write(topic, topicVersion);
 //				cl.logChange(change, request);
 			}
 			StringBuffer next = new StringBuffer();

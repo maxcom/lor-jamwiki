@@ -91,7 +91,7 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 			// grab search engine instance and find
 			boolean fuzzy = false;
 			if (request.getParameter("fuzzy") != null) fuzzy = true;
-			SearchEngine sedb = WikiBase.getInstance().getSearchEngineInstance();
+			SearchEngine sedb = WikiBase.getSearchEngineInstance();
 			Collection results = sedb.findMultiple(virtualWiki, searchField, fuzzy);
 			StringBuffer contents = new StringBuffer();
 			if (results != null && results.size() > 0) {

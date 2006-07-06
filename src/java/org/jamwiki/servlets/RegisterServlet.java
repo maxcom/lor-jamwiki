@@ -76,7 +76,7 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 		String userIdString = request.getParameter("userId");
 		if (StringUtils.hasText(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
-			if (userId > 0) user = WikiBase.getInstance().getHandler().lookupWikiUser(userId);
+			if (userId > 0) user = WikiBase.getHandler().lookupWikiUser(userId);
 		}
 		user.setLogin(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
@@ -99,7 +99,7 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
 			return false;
 		} else {
-			WikiBase.getInstance().getHandler().addWikiUser(user);
+			WikiBase.getHandler().addWikiUser(user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
@@ -119,7 +119,7 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 			errors.add("Login cannot be empty");
 		}
 		String oldPassword = request.getParameter("oldPassword");
-		if (user.getUserId() > 0 && WikiBase.getInstance().getHandler().lookupWikiUser(user.getLogin(), oldPassword) == null) {
+		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword) == null) {
 			errors.add("Invalid old password");
 		}
 		String newPassword = request.getParameter("newPassword");

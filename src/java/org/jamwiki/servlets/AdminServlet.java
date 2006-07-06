@@ -120,7 +120,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
-			WikiBase.getInstance().addVirtualWiki(newWiki);
+			WikiBase.addVirtualWiki(newWiki);
 			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
 			WikiBase.initialise(request.getLocale(), null);
@@ -143,8 +143,8 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		try {
 			String topicName = request.getParameter("topic");
-			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
-			WikiBase.getInstance().getHandler().unlockTopic(topic);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+			WikiBase.getHandler().unlockTopic(topic);
 			String message = Utilities.getMessage("admin.message.lockcleared", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
@@ -169,8 +169,8 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 				next.addObject("errorMessage", "No topic found");
 				return;
 			}
-			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
-			WikiBase.getInstance().getHandler().delete(topic);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+			WikiBase.getHandler().delete(topic);
 			// FIXME - hard coding
 			next.addObject("message", "Topic " + topicName + " deleted successfully");
 		} catch (Exception e) {
@@ -218,7 +218,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
-			WikiBase.getInstance().getHandler().panic();
+			WikiBase.getHandler().panic();
 		} catch (Exception e) {
 			logger.error("Failure during panic reset", e);
 			String message = "Failure during panic reset: " + e.getMessage();
@@ -495,13 +495,13 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (request.getParameter("addReadOnly") != null) {
 			String topicName = request.getParameter("readOnlyTopic");
-			WikiBase.getInstance().getHandler().addReadOnlyTopic(virtualWiki, topicName);
+			WikiBase.getHandler().addReadOnlyTopic(virtualWiki, topicName);
 		}
 		if (request.getParameter("removeReadOnly") != null) {
 			String[] topics = request.getParameterValues("markRemove");
 			for (int i = 0; i < topics.length; i++) {
 				String topicName = topics[i];
-				WikiBase.getInstance().getHandler().removeReadOnlyTopic(virtualWiki, topicName);
+				WikiBase.getHandler().removeReadOnlyTopic(virtualWiki, topicName);
 			}
 		}
 	}
@@ -513,7 +513,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection readOnlyTopics = new ArrayList();
 		try {
-			readOnlyTopics = WikiBase.getInstance().getHandler().getReadOnlyTopics(virtualWiki);
+			readOnlyTopics = WikiBase.getHandler().getReadOnlyTopics(virtualWiki);
 			next.addObject("readOnlyTopics", readOnlyTopics);
 		} catch (Exception e) {
 			// Ignore database error - probably just an invalid setting, the
@@ -529,7 +529,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Admin");
 		try {
-			WikiBase.getInstance().getSearchEngineInstance().refreshIndex();
+			WikiBase.getSearchEngineInstance().refreshIndex();
 			String message = Utilities.getMessage("admin.message.indexrefreshed", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {

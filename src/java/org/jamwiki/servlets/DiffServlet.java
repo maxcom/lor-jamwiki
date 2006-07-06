@@ -72,13 +72,13 @@ public class DiffServlet extends JAMWikiServlet implements Controller {
 				if (firstVersion == -1 || secondVersion == -1) {
 					next.addObject("badinput", "true");
 				} else {
-					String diff = WikiBase.getInstance().getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion), true);
+					String diff = WikiBase.getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion), true);
 					next.addObject("diff", diff);
 				}
 			} else {
 				int topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
 				int topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
-				String diff = WikiBase.getInstance().getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2, true);
+				String diff = WikiBase.getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2, true);
 				next.addObject("diff", diff);
 			}
 		} catch (Exception e) {

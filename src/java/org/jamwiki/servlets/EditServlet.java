@@ -68,9 +68,9 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	private void cancel(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		try {
-			WikiBase.getInstance().getHandler().unlockTopic(topic);
+			WikiBase.getHandler().unlockTopic(topic);
 		} catch (Exception err) {
 			// FIXME - hard coding
 			throw new Exception("Unable to unlock topic " + virtualWiki + "/" + topicName);
@@ -96,7 +96,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			throw new Exception(topicName + " " + Utilities.getMessage("edit.exception.pseudotopic", request.getLocale()));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setName(topicName);
@@ -120,7 +120,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			}
 		}
 		String key = request.getSession().getId();
-		if (!WikiBase.getInstance().getHandler().lockTopic(virtualWiki, topicName, key)) {
+		if (!WikiBase.getHandler().lockTopic(virtualWiki, topicName, key)) {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topicName + " is locked");
 		}
@@ -136,9 +136,9 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			editComment = (String)request.getParameter("editComment");
 			minorEdit = (request.getParameter("minorEdit") != null);
 		} else {
-			contents = WikiBase.getInstance().readRaw(virtualWiki, topicName);
+			contents = WikiBase.readRaw(virtualWiki, topicName);
 		}
-		preview = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, contents);
+		preview = WikiBase.cook(request.getContextPath(), virtualWiki, contents);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(Utilities.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
@@ -212,7 +212,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			// FIXME - hard coding
 			throw new Exception("Topic must be specified");
 		}
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		TopicVersion topicVersion = new TopicVersion();
 		if (topic == null) {
 			topic = new Topic();
@@ -225,7 +225,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			throw new Exception("The topic " + topicName + " is read only and cannot be saved");
 		}
 		String key = request.getSession().getId();
-		if (!WikiBase.getInstance().getHandler().holdsLock(virtualWiki, topicName, key)) {
+		if (!WikiBase.getHandler().holdsLock(virtualWiki, topicName, key)) {
 			logger.warn("The lock on " + topicName + " has timed out");
 			// FIXME - hard coding
 			throw new Exception("The lock on " + topicName + " has timed out");
@@ -244,12 +244,12 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		if (user != null) {
 			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}
-		WikiBase.getInstance().getHandler().write(topic, topicVersion);
+		WikiBase.getHandler().write(topic, topicVersion);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
 		// refresh layout
 		JAMWikiServlet.buildLayout(request, next);
-		SearchEngine sedb = WikiBase.getInstance().getSearchEngineInstance();
+		SearchEngine sedb = WikiBase.getSearchEngineInstance();
 		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
 		view(request, next);
 	}
@@ -261,12 +261,12 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {
-			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
 		}
 		next.addObject("contents", contents);
 	}

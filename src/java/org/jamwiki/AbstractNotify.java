@@ -61,12 +61,12 @@ public abstract class AbstractNotify implements Notify {
 	 */
 	public boolean sendNotifications(String rootPath, Locale locale) throws Exception {
 		// FIXME - this is broken now.  get only users who want a notification.
-		List members = WikiBase.getInstance().getHandler().getAllWikiUserLogins();
+		List members = WikiBase.getHandler().getAllWikiUserLogins();
 		WikiMail mailer = WikiMail.getInstance();
 		Iterator anIterator = getMembers().iterator();
 		while (anIterator.hasNext()) {
 			String login = (String)anIterator.next();
-			WikiUser user = WikiBase.getInstance().getHandler().lookupWikiUser(login);
+			WikiUser user = WikiBase.getHandler().lookupWikiUser(login);
 			String replyAddress = Environment.getValue(Environment.PROP_EMAIL_REPLY_ADDRESS);
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(Utilities.getMessage("mail.notification.body.line1", locale));
@@ -79,17 +79,17 @@ public abstract class AbstractNotify implements Notify {
 			}
 			buffer.append(rootPath + "Wiki?" + Utilities.encodeURL(topicName));
 			buffer.append("\n");
-			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 			if (topic == null) {
 				throw new Exception("No topic found " + topicName + " / " + virtualWiki);
 			}
 			String author = null;
 			java.util.Date lastRevisionDate = null;
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-				lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName);
+				lastRevisionDate = WikiBase.getHandler().lastRevisionDate(virtualWiki, topicName);
 				if (lastRevisionDate != null) {
 					buffer.append(Utilities.getMessage("mail.notification.body.revision", locale) + Utilities.formatDateTime(lastRevisionDate) + "\n");
-//					Collection c = WikiBase.getInstance().getChangeLogInstance().getChanges(virtualWiki, lastRevisionDate);
+//					Collection c = WikiBase.getChangeLogInstance().getChanges(virtualWiki, lastRevisionDate);
 //					if (c != null) {
 //						Iterator it = c.iterator();
 //						while (it.hasNext()) {
@@ -104,7 +104,7 @@ public abstract class AbstractNotify implements Notify {
 			if (author != null) {
 				buffer.append(Utilities.getMessage("mail.notification.body.author", locale) + author + "\n");
 			}
-			String diff = WikiBase.getInstance().getHandler().diff(this.virtualWiki, topic.getName(), 0, 1, false);
+			String diff = WikiBase.getHandler().diff(this.virtualWiki, topic.getName(), 0, 1, false);
 			buffer.append("\n" + Utilities.getMessage("mail.notification.body.diff", locale) + "\n" + diff);
 			buffer.append("\n\n\n----\n\n");
 			buffer.append(Utilities.getMessage("mail.unsubscribe", locale) + " <");

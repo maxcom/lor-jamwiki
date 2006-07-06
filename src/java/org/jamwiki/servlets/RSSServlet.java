@@ -83,7 +83,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 			// get the latest pages
 			int howManyDatesToGoBack = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 			if (howManyDatesToGoBack == 0) howManyDatesToGoBack = 5;
-//			ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//			ChangeLog cl = WikiBase.getChangeLogInstance();
 			Collection changed = new ArrayList();
 //			if (cl != null) {
 //				Calendar historycal = Calendar.getInstance();
@@ -130,7 +130,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 			//  we want to do just a single pass.
 			StringBuffer itemBuffer = new StringBuffer();
 			result.append("  <items>\n   <rdf:Seq>\n");
-			Usergroup usergroup = WikiBase.getInstance().getUsergroupInstance();
+			Usergroup usergroup = WikiBase.getUsergroupInstance();
 			int items = 0;
 			for (Iterator i = changed.iterator(); i.hasNext() && items < 15; items++) {
 //				Change change = (Change) i.next();
@@ -141,7 +141,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				if (userid != null) {
 					author = usergroup.getFullnameById(userid);
 				}
-				java.util.Date lastRevisionDate = WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName);
+				java.util.Date lastRevisionDate = WikiBase.getHandler().lastRevisionDate(virtualWiki, topicName);
 				String url = baseURL + "Wiki?" + topicName;
 				result.append("	<rdf:li rdf:resource=\"" + url + "\" />\n");
 				itemBuffer.append(" <item rdf:about=\"" + url + "\">\n");
@@ -153,9 +153,9 @@ public class RSSServlet extends HttpServlet implements Controller {
 				itemBuffer.append("]]></link>\n");
 				itemBuffer.append("  <description>");
 				if (author == null) author = "An unknown author";
-				itemBuffer.append("Last changed by " + author + " on " + WikiBase.getInstance().getHandler().lastRevisionDate(virtualWiki, topicName));
+				itemBuffer.append("Last changed by " + author + " on " + WikiBase.getHandler().lastRevisionDate(virtualWiki, topicName));
 				itemBuffer.append("<p>\n<![CDATA[");
-				String content = WikiBase.getInstance().readRaw(virtualWiki, topicName);
+				String content = WikiBase.readRaw(virtualWiki, topicName);
 				if (content.length() > 200) {
 					content = content.substring(0, 197) + "...";
 				}
@@ -186,7 +186,7 @@ public class RSSServlet extends HttpServlet implements Controller {
 				//
 				itemBuffer.append("  <dc:contributor>\n");
 				itemBuffer.append("   <rdf:Description");
-				if (WikiBase.getInstance().exists(virtualWiki, author)) {
+				if (WikiBase.exists(virtualWiki, author)) {
 					itemBuffer.append(" link=\"" + baseURL + "Wiki?" + author + "\"");
 				}
 				itemBuffer.append(">\n");

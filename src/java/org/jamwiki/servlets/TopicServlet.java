@@ -62,7 +62,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection all = WikiBase.getInstance().getHandler().getAllTopicNames(virtualWiki);
+		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
 		String title = "Special:AllTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
@@ -160,7 +160,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void orphanedTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection all = WikiBase.getInstance().getOrphanedTopics(virtualWiki);
+		Collection all = WikiBase.getOrphanedTopics(virtualWiki);
 		String title = "Special:OrphanedTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
@@ -188,7 +188,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void toDoTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection all = WikiBase.getInstance().getToDoWikiTopics(virtualWiki);
+		Collection all = WikiBase.getToDoWikiTopics(virtualWiki);
 		String title = "Special:ToDoTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
@@ -203,12 +203,12 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromURI(request);
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {
-			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
 			contents = highlight(request, contents);
 		}
 		next.addObject("contents", contents);

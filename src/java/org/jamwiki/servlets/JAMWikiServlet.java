@@ -227,11 +227,11 @@ public abstract class JAMWikiServlet extends HttpServlet {
 					// FIXME - filename should be set better
 					content = Utilities.readFile(topicName + ".txt");
 				} else {
-					Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+					Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 					content = topic.getTopicContent();
 				}
 				if (cook) {
-					content = WikiBase.getInstance().cook(context, virtualWiki, content);
+					content = WikiBase.cook(context, virtualWiki, content);
 				}
 				synchronized (cachedContents) {
 					cachedContents.put(virtualWiki + "-" + topicName, content);

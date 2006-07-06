@@ -166,12 +166,12 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = WikiBase.DEFAULT_VWIKI;
 		String topicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {
-			contents = WikiBase.getInstance().cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
 		}
 		next.addObject("contents", contents);
 	}

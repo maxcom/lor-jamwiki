@@ -1,10 +1,11 @@
 
 <f:message key="virtualwiki.${virtualWiki}.name" var="wikiname"/>
-<jamwiki:wikibase var="wb"/>
-<c:if test="${wb.virtualWikiCount > 1}">
-
+<%-- FIXME: clean this up --%>
 <%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && WikiBase.getInstance().getVirtualWikiCount() > 1) {
+if (WikiBase.getVirtualWikiCount() > 1) {
+%>
+<%
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && WikiBase.getVirtualWikiCount() > 1) {
 %>
 <a href="<jamwiki:link value="Special:VirtualWikiList" />">
 <%
@@ -12,7 +13,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && Wiki
 %>
 <b><f:message key="common.wiki"/>
 <%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && WikiBase.getInstance().getVirtualWikiCount() > 1) {
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && WikiBase.getVirtualWikiCount() > 1) {
 %>
 </a>
 <%
@@ -20,4 +21,6 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && Wiki
 %>
 :
 <a href="<jamwiki:link value="StartingPoints" />"><c:out value="${virtualWiki}"/></a></b> :
-</c:if>
+<%
+}
+%>

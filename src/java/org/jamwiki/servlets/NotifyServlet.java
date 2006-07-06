@@ -80,7 +80,7 @@ public class NotifyServlet extends HttpServlet implements Controller {
 			if (user == null || user.equals("")) {
 				throw new Exception("User name not found.");
 			}
-			Notify notifier = WikiBase.getInstance().getNotifyInstance(virtualWiki, topic);
+			Notify notifier = WikiBase.getNotifyInstance(virtualWiki, topic);
 			if (action == null || action.equals("notify_on")) {
 				notifier.addMember(user);
 			} else {

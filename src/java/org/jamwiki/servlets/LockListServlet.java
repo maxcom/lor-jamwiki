@@ -55,7 +55,7 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		List locks = null;
 		try {
-			locks = WikiBase.getInstance().getHandler().getLockList(virtualWiki);
+			locks = WikiBase.getHandler().getLockList(virtualWiki);
 		} catch (Exception e) {
 			logger.error("Error retrieving lock list", e);
 			// FIXME - hard coding
@@ -73,7 +73,7 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 	private void unlock(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
 			next.addObject("redirect", redirect);
@@ -82,7 +82,7 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 			return;
 		}
 		try {
-			WikiBase.getInstance().getHandler().unlockTopic(topic);
+			WikiBase.getHandler().unlockTopic(topic);
 		} catch (Exception e) {
 			logger.error("Failure while unlocking " + topic, e);
 			// FIXME - hard coding

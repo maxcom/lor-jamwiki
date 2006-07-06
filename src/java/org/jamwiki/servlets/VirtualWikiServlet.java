@@ -46,7 +46,7 @@ public class VirtualWikiServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void list(HttpServletRequest request, ModelAndView next) throws Exception {
-		Collection virtualWikiList = WikiBase.getInstance().getVirtualWikiList();
+		Collection virtualWikiList = WikiBase.getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		// FIXME - hard coding
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:VirtualWikiList");

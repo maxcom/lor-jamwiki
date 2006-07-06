@@ -59,7 +59,7 @@ public class AttachServlet extends JAMWikiServlet implements Controller {
 		}
 		next.addObject("user", user);
 		try {
-			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 			if (topic == null) {
 				throw new Exception("Topic does not exist: " + topicName + " / " + virtualWiki);
 			}
@@ -69,7 +69,7 @@ public class AttachServlet extends JAMWikiServlet implements Controller {
 				throw new Exception("Topic " + topicName + " is read only");
 			}
 			String key = request.getSession().getId();
-			if (!WikiBase.getInstance().getHandler().lockTopic(virtualWiki, topicName, key)) {
+			if (!WikiBase.getHandler().lockTopic(virtualWiki, topicName, key)) {
 				// FIXME - hard coding
 				throw new Exception("Topic " + topicName + " is locked");
 			}

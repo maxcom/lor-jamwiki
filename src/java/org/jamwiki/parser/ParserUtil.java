@@ -143,7 +143,7 @@ public class ParserUtil {
 		// FIXME - this causes a database query for every topic in the page,
 		// which is very inefficient
 		try {
-			return WikiBase.getInstance().exists(virtualWiki, topic);
+			return WikiBase.exists(virtualWiki, topic);
 		} catch (Exception e) {
 			logger.error(e);
 		}

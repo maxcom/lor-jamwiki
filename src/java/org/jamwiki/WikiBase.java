@@ -59,15 +59,32 @@ public class WikiBase {
 
 	// FIXME - remove this
 	public final static String WIKI_VERSION = "0.0.4";
-	private static WikiBase instance;					   /** An instance to myself. Singleton pattern. */
-	public static final int FILE = 0;					   /** The topics are stored in a flat file */
-	public static final int DATABASE = 1;				   /** The topics are stored in a database */
-	public static final int LDAP = 2;					   /** Members are retrieved from LDAP */
-	public static final String DEFAULT_VWIKI = "en";	   /** Name of the default wiki */
-	private static final Logger logger = Logger.getLogger(WikiBase.class);  /** Log output */
-	protected PersistencyHandler handler;				   /** The handler that looks after read/write operations for a persitence type */
-	private List topicListeners;							/** Listeners for topic changes */
-	private int virtualWikiCount;						   /** Number of virtual wikis */
+	/** An instance to myself. Singleton pattern. */
+	private static WikiBase instance;
+	/** The topics are stored in a flat file */
+	public static final int FILE = 0;
+	/** The topics are stored in a database */
+	public static final int DATABASE = 1;
+	/** Members are retrieved from LDAP */
+	public static final int LDAP = 2;
+	/** Name of the default wiki */
+	public static final String DEFAULT_VWIKI = "en";
+	/** Log output */
+	private static final Logger logger = Logger.getLogger(WikiBase.class);
+	/** The handler that looks after read/write operations for a persitence type */
+	private static PersistencyHandler handler;
+	/** Listeners for topic changes */
+	private static List topicListeners;
+	/** Number of virtual wikis */
+	private static int virtualWikiCount;
+
+	static {
+		try {
+			instance = new WikiBase();
+		} catch (Exception e) {
+			logger.error("Failure while initializing WikiBase", e);
+		}
+	}
 
 	/**
 	 * Creates an instance of <code>WikiBase</code> with a specified persistency sub-system.
@@ -75,21 +92,9 @@ public class WikiBase {
 	 * @param persistencyType
 	 * @throws Exception If the handler cannot be instanciated.
 	 */
-	private WikiBase(int persistencyType) throws Exception {
-		switch (persistencyType) {
-			case FILE:
-				this.handler = new FileHandler();
-				break;
-			case DATABASE:
-				this.handler = new DatabaseHandler();
-				break;
-		}
-
-		new SearchRefreshThread(
-			Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL)
-		);
+	private WikiBase() throws Exception {
+		WikiBase.init();
 	}
-
 
 	/**
 	 * Singleton. Retrieves an intance of <code>WikiBase</code> and creates one if it doesn't exist yet.
@@ -97,20 +102,16 @@ public class WikiBase {
 	 * @return Instance of this class
 	 * @throws Exception If the storage produces errors
 	 */
-	public static WikiBase getInstance() throws Exception {
+	private static void init() throws Exception {
 		int persistenceType = -1;
 		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
 		if (type != null && type.equals("DATABASE")) {
-			persistenceType = WikiBase.DATABASE;
+			WikiBase.handler = new DatabaseHandler();
 		} else {
-			persistenceType = WikiBase.FILE;
+			WikiBase.handler = new FileHandler();
 		}
-		if (instance == null) {
-			instance = new WikiBase(persistenceType);
-		}
-		return instance;
+		new SearchRefreshThread(Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL));
 	}
-
 
 	/**
 	 * Get an instance to the search enginge.
@@ -118,7 +119,7 @@ public class WikiBase {
 	 * @return Reference to the SearchEngine
 	 * @throws Exception the current search engine
 	 */
-	public SearchEngine getSearchEngineInstance() throws Exception {
+	public static SearchEngine getSearchEngineInstance() throws Exception {
 		switch (WikiBase.getPersistenceType()) {
 			case FILE:
 				return FileSearchEngine.getInstance();
@@ -146,7 +147,7 @@ public class WikiBase {
 	 * @return Reference to the SearchEngine
 	 * @throws Exception the current search engine
 	 */
-	public Usergroup getUsergroupInstance() throws Exception {
+	public static Usergroup getUsergroupInstance() throws Exception {
 		switch (Usergroup.getUsergroupType()) {
 			case LDAP:
 				return LdapUsergroup.getInstance();
@@ -165,7 +166,7 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public Notify getNotifyInstance(String virtualWiki, String topic) throws Exception {
+	public static Notify getNotifyInstance(String virtualWiki, String topic) throws Exception {
 		switch (WikiBase.getPersistenceType()) {
 			case FILE:
 				return new FileNotify(virtualWiki, topic);
@@ -179,8 +180,8 @@ public class WikiBase {
 	/**
 	 * Reads a file and returns the raw contents. Used for the editing version.
 	 */
-	public synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
-		Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+	public static synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		// FIXME - return null or empty?
 		if (topic == null) return "";
 		return topic.getTopicContent();
@@ -194,7 +195,7 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public synchronized boolean exists(String virtualWiki, String topicName) throws Exception {
+	public static synchronized boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (PseudoTopicHandler.getInstance().isPseudoTopic(topicName)) {
 			return true;
 		}
@@ -209,7 +210,7 @@ public class WikiBase {
 	 * @return				TODO: DOCUMENT ME!
 	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public synchronized String cook(String context, String virtualWiki, String content) throws Exception {
+	public static synchronized String cook(String context, String virtualWiki, String content) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
 			return "";
@@ -226,7 +227,7 @@ public class WikiBase {
 	 * @return				TODO: DOCUMENT ME!
 	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public synchronized String cook(String context, String virtualWiki, BufferedReader in) throws Exception {
+	public static synchronized String cook(String context, String virtualWiki, BufferedReader in) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
@@ -250,7 +251,7 @@ public class WikiBase {
 	public static void initialise(Locale locale, WikiUser user) throws Exception {
 		int persistenceType = WikiBase.getPersistenceType();
 		WikiMail.init();
-		instance = new WikiBase(persistenceType);
+		instance = new WikiBase();
 		instance.getHandler().initialize(locale, user);
 		JAMWikiServlet.removeCachedContents();
 	}
@@ -258,7 +259,7 @@ public class WikiBase {
 	/**
 	 * Find all topics without links to them
 	 */
-	public Collection getOrphanedTopics(String virtualWiki) throws Exception {
+	public static Collection getOrphanedTopics(String virtualWiki) throws Exception {
 		Collection results = new HashSet();
 		Collection all = getHandler().getAllTopicNames(virtualWiki);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
@@ -279,13 +280,13 @@ public class WikiBase {
 	/**
 	 * Find all topics that haven't been written but are linked to
 	 */
-	public Collection getToDoWikiTopics(String virtualWiki) throws Exception {
+	public static Collection getToDoWikiTopics(String virtualWiki) throws Exception {
 		Collection results = new TreeSet();
 		Collection all = getHandler().getAllTopicNames(virtualWiki);
 		Set topicNames = new HashSet();
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
-			Topic topic = WikiBase.getInstance().getHandler().lookupTopic(virtualWiki, topicName);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 			String content = topic.getTopicContent();
 			StringReader reader = new StringReader(content);
 			BackLinkLex lexer = new BackLinkLex(reader);
@@ -310,15 +311,15 @@ public class WikiBase {
 	/**
 	 * Return a list of all virtual wikis on the server
 	 */
-	public Collection getVirtualWikiList() throws Exception {
-		return this.handler.getVirtualWikiList();
+	public static Collection getVirtualWikiList() throws Exception {
+		return WikiBase.handler.getVirtualWikiList();
 	}
 
 	/**
 	 * Add virtual wiki
 	 */
-	public void addVirtualWiki(String virtualWiki) throws Exception {
-		this.handler.addVirtualWiki(virtualWiki);
+	public static void addVirtualWiki(String virtualWiki) throws Exception {
+		WikiBase.handler.addVirtualWiki(virtualWiki);
 	}
 
 	/**
@@ -326,7 +327,7 @@ public class WikiBase {
 	 *
 	 * @return the number of virtual wikis
 	 */
-	public int getVirtualWikiCount() {
+	public static int getVirtualWikiCount() {
 		if (virtualWikiCount == 0) {
 			try {
 				virtualWikiCount = getVirtualWikiList().size();
@@ -342,7 +343,7 @@ public class WikiBase {
 	 *
 	 * @return the current handler instance
 	 */
-	public PersistencyHandler getHandler() {
+	public static PersistencyHandler getHandler() {
 		return handler;
 	}
 
@@ -353,7 +354,7 @@ public class WikiBase {
 	 * @param topicName
 	 * @return
 	 */
-	public boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
+	public static boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
 		String adminOnlyTopics = readRaw(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale));
 		StringTokenizer tokenizer = new StringTokenizer(adminOnlyTopics);
 		while (tokenizer.hasMoreTokens()) {

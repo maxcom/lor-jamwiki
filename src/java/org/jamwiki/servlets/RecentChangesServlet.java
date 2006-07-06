@@ -60,7 +60,7 @@ public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 		}
 		Collection all = null;
 		try {
-			all = WikiBase.getInstance().getHandler().getRecentChanges(virtualWiki, num);
+			all = WikiBase.getHandler().getRecentChanges(virtualWiki, num);
 		} catch (Exception e) {
 			logger.error(e);
 			throw e;
@@ -77,7 +77,7 @@ public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 //	private ArrayList getRecentChanges(String virtualWiki, int num) throws Exception {
 //		// FIXME - this is hugely inefficient as it gets too many changes at once
 //		Calendar cal = Calendar.getInstance();
-//		ChangeLog cl = WikiBase.getInstance().getChangeLogInstance();
+//		ChangeLog cl = WikiBase.getChangeLogInstance();
 //		ArrayList all = new ArrayList();
 //		for (int i = 0; i < num; i++) {
 //			Collection col = cl.getChanges(virtualWiki, cal.getTime());
