@@ -67,7 +67,7 @@
         <war warfile="${dir.build}/${war.name}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml">
             <classes dir="${dir.build.classes}" includes="org/jamwiki/**" />
             <classes dir="${dir.src.properties}" />
-            <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar" />
+            <lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar,JFlex.jar" />
             <webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml,**/index.jsp" />
             <zipfileset dir="${dir.src.resources}/images" prefix="images" />
             <zipfileset dir="${dir.src.resources}/js" prefix="js" />
