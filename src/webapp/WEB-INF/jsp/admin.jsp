@@ -97,7 +97,7 @@ function onUserGroupType() {
     <tr>
       <td class="normal"><f:message key="admin.caption.defaulttopic"/></td>
       <td class="normal">
-        <input type="text" name="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) == null ? "" : Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>">
+        <input type="text" name="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30">
       </td>
     </tr>
     <tr>
@@ -180,7 +180,7 @@ function onUserGroupType() {
     <tr>
       <td class="normal"><f:message key="admin.caption.parser"/></td>
       <td class="normal">
-        <input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= Environment.getValue(Environment.PROP_PARSER_CLASS) %>" size="15">
+        <input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= Environment.getValue(Environment.PROP_PARSER_CLASS) %>" size="50">
       </td>
     </tr>
     <tr>
@@ -207,11 +207,11 @@ function onUserGroupType() {
     </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.smtp.user"/></td>
-      <td class="normal"><input type="text" name="<%= Environment.PROP_EMAIL_SMTP_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_EMAIL_SMTP_USERNAME) %>" size="10"></td>
+      <td class="normal"><input type="text" name="<%= Environment.PROP_EMAIL_SMTP_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_EMAIL_SMTP_USERNAME) %>" size="30"></td>
     </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.smtp.pass"/></td>
-      <td class="normal"><input type="password" name="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD) %>" size="10"></td>
+      <td class="normal"><input type="password" name="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD) %>" size="30"></td>
     </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.reply"/></td>
@@ -311,13 +311,13 @@ function onUserGroupType() {
     <tr>
       <td class="normal"><f:message key="admin.caption.databaseuser"/></td>
       <td class="normal">
-        <input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15">
+        <input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="30">
       </td>
     </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.databasepass"/></td>
       <td class="normal">
-        <input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="15">
+        <input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="30">
       </td>
     </tr>
     <tr><td colspan="2">&nbsp;</td></tr>
@@ -385,7 +385,7 @@ function onUserGroupType() {
 	<tr>
 	  <td class="normal"><f:message key="admin.caption.dbcp.validationquery"/></td>
 	  <td class="normal">
-	    <input type="text" name="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" id="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" value="<%= Environment.getValue(Environment.PROP_DBCP_VALIDATION_QUERY) %>" size="30"/>
+	    <input type="text" name="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" id="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" value="<%= Environment.getValue(Environment.PROP_DBCP_VALIDATION_QUERY) %>" size="50" />
 	  </td>
 	</tr>
     <tr>
