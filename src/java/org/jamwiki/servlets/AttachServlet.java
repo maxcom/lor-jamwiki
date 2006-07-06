@@ -38,8 +38,8 @@ public class AttachServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		attach(request, next);
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -49,8 +49,6 @@ public class AttachServlet extends JAMWikiServlet implements Controller {
 	private void attach(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Attach Files to " + topicName);
-		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
 		String user = request.getRemoteAddr();
 		if (Utilities.currentUser(request) != null) {
 			// FIXME - handle this better
@@ -78,7 +76,9 @@ public class AttachServlet extends JAMWikiServlet implements Controller {
 			// FIXME - hard coding
 			throw new Exception("Failure while getting attachment topic info for " + topicName + " " + e.getMessage());
 		}
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_ATTACH);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		this.pageInfo.setPageTitle("Attach Files to " + topicName);
+		this.pageInfo.setTopicName(topicName);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ATTACH);
+		this.pageInfo.setSpecial(true);
 	}
 }

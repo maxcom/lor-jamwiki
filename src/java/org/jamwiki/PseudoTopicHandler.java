@@ -43,7 +43,7 @@ public class PseudoTopicHandler {
 	/** Singleton instance */
 	private static PseudoTopicHandler instance;
 	/** Properties bundle to store mappings */
-	private Properties mapping;
+	private static Properties mapping;
 	/** Name of resource to access the persisted bundle */
 	private static final String RESOURCE_NAME = "/pseudotopics.properties";
 
@@ -53,35 +53,10 @@ public class PseudoTopicHandler {
 	}
 
 	/**
-	 * Get instance
-	 *
-	 * @return singleton instance
-	 */
-	public synchronized static PseudoTopicHandler getInstance() {
-		return instance;
-	}
-
-	/**
 	 * Hide constructor
 	 */
 	private PseudoTopicHandler() {
-		this.mapping = Environment.loadProperties(RESOURCE_NAME);
-	}
-
-	/**
-	 * Return a redirect URL for the given topic
-	 *
-	 * @param pseudotopicName topic
-	 * @return redirect URL or null if no mapping exists
-	 */
-	public String getRedirectURL(String pseudotopicName) {
-		String redirectURL = this.mapping.getProperty(pseudotopicName);
-		String msg = ((redirectURL == null) ?
-			"no pseudotopic redirect for " + pseudotopicName :
-			"pseudo topic found for " + pseudotopicName + ": " + redirectURL
-		);
-		logger.debug(msg);
-		return redirectURL;
+		PseudoTopicHandler.mapping = Environment.loadProperties(RESOURCE_NAME);
 	}
 
 	/**
@@ -90,7 +65,7 @@ public class PseudoTopicHandler {
 	 * @param pseudotopicName topic
 	 * @return true if mapping exists
 	 */
-	public boolean isPseudoTopic(String pseudotopicName) {
-		return getRedirectURL(pseudotopicName) != null;
+	public static boolean isPseudoTopic(String pseudotopicName) {
+		return PseudoTopicHandler.mapping.containsKey(pseudotopicName);
 	}
 }

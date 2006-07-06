@@ -40,7 +40,6 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		if (isTopic(request, "Special:Logout")) {
 			// FIXME - response is non-standard here
 			logout(request, response, next);
@@ -56,6 +55,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 		} else {
 			view(request, next);
 		}
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -91,8 +91,8 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 			// should this return a specific message instead?
 			next.addObject("loginFailure", "true");
 			next.addObject("redirect", redirect);
-			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
+			this.pageInfo.setSpecial(true);
+			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
 			return false;
 		}
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
@@ -112,7 +112,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 		}
 		next.addObject("redirect", redirect);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
 	}
 }

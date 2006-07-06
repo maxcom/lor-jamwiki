@@ -39,8 +39,8 @@ public class DiffServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		diff(request, next);
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -50,8 +50,6 @@ public class DiffServlet extends JAMWikiServlet implements Controller {
 	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Diff " + topicName);
-		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topicName);
 		try {
 			String diffType = request.getParameter("type");
 			if (diffType != null && diffType.equals("arbitrary")) {
@@ -85,6 +83,8 @@ public class DiffServlet extends JAMWikiServlet implements Controller {
 			logger.error(e);
 			throw e;
 		}
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_DIFF);
+		this.pageInfo.setPageTitle("Diff " + topicName);
+		this.pageInfo.setTopicName(topicName);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_DIFF);
 	}
 }

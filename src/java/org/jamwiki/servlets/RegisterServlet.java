@@ -41,7 +41,6 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		if (request.getParameter("function") != null) {
 			if (register(request, response, next)) {
 				// FIXME - use Spring
@@ -51,6 +50,7 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 		} else {
 			view(request, next);
 		}
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -58,9 +58,9 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
+		this.pageInfo.setPageTitle("Account Details");
 	}
 
 	/**
@@ -68,9 +68,9 @@ public class RegisterServlet extends JAMWikiServlet implements Controller {
 	 */
 	// FIXME - shouldn't need to pass in response
 	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_REGISTER);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Wiki Membership");
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
+		this.pageInfo.setPageTitle("Account Details");
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
 		String userIdString = request.getParameter("userId");

@@ -47,7 +47,6 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		if (mustLogin(request)) {
 			login(request, next);
 		} else if (isSave(request)) {
@@ -59,6 +58,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		} else {
 			edit(request, next);
 		}
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -77,9 +77,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		}
 		// FIXME - the caching needs to be simplified
 		JAMWikiServlet.removeCachedContents();
-		// refresh layout
-		JAMWikiServlet.buildLayout(request, next);
-		view(request, next);
+		viewTopic(request, next);
 	}
 
 	/**
@@ -92,7 +90,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 			// FIXME - hard coding
 			throw new Exception("Invalid or missing topic name");
 		}
-		if (PseudoTopicHandler.getInstance().isPseudoTopic(topicName)) {
+		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			throw new Exception(topicName + " " + Utilities.getMessage("edit.exception.pseudotopic", request.getLocale()));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
@@ -108,14 +106,10 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		if (topic.getAdminOnly()) {
 			if (!Utilities.isAdmin(request)) {
 				next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("login.title", request.getLocale()));
-				String redirect = Utilities.buildInternalLink(
-					request.getContextPath(),
-					virtualWiki,
-					"Special:Edit"
-				);
+				String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Edit");
 				next.addObject("redirect", redirect);
-				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
-				next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+				this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+				this.pageInfo.setSpecial(true);
 				return;
 			}
 		}
@@ -130,8 +124,6 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		String preview = null;
 		if (isPreview(request)) {
 			JAMWikiServlet.removeCachedContents();
-			// refresh layout
-			JAMWikiServlet.buildLayout(request, next);
 			contents = (String)request.getParameter("contents");
 			editComment = (String)request.getParameter("editComment");
 			minorEdit = (request.getParameter("minorEdit") != null);
@@ -143,15 +135,16 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		buffer.append(Utilities.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
 		buffer.append(topicName);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, buffer.toString());
+		this.pageInfo.setPageTitle(buffer.toString());
 		next.addObject("contents", contents);
 		next.addObject("editComment", editComment);
 		next.addObject("minorEdit", new Boolean(minorEdit));
 		next.addObject("preview", preview);
+		loadTabs(request, next, topicName);
 		if (request.getAttribute(JAMWikiServlet.ACTION_PREVIEW) != null) {
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_PREVIEW);
+			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
 		} else {
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_EDIT);
+			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
 		}
 	}
 
@@ -182,15 +175,14 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	private void login(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String page = JAMWikiServlet.getTopicFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("login.title", request.getLocale()));
 		String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, page);
 		if (request.getQueryString() != null) {
 			redirect += "?" + request.getQueryString();
 		}
 		next.addObject("redirect", redirect);
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Login");
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle(Utilities.getMessage("login.title", request.getLocale()));
 	}
 
 	/**
@@ -247,27 +239,8 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 		WikiBase.getHandler().write(topic, topicVersion);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
-		// refresh layout
-		JAMWikiServlet.buildLayout(request, next);
 		SearchEngine sedb = WikiBase.getSearchEngineInstance();
 		sedb.indexText(virtualWiki, topicName, request.getParameter("contents"));
-		view(request, next);
-	}
-
-	/**
-	 *
-	 */
-	// FIXME - duplicates the functionality in ViewController
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName);
-		// FIXME - what should the default be for topics that don't exist?
-		String contents = "";
-		if (topic != null) {
-			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
-		}
-		next.addObject("contents", contents);
+		viewTopic(request, next);
 	}
 }

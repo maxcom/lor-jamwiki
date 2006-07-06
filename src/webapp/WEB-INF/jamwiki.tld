@@ -53,6 +53,10 @@
       <name>value</name>
       <required>true</required>
     </attribute>
+    <attribute>
+      <name>text</name>
+      <required>false</required>
+    </attribute>
   </tag>
   <tag>
     <name>notification</name>

@@ -44,13 +44,13 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		String jumpto = request.getParameter("jumpto");
 		if (jumpto != null) {
 			jumpTo(request, response, next);
 			return null;
 		}
 		search(request, response, next);
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -77,15 +77,15 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 		try {
 			String searchField = request.getParameter("text");
 			if (request.getParameter("text") == null) {
-				next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Search");
+				this.pageInfo.setPageTitle("Special:Search");
 			} else {
 				formatter.applyPattern(Utilities.getMessage("searchresult.title", request.getLocale()));
-				next.addObject(JAMWikiServlet.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
+				this.pageInfo.setPageTitle(formatter.format(new Object[]{searchField}));
 			}
 			// forward back to the search page if the request is blank or null
 			if (!StringUtils.hasText(searchField)) {
-				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SEARCH);
-				next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+				this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH);
+				this.pageInfo.setSpecial(true);
 				return;
 			}
 			// grab search engine instance and find
@@ -138,8 +138,8 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 			}
 			next.addObject("results", contents.toString());
 			next.addObject("titlelink", "Special:Search");
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SEARCH_RESULTS);
-			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH_RESULTS);
+			this.pageInfo.setSpecial(true);
 			return;
 		} catch (Exception e) {
 			logger.error(e);

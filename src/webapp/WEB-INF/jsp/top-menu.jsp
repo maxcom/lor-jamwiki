@@ -16,10 +16,10 @@ try {
 if (!special) {
 %>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="${topic}" />"><f:message key="menu.article" /></a></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="${article}"><f:message key="menu.article" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<%-- FIXME: hard coding --%>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Comments:${topic}" />"><f:message key="menu.comments" /></a></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="menu.comments" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Edit" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.editpage" /></a></td>

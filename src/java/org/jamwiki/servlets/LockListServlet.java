@@ -38,12 +38,12 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		if (isTopic(request, "Special:Unlock")) {
 			unlock(request, next);
 		} else {
 			lockList(request, next);
 		}
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -62,9 +62,9 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 			throw new Exception("Error retrieving lock list " + e.getMessage());
 		}
 		next.addObject("locks", locks);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("locklist.title", request.getLocale()));
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOCKLIST);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		this.pageInfo.setPageTitle(Utilities.getMessage("locklist.title", request.getLocale()));
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOCKLIST);
+		this.pageInfo.setSpecial(true);
 	}
 
 	/**
@@ -77,8 +77,8 @@ public class LockListServlet extends JAMWikiServlet implements Controller {
 		if (!Utilities.isAdmin(request)) {
 			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:LockList");
 			next.addObject("redirect", redirect);
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_LOGIN);
-			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+			this.pageInfo.setSpecial(true);
 			return;
 		}
 		try {

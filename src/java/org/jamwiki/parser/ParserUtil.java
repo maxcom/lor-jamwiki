@@ -85,37 +85,30 @@ public class ParserUtil {
 	 *
 	 */
 	protected static String buildWikiLink(String context, String virtualWiki, String raw) {
-		if (raw == null || raw.length() <= 4) {
-			// no topic, display the raw text
-			return raw;
+		try {
+			if (raw == null || raw.length() <= 4) {
+				// no topic, display the raw text
+				return raw;
+			}
+			// strip the first and last brackets
+			String topic = raw.substring(2, raw.length() - 2).trim();
+			if (topic.length() <= 0) {
+				// empty brackets, no topic to display
+				return raw;
+			}
+			// search for topic text ("|" followed by text)
+			String text = topic.trim();
+			int pos = topic.indexOf('|');
+			if (pos > 0) {
+				text = topic.substring(pos+1).trim();
+				topic = topic.substring(0, pos).trim();
+			}
+			String url = Utilities.buildWikiLink(context, virtualWiki, topic);
+			return "<a title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
+		} catch (Exception e) {
+			logger.error("Failure while parsing link " + raw);
+			return "";
 		}
-		// strip the first and last brackets
-		String topic = raw.substring(2, raw.length() - 2).trim();
-		if (topic.length() <= 0) {
-			// empty brackets, no topic to display
-			return raw;
-		}
-		// search for topic text ("|" followed by text)
-		String text = topic.trim();
-		int pos = topic.indexOf('|');
-		if (pos > 0) {
-			text = topic.substring(pos+1).trim();
-			topic = topic.substring(0, pos).trim();
-		}
-		// search for hash mark
-		String section = "";
-		pos = topic.indexOf('#');
-		if (pos > 0) {
-			section = topic.substring(pos+1).trim();
-			topic = topic.substring(0, pos).trim();
-		}
-		String url = Utilities.buildInternalLink(context, virtualWiki, topic, section);
-		if (!exists(topic, virtualWiki)) {
-			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
-			url += "?topic=" + Utilities.encodeURL(topic);
-			return "<a class=\"edit\" title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
-		}
-		return "<a title=\"" + topic + "\" href=\"" + url + "\">" + text + "</a>";
 	}
 
 	/**
@@ -134,20 +127,6 @@ public class ParserUtil {
 			}
 		}
 		return escaped.toString();
-	}
-
-	/**
-	 *
-	 */
-	protected static boolean exists(String topic, String virtualWiki) {
-		// FIXME - this causes a database query for every topic in the page,
-		// which is very inefficient
-		try {
-			return WikiBase.exists(virtualWiki, topic);
-		} catch (Exception e) {
-			logger.error(e);
-		}
-		return false;
 	}
 
 	/**

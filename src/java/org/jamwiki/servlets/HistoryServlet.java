@@ -42,8 +42,8 @@ public class HistoryServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		history(request, next);
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -54,22 +54,22 @@ public class HistoryServlet extends JAMWikiServlet implements Controller {
 		PersistencyHandler handler;
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_HISTORY);
+		this.pageInfo.setTopicName(topicName);
 		try {
 			handler = WikiBase.getHandler();
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
-				next.addObject(JAMWikiServlet.PARAMETER_TITLE, "History for " + topicName);
+				this.pageInfo.setPageTitle("History for " + topicName);
 				Vector changes = handler.getRecentChanges(virtualWiki, topicName);
 				next.addObject("changes", changes);
-				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_HISTORY);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 				TopicVersion topicVersion = handler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 				String cookedContents = WikiBase.cook(request.getContextPath(), virtualWiki, topicVersion.getVersionContent());
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("cookedContents", cookedContents);
-				next.addObject(JAMWikiServlet.PARAMETER_TITLE, topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
-				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_HISTORY);
+				this.pageInfo.setPageTitle(topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
 			}
 		} catch (Exception e) {
 			logger.error(e);

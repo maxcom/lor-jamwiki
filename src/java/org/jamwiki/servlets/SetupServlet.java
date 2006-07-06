@@ -48,7 +48,6 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		String function = request.getParameter("function");
 		if (function == null) function = "";
 		// FIXME - hard coding of "function" values
@@ -57,6 +56,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 		} else {
 			initialize(request, next);
 		}
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -69,16 +69,14 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 		setAdminUser(request, next, user);
 		Vector errors = validate(request, next, user);
 		if (errors.size() > 0) {
-			next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
-			next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-			next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Setup");
+			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+			this.pageInfo.setSpecial(true);
+			this.pageInfo.setPageTitle("Special:Setup");
 			next.addObject("errors", errors);
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
 			WikiBase.initialise(request.getLocale(), user);
-			// refresh layout
-			JAMWikiServlet.buildLayout(request, next);
 			view(request, next);
 		}
 	}
@@ -118,9 +116,9 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 	 *
 	 */
 	private void setup(HttpServletRequest request, ModelAndView next) throws Exception {
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SETUP);
-		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "Special:Setup");
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle("Special:Setup");
 	}
 
 	/**

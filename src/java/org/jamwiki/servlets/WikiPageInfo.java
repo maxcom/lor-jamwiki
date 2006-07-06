@@ -16,41 +16,80 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.WikiBase;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.Controller;
 
 /**
  *
  */
-public class VirtualWikiServlet extends JAMWikiServlet implements Controller {
+public class WikiPageInfo {
 
-	/** Logger for this class and subclasses. */
-	private static Logger logger = Logger.getLogger(TopicServlet.class.getName());
+	private static final Logger logger = Logger.getLogger(WikiPageInfo.class);
+	protected String pageAction = "";
+	protected String pageTitle = "";
+	protected String topicName = "";
+	protected boolean special = false;
 
 	/**
 	 *
 	 */
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView next = new ModelAndView("wiki");
-		list(request, next);
-		loadDefaults(request, next, this.pageInfo);
-		return next;
+	protected WikiPageInfo() {
 	}
 
 	/**
 	 *
 	 */
-	private void list(HttpServletRequest request, ModelAndView next) throws Exception {
-		Collection virtualWikiList = WikiBase.getVirtualWikiList();
-		next.addObject("wikis", virtualWikiList);
-		// FIXME - hard coding
-		this.pageInfo.setPageTitle("Special:VirtualWikiList");
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_VIRTUAL_WIKI_LIST);
-		this.pageInfo.setSpecial(true);
+	protected String getPageAction() {
+		return this.pageAction;
+	}
+
+	/**
+	 *
+	 */
+	protected void setPageAction(String pageAction) {
+		this.pageAction = pageAction;
+	}
+
+	/**
+	 *
+	 */
+	protected String getPageTitle() {
+		return this.pageTitle;
+	}
+
+	/**
+	 *
+	 */
+	protected void setPageTitle(String pageTitle) {
+		this.pageTitle = pageTitle;
+	}
+
+	/**
+	 *
+	 */
+	protected boolean getSpecial() {
+		return this.special;
+	}
+
+	/**
+	 *
+	 */
+	protected void setSpecial(boolean special) {
+		this.special = special;
+	}
+
+	/**
+	 *
+	 */
+	protected String getTopicName() {
+		return this.topicName;
+	}
+
+	/**
+	 *
+	 */
+	protected void setTopicName(String topicName) {
+		this.topicName = topicName;
 	}
 }

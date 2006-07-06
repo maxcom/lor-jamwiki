@@ -47,8 +47,8 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("printable");
-		JAMWikiServlet.buildLayout(request, next);
 		print(request, next);
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -58,8 +58,6 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topic = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, topic);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, topic);
 		String strDepth = request.getParameter("depth");
 		if (request.getParameter("hideform") != null) {
 			next.addObject("hideform", "true");
@@ -93,7 +91,9 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 		}
 		// put the result in the request
 		next.addObject("contentList", result);
-		next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_PRINT);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PRINT);
+		this.pageInfo.setTopicName(topic);
+		this.pageInfo.setPageTitle(topic);
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 						!link.startsWith("topic=") &&
 						!link.startsWith("action=") &&
 						!alreadyVisited.contains(link) &&
-						!PseudoTopicHandler.getInstance().isPseudoTopic(link)) {
+						!PseudoTopicHandler.isPseudoTopic(link)) {
 						result.addAll(parsePage(request, virtualWiki, link, (depth - 1), alreadyVisited));
 					}
 					iPos = onepage.indexOf(searchfor, iPos + 10);

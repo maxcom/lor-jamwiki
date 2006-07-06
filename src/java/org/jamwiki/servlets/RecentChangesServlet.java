@@ -42,8 +42,8 @@ public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 	 */
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		JAMWikiServlet.buildLayout(request, next);
 		recentChanges(request, next);
+		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -52,7 +52,6 @@ public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("recentchanges.title", request.getLocale()));
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number
@@ -65,27 +64,10 @@ public class RecentChangesServlet extends JAMWikiServlet implements Controller {
 			logger.error(e);
 			throw e;
 		}
-		request.setAttribute("changes", all);
-		request.setAttribute("num", new Integer(num));
-		request.setAttribute(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_RECENT_CHANGES);
-		request.setAttribute(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
+		next.addObject("changes", all);
+		next.addObject("num", new Integer(num));
+		this.pageInfo.setPageTitle(Utilities.getMessage("recentchanges.title", request.getLocale()));
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_RECENT_CHANGES);
+		this.pageInfo.setSpecial(true);
 	}
-
-	/**
-	 *
-	 */
-//	private ArrayList getRecentChanges(String virtualWiki, int num) throws Exception {
-//		// FIXME - this is hugely inefficient as it gets too many changes at once
-//		Calendar cal = Calendar.getInstance();
-//		ChangeLog cl = WikiBase.getChangeLogInstance();
-//		ArrayList all = new ArrayList();
-//		for (int i = 0; i < num; i++) {
-//			Collection col = cl.getChanges(virtualWiki, cal.getTime());
-//			if (col != null) {
-//				all.addAll(col);
-//			}
-//			cal.add(Calendar.DATE, -1);
-//		}
-//		return (all.size() > num) ? new ArrayList(all.subList(0, num)) : all;
-//	}
 }

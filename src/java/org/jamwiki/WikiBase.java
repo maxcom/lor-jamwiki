@@ -196,7 +196,7 @@ public class WikiBase {
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
 	public static synchronized boolean exists(String virtualWiki, String topicName) throws Exception {
-		if (PseudoTopicHandler.getInstance().isPseudoTopic(topicName)) {
+		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			return true;
 		}
 		return handler.exists(virtualWiki, topicName);
@@ -298,7 +298,7 @@ public class WikiBase {
 		}
 		for (Iterator iterator = topicNames.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
-			if (!PseudoTopicHandler.getInstance().isPseudoTopic(topicName)
+			if (!PseudoTopicHandler.isPseudoTopic(topicName)
 				&& !handler.exists(virtualWiki, topicName)
 				&& !"\\\\\\\\link\\\\\\\\".equals(topicName)) {
 				results.add(topicName);

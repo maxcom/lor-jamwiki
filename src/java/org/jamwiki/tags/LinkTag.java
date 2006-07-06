@@ -18,31 +18,45 @@ package org.jamwiki.tags;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
+import org.jamwiki.WikiBase;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 /**
  *
  */
-public class LinkTag extends TagSupport {
+public class LinkTag extends BodyTagSupport {
 
 	private static Logger logger = Logger.getLogger(LinkTag.class);
 	private String value = null;
+	private String text = null;
 
 	/**
 	 *
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			value = (String)ExpressionUtil.evalNotNull("link", "value", value, Object.class, this, pageContext);
+			this.value = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
+			buildLinkText();
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			String url = null;
 			String virtualWiki = retrieveVirtualWiki(request);
 			try {
-				url = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, value);
+				// return raw link of the form "/wiki/en/Special:Edit"
+				url = Utilities.buildWikiLink(request.getContextPath(), virtualWiki, this.value);
+				if (StringUtils.hasText(this.text)) {
+					// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
+					String css = "";
+					if (!WikiBase.exists(virtualWiki, this.value)) {
+						// FIXME - hard coding
+						css = " class=\"edit\"";
+					}
+					url = "<a href=\"" + url + "\"" + css + ">" + this.text + "</a>";
+				}
 				this.pageContext.getOut().print(url);
 			} catch (Exception e) {
 				logger.error("Failure while building url " + url + " with value " + value);
@@ -52,6 +66,25 @@ public class LinkTag extends TagSupport {
 		} finally {
 			// FIXME - var & value not getting reset, so explicitly call release
 			release();
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void buildLinkText() throws JspException {
+		String body = null;
+		if (this.getBodyContent() != null) {
+			body = this.getBodyContent().getString();
+		}
+		if (StringUtils.hasText(body) && StringUtils.hasText(this.text)) {
+			throw new JspException("Attribute 'text' and body content may not both be specified for link tag");
+		}
+		if (StringUtils.hasText(this.text)) {
+			this.text = (String)ExpressionUtil.evalNotNull("link", "text", text, Object.class, this, pageContext);
+		}
+		if (StringUtils.hasText(body)) {
+			this.text = body;
 		}
 	}
 
@@ -68,6 +101,20 @@ public class LinkTag extends TagSupport {
 			throw new JspException("No virtual wiki value found");
 		}
 		return virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public String getText() {
+		return this.text;
+	}
+
+	/**
+	 *
+	 */
+	public void setText(String text) {
+		this.text = text;
 	}
 
 	/**
@@ -90,5 +137,6 @@ public class LinkTag extends TagSupport {
     public void release() {
 		super.release();
 		this.value = null;
+		this.text = null;
     }
 }

@@ -91,6 +91,28 @@ public class Utilities {
 	}
 
 	/**
+	 *
+	 */
+	public static String buildWikiLink(String context, String virtualWiki, String topic) throws Exception {
+		if (!StringUtils.hasText(topic)) {
+			return null;
+		}
+		// search for hash mark
+		String section = "";
+		int pos = topic.indexOf('#');
+		if (pos > 0) {
+			section = topic.substring(pos+1).trim();
+			topic = topic.substring(0, pos).trim();
+		}
+		String url = Utilities.buildInternalLink(context, virtualWiki, topic, section);
+		if (!WikiBase.exists(virtualWiki, topic)) {
+			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
+			url += "?topic=" + Utilities.encodeURL(topic);
+		}
+		return url;
+	}
+
+	/**
 	 * Returns true if the given collection of strings contains the given string where the case
 	 * of either is ignored
 	 * @param collection collection of {@link String}s
