@@ -33,6 +33,7 @@ import org.jamwiki.*;
 import org.jamwiki.model.Topic;
 import org.jamwiki.users.Usergroup;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -242,9 +243,9 @@ public class RSSServlet extends HttpServlet implements Controller {
 	 * @return The String formatted
 	 */
 	private String format(String s) {
-		s = Utilities.replaceString(s, "&", "&amp;");
-		s = Utilities.replaceString(s, "<", "&lt;");
-		s = Utilities.replaceString(s, "]]>", "]]&gt;");
+		s = StringUtils.replace(s, "&", "&amp;");
+		s = StringUtils.replace(s, "<", "&lt;");
+		s = StringUtils.replace(s, "]]>", "]]&gt;");
 		return s;
 	}
 }

@@ -31,6 +31,7 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -87,7 +88,7 @@ public class EditServlet extends JAMWikiServlet implements Controller {
 	private void edit(HttpServletRequest request, ModelAndView next) throws Exception {
 		request.getSession().setMaxInactiveInterval(60 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		if (topicName == null || topicName.length() == 0) {
+		if (!StringUtils.hasText(topicName)) {
 			// FIXME - hard coding
 			throw new Exception("Invalid or missing topic name");
 		}

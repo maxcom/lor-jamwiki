@@ -51,6 +51,7 @@ import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -491,7 +492,7 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
 		StringBuffer buffer = new StringBuffer();
-		if (virtualWiki == null || virtualWiki.length() == 0) {
+		if (!StringUtils.hasText(virtualWiki)) {
 			// this is questionable, but the virtual wiki list does it
 			logger.info("Attempting to write file with empty virtual wiki for file " + fileName);
 			virtualWiki = "";

@@ -23,6 +23,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.search.AbstractSearchEngine;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -49,7 +50,7 @@ public class FileSearchEngine extends AbstractSearchEngine {
 	 */
 	public static synchronized FileSearchEngine getInstance() throws Exception {
 		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-		if (baseFileDir == null || baseFileDir.length() == 0) {
+		if (!StringUtils.hasText(baseFileDir)) {
 			// system not initialized yet
 			return null;
 		}

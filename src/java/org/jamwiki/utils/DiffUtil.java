@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility class for creating either a text of HTML representation of the difference
@@ -137,12 +138,12 @@ public class DiffUtil {
 			StringBuffer output = new StringBuffer();
 			// escape HTML if needed
 			if (this.htmlFormat) {
-				if (oldLine.trim().length() == 0) {
+				if (!StringUtils.hasText(oldLine)) {
 					oldLine += "&#160;";
 				} else {
 					oldLine = convertToHTML(oldLine);
 				}
-				if (newLine.trim().length() == 0) {
+				if (!StringUtils.hasText(newLine)) {
 					newLine += "&#160;";
 				} else {
 					newLine = convertToHTML(newLine);

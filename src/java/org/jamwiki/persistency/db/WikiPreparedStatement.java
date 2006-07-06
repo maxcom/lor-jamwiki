@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 /**
  * This class is a wrapper around the java.sql.PreparedStatement class, allowing a
@@ -47,22 +48,9 @@ public class WikiPreparedStatement {
 	 */
 	public WikiPreparedStatement(String sql) {
 		this.sql = sql;
-		this.numElements = countElements(sql);
+		this.numElements = StringUtils.countOccurrencesOf(sql, "?");
 		this.params = new Object[numElements];
 		this.paramTypes = new int[numElements];
-	}
-
-	/**
-	 *
-	 */
-	private static int countElements(String sql) {
-		int total = 0;
-		int pos = 0;
-		while ((pos = sql.indexOf("?", pos)) != -1) {
-			total++;
-			pos++;
-		}
-		return total;
 	}
 
 	/**

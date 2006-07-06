@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
-import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -89,7 +89,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 				myhighlightparam += highlightparam.substring(i + 1);
 			}
 			String highlight = highlighttext;
-			highlight = Utilities.replaceString(highlight, "###", myhighlightparam);
+			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
 			contents = replaceMarked(contents, myhighlightparam, highlight);
 			myhighlightparam = highlightparam.substring(0, i)
 				+ highlightparam.substring(i, i + 1).toLowerCase();
@@ -97,7 +97,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 				myhighlightparam += highlightparam.substring(i + 1);
 			}
 			highlight = highlighttext;
-			highlight = Utilities.replaceString(highlight, "###", myhighlightparam);
+			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
 			contents = replaceMarked(contents, myhighlightparam, highlight);
 		}
 		return contents;
@@ -179,7 +179,7 @@ public class TopicServlet extends JAMWikiServlet implements Controller {
 	 */
 	public static String replaceMarked(String text, String needle, String replacement) {
 		needle = '\u0000' + needle;
-		text = Utilities.replaceString(text, needle, replacement);
+		text = StringUtils.replace(text, needle, replacement);
 		return text;
 	}
 

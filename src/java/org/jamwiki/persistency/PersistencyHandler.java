@@ -37,6 +37,7 @@ import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -454,7 +455,7 @@ public abstract class PersistencyHandler {
 			return;
 		}
 		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-		if (baseFileDir == null || baseFileDir.length() == 0) {
+		if (!StringUtils.hasText(baseFileDir)) {
 			// do not set up special pages until initial property values set
 			return;
 		}
@@ -506,7 +507,7 @@ public abstract class PersistencyHandler {
 		if (topicVersion.getAuthorId() != null) {
 			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue());
 			authorName = user.getDisplayName();
-			if (authorName == null || authorName.length() == 0) authorName = user.getLogin();
+			if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
 		}
 		RecentChange change = new RecentChange();
 		change.setTopicId(topic.getTopicId());

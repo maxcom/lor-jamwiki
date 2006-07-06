@@ -23,6 +23,7 @@ import javax.crypto.spec.DESKeySpec;
 import org.apache.log4j.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.jamwiki.Environment;
+import org.springframework.util.StringUtils;
 
 /**
  * Provide capability for encrypting and decrypting values.  Inspired by an
@@ -47,7 +48,7 @@ public class Encryption {
 	 * @return An encrypted version of the String that was passed to this method.
 	 */
 	public static String encrypt(String unencryptedString) throws Exception {
-		if (unencryptedString == null || unencryptedString.trim().length() == 0) {
+		if (!StringUtils.hasText(unencryptedString)) {
 			return unencryptedString;
 		}
 		try {

@@ -23,6 +23,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -65,7 +66,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		request.getSession().invalidate();
 		String redirect = request.getParameter("redirect");
-		if (redirect == null || redirect.length() == 0) {
+		if (!StringUtils.hasText(redirect)) {
 			redirect = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		}
 		redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, redirect);
@@ -81,7 +82,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
-		if (redirect == null || redirect.length() == 0) {
+		if (!StringUtils.hasText(redirect)) {
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 		}
@@ -106,7 +107,7 @@ public class LoginServlet extends JAMWikiServlet implements Controller {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String redirect = request.getParameter("redirect");
-		if (redirect == null || redirect.length() == 0) {
+		if (!StringUtils.hasText(redirect)) {
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 		}

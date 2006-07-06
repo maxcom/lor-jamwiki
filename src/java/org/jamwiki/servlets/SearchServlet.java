@@ -28,6 +28,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.search.SearchResultEntry;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -82,7 +83,7 @@ public class SearchServlet extends JAMWikiServlet implements Controller {
 				next.addObject(JAMWikiServlet.PARAMETER_TITLE, formatter.format(new Object[]{searchField}));
 			}
 			// forward back to the search page if the request is blank or null
-			if (searchField == null || searchField.length() == 0) {
+			if (!StringUtils.hasText(searchField)) {
 				next.addObject(JAMWikiServlet.PARAMETER_ACTION, JAMWikiServlet.ACTION_SEARCH);
 				next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(true));
 				return;

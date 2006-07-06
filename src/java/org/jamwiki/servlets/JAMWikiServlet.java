@@ -25,6 +25,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -167,7 +168,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		String uri = request.getRequestURI().trim();
 		String contextPath = request.getContextPath().trim();
 		String virtualWiki = null;
-		if (uri == null || uri.length() == 0 || contextPath == null) {
+		if (!StringUtils.hasText(uri) || contextPath == null) {
 			return null;
 		}
 		uri = uri.substring(contextPath.length() + 1);
@@ -185,7 +186,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	 */
 	protected static boolean isAction(HttpServletRequest request, String key, String constant) {
 		String action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
-		if (action == null || action.length() == 0) {
+		if (!StringUtils.hasText(action)) {
 			return false;
 		}
 		if (key != null &&  action.equals(Utilities.getMessage(key, request.getLocale()))) {
@@ -203,7 +204,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
 			String topic = JAMWikiServlet.getTopicFromURI(request);
-			if (topic == null || topic.length() == 0) {
+			if (!StringUtils.hasText(topic)) {
 				return false;
 			}
 			if (value != null &&  topic.equals(value)) {
@@ -221,7 +222,7 @@ public abstract class JAMWikiServlet extends HttpServlet {
 		if (content == null) {
 			try {
 				String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-				if (baseFileDir == null || baseFileDir.length() == 0) {
+				if (!StringUtils.hasText(baseFileDir)) {
 					// system not set up yet, just read the default file
 					// FIXME - filename should be set better
 					content = Utilities.readFile(topicName + ".txt");

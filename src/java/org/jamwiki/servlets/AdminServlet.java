@@ -35,6 +35,7 @@ import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -83,7 +84,7 @@ public class AdminServlet extends JAMWikiServlet implements Controller {
 			}
 			return next;
 		}
-		if (function == null || function.length() == 0) {
+		if (!StringUtils.hasText(function)) {
 			view(request, next);
 		}
 		if (function.equals("refreshIndex")) {

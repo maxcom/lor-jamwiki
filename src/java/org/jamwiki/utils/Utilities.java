@@ -52,13 +52,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.servlets.JAMWikiServlet;
+import org.springframework.util.StringUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -220,7 +221,7 @@ public class Utilities {
 			logger.error("Failure while decoding " + name + " with charset UTF-8", e);
 		}
 		// replace spaces with underscores
-		name = Utilities.replaceString(name, " ", "_");
+		name = StringUtils.replace(name, " ", "_");
 		return name;
 	}
 
@@ -243,7 +244,7 @@ public class Utilities {
 			logger.error("Failure while decoding url " + url + " with charset " + charSet, e);
 		}
 		// convert underscores to spaces
-		url = Utilities.replaceString(url, "_", " ");
+		url = StringUtils.replace(url, "_", " ");
 		return url;
 	}
 
@@ -267,7 +268,7 @@ public class Utilities {
 	 */
 	public static String encodeSafeFileName(String name) {
 		// replace spaces with underscores
-		name = Utilities.replaceString(name, " ", "_");
+		name = StringUtils.replace(name, " ", "_");
 		// URL encode the rest of the name
 		try {
 			name = URLEncoder.encode(name, "UTF-8");
@@ -292,14 +293,14 @@ public class Utilities {
 	 */
 	public static String encodeURL(String url,String charSet) {
 		// convert spaces to underscores
-		url = Utilities.replaceString(url, " ", "_");
+		url = StringUtils.replace(url, " ", "_");
 		try {
 			url = URLEncoder.encode(url, charSet);
 		} catch (UnsupportedEncodingException e) {
 			logger.error("Failure while encoding url " + url + " with charset " + charSet, e);
 		}
 		// FIXME - un-encode colons.  handle this better.
-		url = Utilities.replaceString(url, "%3A", ":");
+		url = StringUtils.replace(url, "%3A", ":");
 		return url;
 	}
 
@@ -386,13 +387,6 @@ public class Utilities {
 	public static boolean isAdmin(HttpServletRequest request) {
 		WikiUser user = currentUser(request);
 		return (user != null && user.getAdmin());
-	}
-
-	/**
-	 * Utility method for determining if a String is null or empty.
-	 */
-	public static boolean isEmpty(String value) {
-		return (value == null || value.length() == 0);
 	}
 
 	/**
@@ -506,34 +500,6 @@ public class Utilities {
 			return new File(Utilities.dir(), path).getAbsolutePath();
 		}
 		return path;
-	}
-
-	/**
-	 * Replaces occurences of the find string with the replace string in the given text
-	 * @param text
-	 * @param find
-	 * @param replace
-	 * @return the altered string
-	 */
-	public static String replaceString(String text, String find, String replace) {
-		StringBuffer buffer = new StringBuffer(text);
-		return replaceString(buffer, find, replace).toString();
-	}
-
-	/**
-	 * Replaces occurences of the find string with the replace string in the given text
-	 * @param text
-	 * @param find
-	 * @param replace
-	 * @return the altered string
-	 */
-	public static StringBuffer replaceString(StringBuffer buffer, String find, String replace) {
-		int i = 0;
-		while ((i = buffer.indexOf(find, i)) != -1) {
-			buffer.replace(i, i + find.length(), replace);
-			i = i + replace.length();
-		}
-		return buffer;
 	}
 
 	/**

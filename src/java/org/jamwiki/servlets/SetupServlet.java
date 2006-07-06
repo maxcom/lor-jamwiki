@@ -28,6 +28,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -51,7 +52,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 		String function = request.getParameter("function");
 		if (function == null) function = "";
 		// FIXME - hard coding of "function" values
-		if (function == null || function.length() == 0) {
+		if (!StringUtils.hasText(function)) {
 			setup(request, next);
 		} else {
 			initialize(request, next);
@@ -133,7 +134,7 @@ public class SetupServlet extends JAMWikiServlet implements Controller {
 			// FIXME - hard coding
 			errors.add(Environment.getValue(Environment.PROP_BASE_FILE_DIR) + " is not a valid directory");
 		}
-		if (user.getLogin() == null || user.getLogin().length() == 0) {
+		if (!StringUtils.hasText(user.getLogin())) {
 			user.setLogin("");
 			errors.add("Login cannot be empty");
 		}

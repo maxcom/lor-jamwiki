@@ -31,6 +31,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.model.Topic;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -87,9 +88,7 @@ public class PrintableServlet extends JAMWikiServlet implements Controller {
 			PrintableEntry element = (PrintableEntry) iter.next();
 			for (Iterator visitedIterator = alreadyVisited.iterator(); visitedIterator.hasNext();) {
 				String visitedTopic = (String) visitedIterator.next();
-				element.setContent(Utilities.replaceString(element.getContent(),
-					"href=\"" + visitedTopic, "href=\"#" + visitedTopic)
-				);
+				element.setContent(StringUtils.replace(element.getContent(), "href=\"" + visitedTopic, "href=\"#" + visitedTopic));
 			}
 		}
 		// put the result in the request

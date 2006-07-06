@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.sql.Timestamp;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -87,13 +88,12 @@ public class XMLUtil {
 	 *
 	 */
 	private static String escapeXML(String text) {
-		StringBuffer buffer = new StringBuffer(text);
-		buffer = Utilities.replaceString(buffer, "&", "&amp;");
-		buffer = Utilities.replaceString(buffer, "<", "&lt;");
-		buffer = Utilities.replaceString(buffer, ">", "&gt;");
-		buffer = Utilities.replaceString(buffer, "\"", "&quot;");
-		buffer = Utilities.replaceString(buffer, "'", "&apos;");
-		return buffer.toString();
+		text = StringUtils.replace(text, "&", "&amp;");
+		text = StringUtils.replace(text, "<", "&lt;");
+		text = StringUtils.replace(text, ">", "&gt;");
+		text = StringUtils.replace(text, "\"", "&quot;");
+		text = StringUtils.replace(text, "'", "&apos;");
+		return text;
 	}
 
 	/**
