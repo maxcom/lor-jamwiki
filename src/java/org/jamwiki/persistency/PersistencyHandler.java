@@ -45,6 +45,12 @@ import org.springframework.util.StringUtils;
 public abstract class PersistencyHandler {
 
 	private static Logger logger = Logger.getLogger(PersistencyHandler.class);
+	/** For performance reasons, keep a (small) list of recently looked-up topics around in memory. */
+	private static Vector cachedTopicsList = new Vector();
+	/** For performance reasons, keep a (small) list of recently looked-up non-topics around in memory. */
+	private static Vector cachedNonTopicsList = new Vector();
+	// FIXME - possibly make this a property, or configurable based on number of topics in the system
+	private int MAX_CACHED_EXISTS_TOPICS = 2000;
 
 	/**
 	 *
@@ -206,6 +212,8 @@ public abstract class PersistencyHandler {
 		topic.setDeleted(true);
 		// update recent changes
 		addTopic(topic);
+		// reset topic existence vector
+		cachedTopicsList = new Vector();
 	}
 
 	/**
@@ -239,8 +247,27 @@ public abstract class PersistencyHandler {
 	 * See if a topic exists and if it has not been deleted.
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
+		// first check a cache of recently looked-up topics for performance reasons
+		String key = virtualWiki + "/" + topicName;
+		if (cachedTopicsList.contains(key)) {
+			return true;
+		}
+		if (cachedNonTopicsList.contains(key)) {
+			return false;
+		}
 		Topic topic = lookupTopic(virtualWiki, topicName);
-		return (topic != null && !topic.getDeleted());
+		if (topic == null || topic.getDeleted()) {
+			cachedNonTopicsList.add(key);
+			while (cachedNonTopicsList.size() > MAX_CACHED_EXISTS_TOPICS) {
+				cachedNonTopicsList.removeElementAt(0);
+			}
+			return false;
+		}
+		cachedTopicsList.add(key);
+		while (cachedTopicsList.size() > MAX_CACHED_EXISTS_TOPICS) {
+			cachedTopicsList.removeElementAt(0);
+		}
+		return true;
 	}
 
 	/**
@@ -498,6 +525,8 @@ public abstract class PersistencyHandler {
 		topic.setLockedDate(null);
 		topic.setLockSessionKey(null);
 		addTopic(topic);
+		// reset topic non-existence vector
+		cachedNonTopicsList = new Vector();
 		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version
