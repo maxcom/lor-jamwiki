@@ -133,7 +133,10 @@ public class EditServlet extends JAMWikiServlet {
 		} else {
 			contents = WikiBase.readRaw(virtualWiki, topicName);
 		}
-		preview = WikiBase.cook(request.getContextPath(), virtualWiki, contents);
+		String displayName = request.getRemoteAddr();
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) displayName = user.getDisplayName();
+		preview = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, contents);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(Utilities.getMessage("edit", request.getLocale()));
 		buffer.append(" ");

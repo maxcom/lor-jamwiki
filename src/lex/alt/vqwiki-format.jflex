@@ -5,13 +5,15 @@ package org.jamwiki.parser.alt;
 
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.ParserInfo;
 
 %%
 
 %public
 %type String
 %unicode
-%implements org.jamwiki.parser.Lexer
+%implements Lexer
 %class VQWikiFormatLex
 
 %init{
@@ -32,24 +34,29 @@ import org.jamwiki.WikiBase;
 
 %{
 	protected boolean em, strong, underline, center, table, row, cell, allowHtml, code, h1, h2, h3, color;
-  protected int listLevel;
-  protected boolean ordered;
+	protected int listLevel;
+	protected boolean ordered;
 	protected static Logger cat = Logger.getLogger( VQWikiFormatLex.class );
-
-  protected String virtualWiki;
-
-	protected boolean exists( String topic ){
-	  try{
-	    return WikiBase.exists( virtualWiki, topic );
-	  }catch( Exception err ){
-	    cat.error( err );
-	  }
-	  return false;
+	protected ParserInfo parserInfo;
+	
+	/**
+	 *
+	 */
+	protected boolean exists(String topic) {
+		try {
+			return WikiBase.exists(this.parserInfo.getVirtualWiki(), topic);
+		} catch (Exception err) {
+			cat.error(err);
+		}
+		return false;
 	}
-
-  public void setVirtualWiki( String vWiki ){
-    this.virtualWiki = vWiki;
-  }
+	
+	/**
+	 *
+	 */
+	public void setParserInfo(ParserInfo parserInfo) {
+		this.parserInfo = parserInfo;
+	}
 
 %}
 

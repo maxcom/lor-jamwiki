@@ -237,7 +237,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					content = topic.getTopicContent();
 				}
 				if (cook) {
-					content = WikiBase.cook(context, virtualWiki, content);
+					content = WikiBase.cook(context, virtualWiki, null, content);
 				}
 				synchronized (cachedContents) {
 					cachedContents.put(virtualWiki + "-" + topicName, content);
@@ -362,7 +362,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {
-			contents = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+			String displayName = request.getRemoteAddr();
+			WikiUser user = Utilities.currentUser(request);
+			if (user != null) displayName = user.getDisplayName();
+			contents = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, topic.getTopicContent());
 			// search servlet highlights search terms, so add that here
 			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
 		}

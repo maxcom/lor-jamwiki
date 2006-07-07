@@ -31,14 +31,14 @@ import org.jamwiki.parser.ParserInfo;
 public abstract class AbstractParser {
 
 	private static final Logger logger = Logger.getLogger(AbstractParser.class);
-	private ParserInfo parserInfo;
+	protected ParserInfo parserInfo;
 
 	/**
 	 * Sets the basics for this parser.
 	 *
 	 * @param parserInfo General information about this parser.
 	 */
-	protected AbstractParser(ParserInfo parserInfo) {
+	public AbstractParser(ParserInfo parserInfo) {
 		this.parserInfo = parserInfo;
 	}
 
@@ -55,8 +55,16 @@ public abstract class AbstractParser {
 	 * Returns a HTML representation of the given wiki raw text for online representation.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @param virtualwiki A virtual wiki prefix (if any).
 	 * @return HTML representation of the text for online.
 	 */
-	public abstract String parseHTML(String context, String virtualWiki, String raw) throws IOException;
+	public abstract String parseHTML(String raw) throws IOException;
+
+	/**
+	 * For setting general information about this parser.
+	 *
+	 * @param parserInfo General information about this parser.
+	 */
+	public void setParserInfo(ParserInfo parserInfo) {
+		this.parserInfo = parserInfo;
+	}
 }

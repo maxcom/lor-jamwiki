@@ -16,16 +16,15 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Vector;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.model.TopicVersion;
-import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
+import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -69,7 +68,10 @@ public class HistoryServlet extends JAMWikiServlet {
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 				TopicVersion topicVersion = handler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-				String cookedContents = WikiBase.cook(request.getContextPath(), virtualWiki, topicVersion.getVersionContent());
+				String displayName = request.getRemoteAddr();
+				WikiUser user = Utilities.currentUser(request);
+				if (user != null) displayName = user.getDisplayName();
+				String cookedContents = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, topicVersion.getVersionContent());
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("cookedContents", cookedContents);
 				this.pageInfo.setPageTitle(topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));

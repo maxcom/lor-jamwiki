@@ -16,12 +16,10 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -30,6 +28,7 @@ import org.jamwiki.PrintableEntry;
 import org.jamwiki.WikiBase;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -109,7 +108,10 @@ public class PrintableServlet extends JAMWikiServlet {
 	private Collection parsePage(HttpServletRequest request, String virtualWiki, String topicName, int depth, Vector alreadyVisited)
 		throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		String onepage = WikiBase.cook(request.getContextPath(), virtualWiki, topic.getTopicContent());
+		String displayName = request.getRemoteAddr();
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) displayName = user.getDisplayName();
+		String onepage = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, topic.getTopicContent());
 		Collection result = new ArrayList();
 		if (onepage != null) {
 			PrintableEntry entry = new PrintableEntry();

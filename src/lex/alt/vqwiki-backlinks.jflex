@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.jamwiki.parser.Lexer;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.utils.Utilities;
 
 %%
@@ -31,24 +32,36 @@ import org.jamwiki.utils.Utilities;
 
 %{
 	protected static Logger logger = Logger.getLogger( BackLinkLex.class );
-  protected String virtualWiki;
-  private List links = new ArrayList();
-
-  public void setVirtualWiki( String vWiki ){
-    this.virtualWiki = vWiki;
-  }
-
-	protected boolean ignoreWikiname( String name ){
-	  return VQWikiParser.doIgnoreWikiname(name);
+	protected ParserInfo parserInfo;
+	private List links = new ArrayList();
+	
+	/**
+	 *
+	 */
+	public void setParserInfo(ParserInfo parserInfo) {
+		this.parserInfo = parserInfo;
+	}
+	
+	/**
+	 *
+	 */
+	protected boolean ignoreWikiname(String name) {
+		return VQWikiParser.doIgnoreWikiname(name);
 	}
 
-	public List getLinks(){
-	  return this.links;
+	/**
+	 *
+	 */
+	public List getLinks() {
+		return this.links;
 	}
 
-	private void addLink(String link){
-	  logger.debug("adding link: '" + link + "'");
-	  this.links.add(link);
+	/**
+	 *
+	 */
+	private void addLink(String link) {
+		logger.debug("adding link: '" + link + "'");
+		this.links.add(link);
 	}
 %}
 

@@ -16,43 +16,73 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
- * Returns general informations about the parser.
+ *
  */
 public class ParserInfo {
 
-	protected final String name;
-	protected final String version;
-	protected final String bundleName;
+	private String context = null;
+	/** User name to display for syntax such as the MediaWiki "~~~~" syntax */
+	private String userDisplay = null;
+	private String virtualWiki = null;
+	private TableOfContents tableOfContents = new TableOfContents();
 
-	public ParserInfo(String name, String version, String bundleName) {
-		this.name = name;
-		this.version = version;
-		this.bundleName = bundleName;
+	public ParserInfo() {
 	}
 
 	/**
-	 * @return name of the parser
+	 *
 	 */
-	public String getName() {
-		return name;
+	public String getContext() {
+		return context;
 	}
 
 	/**
-	 * @param loc localization for the language to use
-	 * @return short description of the parser
+	 *
 	 */
-	public String getDescription(Locale loc) {
-		return ResourceBundle.getBundle(bundleName, loc).getString("parser.description");
+	public void setContext(String context) {
+		this.context = context;
 	}
 
 	/**
-	 * @return version of the parser.
+	 *
 	 */
-	public String getVersion() {
-		return version;
+	public TableOfContents getTableOfContents() {
+		return this.tableOfContents;
+	}
+
+	/**
+	 *
+	 */
+	public void setTableOfContents(TableOfContents tableOfContents) {
+		this.tableOfContents = tableOfContents;
+	}
+
+	/**
+	 *
+	 */
+	public String getUserDisplay() {
+		return userDisplay;
+	}
+
+	/**
+	 *
+	 */
+	public void setUserDisplay(String userDisplay) {
+		this.userDisplay = userDisplay;
+	}
+
+	/**
+	 *
+	 */
+	public String getVirtualWiki() {
+		return this.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public void setVirtualWiki(String virtualWiki) {
+		this.virtualWiki = virtualWiki;
 	}
 }

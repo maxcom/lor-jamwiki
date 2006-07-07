@@ -36,7 +36,7 @@ import org.jamwiki.WikiBase;
     protected static Logger logger = Logger.getLogger(MediaWikiHTML.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
-    protected String virtualWiki;
+    protected ParserInfo parserInfo = null;
 
     /**
      * Begin a new state and store the old state onto the stack.
@@ -61,8 +61,8 @@ import org.jamwiki.WikiBase;
     /**
      *
      */
-    public void setVirtualWiki(String vWiki) {
-        this.virtualWiki = vWiki;
+    public void setParserInfo(ParserInfo parserInfo) {
+        this.parserInfo = parserInfo;
     }
 %}
 

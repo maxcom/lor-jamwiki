@@ -37,6 +37,7 @@ import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileSearchEngine;
 import org.jamwiki.parser.AbstractParser;
+import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.search.SearchRefreshThread;
@@ -104,13 +105,13 @@ public class WikiBase {
 	 * @return				TODO: DOCUMENT ME!
 	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public static synchronized String cook(String context, String virtualWiki, String content) throws Exception {
+	public static synchronized String cook(String context, String virtualWiki, String userDisplay, String content) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
 			return "";
 		}
 		BufferedReader in = new BufferedReader(new StringReader(content));
-		return cook(context, virtualWiki, in);
+		return cook(context, virtualWiki, userDisplay, in);
 	}
 
 	/**
@@ -121,20 +122,26 @@ public class WikiBase {
 	 * @return				TODO: DOCUMENT ME!
 	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public static synchronized String cook(String context, String virtualWiki, BufferedReader in) throws Exception {
+	public static synchronized String cook(String context, String virtualWiki, String userDisplay, BufferedReader in) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(context);
+		parserInfo.setUserDisplay(userDisplay);
+		parserInfo.setVirtualWiki(virtualWiki);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
-		Class[] parameterTypes = null;
+		Class[] parameterTypes = new Class[1];
+		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInfo");
 		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = null;
+		Object[] initArgs = new Object[1];
+		initArgs[0] = parserInfo;
 		AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
 		String line;
 		StringBuffer raw = new StringBuffer();
 		while ((line = in.readLine()) != null) {
 			raw.append(line).append("\n");
 		}
-		return parser.parseHTML(context, virtualWiki, raw.toString());
+		return parser.parseHTML(raw.toString());
 	}
 
 	/**

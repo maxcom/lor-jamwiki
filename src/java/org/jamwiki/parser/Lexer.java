@@ -32,5 +32,5 @@ public interface Lexer {
 	/**
 	 *
 	 */
-	public void setVirtualWiki(String vWiki);
+	public void setParserInfo(ParserInfo parserInfo);
 }

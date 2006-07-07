@@ -5,9 +5,10 @@ package org.jamwiki.parser.alt;
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import org.jamwiki.parser.Lexer;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.utils.Utilities;
 
 %%
@@ -15,7 +16,7 @@ import org.jamwiki.utils.Utilities;
 %public
 %type String
 %unicode
-%implements	org.jamwiki.parser.Lexer
+%implements Lexer
 %class VQWikiLinkLex
 
 %init{
@@ -28,15 +29,14 @@ import org.jamwiki.utils.Utilities;
 
 %{
 	protected static Logger logger = Logger.getLogger( VQWikiLinkLex.class );
-	protected String virtualWiki;
-	protected String context = null;
+	protected ParserInfo parserInfo;
 	
 	/**
 	 *
 	 */
 	protected boolean exists(String topic) {
 		try {
-			return WikiBase.exists(virtualWiki, topic);
+			return WikiBase.exists(this.parserInfo.getVirtualWiki(), topic);
 		} catch (Exception err) {
 			logger.error(err);
 		}
@@ -46,8 +46,8 @@ import org.jamwiki.utils.Utilities;
 	/**
 	 *
 	 */
-	public void setVirtualWiki(String vWiki) {
-		this.virtualWiki = vWiki;
+	public void setParserInfo(ParserInfo parserInfo) {
+		this.parserInfo = parserInfo;
 	}
 	
 	/**
@@ -64,7 +64,7 @@ import org.jamwiki.utils.Utilities;
 		link = link.trim();
 		description = description.trim();
 		if (exists(link)) {
-			return "<a class=\"topic\" href=\"" + Utilities.buildInternalLink(context, virtualWiki, link)
+			return "<a class=\"topic\" href=\"" + Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), link)
 				+ "\">" + description + "</a>";
 		} else if (description.equals(link)) {
 			return "<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeURL(link)
@@ -73,13 +73,6 @@ import org.jamwiki.utils.Utilities;
 			return description + " (<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeURL(link)
 				+ "\">" + link + "</a>)";
 		}
-	}
-	
-	/**
-	 *
-	 */
-	protected void setContext(String context) {
-		this.context = context;
 	}
 %}
 
@@ -286,7 +279,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
   String displayLink = yytext();
   int firstQuotePosition = displayLink.indexOf("\"");
   String attachmentName = displayLink.substring(firstQuotePosition+1, displayLink.length()-1);
-  String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
+  String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
                 Utilities.encodeURL( attachmentName );
   return "<img src=\"" + link.trim() + "\"/>";
 }
@@ -295,7 +288,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
   logger.debug( "{imageattachment}" );
   String displayLink = yytext();
   String attachmentName = displayLink.substring(7);
-  String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
+  String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
                 Utilities.encodeURL( attachmentName );
   return "<img src=\"" + link.trim() + "\"/>";
 }
@@ -305,7 +298,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
  String displayLink = yytext();
  int firstQuotePosition = displayLink.indexOf("\"");
  String attachmentName = displayLink.substring(firstQuotePosition+1, displayLink.length()-1);
- String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
+ String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
    Utilities.encodeURL( attachmentName );
   StringBuffer buffer = new StringBuffer();
   buffer.append( "<a class=\"attachmentlink\"" );
@@ -324,7 +317,7 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
  logger.debug( "{attachment}" );
  String displayLink = yytext();
  String attachmentName = displayLink.substring(7);
- String link = Utilities.buildInternalLink(context, virtualWiki, "Special:ViewAttachment") + "?attachment=" +
+ String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
    Utilities.encodeURL( attachmentName );
   StringBuffer buffer = new StringBuffer();
   buffer.append( "<a class=\"attachmentlink\"" );

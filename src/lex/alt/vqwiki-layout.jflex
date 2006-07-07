@@ -5,16 +5,17 @@ package org.jamwiki.parser.alt;
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import org.jamwiki.parser.Lexer;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.ParserInfo;
 
 %%
 
 %public
 %type String
 %unicode
-%implements org.jamwiki.parser.Lexer
+%implements Lexer
 %class VQWikiLayoutLex
 
 %init{
@@ -45,108 +46,110 @@ import org.jamwiki.WikiBase;
 %eofval}
 
 %{
-  protected boolean allowHtml;
-  protected int listLevel;
-  protected boolean ordered;
-  protected static Logger cat = Logger.getLogger( VQWikiLayoutLex.class );
-  protected String virtualWiki;
-
-	protected boolean exists( String topic ){
-	  try{
-	    return WikiBase.exists( virtualWiki, topic );
-	  }catch( Exception err ){
-	    cat.error( err );
-	  }
-	  return false;
+	protected boolean allowHtml;
+	protected int listLevel;
+	protected boolean ordered;
+	protected static Logger cat = Logger.getLogger( VQWikiLayoutLex.class );
+	protected ParserInfo parserInfo;
+	
+	/**
+	 *
+	 */
+	protected boolean exists(String topic) {
+		try {
+			return WikiBase.exists(this.parserInfo.getVirtualWiki(), topic);
+		} catch (Exception err) {
+			cat.error(err);
+		}
+		return false;
 	}
-
-  public void setVirtualWiki( String vWiki ){
-    this.virtualWiki = vWiki;
-  }
-
-  protected String getListEntry(String text)
-  {
-    cat.debug( "first list item: " + text );
-    int count = 0;
-    ordered = false;
-
-    cat.debug( "First char='" + text.charAt(0) + "'" );
-    if( text.charAt( 0 ) == '#' )
-      ordered = true;
-
-    listLevel = 1;
-    StringBuffer buffer = new StringBuffer();
-    if( ordered )
-      buffer.append( "<ol>" );
-    else
-      buffer.append( "<ul>" );
-    buffer.append( "<li>" );
-    buffer.append( text.substring( count + 1 ).trim() );
-    return buffer.toString();
-  }
-  
-  protected String getListSingleEntry(String text)
-  {
-	  cat.debug( "another list item: " + text );
-	  boolean tabs = false;
-	  int count = 0;
-	  if(text.charAt(0) == '\t')
-	  {
-	    tabs = true;
-	    for( int i = 0; i < text.length(); i++ ){
-	      if( text.charAt( i ) == '\t' )
-	        count++;
-	      else
-	        break;
-	    }
-	  }
-	  else
-	  {
-	    tabs = false;
-	    for( int i = 0; i < text.length(); i +=  3 ){
-	      if((i + 3 <= text.length()) && (text.substring( i, i + 3 ).equals("   ")) )
-	        count++;
-	      else
-	        break;
-	    }
-	  }
-	  StringBuffer buffer = new StringBuffer();
-	  if( count > listLevel ){
-		for (int i=count-listLevel;i>0;i--)
-		{
-		  if( ordered )
-		    buffer.append( "\n<ol>" );
-		  else
-		    buffer.append( "\n<ul>" );
+	
+	/**
+	 *
+	 */
+	public void setParserInfo(ParserInfo parserInfo) {
+		this.parserInfo = parserInfo;
+	}
+	
+	/**
+	 *
+	 */
+	protected String getListEntry(String text) {
+		cat.debug( "first list item: " + text );
+		int count = 0;
+		ordered = false;
+		cat.debug( "First char='" + text.charAt(0) + "'" );
+		if (text.charAt( 0 ) == '#') ordered = true;
+		listLevel = 1;
+		StringBuffer buffer = new StringBuffer();
+		if (ordered) {
+			buffer.append( "<ol>" );
+		} else {
+			buffer.append( "<ul>" );
 		}
-	    listLevel = count;
-	  }
-	  else if( count < listLevel ){
-		buffer.append( "</li>" );
-		for (int i = listLevel - count ; i > 0 ; i--)
-		{
-		    if( ordered )
-		      buffer.append( "</ol>" );
-		    else
-		      buffer.append( "</ul>" );
+		buffer.append( "<li>" );
+		buffer.append( text.substring( count + 1 ).trim() );
+		return buffer.toString();
+	}
+	
+	/**
+	 *
+	 */
+	protected String getListSingleEntry(String text) {
+		cat.debug( "another list item: " + text );
+		boolean tabs = false;
+		int count = 0;
+		if (text.charAt(0) == '\t') {
+			tabs = true;
+			for( int i = 0; i < text.length(); i++ ){
+				if( text.charAt( i ) == '\t' ) {
+					count++;
+				} else {
+					break;
+				}
+			}
+		} else {
+			tabs = false;
+			for (int i = 0; i < text.length(); i +=  3) {
+				if ((i + 3 <= text.length()) && (text.substring( i, i + 3 ).equals("   "))) {
+					count++;
+				} else {
+					break;
+				}
+			}
 		}
-	    listLevel = count;
-	    buffer.append( "\n" );
-	  }
-	  else{
-	    buffer.append( "</li>\n" );
-	  }
-	  buffer.append( "<li>" );
-	  if (tabs)
-	  {
-	    buffer.append(text.substring( count + 1 ).trim());
-	  }
-	  else
-	  {
-	    buffer.append(text.substring((count * 3) + 1).trim());
-	  }
-	  return buffer.toString();
-  }
+		StringBuffer buffer = new StringBuffer();
+		if (count > listLevel) {
+			for (int i=count-listLevel;i>0;i--) {
+				if( ordered ) {
+					buffer.append( "\n<ol>" );
+				} else {
+					buffer.append( "\n<ul>" );
+				}
+			}
+			listLevel = count;
+		} else if (count < listLevel) {
+			buffer.append( "</li>" );
+			for (int i = listLevel - count ; i > 0 ; i--) {
+				if( ordered ) {
+					buffer.append( "</ol>" );
+				} else {
+					buffer.append( "</ul>" );
+				}
+			}
+			listLevel = count;
+			buffer.append( "\n" );
+		} else {
+			buffer.append( "</li>\n" );
+		}
+		buffer.append( "<li>" );
+		if (tabs) {
+			buffer.append(text.substring( count + 1 ).trim());
+		} else {
+			buffer.append(text.substring((count * 3) + 1).trim());
+		}
+		return buffer.toString();
+	}
 
 %}
 

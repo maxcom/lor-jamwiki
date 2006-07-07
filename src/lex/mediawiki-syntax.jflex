@@ -89,9 +89,7 @@ import org.jamwiki.utils.Utilities;
     protected static Logger logger = Logger.getLogger(MediaWikiSyntax.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
-    protected String virtualWiki = null;;
-    protected String context = null;
-    protected TableOfContents toc = new TableOfContents();
+    protected ParserInfo parserInfo = null;;
     protected boolean allowHtml = false;
     protected boolean wikibold = false;
     protected boolean wikiitalic = false;
@@ -231,34 +229,20 @@ import org.jamwiki.utils.Utilities;
     /**
      *
      */
-    protected void setContext(String context) {
-    	this.context = context;
-    }
-    
-    /**
-     *
-     */
     protected String updateToc(String name, String text, int level) {
         String output = "";
-        if (this.toc.getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
+        if (this.parserInfo.getTableOfContents().getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
             output = TableOfContents.TOC_INSERT_TAG;
         }
-        this.toc.addEntry(name, text, level);
+        this.parserInfo.getTableOfContents().addEntry(name, text, level);
         return output;
     }
     
     /**
      *
      */
-    public void setVirtualWiki(String vWiki) {
-        this.virtualWiki = vWiki;
-    }
-    
-    /**
-     *
-     */
-    public void setTOC(TableOfContents toc) {
-        this.toc = toc;
+    public void setParserInfo(ParserInfo parserInfo) {
+        this.parserInfo = parserInfo;
     }
 %}
 
@@ -382,7 +366,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{notoc} {
     logger.debug("notoc: " + yytext() + " (" + yystate() + ")");
-    this.toc.setStatus(TableOfContents.STATUS_NO_TOC);
+    this.parserInfo.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
@@ -390,7 +374,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildWikiLink(this.context, this.virtualWiki, yytext());
+    return ParserUtil.buildWikiLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
