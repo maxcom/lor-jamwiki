@@ -60,10 +60,12 @@ public class WikiPreparedStatement {
 		Connection conn = null;
 		ResultSet rs = null;
 		try {
+			long start = System.currentTimeMillis();
 			conn = DatabaseConnection.getConnection();
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			rs = this.statement.executeQuery();
+			logger.info("Prepared statement execution time: " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
 			return new WikiResultSet(rs);
 		} finally {
 			DatabaseConnection.closeConnection(conn, this.statement, rs);
@@ -76,10 +78,13 @@ public class WikiPreparedStatement {
 	public int executeUpdate() throws Exception {
 		Connection conn = null;
 		try {
+			long start = System.currentTimeMillis();
 			conn = DatabaseConnection.getConnection();
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
-			return this.statement.executeUpdate();
+			int result = this.statement.executeUpdate();
+			logger.info("Prepared statement execution time: " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			return result;
 		} finally {
 			DatabaseConnection.closeConnection(conn, this.statement);
 		}

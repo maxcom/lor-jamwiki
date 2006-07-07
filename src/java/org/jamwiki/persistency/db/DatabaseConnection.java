@@ -115,9 +115,11 @@ public class DatabaseConnection {
 		Statement stmt = null;
 		ResultSet rs = null;
 		try {
+			long start = System.currentTimeMillis();
 			stmt = conn.createStatement();
 			logger.info("Executing SQL: " + sql);
 			rs = stmt.executeQuery(sql);
+			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
 		} finally {
 			if (rs != null) {
@@ -151,12 +153,15 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	protected static void executeUpdate(String sql, Connection conn) throws Exception {
+	protected static int executeUpdate(String sql, Connection conn) throws Exception {
 		Statement stmt = null;
 		try {
+			long start = System.currentTimeMillis();
 			stmt = conn.createStatement();
 			logger.info("Executing SQL: " + sql);
-			stmt.executeUpdate(sql);
+			int result = stmt.executeUpdate(sql);
+			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+			return result;
 		} finally {
 			if (stmt != null) {
 				try {
