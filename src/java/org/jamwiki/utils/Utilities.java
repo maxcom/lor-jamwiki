@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.servlet.http.Cookie;
@@ -402,6 +403,37 @@ public class Utilities {
 	 */
 	public static boolean isFirstUse() {
 		return !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED);
+	}
+
+	/**
+	 * Determine if the given string is an IP address.
+	 */
+	public static boolean isIpAddress(String ipAddress) {
+		// note that a regular expression would be the easiest way to handle
+		// this, but regular expressions don't handle things like "number between
+		// 0 and 255" very well, so use a heavier approach
+		// if no text, obviously not valid
+		if (!StringUtils.hasText(ipAddress)) return false;
+		// must contain three periods
+		if (StringUtils.countOccurrencesOf(ipAddress, ".") != 3) return false;
+		// ip addresses must be between seven and 15 characters long
+		if (ipAddress.length() < 7 || ipAddress.length() > 15) return false;
+		// verify that the string is "0-255.0-255.0-255.0-255".
+		StringTokenizer tokens = new StringTokenizer(ipAddress, ".");
+		String token = null;
+		int number = -1;
+		while (tokens.hasMoreTokens()) {
+			token = tokens.nextToken();
+			try {
+				number = Integer.parseInt(token);
+				if (number < 0 || number > 255) return false;
+			} catch (Exception e) {
+				// not a number
+				return false;
+			}
+		}
+		// all tests passed, it's an IP address
+		return true;
 	}
 
 	/**
