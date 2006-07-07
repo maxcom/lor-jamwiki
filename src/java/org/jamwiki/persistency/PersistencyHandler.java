@@ -312,6 +312,7 @@ public abstract class PersistencyHandler {
 			Integer authorId = version.getAuthorId();
 			change.setAuthorId(authorId);
 			if (authorId != null) {
+				// FIXME - this causes a database lookup for each change entry
 				WikiUser user = lookupWikiUser(authorId.intValue());
 				change.setAuthorName(user.getLogin());
 			} else {

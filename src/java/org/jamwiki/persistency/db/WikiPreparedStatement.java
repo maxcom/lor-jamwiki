@@ -65,7 +65,7 @@ public class WikiPreparedStatement {
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			rs = this.statement.executeQuery();
-			logger.info("Prepared statement execution time: " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			logger.info("Executed " + this.sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
 		} finally {
 			DatabaseConnection.closeConnection(conn, this.statement, rs);
@@ -83,7 +83,7 @@ public class WikiPreparedStatement {
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			int result = this.statement.executeUpdate();
-			logger.info("Prepared statement execution time: " + ((System.currentTimeMillis() - start) / 1000.000) + " s.");
+			logger.info("Executed " + this.sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return result;
 		} finally {
 			DatabaseConnection.closeConnection(conn, this.statement);

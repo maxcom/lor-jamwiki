@@ -147,7 +147,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		String topic = uri.substring(slashIndex + 1);
 		topic = Utilities.decodeURL(topic);
-		logger.info("Retrieved topic from URI as: " + topic);
 		return topic;
 	}
 
@@ -180,7 +179,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 			return null;
 		}
 		virtualWiki = uri.substring(0, slashIndex);
-		logger.info("Retrieved virtual wiki from URI as: " + virtualWiki);
 		return virtualWiki;
 	}
 
