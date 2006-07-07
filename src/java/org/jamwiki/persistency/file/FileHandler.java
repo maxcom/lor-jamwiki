@@ -257,7 +257,6 @@ public class FileHandler extends PersistencyHandler {
 			NEXT_TOPIC_VERSION_ID = topicVersion.getTopicVersionId();
 			nextFileWrite(NEXT_TOPIC_VERSION_ID, getPathFor(null, null, NEXT_TOPIC_VERSION_ID_FILE));
 		}
-		logger.info("next topic version: " + NEXT_TOPIC_VERSION_ID);
 		StringBuffer content = new StringBuffer();
 		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
 		content.append("\n");
