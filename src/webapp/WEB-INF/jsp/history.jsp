@@ -82,7 +82,8 @@ function inactive(element) {
 	<%-- FIXME: do not hardcode date pattern --%>
 	<a href="<jamwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 	&#160;.&#160;.&#160;
-	<c:out value="${change.authorName}" />
+	<%-- FIXME: ugly --%>
+	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 		</c:forEach>
 </ul>

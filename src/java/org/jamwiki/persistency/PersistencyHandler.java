@@ -313,11 +313,7 @@ public abstract class PersistencyHandler {
 			change.setAuthorId(authorId);
 			if (authorId != null) {
 				WikiUser user = lookupWikiUser(authorId.intValue());
-				if (user.getDisplayName() != null) {
-					change.setAuthorName(user.getDisplayName());
-				} else {
-					change.setAuthorName(user.getLogin());
-				}
+				change.setAuthorName(user.getLogin());
 			} else {
 				change.setAuthorName(version.getAuthorIpAddress());
 			}
@@ -535,7 +531,7 @@ public abstract class PersistencyHandler {
 		String authorName = topicVersion.getAuthorIpAddress();
 		if (topicVersion.getAuthorId() != null) {
 			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue());
-			authorName = user.getDisplayName();
+			authorName = user.getLogin();
 			if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
 		}
 		RecentChange change = new RecentChange();

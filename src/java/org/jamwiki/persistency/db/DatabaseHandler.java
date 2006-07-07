@@ -82,7 +82,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		+ "SELECT "
 		+   "jam_topic_version.topic_version_id, jam_topic.topic_id, "
 		+   "jam_topic.topic_name, jam_topic_version.edit_date, "
-		+   "jam_topic_version.wiki_user_id, jam_wiki_user.display_name, "
+		+   "jam_topic_version.wiki_user_id, jam_wiki_user.login, "
 		+   "jam_topic_version.edit_type, jam_virtual_wiki.virtual_wiki_id, "
 		+   "jam_virtual_wiki.virtual_wiki_name, jam_topic_version.edit_comment "
 		+ "FROM jam_topic, jam_topic_version, jam_wiki_user, jam_virtual_wiki "

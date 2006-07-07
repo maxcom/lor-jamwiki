@@ -55,7 +55,8 @@ if (request.getParameter("num") != null) {
 	&#160;
 	<a href='<jamwiki:link value="${change.topicName}"/>'><c:out value="${change.topicName}"/></a>
 	&#160;.&#160;.&#160;
-	<c:out value="${change.authorName}" />
+	<%-- FIXME: ugly --%>
+	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </c:forEach>
 </ul>
