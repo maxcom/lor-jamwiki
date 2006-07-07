@@ -517,15 +517,15 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
-		if (topicVersion.getPreviousTopicVersionId() == null) {
-			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
-			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
-		}
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(null);
 		topic.setLockedDate(null);
 		topic.setLockSessionKey(null);
 		addTopic(topic);
+		if (topicVersion.getPreviousTopicVersionId() == null) {
+			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
+			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
+		}
 		// reset topic non-existence vector
 		cachedNonTopicsList = new Vector();
 		topicVersion.setTopicId(topic.getTopicId());
