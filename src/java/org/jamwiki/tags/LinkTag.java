@@ -51,7 +51,16 @@ public class LinkTag extends BodyTagSupport {
 				if (StringUtils.hasText(this.text)) {
 					// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
 					String css = "";
-					if (!WikiBase.exists(virtualWiki, this.value)) {
+					String topic = this.value;
+					int pos = topic.indexOf('?');
+					if (pos > 0) {
+						topic = topic.substring(0, pos).trim();
+					}
+					pos = topic.indexOf('#');
+					if (pos > 0) {
+						topic = topic.substring(0, pos).trim();
+					}
+					if (!WikiBase.exists(virtualWiki, topic)) {
 						// FIXME - hard coding
 						css = " class=\"edit\"";
 					}

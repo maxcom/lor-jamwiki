@@ -67,13 +67,20 @@ public class Utilities {
 	 *
 	 */
 	public static String buildInternalLink(String context, String virtualWiki, String page) {
-		return buildInternalLink(context, virtualWiki, page, null);
+		return buildInternalLink(context, virtualWiki, page, null, null);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildInternalLink(String context, String virtualWiki, String page, String section) {
+		return buildInternalLink(context, virtualWiki, page, section, null);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLink(String context, String virtualWiki, String page, String section, String query) {
 		String url = context;
 		// context never ends with a "/" per servlet specification
 		url += "/";
@@ -81,11 +88,14 @@ public class Utilities {
 		url += Utilities.encodeURL(virtualWiki);
 		url += "/";
 		url += Utilities.encodeURL(page);
-		if (section != null && section.length() > 0) {
+		if (StringUtils.hasText(section)) {
 			if (section.startsWith("#")) {
 				section = section.substring(1);
 			}
 			url += "#" + Utilities.encodeURL(section);
+		}
+		if (StringUtils.hasText(query)) {
+			url += query;
 		}
 		return url;
 	}
@@ -99,12 +109,18 @@ public class Utilities {
 		}
 		// search for hash mark
 		String section = "";
-		int pos = topic.indexOf('#');
+		String query = "";
+		int pos = topic.indexOf('?');
+		if (pos > 0) {
+			query = topic.substring(pos).trim();
+			topic = topic.substring(0, pos).trim();
+		}
+		pos = topic.indexOf('#');
 		if (pos > 0) {
 			section = topic.substring(pos+1).trim();
 			topic = topic.substring(0, pos).trim();
 		}
-		String url = Utilities.buildInternalLink(context, virtualWiki, topic, section);
+		String url = Utilities.buildInternalLink(context, virtualWiki, topic, section, query);
 		if (!WikiBase.exists(virtualWiki, topic)) {
 			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
 			url += "?topic=" + Utilities.encodeURL(topic);

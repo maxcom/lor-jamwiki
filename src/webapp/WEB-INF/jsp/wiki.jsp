@@ -92,6 +92,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="attach.jsp" %>
 <%
+} else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
+%>
+		<%@ include file="contributions.jsp" %>
+<%
 } else if (action.equals(JAMWikiServlet.ACTION_DIFF)) {
 %>
 		<%@ include file="diff.jsp" %>

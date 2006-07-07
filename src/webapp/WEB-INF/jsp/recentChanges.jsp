@@ -57,6 +57,7 @@ if (request.getParameter("num") != null) {
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
+	(<jamwiki:link value="User comments:${change.authorName}">Comments</jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions?user=${change.authorName}">Contribs</jamwiki:link>)
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </c:forEach>
 </ul>

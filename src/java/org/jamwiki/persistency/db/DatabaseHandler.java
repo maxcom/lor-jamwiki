@@ -162,6 +162,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	    + "left outer join jam_wiki_user_info "
 	    + "on (jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) "
 	    + "where jam_wiki_user.wiki_user_id = ? ";
+	private static final String STATEMENT_SELECT_WIKI_USER_CHANGES =
+		"select * from jam_recent_change "
+		+ "where virtual_wiki_name = ? "
+		+ "and display_name = ? "
+		+ "order by edit_date desc "
+		+ "limit ? ";
 	private static final String STATEMENT_SELECT_WIKI_USER_PASSWORD =
 	    "select wiki_user_id from jam_wiki_user_info "
 	    + "where login = ? "
@@ -500,6 +506,24 @@ public class DatabaseHandler extends PersistencyHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
 		stmt.setInt(2, numChanges);
+		WikiResultSet rs = stmt.executeQuery();
+		while (rs.next()) {
+			RecentChange change = initRecentChange(rs);
+			all.add(change);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
+	public Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+		Vector all = new Vector();
+		// FIXME - query should be against jam_topic_version, not jam_recent_change
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES);
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userString);
+		stmt.setInt(3, num);
 		WikiResultSet rs = stmt.executeQuery();
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);

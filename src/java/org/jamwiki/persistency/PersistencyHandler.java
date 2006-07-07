@@ -334,6 +334,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public abstract Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception;
+
+	/**
+	 *
+	 */
 	public abstract Collection getVirtualWikiList() throws Exception;
 
 	/**

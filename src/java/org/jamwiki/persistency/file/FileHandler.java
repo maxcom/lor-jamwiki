@@ -557,6 +557,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+		Vector contributions = new Vector();
+		// FIXME - implement
+		return contributions;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getVirtualWikiList() throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
