@@ -17,16 +17,11 @@
 package org.jamwiki;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -73,8 +68,6 @@ public class WikiBase {
 	private static final Logger logger = Logger.getLogger(WikiBase.class);
 	/** The handler that looks after read/write operations for a persitence type */
 	private static PersistencyHandler handler;
-	/** Listeners for topic changes */
-	private static List topicListeners;
 	/** Number of virtual wikis */
 	private static int virtualWikiCount;
 
