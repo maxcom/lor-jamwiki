@@ -96,8 +96,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	private transient int fsType = FS_BASED;
 	/** Can we parse HTML files? */
 	private transient boolean canParseHTML = false;
-	/** Can we parse PDF files? */
-	private transient boolean canParsePDF = false;
 
 	/**
 	 * Index the given text for the search engine database
@@ -414,13 +412,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		} catch (ClassNotFoundException e) {
 			canParseHTML = false;
 		}
-		try {
-			// check, if classes are here:
-			Class.forName("org.pdfbox.pdfparser.PDFParser");
-			canParsePDF = true;
-		} catch (ClassNotFoundException e) {
-			canParsePDF = false;
-		}
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
 			String currentWiki = (String) iterator.next();
 			logger.debug("indexing virtual wiki " + currentWiki);
@@ -599,31 +590,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 						contents.append((char) read);
 					}
 					inStream.close();
-				}
-				if (canParsePDF && ("pdf".equals(extension))) {
-					try {
-						Class pdfclass = Class.forName("org.jamwiki.search.lucene.PDFDocument");
-						Object pdfdocument = pdfclass.newInstance();
-						Method method = pdfclass.getMethod("getContentOfPDFFile", new Class[]{String.class, File.class});
-						Object result = method.invoke(pdfdocument, new Object[]{attachmentFileName, attachmentFile});
-						if (result instanceof StringBuffer) {
-							contents.append((StringBuffer) result);
-						}
-					} catch (SecurityException e) {
-						// Actually do nothing
-					} catch (IllegalArgumentException e) {
-						// Actually do nothing
-					} catch (ClassNotFoundException e) {
-						// Actually do nothing
-					} catch (InstantiationException e) {
-						// Actually do nothing
-					} catch (IllegalAccessException e) {
-						// Actually do nothing
-					} catch (NoSuchMethodException e) {
-						// Actually do nothing
-					} catch (InvocationTargetException e) {
-						// Actually do nothing
-					}
 				}
 				// otherwise we cannot index it -> ignore it!
 			}
