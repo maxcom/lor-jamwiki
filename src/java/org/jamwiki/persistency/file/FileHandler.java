@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -63,6 +62,7 @@ public class FileHandler extends PersistencyHandler {
 
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
+	private static final String CONTRIBUTIONS_DIR = "contributions";
 	private static final String DELETE_DIR = "deletes";
 	private final static String EXT = ".xml";
 	private static final String LOCK_DIR = "locks";
@@ -185,6 +185,11 @@ public class FileHandler extends PersistencyHandler {
 		String filename = recentChangeFilename(change.getTopicVersionId());
 		File file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
 		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(content.toString());
+		writer.close();
+		// also write to user contributions directory
+		file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.CONTRIBUTIONS_DIR, change.getAuthorName(), filename);
+		writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		writer.write(content.toString());
 		writer.close();
 	}
@@ -560,9 +565,16 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception {
-		// FIXME - implement
-		throw new UnsupportedOperationException("Retrieval of user contributions is not supported in file persistency mode");
+	public Collection getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+		List all = new LinkedList();
+		File[] files = retrieveUserContributionsFiles(virtualWiki, userString);
+		if (files == null) return all;
+		for (int i = 0; i < files.length; i++) {
+			if (i >= num) break;
+			RecentChange change = initRecentChange(files[i]);
+			all.add(change);
+		}
+		return all;
 	}
 
 	/**
@@ -1011,6 +1023,18 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	private File[] retrieveTopicVersionFiles(String virtualWiki, String topicName) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName);
+		File[] files = file.listFiles();
+		if (files == null) return null;
+		Comparator comparator = new WikiFileComparator();
+		Arrays.sort(files, comparator);
+		return files;
+	}
+
+	/**
+	 *
+	 */
+	private File[] retrieveUserContributionsFiles(String virtualWiki, String userString) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, FileHandler.CONTRIBUTIONS_DIR, userString);
 		File[] files = file.listFiles();
 		if (files == null) return null;
 		Comparator comparator = new WikiFileComparator();

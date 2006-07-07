@@ -25,7 +25,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.persistency.PersistencyHandler;
@@ -560,8 +559,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception {
-		Vector all = new Vector();
+	public Collection getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+		Collection all = new ArrayList();
 		WikiPreparedStatement stmt = null;
 		if (Utilities.isIpAddress(userString)) {
 			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
