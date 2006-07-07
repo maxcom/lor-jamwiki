@@ -90,109 +90,10 @@ public class WikiBase {
 	}
 
 	/**
-	 * Singleton. Retrieves an intance of <code>WikiBase</code> and creates one if it doesn't exist yet.
-	 *
-	 * @return Instance of this class
-	 * @throws Exception If the storage produces errors
+	 * Add virtual wiki
 	 */
-	private static void init() throws Exception {
-		int persistenceType = -1;
-		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
-		if (type != null && type.equals("DATABASE")) {
-			WikiBase.handler = new DatabaseHandler();
-		} else {
-			WikiBase.handler = new FileHandler();
-		}
-		new SearchRefreshThread(Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL));
-	}
-
-	/**
-	 * Get an instance to the search enginge.
-	 *
-	 * @return Reference to the SearchEngine
-	 * @throws Exception the current search engine
-	 */
-	public static SearchEngine getSearchEngineInstance() throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return FileSearchEngine.getInstance();
-			case DATABASE:
-				return DatabaseSearchEngine.getInstance();
-			default:
-				return FileSearchEngine.getInstance();
-		}
-	}
-
-	/**
-	 *
-	 */
-	public static int getPersistenceType() {
-		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
-			return WikiBase.DATABASE;
-		} else {
-			return WikiBase.FILE;
-		}
-	}
-
-	/**
-	 * Get an instance of the user group
-	 *
-	 * @return Reference to the SearchEngine
-	 * @throws Exception the current search engine
-	 */
-	public static Usergroup getUsergroupInstance() throws Exception {
-		switch (Usergroup.getUsergroupType()) {
-			case LDAP:
-				return LdapUsergroup.getInstance();
-			//TODO case DATABASE:
-			//  return DatabaseUsergroup.getInstance();
-			default:
-				return NoUsergroup.getInstance();
-		}
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topic	   TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public static Notify getNotifyInstance(String virtualWiki, String topic) throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return new FileNotify(virtualWiki, topic);
-			case DATABASE:
-				return new DatabaseNotify(virtualWiki, topic);
-			default:
-				return new FileNotify();
-		}
-	}
-
-	/**
-	 * Reads a file and returns the raw contents. Used for the editing version.
-	 */
-	public static synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		// FIXME - return null or empty?
-		if (topic == null) return "";
-		return topic.getTopicContent();
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public static synchronized boolean exists(String virtualWiki, String topicName) throws Exception {
-		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
-			return true;
-		}
-		return handler.exists(virtualWiki, topicName);
+	public static void addVirtualWiki(String virtualWiki) throws Exception {
+		WikiBase.handler.addVirtualWiki(virtualWiki);
 	}
 
 	/**
@@ -239,14 +140,44 @@ public class WikiBase {
 	/**
 	 * TODO: DOCUMENT ME!
 	 *
+	 * @param virtualWiki TODO: DOCUMENT ME!
+	 * @param topicName   TODO: DOCUMENT ME!
+	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public static void initialise(Locale locale, WikiUser user) throws Exception {
-		int persistenceType = WikiBase.getPersistenceType();
-		WikiMail.init();
-		instance = new WikiBase();
-		instance.getHandler().initialize(locale, user);
-		JAMWikiServlet.removeCachedContents();
+	public static synchronized boolean exists(String virtualWiki, String topicName) throws Exception {
+		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
+			return true;
+		}
+		return handler.exists(virtualWiki, topicName);
+	}
+
+	/**
+	 * return the current handler instance
+	 *
+	 * @return the current handler instance
+	 */
+	public static PersistencyHandler getHandler() {
+		return handler;
+	}
+
+	/**
+	 * TODO: DOCUMENT ME!
+	 *
+	 * @param virtualWiki TODO: DOCUMENT ME!
+	 * @param topic	   TODO: DOCUMENT ME!
+	 * @return TODO: DOCUMENT ME!
+	 * @throws Exception TODO: DOCUMENT ME!
+	 */
+	public static Notify getNotifyInstance(String virtualWiki, String topic) throws Exception {
+		switch (WikiBase.getPersistenceType()) {
+			case FILE:
+				return new FileNotify(virtualWiki, topic);
+			case DATABASE:
+				return new DatabaseNotify(virtualWiki, topic);
+			default:
+				return new FileNotify();
+		}
 	}
 
 	/**
@@ -268,6 +199,34 @@ public class WikiBase {
 		}
 		logger.debug(results.size() + " orphaned topics found");
 		return results;
+	}
+
+	/**
+	 *
+	 */
+	public static int getPersistenceType() {
+		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
+			return WikiBase.DATABASE;
+		} else {
+			return WikiBase.FILE;
+		}
+	}
+
+	/**
+	 * Get an instance to the search enginge.
+	 *
+	 * @return Reference to the SearchEngine
+	 * @throws Exception the current search engine
+	 */
+	public static SearchEngine getSearchEngineInstance() throws Exception {
+		switch (WikiBase.getPersistenceType()) {
+			case FILE:
+				return FileSearchEngine.getInstance();
+			case DATABASE:
+				return DatabaseSearchEngine.getInstance();
+			default:
+				return FileSearchEngine.getInstance();
+		}
 	}
 
 	/**
@@ -302,17 +261,20 @@ public class WikiBase {
 	}
 
 	/**
-	 * Return a list of all virtual wikis on the server
+	 * Get an instance of the user group
+	 *
+	 * @return Reference to the SearchEngine
+	 * @throws Exception the current search engine
 	 */
-	public static Collection getVirtualWikiList() throws Exception {
-		return WikiBase.handler.getVirtualWikiList();
-	}
-
-	/**
-	 * Add virtual wiki
-	 */
-	public static void addVirtualWiki(String virtualWiki) throws Exception {
-		WikiBase.handler.addVirtualWiki(virtualWiki);
+	public static Usergroup getUsergroupInstance() throws Exception {
+		switch (Usergroup.getUsergroupType()) {
+			case LDAP:
+				return LdapUsergroup.getInstance();
+			//TODO case DATABASE:
+			//  return DatabaseUsergroup.getInstance();
+			default:
+				return NoUsergroup.getInstance();
+		}
 	}
 
 	/**
@@ -332,30 +294,49 @@ public class WikiBase {
 	}
 
 	/**
-	 * return the current handler instance
-	 *
-	 * @return the current handler instance
+	 * Return a list of all virtual wikis on the server
 	 */
-	public static PersistencyHandler getHandler() {
-		return handler;
+	public static Collection getVirtualWikiList() throws Exception {
+		return WikiBase.handler.getVirtualWikiList();
 	}
 
 	/**
-	 * Return true if the given topic is marked as "admin only", i.e. it is present in the admin only topics topic
+	 * Singleton. Retrieves an intance of <code>WikiBase</code> and creates one if it doesn't exist yet.
 	 *
-	 * @param virtualWiki
-	 * @param topicName
-	 * @return
+	 * @return Instance of this class
+	 * @throws Exception If the storage produces errors
 	 */
-	public static boolean isAdminOnlyTopic(Locale locale, String virtualWiki, String topicName) throws Exception {
-		String adminOnlyTopics = readRaw(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale));
-		StringTokenizer tokenizer = new StringTokenizer(adminOnlyTopics);
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			if (token.equals(topicName)) {
-				return true;
-			}
+	private static void init() throws Exception {
+		int persistenceType = -1;
+		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
+		if (type != null && type.equals("DATABASE")) {
+			WikiBase.handler = new DatabaseHandler();
+		} else {
+			WikiBase.handler = new FileHandler();
 		}
-		return false;
+		new SearchRefreshThread(Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL));
+	}
+
+	/**
+	 * TODO: DOCUMENT ME!
+	 *
+	 * @throws Exception TODO: DOCUMENT ME!
+	 */
+	public static void initialise(Locale locale, WikiUser user) throws Exception {
+		int persistenceType = WikiBase.getPersistenceType();
+		WikiMail.init();
+		instance = new WikiBase();
+		instance.getHandler().initialize(locale, user);
+		JAMWikiServlet.removeCachedContents();
+	}
+
+	/**
+	 * Reads a file and returns the raw contents. Used for the editing version.
+	 */
+	public static synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		// FIXME - return null or empty?
+		if (topic == null) return "";
+		return topic.getTopicContent();
 	}
 }
