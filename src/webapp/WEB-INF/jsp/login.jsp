@@ -31,6 +31,10 @@
 	<td><input type="password" name="password"/></td>
 </tr>
 <tr>
+	<td>&#160;</td>
+	<td><input type="checkbox" value="true" name="remember" />&#160;Remember Me</td>
+</tr>
+<tr>
 	<td>&nbsp;</td>
 	<td><input type="submit" name="function" value='<f:message key="login.submit"/>'/></td>
 </tr>

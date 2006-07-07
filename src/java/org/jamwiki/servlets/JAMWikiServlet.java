@@ -74,6 +74,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_USER = "user";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
+	public static final String USER_COOKIE = "user-cookie";
+	public static final String USER_COOKIE_DELIMITER = "|";
+	// FIXME - make configurable
+	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
 	private static HashMap cachedContents = new HashMap();
 	WikiPageInfo pageInfo = new WikiPageInfo();
 

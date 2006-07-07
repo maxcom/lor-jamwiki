@@ -68,6 +68,7 @@ public class LoginServlet extends JAMWikiServlet {
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		request.getSession().invalidate();
+		Utilities.removeCookie(response, JAMWikiServlet.USER_COOKIE);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			redirect = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
@@ -99,6 +100,10 @@ public class LoginServlet extends JAMWikiServlet {
 			return false;
 		}
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+		if (request.getParameter("remember") != null) {
+			String cookieValue = user.getLogin() + JAMWikiServlet.USER_COOKIE_DELIMITER + user.getEncodedPassword();
+			Utilities.addCookie(response, JAMWikiServlet.USER_COOKIE, cookieValue, JAMWikiServlet.USER_COOKIE_EXPIRES);
+		}
 		// FIXME - can a redirect be done with Spring?
 		redirect(redirect, response);
 		return true;

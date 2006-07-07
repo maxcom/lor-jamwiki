@@ -45,6 +45,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -63,6 +64,17 @@ public class Utilities {
 	private static final int STATE_NO_ENTITY = 0;
 	private static final int STATE_AMPERSAND = 1;
 	private static final int STATE_AMPERSAND_HASH = 2;
+
+	/**
+	 *
+	 */
+	public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int cookieAge) throws Exception {
+		Cookie cookie = null;
+		// after confirming credentials
+		cookie = new Cookie(cookieName, cookieValue);
+		cookie.setMaxAge(cookieAge);
+		response.addCookie(cookie);
+	}
 
 	/**
 	 *
@@ -229,8 +241,23 @@ public class Utilities {
 	 *
 	 */
 	public static WikiUser currentUser(HttpServletRequest request) {
-		HttpSession session = request.getSession();
-		return (WikiUser)session.getAttribute(JAMWikiServlet.PARAMETER_USER);
+		// first look for user in the session
+		WikiUser user = (WikiUser)request.getSession().getAttribute(JAMWikiServlet.PARAMETER_USER);
+		if (user != null) return user;
+		// look for user cookie
+		String userInfo = Utilities.retrieveCookieValue(request, JAMWikiServlet.USER_COOKIE);
+		if (!StringUtils.hasText(userInfo)) return null;
+		StringTokenizer tokens = new StringTokenizer(userInfo, JAMWikiServlet.USER_COOKIE_DELIMITER);
+		if (tokens.countTokens() != 2) return null;
+		String login = tokens.nextToken();
+		String password = Encryption.decrypt(tokens.nextToken());
+		try {
+			user = WikiBase.getHandler().lookupWikiUser(login, password);
+		} catch (Exception e) {
+			// FIXME - safe to ignore?
+		}
+		if (user != null) request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+		return user;
 	}
 
 	/**
@@ -556,6 +583,34 @@ public class Utilities {
 			return new File(Utilities.dir(), path).getAbsolutePath();
 		}
 		return path;
+	}
+
+	/**
+	 *
+	 */
+	public static final void removeCookie(HttpServletResponse response, String cookieName) {
+		Cookie cookie = new Cookie(cookieName, null);
+		cookie.setMaxAge(0);
+		// FIXME - need path to be the server base
+		//cookie.setPath("/");
+		response.addCookie(cookie);
+	}
+
+	/**
+	 *
+	 */
+	public static String retrieveCookieValue(HttpServletRequest request, String cookieName) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies == null) return null;
+		Cookie cookie = null;
+		for (int i=0; i < cookies.length; i++) {
+			if (cookies[i].getName().equals(cookieName)) {
+				cookie = cookies[i];
+				break;
+			}
+		}
+		if (cookie == null) return null;
+		return cookie.getValue();
 	}
 
 	/**
