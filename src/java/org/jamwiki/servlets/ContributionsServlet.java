@@ -51,17 +51,24 @@ public class ContributionsServlet extends JAMWikiServlet {
 	 */
 	private void contributions(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String userString = request.getParameter("user");
+		String userString = request.getParameter("contributor");
+		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
+		if (request.getParameter("num") != null) {
+			// FIXME - verify it's a number
+			num = new Integer(request.getParameter("num")).intValue();
+		}
 		Collection all = null;
 		try {
 			// FIXME - hard coding of "50"
-			all = WikiBase.getHandler().getUserContributions(virtualWiki, userString, 50);
+			all = WikiBase.getHandler().getUserContributions(virtualWiki, userString, num);
 		} catch (Exception e) {
 			logger.error(e);
 			throw e;
 		}
 		next.addObject("contributions", all);
-		this.pageInfo.setPageTitle("User contributions");
+		next.addObject("num", new Integer(num));
+		next.addObject("contributor", userString);
+		this.pageInfo.setPageTitle("User contributions for " + userString);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_CONTRIBUTIONS);
 		this.pageInfo.setSpecial(true);
 	}

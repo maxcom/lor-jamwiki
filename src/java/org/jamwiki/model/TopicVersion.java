@@ -34,6 +34,7 @@ public class TopicVersion {
 	private String editComment = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
+	private Integer previousTopicVersionId = null;
 	private int topicId = -1;
 	private int topicVersionId = -1;
 	private String versionContent = null;
@@ -113,6 +114,20 @@ public class TopicVersion {
 	 */
 	public void setEditType(int editType) {
 		this.editType = editType;
+	}
+
+	/**
+	 *
+	 */
+	public Integer getPreviousTopicVersionId() {
+		return this.previousTopicVersionId;
+	}
+
+	/**
+	 *
+	 */
+	public void setPreviousTopicVersionId(Integer previousTopicVersionId) {
+		this.previousTopicVersionId = previousTopicVersionId;
 	}
 
 	/**

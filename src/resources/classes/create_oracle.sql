@@ -88,9 +88,11 @@ CREATE TABLE jam_topic_version (
   wiki_user_ip_address VARCHAR(15) NOT NULL,
   edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   edit_type INTEGER NOT NULL,
+  previous_topic_version_id INTEGER,
   CONSTRAINT jam_pk_topic_version PRIMARY KEY (topic_version_id),
   CONSTRAINT jam_fk_topic_version_topic FOREIGN KEY (topic_id) REFERENCES jam_topic,
-  CONSTRAINT jam_fk_topic_version_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user
+  CONSTRAINT jam_fk_topic_version_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user,
+  CONSTRAINT jam_fk_topic_version_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version
 );
 
 CREATE OR REPLACE TRIGGER jam_trig_topic_version_id

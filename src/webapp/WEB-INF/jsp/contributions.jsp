@@ -16,8 +16,30 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<form name="num-changes" method="get" action="<jamwiki:link value="Special:Contributions" />">
+<%-- FIXME: hard coding --%>
+<input type="hidden" name="contributor" value="<c:out value="${contributor}" />" />
 
 <br />
+
+<%-- FIXME: use JSP tag --%>
+<%
+int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
+if (request.getParameter("num") != null) {
+	// FIXME - breaks if non-integer
+	num = new Integer(request.getParameter("num")).intValue();
+}
+%>
+<select name="num">
+<option value="10"<%= (num == 10) ? " selected=\"selected\"" : "" %>>10</option>
+<option value="25"<%= (num == 25) ? " selected=\"selected\"" : "" %>>25</option>
+<option value="50"<%= (num == 50) ? " selected=\"selected\"" : "" %>>50</option>
+<option value="100"<%= (num == 100) ? " selected=\"selected\"" : "" %>>100</option>
+</select>
+&#160;
+<input type="Submit" value="Change" />
+
+<br /><br />
 
 <ul>
 

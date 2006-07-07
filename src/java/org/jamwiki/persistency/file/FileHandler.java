@@ -112,6 +112,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_VERSION_EDIT_COMMENT = "comment";
 	protected static final String XML_TOPIC_VERSION_EDIT_DATE = "timestamp";
 	protected static final String XML_TOPIC_VERSION_EDIT_TYPE = "edittype";
+	protected static final String XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID = "previoustopicversionid";
 	protected static final String XML_TOPIC_VERSION_TEXT = "text";
 	protected static final String XML_WIKI_USER_ROOT = "wikiuser";
 	protected static final String XML_WIKI_USER_ADMIN = "admin";
@@ -279,6 +280,8 @@ public class FileHandler extends PersistencyHandler {
 			content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_COMMENT, topicVersion.getEditComment(), true));
 			content.append("\n");
 		}
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID, topicVersion.getPreviousTopicVersionId()));
+		content.append("\n");
 		content.append("</").append(XML_TOPIC_VERSION_ROOT).append(">");
 		content.append("\n");
 		content.append("</mediawiki>");
@@ -558,9 +561,8 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception {
-		Vector contributions = new Vector();
 		// FIXME - implement
-		return contributions;
+		throw new UnsupportedOperationException("Retrieval of user contributions is not supported in file persistency mode");
 	}
 
 	/**
@@ -739,6 +741,8 @@ public class FileHandler extends PersistencyHandler {
 							topicVersion.setAuthorIpAddress(authorChild.getTextContent());
 						}
 					}
+				} else if (childName.equals(XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID)) {
+					topicVersion.setPreviousTopicVersionId(new Integer(rootChild.getTextContent()));
 				}
 			}
 			return topicVersion;

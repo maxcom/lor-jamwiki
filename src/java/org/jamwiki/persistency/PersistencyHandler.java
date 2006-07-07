@@ -50,7 +50,7 @@ public abstract class PersistencyHandler {
 	/** For performance reasons, keep a (small) list of recently looked-up non-topics around in memory. */
 	private static Vector cachedNonTopicsList = new Vector();
 	// FIXME - possibly make this a property, or configurable based on number of topics in the system
-	private int MAX_CACHED_EXISTS_TOPICS = 2000;
+	private int MAX_CACHED_LIST_SIZE = 2000;
 
 	/**
 	 *
@@ -258,13 +258,13 @@ public abstract class PersistencyHandler {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getDeleted()) {
 			cachedNonTopicsList.add(key);
-			while (cachedNonTopicsList.size() > MAX_CACHED_EXISTS_TOPICS) {
+			while (cachedNonTopicsList.size() > MAX_CACHED_LIST_SIZE) {
 				cachedNonTopicsList.removeElementAt(0);
 			}
 			return false;
 		}
 		cachedTopicsList.add(key);
-		while (cachedTopicsList.size() > MAX_CACHED_EXISTS_TOPICS) {
+		while (cachedTopicsList.size() > MAX_CACHED_LIST_SIZE) {
 			cachedTopicsList.removeElementAt(0);
 		}
 		return true;
@@ -517,10 +517,9 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
-		Integer previousTopicVersionId = null;
-		if (topic.getTopicId() > 0) {
-			TopicVersion oldVersion = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
-			if (oldVersion != null) previousTopicVersionId = new Integer(oldVersion.getTopicVersionId());
+		if (topicVersion.getPreviousTopicVersionId() == null) {
+			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
+			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
 		}
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(null);
@@ -544,7 +543,7 @@ public abstract class PersistencyHandler {
 		change.setTopicId(topic.getTopicId());
 		change.setTopicName(topic.getName());
 		change.setTopicVersionId(topicVersion.getTopicVersionId());
-		change.setPreviousTopicVersionId(previousTopicVersionId);
+		change.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
 		change.setAuthorId(topicVersion.getAuthorId());
 		change.setAuthorName(authorName);
 		change.setEditComment(topicVersion.getEditComment());

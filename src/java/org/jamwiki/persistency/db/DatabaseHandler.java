@@ -61,9 +61,10 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String STATEMENT_INSERT_TOPIC_VERSION =
 		"insert into jam_topic_version ("
 		+   "topic_version_id, topic_id, edit_comment, version_content, "
-		+   "wiki_user_id, edit_type, wiki_user_ip_address, edit_date "
+		+   "wiki_user_id, edit_type, wiki_user_ip_address, edit_date, "
+		+   "previous_topic_version_id "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	private static final String STATEMENT_INSERT_RECENT_CHANGE =
 		"insert into jam_recent_change ("
@@ -77,17 +78,24 @@ public class DatabaseHandler extends PersistencyHandler {
 		"INSERT INTO jam_recent_change ( "
 		+   "topic_version_id, topic_id, "
 		+   "topic_name, edit_date, wiki_user_id, display_name, "
-		+   "edit_type, virtual_wiki_id, virtual_wiki_name, edit_comment "
+		+   "edit_type, virtual_wiki_id, virtual_wiki_name, edit_comment, "
+		+   "previous_topic_version_id "
 		+ ") "
 		+ "SELECT "
 		+   "jam_topic_version.topic_version_id, jam_topic.topic_id, "
 		+   "jam_topic.topic_name, jam_topic_version.edit_date, "
-		+   "jam_topic_version.wiki_user_id, jam_wiki_user.login, "
+		+   "jam_topic_version.wiki_user_id, "
+		// FIXME - postgres specific
+		+   "coalesce(jam_wiki_user.login, jam_topic_version.wiki_user_ip_address), "
 		+   "jam_topic_version.edit_type, jam_virtual_wiki.virtual_wiki_id, "
-		+   "jam_virtual_wiki.virtual_wiki_name, jam_topic_version.edit_comment "
-		+ "FROM jam_topic, jam_topic_version, jam_wiki_user, jam_virtual_wiki "
+		+   "jam_virtual_wiki.virtual_wiki_name, jam_topic_version.edit_comment, "
+		+   "jam_topic_version.previous_topic_version_id "
+		+ "FROM jam_topic, jam_virtual_wiki, jam_topic_version "
+		// FIXME - postgres specific
+		+ "LEFT OUTER JOIN jam_wiki_user ON ( "
+		+    "jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
+		+ ") "
 		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
-		+ "AND jam_topic_version.wiki_user_id = jam_wiki_user.wiki_user_id "
 		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
 		+ "AND jam_topic.topic_deleted = FALSE ";
 	private static final String STATEMENT_INSERT_VIRTUAL_WIKI =
@@ -162,10 +170,38 @@ public class DatabaseHandler extends PersistencyHandler {
 	    + "left outer join jam_wiki_user_info "
 	    + "on (jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) "
 	    + "where jam_wiki_user.wiki_user_id = ? ";
-	private static final String STATEMENT_SELECT_WIKI_USER_CHANGES =
-		"select * from jam_recent_change "
-		+ "where virtual_wiki_name = ? "
-		+ "and display_name = ? "
+	private static final String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS =
+		"select "
+		+   "jam_topic_version.topic_version_id, jam_topic_version.topic_id, "
+		+   "jam_topic_version.previous_topic_version_id, jam_topic.topic_name, "
+		+   "jam_topic_version.edit_date, jam_topic_version.edit_comment, "
+		+   "jam_topic_version.wiki_user_id, jam_topic_version.edit_type, "
+		+   "jam_topic_version.wiki_user_ip_address as display_name, "
+		+   "jam_topic.virtual_wiki_id, jam_virtual_wiki.virtual_wiki_name "
+		+ "from jam_topic, jam_virtual_wiki, jam_topic_version "
+		+ "where jam_virtual_wiki.virtual_wiki_id = jam_topic.virtual_wiki_id "
+		+ "and jam_topic.topic_id = jam_topic_version.topic_id "
+		+ "and jam_virtual_wiki.virtual_wiki_name = ? "
+		+ "and jam_topic_version.wiki_user_ip_address = ? "
+		+ "and jam_topic_version.wiki_user_id is null "
+		+ "and jam_topic.topic_deleted = FALSE "
+		+ "order by edit_date desc "
+		+ "limit ? ";
+	private static final String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN =
+		"select "
+		+   "jam_topic_version.topic_version_id, jam_topic_version.topic_id, "
+		+   "jam_topic_version.previous_topic_version_id, jam_topic.topic_name, "
+		+   "jam_topic_version.edit_date, jam_topic_version.edit_comment, "
+		+   "jam_topic_version.wiki_user_id, jam_topic_version.edit_type, "
+		+   "jam_wiki_user.login as display_name, jam_topic.virtual_wiki_id, "
+		+   "jam_virtual_wiki.virtual_wiki_name "
+		+ "from jam_topic, jam_virtual_wiki, jam_topic_version, jam_wiki_user "
+		+ "where jam_virtual_wiki.virtual_wiki_id = jam_topic.virtual_wiki_id "
+		+ "and jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
+		+ "and jam_topic.topic_id = jam_topic_version.topic_id "
+		+ "and jam_virtual_wiki.virtual_wiki_name = ? "
+		+ "and jam_wiki_user.login = ? "
+		+ "and jam_topic.topic_deleted = FALSE "
 		+ "order by edit_date desc "
 		+ "limit ? ";
 	private static final String STATEMENT_SELECT_WIKI_USER_PASSWORD =
@@ -289,8 +325,10 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
-		topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+		if (topicVersion.getTopicVersionId() < 1) {
+			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
+			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
+		}
 		Timestamp editDate = new Timestamp(System.currentTimeMillis());
 		if (topicVersion.getEditDate() != null) {
 			editDate = topicVersion.getEditDate();
@@ -308,6 +346,11 @@ public class DatabaseHandler extends PersistencyHandler {
 		stmt.setInt(6, topicVersion.getEditType());
 		stmt.setString(7, topicVersion.getAuthorIpAddress());
 		stmt.setTimestamp(8, editDate);
+		if (topicVersion.getPreviousTopicVersionId() != null) {
+			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
+		} else {
+			stmt.setNull(9, Types.INTEGER);
+		}
 		stmt.executeUpdate();
 	}
 
@@ -519,8 +562,12 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public Vector getUserContributions(String virtualWiki, String userString, int num) throws Exception {
 		Vector all = new Vector();
-		// FIXME - query should be against jam_topic_version, not jam_recent_change
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES);
+		WikiPreparedStatement stmt = null;
+		if (Utilities.isIpAddress(userString)) {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		} else {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+		}
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
 		stmt.setInt(3, num);
@@ -647,6 +694,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			topicVersion.setTopicId(rs.getInt("topic_id"));
 			topicVersion.setEditComment(rs.getString("edit_comment"));
 			topicVersion.setVersionContent(rs.getString("version_content"));
+			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
+			if (previousTopicVersionId > 0) topicVersion.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
 			int userId = rs.getInt("wiki_user_id");
 			if (userId > 0) topicVersion.setAuthorId(new Integer(userId));
 			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
@@ -707,23 +756,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		sql = "DELETE from jam_recent_change";
 		DatabaseConnection.executeUpdate(sql);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
-		// FIXME - slow
-		sql = "SELECT topic_id, topic_version_id from jam_recent_change "
-		    + "WHERE previous_topic_version_id is null ";
-		WikiResultSet rs = DatabaseConnection.executeQuery(sql);
-		while (rs.next()) {
-			// FIXME - postgres specific
-			sql = "UPDATE jam_recent_change SET "
-			    + "previous_topic_version_id = ( "
-			    +   "select max(jam_topic_version.topic_version_id) "
-			    +   "from jam_topic_version "
-			    +   "where jam_topic_version.topic_id = " + rs.getInt("topic_id") + " "
-			    +   "and jam_topic_version.topic_version_id < " + rs.getInt("topic_version_id") + " "
-			    + ") "
-			    + "where topic_id = " + rs.getInt("topic_id") + " "
-			    + "and topic_version_id = " + rs.getInt("topic_version_id") + " ";
-			DatabaseConnection.executeUpdate(sql);
-		}
 	}
 
 	/**
