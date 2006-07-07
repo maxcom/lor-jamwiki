@@ -60,7 +60,11 @@ public class AdminServlet extends JAMWikiServlet {
 			if (function == null) function = "";
 			// FIXME - hard coding of "function" values
 			if (!Utilities.isAdmin(request)) {
-				viewLogin(request, next, "Special:Admin");
+				String redirect = "Special:Admin";
+				if (isTopic(request, "Special:Upgrade")) {
+					redirect = "Special:Upgrade";
+				}
+				viewLogin(request, next, redirect);
 				loadDefaults(request, next, this.pageInfo);
 				return next;
 			}
