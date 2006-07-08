@@ -71,6 +71,17 @@ newline            = \r|\n|\r\n
 inputcharacter     = [^\r\n\<]
 whitespace         = {newline} | [ \t\f]
 
+/* nowiki */
+nowikistart        = "<nowiki>"
+nowikiend          = "</nowiki>"
+
+/* pre */
+htmlprestart       = (<[ ]*[Pp][Rr][Ee][ ]*>)
+htmlpreend         = (<[ ]*\/[ ]*[Pp][Rr][Ee][ ]*>)
+
+/* processing commands */
+toc                = "__TOC__"
+
 /* paragraph */
 nonparagraphstart  = "<table" | "<div" | "<h1" | "<h2" | "<h3" | "<h4" | "<h5" | "<pre" | "<ul" | "<dl" | "<ol" | "</td>" | "<span"
 nonparagraphend    = "</table>" | "</div>" | "</h1>" | "</h2>" | "</h3>" | "</h4>" | "</h5>" | "</pre>" | "</ul>" | "</dl>" | "</ol>" | "<td" [^\>]* ~">" | "</span>"
@@ -78,9 +89,45 @@ paragraphend       = ({newline} {newline})
 paragraphstart     = {nonparagraphend} {inputcharacter}
 paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 
-%state NORMAL, P, NONPARAGRAPH
+%state NOWIKI, PRE, NORMAL, P, NONPARAGRAPH
 
 %%
+
+/* ----- parsing tags ----- */
+
+<PRE, NORMAL, P, NONPARAGRAPH>{nowikistart} {
+    logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
+    beginState(NOWIKI);
+    return "";
+}
+
+<NOWIKI>{nowikiend} {
+    logger.debug("nowikiend: " + yytext() + " (" + yystate() + ")");
+    endState();
+    return "";
+}
+
+<NORMAL, P, NONPARAGRAPH>{htmlprestart} {
+    logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
+    beginState(PRE);
+    return "<pre>";
+}
+
+<PRE>{htmlpreend} {
+    logger.debug("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    // state only changes to pre if allowHTML is true, so no need to check here
+    endState();
+    return "</pre>";
+}
+
+/* ----- processing commands ----- */
+
+<NORMAL, P, NONPARAGRAPH>{toc} {
+    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    return this.parserInfo.getTableOfContents().attemptTOCInsertion();
+}
+
+/* ----- layout ----- */
 
 <NORMAL, P, NONPARAGRAPH>{nonparagraphstart} {
     logger.debug("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
@@ -125,12 +172,12 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
     return "</p>" + yytext();
 }
 
-<NORMAL, NONPARAGRAPH, P>{whitespace} {
-    logger.debug("{whitespace}: " + yytext() + " (" + yystate() + ")");
+<PRE, NOWIKI, NORMAL, NONPARAGRAPH, P>{whitespace} {
+    // no need to log this
     return yytext();
 }
 
-<NORMAL, NONPARAGRAPH, P>. {
-    logger.debug("default: " + yytext() + " (" + yystate() + ")");
+<PRE, NOWIKI, NORMAL, NONPARAGRAPH, P>. {
+    // no need to log this
     return yytext();
 }

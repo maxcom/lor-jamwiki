@@ -35,9 +35,8 @@ import org.jamwiki.Environment;
  * The static addTableOfContents(TableOfContents, StringBuffer) method
  * may be called to insert a pre-built TableOfContents object into an
  * article.  This method requires that the parser has added all table of
- * contents headings to the object and included a TOC_INSERT_TAG at the point
- * where the table of contents should be inserted.  It is a bit more flexible
- * but requires more preperatory work.
+ * contents headings to the object.  It is a bit more flexible but requires
+ * more preperatory work.
  */
 public class TableOfContents {
 
@@ -45,8 +44,11 @@ public class TableOfContents {
 	public static final int STATUS_TOC_UNINITIALIZED = 0;
 	public static final int STATUS_TOC_INITIALIZED = 1;
 	public static final int STATUS_NO_TOC = 2;
-	public static final String TOC_INSERT_TAG = "__INSERT_TOC__";
 	private int currentLevel = 0;
+	/** It is possible for a user to include more than one "TOC" tag in a document, so keep count. */
+	private int insertTagCount = 0;
+	/** Keep track of how many times the parser attempts to insert the TOC (one per "TOC" tag) */
+	private int insertionAttempt = 0;
 	private int minLevel = 4;
 	private Vector entries = new Vector();
 	private int status = STATUS_TOC_UNINITIALIZED;
@@ -96,30 +98,6 @@ public class TableOfContents {
 	}
 
 	/**
-	 * Insert an existing TableOfContents object into formatted HTML
-	 * output.
-	 *
-	 * @param toc A pre-built TableOfContents object.
-	 * @param contents The Wiki syntax, which should contain TOC_INSERT_TAG at
-	 *  the point where the table of contents object is to be inserted.
-	 * @return The formatted content containing the table of contents.
-	 */
-	public static StringBuffer addTableOfContents(TableOfContents toc, StringBuffer contents) {
-		int pos = contents.indexOf(TableOfContents.TOC_INSERT_TAG);
-		if (pos >= 0) {
-			// FIXME - don't hardcode minimum TOC size
-			if (toc == null || toc.size() <= 3 || toc.getStatus() == TableOfContents.STATUS_NO_TOC || !Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
-				// remove the insert tag
-				contents.delete(pos, pos + TableOfContents.TOC_INSERT_TAG.length());
-			} else {
-				// insert the toc
-				contents.replace(pos, pos + TableOfContents.TOC_INSERT_TAG.length(), toc.toHTML());
-			}
-		}
-		return contents;
-	}
-
-	/**
 	 * Add a new table of contents entry.
 	 *
 	 * @param name The name of the entry, to be used in the anchor tag name.
@@ -129,10 +107,34 @@ public class TableOfContents {
 	 *  entry then its value would be 3, and so forth.
 	 */
 	public void addEntry(String name, String text, int level) {
-		if (this.status != STATUS_NO_TOC) this.status = STATUS_TOC_INITIALIZED;
+		if (this.status != STATUS_NO_TOC && this.status != STATUS_TOC_INITIALIZED) {
+			this.setStatus(STATUS_TOC_INITIALIZED);
+		}
 		TableOfContentsEntry entry = new TableOfContentsEntry(name, text, level);
 		entries.add(entry);
 		if (level < minLevel) minLevel = level;
+	}
+
+	/**
+	 * This method checks to see if a TOC is allowed to be inserted, and if so
+	 * returns an HTML representation of the TOC.
+	 */
+	public String attemptTOCInsertion() {
+		this.insertionAttempt++;
+		// FIXME - do not hardcode minimum TOC size
+		if (this.size() <= 3) {
+			return "";
+		}
+		if (this.getStatus() == TableOfContents.STATUS_NO_TOC) {
+			return "";
+		}
+		if (!Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
+			return "";
+		}
+		if (this.insertionAttempt < this.insertTagCount) {
+			return "";
+		}
+		return this.toHTML();
 	}
 
 	/**
@@ -144,6 +146,13 @@ public class TableOfContents {
 			text.append("</li></ol>");
 			currentLevel--;
 		}
+	}
+
+	/**
+	 *
+	 */
+	public int getInsertTagCount() {
+		return this.insertTagCount;
 	}
 
 	/**
@@ -175,6 +184,10 @@ public class TableOfContents {
 	 * allowed" or "uninitialized".
 	 */
 	public void setStatus(int status) {
+		if (status == STATUS_TOC_INITIALIZED) {
+			// keep track of how many TOC insertion tags are present
+			this.insertTagCount++;
+		}
 		this.status = status;
 	}
 

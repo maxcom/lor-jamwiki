@@ -19,12 +19,12 @@
  *   Tables: {| |- ! | |}
  *   <nowiki>
  *   __NOTOC__
+ *   __TOC__
  *
  * Not yet implemented:
  *
  *   <math>
  *   Templates
- *   __TOC__
  */
 package org.jamwiki.parser;
 
@@ -232,7 +232,7 @@ import org.jamwiki.utils.Utilities;
     protected String updateToc(String name, String text, int level) {
         String output = "";
         if (this.parserInfo.getTableOfContents().getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
-            output = TableOfContents.TOC_INSERT_TAG;
+            output = "__TOC__";
         }
         this.parserInfo.getTableOfContents().addEntry(name, text, level);
         return output;
@@ -309,6 +309,7 @@ htmlunderlineend   = (<[ ]*\/[ ]*[Uu][ ]*>)
 
 /* processing commands */
 notoc              = "__NOTOC__"
+toc                = "__TOC__"
 
 /* comments */
 htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
@@ -337,20 +338,20 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <PRE, NORMAL, TABLE, TD, TH, TC, LIST>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
-    return "";
+    return yytext();
 }
 
 <NOWIKI>{nowikiend} {
     logger.debug("nowikiend: " + yytext() + " (" + yystate() + ")");
     endState();
-    return "";
+    return yytext();
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlprestart} {
     logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHtml) {
         beginState(PRE);
-        return "<pre>";
+        return yytext();
     }
     return "&lt;pre&gt;";
 }
@@ -359,7 +360,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     logger.debug("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    return "</pre>";
+    return yytext();
 }
 
 /* ----- processing commands ----- */
@@ -368,6 +369,12 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     logger.debug("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInfo.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST>{toc} {
+    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    this.parserInfo.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
+    return yytext();
 }
 
 /* ----- wiki links ----- */
