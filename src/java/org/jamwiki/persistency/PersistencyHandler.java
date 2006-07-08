@@ -19,6 +19,7 @@ package org.jamwiki.persistency;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -49,8 +50,10 @@ public abstract class PersistencyHandler {
 	private static Vector cachedTopicsList = new Vector();
 	/** For performance reasons, keep a (small) list of recently looked-up non-topics around in memory. */
 	private static Vector cachedNonTopicsList = new Vector();
+	/** For performance reasons, keep a (small) list of recently looked-up user logins and ids around in memory. */
+	private static Hashtable cachedUserLoginHash = new Hashtable();
 	// FIXME - possibly make this a property, or configurable based on number of topics in the system
-	private int MAX_CACHED_LIST_SIZE = 2000;
+	private static int MAX_CACHED_LIST_SIZE = 2000;
 
 	/**
 	 *
@@ -312,9 +315,8 @@ public abstract class PersistencyHandler {
 			Integer authorId = version.getAuthorId();
 			change.setAuthorId(authorId);
 			if (authorId != null) {
-				// FIXME - this causes a database lookup for each change entry
-				WikiUser user = lookupWikiUser(authorId.intValue());
-				change.setAuthorName(user.getLogin());
+				String login = lookupWikiUserLogin(authorId);
+				change.setAuthorName(login);
 			} else {
 				change.setAuthorName(version.getAuthorIpAddress());
 			}
@@ -433,6 +435,26 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract WikiUser lookupWikiUser(String login) throws Exception;
+
+	/**
+	 *
+	 */
+	protected String lookupWikiUserLogin(Integer authorId) throws Exception {
+		String login = (String)cachedUserLoginHash.get(authorId);
+		if (login != null) {
+			return login;
+		}
+		WikiUser user = lookupWikiUser(authorId.intValue());
+		login = user.getLogin();
+		if (login != null) {
+			cachedUserLoginHash.put(authorId, login);
+		}
+		if (cachedUserLoginHash.size() > MAX_CACHED_LIST_SIZE) {
+			// FIXME - need a has that can drop oldest elements, this is inefficient
+			cachedUserLoginHash = new Hashtable();
+		}
+		return login;
+	}
 
 	/**
 	 * Do emergency repairs by clearing all locks and deleting recent changes files
