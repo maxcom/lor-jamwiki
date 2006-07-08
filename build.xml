@@ -4,8 +4,8 @@
 
     <target name="cleanLexers" description="Cleans up after lexer generation">
         <!-- delete old generated lexer source files -->
-        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiWhitespace.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiSyntax.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreprocessor.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPostprocessor.java"/>
         <delete file="${dir.src.java}/org/jamwiki/parser/alt/BackLinkLex.java"/>
         <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiFormatLex.java"/>
         <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLayoutLex.java"/>
@@ -29,8 +29,8 @@
     </taskdef>
     <target name="jflex" depends="init,cleanLexers">
         <!-- only generate new source files after old ones were deleted through cleanLexers target -->
-        <jflex file="${dir.src.lex}/jamwiki-syntax.jflex" destdir="${dir.src.java}" />
-        <jflex file="${dir.src.lex}/jamwiki-whitespace.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/jamwiki-preprocessor.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/jamwiki-postprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-backlinks.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-format.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-layout.jflex" destdir="${dir.src.java}" />
