@@ -10,7 +10,7 @@ import org.jamwiki.WikiBase;
 %%
 
 %public
-%class JAMWikiPostProcessor
+%class JAMWikiPreSaveProcessor
 %implements org.jamwiki.parser.Lexer
 %type String
 %unicode
@@ -24,16 +24,12 @@ import org.jamwiki.WikiBase;
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
-    if (yystate() == P) {
-        endState();
-        output.append("</p>");
-    }
     return (output.length() == 0) ? null : output.toString();
 %eofval}
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger logger = Logger.getLogger(JAMWikiPostProcessor.class.getName());
+    protected static Logger logger = Logger.getLogger(JAMWikiPreSaveProcessor.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
     protected ParserInfo parserInfo = null;
@@ -68,7 +64,6 @@ import org.jamwiki.WikiBase;
 
 /* character expressions */
 newline            = \r|\n|\r\n
-inputcharacter     = [^\r\n\<]
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
@@ -80,105 +75,53 @@ htmlprestart       = (<[ ]*[Pp][Rr][Ee][ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*[Pp][Rr][Ee][ ]*>)
 
 /* processing commands */
-toc                = "__TOC__"
+wikisig            = "~~~~"
 
-/* paragraph */
-nonparagraphstart  = "<table" | "<div" | "<h1" | "<h2" | "<h3" | "<h4" | "<h5" | "<pre" | "<ul" | "<dl" | "<ol" | "</td>" | "<span"
-nonparagraphend    = "</table>" | "</div>" | "</h1>" | "</h2>" | "</h3>" | "</h4>" | "</h5>" | "</pre>" | "</ul>" | "</dl>" | "</ol>" | "<td" [^\>]* ~">" | "</span>"
-paragraphend       = ({newline} {newline})
-paragraphstart     = {nonparagraphend} {inputcharacter}
-paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
-
-%state NOWIKI, PRE, NORMAL, P, NONPARAGRAPH
+%state NOWIKI, PRE, NORMAL
 
 %%
 
 /* ----- parsing tags ----- */
 
-<PRE, NORMAL, P, NONPARAGRAPH>{nowikistart} {
+<PRE, NORMAL>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
-    return "";
+    return yytext();
 }
 
 <NOWIKI>{nowikiend} {
     logger.debug("nowikiend: " + yytext() + " (" + yystate() + ")");
     endState();
-    return "";
+    return yytext();
 }
 
-<NORMAL, P, NONPARAGRAPH>{htmlprestart} {
+<NORMAL>{htmlprestart} {
     logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
-    return "<pre>";
+    return yytext();
 }
 
 <PRE>{htmlpreend} {
     logger.debug("htmlpreend: " + yytext() + " (" + yystate() + ")");
     endState();
-    return "</pre>";
+    return yytext();
 }
 
 /* ----- processing commands ----- */
 
-<NORMAL, P, NONPARAGRAPH>{toc} {
+<NORMAL>{wikisig} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    return this.parserInfo.getTableOfContents().attemptTOCInsertion();
-}
-
-/* ----- layout ----- */
-
-<NORMAL, P, NONPARAGRAPH>{nonparagraphstart} {
-    logger.debug("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
-    StringBuffer output = new StringBuffer();
-    if (yystate() == P) {
-        output.append("</p>");
-        endState();
-    }
-    beginState(NONPARAGRAPH);
-    return output.toString() + yytext();
-}
-
-<NONPARAGRAPH>{nonparagraphend} {
-    logger.debug("nonparagraphend: " + yytext() + " (" + yystate() + ")");
-    endState();
-    if (yystate() != NONPARAGRAPH) {
-        // if not non-paragraph, roll back to allow potential paragraph start
-        yypushback(yytext().length());
-    }
-    return yytext();
-}
-
-<NORMAL>{paragraphstart} {
-    logger.debug("paragraphstart: " + yytext() + " (" + yystate() + ")");
-    beginState(P);
-    // start paragraph, then rollback to allow normal processing
-    yypushback(1);
-    return yytext() + "<p>";
-}
-
-<NORMAL>^{paragraphstart2} {
-    logger.debug("paragraphstart2: " + yytext() + " (" + yystate() + ")");
-    beginState(P);
-    // start paragraph, then rollback to allow normal processing
-    yypushback(yytext().length());
-    return "<p>";
-}
-
-<P>{paragraphend} {
-    logger.debug("end of paragraph: " + yytext() + " (" + yystate() + ")");
-    endState();
-    return "</p>" + yytext();
+    return ParserUtil.buildWikiSignature(this.parserInfo);
 }
 
 /* ----- other ----- */
 
-<PRE, NOWIKI, NORMAL, NONPARAGRAPH, P>{whitespace} {
+<PRE, NOWIKI, NORMAL>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NOWIKI, NORMAL, NONPARAGRAPH, P>. {
+<PRE, NOWIKI, NORMAL>. {
     // no need to log this
     return yytext();
 }

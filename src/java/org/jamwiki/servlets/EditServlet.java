@@ -29,6 +29,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -135,8 +136,13 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		String displayName = request.getRemoteAddr();
 		WikiUser user = Utilities.currentUser(request);
-		if (user != null) displayName = user.getDisplayName();
-		preview = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, contents);
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setWikiUser(user);
+		parserInfo.setUserIpAddress(request.getRemoteAddr());
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
+		preview = WikiBase.parse(parserInfo, contents);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(Utilities.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
@@ -218,11 +224,20 @@ public class EditServlet extends JAMWikiServlet {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topicName + " has no content");
 		}
+		// parse for signatures and other syntax that should not be saved in raw form
+		String displayName = request.getRemoteAddr();
+		WikiUser user = Utilities.currentUser(request);
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setWikiUser(user);
+		parserInfo.setUserIpAddress(request.getRemoteAddr());
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_SAVE);
+		contents = WikiBase.parsePreSave(parserInfo, contents);
 		topic.setTopicContent(contents);
 		topicVersion.setVersionContent(contents);
 		topicVersion.setEditComment(request.getParameter("editComment"));
 		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
-		WikiUser user = Utilities.currentUser(request);
 		if (user != null) {
 			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}

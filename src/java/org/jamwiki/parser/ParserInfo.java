@@ -16,15 +16,25 @@
  */
 package org.jamwiki.parser;
 
+import org.jamwiki.model.WikiUser;
+
 /**
  *
  */
 public class ParserInfo {
 
+	public static final int MODE_NORMAL = 1;
+	/** Preview mode indicates that the topic is being edited but not saved yet. */
+	public static final int MODE_PREVIEW = 2;
+	/** Save mode indicates that the topic was edited and is being saved. */
+	public static final int MODE_SAVE = 3;
 	private String context = null;
-	/** User name to display for syntax such as the MediaWiki "~~~~" syntax */
-	private String userDisplay = null;
+	private int mode = MODE_NORMAL;
+	/** IP address of the current user. */
+	private String userIpAddress = null;
 	private String virtualWiki = null;
+	/** Current WikiUser (if any). */
+	private WikiUser wikiUser = null;
 	private TableOfContents tableOfContents = new TableOfContents();
 
 	public ParserInfo() {
@@ -47,6 +57,20 @@ public class ParserInfo {
 	/**
 	 *
 	 */
+	public int getMode() {
+		return this.mode;
+	}
+
+	/**
+	 *
+	 */
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+
+	/**
+	 *
+	 */
 	public TableOfContents getTableOfContents() {
 		return this.tableOfContents;
 	}
@@ -61,15 +85,15 @@ public class ParserInfo {
 	/**
 	 *
 	 */
-	public String getUserDisplay() {
-		return userDisplay;
+	public String getUserIpAddress() {
+		return this.userIpAddress;
 	}
 
 	/**
 	 *
 	 */
-	public void setUserDisplay(String userDisplay) {
-		this.userDisplay = userDisplay;
+	public void setUserIpAddress(String userIpAddress) {
+		this.userIpAddress = userIpAddress;
 	}
 
 	/**
@@ -84,5 +108,19 @@ public class ParserInfo {
 	 */
 	public void setVirtualWiki(String virtualWiki) {
 		this.virtualWiki = virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser getWikiUser() {
+		return this.wikiUser;
+	}
+
+	/**
+	 *
+	 */
+	public void setWikiUser(WikiUser wikiUser) {
+		this.wikiUser = wikiUser;
 	}
 }

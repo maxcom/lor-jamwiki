@@ -29,6 +29,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -110,8 +111,12 @@ public class PrintableServlet extends JAMWikiServlet {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		String displayName = request.getRemoteAddr();
 		WikiUser user = Utilities.currentUser(request);
-		if (user != null) displayName = user.getDisplayName();
-		String onepage = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, topic.getTopicContent());
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setWikiUser(user);
+		parserInfo.setUserIpAddress(request.getRemoteAddr());
+		parserInfo.setVirtualWiki(virtualWiki);
+		String onepage = WikiBase.parse(parserInfo, topic.getTopicContent());
 		Collection result = new ArrayList();
 		if (onepage != null) {
 			PrintableEntry entry = new PrintableEntry();

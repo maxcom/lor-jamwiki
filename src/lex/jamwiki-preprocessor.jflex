@@ -39,7 +39,7 @@ import org.jamwiki.utils.Utilities;
 %%
 
 %public
-%class JAMWikiPreprocessor
+%class JAMWikiPreProcessor
 %implements org.jamwiki.parser.Lexer
 %type String
 %unicode
@@ -86,7 +86,7 @@ import org.jamwiki.utils.Utilities;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger logger = Logger.getLogger(JAMWikiPreprocessor.class.getName());
+    protected static Logger logger = Logger.getLogger(JAMWikiPreProcessor.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
     protected ParserInfo parserInfo = null;;

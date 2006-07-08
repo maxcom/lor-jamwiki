@@ -60,6 +60,15 @@ public abstract class AbstractParser {
 	public abstract String parseHTML(String raw) throws IOException;
 
 	/**
+	 * For syntax that is not saved with the topic source, this method provides
+	 * a way of parsing prior to saving.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return HTML representation of the text for online.
+	 */
+	public abstract String parsePreSave(String raw) throws IOException;
+
+	/**
 	 * For setting general information about this parser.
 	 *
 	 * @param parserInfo General information about this parser.

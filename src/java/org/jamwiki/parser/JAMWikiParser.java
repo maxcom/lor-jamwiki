@@ -59,26 +59,45 @@ public class JAMWikiParser extends AbstractParser {
 	public String parseHTML(String rawtext) throws IOException {
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());
-		contents = this.parseSyntax(raw);
+		contents = this.parsePreProcess(raw);
+		if (this.parserInfo.getMode() != ParserInfo.MODE_NORMAL) {
+			// save or preview mode, add pre-save processor
+			String result = this.parsePreSave(contents.toString());
+			contents = new StringBuffer(result);
+		}
 		raw = new StringReader(contents.toString());
-		contents = this.parseParagraphs(raw);
+		contents = this.parsePostProcess(raw);
 		return contents.toString();
 	}
 
 	/**
 	 *
 	 */
-	private StringBuffer parseSyntax(Reader raw) throws IOException {
-		JAMWikiPreprocessor lexer = new JAMWikiPreprocessor(raw);
+	private StringBuffer parsePreProcess(Reader raw) throws IOException {
+		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
 		lexer.setParserInfo(parserInfo);
 		return this.lex(lexer);
 	}
 
 	/**
+	 * Parse MediaWiki signatures and other tags that should not be
+	 * saved as part of the topic source.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return HTML representation of the text for online.
+	 */
+	public String parsePreSave(String contents) throws IOException {
+		StringReader raw = new StringReader(contents);
+		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
+		lexer.setParserInfo(parserInfo);
+		return this.lex(lexer).toString();
+	}
+
+	/**
 	 *
 	 */
-	private StringBuffer parseParagraphs(Reader raw) throws IOException {
-		JAMWikiPostprocessor lexer = new JAMWikiPostprocessor(raw);
+	private StringBuffer parsePostProcess(Reader raw) throws IOException {
+		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(raw);
 		lexer.setParserInfo(parserInfo);
 		return this.lex(lexer);
 	}

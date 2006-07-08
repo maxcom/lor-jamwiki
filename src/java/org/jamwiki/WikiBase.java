@@ -98,36 +98,34 @@ public class WikiBase {
 	}
 
 	/**
-	 * TODO: DOCUMENT ME!
 	 *
-	 * @param in		  TODO: DOCUMENT ME!
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @return				TODO: DOCUMENT ME!
-	 * @throws Exception	TODO: DOCUMENT ME!
 	 */
-	public static synchronized String cook(String context, String virtualWiki, String userDisplay, String content) throws Exception {
+	public static synchronized String parse(ParserInfo parserInfo, String content) throws Exception {
+		return WikiBase.parse(parserInfo, content, false);
+	}
+
+	/**
+	 *
+	 */
+	public static synchronized String parsePreSave(ParserInfo parserInfo, String content) throws Exception {
+		return WikiBase.parse(parserInfo, content, true);
+	}
+
+	/**
+	 *
+	 */
+	private static String parse(ParserInfo parserInfo, String content, boolean preSave) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
 			return "";
 		}
 		BufferedReader in = new BufferedReader(new StringReader(content));
-		return cook(context, virtualWiki, userDisplay, in);
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param in		  TODO: DOCUMENT ME!
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @return				TODO: DOCUMENT ME!
-	 * @throws Exception	TODO: DOCUMENT ME!
-	 */
-	public static synchronized String cook(String context, String virtualWiki, String userDisplay, BufferedReader in) throws Exception {
+		String line;
+		StringBuffer raw = new StringBuffer();
+		while ((line = in.readLine()) != null) {
+			raw.append(line).append("\n");
+		}
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(context);
-		parserInfo.setUserDisplay(userDisplay);
-		parserInfo.setVirtualWiki(virtualWiki);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
 		Class[] parameterTypes = new Class[1];
@@ -136,12 +134,7 @@ public class WikiBase {
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInfo;
 		AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
-		String line;
-		StringBuffer raw = new StringBuffer();
-		while ((line = in.readLine()) != null) {
-			raw.append(line).append("\n");
-		}
-		return parser.parseHTML(raw.toString());
+		return (preSave) ? parser.parsePreSave(raw.toString()) : parser.parseHTML(raw.toString());
 	}
 
 	/**

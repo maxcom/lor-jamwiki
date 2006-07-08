@@ -24,6 +24,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -237,7 +238,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 					content = topic.getTopicContent();
 				}
 				if (cook) {
-					content = WikiBase.cook(context, virtualWiki, null, content);
+					ParserInfo parserInfo = new ParserInfo();
+					parserInfo.setContext(context);
+					parserInfo.setVirtualWiki(virtualWiki);
+					content = WikiBase.parse(parserInfo, content);
 				}
 				synchronized (cachedContents) {
 					cachedContents.put(virtualWiki + "-" + topicName, content);
@@ -364,8 +368,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (topic != null) {
 			String displayName = request.getRemoteAddr();
 			WikiUser user = Utilities.currentUser(request);
-			if (user != null) displayName = user.getDisplayName();
-			contents = WikiBase.cook(request.getContextPath(), virtualWiki, displayName, topic.getTopicContent());
+			ParserInfo parserInfo = new ParserInfo();
+			parserInfo.setContext(request.getContextPath());
+			parserInfo.setWikiUser(user);
+			parserInfo.setUserIpAddress(request.getRemoteAddr());
+			parserInfo.setVirtualWiki(virtualWiki);
+			contents = WikiBase.parse(parserInfo, topic.getTopicContent());
 			// search servlet highlights search terms, so add that here
 			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
 		}
