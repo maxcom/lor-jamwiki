@@ -10,7 +10,7 @@ import org.jamwiki.WikiBase;
 %%
 
 %public
-%class MediaWikiHTML
+%class JAMWikiWhitespace
 %implements org.jamwiki.parser.Lexer
 %type String
 %unicode
@@ -33,7 +33,7 @@ import org.jamwiki.WikiBase;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger logger = Logger.getLogger(MediaWikiHTML.class.getName());
+    protected static Logger logger = Logger.getLogger(JAMWikiWhitespace.class.getName());
     /** Member variable used to keep track of the state history for the lexer. */
     protected Stack states = new Stack();
     protected ParserInfo parserInfo = null;

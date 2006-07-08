@@ -310,7 +310,7 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY, "false");
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
-		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.MediaWikiParser");
+		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.JAMWikiParser");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
 		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
 		defaults.setProperty(PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED, "false");
