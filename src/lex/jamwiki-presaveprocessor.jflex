@@ -75,7 +75,9 @@ htmlprestart       = (<[ ]*[Pp][Rr][Ee][ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*[Pp][Rr][Ee][ ]*>)
 
 /* processing commands */
-wikisig            = "~~~~"
+wikisig3           = "~~~"
+wikisig4           = "~~~~"
+wikisig5           = "~~~~~"
 
 %state NOWIKI, PRE, NORMAL
 
@@ -109,9 +111,19 @@ wikisig            = "~~~~"
 
 /* ----- processing commands ----- */
 
-<NORMAL>{wikisig} {
+<NORMAL>{wikisig3} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildWikiSignature(this.parserInfo);
+    return ParserUtil.buildWikiSignature(this.parserInfo, true, false);
+}
+
+<NORMAL>{wikisig4} {
+    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    return ParserUtil.buildWikiSignature(this.parserInfo, true, true);
+}
+
+<NORMAL>{wikisig5} {
+    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    return ParserUtil.buildWikiSignature(this.parserInfo, false, true);
 }
 
 /* ----- other ----- */

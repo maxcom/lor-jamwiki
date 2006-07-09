@@ -123,36 +123,45 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	public static String buildWikiSignature(ParserInfo parserInfo) {
+	public static String buildWikiSignature(ParserInfo parserInfo, boolean includeUser, boolean includeDate) {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat();
-			format.applyPattern("dd-MMM-yyyy HH:mm zzz");
-			String context = parserInfo.getContext();
-			String virtualWiki = parserInfo.getVirtualWiki();
-			// FIXME - need a utility method for user links
-			String topic = "User:" + parserInfo.getUserIpAddress();
-			String text = parserInfo.getUserIpAddress();
-			if (parserInfo.getWikiUser() != null) {
-				WikiUser user = parserInfo.getWikiUser();
-				topic = "User:" + user.getLogin();
-				text = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
-			}
-			String link = "";
-			if (parserInfo.getMode() == ParserInfo.MODE_SAVE) {
-				// FIXME - mediawiki specific.
-				link = "[[" + topic + "|" + text + "]]";
-			} else {
-				link += "<a href=\"";
-				link += Utilities.buildWikiLink(context, virtualWiki, topic);
-				link += "\"";
-				if (!WikiBase.exists(virtualWiki, topic)) {
-					link += " class=\"edit\"";
+			String signature = "";
+			if (includeUser) {
+				String context = parserInfo.getContext();
+				String virtualWiki = parserInfo.getVirtualWiki();
+				// FIXME - need a utility method for user links
+				String topic = "User:" + parserInfo.getUserIpAddress();
+				String text = parserInfo.getUserIpAddress();
+				if (parserInfo.getWikiUser() != null) {
+					WikiUser user = parserInfo.getWikiUser();
+					topic = "User:" + user.getLogin();
+					text = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
 				}
-				link += ">";
-				link += text;
-				link += "</a>";
+				String link = "";
+				if (parserInfo.getMode() == ParserInfo.MODE_SAVE) {
+					// FIXME - mediawiki specific.
+					link = "[[" + topic + "|" + text + "]]";
+				} else {
+					link += "<a href=\"";
+					link += Utilities.buildWikiLink(context, virtualWiki, topic);
+					link += "\"";
+					if (!WikiBase.exists(virtualWiki, topic)) {
+						link += " class=\"edit\"";
+					}
+					link += ">";
+					link += text;
+					link += "</a>";
+				}
+				signature += link;
 			}
-			String signature = link + " " + format.format(new java.util.Date());
+			if (includeUser && includeDate) {
+				signature += " ";
+			}
+			if (includeDate) {
+				SimpleDateFormat format = new SimpleDateFormat();
+				format.applyPattern("dd-MMM-yyyy HH:mm zzz");
+				signature += format.format(new java.util.Date());
+			}
 			return signature;
 		} catch (Exception e) {
 			logger.error("Failure while building wiki signature", e);
