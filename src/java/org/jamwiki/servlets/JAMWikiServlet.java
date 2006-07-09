@@ -241,7 +241,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					ParserInfo parserInfo = new ParserInfo();
 					parserInfo.setContext(context);
 					parserInfo.setVirtualWiki(virtualWiki);
-					content = WikiBase.parse(parserInfo, content);
+					content = WikiBase.parse(parserInfo, content, topicName);
 				}
 				synchronized (cachedContents) {
 					cachedContents.put(virtualWiki + "-" + topicName, content);
@@ -373,7 +373,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			parserInfo.setWikiUser(user);
 			parserInfo.setUserIpAddress(request.getRemoteAddr());
 			parserInfo.setVirtualWiki(virtualWiki);
-			contents = WikiBase.parse(parserInfo, topic.getTopicContent());
+			contents = WikiBase.parse(parserInfo, topic.getTopicContent(), topicName);
 			// search servlet highlights search terms, so add that here
 			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
 		}

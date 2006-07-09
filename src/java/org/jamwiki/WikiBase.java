@@ -100,21 +100,21 @@ public class WikiBase {
 	/**
 	 *
 	 */
-	public static synchronized String parse(ParserInfo parserInfo, String content) throws Exception {
-		return WikiBase.parse(parserInfo, content, false);
+	public static synchronized String parse(ParserInfo parserInfo, String content, String topicName) throws Exception {
+		return WikiBase.parse(parserInfo, content, topicName, false);
 	}
 
 	/**
 	 *
 	 */
 	public static synchronized String parsePreSave(ParserInfo parserInfo, String content) throws Exception {
-		return WikiBase.parse(parserInfo, content, true);
+		return WikiBase.parse(parserInfo, content, null, true);
 	}
 
 	/**
 	 *
 	 */
-	private static String parse(ParserInfo parserInfo, String content, boolean preSave) throws Exception {
+	private static String parse(ParserInfo parserInfo, String content, String topicName, boolean preSave) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
 			return "";
@@ -134,7 +134,7 @@ public class WikiBase {
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInfo;
 		AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
-		return (preSave) ? parser.parsePreSave(raw.toString()) : parser.parseHTML(raw.toString());
+		return (preSave) ? parser.parsePreSave(raw.toString()) : parser.parseHTML(raw.toString(), topicName);
 	}
 
 	/**

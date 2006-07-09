@@ -56,7 +56,8 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 * Parse text for online display.
 	 */
-	public String parseHTML(String rawtext) throws IOException {
+	public String parseHTML(String rawtext, String topicName) throws IOException {
+		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());
 		contents = this.parsePreProcess(raw);
@@ -67,6 +68,7 @@ public class JAMWikiParser extends AbstractParser {
 		}
 		raw = new StringReader(contents.toString());
 		contents = this.parsePostProcess(raw);
+		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return contents.toString();
 	}
 

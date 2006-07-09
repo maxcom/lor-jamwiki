@@ -57,7 +57,7 @@ public abstract class AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return HTML representation of the text for online.
 	 */
-	public abstract String parseHTML(String raw) throws IOException;
+	public abstract String parseHTML(String raw, String topicName) throws IOException;
 
 	/**
 	 * For syntax that is not saved with the topic source, this method provides

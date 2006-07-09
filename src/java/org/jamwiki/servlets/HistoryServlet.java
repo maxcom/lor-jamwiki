@@ -76,7 +76,7 @@ public class HistoryServlet extends JAMWikiServlet {
 				parserInfo.setWikiUser(user);
 				parserInfo.setUserIpAddress(request.getRemoteAddr());
 				parserInfo.setVirtualWiki(virtualWiki);
-				String cookedContents = WikiBase.parse(parserInfo, topicVersion.getVersionContent());
+				String cookedContents = WikiBase.parse(parserInfo, topicVersion.getVersionContent(), topicName);
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("cookedContents", cookedContents);
 				this.pageInfo.setPageTitle(topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));

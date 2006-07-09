@@ -142,7 +142,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
-		preview = WikiBase.parse(parserInfo, contents);
+		preview = WikiBase.parse(parserInfo, contents, topicName);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(Utilities.getMessage("edit", request.getLocale()));
 		buffer.append(" ");
