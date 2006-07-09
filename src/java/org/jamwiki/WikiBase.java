@@ -91,13 +91,6 @@ public class WikiBase {
 	}
 
 	/**
-	 * Add virtual wiki
-	 */
-	public static void addVirtualWiki(String virtualWiki) throws Exception {
-		WikiBase.handler.addVirtualWiki(virtualWiki);
-	}
-
-	/**
 	 *
 	 */
 	public static synchronized String parse(ParserInfo parserInfo, String content, String topicName) throws Exception {

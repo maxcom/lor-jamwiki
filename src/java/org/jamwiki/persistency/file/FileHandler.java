@@ -137,18 +137,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		super.addReadOnlyTopic(virtualWiki, topicName);
-		String filename = readOnlyFilename(topicName);
-		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(readOnlyFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(topicName);
-		writer.close();
-	}
-
-	/**
-	 *
-	 */
 	protected void addRecentChange(RecentChange change) throws Exception {
 		StringBuffer content = new StringBuffer();
 		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
@@ -299,7 +287,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addVirtualWiki(String virtualWiki) throws Exception {
+	protected void addVirtualWiki(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		if (file.exists()) {
@@ -323,7 +311,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addWikiUser(WikiUser user) throws Exception {
+	protected void addWikiUser(WikiUser user) throws Exception {
 		if (user.getUserId() < 1) {
 			user.setUserId(nextWikiUserId());
 		}
@@ -390,8 +378,21 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void delete(Topic topic) throws Exception {
-		super.delete(topic);
+	public void deleteReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		super.deleteReadOnlyTopic(virtualWiki, topicName);
+		String filename = readOnlyFilename(topicName);
+		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
+		if (!readOnlyFile.exists()) {
+			logger.warn("No read only file for topic " + virtualWiki + " / " + topicName);
+		}
+		readOnlyFile.delete();
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopic(Topic topic) throws Exception {
+		super.deleteTopic(topic);
 		String filename = topicFilename(topic.getName());
 		// move file from topic directory to delete directory
 		File oldFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
@@ -965,19 +966,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		super.removeReadOnlyTopic(virtualWiki, topicName);
-		String filename = readOnlyFilename(topicName);
-		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
-		if (!readOnlyFile.exists()) {
-			logger.warn("No read only file for topic " + virtualWiki + " / " + topicName);
-		}
-		readOnlyFile.delete();
-	}
-
-	/**
-	 *
-	 */
 	private File[] retrieveLockFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.LOCK_DIR);
 		File[] files = file.listFiles();
@@ -1102,8 +1090,20 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void write(Topic topic, TopicVersion topicVersion) throws Exception {
-		super.write(topic, topicVersion);
+	public void writeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		super.writeReadOnlyTopic(virtualWiki, topicName);
+		String filename = readOnlyFilename(topicName);
+		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
+		Writer writer = new OutputStreamWriter(new FileOutputStream(readOnlyFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		writer.write(topicName);
+		writer.close();
+	}
+
+	/**
+	 *
+	 */
+	public void writeTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+		super.writeTopic(topic, topicVersion);
 		unlockTopic(topic);
 	}
 

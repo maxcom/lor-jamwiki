@@ -140,7 +140,7 @@ public class SaveAttachmentServlet extends JAMWikiServlet {
 				topicVersion = new TopicVersion();
 				topicVersion.setVersionContent(contents.toString());
 				topicVersion.setAuthorIpAddress(request.getRemoteAddr());
-				WikiBase.getHandler().write(topic, topicVersion);
+				WikiBase.getHandler().writeTopic(topic, topicVersion);
 //				cl.logChange(change, request);
 			}
 			StringBuffer next = new StringBuffer();

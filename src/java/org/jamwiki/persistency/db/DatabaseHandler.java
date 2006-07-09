@@ -356,7 +356,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addVirtualWiki(String virtualWikiName) throws Exception {
+	protected void addVirtualWiki(String virtualWikiName) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
 		int virtualWikiId = rs.getInt("virtual_wiki_id");
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
@@ -374,7 +374,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addWikiUser(WikiUser user) throws Exception {
+	protected void addWikiUser(WikiUser user) throws Exception {
 		if (user.getUserId() <= 0) {
 			// add
 			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);

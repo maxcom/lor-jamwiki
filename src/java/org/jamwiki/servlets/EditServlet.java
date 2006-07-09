@@ -241,7 +241,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (user != null) {
 			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}
-		WikiBase.getHandler().write(topic, topicVersion);
+		WikiBase.getHandler().writeTopic(topic, topicVersion);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
 		SearchEngine sedb = WikiBase.getSearchEngineInstance();

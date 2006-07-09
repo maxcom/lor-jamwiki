@@ -130,7 +130,7 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setPageTitle("Special:Admin");
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
-			WikiBase.addVirtualWiki(newWiki);
+			WikiBase.getHandler().writeVirtualWiki(newWiki);
 			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
 			WikiBase.initialise(request.getLocale(), null);
@@ -177,7 +177,7 @@ public class AdminServlet extends JAMWikiServlet {
 				return;
 			}
 			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-			WikiBase.getHandler().delete(topic);
+			WikiBase.getHandler().deleteTopic(topic);
 			// FIXME - hard coding
 			next.addObject("message", "Topic " + topicName + " deleted successfully");
 		} catch (Exception e) {
@@ -474,13 +474,13 @@ public class AdminServlet extends JAMWikiServlet {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (request.getParameter("addReadOnly") != null) {
 			String topicName = request.getParameter("readOnlyTopic");
-			WikiBase.getHandler().addReadOnlyTopic(virtualWiki, topicName);
+			WikiBase.getHandler().writeReadOnlyTopic(virtualWiki, topicName);
 		}
 		if (request.getParameter("removeReadOnly") != null) {
 			String[] topics = request.getParameterValues("markRemove");
 			for (int i = 0; i < topics.length; i++) {
 				String topicName = topics[i];
-				WikiBase.getHandler().removeReadOnlyTopic(virtualWiki, topicName);
+				WikiBase.getHandler().deleteReadOnlyTopic(virtualWiki, topicName);
 			}
 		}
 	}

@@ -58,15 +58,6 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void addReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		topic.setReadOnly(true);
-		addTopic(topic);
-	}
-
-	/**
-	 *
-	 */
 	protected abstract void addRecentChange(RecentChange change) throws Exception;
 
 	/**
@@ -82,12 +73,12 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract void addVirtualWiki(String virtualWiki) throws Exception;
+	protected abstract void addVirtualWiki(String virtualWiki) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract void addWikiUser(WikiUser user) throws Exception;
+	protected abstract void addWikiUser(WikiUser user) throws Exception;
 
 	/**
 	 *
@@ -154,7 +145,7 @@ public abstract class PersistencyHandler {
 			for (Iterator readOnlyIterator = readOnlys.iterator(); readOnlyIterator.hasNext();) {
 				String topicName = (String) readOnlyIterator.next();
 				try {
-					toHandler.addReadOnlyTopic(virtualWiki, topicName);
+					toHandler.writeReadOnlyTopic(virtualWiki, topicName);
 					messages.add("Added read-only topic " + virtualWiki + " / " + topicName);
 				} catch (Exception e) {
 					String msg = "Unable to convert read-only topic: " + virtualWiki + " / " + topicName;
@@ -211,7 +202,16 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void delete(Topic topic) throws Exception {
+	public void deleteReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(false);
+		addTopic(topic);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopic(Topic topic) throws Exception {
 		topic.setDeleted(true);
 		// update recent changes
 		addTopic(topic);
@@ -439,7 +439,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected String lookupWikiUserLogin(Integer authorId) throws Exception {
+	public String lookupWikiUserLogin(Integer authorId) throws Exception {
 		String login = (String)cachedUserLoginHash.get(authorId);
 		if (login != null) {
 			return login;
@@ -473,11 +473,10 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
-	 * Finds a default topic file and returns the contents
-	 *
-	 * FIXME - this doesn't belong here
+	 * Utility method for reading default topic values from files and returning
+	 * the file contents.
 	 */
-	public static String readDefaultTopic(String topicName) throws Exception {
+	private static String readSpecialPage(String topicName) throws Exception {
 		String filename = Utilities.encodeURL(topicName) + ".txt";
 		String contents = null;
 		try {
@@ -492,15 +491,6 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void removeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		topic.setReadOnly(false);
-		addTopic(topic);
-	}
-
-	/**
-	 *
-	 */
 	protected void setupSpecialPage(String virtualWiki, String topicName, WikiUser user) throws Exception {
 		if (exists(virtualWiki, topicName)) {
 			return;
@@ -510,7 +500,7 @@ public abstract class PersistencyHandler {
 			// do not set up special pages until initial property values set
 			return;
 		}
-		String contents = PersistencyHandler.readDefaultTopic(topicName);
+		String contents = PersistencyHandler.readSpecialPage(topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
@@ -521,7 +511,7 @@ public abstract class PersistencyHandler {
 		topicVersion.setAuthorId(new Integer(user.getUserId()));
 		// FIXME - hard coding
 		topicVersion.setEditComment("Automatically created by system setup");
-		write(topic, topicVersion);
+		writeTopic(topic, topicVersion);
 	}
 
 	/**
@@ -534,11 +524,19 @@ public abstract class PersistencyHandler {
 		addTopic(topic);
 	}
 
+	/**
+	 *
+	 */
+	public void writeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		topic.setReadOnly(true);
+		addTopic(topic);
+	}
 
 	/**
 	 *
 	 */
-	public synchronized void write(Topic topic, TopicVersion topicVersion) throws Exception {
+	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion) throws Exception {
 		// release any lock that is held by setting lock fields null
 		topic.setLockedBy(null);
 		topic.setLockedDate(null);
@@ -573,5 +571,19 @@ public abstract class PersistencyHandler {
 		change.setEditType(topicVersion.getEditType());
 		change.setVirtualWiki(topic.getVirtualWiki());
 		addRecentChange(change);
+	}
+
+	/**
+	 *
+	 */
+	public void writeVirtualWiki(String virtualWiki) throws Exception {
+		this.addVirtualWiki(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	public void writeWikiUser(WikiUser user) throws Exception {
+		this.addWikiUser(user);
 	}
 }
