@@ -2,27 +2,36 @@
 0.0.4
 =====
 
-* [FEATURE] Add option to update user account information.
+* [FEATURE] Add "Account", "User" and "Comments" links to user
+  navigation bar.
+* [FEATURE] Add "Remember Me" login option.
+* [FEATURE] Add ability to view all contributions made by a
+  specific user (Special:Contributions).
+* [FEATURE] Add ability to update user account information.
 * [FEATURE] Change navbar search to default "Search", not "Jump to".
-* [FEATURE] "Comments" link works now and is colored to reflect
+* [FEATURE] "Comments" tab works now and is colored to reflect
   whether a comments page exists yet or not.
 * [FEATURE] Error handling added to avoid ugly stack traces being
   shown to end users and ensure that errors are logged.
+* [FEATURE] Support MediaWiki signatures - "~~~", "~~~~" and "~~~~~".
+* [FEATURE] Support MediaWiki "__TOC__" directive.
 * [FEATURE] Change Special:Registration URL to Special:Account.
-* [FEATURE] Add "Account" link to user navigation bar.
 * [BUG] If user login required actually check for logged in user prior
   to editing.
 * [FEATURE] Hide LDAP and other unused / unsupported options in admin tool.
 * [FEATURE] Always encode passwords by default, remove option to have
   unencoded passwords.
-* [FEATURE] Code cleanups including deletion of unused code.
+* [FEATURE] Code cleanups including deletion of unused code.  PDF search
+  no longer supported.  War file size should now be about 450K smaller.
 * [FEATURE] New utility class for handling prepared statements.
 * [FEATURE] Added new WikiPageInfo class to hold basic page data.
-* [FEATURE] Added JAMWikiServlet.loadDefaults method to handle required
-  page data.
 * [FEATURE] Utilize more of the Spring framework functionality, should
   ensure that cache headers always get set properly.
-* [BUG] "Article" link from comments pages fixed.
+* [FEATURE] Update from JFlex 1.3.5 to 1.4.1 - slightly faster.
+* [FEATURE] Add previous_topic_version_id column to jam_topic_version.
+  BREAKS ANY EXISTING INSTALLATION!  See the release notes for the
+  database update syntax.
+* [BUG] "Article" tab from comments pages fixed.
 
 0.0.3
 =====
