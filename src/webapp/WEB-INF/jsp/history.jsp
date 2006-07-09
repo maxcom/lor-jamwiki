@@ -65,6 +65,9 @@ function inactive(element) {
 
 <c:choose>
 	<c:when test="${param.type=='all'}">
+
+<div id="change">
+
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="historyForm">
 <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_DIFF %>"/>
 <input type="hidden" name="type" value="arbitrary"/>
@@ -92,6 +95,9 @@ function inactive(element) {
 
 <input type="submit" value='<f:message key="history.diff"/>'/>
 </form>
+
+</div>
+
 	</c:when>
 	<c:when test="${param.type=='version'}">
 <c:out value="${cookedContents}" escapeXml="${false}"/>

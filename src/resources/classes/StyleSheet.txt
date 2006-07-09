@@ -288,6 +288,12 @@ td.footer {
 	vertical-align: top;
 }
 
+/* change lists (recent changes, history */
+
+#change a {
+	font-weight: normal;
+}
+
 /* older stuff */
 
 .title {

@@ -16,6 +16,9 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+
+<div id="change">
+
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 <%-- FIXME: hard coding --%>
 <input type="hidden" name="<%= JAMWikiServlet.PARAMETER_ACTION %>" value="<%= JAMWikiServlet.ACTION_RECENT_CHANGES %>" />
@@ -62,3 +65,5 @@ if (request.getParameter("num") != null) {
 </c:forEach>
 </ul>
 </form>
+
+</div>
