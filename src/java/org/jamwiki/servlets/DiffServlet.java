@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -77,8 +78,14 @@ public class DiffServlet extends JAMWikiServlet {
 					next.addObject("diff", diff);
 				}
 			} else {
-				int topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
-				int topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+				int topicVersionId1 = 0;
+				if (StringUtils.hasText(request.getParameter("version1"))) {
+					topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
+				}
+				int topicVersionId2 = 0;
+				if (StringUtils.hasText(request.getParameter("version2"))) {
+					topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+				}
 				String diff = WikiBase.getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2, true);
 				next.addObject("diff", diff);
 			}
