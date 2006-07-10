@@ -124,6 +124,28 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+   "CONSTRAINT jam_fk_recent_change_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_fk_recent_change_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) "
 		+ ") ";
+	private static final String STATEMENT_INSERT_RECENT_CHANGES =
+		"INSERT INTO jam_recent_change ( "
+		+   "topic_version_id, topic_id, "
+		+   "topic_name, edit_date, wiki_user_id, display_name, "
+		+   "edit_type, virtual_wiki_id, virtual_wiki_name, edit_comment, "
+		+   "previous_topic_version_id "
+		+ ") "
+		+ "SELECT "
+		+   "jam_topic_version.topic_version_id, jam_topic.topic_id, "
+		+   "jam_topic.topic_name, jam_topic_version.edit_date, "
+		+   "jam_topic_version.wiki_user_id, "
+		+   "IFNULL(jam_wiki_user.login, jam_topic_version.wiki_user_ip_address), "
+		+   "jam_topic_version.edit_type, jam_virtual_wiki.virtual_wiki_id, "
+		+   "jam_virtual_wiki.virtual_wiki_name, jam_topic_version.edit_comment, "
+		+   "jam_topic_version.previous_topic_version_id "
+		+ "FROM jam_topic, jam_virtual_wiki, jam_topic_version "
+		+ "LEFT OUTER JOIN jam_wiki_user ON ( "
+		+    "jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
+		+ ") "
+		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
+		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
+		+ "AND jam_topic.topic_deleted = FALSE ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select LAST_INSERT_ID() as topic_id from jam_topic ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
@@ -246,5 +268,13 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		stmt.setString(5, user.getLastName());
 		stmt.setString(6, user.getEncodedPassword());
 		stmt.executeUpdate();
+	}
+
+	/**
+	 *
+	 */
+	public void reloadRecentChanges() throws Exception {
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
 	}
 }
