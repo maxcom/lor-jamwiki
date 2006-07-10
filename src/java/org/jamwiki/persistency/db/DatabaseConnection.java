@@ -121,6 +121,8 @@ public class DatabaseConnection {
 			rs = stmt.executeQuery(sql);
 			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
+		} catch (Exception e) {
+			throw new Exception("Failure while executing " + sql, e);
 		} finally {
 			if (rs != null) {
 				try {
@@ -162,6 +164,8 @@ public class DatabaseConnection {
 			int result = stmt.executeUpdate(sql);
 			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return result;
+		} catch (Exception e) {
+			throw new Exception("Failure while executing " + sql, e);
 		} finally {
 			if (stmt != null) {
 				try {

@@ -438,7 +438,7 @@ public class FileHandler extends PersistencyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public List getAllVersions(String virtualWiki, String topicName) throws Exception {
+	public List getAllTopicVersions(String virtualWiki, String topicName) throws Exception {
 		List all = new LinkedList();
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
 		for (int i = 0; i < files.length; i++) {
@@ -503,6 +503,9 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
+		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR))) {
+			return null;
+		}
 		StringBuffer buffer = new StringBuffer();
 		if (!StringUtils.hasText(virtualWiki)) {
 			// this is questionable, but the virtual wiki list does it

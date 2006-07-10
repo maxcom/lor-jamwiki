@@ -562,7 +562,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void upgradeRecentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
 		try {
 			// FIXME - database specific
-			org.jamwiki.persistency.db.DatabaseHandler.loadRecentChanges();
+			DatabaseHandler.reloadRecentChanges();
 			next.addObject("message", "Recent changes successfully loaded");
 		} catch (Exception e) {
 			logger.error("Failure while loading recent changes", e);

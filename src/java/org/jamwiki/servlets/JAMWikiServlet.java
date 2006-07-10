@@ -292,6 +292,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject("article", article);
 		next.addObject("comments", comments);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
+		if (!StringUtils.hasText(this.pageInfo.getTopicName())) {
+			try {
+				next.addObject(JAMWikiServlet.PARAMETER_TOPIC, JAMWikiServlet.getTopicFromURI(request));
+			} catch (Exception e) {
+				logger.error("Unable to load topic value in JAMWikiServlet", e);
+			}
+		}
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(this.pageInfo.getSpecial()));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "JAMWiki - " + this.pageInfo.getPageTitle());
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, this.pageInfo.getPageAction());

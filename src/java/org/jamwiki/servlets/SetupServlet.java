@@ -76,6 +76,7 @@ public class SetupServlet extends JAMWikiServlet {
 			this.pageInfo.setSpecial(true);
 			this.pageInfo.setPageTitle("Special:Setup");
 			next.addObject("errors", errors);
+			next.addObject("login", user.getLogin());
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
@@ -93,7 +94,6 @@ public class SetupServlet extends JAMWikiServlet {
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
 		user.setAdmin(true);
-		next.addObject("user", user);
 	}
 
 	/**
@@ -108,6 +108,7 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
 		}
 		if (request.getParameter(Environment.PROP_DB_DRIVER) != null) {
+			Environment.setValue(Environment.PROP_DB_TYPE, request.getParameter(Environment.PROP_DB_TYPE));
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));
 			Environment.setValue(Environment.PROP_DB_URL, request.getParameter(Environment.PROP_DB_URL));
 			Environment.setValue(Environment.PROP_DB_USERNAME, request.getParameter(Environment.PROP_DB_USERNAME));

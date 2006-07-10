@@ -91,7 +91,7 @@ function onPersistenceType() {
 
 <tr>
 	<td>Admin User Login:</td>
-	<td><input type="text" name="login" value="<c:out value="${user.login}" />" /></td>
+	<td><input type="text" name="login" value="<c:out value="${login}" />" /></td>
 </tr>
 <tr>
 	<td><f:message key="admin.caption.newpassword"/></td>

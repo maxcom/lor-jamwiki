@@ -127,7 +127,7 @@ public abstract class PersistencyHandler {
 			// Versions
 			for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 				String topicName = (String) topicIterator.next();
-				List versions = fromHandler.getAllVersions(virtualWiki, topicName);
+				List versions = fromHandler.getAllTopicVersions(virtualWiki, topicName);
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 					TopicVersion topicVersion = (TopicVersion) topicVersionIterator.next();
 					try {
@@ -276,7 +276,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract List getAllVersions(String virtualWiki, String topicName) throws Exception;
+	public abstract List getAllTopicVersions(String virtualWiki, String topicName) throws Exception;
 
 	/**
 	 *
@@ -308,7 +308,7 @@ public abstract class PersistencyHandler {
 	 */
 	public Vector getRecentChanges(String virtualWiki, String topicName) throws Exception {
 		Vector results = new Vector();
-		Collection versions = getAllVersions(virtualWiki, topicName);
+		Collection versions = getAllTopicVersions(virtualWiki, topicName);
 		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
 			TopicVersion version = (TopicVersion)iterator.next();
 			RecentChange change = new RecentChange();

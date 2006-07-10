@@ -67,6 +67,8 @@ public class WikiPreparedStatement {
 			rs = this.statement.executeQuery();
 			logger.info("Executed " + this.sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
+		} catch (Exception e) {
+			throw new Exception("Failure while executing " + this.sql, e);
 		} finally {
 			DatabaseConnection.closeConnection(conn, this.statement, rs);
 		}
@@ -85,6 +87,8 @@ public class WikiPreparedStatement {
 			int result = this.statement.executeUpdate();
 			logger.info("Executed " + this.sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return result;
+		} catch (Exception e) {
+			throw new Exception("Failure while executing " + this.sql, e);
 		} finally {
 			DatabaseConnection.closeConnection(conn, this.statement);
 		}
