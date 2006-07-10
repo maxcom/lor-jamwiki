@@ -131,12 +131,13 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageTitle("Special:Admin");
+		WikiUser user = Utilities.currentUser(request);
 		try {
 			logger.debug("Adding new Wiki: " + newWiki);
 			WikiBase.getHandler().writeVirtualWiki(newWiki);
 			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
-			WikiBase.initialise(request.getLocale(), null);
+			WikiBase.initialise(request.getLocale(), user);
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
 			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
