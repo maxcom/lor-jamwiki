@@ -63,7 +63,10 @@ public class AdminServlet extends JAMWikiServlet {
 				String redirect = "Special:Admin";
 				if (isTopic(request, "Special:Upgrade")) {
 					redirect = "Special:Upgrade";
+				} else if (isTopic(request, "Special:Delete")) {
+					redirect = "Special:Delete";
 				}
+				next.addObject("errorMessage", "Only administrators may access this page");
 				viewLogin(request, next, redirect);
 				loadDefaults(request, next, this.pageInfo);
 				return next;
@@ -168,6 +171,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void delete(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		this.pageInfo.setSpecial(true);
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
 		this.pageInfo.setPageTitle("Delete " + topicName);
@@ -197,6 +201,7 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
 		this.pageInfo.setPageTitle("Delete " + topicName);
+		this.pageInfo.setSpecial(true);
 	}
 
 	/**

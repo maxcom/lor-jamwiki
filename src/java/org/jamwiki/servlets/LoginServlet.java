@@ -92,8 +92,7 @@ public class LoginServlet extends JAMWikiServlet {
 		}
 		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password);
 		if (user == null) {
-			// should this return a specific message instead?
-			next.addObject("loginFailure", "true");
+			next.addObject("errorMessage", Utilities.getMessage("error.login", request.getLocale()));
 			next.addObject("redirect", redirect);
 			this.pageInfo.setSpecial(true);
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);

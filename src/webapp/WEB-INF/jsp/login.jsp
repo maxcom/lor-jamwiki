@@ -19,8 +19,8 @@
 <form method="post" action="<jamwiki:link value="Special:Login" />">
 <input type="hidden" name="redirect" value="<c:out value="${redirect}"/>" />
 <table>
-<c:if test="${loginFailure}">
-<tr><td colspan="2" class="red"><f:message key="error.login" /></td></tr>
+<c:if test="${!empty errorMessage}">
+<tr><td colspan="2" class="red"><c:out value="${errorMessage}" /></td></tr>
 </c:if>
 <tr>
 	<td><f:message key="login.username"/></td>

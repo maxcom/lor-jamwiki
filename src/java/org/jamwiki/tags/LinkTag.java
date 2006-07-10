@@ -40,7 +40,12 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			this.value = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
+			try {
+				this.value = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
+			} catch (JspException e) {
+				logger.error("Failure in link tag for " + this.value + " / " + this.text, e);
+				throw e;
+			}
 			buildLinkText();
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			String url = null;

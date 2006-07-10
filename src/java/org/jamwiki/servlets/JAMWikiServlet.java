@@ -269,28 +269,31 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (user != null) {
 			next.addObject("userpage", "User:" + user.getLogin());
 			next.addObject("usercomments", "User comments:" + user.getLogin());
+			next.addObject("adminUser", new Boolean(user.getAdmin()));
 		}
-		// FIXME - this is really ugly
-		String article = this.pageInfo.getTopicName();
-		String comments = "Comments:" + article;
-		if (article != null && article.startsWith("Comments:")) {
-			int pos = "Comments:".length();
-			article = article.substring(pos);
-			comments = "Comments:" + article;
-		} else if (article != null && article.startsWith("Special:")) {
-			int pos = "Special:".length();
-			article = article.substring(pos);
-			comments = "Comments:" + article;
-		} else if (article != null && article.startsWith("User comments:")) {
-			int pos = "User comments:".length();
-			comments = article;
-			article = "User:" + article.substring(pos);
-		} else if (article != null && article.startsWith("User:")) {
-			int pos = "User:".length();
-			comments = "User comments:" + article.substring(pos);
+		if (!this.pageInfo.getSpecial()) {
+			// FIXME - this is really ugly
+			String article = this.pageInfo.getTopicName();
+			String comments = "Comments:" + article;
+			if (article != null && article.startsWith("Comments:")) {
+				int pos = "Comments:".length();
+				article = article.substring(pos);
+				comments = "Comments:" + article;
+			} else if (article != null && article.startsWith("Special:")) {
+				int pos = "Special:".length();
+				article = article.substring(pos);
+				comments = "Comments:" + article;
+			} else if (article != null && article.startsWith("User comments:")) {
+				int pos = "User comments:".length();
+				comments = article;
+				article = "User:" + article.substring(pos);
+			} else if (article != null && article.startsWith("User:")) {
+				int pos = "User:".length();
+				comments = "User comments:" + article.substring(pos);
+			}
+			next.addObject("article", article);
+			next.addObject("comments", comments);
 		}
-		next.addObject("article", article);
-		next.addObject("comments", comments);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
 		if (!StringUtils.hasText(this.pageInfo.getTopicName())) {
 			try {
@@ -324,6 +327,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	protected void viewError(HttpServletRequest request, ModelAndView next, Exception e) {
 		logger.error("Servlet error", e);
+		this.pageInfo = new WikiPageInfo();
 		this.pageInfo.setPageTitle("System Error");
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ERROR);
 		this.pageInfo.setSpecial(true);
@@ -339,6 +343,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *  "StartingPoints", etc.
 	 */
 	protected void viewLogin(HttpServletRequest request, ModelAndView next, String topic) throws Exception {
+		this.pageInfo = new WikiPageInfo();
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {

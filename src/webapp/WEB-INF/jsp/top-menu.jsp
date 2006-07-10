@@ -34,9 +34,10 @@
 	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
 	</c:if>
-	<%-- FIXME: admin only --%>
+	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>
+	</c:if>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${topic}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
 </c:if>
