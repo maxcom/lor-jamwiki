@@ -11,8 +11,13 @@ JAMWiki is built to the following specifications:
 
   JDK 1.4 or later
   Servlet 2.3 or later
-  Postgres 8.x (may work on earlier or later versions, untested)
-  Tomcat 5.x (should work on other app servers, untested)
+
+JAMWiki has been tested with the following software:
+
+  Postgres 8.0 (may work on earlier or later versions, untested)
+  MySQL 4.1 (may work on earlier or later versions, untested)
+  Oracle 10.2 (may work on earlier or later versions, untested)
+  Tomcat 5.5 (should work on any app server supporting servlet 2.3, untested)
 
 
 BUILDING THE APPLICATION
@@ -84,8 +89,12 @@ JAMWiki can operate using files for storage, or using a database.  For larger im
 3. During setup choose "Database" from the persistency-type dropdown menu and fill out the driver, database type, url, username and password fields.  Check with your database vendor to determine the appropriate values for each of these fields.  Some example values are below:
 
     JDBC driver class: org.postgresql.Driver
-    Database type    : postgres
-    Database URL     : jdbc:postgresql://localhost:5432/jamwiki
+    JDBC driver class: com.mysql.jdbc.Driver
+    JDBC driver class: oracle.jdbc.driver.OracleDriver
+    Database type    : as appropriate
+    Database URL     : jdbc:postgresql://localhost:5432/<database_name>
+    Database URL     : jdbc:mysql://localhost:3306/<database_name>
+    Database URL     : jdbc:oracle:thin:@//localhost:1521/<service_name>
     Database Username: as appropriate
     Database Password: as appropriate
 
