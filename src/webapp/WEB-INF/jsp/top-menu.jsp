@@ -42,7 +42,7 @@
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${topic}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
 </c:if>
 <c:if test="${special}">
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="${topic}" />"><f:message key="menu.special" /></a></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="${topic}"><f:message key="menu.special" /></jamwiki:link></td>
 </c:if>
 	<td class="menu-tab-close">&#160;</td>
 </tr>

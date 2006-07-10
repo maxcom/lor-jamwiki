@@ -22,13 +22,13 @@
 	<%-- FIXME: do not hardcode --%>
 <c:choose>
 <c:when test="${empty user}">
-	<td class="menu-user"><a href="<jamwiki:link value="Special:Login" />">Login</a> / <a href="<jamwiki:link value="Special:Account" />">Register</a></td>
+	<td class="menu-user"><jamwiki:link value="Special:Login">Login</jamwiki:link> / <jamwiki:link value="Special:Account">Register</jamwiki:link></td>
 </c:when>
 <c:otherwise>
 	<td class="menu-user"><jamwiki:link value="${userpage}"><c:if test="${!empty user.displayName}"><c:out value="${user.displayName}" /></c:if><c:if test="${empty user.displayName}"><c:out value="${user.login}" /></c:if></jamwiki:link></td>
 	<td class="menu-user"><jamwiki:link value="${usercomments}">User Comments</jamwiki:link></td>
-	<td class="menu-user"><a href="<jamwiki:link value="Special:Account" />">Account</a></td>
-	<td class="menu-user"><a href="<jamwiki:link value="Special:Logout" />">Logout</a></td>
+	<td class="menu-user"><jamwiki:link value="Special:Account">Account</jamwiki:link></td>
+	<td class="menu-user"><jamwiki:link value="Special:Logout">Logout</jamwiki:link></td>
 	<c:if test="${adminUser}"><td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="admin.title" /></jamwiki:link></c:if>
 </c:otherwise>
 </c:choose>

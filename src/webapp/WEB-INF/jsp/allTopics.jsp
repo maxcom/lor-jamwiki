@@ -24,7 +24,7 @@
 	<c:otherwise>
 <tr><td><f:message key="alltopics.topics"><f:param><c:out value="${topicCount}" /></f:param></f:message></td></tr>
 		<c:forEach items="${all}" var="topicName">
-<tr><td class="recent"><a href="<jamwiki:link value="${topicName}" />"><c:out value="${topicName}" /></a></td></tr>
+<tr><td class="recent"><jamwiki:link value="${topicName}"><c:out value="${topicName}" /></jamwiki:link></td></tr>
 		</c:forEach>
 	</c:otherwise>
 </c:choose>

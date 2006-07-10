@@ -17,5 +17,5 @@
 
 --%>
 <c:forEach items="${historyThisPage}" var="history">
-<a href="<jamwiki:link value="${history} " />"><c:out value="${history}"/></a> &gt;&gt;
+<jamwiki:link value="${history}"><c:out value="${history}"/></jamwiki:link> &gt;&gt;
 </c:forEach>

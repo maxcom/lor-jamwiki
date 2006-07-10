@@ -28,7 +28,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && Wiki
 <%
 }
 %>
-<b><f:message key="common.wiki"/>
+<f:message key="common.wiki"/>
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && WikiBase.getVirtualWikiCount() > 1) {
 %>
@@ -37,7 +37,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) && Wiki
 }
 %>
 :
-<a href="<jamwiki:link value="StartingPoints" />"><c:out value="${virtualWiki}"/></a></b> :
+<jamwiki:link value="StartingPoints"><c:out value="${virtualWiki}"/></jamwiki:link> :
 <%
 }
 %>
