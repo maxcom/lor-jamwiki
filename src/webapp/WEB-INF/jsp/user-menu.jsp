@@ -29,6 +29,7 @@
 	<td class="menu-user"><jamwiki:link value="${usercomments}">User Comments</jamwiki:link></td>
 	<td class="menu-user"><a href="<jamwiki:link value="Special:Account" />">Account</a></td>
 	<td class="menu-user"><a href="<jamwiki:link value="Special:Logout" />">Logout</a></td>
+	<c:if test="${adminUser}"><td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="admin.title" /></jamwiki:link></c:if>
 </c:otherwise>
 </c:choose>
 </tr>

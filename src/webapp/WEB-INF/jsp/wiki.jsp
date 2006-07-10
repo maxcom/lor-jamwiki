@@ -166,9 +166,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 		<hr width="99%" />
 		<c:out value="${bottomArea}" escapeXml="false" />
 		<br/>
-		<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> Version <jamwiki:wiki-version/> |
-		<a href="<jamwiki:link value="Special:Admin" />"><f:message key="admin.title" /></a>
-		</font>
+		<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> Version <jamwiki:wiki-version/></font>
 	</td>
 </tr>
 </table>
