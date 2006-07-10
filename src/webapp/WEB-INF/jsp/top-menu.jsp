@@ -33,8 +33,6 @@
 	</c:if>
 	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
-	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Upload" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.attach" /></a></td>
 	</c:if>
 	<%-- FIXME: admin only --%>
 	<td class="menu-tab-space">&#160;</td>
