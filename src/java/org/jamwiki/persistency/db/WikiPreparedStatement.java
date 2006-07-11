@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.log4j.Logger;
@@ -97,7 +96,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	private void loadStatement() throws SQLException {
+	private void loadStatement() throws Exception {
 		for (int i=0; i < this.paramTypes.length; i++) {
 			if (params[i] == null) {
 				this.statement.setNull(i+1, paramTypes[i]);
@@ -123,9 +122,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws SQLException If a parameter is invalid.
+	 * @throws Exception If a parameter is invalid.
 	 */
-	public void setChar(int parameterIndex, char x) throws SQLException {
+	public void setChar(int parameterIndex, char x) throws Exception {
 		this.verifyParams(parameterIndex, new Character(x));
 		this.paramTypes[parameterIndex - 1] = Types.CHAR;
 		this.params[parameterIndex - 1] = new Character(x);
@@ -137,9 +136,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws SQLException If a parameter is invalid.
+	 * @throws Exception If a parameter is invalid.
 	 */
-	public void setInt(int parameterIndex, int x) throws SQLException {
+	public void setInt(int parameterIndex, int x) throws Exception {
 		this.verifyParams(parameterIndex, new Integer(x));
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
 		this.params[parameterIndex - 1] = new Integer(x);
@@ -152,9 +151,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param sqlType The SQL type code defined in java.sql.Types
-	 * @throws SQLException If a parameter is invalid.
+	 * @throws Exception If a parameter is invalid.
 	 */
-	public void setNull(int parameterIndex, int sqlType) throws SQLException {
+	public void setNull(int parameterIndex, int sqlType) throws Exception {
 		this.verifyParams(parameterIndex, null);
 		this.paramTypes[parameterIndex - 1] = sqlType;
 		this.params[parameterIndex - 1] = null;
@@ -168,9 +167,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws SQLException If a parameter is invalid.
+	 * @throws Exception If a parameter is invalid.
 	 */
-	public void setString(int parameterIndex, String x) throws SQLException {
+	public void setString(int parameterIndex, String x) throws Exception {
 		this.verifyParams(parameterIndex, x);
 		this.paramTypes[parameterIndex - 1] = Types.VARCHAR;
 		this.params[parameterIndex - 1] = x;
@@ -182,9 +181,9 @@ public class WikiPreparedStatement {
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
-	 * @throws SQLException If a parameter is invalid.
+	 * @throws Exception If a parameter is invalid.
 	 */
-	public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
+	public void setTimestamp(int parameterIndex, Timestamp x) throws Exception {
 		this.verifyParams(parameterIndex, x);
 		this.paramTypes[parameterIndex - 1] = Types.TIMESTAMP;
 		this.params[parameterIndex - 1] = x;
@@ -193,9 +192,9 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	private void verifyParams(int pos, Object value) throws SQLException {
+	private void verifyParams(int pos, Object value) throws Exception {
 		if (pos <= 0) {
-			throw new SQLException("Invalid PreparedStatement index " + pos);
+			throw new Exception("Invalid PreparedStatement index " + pos);
 		}
 	}
 }
