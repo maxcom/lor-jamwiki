@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import org.apache.commons.dbcp.AbandonedConfig;
@@ -31,6 +32,7 @@ import org.apache.commons.dbcp.PoolingDriver;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 
 /**
@@ -62,7 +64,14 @@ public class DatabaseConnection {
 		connectionPool.setTimeBetweenEvictionRunsMillis(Environment.getIntValue(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) * 1000);
 		connectionPool.setNumTestsPerEvictionRun(Environment.getIntValue(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN));
 		connectionPool.setWhenExhaustedAction((byte) Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION));
-		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, userName, password);
+		Properties properties = new Properties();
+		properties.setProperty("user", userName);
+		properties.setProperty("password", password);
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
+			// handle clobs as strings, Oracle 10g and higher drivers (ojdbc14.jar)
+			properties.setProperty("SetBigStringTryClob", "true");
+		}
+		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
 		new PoolableConnectionFactory(connectionFactory, connectionPool, null, Environment.getValue(Environment.PROP_DBCP_VALIDATION_QUERY), false, true);
 		PoolingDriver driver = new PoolingDriver();
 		driver.registerPool("jamwiki", connectionPool);
@@ -117,7 +126,6 @@ public class DatabaseConnection {
 		try {
 			long start = System.currentTimeMillis();
 			stmt = conn.createStatement();
-			logger.info("Executing SQL: " + sql);
 			rs = stmt.executeQuery(sql);
 			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
