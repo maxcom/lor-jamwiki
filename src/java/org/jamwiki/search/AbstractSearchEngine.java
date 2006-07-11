@@ -551,7 +551,9 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		// get content
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
-		StringBuffer contents = new StringBuffer(topic.getTopicContent());
+		String topicContent = topic.getTopicContent();
+		if (topicContent == null) topicContent = "";
+		StringBuffer contents = new StringBuffer(topicContent);
 		// find attachments
 		List attachments = extractByKeyword(contents, "attach:", true);
 		// find links
