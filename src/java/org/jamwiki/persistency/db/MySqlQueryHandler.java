@@ -30,13 +30,6 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 
 	private static Logger logger = Logger.getLogger(MySqlQueryHandler.class.getName());
 
-	private static final String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE =
-		"CREATE TABLE jam_virtual_wiki ( "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-		+   "CONSTRAINT jam_pk_virtual_wiki PRIMARY KEY (virtual_wiki_id) "
-		+ ") ";
 	private static final String STATEMENT_CREATE_WIKI_USER_TABLE =
 		"CREATE TABLE jam_wiki_user ( "
 		+   "wiki_user_id INTEGER NOT NULL, "
@@ -164,7 +157,7 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	public void createTables() throws Exception {
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
