@@ -37,7 +37,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		"CREATE SEQUENCE jam_virtual_wiki_seq ";
 	protected static final String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE =
 		"CREATE TABLE jam_virtual_wiki ( "
-		+   "virtual_wiki_id INTEGER NOT NULL DEFAULT NEXTVAL('jam_virtual_wiki_seq'), "
+		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
 		+   "create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 		+   "CONSTRAINT jam_pk_virtual_wiki PRIMARY KEY (virtual_wiki_id) "
@@ -46,7 +46,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		"CREATE SEQUENCE jam_wiki_user_seq ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_TABLE =
 		"CREATE TABLE jam_wiki_user ( "
-		+   "wiki_user_id INTEGER NOT NULL DEFAULT NEXTVAL('jam_wiki_user_seq'), "
+		+   "wiki_user_id INTEGER NOT NULL, "
 		+   "login VARCHAR(100) NOT NULL, "
 		+   "display_name VARCHAR(100), "
 		+   "create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
@@ -71,7 +71,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		"CREATE SEQUENCE jam_topic_seq ";
 	protected static final String STATEMENT_CREATE_TOPIC_TABLE =
 		"CREATE TABLE jam_topic ( "
-		+   "topic_id INTEGER NOT NULL DEFAULT NEXTVAL('jam_topic_seq'), "
+		+   "topic_id INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "topic_name VARCHAR(200) NOT NULL, "
 		+   "topic_locked_by INTEGER, "
@@ -90,7 +90,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		"CREATE SEQUENCE jam_topic_version_seq ";
 	protected static final String STATEMENT_CREATE_TOPIC_VERSION_TABLE =
 		"CREATE TABLE jam_topic_version ( "
-		+   "topic_version_id INTEGER NOT NULL DEFAULT NEXTVAL('jam_topic_version_seq'), "
+		+   "topic_version_id INTEGER NOT NULL, "
 		+   "topic_id INTEGER NOT NULL, "
 		+   "edit_comment VARCHAR(200), "
 		+   "version_content TEXT, "
@@ -108,7 +108,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		"CREATE SEQUENCE jam_notification_seq ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_TABLE =
 		"CREATE TABLE jam_notification ( "
-		+   "notification_id INTEGER NOT NULL DEFAULT NEXTVAL('jam_notification_seq'), "
+		+   "notification_id INTEGER NOT NULL, "
 		+   "wiki_user_id INTEGER NOT NULL, "
 		+   "topic_id INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_notification PRIMARY KEY (notification_id), "
