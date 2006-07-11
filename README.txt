@@ -1,7 +1,7 @@
 INTRODUCTION
 ============
 
-This file attempts to provide basic information for getting an instance of JAMWiki running on your web application server.  In addition, instructions are provided for those interested in building JAMWiki from source.
+Please see http://jamwiki.org for the latest notes and documentation.  This file attempts to provide basic information for getting an instance of JAMWiki running on your web application server.  In addition, instructions are provided for those interested in building JAMWiki from source.
 
 
 SUPPORTED CONFIGURATIONS
