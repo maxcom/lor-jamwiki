@@ -80,6 +80,7 @@ public class SetupServlet extends JAMWikiServlet {
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.saveProperties();
+			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			WikiBase.initialise(request.getLocale(), user);
 			viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
