@@ -19,10 +19,12 @@ package org.jamwiki.persistency.db;
 import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.log4j.Logger;
+import org.jamwiki.Environment;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 
@@ -39,8 +41,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		"CREATE TABLE jam_virtual_wiki ( "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-		+   "CONSTRAINT jam_pk_virtual_wiki PRIMARY KEY (virtual_wiki_id) "
+		+   "create_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
+		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_SEQUENCE =
 		"CREATE SEQUENCE jam_wiki_user_seq ";
@@ -49,11 +51,11 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "wiki_user_id INTEGER NOT NULL, "
 		+   "login VARCHAR(100) NOT NULL, "
 		+   "display_name VARCHAR(100), "
-		+   "create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-		+   "last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+		+   "create_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
+		+   "last_login_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin CHAR NOT NULL DEFAULT '0', "
+		+   "is_admin CHAR DEFAULT '0' NOT NULL, "
 		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
@@ -64,8 +66,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "first_name VARCHAR(100), "
 		+   "last_name VARCHAR(100), "
 		+   "encoded_password VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_wiki_user_info PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_fk_wiki_user_info_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id) "
+		+   "CONSTRAINT jam_pk_wiki_uinfo PRIMARY KEY (wiki_user_id), "
+		+   "CONSTRAINT jam_fk_wiki_uinfo_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_SEQUENCE =
 		"CREATE SEQUENCE jam_topic_seq ";
@@ -77,13 +79,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "topic_locked_by INTEGER, "
 		+   "topic_lock_date TIMESTAMP, "
 		+   "topic_lock_session_key VARCHAR(100), "
-		+   "topic_deleted CHAR NOT NULL DEFAULT '0', "
-		+   "topic_read_only CHAR NOT NULL DEFAULT '0', "
-		+   "topic_admin_only CHAR NOT NULL DEFAULT '0', "
-		+   "topic_content TEXT, "
+		+   "topic_deleted CHAR DEFAULT '0' NOT NULL, "
+		+   "topic_read_only CHAR DEFAULT '0' NOT NULL, "
+		+   "topic_admin_only CHAR DEFAULT '0' NOT NULL, "
+		+   "topic_content " + text() + ", "
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
-		+   "CONSTRAINT jam_fk_topic_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
+		+   "CONSTRAINT jam_fk_topic_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
 		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE =
@@ -93,16 +95,16 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "topic_version_id INTEGER NOT NULL, "
 		+   "topic_id INTEGER NOT NULL, "
 		+   "edit_comment VARCHAR(200), "
-		+   "version_content TEXT, "
+		+   "version_content " + text() + ", "
 		+   "wiki_user_id INTEGER, "
 		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
-		+   "edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+		+   "edit_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
 		+   "edit_type INTEGER NOT NULL, "
 		+   "previous_topic_version_id INTEGER, "
-		+   "CONSTRAINT jam_pk_topic_version PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_topic_version_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_fk_topic_version_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_topic_version_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
+		+   "CONSTRAINT jam_pk_topic_ver PRIMARY KEY (topic_version_id), "
+		+   "CONSTRAINT jam_fk_topic_ver_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
+		+   "CONSTRAINT jam_fk_topic_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_fk_topic_ver_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_SEQUENCE =
 		"CREATE SEQUENCE jam_notification_seq ";
@@ -123,19 +125,19 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "previous_topic_version_id INTEGER, "
 		+   "topic_id INTEGER NOT NULL, "
 		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+		+   "edit_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
 		+   "edit_comment VARCHAR(200), "
 		+   "wiki_user_id INTEGER, "
 		+   "display_name VARCHAR(200) NOT NULL, "
 		+   "edit_type INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_fk_recent_change_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_recent_change_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) "
+		+   "CONSTRAINT jam_pk_rchange PRIMARY KEY (topic_version_id), "
+		+   "CONSTRAINT jam_fk_rchange_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
+		+   "CONSTRAINT jam_fk_rchange_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
+		+   "CONSTRAINT jam_fk_rchange_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
+		+   "CONSTRAINT jam_fk_rchange_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_fk_rchange_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) "
 		+ ") ";
 	protected static final String STATEMENT_DELETE_RECENT_CHANGES =
 	    "delete from jam_recent_change ";
@@ -642,11 +644,43 @@ public class DefaultQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Utility method for returning a database-appropriate value that corresponds
+	 * to the SQL function indicating the current time.
+	 */
+	private static String now() {
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES)) {
+			return "CURRENT_TIMESTAMP";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
+			return "CURRENT_TIMESTAMP";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
+			return "SYSTIMESTAMP";
+		} else {
+			return "CURRENT_TIMESTAMP";
+		}
+	}
+
+	/**
 	 *
 	 */
 	public void reloadRecentChanges() throws Exception {
 		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
+	}
+
+	/**
+	 * Utility method for returning a database-appropriate value that corresponds
+	 * to the SQL type for text values.
+	 */
+	private static String text() {
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES)) {
+			return "TEXT";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
+			return "TEXT";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
+			return "CLOB";
+		} else {
+			return "TEXT";
+		}
 	}
 
 	/**

@@ -29,99 +29,6 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 
 	private static Logger logger = Logger.getLogger(OracleQueryHandler.class.getName());
 
-	private static final String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE =
-		"CREATE TABLE jam_virtual_wiki ( "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "create_date TIMESTAMP DEFAULT SYSTIMESTAMP, "
-		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id) "
-		+ ") ";
-	private static final String STATEMENT_CREATE_WIKI_USER_TABLE =
-		"CREATE TABLE jam_wiki_user ( "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "login VARCHAR(100) NOT NULL, "
-		+   "display_name VARCHAR(100), "
-		+   "create_date TIMESTAMP DEFAULT SYSTIMESTAMP, "
-		+   "last_login_date TIMESTAMP DEFAULT SYSTIMESTAMP, "
-		+   "create_ip_address VARCHAR(15) NOT NULL, "
-		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin CHAR DEFAULT '0', "
-		+   "CONSTRAINT jam_pk_wuser PRIMARY KEY (wiki_user_id) "
-		+ ") ";
-	private static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
-		"CREATE TABLE jam_wiki_user_info ( "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "login VARCHAR(100) NOT NULL, "
-		+   "email VARCHAR(100), "
-		+   "first_name VARCHAR(100), "
-		+   "last_name VARCHAR(100), "
-		+   "encoded_password VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_wiki_uinfo PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_fk_wiki_uinfo_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user "
-		+ ") ";
-	private static final String STATEMENT_CREATE_TOPIC_TABLE =
-		"CREATE TABLE jam_topic ( "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "topic_locked_by INTEGER, "
-		+   "topic_lock_date TIMESTAMP, "
-		+   "topic_lock_session_key VARCHAR(100), "
-		+   "topic_deleted CHAR DEFAULT '0', "
-		+   "topic_read_only CHAR DEFAULT '0', "
-		+   "topic_admin_only CHAR DEFAULT '0', "
-		+   "topic_content CLOB, "
-		+   "topic_type INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
-		+   "CONSTRAINT jam_fk_topic_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki, "
-		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user "
-		+ ") ";
-	private static final String STATEMENT_CREATE_TOPIC_VERSION_TABLE =
-		"CREATE TABLE jam_topic_version ( "
-		+   "topic_version_id INTEGER NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "edit_comment VARCHAR(200), "
-		+   "version_content CLOB, "
-		+   "wiki_user_id INTEGER, "
-		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
-		+   "edit_date TIMESTAMP DEFAULT SYSTIMESTAMP, "
-		+   "edit_type INTEGER NOT NULL, "
-		+   "previous_topic_version_id INTEGER, "
-		+   "CONSTRAINT jam_pk_topic_ver PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_topic_ver_topic FOREIGN KEY (topic_id) REFERENCES jam_topic, "
-		+   "CONSTRAINT jam_fk_topic_ver_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user, "
-		+   "CONSTRAINT jam_fk_topic_ver_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version "
-		+ ") ";
-	private static final String STATEMENT_CREATE_NOTIFICATION_TABLE =
-		"CREATE TABLE jam_notification ( "
-		+   "notification_id INTEGER NOT NULL, "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_ntfy PRIMARY KEY (notification_id), "
-		+   "CONSTRAINT jam_fk_ntfy_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user, "
-		+   "CONSTRAINT jam_fk_ntfy_topic FOREIGN KEY (topic_id) REFERENCES jam_topic "
-		+ ") ";
-	private static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
-		"CREATE TABLE jam_recent_change ( "
-		+   "topic_version_id INTEGER NOT NULL, "
-		+   "previous_topic_version_id INTEGER, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "edit_date TIMESTAMP DEFAULT SYSTIMESTAMP, "
-		+   "edit_comment VARCHAR(200), "
-		+   "wiki_user_id INTEGER, "
-		+   "display_name VARCHAR(200) NOT NULL, "
-		+   "edit_type INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_rchange PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_rchange_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version, "
-		+   "CONSTRAINT jam_fk_rchange_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version, "
-		+   "CONSTRAINT jam_fk_rchange_topic FOREIGN KEY (topic_id) REFERENCES jam_topic, "
-		+   "CONSTRAINT jam_fk_rchange_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user, "
-		+   "CONSTRAINT jam_fk_rchange_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki "
-		+ ") ";
-
 	private static final String STATEMENT_INSERT_RECENT_CHANGES =
 		"INSERT INTO jam_recent_change ( "
 		+   "topic_version_id, topic_id, "
@@ -199,25 +106,6 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected OracleQueryHandler() {
-	}
-
-	/**
-	 *
-	 */
-	public void createTables() throws Exception {
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE);
 	}
 
 	/**
