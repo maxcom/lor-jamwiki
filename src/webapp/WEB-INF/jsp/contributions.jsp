@@ -16,6 +16,9 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+
+<div id="change">
+
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Contributions" />">
 <%-- FIXME: hard coding --%>
 <input type="hidden" name="contributor" value="<c:out value="${contributor}" />" />
@@ -58,3 +61,6 @@ if (request.getParameter("num") != null) {
 	<c:if test="${!empty contribution.editComment}">&#160;(<i><c:out value="${contribution.editComment}" /></i>)</c:if>
 </c:forEach>
 </ul>
+</form>
+
+</div>
