@@ -59,7 +59,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {
 			DatabaseHandler.queryHandler = new OracleQueryHandler();
 		} else {
-			DatabaseHandler.queryHandler = new AnsiQueryHandler();
+			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}
 	}
 
@@ -267,7 +267,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {
 			DatabaseHandler.queryHandler = new OracleQueryHandler();
 		} else {
-			DatabaseHandler.queryHandler = new AnsiQueryHandler();
+			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}
 		String sql = null;
 		WikiResultSet rs = null;

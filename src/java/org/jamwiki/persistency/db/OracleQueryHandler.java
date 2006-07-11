@@ -25,7 +25,7 @@ import org.jamwiki.utils.Utilities;
 /**
  *
  */
-public class OracleQueryHandler extends AnsiQueryHandler {
+public class OracleQueryHandler extends DefaultQueryHandler {
 
 	private static Logger logger = Logger.getLogger(OracleQueryHandler.class.getName());
 
@@ -205,18 +205,18 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	public void createTables() throws Exception {
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_SEQUENCE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WIKI_USER_SEQUENCE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_TOPIC_SEQUENCE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE);
 	}
 
@@ -282,7 +282,7 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	public void reloadRecentChanges() throws Exception {
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
 	}
 }

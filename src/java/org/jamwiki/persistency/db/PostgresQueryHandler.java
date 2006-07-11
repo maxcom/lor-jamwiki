@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 /**
  *
  */
-public class PostgresQueryHandler extends AnsiQueryHandler {
+public class PostgresQueryHandler extends DefaultQueryHandler {
 
 	private static Logger logger = Logger.getLogger(PostgresQueryHandler.class.getName());
 
@@ -58,7 +58,7 @@ public class PostgresQueryHandler extends AnsiQueryHandler {
 	 *
 	 */
 	public void reloadRecentChanges() throws Exception {
-		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
 	}
 }

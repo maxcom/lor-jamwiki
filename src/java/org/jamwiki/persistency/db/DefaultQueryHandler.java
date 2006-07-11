@@ -29,9 +29,9 @@ import org.jamwiki.utils.Utilities;
 /**
  *
  */
-public class AnsiQueryHandler implements QueryHandler {
+public class DefaultQueryHandler implements QueryHandler {
 
-	private static Logger logger = Logger.getLogger(AnsiQueryHandler.class.getName());
+	private static Logger logger = Logger.getLogger(DefaultQueryHandler.class.getName());
 
 	protected static final String STATEMENT_CREATE_VIRTUAL_WIKI_SEQUENCE =
 		"CREATE SEQUENCE jam_virtual_wiki_seq ";
@@ -335,7 +335,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected AnsiQueryHandler() {
+	protected DefaultQueryHandler() {
 	}
 
 	/**
