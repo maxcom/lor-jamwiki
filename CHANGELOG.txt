@@ -2,6 +2,24 @@
 0.0.5
 =====
 
+* [FEATURE] Add support for MySql 4.1.
+* [FEATURE] Add support for Oracle 10g.
+* [FEATURE] Code cleanups including abstraction of database code.
+* [BUG] Do not allow directories to be created in the filesystem root
+  during setup.
+* [BUG] User menu link for user was broken if display name not set.
+* [FEATURE] Hide Special:Attach - not currently supported.
+* [FEATURE] Display an explanation message on the login page when
+  requiring login to an admin page.
+* [BUG] Login to Special:Delete went to Special:Admin.
+* [FEATURE] Log sql execution time info for debugging.
+* [FEATURE] Remove the "Admin" link from the footer, display in the
+  user menu ONLY for users who are admins.
+* [FEATURE] Update database schema - BREAKS ANY EXISTING INSTALLATION!
+  See the release notes for the database update syntax.
+* [FEATURE] User contributions page now has the same style as the
+  recent changes and history pages.
+* [FEATURE] Add unique constraints to several database fields.
 
 0.0.4
 =====

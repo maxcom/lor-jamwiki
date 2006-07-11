@@ -1,27 +1,86 @@
 INTRODUCTION
 ============
 
-This file attempts to aid you in coming to understand the structure of the JAMWiki project and to tell you what you need to know in order to be able to build a working, installable WAR file from the source code.
+This file attempts to provide basic information for getting an instance of JAMWiki running on your web application server.  In addition, instructions are provided for those interested in building JAMWiki from source.
 
 
-PREREQUISITES
-=============
+SUPPORTED CONFIGURATIONS
+========================
 
-JAMWiki is built to the following specifications:
+JAMWiki requires a web application server (such as Tomcat or Websphere) that supports the following specifications:
 
   JDK 1.4 or later
   Servlet 2.3 or later
 
-JAMWiki has been tested with the following software:
+In addition, JAMWiki can be run in either a file persistency mode, or a database persistency mode.  When running in a file persistency mode a directory must be available into which JAMWiki files can be written.  When running in database persistency mode JAMWiki requires a database user with permission to create tables and sequences.  JAMWiki has been tested with the following databases:
 
   Postgres 8.0 (untested on other versions)
   MySQL 4.1 (untested on other versions)
   Oracle 10.2 (untested on other versions; requires the 10g or later JDBC drivers)
-  Tomcat 5.5 (should work on any app server supporting servlet 2.3, untested)
 
 
-BUILDING THE APPLICATION
-========================
+INSTALLATION
+============
+
+JAMWiki is distributed as a WAR file that can be installed onto any web application server that supports the JDK 1.4 and servlet 2.3 specifications.  Refer to the web application server documentation for specific instructions on how to deploy a WAR file.  Once the WAR file has been installed, restart the web application server and view the page http://<server>/<context>/ to begin the configuration process (<server> is the URL for your server, and <context> is the web application server context under which JAMWiki was installed).
+
+The setup process begins with the first JAMWiki pageview after setup.  Setup requires that a directory into which JAMWiki files can be written be provided, as well as the name and login of an administrative user.  If using a database for persistency then the database settings must also be provided (see the "Database Settings" section below).  Once the settings have been verified JAMWiki will create the user account, database tables or file directories, base properties, and default topics.  Once complete JAMWiki redirects to the starting page, ready for use.  That's all there is to it!
+
+
+DATABASE SETTINGS
+=================
+
+JAMWiki can operate using files for storage, or using a database.  For larger implementations a database is highly recommended.  To utilize a database the following steps are required during initial setup:
+
+1. Install an appropriate JDBC driver in the WEB-INF/lib directory.  JDBC driver packages can normally be obtained from the database vendor.
+
+2. Create the JAMWiki database.  JAMWiki can also use an existing database.
+
+3. Create a user login for JAMWiki.  The user must have permission to create tables and sequences.
+
+4. During setup choose "Database" from the persistency-type dropdown menu and fill out the driver, database type, url, username and password fields.  Check with your database vendor to determine the appropriate values for each of these fields.  Some example values are below:
+
+    JDBC driver class: org.postgresql.Driver
+    JDBC driver class: com.mysql.jdbc.Driver
+    JDBC driver class: oracle.jdbc.driver.OracleDriver
+    Database type    : as appropriate
+    Database URL     : jdbc:postgresql://localhost:5432/<database_name>
+    Database URL     : jdbc:mysql://localhost:3306/<database_name>
+    Database URL     : jdbc:oracle:thin:@//localhost:1521/<service_name>
+    Database Username: as appropriate
+    Database Password: as appropriate
+
+5. JAMWiki will verify that a connection can be established with the database and will then create all required tables.
+
+
+VIRTUAL WIKIS
+=============
+
+JAMWiki provides the capability to create "virtual wikis", which are distinct wikis running under the same web application.  By default, a virtual wiki named "en" is created during installation.  The default URL for files within this virtual wiki is then of the form "http://<server>/<context>/en/Topic".  To create a new virtual wiki the following steps are required:
+
+1. Access the admin console at http://<server>/<context>/en/Special:Admin.
+2. Scroll down to the "add virtual wiki" box, enter a name (one word, no spaces) and click add.
+3. Shut down the web application server.
+4. Edit the web application web.xml file.  There will be a mapping of the form:
+
+    <servlet-mapping>
+        <servlet-name>jamwiki</servlet-name>
+        <url-pattern>/en/*</url-pattern>
+    </servlet-mapping>
+
+5. Enter a new servlet-mapping, replacing "en" in the above example with the name of the new virtual wiki.
+6. Restart the web application server.
+7. A new virtual wiki will now be available from URLs of the form "http://<server>/<context>/<virtual-wiki>/Topic.
+
+
+BUILDING FROM SOURCE
+====================
+
+The JAMWiki source is available from the Subversion source repository on Sourceforge.net.  To check out the code, first install Subversion and then execute the following command:
+
+svn co https://svn.sourceforge.net/svnroot/jamwiki/trunk jamwiki
+
+This command will copy the current development code (the "trunk") into a local directory named "jamwiki".
 
 The software can be built from the ANT build script provided.  To build the software, install ANT (http://ant.apache.org/) and a JDK version 1.4 or later.  Once ANT and the JDK are properly installed, run the following commands:
 
@@ -58,7 +117,7 @@ This directory contains the Ant build files and this file.
 
 * jamwiki/lib
 
-This directory contains all the libraries needed for the BUILD PROCESS ONLY. The libraries in this directory are NOT packaged into the final WAR file. This allows us to focus on building JAMWiki for a certain Java release.
+This directory contains all the libraries needed for JAMWiki.
 
 * jamwiki/src/java
 
@@ -75,47 +134,3 @@ Contains all the libraries that should be packaged into the final WAR file. Thes
 * jamwiki/src/webapp
 
 All the web application files are located in here conforming to the Maven idea.
-
-
-DATABASE SETTINGS
-=================
-
-JAMWiki can operate using files for storage, or using a database.  For larger implementations a database is highly recommended.  To utilize a database the following steps are required during initial setup:
-
-1. Install an appropriate JDBC driver in the WEB-INF/lib directory.  JDBC driver packages can normally be obtained from the database vendor.
-
-2. Create the JAMWiki database.  JAMWiki can also use an existing database.
-
-3. During setup choose "Database" from the persistency-type dropdown menu and fill out the driver, database type, url, username and password fields.  Check with your database vendor to determine the appropriate values for each of these fields.  Some example values are below:
-
-    JDBC driver class: org.postgresql.Driver
-    JDBC driver class: com.mysql.jdbc.Driver
-    JDBC driver class: oracle.jdbc.driver.OracleDriver
-    Database type    : as appropriate
-    Database URL     : jdbc:postgresql://localhost:5432/<database_name>
-    Database URL     : jdbc:mysql://localhost:3306/<database_name>
-    Database URL     : jdbc:oracle:thin:@//localhost:1521/<service_name>
-    Database Username: as appropriate
-    Database Password: as appropriate
-
-4. JAMWiki will verify that a connection can be established with the database and will then create all required tables.
-
-
-VIRTUAL WIKIS
-=============
-
-JAMWiki provides the capability to create "virtual wikis", which are distinct wikis running under the same web application.  By default, a virtual wiki named "en" is created during installation.  The default URL for files within this virtual wiki is then of the form "http://<server>/<context>/en/Topic".  To create a new virtual wiki the following steps are required:
-
-1. Access the admin console at http://<server>/<context>/en/Special:Admin.
-2. Scroll down to the "add virtual wiki" box, enter a name (one word, no spaces) and click add.
-3. Shut down the web application server.
-4. Edit the web application web.xml file.  There will be a mapping of the form:
-
-    <servlet-mapping>
-        <servlet-name>jamwiki</servlet-name>
-        <url-pattern>/en/*</url-pattern>
-    </servlet-mapping>
-
-5. Enter a new servlet-mapping, replacing "en" in the above example with the name of the new virtual wiki.
-6. Restart the web application server.
-7. A new virtual wiki will now be available from URLs of the form "http://<server>/<context>/<virtual-wiki>/Topic.

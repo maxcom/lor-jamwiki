@@ -1,0 +1,40 @@
+
+CREDITS
+=======
+
+
+JAMWiki Contributors
+--------------------
+
+  Developers:               Ryan Holliday (wrh2)
+  Documentation:
+  Translations:
+  Non-project contributors:
+
+
+Very Quick Wiki Contributors
+----------------------------
+
+JAMWiki was originally created as a fork of the Very Quick Wiki project (http://vqwiki.org/).  Individuals who contributed to that project include:
+
+  Project Lead:             Martijn van der Kleijn (mvdkleijn)
+  Developers:               Martijn van der Kleijn (mvdkleijn)
+                            Andreas Studer (studer)
+                            Colin Jacobs (coljac)
+                            Tobias Schulz-Hess (mrgadget4711)
+                            Fritz Freiheit (fritz_freiheit)
+                            Gareth Cronin (garethc)
+                            HongLiang Bi (redragon4679)
+                            Ryan Holliday (wrh2)
+  Documentation:            Tim Howland (thowland)
+  Translations:
+     Italian:               Marcello Teodori (teodori)
+     Spanish:               Zapo (erzapo)
+     German:                Nico Jabin (nicojabin)
+     Swedish:               Johan Lindell (lindelj)
+     Norwegian:             Erik (xan-)
+     Serbian:               Sasha Kotlo (kotlo_sasha)
+     Polish:                Michael (mindweb)
+     Dutch:                 Martijn van der Kleijn (mvdkleijn)
+     English:               Martijn van der Kleijn (mvdkleijn)
+  Non-project contributors: Fabrizio Zellini, Fritz Kunstler, Steve Pugh

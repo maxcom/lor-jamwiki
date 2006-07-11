@@ -78,6 +78,7 @@
             <zipfileset file="${basedir}/README.txt" prefix="" />
             <zipfileset file="${basedir}/CHANGELOG.txt" prefix="" />
             <zipfileset file="${basedir}/LICENSE.txt" prefix="" />
+            <zipfileset file="${basedir}/CREDITS.txt" prefix="" />
         </war>
     </target>
 
