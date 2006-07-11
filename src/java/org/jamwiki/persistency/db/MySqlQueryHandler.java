@@ -41,7 +41,8 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
 		+   "is_admin CHAR NOT NULL DEFAULT '0', "
-		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id) "
+		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id), "
+		+   "CONSTRAINT jam_unique_wiki_user_login UNIQUE (login) "
 		+ ") ";
 	private static final String STATEMENT_INSERT_RECENT_CHANGES =
 		"INSERT INTO jam_recent_change ( "

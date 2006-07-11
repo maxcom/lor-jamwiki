@@ -42,7 +42,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
 		+   "create_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id) "
+		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id), "
+		+   "CONSTRAINT jam_unique_vwiki_name UNIQUE (virtual_wiki_name) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_SEQUENCE =
 		"CREATE SEQUENCE jam_wiki_user_seq ";
@@ -56,7 +57,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
 		+   "is_admin CHAR DEFAULT '0' NOT NULL, "
-		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id) "
+		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id), "
+		+   "CONSTRAINT jam_unique_wiki_user_login UNIQUE (login) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
 		"CREATE TABLE jam_wiki_user_info ( "
@@ -67,7 +69,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "last_name VARCHAR(100), "
 		+   "encoded_password VARCHAR(100) NOT NULL, "
 		+   "CONSTRAINT jam_pk_wiki_uinfo PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_fk_wiki_uinfo_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id) "
+		+   "CONSTRAINT jam_fk_wiki_uinfo_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_unique_wiki_uinfo_login UNIQUE (login) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_SEQUENCE =
 		"CREATE SEQUENCE jam_topic_seq ";
@@ -86,7 +89,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
 		+   "CONSTRAINT jam_fk_topic_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
-		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id) "
+		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE =
 		"CREATE SEQUENCE jam_topic_version_seq ";
