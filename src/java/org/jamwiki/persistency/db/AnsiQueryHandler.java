@@ -65,7 +65,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "last_name VARCHAR(100), "
 		+   "encoded_password VARCHAR(100) NOT NULL, "
 		+   "CONSTRAINT jam_pk_wiki_user_info PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_fk_wiki_user_info_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user "
+		+   "CONSTRAINT jam_fk_wiki_user_info_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_SEQUENCE =
 		"CREATE SEQUENCE jam_topic_seq ";
@@ -83,8 +83,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "topic_content TEXT, "
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
-		+   "CONSTRAINT jam_fk_topic_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki, "
-		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user "
+		+   "CONSTRAINT jam_fk_topic_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
+		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE =
 		"CREATE SEQUENCE jam_topic_version_seq ";
@@ -100,9 +100,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "edit_type INTEGER NOT NULL, "
 		+   "previous_topic_version_id INTEGER, "
 		+   "CONSTRAINT jam_pk_topic_version PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_topic_version_topic FOREIGN KEY (topic_id) REFERENCES jam_topic, "
-		+   "CONSTRAINT jam_fk_topic_version_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user, "
-		+   "CONSTRAINT jam_fk_topic_version_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version "
+		+   "CONSTRAINT jam_fk_topic_version_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
+		+   "CONSTRAINT jam_fk_topic_version_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_fk_topic_version_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_SEQUENCE =
 		"CREATE SEQUENCE jam_notification_seq ";
@@ -112,8 +112,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "wiki_user_id INTEGER NOT NULL, "
 		+   "topic_id INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_notification PRIMARY KEY (notification_id), "
-		+   "CONSTRAINT jam_fk_notification_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user, "
-		+   "CONSTRAINT jam_fk_notification_topic FOREIGN KEY (topic_id) REFERENCES jam_topic "
+		+   "CONSTRAINT jam_fk_notification_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_fk_notification_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE =
 		"CREATE SEQUENCE jam_recent_change_seq ";
@@ -131,11 +131,11 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
 		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version, "
-		+   "CONSTRAINT jam_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version, "
-		+   "CONSTRAINT jam_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jam_topic, "
-		+   "CONSTRAINT jam_fk_recent_change_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user, "
-		+   "CONSTRAINT jam_fk_recent_change_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki "
+		+   "CONSTRAINT jam_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
+		+   "CONSTRAINT jam_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
+		+   "CONSTRAINT jam_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
+		+   "CONSTRAINT jam_fk_recent_change_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_fk_recent_change_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) "
 		+ ") ";
 	protected static final String STATEMENT_DELETE_RECENT_CHANGES =
 	    "delete from jam_recent_change ";

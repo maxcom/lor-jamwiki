@@ -43,79 +43,6 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+   "is_admin CHAR NOT NULL DEFAULT '0', "
 		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id) "
 		+ ") ";
-	private static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
-		"CREATE TABLE jam_wiki_user_info ( "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "login VARCHAR(100) NOT NULL, "
-		+   "email VARCHAR(100), "
-		+   "first_name VARCHAR(100), "
-		+   "last_name VARCHAR(100), "
-		+   "encoded_password VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_wiki_user_info PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_fk_wiki_user_info_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id) "
-		+ ") ";
-	private static final String STATEMENT_CREATE_TOPIC_TABLE =
-		"CREATE TABLE jam_topic ( "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "topic_locked_by INTEGER, "
-		+   "topic_lock_date TIMESTAMP, "
-		+   "topic_lock_session_key VARCHAR(100), "
-		+   "topic_deleted CHAR NOT NULL DEFAULT '0', "
-		+   "topic_read_only CHAR NOT NULL DEFAULT '0', "
-		+   "topic_admin_only CHAR NOT NULL DEFAULT '0', "
-		+   "topic_content TEXT, "
-		+   "topic_type INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
-		+   "CONSTRAINT jam_fk_topic_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
-		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id) "
-		+ ") ";
-	private static final String STATEMENT_CREATE_TOPIC_VERSION_TABLE =
-		"CREATE TABLE jam_topic_version ( "
-		+   "topic_version_id INTEGER NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "edit_comment VARCHAR(200), "
-		+   "version_content TEXT, "
-		+   "wiki_user_id INTEGER, "
-		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
-		+   "edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-		+   "edit_type INTEGER NOT NULL, "
-		+   "previous_topic_version_id INTEGER, "
-		+   "CONSTRAINT jam_pk_topic_version PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_topic_version_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_fk_topic_version_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_topic_version_previous FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
-		+ ") ";
-	private static final String STATEMENT_CREATE_NOTIFICATION_TABLE =
-		"CREATE TABLE jam_notification ( "
-		+   "notification_id INTEGER NOT NULL, "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_notification PRIMARY KEY (notification_id), "
-		+   "CONSTRAINT jam_fk_notification_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_notification_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) "
-		+ ") ";
-	private static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
-		"CREATE TABLE jam_recent_change ( "
-		+   "topic_version_id INTEGER NOT NULL, "
-		+   "previous_topic_version_id INTEGER, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "edit_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-		+   "edit_comment VARCHAR(200), "
-		+   "wiki_user_id INTEGER, "
-		+   "display_name VARCHAR(200) NOT NULL, "
-		+   "edit_type INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
-		+   "CONSTRAINT jam_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_fk_recent_change_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_recent_change_virtual_wiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) "
-		+ ") ";
 	private static final String STATEMENT_INSERT_RECENT_CHANGES =
 		"INSERT INTO jam_recent_change ( "
 		+   "topic_version_id, topic_id, "
@@ -159,11 +86,11 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 	public void createTables() throws Exception {
 		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE);
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_TOPIC_TABLE);
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_NOTIFICATION_TABLE);
+		DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_TABLE);
 	}
 
 	/**
