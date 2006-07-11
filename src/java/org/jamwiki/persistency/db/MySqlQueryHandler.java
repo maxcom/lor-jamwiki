@@ -105,7 +105,6 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+ ") ";
 	private static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
 		"CREATE TABLE jam_recent_change ( "
-		+   "recent_change_id INTEGER NOT NULL AUTO_INCREMENT, "
 		+   "topic_version_id INTEGER NOT NULL, "
 		+   "previous_topic_version_id INTEGER, "
 		+   "topic_id INTEGER NOT NULL, "
@@ -117,7 +116,7 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+   "edit_type INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (recent_change_id), "
+		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (topic_version_id), "
 		+   "CONSTRAINT jam_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
 		+   "CONSTRAINT jam_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
 		+   "CONSTRAINT jam_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
@@ -147,11 +146,13 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
 		+ "AND jam_topic.topic_deleted = '0' ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
-		"select LAST_INSERT_ID() as topic_id from jam_topic ";
+		"select max(topic_id) as topic_id from jam_topic ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
-		"select LAST_INSERT_ID() as topic_version_id from jam_topic_version ";
+		"select max(topic_version_id) as topic_version_id from jam_topic_version ";
+	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
+		"select max(virtual_wiki_id) as virtual_wiki_id from jam_virtual_wiki ";
 	private static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
-		"select LAST_INSERT_ID() as wiki_user_id from jam_wiki_user ";
+		"select max(wiki_user_id) as wiki_user_id from jam_wiki_user ";
 
 	/**
 	 *
@@ -175,99 +176,45 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public void insertTopic(Topic topic) throws Exception {
-		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(topic.getVirtualWiki());
-		WikiPreparedStatement stmt = new WikiPreparedStatement(AnsiQueryHandler.STATEMENT_INSERT_TOPIC);
-		stmt.setNull(1, Types.INTEGER);
-		stmt.setInt(2, virtualWikiId);
-		stmt.setString(3, topic.getName());
-		stmt.setInt(4, topic.getTopicType());
-		if (topic.getLockedBy() != null) {
-			stmt.setInt(5, topic.getLockedBy().intValue());
-		} else {
-			stmt.setNull(5, Types.INTEGER);
-		}
-		stmt.setTimestamp(6, topic.getLockedDate());
-		stmt.setChar(7, (topic.getReadOnly() ? '1' : '0'));
-		stmt.setString(8, topic.getTopicContent());
-		stmt.setString(9, topic.getLockSessionKey());
-		stmt.executeUpdate();
+	public int nextTopicId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
-		topic.setTopicId(rs.getInt("topic_id"));
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("topic_id");
+		// note - for MySql this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
 	 *
 	 */
-	public void insertTopicVersion(TopicVersion topicVersion) throws Exception {
-		Timestamp editDate = new Timestamp(System.currentTimeMillis());
-		if (topicVersion.getEditDate() != null) {
-			editDate = topicVersion.getEditDate();
-		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
-		if (topicVersion.getTopicVersionId() < 1) {
-			stmt.setNull(1, Types.INTEGER);
-		} else {
-			stmt.setInt(1, topicVersion.getTopicVersionId());
-		}
-		stmt.setInt(2, topicVersion.getTopicId());
-		stmt.setString(3, topicVersion.getEditComment());
-		stmt.setString(4, topicVersion.getVersionContent());
-		if (topicVersion.getAuthorId() != null) {
-			stmt.setInt(5, topicVersion.getAuthorId().intValue());
-		} else {
-			stmt.setNull(5, Types.INTEGER);
-		}
-		stmt.setInt(6, topicVersion.getEditType());
-		stmt.setString(7, topicVersion.getAuthorIpAddress());
-		stmt.setTimestamp(8, editDate);
-		if (topicVersion.getPreviousTopicVersionId() != null) {
-			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
-		} else {
-			stmt.setNull(9, Types.INTEGER);
-		}
-		stmt.executeUpdate();
-		if (topicVersion.getTopicVersionId() < 1) {
-			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
-			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
-		}
+	public int nextTopicVersionId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("topic_version_id");
+		// note - for MySql this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(String virtualWikiName) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
-		stmt.setNull(1, Types.INTEGER);
-		stmt.setString(2, virtualWikiName);
-		stmt.executeUpdate();
+	public int nextVirtualWikiId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("virtual_wiki_id");
+		// note - for MySql this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
 	 *
 	 */
-	public void insertWikiUser(WikiUser user) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
-		stmt.setNull(1, Types.INTEGER);
-		stmt.setString(2, user.getLogin());
-		stmt.setString(3, user.getDisplayName());
-		stmt.setTimestamp(4, user.getCreateDate());
-		stmt.setTimestamp(5, user.getLastLoginDate());
-		stmt.setString(6, user.getCreateIpAddress());
-		stmt.setString(7, user.getLastLoginIpAddress());
-		stmt.setChar(8, (user.getAdmin() ? '1' : '0'));
-		stmt.executeUpdate();
+	public int nextWikiUserId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
-		user.setUserId(rs.getInt("wiki_user_id"));
-		// FIXME - may be in LDAP
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
-		stmt.setInt(1, user.getUserId());
-		stmt.setString(2, user.getLogin());
-		stmt.setString(3, user.getEmail());
-		stmt.setString(4, user.getFirstName());
-		stmt.setString(5, user.getLastName());
-		stmt.setString(6, user.getEncodedPassword());
-		stmt.executeUpdate();
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("wiki_user_id");
+		// note - for MySql this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**

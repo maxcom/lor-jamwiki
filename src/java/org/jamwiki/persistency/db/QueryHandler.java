@@ -89,12 +89,17 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(String virtualWikiName) throws Exception;
+	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName) throws Exception;
 
 	/**
 	 *
 	 */
 	public void insertWikiUser(WikiUser user) throws Exception;
+
+	/**
+	 *
+	 */
+	public void insertWikiUserInfo(WikiUser user) throws Exception;
 
 	/**
 	 *
@@ -129,6 +134,26 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public int nextTopicId() throws Exception;
+
+	/**
+	 *
+	 */
+	public int nextTopicVersionId() throws Exception;
+
+	/**
+	 *
+	 */
+	public int nextVirtualWikiId() throws Exception;
+
+	/**
+	 *
+	 */
+	public int nextWikiUserId() throws Exception;
+
+	/**
+	 *
+	 */
 	public void reloadRecentChanges() throws Exception;
 
 	/**
@@ -140,4 +165,9 @@ public interface QueryHandler {
 	 *
 	 */
 	public void updateWikiUser(WikiUser user) throws Exception;
+
+	/**
+	 *
+	 */
+	public void updateWikiUserInfo(WikiUser user) throws Exception;
 }

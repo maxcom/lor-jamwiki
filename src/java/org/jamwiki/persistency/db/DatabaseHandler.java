@@ -81,6 +81,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected void addTopic(Topic topic) throws Exception {
 		if (topic.getTopicId() <= 0) {
+			int topicId = DatabaseHandler.queryHandler.nextTopicId();
+			topic.setTopicId(topicId);
+			logger.info("nextId " + topicId + " / topic.getTopicId() " + topic.getTopicId());
 			DatabaseHandler.queryHandler.insertTopic(topic);
 		} else {
 			DatabaseHandler.queryHandler.updateTopic(topic);
@@ -91,6 +94,14 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+		if (topicVersion.getTopicVersionId() < 1) {
+			int topicVersionId = DatabaseHandler.queryHandler.nextTopicVersionId();
+			topicVersion.setTopicVersionId(topicVersionId);
+		}
+		if (topicVersion.getEditDate() == null) {
+			Timestamp editDate = new Timestamp(System.currentTimeMillis());
+			topicVersion.setEditDate(editDate);
+		}
 		DatabaseHandler.queryHandler.insertTopicVersion(topicVersion);
 	}
 
@@ -98,7 +109,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addVirtualWiki(String virtualWikiName) throws Exception {
-		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWikiName);
+		int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId();
+		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWikiId, virtualWikiName);
 		DatabaseHandler.loadVirtualWikiHashes();
 	}
 
@@ -107,9 +119,15 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected void addWikiUser(WikiUser user) throws Exception {
 		if (user.getUserId() <= 0) {
+			int nextUserId = DatabaseHandler.queryHandler.nextWikiUserId();
+			user.setUserId(nextUserId);
 			DatabaseHandler.queryHandler.insertWikiUser(user);
+			// FIXME - may be in LDAP
+			DatabaseHandler.queryHandler.insertWikiUserInfo(user);
 		} else {
 			DatabaseHandler.queryHandler.updateWikiUser(user);
+			// FIXME - may be in LDAP
+			DatabaseHandler.queryHandler.updateWikiUserInfo(user);
 		}
 	}
 

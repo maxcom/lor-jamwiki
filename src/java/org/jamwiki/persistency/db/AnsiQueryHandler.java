@@ -119,7 +119,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		"CREATE SEQUENCE jam_recent_change_seq ";
 	protected static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
 		"CREATE TABLE jam_recent_change ( "
-		+   "recent_change_id INTEGER NOT NULL DEFAULT NEXTVAL('jam_recent_change_seq'), "
 		+   "topic_version_id INTEGER NOT NULL, "
 		+   "previous_topic_version_id INTEGER, "
 		+   "topic_id INTEGER NOT NULL, "
@@ -131,7 +130,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "edit_type INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (recent_change_id), "
+		+   "CONSTRAINT jam_pk_recent_change PRIMARY KEY (topic_version_id), "
 		+   "CONSTRAINT jam_fk_recent_change_topic_version FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version, "
 		+   "CONSTRAINT jam_fk_recent_change_previous_topic_version FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version, "
 		+   "CONSTRAINT jam_fk_recent_change_topic FOREIGN KEY (topic_id) REFERENCES jam_topic, "
@@ -471,8 +470,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertTopic(Topic topic) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(topic.getVirtualWiki());
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
-		topic.setTopicId(rs.getInt("topic_id"));
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
 		stmt.setInt(1, topic.getTopicId());
 		stmt.setInt(2, virtualWikiId);
@@ -494,14 +491,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertTopicVersion(TopicVersion topicVersion) throws Exception {
-		if (topicVersion.getTopicVersionId() < 1) {
-			WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
-			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
-		}
-		Timestamp editDate = new Timestamp(System.currentTimeMillis());
-		if (topicVersion.getEditDate() != null) {
-			editDate = topicVersion.getEditDate();
-		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
 		stmt.setInt(1, topicVersion.getTopicVersionId());
 		stmt.setInt(2, topicVersion.getTopicId());
@@ -514,7 +503,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		}
 		stmt.setInt(6, topicVersion.getEditType());
 		stmt.setString(7, topicVersion.getAuthorIpAddress());
-		stmt.setTimestamp(8, editDate);
+		stmt.setTimestamp(8, topicVersion.getEditDate());
 		if (topicVersion.getPreviousTopicVersionId() != null) {
 			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
 		} else {
@@ -526,9 +515,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(String virtualWikiName) throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
-		int virtualWikiId = rs.getInt("virtual_wiki_id");
+	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, virtualWikiName);
@@ -539,9 +526,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiUser(WikiUser user) throws Exception {
-		// add
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
-		user.setUserId(rs.getInt("wiki_user_id"));
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
 		stmt.setInt(1, user.getUserId());
 		stmt.setString(2, user.getLogin());
@@ -552,8 +536,13 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(7, user.getLastLoginIpAddress());
 		stmt.setChar(8, (user.getAdmin() ? '1' : '0'));
 		stmt.executeUpdate();
-		// FIXME - may be in LDAP
-		stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
+	}
+
+	/**
+	 *
+	 */
+	public void insertWikiUserInfo(WikiUser user) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
 		stmt.setInt(1, user.getUserId());
 		stmt.setString(2, user.getLogin());
 		stmt.setString(3, user.getEmail());
@@ -623,6 +612,38 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public int nextTopicId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
+		return rs.getInt("topic_id");
+	}
+
+	/**
+	 *
+	 */
+	public int nextTopicVersionId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
+		return rs.getInt("topic_version_id");
+	}
+
+	/**
+	 *
+	 */
+	public int nextVirtualWikiId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
+		return rs.getInt("virtual_wiki_id");
+	}
+
+	/**
+	 *
+	 */
+	public int nextWikiUserId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
+		return rs.getInt("wiki_user_id");
+	}
+
+	/**
+	 *
+	 */
 	public void reloadRecentChanges() throws Exception {
 		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
@@ -663,8 +684,13 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setChar(5, (user.getAdmin() ? '1' : '0'));
 		stmt.setInt(6, user.getUserId());
 		stmt.executeUpdate();
-		// FIXME - may be in LDAP
-		stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
+	}
+
+	/**
+	 *
+	 */
+	public void updateWikiUserInfo(WikiUser user) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
 		stmt.setString(1, user.getLogin());
 		stmt.setString(2, user.getEmail());
 		stmt.setString(3, user.getFirstName());
