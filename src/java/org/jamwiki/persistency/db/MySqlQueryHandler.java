@@ -47,7 +47,7 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+   "last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin BOOLEAN NOT NULL DEFAULT FALSE, "
+		+   "is_admin CHAR NOT NULL DEFAULT '0', "
 		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id) "
 		+ ") ";
 	private static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
@@ -69,9 +69,9 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+   "topic_locked_by INTEGER, "
 		+   "topic_lock_date TIMESTAMP, "
 		+   "topic_lock_session_key VARCHAR(100), "
-		+   "topic_deleted BOOLEAN DEFAULT FALSE, "
-		+   "topic_read_only BOOLEAN DEFAULT FALSE, "
-		+   "topic_admin_only BOOLEAN DEFAULT FALSE, "
+		+   "topic_deleted CHAR NOT NULL DEFAULT '0', "
+		+   "topic_read_only CHAR NOT NULL DEFAULT '0', "
+		+   "topic_admin_only CHAR NOT NULL DEFAULT '0', "
 		+   "topic_content TEXT, "
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
@@ -145,7 +145,7 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		+ ") "
 		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
 		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
-		+ "AND jam_topic.topic_deleted = FALSE ";
+		+ "AND jam_topic.topic_deleted = '0' ";
 	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select LAST_INSERT_ID() as topic_id from jam_topic ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
@@ -188,7 +188,7 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 			stmt.setNull(5, Types.INTEGER);
 		}
 		stmt.setTimestamp(6, topic.getLockedDate());
-		stmt.setBoolean(7, topic.getReadOnly());
+		stmt.setChar(7, (topic.getReadOnly() ? '1' : '0'));
 		stmt.setString(8, topic.getTopicContent());
 		stmt.setString(9, topic.getLockSessionKey());
 		stmt.executeUpdate();
@@ -255,7 +255,7 @@ public class MySqlQueryHandler extends AnsiQueryHandler {
 		stmt.setTimestamp(5, user.getLastLoginDate());
 		stmt.setString(6, user.getCreateIpAddress());
 		stmt.setString(7, user.getLastLoginIpAddress());
-		stmt.setBoolean(8, user.getAdmin());
+		stmt.setChar(8, (user.getAdmin() ? '1' : '0'));
 		stmt.executeUpdate();
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
 		user.setUserId(rs.getInt("wiki_user_id"));

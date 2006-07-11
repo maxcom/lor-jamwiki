@@ -306,7 +306,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			int virtualWikiId = rs.getInt("virtual_wiki_id");
 			String virtualWiki = lookupVirtualWikiName(virtualWikiId);
 			Topic topic = new Topic();
-			topic.setAdminOnly(rs.getBoolean("topic_admin_only"));
+			topic.setAdminOnly(rs.getChar("topic_admin_only") != '0');
 			topic.setName(rs.getString("topic_name"));
 			topic.setVirtualWiki(virtualWiki);
 			topic.setTopicContent(rs.getString("topic_content"));
@@ -315,8 +315,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			if (lockedBy > 0) topic.setLockedBy(new Integer(lockedBy));
 			topic.setLockedDate(rs.getTimestamp("topic_lock_date"));
 			topic.setLockSessionKey(rs.getString("topic_lock_session_key"));
-			topic.setReadOnly(rs.getBoolean("topic_read_only"));
-			topic.setDeleted(rs.getBoolean("topic_deleted"));
+			topic.setReadOnly(rs.getChar("topic_read_only") != '0');
+			topic.setDeleted(rs.getChar("topic_deleted") != '0');
 			topic.setTopicType(rs.getInt("topic_type"));
 			return topic;
 		} catch (Exception e) {
@@ -362,7 +362,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
 			user.setCreateIpAddress(rs.getString("create_ip_address"));
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-			user.setAdmin(rs.getBoolean("is_admin"));
+			user.setAdmin(rs.getChar("is_admin") != '0');
 			// FIXME - may be in LDAP
 			user.setEmail(rs.getString("email"));
 			user.setFirstName(rs.getString("first_name"));

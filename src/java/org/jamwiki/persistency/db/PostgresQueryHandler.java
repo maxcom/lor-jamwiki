@@ -46,7 +46,7 @@ public class PostgresQueryHandler extends AnsiQueryHandler {
 		+ ") "
 		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
 		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
-		+ "AND jam_topic.topic_deleted = FALSE ";
+		+ "AND jam_topic.topic_deleted = '0' ";
 
 	/**
 	 *

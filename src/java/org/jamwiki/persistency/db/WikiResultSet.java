@@ -85,9 +85,11 @@ public class WikiResultSet {
 						Timestamp timestamp = rs.getTimestamp(columnName);
 						column.put(columnName.toLowerCase(), timestamp);
 						break;
-					case java.sql.Types.BOOLEAN:
-						Boolean bool = new Boolean(rs.getBoolean(columnName));
-						column.put(columnName.toLowerCase(), bool);
+					case java.sql.Types.CHAR:
+						String value = rs.getString(columnName);
+						char character = '0';
+						if (value != null && value.length() > 0) character = value.charAt(0);
+						column.put(columnName.toLowerCase(), new Character(character));
 						break;
 					default:
 						Object object = rs.getObject(columnName);
@@ -186,26 +188,6 @@ public class WikiResultSet {
 
 	/**
 	 * <p>Retrieves the value of the designated column in the current row of this
-	 * <code>WikiResultSet</code> object as a <code>boolean</code> value in
-	 * the Java programming language.</p>
-	 *
-	 * <p>This method duplicates the
-	 * {@link java.sql.ResultSet#getBoolean ResultSet.getBoolean(String columnName)} method.</p>
-	 *
-	 * @param columnName The SQL name of the column.
-	 * @return The column value; if the value is SQL <code>NULL</code>, the value
-	 *  returned is <code>false</code>.
-	 * @throws SQLException If the cursor position is invalid or if the column name does
-	 *  not exist in the result set.
-	 */
-	public boolean getBoolean(String columnName) throws SQLException {
-		this.verifyColumn(columnName);
-		Boolean bool = (Boolean)this.currentRow.get(columnName.toLowerCase());
-		return (bool == null) ? false : bool.booleanValue();
-	}
-
-	/**
-	 * <p>Retrieves the value of the designated column in the current row of this
 	 * <code>WikiResultSet</code> object as a <code>java.sql.Date</code> object in
 	 * the Java programming language.</p>
 	 *
@@ -221,6 +203,28 @@ public class WikiResultSet {
 	public Date getDate(String columnName) throws SQLException {
 		this.verifyColumn(columnName);
 		return (Date)this.currentRow.get(columnName.toLowerCase());
+	}
+
+	/**
+	 * <p>Retrieves the value of the designated column in the current row of this
+	 * <code>WikiResultSet</code> object as a <code>char</code> value in
+	 * the Java programming language.</p>
+	 *
+	 * @param columnName The SQL name of the column.
+	 * @return The column value; if the value is SQL <code>NULL</code>, the value
+	 *  returned is <code>0</code>.
+	 * @throws SQLException If the cursor position is invalid or if the column name does
+	 *  not exist in the result set.
+	 */
+	public char getChar(String columnName) throws SQLException {
+		this.verifyColumn(columnName);
+		Character value = null;
+		try {
+			value = (Character)this.currentRow.get(columnName.toLowerCase());
+		} catch (Exception e) {
+			// ignore, probably null
+		}
+		return (value == null) ? '0' : value.charValue();
 	}
 
 	/**

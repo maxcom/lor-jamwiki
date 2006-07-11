@@ -53,7 +53,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin BOOLEAN NOT NULL DEFAULT FALSE, "
+		+   "is_admin CHAR NOT NULL DEFAULT '0', "
 		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
@@ -77,9 +77,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		+   "topic_locked_by INTEGER, "
 		+   "topic_lock_date TIMESTAMP, "
 		+   "topic_lock_session_key VARCHAR(100), "
-		+   "topic_deleted BOOLEAN DEFAULT FALSE, "
-		+   "topic_read_only BOOLEAN DEFAULT FALSE, "
-		+   "topic_admin_only BOOLEAN DEFAULT FALSE, "
+		+   "topic_deleted CHAR NOT NULL DEFAULT '0', "
+		+   "topic_read_only CHAR NOT NULL DEFAULT '0', "
+		+   "topic_admin_only CHAR NOT NULL DEFAULT '0', "
 		+   "topic_content TEXT, "
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
@@ -186,7 +186,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		+ ") "
 		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
 		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
-		+ "AND jam_topic.topic_deleted = FALSE ";
+		+ "AND jam_topic.topic_deleted = '0' ";
 	protected static final String STATEMENT_INSERT_VIRTUAL_WIKI =
 		"insert into jam_virtual_wiki ("
 		+   "virtual_wiki_id, virtual_wiki_name "
@@ -219,17 +219,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static final String STATEMENT_SELECT_TOPICS =
 		"select * from jam_topic "
 		+ "where virtual_wiki_id = ? "
-		+ "and topic_deleted = FALSE ";
+		+ "and topic_deleted = '0' ";
 	protected static final String STATEMENT_SELECT_TOPIC_READ_ONLY =
 		"select * from jam_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_read_only = ? "
-		+ "and topic_deleted = FALSE ";
+		+ "and topic_deleted = '0' ";
 	protected static final String STATEMENT_SELECT_TOPIC_LOCKED =
 		"select * from jam_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_lock_session_key is not null "
-		+ "and topic_deleted = FALSE ";
+		+ "and topic_deleted = '0' ";
 	protected static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select nextval('jam_topic_seq') as topic_id ";
 	protected static final String STATEMENT_SELECT_TOPIC_VERSION =
@@ -275,7 +275,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		+ "and jam_virtual_wiki.virtual_wiki_name = ? "
 		+ "and jam_topic_version.wiki_user_ip_address = ? "
 		+ "and jam_topic_version.wiki_user_id is null "
-		+ "and jam_topic.topic_deleted = FALSE "
+		+ "and jam_topic.topic_deleted = '0' "
 		+ "order by edit_date desc "
 		+ "limit ? ";
 	protected static final String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN =
@@ -292,7 +292,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		+ "and jam_topic.topic_id = jam_topic_version.topic_id "
 		+ "and jam_virtual_wiki.virtual_wiki_name = ? "
 		+ "and jam_wiki_user.login = ? "
-		+ "and jam_topic.topic_deleted = FALSE "
+		+ "and jam_topic.topic_deleted = '0' "
 		+ "order by edit_date desc "
 		+ "limit ? ";
 	protected static final String STATEMENT_SELECT_WIKI_USER_PASSWORD =
@@ -401,7 +401,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setBoolean(2, true);
+		stmt.setChar(2, '1');
 		return stmt.executeQuery();
 	}
 
@@ -484,7 +484,7 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setNull(5, Types.INTEGER);
 		}
 		stmt.setTimestamp(6, topic.getLockedDate());
-		stmt.setBoolean(7, topic.getReadOnly());
+		stmt.setChar(7, (topic.getReadOnly() ? '1' : '0'));
 		stmt.setString(8, topic.getTopicContent());
 		stmt.setString(9, topic.getLockSessionKey());
 		stmt.executeUpdate();
@@ -550,7 +550,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setTimestamp(5, user.getLastLoginDate());
 		stmt.setString(6, user.getCreateIpAddress());
 		stmt.setString(7, user.getLastLoginIpAddress());
-		stmt.setBoolean(8, user.getAdmin());
+		stmt.setChar(8, (user.getAdmin() ? '1' : '0'));
 		stmt.executeUpdate();
 		// FIXME - may be in LDAP
 		stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
@@ -643,10 +643,10 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setNull(4, Types.INTEGER);
 		}
 		stmt.setTimestamp(5, topic.getLockedDate());
-		stmt.setBoolean(6, topic.getReadOnly());
+		stmt.setChar(6, (topic.getReadOnly() ? '1' : '0'));
 		stmt.setString(7, topic.getTopicContent());
 		stmt.setString(8, topic.getLockSessionKey());
-		stmt.setBoolean(9, topic.getDeleted());
+		stmt.setChar(9, (topic.getDeleted() ? '1' : '0'));
 		stmt.setInt(10, topic.getTopicId());
 		stmt.executeUpdate();
 	}
@@ -660,7 +660,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(2, user.getDisplayName());
 		stmt.setTimestamp(3, user.getLastLoginDate());
 		stmt.setString(4, user.getLastLoginIpAddress());
-		stmt.setBoolean(5, user.getAdmin());
+		stmt.setChar(5, (user.getAdmin() ? '1' : '0'));
 		stmt.setInt(6, user.getUserId());
 		stmt.executeUpdate();
 		// FIXME - may be in LDAP

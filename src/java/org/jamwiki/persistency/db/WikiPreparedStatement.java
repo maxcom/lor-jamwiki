@@ -101,9 +101,9 @@ public class WikiPreparedStatement {
 		for (int i=0; i < this.paramTypes.length; i++) {
 			if (params[i] == null) {
 				this.statement.setNull(i+1, paramTypes[i]);
-			} else if (paramTypes[i] == Types.BOOLEAN) {
-				boolean value = ((Boolean)params[i]).booleanValue();
-				this.statement.setBoolean(i+1, value);
+			} else if (paramTypes[i] == Types.CHAR) {
+				char value = ((Character)params[i]).charValue();
+				this.statement.setString(i+1, Character.toString(value));
 			} else if (paramTypes[i] == Types.INTEGER) {
 				int value = ((Integer)params[i]).intValue();
 				this.statement.setInt(i+1, value);
@@ -118,17 +118,17 @@ public class WikiPreparedStatement {
 	}
 
 	/**
-	 * Sets the designated parameter to the given Java boolean value. The
-	 * driver converts this to an SQL BIT value when it sends it to the database.
+	 * Sets the designated parameter to the given Java character value. The
+	 * driver converts this to an SQL CHAR value when it sends it to the database.
 	 *
 	 * @param parameterIndex The first parameter is 1, the second is 2, ...
 	 * @param x The parameter value.
 	 * @throws SQLException If a parameter is invalid.
 	 */
-	public void setBoolean(int parameterIndex, boolean x) throws SQLException {
-		this.verifyParams(parameterIndex, new Boolean(x));
-		this.paramTypes[parameterIndex - 1] = Types.BOOLEAN;
-		this.params[parameterIndex - 1] = new Boolean(x);
+	public void setChar(int parameterIndex, char x) throws SQLException {
+		this.verifyParams(parameterIndex, new Character(x));
+		this.paramTypes[parameterIndex - 1] = Types.CHAR;
+		this.params[parameterIndex - 1] = new Character(x);
 	}
 
 	/**
