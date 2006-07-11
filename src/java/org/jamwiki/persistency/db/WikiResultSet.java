@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.io.Reader;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Date;
@@ -66,10 +67,14 @@ public class WikiResultSet {
 				type = rsmd.getColumnType(i);
 				switch (type) {
 					case java.sql.Types.VARCHAR:
+					case java.sql.Types.CLOB:
 						String varchar = rs.getString(columnName);
 						column.put(columnName.toLowerCase(), varchar);
 						break;
 					case java.sql.Types.INTEGER:
+					case java.sql.Types.NUMERIC:
+					case java.sql.Types.SMALLINT:
+					case java.sql.Types.TINYINT:
 						int integer = rs.getInt(columnName);
 						column.put(columnName.toLowerCase(), new Integer(integer));
 						break;
