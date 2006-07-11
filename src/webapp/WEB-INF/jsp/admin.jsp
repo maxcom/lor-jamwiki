@@ -315,7 +315,6 @@ function onUserGroupType() {
            <option value="mysql"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql") ? " selected" : "" %>>mysql</option>
            <option value="ansi"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi") ? " selected" : "" %>>ansi</option>
            <option value="oracle"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("oracle") ? " selected" : "" %>>oracle</option>
-           <option value="db2"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("db2") ? " selected" : "" %>>db2</option>
            <option value="postgres"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("postgres") ? " selected" : "" %>>postgres</option>
         </select>
       </td>

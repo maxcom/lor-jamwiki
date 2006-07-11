@@ -14,9 +14,9 @@ JAMWiki is built to the following specifications:
 
 JAMWiki has been tested with the following software:
 
-  Postgres 8.0 (may work on earlier or later versions, untested)
-  MySQL 4.1 (may work on earlier or later versions, untested)
-  Oracle 10.2 (may work on earlier or later versions, untested)
+  Postgres 8.0 (untested on other versions)
+  MySQL 4.1 (untested on other versions)
+  Oracle 10.2 (untested on other versions; requires the 10g or later JDBC drivers)
   Tomcat 5.5 (should work on any app server supporting servlet 2.3, untested)
 
 
