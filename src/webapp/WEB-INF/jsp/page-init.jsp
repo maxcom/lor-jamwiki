@@ -16,16 +16,25 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
 
-<%@ include file="page-init.jsp" %>
+<%@ page import="
+    org.jamwiki.servlets.JAMWikiServlet
+" %>
 
-<form name="searchForm" method="post" action="<jamwiki:link value="Special:Search" />">
-<f:message key="search.for"/><input type="text" name="text" value="<c:out value="${text}" />">  <input type="submit" name="Submit" value="<f:message key="search.search"/>">
-<p>&nbsp;</p>
-<f:message key="search.hints"/>
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_SEARCH %>"/>
-</form>
-<p>&nbsp;</p>
-<font size="-1"><i>search powered by</i></font> <a href="http://jakarta.apache.org/lucene"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>
-<script language="JavaScript">document.searchForm.text.focus();</script>
+<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
+<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
+<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+
+<jamwiki:setPageEncoding />
+<%
+response.setLocale(request.getLocale());
+%>
+<f:setBundle basename="ApplicationResources" />
+<%
+// FIXME - this needs to be cleaned up
+String action = (String)request.getAttribute(JAMWikiServlet.PARAMETER_ACTION);
+if (action == null) {
+	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
+}
+if (action == null) action = "";
+%>

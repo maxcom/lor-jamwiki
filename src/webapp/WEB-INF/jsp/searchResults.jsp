@@ -16,6 +16,10 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
+
+<%@ include file="page-init.jsp" %>
+
 <c:out value="${results}" escapeXml="false"/>
 <font size="-1"><i>search powered by</i></font>
 <a href="http://jakarta.apache.org/lucene"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>

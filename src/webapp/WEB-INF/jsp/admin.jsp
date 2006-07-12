@@ -17,15 +17,15 @@
 
 --%>
 <%@ page import="
+    org.jamwiki.Environment,
+    org.jamwiki.WikiBase,
+    org.jamwiki.servlets.JAMWikiServlet,
     org.jamwiki.utils.Encryption,
     org.jamwiki.users.Usergroup,
-    java.util.ArrayList,
-    java.util.Collection,
-    java.util.Iterator,
     org.apache.commons.pool.impl.GenericObjectPool
-" %>
+" errorPage="/WEB-INF/jsp/error.jsp" %>
 
-<f:setBundle basename="ApplicationResources"/>
+<%@ include file="page-init.jsp" %>
 
 <%
 int maximumFileSize = (int)((float)Environment.getIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE)/1000);

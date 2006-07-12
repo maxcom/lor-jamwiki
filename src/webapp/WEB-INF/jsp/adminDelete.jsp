@@ -16,6 +16,12 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page import="
+    org.jamwiki.servlets.JAMWikiServlet
+" errorPage="/WEB-INF/jsp/error.jsp" %>
+
+<%@ include file="page-init.jsp" %>
+
 <form name="adminDelete" method="get" action="<jamwiki:link value="Special:Delete" />">
 <input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${topic}" />" />
 <table style="border:2px solid #333333;padding=1em;">

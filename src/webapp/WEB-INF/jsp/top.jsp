@@ -18,7 +18,6 @@
 --%>
 <html>
   <head>
-    <f:setBundle basename="ApplicationResources"/>
     <title><c:out value="${title}"/></title>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
 <%

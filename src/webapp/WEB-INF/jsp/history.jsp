@@ -16,6 +16,9 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
+
+<%@ include file="page-init.jsp" %>
 
 <script type="text/javascript">
 // enable/disable checkboxes before or after the current element

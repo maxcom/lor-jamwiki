@@ -16,6 +16,10 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
+
+<%@ include file="page-init.jsp" %>
+
 <c:choose>
 	<c:when test="${empty locks}">
 <f:message key="locklist.nolocks"/>

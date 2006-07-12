@@ -16,6 +16,12 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page import="
+    org.jamwiki.Environment,
+    org.jamwiki.servlets.JAMWikiServlet
+" errorPage="/WEB-INF/jsp/error.jsp" %>
+
+<%@ include file="page-init.jsp" %>
 
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {

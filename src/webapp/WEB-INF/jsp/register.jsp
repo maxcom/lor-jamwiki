@@ -16,6 +16,10 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
+
+<%@ include file="page-init.jsp" %>
+
 <p><f:message key="createuser.info.text1"/></p>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${user.userId}" />" />

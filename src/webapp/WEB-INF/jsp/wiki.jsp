@@ -24,20 +24,10 @@
 "
 errorPage="/WEB-INF/jsp/error.jsp" %>
 
-<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
-<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+<%@ include file="page-init.jsp" %>
 
-<jamwiki:setPageEncoding />
-<% response.setLocale(request.getLocale()); %>
-<%@ include file="top.jsp"%>
 <%
-// FIXME - this needs to be cleaned up
-String action = (String)request.getAttribute(JAMWikiServlet.PARAMETER_ACTION);
-if (action == null) {
-	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
-}
-if (action == null) action = "";
+// FIXME - cleanup
 if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP)) {
       // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
       String firstUseUrl = "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
@@ -46,6 +36,8 @@ if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP)) {
 <%
 }
 %>
+
+<%@ include file="top.jsp" %>
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
@@ -78,79 +70,79 @@ if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP)) {
 <%
 if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
-		<%@ include file="admin.jsp" %>
+		<jsp:include page="admin.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ADMIN_DELETE)) {
 %>
-		<%@ include file="adminDelete.jsp" %>
+		<jsp:include page="adminDelete.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ADMIN_UPGRADE)) {
 %>
-		<%@ include file="adminUpgrade.jsp" %>
+		<jsp:include page="adminUpgrade.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
 %>
-		<%@ include file="contributions.jsp" %>
+		<jsp:include page="contributions.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_DIFF)) {
 %>
-		<%@ include file="diff.jsp" %>
+		<jsp:include page="diff.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_EDIT) || action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
-		<%@ include file="edit.jsp" %>
+		<jsp:include page="edit.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_EDIT_USER)) {
 %>
-		<%@ include file="register.jsp" %>
+		<jsp:include page="register.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ERROR)) {
 %>
-		<%@ include file="error-display.jsp" %>
+		<jsp:include page="error-display.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_HISTORY)) {
 %>
-		<%@ include file="history.jsp" %>
+		<jsp:include page="history.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_LOCKLIST)) {
 %>
-		<%@ include file="locklist.jsp" %>
+		<jsp:include page="locklist.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_LOGIN)) {
 %>
-		<%@ include file="login.jsp" %>
+		<jsp:include page="login.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_RECENT_CHANGES)) {
 %>
-		<%@ include file="recentChanges.jsp" %>
+		<jsp:include page="recentChanges.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_REGISTER)) {
 %>
-		<%@ include file="register.jsp" %>
+		<jsp:include page="register.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_SEARCH)) {
 %>
-		<%@ include file="search.jsp" %>
+		<jsp:include page="search.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_SEARCH_RESULTS)) {
 %>
-		<%@ include file="searchResults.jsp" %>
+		<jsp:include page="searchResults.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_SETUP)) {
 %>
-		<%@ include file="setup.jsp" %>
+		<jsp:include page="setup.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>
-		<%@ include file="allTopics.jsp" %>
+		<jsp:include page="allTopics.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
 %>
-		<%@ include file="upload.jsp" %>
+		<jsp:include page="upload.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_VIRTUAL_WIKI_LIST)) {
 %>
-		<%@ include file="virtualwikilist.jsp" %>
+		<jsp:include page="virtualwikilist.jsp" flush="true" />
 <%
 } else {
 %>
