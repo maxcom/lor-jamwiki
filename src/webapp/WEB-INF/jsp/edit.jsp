@@ -18,7 +18,7 @@
 --%>
 
 <%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
 <%-- FIXME - hard coding --%>
 <h3>Preview</h3>

@@ -153,7 +153,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("editComment", editComment);
 		next.addObject("minorEdit", new Boolean(minorEdit));
 		next.addObject("preview", preview);
-		if (request.getAttribute(JAMWikiServlet.ACTION_PREVIEW) != null) {
+		if (isPreview(request)) {
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
 		} else {
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
