@@ -49,6 +49,8 @@ public class EditServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
 			if (mustLogin(request)) {
+				// FIXME - hard coding
+				next.addObject("errorMessage", "Editing a topic requires login");
 				viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
 			} else if (isSave(request)) {
 				save(request, next);
@@ -107,15 +109,11 @@ public class EditServlet extends JAMWikiServlet {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topicName + " is read only");
 		}
-		if (topic.getAdminOnly()) {
-			if (!Utilities.isAdmin(request)) {
-				next.addObject(JAMWikiServlet.PARAMETER_TITLE, Utilities.getMessage("login.title", request.getLocale()));
-				String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, "Special:Edit");
-				next.addObject("redirect", redirect);
-				this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
-				this.pageInfo.setSpecial(true);
-				return;
-			}
+		if (topic.getAdminOnly() && !Utilities.isAdmin(request)) {
+			// FIXME - hard coding
+			next.addObject("errorMessage", "Editing administrative topics requires login");
+			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
+			return;
 		}
 		String key = request.getSession().getId();
 		if (!WikiBase.getHandler().lockTopic(virtualWiki, topicName, key)) {
