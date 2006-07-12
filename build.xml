@@ -47,10 +47,11 @@
                 <pathelement path="${dir.src.java}"/>
                 <pathelement path="${dir.lib}/log4j.jar"/>
                 <pathelement path="${dir.lib}/activation.jar"/>
-                <pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar"/>
                 <pathelement path="${dir.lib}/commons-dbcp.jar"/>
-                <pathelement path="${dir.lib}/commons-pool-1.3.jar"/>
+                <pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar" />
                 <pathelement path="${dir.lib}/commons-httpclient-2.0.jar"/>
+                <pathelement path="${dir.lib}/commons-io-1.2.jar" />
+                <pathelement path="${dir.lib}/commons-pool-1.3.jar"/>
                 <pathelement path="${dir.lib}/jstl.jar"/>
                 <pathelement path="${dir.lib}/log4j.jar"/>
                 <pathelement path="${dir.lib}/mail.jar"/>
