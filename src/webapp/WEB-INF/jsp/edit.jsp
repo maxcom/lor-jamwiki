@@ -22,7 +22,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
 <%-- FIXME - hard coding --%>
 <h3>Preview</h3>
-<hr /><font color="red">Preview: changes have not been saved</font><hr />
+<blockquote><hr /><font color="red">Preview: changes have not been saved</font><hr /></blockquote>
 <div id="content-article"><c:out value="${preview}" escapeXml="false" /></div>
 <%
 }
@@ -30,7 +30,10 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <form name="form" method="post" action="<jamwiki:link value="Special:Edit" />">
 <p>
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
+<%--
+FIXME - restore the Javascript edit buttons
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
+--%>
 <p>
 <textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
