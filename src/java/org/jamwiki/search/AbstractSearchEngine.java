@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
@@ -575,7 +576,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				}
 				File attachmentFile = Utilities.uploadPath(virtualWiki, attachmentFileName);
 				if ("txt".equals(extension) || "asc".equals(extension)) {
-					String textFile = Utilities.readFile(attachmentFile);
+					String textFile = FileUtils.readFileToString(attachmentFile, Environment.getValue(Environment.PROP_FILE_ENCODING));
 					contents.append(" ").append(textFile);
 				}
 				if (canParseHTML && ("htm".equals(extension) || "html".equals(extension))) {

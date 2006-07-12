@@ -16,16 +16,10 @@
  */
 package org.jamwiki.persistency.file;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.Writer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -172,14 +167,10 @@ public class FileHandler extends PersistencyHandler {
 		content.append("</mediawiki>");
 		String filename = recentChangeFilename(change.getTopicVersionId());
 		File file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(content.toString());
-		writer.close();
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		// also write to user contributions directory
 		file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.CONTRIBUTIONS_DIR, change.getAuthorName(), filename);
-		writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(content.toString());
-		writer.close();
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**
@@ -229,9 +220,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("</mediawiki>");
 		String filename = topicFilename(topic.getName());
 		File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_DIR, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(content.toString());
-		writer.close();
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**
@@ -279,9 +268,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("</mediawiki>");
 		String filename = topicVersionFilename(topicVersion.getTopicVersionId());
 		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(versionFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(content.toString());
-		writer.close();
+		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**
@@ -291,21 +278,14 @@ public class FileHandler extends PersistencyHandler {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		if (file.exists()) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-			while (true) {
-				String line = in.readLine();
-				if (line == null) break;
+			List lines = FileUtils.readLines(file, Environment.getValue(Environment.PROP_FILE_ENCODING));
+			for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
+				String line = (String)iterator.next();
 				all.add(line);
 			}
-			in.close();
 		}
-		PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			String s = (String)iterator.next();
-			writer.println(s);
-		}
-		writer.println(virtualWiki);
-		writer.close();
+		all.add(virtualWiki);
+		FileUtils.writeLines(file, Environment.getValue(Environment.PROP_FILE_ENCODING), all);
 	}
 
 	/**
@@ -353,9 +333,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("</mediawiki>");
 		String filename = wikiUserFilename(user.getLogin());
 		File userFile = FileHandler.getPathFor(null, FileHandler.WIKI_USER_DIR, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(userFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(content.toString());
-		writer.close();
+		FileUtils.writeStringToFile(userFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
 		if (WIKI_USER_ID_HASH == null && userIdHashFile.exists()) {
 			WIKI_USER_ID_HASH.load(new FileInputStream(userIdHashFile));
@@ -370,9 +348,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	private void createVirtualWikiList(File virtualList) throws Exception {
-		PrintWriter writer = getNewPrintWriter(virtualList, true);
-		writer.println(WikiBase.DEFAULT_VWIKI);
-		writer.close();
+		FileUtils.writeStringToFile(virtualList, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**
@@ -485,14 +461,6 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
-	 *  returns a printwriter using utf-8 encoding
-	 *
-	 */
-	private PrintWriter getNewPrintWriter(File file, boolean autoflush) throws Exception {
-		return new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)), autoflush);
-	}
-
-	/**
 	 *
 	 */
 	protected static File getPathFor(String virtualWiki, String dir, String fileName) {
@@ -586,13 +554,11 @@ public class FileHandler extends PersistencyHandler {
 	public Collection getVirtualWikiList() throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING)));
-		while (true) {
-			String line = in.readLine();
-			if (line == null) break;
+		List lines = FileUtils.readLines(file, Environment.getValue(Environment.PROP_FILE_ENCODING));
+		for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
+			String line = (String)iterator.next();
 			all.add(line);
 		}
-		in.close();
 		if (!all.contains(WikiBase.DEFAULT_VWIKI)) {
 			all.add(WikiBase.DEFAULT_VWIKI);
 		}
@@ -832,9 +798,7 @@ public class FileHandler extends PersistencyHandler {
 		}
 		String filename = lockFilename(topicName);
 		File lockFile = getPathFor(virtualWiki, LOCK_DIR, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(lockFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(topicName);
-		writer.close();
+		FileUtils.writeStringToFile(lockFile, topicName, Environment.getValue(Environment.PROP_FILE_ENCODING));
 		return true;
 	}
 
@@ -898,9 +862,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	private static int nextFileWrite(int nextId, File file) throws Exception {
-		Writer writer = new OutputStreamWriter(new FileOutputStream(file), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(new Integer(nextId).toString());
-		writer.close();
+		FileUtils.writeStringToFile(file, new Integer(nextId).toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 		return nextId;
 	}
 
@@ -912,7 +874,7 @@ public class FileHandler extends PersistencyHandler {
 		if (NEXT_TOPIC_ID < 1) {
 			// read value from file
 			if (topicIdFile.exists()) {
-				String integer = Utilities.readFile(topicIdFile);
+				String integer = FileUtils.readFileToString(topicIdFile, Environment.getValue(Environment.PROP_FILE_ENCODING));
 				NEXT_TOPIC_ID = new Integer(integer).intValue();
 			}
 		}
@@ -928,7 +890,7 @@ public class FileHandler extends PersistencyHandler {
 		if (NEXT_TOPIC_VERSION_ID < 1) {
 			// read value from file
 			if (topicVersionIdFile.exists()) {
-				String integer = Utilities.readFile(topicVersionIdFile);
+				String integer = FileUtils.readFileToString(topicVersionIdFile, Environment.getValue(Environment.PROP_FILE_ENCODING));
 				NEXT_TOPIC_VERSION_ID = new Integer(integer).intValue();
 			}
 		}
@@ -944,7 +906,7 @@ public class FileHandler extends PersistencyHandler {
 		if (NEXT_WIKI_USER_ID < 1) {
 			// read value from file
 			if (userIdFile.exists()) {
-				String integer = Utilities.readFile(userIdFile);
+				String integer = FileUtils.readFileToString(userIdFile, Environment.getValue(Environment.PROP_FILE_ENCODING));
 				NEXT_WIKI_USER_ID = new Integer(integer).intValue();
 			}
 		}
@@ -1097,9 +1059,7 @@ public class FileHandler extends PersistencyHandler {
 		super.writeReadOnlyTopic(virtualWiki, topicName);
 		String filename = readOnlyFilename(topicName);
 		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
-		Writer writer = new OutputStreamWriter(new FileOutputStream(readOnlyFile), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		writer.write(topicName);
-		writer.close();
+		FileUtils.writeStringToFile(readOnlyFile, topicName, Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**

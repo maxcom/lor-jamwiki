@@ -17,18 +17,14 @@
 package org.jamwiki.utils;
 
 import java.lang.reflect.Method;
-import java.io.BufferedReader;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -47,6 +43,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -516,27 +513,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Read a file from the file system
-	 * @param file The file to read
-	 * @return a Stringbuffer with the content of this file or an empty StringBuffer, if an error has occured
-	 */
-	public static String readFile(File file) {
-		char[] buf = new char[1024];
-		StringBuffer content = new StringBuffer((int)file.length());
-		try {
-			Reader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),Environment.getValue(Environment.PROP_FILE_ENCODING)));
-			int numread = 0;
-			while((numread=in.read(buf))!=-1) {
-				content.append(buf,0,numread);
-			}
-			in.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		return content.toString();
-	}
-
-	/**
 	 * Read a file and return its contents as a String.
 	 */
 	public static String readFile(String filename) throws Exception {
@@ -546,19 +522,18 @@ public class Utilities {
 			File file = new File(filename);
 			if (file.exists()) {
 				// file passed in as full path
-				reader = new FileReader(file);
-			} else {
-				// look for file in resource directories
-				Class[] parameterTypes = null;
-				Method method = Thread.class.getMethod("getContextClassLoader", parameterTypes);
-				Object[] args = null;
-				ClassLoader loader = (ClassLoader)method.invoke(Thread.currentThread(), args);
-				InputStream stream = loader.getResourceAsStream(filename);
-				if (stream == null) {
-					throw new FileNotFoundException("File " + filename + " is not available for reading");
-				}
-				reader = new InputStreamReader(stream);
+				return FileUtils.readFileToString(file, Environment.getValue(Environment.PROP_FILE_ENCODING));
 			}
+			// look for file in resource directories
+			Class[] parameterTypes = null;
+			Method method = Thread.class.getMethod("getContextClassLoader", parameterTypes);
+			Object[] args = null;
+			ClassLoader loader = (ClassLoader)method.invoke(Thread.currentThread(), args);
+			InputStream stream = loader.getResourceAsStream(filename);
+			if (stream == null) {
+				throw new FileNotFoundException("File " + filename + " is not available for reading");
+			}
+			reader = new InputStreamReader(stream);
 			char[] buf = new char[4096];
 			int c;
 			while ((c = reader.read(buf, 0, buf.length)) != -1) {
@@ -637,8 +612,7 @@ public class Utilities {
 				if (!entry.isDirectory()) {
 					logger.debug("Extracting file: " + entry.getName());
 					File outputFile = new File(outputDirectory, entry.getName());
-					copyInputStream(zipFile.getInputStream(entry),
-					new BufferedOutputStream(new FileOutputStream(outputFile)));
+					copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(outputFile)));
 				}
 			}
 			zipFile.close();
