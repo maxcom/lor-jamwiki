@@ -17,6 +17,16 @@
 
 --%>
 
+<%
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
+%>
+<%-- FIXME - hard coding --%>
+<h3>Preview</h3>
+<hr /><font color="red">Preview: changes have not been saved</font><hr />
+<div id="content-article"><c:out value="${preview}" escapeXml="false" /></div>
+<%
+}
+%>
 <form name="form" method="post" action="<jamwiki:link value="Special:Edit" />">
 <p>
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
@@ -41,17 +51,3 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <f:message key="edit.isMinorEdit"/>
 </p>
 </form>
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
-%>
-<table border="1" rules="group" bgcolor="#FFFFCC" width="100%">
-<tr><td>
-<h3>Preview</h3>
-</td></tr>
-<tr><td class="contents">
-<c:out value="${preview}" escapeXml="false" />
-</td></tr>
-</table>
-<%
-}
-%>
