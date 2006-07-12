@@ -2,92 +2,92 @@
 0.0.5
 =====
 
-* [FEATURE] Add support for MySql 4.1.
-* [FEATURE] Add support for Oracle 10g.
-* [FEATURE] Code cleanups including abstraction of database code.
-* [BUG] Do not allow directories to be created in the filesystem root
+* FEATURE: Add support for MySql 4.1.
+* FEATURE: Add support for Oracle 10g.
+* FEATURE: Code cleanups including abstraction of database code.
+* BUG: Do not allow directories to be created in the filesystem root
   during setup.
-* [BUG] User menu link for user was broken if display name not set.
-* [FEATURE] Hide Special:Attach - not currently supported.
-* [FEATURE] Display an explanation message on the login page when
+* BUG: User menu link for user was broken if display name not set.
+* FEATURE: Hide Special:Attach - not currently supported.
+* FEATURE: Display an explanation message on the login page when
   requiring login to an admin page.
-* [BUG] Login to Special:Delete went to Special:Admin.
-* [FEATURE] Log sql execution time info for debugging.
-* [FEATURE] Remove the "Admin" link from the footer, display in the
+* BUG: Login to Special:Delete went to Special:Admin.
+* FEATURE: Log sql execution time info for debugging.
+* FEATURE: Remove the "Admin" link from the footer, display in the
   user menu ONLY for users who are admins.
-* [FEATURE] Update database schema - BREAKS ANY EXISTING INSTALLATION!
+* FEATURE: Update database schema - BREAKS ANY EXISTING INSTALLATION!
   See the release notes for the database update syntax.
-* [FEATURE] User contributions page now has the same style as the
+* FEATURE: User contributions page now has the same style as the
   recent changes and history pages.
-* [FEATURE] Add unique constraints to several database fields.
+* FEATURE: Add unique constraints to several database fields.
 
 0.0.4
 =====
 
-* [FEATURE] Add "Account", "User" and "Comments" links to user
+* FEATURE: Add "Account", "User" and "Comments" links to user
   navigation bar.
-* [FEATURE] Add "Remember Me" login option.
-* [FEATURE] Add ability to view all contributions made by a
+* FEATURE: Add "Remember Me" login option.
+* FEATURE: Add ability to view all contributions made by a
   specific user (Special:Contributions).
-* [FEATURE] Add ability to update user account information.
-* [FEATURE] Change navbar search to default "Search", not "Jump to".
-* [FEATURE] "Comments" tab works now and is colored to reflect
+* FEATURE: Add ability to update user account information.
+* FEATURE: Change navbar search to default "Search", not "Jump to".
+* FEATURE: "Comments" tab works now and is colored to reflect
   whether a comments page exists yet or not.
-* [FEATURE] Error handling added to avoid ugly stack traces being
+* FEATURE: Error handling added to avoid ugly stack traces being
   shown to end users and ensure that errors are logged.
-* [FEATURE] Support MediaWiki signatures - "~~~", "~~~~" and "~~~~~".
-* [FEATURE] Support MediaWiki "__TOC__" directive.
-* [FEATURE] Change Special:Registration URL to Special:Account.
-* [BUG] If user login required actually check for logged in user prior
+* FEATURE: Support MediaWiki signatures - "~~~", "~~~~" and "~~~~~".
+* FEATURE: Support MediaWiki "__TOC__" directive.
+* FEATURE: Change Special:Registration URL to Special:Account.
+* BUG: If user login required actually check for logged in user prior
   to editing.
-* [FEATURE] Hide LDAP and other unused / unsupported options in admin tool.
-* [FEATURE] Always encode passwords by default, remove option to have
+* FEATURE: Hide LDAP and other unused / unsupported options in admin tool.
+* FEATURE: Always encode passwords by default, remove option to have
   unencoded passwords.
-* [FEATURE] Code cleanups including deletion of unused code.  PDF search
+* FEATURE: Code cleanups including deletion of unused code.  PDF search
   no longer supported.  War file size should now be about 450K smaller.
-* [FEATURE] New utility class for handling prepared statements.
-* [FEATURE] Added new WikiPageInfo class to hold basic page data.
-* [FEATURE] Utilize more of the Spring framework functionality, should
+* FEATURE: New utility class for handling prepared statements.
+* FEATURE: Added new WikiPageInfo class to hold basic page data.
+* FEATURE: Utilize more of the Spring framework functionality, should
   ensure that cache headers always get set properly.
-* [FEATURE] Update from JFlex 1.3.5 to 1.4.1 - slightly faster.
-* [FEATURE] Add previous_topic_version_id column to jam_topic_version.
+* FEATURE: Update from JFlex 1.3.5 to 1.4.1 - slightly faster.
+* FEATURE: Add previous_topic_version_id column to jam_topic_version.
   BREAKS ANY EXISTING INSTALLATION!  See the release notes for the
   database update syntax.
-* [BUG] "Article" tab from comments pages fixed.
+* BUG: "Article" tab from comments pages fixed.
 
 0.0.3
 =====
 
-* [FEATURE] Add support for user accounts.
-* [FEATURE] Added user registration and login pages.
-* [FEATURE] Record user information when editing for logged-in users.
-* [FEATURE] Setup now requires creation of a default admin account.
-* [FEATURE] Remove admin password option from admin pages.
-* [FEATURE] Top navigation now shows login/logout option.
-* [FEATURE] Code cleanups including deletion of unused code.  War file
+* FEATURE: Add support for user accounts.
+* FEATURE: Added user registration and login pages.
+* FEATURE: Record user information when editing for logged-in users.
+* FEATURE: Setup now requires creation of a default admin account.
+* FEATURE: Remove admin password option from admin pages.
+* FEATURE: Top navigation now shows login/logout option.
+* FEATURE: Code cleanups including deletion of unused code.  War file
   size should now be about 200K smaller.
-* [FEATURE] Remove and update several database field values.  BREAKS ANY
+* FEATURE: Remove and update several database field values.  BREAKS ANY
   EXISTING INSTALLATION!
-* [FEATURE] Include copy of LGPL in WAR file distribution.
-* [FEATURE] History page now displays author & edit comment.
-* [FEATURE] History & recent changes organization is now more like MediaWiki.
-* [FEATURE] Remove database setup options from Special:Upgrade.
-* [BUG] File handling of next_id values could sometimes cause error.
-* [BUG] Miscellaneous bugfixes.
+* FEATURE: Include copy of LGPL in WAR file distribution.
+* FEATURE: History page now displays author & edit comment.
+* FEATURE: History & recent changes organization is now more like MediaWiki.
+* FEATURE: Remove database setup options from Special:Upgrade.
+* BUG: File handling of next_id values could sometimes cause error.
+* BUG: Miscellaneous bugfixes.
 
 0.0.2
 =====
 
-* [FEATURE] Add admin page option for "Use table of contents".
-* [FEATURE] Code cleanups including deletion of unused code.
-* [BUG] Hash mark in a URL or topic (Topic#Section) was not being interpreted
+* FEATURE: Add admin page option for "Use table of contents".
+* FEATURE: Code cleanups including deletion of unused code.
+* BUG: Hash mark in a URL or topic (Topic#Section) was not being interpreted
   as a page section.
-* [BUG] Error creating topic link on recent changes page.
-* [BUG] Edit comment was being lost during preview.
-* [FEATURE] Add links to jamwiki.org in default setup.
-* [BUG] Fix link from logo.
-* [BUG] Background of external link image not transparent.
-* [BUG] Editing cached topic was not viewable until the second page view
+* BUG: Error creating topic link on recent changes page.
+* BUG: Edit comment was being lost during preview.
+* FEATURE: Add links to jamwiki.org in default setup.
+* BUG: Fix link from logo.
+* BUG: Background of external link image not transparent.
+* BUG: Editing cached topic was not viewable until the second page view
   after the edit.
-* [FEATURE] Rename and reorganize database tables.  BREAKS ANY EXISTING
+* FEATURE: Rename and reorganize database tables.  BREAKS ANY EXISTING
   INSTALLATION!
