@@ -54,7 +54,7 @@ import org.jamwiki.utils.Utilities;
 public class WikiBase {
 
 	// FIXME - remove this
-	public final static String WIKI_VERSION = "0.0.5";
+	public final static String WIKI_VERSION = "0.0.6";
 	/** An instance to myself. Singleton pattern. */
 	private static WikiBase instance;
 	/** The topics are stored in a flat file */
