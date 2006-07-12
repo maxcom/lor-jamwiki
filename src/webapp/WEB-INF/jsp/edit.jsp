@@ -32,7 +32,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
 <p>
-<textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="false"/></textarea>
+<textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
 <%-- FIXME - hard coding --%>
 <p>Edit Comment: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" /></p>
