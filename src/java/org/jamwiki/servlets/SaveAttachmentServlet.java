@@ -79,7 +79,7 @@ public class SaveAttachmentServlet extends JAMWikiServlet {
 		String tempDir = Utilities.relativeDirIfNecessary(Environment.getValue(Environment.PROP_ATTACH_TEMP_DIR));
 		File tempDirFile = new File(tempDir);
 		tempDirFile.mkdirs();
-		upload.setRepositoryPath(tempDir);
+//		upload.setRepositoryPath(tempDir);
 		upload.setSizeMax(Environment.getIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE));
 		List fileList = null;
 		try {
