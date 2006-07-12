@@ -88,10 +88,6 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<%@ include file="adminUpgrade.jsp" %>
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_ATTACH)) {
-%>
-		<%@ include file="attach.jsp" %>
-<%
 } else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
 %>
 		<%@ include file="contributions.jsp" %>
@@ -147,6 +143,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 } else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>
 		<%@ include file="allTopics.jsp" %>
+<%
+} else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
+%>
+		<%@ include file="upload.jsp" %>
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_VIRTUAL_WIKI_LIST)) {
 %>

@@ -40,7 +40,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String ACTION_ADMIN = "action_admin";
 	public static final String ACTION_ADMIN_DELETE = "action_admin_delete";
 	public static final String ACTION_ADMIN_UPGRADE = "action_admin_upgrade";
-	public static final String ACTION_ATTACH = "action_attach";
 	public static final String ACTION_CANCEL = "Cancel";
 	public static final String ACTION_CONTRIBUTIONS = "action_contributions";
 	public static final String ACTION_DIFF = "action_diff";
@@ -57,7 +56,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String ACTION_SEARCH = "action_search";
 	public static final String ACTION_SETUP = "action_setup";
 	public static final String ACTION_UNLOCK = "action_unlock";
-	public static final String ACTION_VIEW_ATTACHMENT = "action_view_attachment";
+	public static final String ACTION_UPLOAD = "action_upload";
 	public static final String ACTION_ALL_TOPICS = "all_topics";
 	public static final String ACTION_EDIT_USER = "edit_user";
 	public static final String ACTION_LOCKLIST = "locklist";

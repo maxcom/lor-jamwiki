@@ -31,7 +31,7 @@
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
 				<prop key="/**/Special:Unlock">LockList</prop>
 				<prop key="/**/Special:Upgrade">Admin</prop>
-				<prop key="/**/Special:Upload">Attach</prop>
+				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
 				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
 				<prop key="/**/*">Topic</prop>
@@ -40,7 +40,6 @@
 	</bean>
 
 	<bean id="Admin" class="org.jamwiki.servlets.AdminServlet" />
-	<bean id="Attach" class="org.jamwiki.servlets.AttachServlet" />
 	<bean id="Contributions" class="org.jamwiki.servlets.ContributionsServlet" />
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
@@ -56,6 +55,7 @@
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
 	<bean id="Topic" class="org.jamwiki.servlets.TopicServlet" />
+	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
 	<bean id="ViewAttachment" class="org.jamwiki.servlets.ViewAttachmentServlet" />
 	<bean id="VirtualWikiList" class="org.jamwiki.servlets.VirtualWikiServlet" />
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
