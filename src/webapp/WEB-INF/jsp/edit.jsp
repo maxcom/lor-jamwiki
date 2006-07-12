@@ -21,7 +21,6 @@
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
 <%-- FIXME - hard coding --%>
-<h3>Preview</h3>
 <blockquote><hr /><font color="red">Preview: changes have not been saved</font><hr /></blockquote>
 <div id="content-article"><c:out value="${preview}" escapeXml="false" /></div>
 <%
