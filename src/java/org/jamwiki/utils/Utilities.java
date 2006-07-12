@@ -17,28 +17,20 @@
 package org.jamwiki.utils;
 
 import java.lang.reflect.Method;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +40,6 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
 
@@ -171,19 +162,6 @@ public class Utilities {
 	}
 
 	/**
-	 *
-	 */
-	private static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
-		byte[] buffer = new byte[1024];
-		int len;
-		while ((len = in.read(buffer)) >= 0) {
-			out.write(buffer, 0, len);
-		}
-		in.close();
-		out.close();
-	}
-
-	/**
 	 * Create the root path for a specific WIKI without the server name.
 	 * This is useful for local redirection or local URL's (relative URL's to the server).
 	 * @param request The HttpServletRequest
@@ -293,13 +271,6 @@ public class Utilities {
 		// convert underscores to spaces
 		url = StringUtils.replace(url, "_", " ");
 		return url;
-	}
-
-	/**
-	 *
-	 */
-	private static String dir() {
-		return Environment.getValue(Environment.PROP_BASE_FILE_DIR) + System.getProperty("file.separator");
 	}
 
 	/**
@@ -555,7 +526,8 @@ public class Utilities {
 			return path;
 		}
 		if (!path.startsWith("/") && !(Character.isLetter(path.charAt(0)) && path.charAt(1) == ':')) {
-			return new File(Utilities.dir(), path).getAbsolutePath();
+			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + System.getProperty("file.separator");
+			return new File(dir, path).getAbsolutePath();
 		}
 		return path;
 	}
@@ -586,41 +558,6 @@ public class Utilities {
 		}
 		if (cookie == null) return null;
 		return cookie.getValue();
-	}
-
-	/**
-	 *
-	 */
-	public static void unzip(File zipFileToOpen, File outputDirectory) {
-		Enumeration entries;
-		ZipFile zipFile;
-		try {
-			zipFile = new ZipFile(zipFileToOpen);
-			entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				if (entry.isDirectory()) {
-					logger.debug("Extracting directory: " + entry.getName());
-					// This is not robust, just for demonstration purposes.
-					File file = new File(outputDirectory, entry.getName());
-					file.mkdir();
-				}
-			}
-			entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
-				if (!entry.isDirectory()) {
-					logger.debug("Extracting file: " + entry.getName());
-					File outputFile = new File(outputDirectory, entry.getName());
-					copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(outputFile)));
-				}
-			}
-			zipFile.close();
-		} catch (IOException ioe) {
-			logger.error("Unzipping error: " + ioe);
-			ioe.printStackTrace();
-			return;
-		}
 	}
 
 	/**
