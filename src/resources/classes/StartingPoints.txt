@@ -1,4 +1,4 @@
-Click "Edit" at the top of this page to start contributing.
+JAMWiki has been successfully installed!  Click "Edit" at the top of this page to start contributing, or visit [http://jamwiki.org/ jamwiki.org] for documentation or to let us know how the software is working.
 
 Some potentially useful functions:
 
