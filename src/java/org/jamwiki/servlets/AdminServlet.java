@@ -274,20 +274,8 @@ public class AdminServlet extends JAMWikiServlet {
 				request.getParameter(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) != null
 			);
 			Environment.setBooleanValue(
-				Environment.PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED,
-				request.getParameter(Environment.PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED) != null
-			);
-			Environment.setBooleanValue(
 				Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED,
 				request.getParameter(Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED) != null
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_ATTACH_TIMESTAMP,
-				request.getParameter(Environment.PROP_ATTACH_TIMESTAMP) != null
-			);
-			Environment.setValue(
-				Environment.PROP_ATTACH_UPLOAD_DIR,
-				request.getParameter(Environment.PROP_ATTACH_UPLOAD_DIR)
 			);
 			Environment.setValue(
 				Environment.PROP_BASE_FILE_DIR,
@@ -385,10 +373,6 @@ public class AdminServlet extends JAMWikiServlet {
 			Environment.setIntValue(
 				Environment.PROP_ATTACH_MAX_FILE_SIZE,
 				maxFileSizeInKB * 1000
-			);
-			Environment.setValue(
-				Environment.PROP_ATTACH_TYPE,
-				request.getParameter(Environment.PROP_ATTACH_TYPE)
 			);
 			if (request.getParameter(Environment.PROP_DB_TYPE) != null) {
 				Environment.setValue(

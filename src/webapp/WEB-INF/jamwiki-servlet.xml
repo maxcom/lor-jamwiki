@@ -25,14 +25,12 @@
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:RSS">RSS</prop>
-				<prop key="/**/Special:SaveAttachment">SaveAttachment</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
 				<prop key="/**/Special:Unlock">LockList</prop>
 				<prop key="/**/Special:Upgrade">Admin</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
-				<prop key="/**/Special:ViewAttachment">ViewAttachment</prop>
 				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
 				<prop key="/**/*">Topic</prop>
 			</props>
@@ -51,12 +49,10 @@
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
 	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />
 	<bean id="RSS" class="org.jamwiki.servlets.RSSServlet" />
-	<bean id="SaveAttachment" class="org.jamwiki.servlets.SaveAttachmentServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
 	<bean id="Topic" class="org.jamwiki.servlets.TopicServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
-	<bean id="ViewAttachment" class="org.jamwiki.servlets.ViewAttachmentServlet" />
 	<bean id="VirtualWikiList" class="org.jamwiki.servlets.VirtualWikiServlet" />
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>

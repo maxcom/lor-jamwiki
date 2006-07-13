@@ -564,20 +564,6 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String relativeDirIfNecessary(String path) {
-		if (path.length() <= 2) {
-			return path;
-		}
-		if (!path.startsWith("/") && !(Character.isLetter(path.charAt(0)) && path.charAt(1) == ':')) {
-			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + System.getProperty("file.separator");
-			return new File(dir, path).getAbsolutePath();
-		}
-		return path;
-	}
-
-	/**
-	 *
-	 */
 	public static final void removeCookie(HttpServletResponse response, String cookieName) {
 		Cookie cookie = new Cookie(cookieName, null);
 		cookie.setMaxAge(0);
@@ -601,25 +587,5 @@ public class Utilities {
 		}
 		if (cookie == null) return null;
 		return cookie.getValue();
-	}
-
-	/**
-	 * The directory to place attachments in. This is either an absolute path if the admin setting for "upload directory"
-	 * starts with a "/" or a drive letter, or it is a relative path.
-	 * @param virtualWiki
-	 * @param name
-	 * @return
-	 */
-	public static File uploadPath(String virtualWiki, String name) {
-		String path = Environment.getValue(Environment.PROP_ATTACH_UPLOAD_DIR);
-		String dir = Utilities.relativeDirIfNecessary(path);
-		if (virtualWiki == null || "".equals(virtualWiki)) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		File baseDir = new File(dir, virtualWiki);
-		baseDir.mkdirs();
-		dir = baseDir.getAbsolutePath();
-		File uploadedFile = new File(dir, name);
-		return uploadedFile;
 	}
 }

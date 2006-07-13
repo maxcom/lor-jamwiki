@@ -154,12 +154,6 @@ function onUserGroupType() {
     </tr>
 
     <tr>
-      <td class="normal"><f:message key="admin.caption.indexattachments"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED) ? " checked" : "" %>>
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.indexextlinks"/></td>
       <td class="normal">
         <input type="checkbox" name="<%= Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED) ? " checked" : "" %>>
@@ -250,30 +244,9 @@ function onUserGroupType() {
     </tr>
 
     <tr>
-      <td class="normal"><f:message key="admin.caption.uploaddir"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_ATTACH_UPLOAD_DIR %>" value="<%= Environment.getValue(Environment.PROP_ATTACH_UPLOAD_DIR) %>" size="50">
-      </td>
-    </tr>
-    <tr>
       <td class="normal"><f:message key="admin.caption.maxfilesize"/></td>
       <td class="normal">
         <input type="text" name="<%= Environment.PROP_ATTACH_MAX_FILE_SIZE %>" value="<%= maximumFileSize %>" size="10">
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.attachment"/></td>
-      <td class="normal">
-        <select name="<%= Environment.PROP_ATTACH_TYPE %>">
-           <option value="inline"<%= Environment.getValue(Environment.PROP_ATTACH_TYPE).equals("inline") ? " selected" : "" %>><f:message key="admin.caption.attachment.inline"/></option>
-           <option value="attachment"<%= Environment.getValue(Environment.PROP_ATTACH_TYPE).equals("attachment") ? " selected" : "" %>><f:message key="admin.caption.attachment.attachment"/></option>
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.attachmenttimestamp"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_ATTACH_TIMESTAMP %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_ATTACH_TIMESTAMP) ? " checked" : "" %>>
       </td>
     </tr>
    <tr>

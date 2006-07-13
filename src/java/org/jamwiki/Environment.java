@@ -41,10 +41,6 @@ public class Environment {
 	static Logger logger = Logger.getLogger(Environment.class.getName());
 
 	public static final String PROP_ATTACH_MAX_FILE_SIZE = "max-file-size";
-	public static final String PROP_ATTACH_TEMP_DIR = "tmp-dir";
-	public static final String PROP_ATTACH_TIMESTAMP = "attachment-timestamp";
-	public static final String PROP_ATTACH_TYPE = "attachment-type";
-	public static final String PROP_ATTACH_UPLOAD_DIR = "uploadDir";
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
@@ -80,7 +76,6 @@ public class Environment {
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
-	public static final String PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED = "attachment-indexing";
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
 	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jamwiki-list";
@@ -267,11 +262,6 @@ public class Environment {
 	private static void initDefaultProperties() {
 		defaults = new Properties();
 		defaults.setProperty(PROP_ATTACH_MAX_FILE_SIZE, "2000000");
-		// FIXME - make sure this is set
-		defaults.setProperty(PROP_ATTACH_TEMP_DIR, "");
-		defaults.setProperty(PROP_ATTACH_TIMESTAMP, "true");
-		defaults.setProperty(PROP_ATTACH_TYPE, "inline");
-		defaults.setProperty(PROP_ATTACH_UPLOAD_DIR, "upload");
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
@@ -313,7 +303,6 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.JAMWikiParser");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
 		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
-		defaults.setProperty(PROP_SEARCH_ATTACHMENT_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_EXTLINKS_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
 		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");

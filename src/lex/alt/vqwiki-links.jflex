@@ -100,10 +100,6 @@ framedextlink = (\[([:letter:]|[:digit:])+:{notbacktick_notsquares_tabcrlf}+\])
 noformat = (__)
 externalstart = (\[<[A-Za-z]+>\])
 externalend = (\[<\/[A-Za-z]+>\])
-attachment = (attach:{extlinkchar}+)
-attachment2 = (attach:\".+\")
-imageattachment = (attach:{extlinkchar}+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPEG|\.bmp|\.BMP))
-imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPEG|\.bmp|\.BMP)\")
 
 %state NORMAL, OFF, PRE, EXTERNAL
 
@@ -272,63 +268,6 @@ imageattachment2 = (attach:\".+(\.gif|\.jpg|\.png|\.jpeg|\.GIF|\.JPG|\.PNG|\.JPE
   link = link.substring( 0, link.indexOf("]]")).trim();
   desc = link + desc;
   return getTopicLink(link, desc);
-}
-
-<NORMAL>{imageattachment2} {
-  logger.debug( "{imageattachment2}" );
-  String displayLink = yytext();
-  int firstQuotePosition = displayLink.indexOf("\"");
-  String attachmentName = displayLink.substring(firstQuotePosition+1, displayLink.length()-1);
-  String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
-                Utilities.encodeURL( attachmentName );
-  return "<img src=\"" + link.trim() + "\"/>";
-}
-
-<NORMAL>{imageattachment} {
-  logger.debug( "{imageattachment}" );
-  String displayLink = yytext();
-  String attachmentName = displayLink.substring(7);
-  String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
-                Utilities.encodeURL( attachmentName );
-  return "<img src=\"" + link.trim() + "\"/>";
-}
-
-<NORMAL>{attachment2} {
- logger.debug( "{attachment2}" );
- String displayLink = yytext();
- int firstQuotePosition = displayLink.indexOf("\"");
- String attachmentName = displayLink.substring(firstQuotePosition+1, displayLink.length()-1);
- String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
-   Utilities.encodeURL( attachmentName );
-  StringBuffer buffer = new StringBuffer();
-  buffer.append( "<a class=\"attachmentlink\"" );
-  if( Environment.getValue( Environment.PROP_ATTACH_TYPE ).equals( "inline" ) )
-    buffer.append( " target=\"_blank\"" );
-  buffer.append( " href=\"" );
-  buffer.append(link);
-  buffer.append( "\" >att:" );
-  buffer.append( attachmentName );
-  buffer.append( "</a>" );
-  return buffer.toString();
-}
-
-
-<NORMAL>{attachment} {
- logger.debug( "{attachment}" );
- String displayLink = yytext();
- String attachmentName = displayLink.substring(7);
- String link = Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), "Special:ViewAttachment") + "?attachment=" +
-   Utilities.encodeURL( attachmentName );
-  StringBuffer buffer = new StringBuffer();
-  buffer.append( "<a class=\"attachmentlink\"" );
-  if( Environment.getValue( Environment.PROP_ATTACH_TYPE ).equals( "inline" ) )
-    buffer.append( " target=\"_blank\"" );
-  buffer.append( " href=\"" );
-  buffer.append(link);
-  buffer.append( "\" >att:" );
-  buffer.append( attachmentName );
-  buffer.append( "</a>" );
-  return buffer.toString();
 }
 
 <NORMAL>{extlink} {
