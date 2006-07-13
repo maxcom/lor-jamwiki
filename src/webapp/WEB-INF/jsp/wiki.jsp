@@ -74,11 +74,11 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ADMIN_DELETE)) {
 %>
-		<jsp:include page="adminDelete.jsp" flush="true" />
+		<jsp:include page="admin-delete.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ADMIN_UPGRADE)) {
 %>
-		<jsp:include page="adminUpgrade.jsp" flush="true" />
+		<jsp:include page="admin-upgrade.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
 %>
@@ -114,7 +114,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_RECENT_CHANGES)) {
 %>
-		<jsp:include page="recentChanges.jsp" flush="true" />
+		<jsp:include page="recent-changes.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_REGISTER)) {
 %>
@@ -126,7 +126,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_SEARCH_RESULTS)) {
 %>
-		<jsp:include page="searchResults.jsp" flush="true" />
+		<jsp:include page="search-results.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_SETUP)) {
 %>
@@ -134,7 +134,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>
-		<jsp:include page="allTopics.jsp" flush="true" />
+		<jsp:include page="all-topics.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
 %>
