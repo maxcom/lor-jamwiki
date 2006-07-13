@@ -20,11 +20,13 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Stack;
+import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility methods used with the Mediawiki lexers.
@@ -97,6 +99,10 @@ public class ParserUtil {
 			if (topic.length() <= 0) {
 				// empty brackets, no topic to display
 				return raw;
+			}
+			// FIXME - hard coding
+			if (topic.startsWith("Image:")) {
+				return ParserUtil.parseImageLink(context, virtualWiki, topic);
 			}
 			// search for topic text ("|" followed by text)
 			String text = topic.trim();
@@ -224,5 +230,35 @@ public class ParserUtil {
 				 + punctuation;
 		}
 		return html;
+	}
+
+	/**
+	 *
+	 */
+	protected static String parseImageLink(String context, String virtualWiki, String topic) throws Exception {
+		StringTokenizer tokens = new StringTokenizer(topic, "|");
+		if (tokens.countTokens() >= 1) topic = tokens.nextToken();
+		boolean thumb = false;
+		boolean frame = false;
+		String caption = null;
+		String align = null;
+		while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken();
+			if (!StringUtils.hasText(token)) continue;
+			if (token.equalsIgnoreCase("noframe")) {
+				frame = false;
+			} else if (token.equalsIgnoreCase("frame")) {
+				frame = true;
+			} else if (token.equalsIgnoreCase("thumb")) {
+				thumb = true;
+			} else if (token.equalsIgnoreCase("right")) {
+				align = "right";
+			} else if (token.equalsIgnoreCase("left")) {
+				align = "left";
+			} else {
+				caption = token;
+			}
+		}
+		return Utilities.buildImageLink(context, virtualWiki, topic, frame, thumb, align, caption, false);
 	}
 }

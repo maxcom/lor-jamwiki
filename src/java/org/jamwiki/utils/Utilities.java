@@ -68,14 +68,43 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String buildImageLink(String virtualWiki, String topicName) throws Exception {
+	public static String buildImageLink(String context, String virtualWiki, String topicName) throws Exception {
+		return Utilities.buildImageLink(context, virtualWiki, topicName, false, false, null, null, true);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildImageLink(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, boolean suppressLink) throws Exception {
 		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			// doesn't exist, return topic name as text
 			return topicName;
 		}
-		String url = "<img src=\"" + "/files/" + Utilities.encodeURL(wikiFile.getUrl()) + "\" />";
-		return url;
+		String html = "";
+		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + Utilities.buildWikiLink(context, virtualWiki, topicName) + "\">";
+		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
+			html += "<div ";
+			if (thumb) {
+				html += "class=\"imgthumb\"";
+			} else if (align != null && align.equalsIgnoreCase("right")) {
+				html += "class=\"imgright\"";
+			} else if (align != null && align.equalsIgnoreCase("left")) {
+				html += "class=\"imgleft\"";
+			} else if (frame) {
+				html += "class=\"imgleft\"";
+			}
+			html += "\">";
+		}
+		html += "<img class=\"wikiimg\" src=\"" + "/files/" + Utilities.encodeURL(wikiFile.getUrl()) + "\" />";
+		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
+			if (StringUtils.hasText(caption)) {
+				html += "<div class=\"imgcaption\">" + caption + "</div>";
+			}
+			html += "</div>";
+		}
+		if (!suppressLink) html += "</a>";
+		return html;
 	}
 
 	/**
