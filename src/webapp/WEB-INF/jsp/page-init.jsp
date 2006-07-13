@@ -28,6 +28,8 @@
 <jamwiki:setPageEncoding />
 <%
 response.setLocale(request.getLocale());
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
 <%
