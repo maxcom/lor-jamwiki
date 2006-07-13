@@ -126,7 +126,8 @@ public class UploadServlet extends JAMWikiServlet {
 			throw new Exception("No file found");
 		}
 		// FIXME - hard coding
-		topic.setName("Image:" + Utilities.decodeURL(fileName));
+		String topicName = "Image:" + Utilities.decodeURL(fileName);
+		topic.setName(topicName);
 		wikiFile.setFileName(fileName);
 		wikiFile.setUrl(url);
 		wikiFileVersion.setUrl(url);
@@ -140,8 +141,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getHandler().writeFile(wikiFile, wikiFileVersion);
-		// FIXME - should redirect to the image page
-		view(request, next);
+		viewTopic(request, next, topicName);
 	}
 
 	/**
