@@ -28,7 +28,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.eq
 %>
 <%-- FIXME - hard coding --%>
 <blockquote><hr /><font color="red">Preview: changes have not been saved</font><hr /></blockquote>
-<div id="content-article"><c:out value="${preview}" escapeXml="false" /></div>
+<%@ include file="view-topic.jsp" %>
 <%
 }
 %>

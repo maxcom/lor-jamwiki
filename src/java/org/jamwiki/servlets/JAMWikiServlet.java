@@ -72,6 +72,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String PARAMETER_SPECIAL = "special";
 	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
+	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
 	public static final String PARAMETER_USER = "user";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String USER_COOKIE = "user-cookie";
@@ -387,8 +388,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 			contents = WikiBase.parse(parserInfo, topic.getTopicContent(), topicName);
 			// search servlet highlights search terms, so add that here
 			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
+			topic.setTopicContent(contents);
 		}
-		next.addObject("contents", contents);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);
 		this.pageInfo.setPageTitle(topicName);
 		this.pageInfo.setTopicName(topicName);
 	}

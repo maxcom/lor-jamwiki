@@ -146,7 +146,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else {
 %>
-		<div id="content-article"><c:out value="${contents}" escapeXml="false" /></div>
+		<%@ include file="view-topic.jsp" %>
 <%
 }
 %>
