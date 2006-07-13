@@ -32,6 +32,8 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -83,7 +85,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (topic.getTopicId() <= 0) {
 			int topicId = DatabaseHandler.queryHandler.nextTopicId();
 			topic.setTopicId(topicId);
-			logger.info("nextId " + topicId + " / topic.getTopicId() " + topic.getTopicId());
 			DatabaseHandler.queryHandler.insertTopic(topic);
 		} else {
 			DatabaseHandler.queryHandler.updateTopic(topic);
@@ -112,6 +113,34 @@ public class DatabaseHandler extends PersistencyHandler {
 		int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId();
 		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWikiId, virtualWikiName);
 		DatabaseHandler.loadVirtualWikiHashes();
+	}
+
+	/**
+	 *
+	 */
+	protected void addWikiFile(WikiFile wikiFile) throws Exception {
+		if (wikiFile.getFileId() <= 0) {
+			int fileId = DatabaseHandler.queryHandler.nextWikiFileId();
+			wikiFile.setFileId(fileId);
+			DatabaseHandler.queryHandler.insertWikiFile(wikiFile);
+		} else {
+			DatabaseHandler.queryHandler.updateWikiFile(wikiFile);
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected void addWikiFileVersion(String virtualWiki, String wikiFileName, WikiFileVersion wikiFileVersion) throws Exception {
+		if (wikiFileVersion.getFileVersionId() < 1) {
+			int fileVersionId = DatabaseHandler.queryHandler.nextWikiFileVersionId();
+			wikiFileVersion.setFileVersionId(fileVersionId);
+		}
+		if (wikiFileVersion.getUploadDate() == null) {
+			Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
+			wikiFileVersion.setUploadDate(uploadDate);
+		}
+		DatabaseHandler.queryHandler.insertWikiFileVersion(wikiFileVersion);
 	}
 
 	/**

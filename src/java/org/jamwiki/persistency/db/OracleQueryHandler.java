@@ -99,6 +99,10 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 		"select jam_topic_seq.nextval as topic_id from dual ";
 	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
 		"select jam_topic_version_seq.nextval as topic_version_id from dual ";
+	private static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
+		"select jam_file_seq.nextval as file_id from dual ";
+	private static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
+		"select jam_file_version_seq.nextval as file_version_id from dual ";
 	private static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
 		"select jam_wiki_user_seq.nextval as wiki_user_id from dual ";
 
@@ -156,6 +160,22 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	public int nextVirtualWikiId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
 		return rs.getInt("virtual_wiki_id");
+	}
+
+	/**
+	 *
+	 */
+	public int nextWikiFileId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE);
+		return rs.getInt("file_id");
+	}
+
+	/**
+	 *
+	 */
+	public int nextWikiFileVersionId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE);
+		return rs.getInt("file_version_id");
 	}
 
 	/**

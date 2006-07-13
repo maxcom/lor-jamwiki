@@ -40,6 +40,8 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Encryption;
@@ -286,6 +288,22 @@ public class FileHandler extends PersistencyHandler {
 		}
 		all.add(virtualWiki);
 		FileUtils.writeLines(file, Environment.getValue(Environment.PROP_FILE_ENCODING), all);
+	}
+
+	/**
+	 *
+	 */
+	protected void addWikiFile(WikiFile wikiFile) throws Exception {
+		// FIXME - implement
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception {
+		// FIXME - implement
+		throw new UnsupportedOperationException();
 	}
 
 	/**

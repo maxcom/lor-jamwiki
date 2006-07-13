@@ -23,6 +23,8 @@ import org.jamwiki.Environment;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
@@ -110,9 +112,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_topic_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_fk_topic_ver_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_FILE_SEQUENCE =
+	protected static final String STATEMENT_CREATE_WIKI_FILE_SEQUENCE =
 		"CREATE SEQUENCE jam_file_seq ";
-	protected static final String STATEMENT_CREATE_FILE_TABLE =
+	protected static final String STATEMENT_CREATE_WIKI_FILE_TABLE =
 		"CREATE TABLE jam_file ( "
 		+   "file_id INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
@@ -128,9 +130,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_file_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
 		+   "CONSTRAINT jam_unique_file_url UNIQUE (file_url) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_FILE_VERSION_SEQUENCE =
+	protected static final String STATEMENT_CREATE_WIKI_FILE_VERSION_SEQUENCE =
 		"CREATE SEQUENCE jam_file_version_seq ";
-	protected static final String STATEMENT_CREATE_FILE_VERSION_TABLE =
+	protected static final String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE =
 		"CREATE TABLE jam_file_version ( "
 		+   "file_version_id INTEGER NOT NULL, "
 		+   "file_id INTEGER NOT NULL, "
@@ -241,8 +243,24 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ ") values ( "
 		+   "?, ? "
 		+ ") ";
+	protected static final String STATEMENT_INSERT_WIKI_FILE =
+	    "insert into jam_file ( "
+	    +   "file_id, virtual_wiki_id, file_name, "
+	    +   "file_url, mime_type, topic_id, "
+	    +   "file_deleted, file_read_only, file_admin_only "
+	    + ") values ( "
+	    +   "?, ?, ?, ?, ?, ?, ?, ?, ? "
+	    + ") ";
+	protected static final String STATEMENT_INSERT_WIKI_FILE_VERSION =
+	    "insert into jam_file_version ( "
+	    +   "file_version_id, file_id, upload_comment, "
+	    +   "file_url, wiki_user_id, wiki_user_ip_address, "
+	    +   "upload_date, mime_type "
+	    + ") values ( "
+	    +   "?, ?, ?, ?, ?, ?, ?, ? "
+	    + ") ";
 	protected static final String STATEMENT_INSERT_WIKI_USER =
-		"insert into jam_wiki_user ("
+		"insert into jam_wiki_user ( "
 		+   "wiki_user_id, login, display_name, create_date, "
 		+   "last_login_date, create_ip_address, last_login_ip_address, "
 		+   "is_admin "
@@ -296,6 +314,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		"select * from jam_virtual_wiki ";
 	protected static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
 		"select nextval('jam_virtual_wiki_seq') as virtual_wiki_id ";
+	protected static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
+		"select nextval('jam_file_seq') as file_id ";
+	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
+		"select nextval('jam_file_version_seq') as file_version_id ";
 	protected static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
 		"select nextval('jam_wiki_user_seq') as wiki_user_id ";
 	protected static final String STATEMENT_SELECT_WIKI_USER =
@@ -364,6 +386,17 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "topic_lock_session_key = ?, "
 		+ "topic_deleted = ? "
 		+ "where topic_id = ? ";
+	protected static final String STATEMENT_UPDATE_WIKI_FILE =
+		"update jam_file set "
+		+ "virtual_wiki_id = ?, "
+		+ "file_name = ?, "
+		+ "file_url = ?, "
+		+ "mime_type = ?, "
+		+ "topic_id = ?, "
+		+ "file_deleted = ?, "
+		+ "file_read_only = ?, "
+		+ "file_admin_only = ? "
+		+ "where file_id = ? ";
 	protected static final String STATEMENT_UPDATE_WIKI_USER =
 		"update jam_wiki_user set "
 		+ "login = ?, "
@@ -400,10 +433,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_VERSION_SEQUENCE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_SEQUENCE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_SEQUENCE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
@@ -579,6 +612,44 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public void insertWikiFile(WikiFile wikiFile) throws Exception {
+		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(wikiFile.getVirtualWiki());
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE);
+		stmt.setInt(1, wikiFile.getFileId());
+		stmt.setInt(2, virtualWikiId);
+		stmt.setString(3, wikiFile.getFileName());
+		stmt.setString(4, wikiFile.getUrl());
+		stmt.setString(5, wikiFile.getMimeType());
+		stmt.setInt(6, wikiFile.getTopicId());
+		stmt.setChar(7, (wikiFile.getDeleted() ? '1' : '0'));
+		stmt.setChar(8, (wikiFile.getReadOnly() ? '1' : '0'));
+		stmt.setChar(9, (wikiFile.getAdminOnly() ? '1' : '0'));
+		stmt.executeUpdate();
+	}
+
+	/**
+	 *
+	 */
+	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE_VERSION);
+		stmt.setInt(1, wikiFileVersion.getFileVersionId());
+		stmt.setInt(2, wikiFileVersion.getFileId());
+		stmt.setString(3, wikiFileVersion.getUploadComment());
+		stmt.setString(4, wikiFileVersion.getUrl());
+		if (wikiFileVersion.getAuthorId() != null) {
+			stmt.setInt(5, wikiFileVersion.getAuthorId().intValue());
+		} else {
+			stmt.setNull(5, Types.INTEGER);
+		}
+		stmt.setString(6, wikiFileVersion.getAuthorIpAddress());
+		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
+		stmt.setString(8, wikiFileVersion.getMimeType());
+		stmt.executeUpdate();
+	}
+
+	/**
+	 *
+	 */
 	public void insertWikiUser(WikiUser user) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
 		stmt.setInt(1, user.getUserId());
@@ -690,6 +761,22 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public int nextWikiFileId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE);
+		return rs.getInt("file_id");
+	}
+
+	/**
+	 *
+	 */
+	public int nextWikiFileVersionId() throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE);
+		return rs.getInt("file_version_id");
+	}
+
+	/**
+	 *
+	 */
 	public int nextWikiUserId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
 		return rs.getInt("wiki_user_id");
@@ -755,6 +842,24 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(8, topic.getLockSessionKey());
 		stmt.setChar(9, (topic.getDeleted() ? '1' : '0'));
 		stmt.setInt(10, topic.getTopicId());
+		stmt.executeUpdate();
+	}
+
+	/**
+	 *
+	 */
+	public void updateWikiFile(WikiFile wikiFile) throws Exception {
+		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(wikiFile.getVirtualWiki());
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_FILE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setString(2, wikiFile.getFileName());
+		stmt.setString(3, wikiFile.getUrl());
+		stmt.setString(4, wikiFile.getMimeType());
+		stmt.setInt(5, wikiFile.getTopicId());
+		stmt.setChar(6, (wikiFile.getDeleted() ? '1' : '0'));
+		stmt.setChar(7, (wikiFile.getReadOnly() ? '1' : '0'));
+		stmt.setChar(8, (wikiFile.getAdminOnly() ? '1' : '0'));
+		stmt.setInt(9, wikiFile.getFileId());
 		stmt.executeUpdate();
 	}
 

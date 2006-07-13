@@ -27,10 +27,6 @@
 	<td><input type="file" name="contents" size="50" /></td>
 </tr>
 <tr>
-	<td>Destination Filename:</td>
-	<td><input type="text" name="destination" size="50" /></td>
-</tr>
-<tr>
 	<td>File Description:</td>
 	<td><textarea name="description" rows="6" cols="80"></textarea></td>
 </tr>

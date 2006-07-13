@@ -18,13 +18,19 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
+import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -40,7 +46,12 @@ public class UploadServlet extends JAMWikiServlet {
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
-			upload(request, next);
+			String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
+			if (contentType.indexOf("multipart") != -1) {
+				upload(request, next);
+			} else {
+				view(request, next);
+			}
 		} catch (Exception e) {
 			viewError(request, next, e);
 		}
@@ -51,7 +62,7 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void upload(HttpServletRequest request, ModelAndView next) throws Exception {
+	private Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
 		// Create a factory for disk-based file items
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		// Set factory constraints
@@ -62,24 +73,79 @@ public class UploadServlet extends JAMWikiServlet {
 		// Set overall request size constraint
 		upload.setSizeMax(100000); // 100k
 		// Parse the request
-		List items = upload.parseRequest(request);
-		// Process the uploaded items
-		Iterator iter = items.iterator();
-		while (iter.hasNext()) {
-			FileItem item = (FileItem) iter.next();
+		return upload.parseRequest(request).iterator();
+	}
+
+	/**
+	 *
+	 */
+	private void upload(HttpServletRequest request, ModelAndView next) throws Exception {
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		WikiUser user = Utilities.currentUser(request);
+		Iterator iterator = processMultipartRequest(request);
+		Topic topic = new Topic();
+		topic.setVirtualWiki(virtualWiki);
+		topic.setTopicType(Topic.TYPE_IMAGE);
+		WikiFile wikiFile = new WikiFile();
+		wikiFile.setVirtualWiki(virtualWiki);
+		WikiFileVersion wikiFileVersion = new WikiFileVersion();
+		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
+		TopicVersion topicVersion = new TopicVersion();
+		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
+		if (user != null) {
+			topicVersion.setAuthorId(new Integer(user.getUserId()));
+			wikiFileVersion.setAuthorId(new Integer(user.getUserId()));
+		}
+		String fileName = null;
+		String url = null;
+		while (iterator.hasNext()) {
+			FileItem item = (FileItem)iterator.next();
+			String fieldName = item.getFieldName();
 			if (item.isFormField()) {
-				String name = item.getFieldName();
-				String value = item.getString();
+				if (fieldName.equals("description")) {
+					wikiFileVersion.setUploadComment(item.getString());
+					topicVersion.setEditComment(item.getString());
+					// FIXME - these should be parsed
+					topicVersion.setVersionContent(item.getString());
+					topic.setTopicContent(item.getString());
+				}
 			} else {
-				String fieldName = item.getFieldName();
-				String fileName = item.getName();
+				fieldName = item.getFieldName();
+				fileName = item.getName();
+				url = "files/" + fileName;
 				String contentType = item.getContentType();
 				boolean isInMemory = item.isInMemory();
 				long sizeInBytes = item.getSize();
-				File uploadedFile = new File("e:/tmp/upload.test");
+				File uploadedFile = new File("e:/www/jamwiki.org/files/" + fileName);
 				item.write(uploadedFile);
 			}
 		}
+		if (fileName == null) {
+			throw new Exception("No file found");
+		}
+		// FIXME - hard coding
+		topic.setName("Image:" + fileName);
+		wikiFile.setFileName(fileName);
+		wikiFile.setUrl(url);
+		wikiFileVersion.setUrl(url);
+		// FIXME - determine this
+		wikiFile.setMimeType("text/html");
+		wikiFileVersion.setMimeType("text/html");
+		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
+			WikiBase.getHandler().writeTopic(topic, topicVersion);
+		} else {
+			topic = WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName());
+		}
+		wikiFile.setTopicId(topic.getTopicId());
+		WikiBase.getHandler().writeFile(wikiFile, wikiFileVersion);
+		// FIXME - should redirect to the image page
+		view(request, next);
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		// FIXME - hard coding
 		this.pageInfo.setPageTitle("File Upload");
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPLOAD);

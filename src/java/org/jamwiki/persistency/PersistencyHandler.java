@@ -30,6 +30,8 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseNotify;
@@ -74,6 +76,16 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected abstract void addVirtualWiki(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
+	protected abstract void addWikiFile(WikiFile wikiFile) throws Exception;
+
+	/**
+	 *
+	 */
+	protected abstract void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception;
 
 	/**
 	 *
@@ -522,6 +534,18 @@ public abstract class PersistencyHandler {
 		topic.setLockedDate(null);
 		topic.setLockedBy(null);
 		addTopic(topic);
+	}
+
+	/**
+	 *
+	 */
+	public synchronized void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception {
+		addWikiFile(wikiFile);
+		wikiFileVersion.setFileId(wikiFile.getFileId());
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
+			// write version
+			addWikiFileVersion(wikiFile.getVirtualWiki(), wikiFile.getFileName(), wikiFileVersion);
+		}
 	}
 
 	/**

@@ -132,7 +132,6 @@ public class EditServlet extends JAMWikiServlet {
 		} else {
 			contents = WikiBase.readRaw(virtualWiki, topicName);
 		}
-		String displayName = request.getRemoteAddr();
 		WikiUser user = Utilities.currentUser(request);
 		ParserInfo parserInfo = new ParserInfo();
 		parserInfo.setContext(request.getContextPath());
@@ -223,7 +222,6 @@ public class EditServlet extends JAMWikiServlet {
 			throw new Exception("The topic " + topicName + " has no content");
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
-		String displayName = request.getRemoteAddr();
 		WikiUser user = Utilities.currentUser(request);
 		ParserInfo parserInfo = new ParserInfo();
 		parserInfo.setContext(request.getContextPath());

@@ -19,6 +19,8 @@ package org.jamwiki.persistency.db;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 
 /**
@@ -94,6 +96,16 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public void insertWikiFile(WikiFile wikiFile) throws Exception;
+
+	/**
+	 *
+	 */
+	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion) throws Exception;
+
+	/**
+	 *
+	 */
 	public void insertWikiUser(WikiUser user) throws Exception;
 
 	/**
@@ -149,6 +161,16 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public int nextWikiFileId() throws Exception;
+
+	/**
+	 *
+	 */
+	public int nextWikiFileVersionId() throws Exception;
+
+	/**
+	 *
+	 */
 	public int nextWikiUserId() throws Exception;
 
 	/**
@@ -160,6 +182,11 @@ public interface QueryHandler {
 	 *
 	 */
 	public void updateTopic(Topic topic) throws Exception;
+
+	/**
+	 *
+	 */
+	public void updateWikiFile(WikiFile wikiFile) throws Exception;
 
 	/**
 	 *
