@@ -369,10 +369,18 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_PARSER_CLASS,
 				request.getParameter(Environment.PROP_PARSER_CLASS)
 			);
-			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_ATTACH_MAX_FILE_SIZE));
+			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
 			Environment.setIntValue(
-				Environment.PROP_ATTACH_MAX_FILE_SIZE,
+				Environment.PROP_FILE_MAX_FILE_SIZE,
 				maxFileSizeInKB * 1000
+			);
+			Environment.setValue(
+				Environment.PROP_FILE_DIR_FULL_PATH,
+				request.getParameter(Environment.PROP_FILE_DIR_FULL_PATH)
+			);
+			Environment.setValue(
+				Environment.PROP_FILE_DIR_RELATIVE_PATH,
+				request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH)
 			);
 			if (request.getParameter(Environment.PROP_DB_TYPE) != null) {
 				Environment.setValue(

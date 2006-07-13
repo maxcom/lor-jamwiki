@@ -96,7 +96,12 @@ public class Utilities {
 			}
 			html += "\">";
 		}
-		html += "<img class=\"wikiimg\" src=\"" + "/files/" + Utilities.encodeURL(wikiFile.getUrl()) + "\" />";
+		html += "<img class=\"wikiimg\" src=\"";
+		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
+		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
+		if (!html.endsWith("/")) html += "/";
+		html += Utilities.encodeURL(wikiFile.getUrl());
+		html += "\" />";
 		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
 			if (StringUtils.hasText(caption)) {
 				html += "<div class=\"imgcaption\">" + caption + "</div>";

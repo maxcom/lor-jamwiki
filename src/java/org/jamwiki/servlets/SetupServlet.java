@@ -102,6 +102,8 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private void setProperties(HttpServletRequest request, ModelAndView next) throws Exception {
 		Environment.setValue(Environment.PROP_BASE_FILE_DIR, request.getParameter(Environment.PROP_BASE_FILE_DIR));
+		Environment.setValue(Environment.PROP_FILE_DIR_FULL_PATH, request.getParameter(Environment.PROP_FILE_DIR_FULL_PATH));
+		Environment.setValue(Environment.PROP_FILE_DIR_RELATIVE_PATH, request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH));
 		int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 		if (persistenceType == WikiBase.FILE) {
 			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
@@ -140,6 +142,12 @@ public class SetupServlet extends JAMWikiServlet {
 			// invalid base directory
 			// FIXME - hard coding
 			errors.add(Environment.getValue(Environment.PROP_BASE_FILE_DIR) + " is not a valid directory");
+		}
+		File fullDir = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
+		if (!fullDir.exists()) {
+			// invalid base directory
+			// FIXME - hard coding
+			errors.add(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH) + " is not a valid directory");
 		}
 		if (!StringUtils.hasText(user.getLogin())) {
 			user.setLogin("");

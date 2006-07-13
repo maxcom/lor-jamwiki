@@ -28,7 +28,7 @@
 <%@ include file="page-init.jsp" %>
 
 <%
-int maximumFileSize = (int)((float)Environment.getIntValue(Environment.PROP_ATTACH_MAX_FILE_SIZE)/1000);
+int maximumFileSize = (int)((float)Environment.getIntValue(Environment.PROP_FILE_MAX_FILE_SIZE)/1000);
 %>
 
 <script type="text/javascript">
@@ -142,7 +142,7 @@ function onUserGroupType() {
     </tr>
 
     <tr>
-      <td class="normal"><f:message key="admin.caption.recentchangesdays"/></td>
+      <td class="normal"><f:message key="admin.caption.recentchangesdefault"/></td>
       <td class="normal">
         <input type="text" name="<%= Environment.PROP_RECENT_CHANGES_DAYS %>" size="3" maxlength="3" value="<%= Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS) %>">
       </td>
@@ -243,12 +243,6 @@ function onUserGroupType() {
       <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.persistenceheader"/></td>
     </tr>
 
-    <tr>
-      <td class="normal"><f:message key="admin.caption.maxfilesize"/></td>
-      <td class="normal">
-        <input type="text" name="<%= Environment.PROP_ATTACH_MAX_FILE_SIZE %>" value="<%= maximumFileSize %>" size="10">
-      </td>
-    </tr>
    <tr>
       <td class="normal"><f:message key="admin.caption.filedir"/></td>
       <td class="normal">
@@ -397,6 +391,29 @@ function onUserGroupType() {
 	  </td>
 	</tr>
 <!-- END DATABASE-PERSISTENCE -->
+
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+      <td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.uploadheader" /></td>
+    </tr>
+    <tr>
+      <td class="normal"><f:message key="admin.caption.maxfilesize"/></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" value="<%= maximumFileSize %>" size="10">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.uploaddir" /></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH) %>" size="50">
+      </td>
+    </tr>
+   <tr>
+      <td class="normal"><f:message key="admin.caption.uploaddirrel" /></td>
+      <td class="normal">
+        <input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50">
+      </td>
+    </tr>
 
 <%--
 FIXME - LDAP not supported at the moment, comment this out

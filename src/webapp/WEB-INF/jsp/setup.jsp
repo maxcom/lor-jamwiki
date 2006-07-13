@@ -53,12 +53,12 @@ function onPersistenceType() {
 <c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td><f:message key="admin.caption.filedir"/>:</td>
-	<td><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= Environment.getValue(Environment.PROP_BASE_FILE_DIR) %>" size="50"></td>
+	<td><f:message key="admin.caption.filedir" />:</td>
+	<td><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= Environment.getValue(Environment.PROP_BASE_FILE_DIR) %>" size="50" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td><f:message key="admin.caption.persistence"/></td>
+	<td><f:message key="admin.caption.persistence" />:</td>
 	<td>
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
 		<option value="<%=WikiBase.FILE%>"<%= WikiBase.getPersistenceType() == WikiBase.FILE ? " selected" : "" %>><f:message key="admin.persistencetype.flatfile"/></option>
@@ -67,11 +67,11 @@ function onPersistenceType() {
 	</td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.databasedriver"/></td>
+	<td><f:message key="admin.caption.databasedriver" />:</td>
 	<td><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50"></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.databasetype"/></td>
+	<td><f:message key="admin.caption.databasetype" />:</td>
 	<td>
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<option value="mysql"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql") ? " selected" : "" %>>mysql</option>
@@ -82,30 +82,37 @@ function onPersistenceType() {
 	</td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.databaseurl"/></td>
+	<td><f:message key="admin.caption.databaseurl" />:</td>
 	<td><input type="text" name="<%= Environment.PROP_DB_URL %>" id="<%= Environment.PROP_DB_URL %>" value="<%= Environment.getValue(Environment.PROP_DB_URL) %>" size="50"></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.databaseuser"/></td>
+	<td><f:message key="admin.caption.databaseuser" />:</td>
 	<td><input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15"></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.databasepass"/></td>
+	<td><f:message key="admin.caption.databasepass" />:</td>
 	<td><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="15"></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
-<%-- FIXME - hard coding --%>
-
 <tr>
-	<td>Admin User Login:</td>
+	<td><f:message key="admin.caption.uploaddir" />:</td>
+	<td><input type="text" name="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH) %>" size="50" /></td>
+</tr>
+<tr>
+	<td><f:message key="admin.caption.uploaddirrel" />:</td>
+	<td><input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50" /></td>
+</tr>
+<tr><td colspan="2">&#160;</td></tr>
+<tr>
+	<td><f:message key="admin.caption.adminlogin"/>:</td>
 	<td><input type="text" name="login" value="<c:out value="${login}" />" /></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.newpassword"/></td>
+	<td><f:message key="admin.caption.newpassword"/>:</td>
 	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" /></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.confirmpassword" /></td>
+	<td><f:message key="admin.caption.confirmpassword" />:</td>
 	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>

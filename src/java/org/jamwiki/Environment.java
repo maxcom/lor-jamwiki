@@ -40,7 +40,6 @@ public class Environment {
 
 	static Logger logger = Logger.getLogger(Environment.class.getName());
 
-	public static final String PROP_ATTACH_MAX_FILE_SIZE = "max-file-size";
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
@@ -71,7 +70,10 @@ public class Environment {
 	public static final String PROP_EMAIL_SMTP_PASSWORD = "smtp-password";
 	public static final String PROP_EMAIL_SMTP_USERNAME = "smtp-username";
 	public static final String PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY = "supress-notify-within-same-day";
+	public static final String PROP_FILE_DIR_FULL_PATH = "file-dir-full-path";
+	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
 	public static final String PROP_FILE_ENCODING = "file-encoding";
+	public static final String PROP_FILE_MAX_FILE_SIZE = "max-file-size";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_TOC = "allow-toc";
@@ -138,6 +140,23 @@ public class Environment {
 			 return Integer.parseInt(value);
 		} catch (Exception e) {
 			logger.info("Invalid integer property " + name + " with value " + value);
+		}
+		// FIXME - should this otherwise indicate an invalid property?
+		return -1;
+	}
+
+	/**
+	 * Get the value of a long property.
+	 *
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @return The value of the property.
+	 */
+	public static long getLongValue(String name) {
+		String value = getValue(name);
+		try {
+			 return Long.parseLong(value);
+		} catch (Exception e) {
+			logger.info("Invalid long property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return -1;
@@ -261,7 +280,6 @@ public class Environment {
 	 */
 	private static void initDefaultProperties() {
 		defaults = new Properties();
-		defaults.setProperty(PROP_ATTACH_MAX_FILE_SIZE, "2000000");
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
@@ -298,7 +316,11 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
 		defaults.setProperty(PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY, "false");
+		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, "");
+		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, "");
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
+		// size is in bytes
+		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.JAMWikiParser");
 		defaults.setProperty(PROP_PARSER_TOC, "false");

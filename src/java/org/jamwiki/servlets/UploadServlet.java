@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -65,14 +66,9 @@ public class UploadServlet extends JAMWikiServlet {
 	private Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
 		// Create a factory for disk-based file items
 		DiskFileItemFactory factory = new DiskFileItemFactory();
-		// Set factory constraints
-		factory.setSizeThreshold(100000); // 100k
-		factory.setRepository(new File("e:/tmp"));
-		// Create a new file upload handler
+		factory.setRepository(new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
 		ServletFileUpload upload = new ServletFileUpload(factory);
-		// Set overall request size constraint
-		upload.setSizeMax(100000); // 100k
-		// Parse the request
+		upload.setSizeMax(Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		return upload.parseRequest(request).iterator();
 	}
 
@@ -80,6 +76,11 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void upload(HttpServletRequest request, ModelAndView next) throws Exception {
+		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
+		if (!file.exists()) {
+			// FIXME - hard coding
+			throw new Exception("Uploads not supported, no valid directory to upload into");
+		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = Utilities.currentUser(request);
 		Iterator iterator = processMultipartRequest(request);
@@ -118,7 +119,7 @@ public class UploadServlet extends JAMWikiServlet {
 				String contentType = item.getContentType();
 				boolean isInMemory = item.isInMemory();
 				long sizeInBytes = item.getSize();
-				File uploadedFile = new File("e:/www/jamwiki.org/files/" + fileName);
+				File uploadedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), fileName);
 				item.write(uploadedFile);
 			}
 		}
