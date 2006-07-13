@@ -151,6 +151,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("minorEdit", new Boolean(minorEdit));
 		if (isPreview(request)) {
 			Topic previewTopic = new Topic();
+			previewTopic.setName(topicName);
 			previewTopic.setTopicContent(preview);
 			next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, previewTopic);
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
