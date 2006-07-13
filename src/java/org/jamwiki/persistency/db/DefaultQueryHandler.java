@@ -145,15 +145,12 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_file_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_unique_file_ver_url UNIQUE (file_url) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_IMAGE_SEQUENCE =
-		"CREATE SEQUENCE jam_image_seq ";
 	protected static final String STATEMENT_CREATE_IMAGE_TABLE =
 		"CREATE TABLE jam_image ( "
-		+   "image_id INTEGER NOT NULL, "
 		+   "file_version_id INTEGER NOT NULL, "
 		+   "width INTEGER NOT NULL, "
 		+   "height INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_image PRIMARY KEY (image_id), "
+		+   "CONSTRAINT jam_pk_image PRIMARY KEY (file_version_id), "
 		+   "CONSTRAINT jam_fk_image_file_ver FOREIGN KEY (file_version_id) REFERENCES jam_file_version(file_version_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_SEQUENCE =
@@ -407,7 +404,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_VERSION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
