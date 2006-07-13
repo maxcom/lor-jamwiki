@@ -46,6 +46,15 @@
     </attribute>
   </tag>
   <tag>
+    <name>image</name>
+    <tag-class>org.jamwiki.tags.ImageLinkTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+    </attribute>
+  </tag>
+  <tag>
     <name>link</name>
     <tag-class>org.jamwiki.tags.LinkTag</tag-class>
     <body-content>JSP</body-content>

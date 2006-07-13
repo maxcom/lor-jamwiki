@@ -19,6 +19,6 @@
 <c:if test="${!empty topicObject}">
 <div id="content-article">
 <%-- FIXME - ugly, clean this up --%>
-<c:if test="${topicObject.topicType == 4}"><%= Utilities.buildImageLink("en", "Image:meat massacre03.jpg") %></c:if>
+<jamwiki:image value="${topicObject.name}" />
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
 </c:if>
