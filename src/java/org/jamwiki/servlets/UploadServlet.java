@@ -112,7 +112,9 @@ public class UploadServlet extends JAMWikiServlet {
 			} else {
 				fieldName = item.getFieldName();
 				fileName = item.getName();
-				url = "files/" + fileName;
+				// decode, then encode to ensure that any previously encoded characters
+				// aren't encoded twice
+				url = "files/" + Utilities.encodeURL(Utilities.decodeURL(fileName));
 				String contentType = item.getContentType();
 				boolean isInMemory = item.isInMemory();
 				long sizeInBytes = item.getSize();
@@ -124,7 +126,7 @@ public class UploadServlet extends JAMWikiServlet {
 			throw new Exception("No file found");
 		}
 		// FIXME - hard coding
-		topic.setName("Image:" + fileName);
+		topic.setName("Image:" + Utilities.decodeURL(fileName));
 		wikiFile.setFileName(fileName);
 		wikiFile.setUrl(url);
 		wikiFileVersion.setUrl(url);
