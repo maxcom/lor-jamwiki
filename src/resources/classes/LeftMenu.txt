@@ -6,8 +6,9 @@
 * [[Special:OrphanedTopics|Orphaned Topics]]
 * [[Special:ToDoTopics|To Do Topics]]
 * [[Special:LockList|Lock List]]
-* [[Special:RSS|RSS]]
+* [[Special:Upload|Upload File]]
 * [[AdminOnlyTopics]]
 ----
 * [http://jamwiki.org/ JAMWiki]
+* [http://sourceforge.net/projects/jamwiki/ Sourceforge Page]
 * [http://mediawiki.org/ MediaWiki]

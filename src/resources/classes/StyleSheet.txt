@@ -176,6 +176,44 @@ td.navigation {
 	background: #f9f8f9;
 }
 
+/* images */
+
+img.wikiimg {
+	border: 0px;
+}
+
+a.wikiimg {
+	text-decoration: none;
+	color: inherit;
+	font-weight: inherit;
+}
+
+div.imgcaption {
+	padding: 0.3em 0em 0.2em 0em;
+	text-align: left;
+}
+
+div.imgleft {
+	border: 1px solid #bbbbbb;
+	float: left;
+	padding: 0.3em;
+	margin: 0.3em 0.3em 0.3em 0em;
+}
+
+div.imgright {
+	float: right;
+	border: 1px solid #bbbbbb;
+	padding: 0.3em;
+	margin: 0.3em 0em 0.3em 0.3em;
+}
+
+div.imgthumb {
+	float: right;
+	border: 1px solid #bbbbbb;
+	padding: 0.3em;
+	margin: 0.3em 0em 0.3em 0.3em;
+}
+
 /* diff page */
 
 table.diff {
@@ -280,6 +318,12 @@ td.menu-user {
 	width: 5px;
 }
 
+/* topic pages */
+
+#content-article {
+	padding: 10px 0px 10px 0px;
+}
+
 /* footer */
 
 td.footer {
@@ -310,29 +354,6 @@ td.footer {
   font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: larger;
-}
-
-.menu{
-  margin-left: 0%;
-  margin-right: 0%;
-  background: #bbbbbb;
-  color: #dddddd;
-}
-
-.menu a{
-  color: #ffffff;
-}
-
-.menu a:hover {
- color: #5555bb;
- text-decoration: none
-}
-
-.menuinactive {
-	font-family: Trebuchet MS, Verdana, Helvetica, sans-serif;
-	font-weight: bold;
-	text-decoration: none;
-	color: #aaaaaa;
 }
 
 .backlinks{
