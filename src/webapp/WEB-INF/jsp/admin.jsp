@@ -587,6 +587,8 @@ FIXME - LDAP not supported at the moment, comment this out
   <input type="hidden" name="function" value="addVirtualWiki">
   <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
+<%--
+FIXME - Hide panic code for now
 <hr/>
 <p class="subHeader"><f:message key="admin.title.panic"/></p>
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
@@ -601,4 +603,5 @@ FIXME - LDAP not supported at the moment, comment this out
   <input type="hidden" name="function" value="panic">
   <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
+--%>
 <hr/>
