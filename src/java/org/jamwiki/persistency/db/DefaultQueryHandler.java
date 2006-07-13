@@ -110,6 +110,52 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_topic_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_fk_topic_ver_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
 		+ ") ";
+	protected static final String STATEMENT_CREATE_FILE_SEQUENCE =
+		"CREATE SEQUENCE jam_file_seq ";
+	protected static final String STATEMENT_CREATE_FILE_TABLE =
+		"CREATE TABLE jam_file ( "
+		+   "file_id INTEGER NOT NULL, "
+		+   "virtual_wiki_id INTEGER NOT NULL, "
+		+   "file_name VARCHAR(200) NOT NULL, "
+		+   "file_deleted CHAR DEFAULT '0' NOT NULL, "
+		+   "file_read_only CHAR DEFAULT '0' NOT NULL, "
+		+   "file_admin_only CHAR DEFAULT '0' NOT NULL, "
+		+   "file_url VARCHAR(200) NOT NULL, "
+		+   "mime_type VARCHAR(100) NOT NULL, "
+		+   "topic_id INTEGER NOT NULL, "
+		+   "CONSTRAINT jam_pk_file PRIMARY KEY (file_id), "
+		+   "CONSTRAINT jam_fk_file_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
+		+   "CONSTRAINT jam_fk_file_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
+		+   "CONSTRAINT jam_unique_file_url UNIQUE (file_url) "
+		+ ") ";
+	protected static final String STATEMENT_CREATE_FILE_VERSION_SEQUENCE =
+		"CREATE SEQUENCE jam_file_version_seq ";
+	protected static final String STATEMENT_CREATE_FILE_VERSION_TABLE =
+		"CREATE TABLE jam_file_version ( "
+		+   "file_version_id INTEGER NOT NULL, "
+		+   "file_id INTEGER NOT NULL, "
+		+   "upload_comment VARCHAR(200), "
+		+   "file_url VARCHAR(200) NOT NULL, "
+		+   "wiki_user_id INTEGER, "
+		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
+		+   "upload_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
+		+   "mime_type VARCHAR(100) NOT NULL, "
+		+   "CONSTRAINT jam_pk_file_ver PRIMARY KEY (file_version_id), "
+		+   "CONSTRAINT jam_fk_file_ver_file FOREIGN KEY (file_id) REFERENCES jam_file(file_id), "
+		+   "CONSTRAINT jam_fk_file_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+		+   "CONSTRAINT jam_unique_file_ver_url UNIQUE (file_url) "
+		+ ") ";
+	protected static final String STATEMENT_CREATE_IMAGE_SEQUENCE =
+		"CREATE SEQUENCE jam_image_seq ";
+	protected static final String STATEMENT_CREATE_IMAGE_TABLE =
+		"CREATE TABLE jam_image ( "
+		+   "image_id INTEGER NOT NULL, "
+		+   "file_version_id INTEGER NOT NULL, "
+		+   "width INTEGER NOT NULL, "
+		+   "height INTEGER NOT NULL, "
+		+   "CONSTRAINT jam_pk_image PRIMARY KEY (image_id), "
+		+   "CONSTRAINT jam_fk_image_file_ver FOREIGN KEY (file_version_id) REFERENCES jam_file_version(file_version_id) "
+		+ ") ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_SEQUENCE =
 		"CREATE SEQUENCE jam_notification_seq ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_TABLE =
@@ -357,6 +403,12 @@ public class DefaultQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_SEQUENCE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_VERSION_SEQUENCE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_FILE_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_SEQUENCE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE);
