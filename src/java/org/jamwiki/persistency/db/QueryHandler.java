@@ -131,6 +131,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupWikiFile(String virtualWiki, int topicId) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupWikiUser(int userId) throws Exception;
 
 	/**

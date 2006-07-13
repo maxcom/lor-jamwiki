@@ -399,6 +399,30 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static WikiFile initWikiFile(WikiResultSet rs) {
+		try {
+			int virtualWikiId = rs.getInt("virtual_wiki_id");
+			String virtualWiki = lookupVirtualWikiName(virtualWikiId);
+			WikiFile wikiFile = new WikiFile();
+			wikiFile.setFileId(rs.getInt("file_id"));
+			wikiFile.setAdminOnly(rs.getChar("file_admin_only") != '0');
+			wikiFile.setFileName(rs.getString("file_name"));
+			wikiFile.setVirtualWiki(virtualWiki);
+			wikiFile.setUrl(rs.getString("file_url"));
+			wikiFile.setTopicId(rs.getInt("topic_id"));
+			wikiFile.setReadOnly(rs.getChar("file_read_only") != '0');
+			wikiFile.setDeleted(rs.getChar("file_deleted") != '0');
+			wikiFile.setMimeType(rs.getString("mime_type"));
+			return wikiFile;
+		} catch (Exception e) {
+			logger.error("Failure while initializing file", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected static WikiUser initWikiUser(WikiResultSet rs) {
 		try {
 			WikiUser user = new WikiUser();
@@ -509,6 +533,18 @@ public class DatabaseHandler extends PersistencyHandler {
 			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
 		}
 		return virtualWikiName;
+	}
+
+	/**
+	 *
+	 */
+	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
+		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
+		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) return null;
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFile(virtualWiki, topic.getTopicId());
+		if (rs.size() == 0) return null;
+		return initWikiFile(rs);
 	}
 
 	/**

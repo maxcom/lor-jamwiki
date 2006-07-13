@@ -128,7 +128,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_pk_file PRIMARY KEY (file_id), "
 		+   "CONSTRAINT jam_fk_file_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
 		+   "CONSTRAINT jam_fk_file_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_unique_file_url UNIQUE (file_url) "
+		+   "CONSTRAINT jam_unique_file_url UNIQUE (file_url), "
+		+   "CONSTRAINT jam_unique_file_topic_vwiki UNIQUE (virtual_wiki_id, topic_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_WIKI_FILE_VERSION_SEQUENCE =
 		"CREATE SEQUENCE jam_file_version_seq ";
@@ -314,6 +315,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		"select * from jam_virtual_wiki ";
 	protected static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
 		"select nextval('jam_virtual_wiki_seq') as virtual_wiki_id ";
+	protected static final String STATEMENT_SELECT_WIKI_FILE =
+		"select * from jam_file "
+		+ "where virtual_wiki_id = ? "
+		+ "and topic_id = ? ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
 		"select nextval('jam_file_seq') as file_id ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
@@ -703,6 +708,17 @@ public class DefaultQueryHandler implements QueryHandler {
 	public WikiResultSet lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION);
 		stmt.setInt(1, topicVersionId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupWikiFile(String virtualWiki, int topicId) throws Exception {
+		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, topicId);
 		return stmt.executeQuery();
 	}
 

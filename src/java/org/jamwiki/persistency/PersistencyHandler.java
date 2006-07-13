@@ -436,6 +436,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public abstract WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
 	public abstract WikiUser lookupWikiUser(int userId) throws Exception;
 
 	/**

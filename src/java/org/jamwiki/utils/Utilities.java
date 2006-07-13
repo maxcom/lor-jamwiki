@@ -39,6 +39,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
@@ -62,6 +63,19 @@ public class Utilities {
 		cookie = new Cookie(cookieName, cookieValue);
 		cookie.setMaxAge(cookieAge);
 		response.addCookie(cookie);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildImageLink(String virtualWiki, String topicName) throws Exception {
+		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
+		if (wikiFile == null) {
+			// doesn't exist, return topic name as text
+			return topicName;
+		}
+		String url = "<img src=\"" + "/files/" + Utilities.encodeURL(wikiFile.getUrl()) + "\" />";
+		return url;
 	}
 
 	/**

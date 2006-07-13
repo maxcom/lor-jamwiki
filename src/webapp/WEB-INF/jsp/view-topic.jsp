@@ -17,5 +17,8 @@
 
 --%>
 <c:if test="${!empty topicObject}">
-<div id="content-article">(<c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
+<div id="content-article">
+<%-- FIXME - ugly, clean this up --%>
+<c:if test="${topicObject.topicType == 4}"><%= Utilities.buildImageLink("en", "Image:meat massacre03.jpg") %></c:if>
+<c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
 </c:if>

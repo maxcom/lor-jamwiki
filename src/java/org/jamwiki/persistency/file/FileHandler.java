@@ -852,6 +852,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
+		// FIXME - implement
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public WikiUser lookupWikiUser(int userId) throws Exception {
 		String login = retrieveWikiUserLogin(userId);
 		return lookupWikiUser(login);

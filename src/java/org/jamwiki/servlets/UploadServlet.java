@@ -114,7 +114,7 @@ public class UploadServlet extends JAMWikiServlet {
 				fileName = item.getName();
 				// decode, then encode to ensure that any previously encoded characters
 				// aren't encoded twice
-				url = "files/" + Utilities.encodeURL(Utilities.decodeURL(fileName));
+				url = Utilities.encodeURL(Utilities.decodeURL(fileName));
 				String contentType = item.getContentType();
 				boolean isInMemory = item.isInMemory();
 				long sizeInBytes = item.getSize();
