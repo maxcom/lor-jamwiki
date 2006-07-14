@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Iterator;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -132,16 +133,16 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setFileName(fileName);
 		wikiFile.setUrl(url);
 		wikiFileVersion.setUrl(url);
-		// FIXME - determine this
-		wikiFile.setMimeType("text/html");
-		wikiFileVersion.setMimeType("text/html");
+		ServletContext context = request.getSession().getServletContext();
+		wikiFile.setMimeType(context.getMimeType(fileName));
+		wikiFileVersion.setMimeType(context.getMimeType(fileName));
 		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
 			WikiBase.getHandler().writeTopic(topic, topicVersion);
 		} else {
 			topic = WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName());
 		}
 		wikiFile.setTopicId(topic.getTopicId());
-		WikiBase.getHandler().writeFile(wikiFile, wikiFileVersion);
+		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
 		viewTopic(request, next, topicName);
 	}
 
