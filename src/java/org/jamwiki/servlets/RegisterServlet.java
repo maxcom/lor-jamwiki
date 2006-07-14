@@ -73,7 +73,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
-		this.pageInfo.setPageTitle("Account Details");
+		this.pageInfo.setPageTitle(Utilities.getMessage("register.title", request.getLocale()));
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
 		String userIdString = request.getParameter("userId");

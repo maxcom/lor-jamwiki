@@ -93,7 +93,8 @@ public class DiffServlet extends JAMWikiServlet {
 			logger.error(e);
 			throw e;
 		}
-		this.pageInfo.setPageTitle("Diff " + topicName);
+		String message = Utilities.getMessage("diff.title", request.getLocale(), topicName);
+		this.pageInfo.setPageTitle(message);
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_DIFF);
 	}
