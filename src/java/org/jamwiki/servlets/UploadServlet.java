@@ -17,6 +17,8 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -117,10 +119,19 @@ public class UploadServlet extends JAMWikiServlet {
 				// decode, then encode to ensure that any previously encoded characters
 				// aren't encoded twice
 				url = Utilities.encodeURL(Utilities.decodeURL(fileName));
+				GregorianCalendar cal = new GregorianCalendar();
+				String year = new Integer(cal.get(Calendar.YEAR)).toString();
+				String month = new Integer(cal.get(Calendar.MONTH) + 1).toString();
+				String subdirectory = "/" + year + "/" + month;
 				String contentType = item.getContentType();
 				boolean isInMemory = item.isInMemory();
 				long sizeInBytes = item.getSize();
-				File uploadedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), fileName);
+				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
+				if (!directory.exists() && !directory.mkdirs()) {
+					throw new Exception("Unable to create upload directory " + directory.getAbsolutePath());
+				}
+				url = subdirectory + "/" + url;
+				File uploadedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), url);
 				item.write(uploadedFile);
 			}
 		}

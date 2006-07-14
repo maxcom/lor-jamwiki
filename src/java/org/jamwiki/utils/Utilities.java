@@ -99,8 +99,13 @@ public class Utilities {
 		html += "<img class=\"wikiimg\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
 		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
-		if (!html.endsWith("/")) html += "/";
-		html += Utilities.encodeURL(wikiFile.getUrl());
+		String url = wikiFile.getUrl();
+		if (!html.endsWith("/") && !url.startsWith("/")) {
+			url = "/" + url;
+		} else if (html.endsWith("/") && url.startsWith("/")) {
+			url = url.substring(1);
+		}
+		html += url;
 		html += "\" />";
 		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
 			if (StringUtils.hasText(caption)) {
@@ -203,6 +208,10 @@ public class Utilities {
 				return "&lt";
 			case ('>'):
 				return "&gt";
+			case ('\"'):
+				return "&quot";
+			case ('\''):
+				return "&apos;";
 			case ('&'):
 				return "&amp";
 		}
