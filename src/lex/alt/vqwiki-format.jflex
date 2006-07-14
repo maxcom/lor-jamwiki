@@ -180,7 +180,7 @@ nbsp=_&
 }
 
 <NORMAL>"@@" {
-  return "<br>";
+  return "<br />";
 }
 
 <NORMAL, OFF, PRE>{entity}  {

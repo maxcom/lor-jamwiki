@@ -112,7 +112,7 @@ public class SearchServlet extends JAMWikiServlet {
 					contents.append("</div>");
 					if (result.getTextBefore().length() > 0 || result.getTextAfter().length() > 0
 						|| result.getFoundWord().length() > 0) {
-						contents.append("<br>");
+						contents.append("<br />");
 						contents.append(result.getTextBefore());
 						contents.append("<a style=\"background:yellow\" href=\"");
 						contents.append(
