@@ -75,7 +75,6 @@
             <webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml,**/index.jsp" />
             <zipfileset dir="${dir.src.resources}/images" prefix="images" />
             <zipfileset dir="${dir.src.resources}/js" prefix="js" />
-            <zipfileset dir="${dir.src.resources}/css" prefix="css" />
             <zipfileset file="${dir.src.jsp}/index.jsp" prefix="" />
             <zipfileset file="${basedir}/README.txt" prefix="" />
             <zipfileset file="${basedir}/CHANGELOG.txt" prefix="" />
