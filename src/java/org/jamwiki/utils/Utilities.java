@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -413,6 +414,36 @@ public class Utilities {
 	public static String getMessage(String key, Locale locale) {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
 		return messages.getString(key);
+	}
+
+	/**
+	 *
+	 */
+	public static String getMessage(String key, Locale locale, Object param1) {
+		Object[] objects = new Object[1];
+		objects[0] = param1;
+		return Utilities.getMessage(key, locale, objects);
+	}
+
+	/**
+	 *
+	 */
+	public static String getMessage(String key, Locale locale, Object param1, Object param2) {
+		Object[] objects = new Object[2];
+		objects[0] = param1;
+		objects[1] = param2;
+		return Utilities.getMessage(key, locale, objects);
+	}
+
+	/**
+	 *
+	 */
+	public static String getMessage(String key, Locale locale, Object[] objects) {
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(locale);
+		String message = Utilities.getMessage(key, locale);
+		formatter.applyPattern(message);
+		return formatter.format(objects);
 	}
 
 	/**

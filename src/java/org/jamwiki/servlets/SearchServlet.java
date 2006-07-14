@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.servlet.ServletException;
@@ -75,15 +74,13 @@ public class SearchServlet extends JAMWikiServlet {
 	 */
 	private void search(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		MessageFormat formatter = new MessageFormat("");
-		formatter.setLocale(request.getLocale());
 		try {
 			String searchField = request.getParameter("text");
 			if (request.getParameter("text") == null) {
 				this.pageInfo.setPageTitle("Special:Search");
 			} else {
-				formatter.applyPattern(Utilities.getMessage("searchresult.title", request.getLocale()));
-				this.pageInfo.setPageTitle(formatter.format(new Object[]{searchField}));
+				String message = Utilities.getMessage("searchresult.title", request.getLocale(), searchField);
+				this.pageInfo.setPageTitle(message);
 			}
 			// forward back to the search page if the request is blank or null
 			if (!StringUtils.hasText(searchField)) {
@@ -133,10 +130,8 @@ public class SearchServlet extends JAMWikiServlet {
 			} else {
 				next.addObject("text", searchField);
 				contents.append("<p>");
-				formatter = new MessageFormat("");
-				formatter.setLocale(request.getLocale());
-				formatter.applyPattern(Utilities.getMessage("searchresult.notfound", request.getLocale()));
-				contents.append(formatter.format(new Object[]{searchField}));
+				String message = Utilities.getMessage("searchresult.notfound", request.getLocale(), searchField);
+				contents.append(message);
 				contents.append("</p>");
 			}
 			next.addObject("results", contents.toString());
