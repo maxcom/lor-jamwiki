@@ -78,8 +78,8 @@ public class Utilities {
 	public static String buildImageLink(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, boolean suppressLink) throws Exception {
 		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
-			// doesn't exist, return topic name as text
-			return topicName;
+			// doesn't exist, return topic name as text IF it's an image
+			return (topicName.toLowerCase().startsWith("Image:")) ? topicName : "";
 		}
 		String html = "";
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + Utilities.buildWikiLink(context, virtualWiki, topicName) + "\">";
