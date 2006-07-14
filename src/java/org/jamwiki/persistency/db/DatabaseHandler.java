@@ -441,6 +441,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			wikiFile.setReadOnly(rs.getChar("file_read_only") != '0');
 			wikiFile.setDeleted(rs.getChar("file_deleted") != '0');
 			wikiFile.setMimeType(rs.getString("mime_type"));
+			wikiFile.setFileSize(rs.getInt("file_size"));
 			return wikiFile;
 		} catch (Exception e) {
 			logger.error("Failure while initializing file", e);
@@ -463,6 +464,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			wikiFileVersion.setUploadDate(rs.getTimestamp("upload_date"));
 			wikiFileVersion.setMimeType(rs.getString("mime_type"));
 			wikiFileVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));
+			wikiFileVersion.setFileSize(rs.getInt("file_size"));
 			return wikiFileVersion;
 		} catch (Exception e) {
 			logger.error("Failure while initializing wiki file version", e);

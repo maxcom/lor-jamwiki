@@ -87,6 +87,13 @@ public class XMLUtil {
 	/**
 	 *
 	 */
+	public static String buildTag(String tagName, long tagValue) {
+		return XMLUtil.buildTag(tagName, new Long(tagValue).toString(), false);
+	}
+
+	/**
+	 *
+	 */
 	private static String escapeXML(String text) {
 		text = StringUtils.replace(text, "&", "&amp;");
 		text = StringUtils.replace(text, "<", "&lt;");

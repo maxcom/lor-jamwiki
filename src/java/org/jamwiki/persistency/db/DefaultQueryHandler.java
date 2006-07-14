@@ -125,6 +125,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "file_url VARCHAR(200) NOT NULL, "
 		+   "mime_type VARCHAR(100) NOT NULL, "
 		+   "topic_id INTEGER NOT NULL, "
+		+   "file_size INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_file PRIMARY KEY (file_id), "
 		+   "CONSTRAINT jam_fk_file_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
 		+   "CONSTRAINT jam_fk_file_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
@@ -143,6 +144,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
 		+   "upload_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
 		+   "mime_type VARCHAR(100) NOT NULL, "
+		+   "file_size INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_file_ver PRIMARY KEY (file_version_id), "
 		+   "CONSTRAINT jam_fk_file_ver_file FOREIGN KEY (file_id) REFERENCES jam_file(file_id), "
 		+   "CONSTRAINT jam_fk_file_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
@@ -248,17 +250,18 @@ public class DefaultQueryHandler implements QueryHandler {
 	    "insert into jam_file ( "
 	    +   "file_id, virtual_wiki_id, file_name, "
 	    +   "file_url, mime_type, topic_id, "
-	    +   "file_deleted, file_read_only, file_admin_only "
+	    +   "file_deleted, file_read_only, file_admin_only, "
+	    +   "file_size "
 	    + ") values ( "
-	    +   "?, ?, ?, ?, ?, ?, ?, ?, ? "
+	    +   "?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
 	    + ") ";
 	protected static final String STATEMENT_INSERT_WIKI_FILE_VERSION =
 	    "insert into jam_file_version ( "
 	    +   "file_version_id, file_id, upload_comment, "
 	    +   "file_url, wiki_user_id, wiki_user_ip_address, "
-	    +   "upload_date, mime_type "
+	    +   "upload_date, mime_type, file_size "
 	    + ") values ( "
-	    +   "?, ?, ?, ?, ?, ?, ?, ? "
+	    +   "?, ?, ?, ?, ?, ?, ?, ?, ? "
 	    + ") ";
 	protected static final String STATEMENT_INSERT_WIKI_USER =
 		"insert into jam_wiki_user ( "
@@ -409,7 +412,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "topic_id = ?, "
 		+ "file_deleted = ?, "
 		+ "file_read_only = ?, "
-		+ "file_admin_only = ? "
+		+ "file_admin_only = ?, "
+		+ "file_size = ? "
 		+ "where file_id = ? ";
 	protected static final String STATEMENT_UPDATE_WIKI_USER =
 		"update jam_wiki_user set "
@@ -657,6 +661,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setChar(7, (wikiFile.getDeleted() ? '1' : '0'));
 		stmt.setChar(8, (wikiFile.getReadOnly() ? '1' : '0'));
 		stmt.setChar(9, (wikiFile.getAdminOnly() ? '1' : '0'));
+		stmt.setInt(10, wikiFile.getFileSize());
 		stmt.executeUpdate();
 	}
 
@@ -677,6 +682,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(6, wikiFileVersion.getAuthorIpAddress());
 		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
 		stmt.setString(8, wikiFileVersion.getMimeType());
+		stmt.setInt(9, wikiFileVersion.getFileSize());
 		stmt.executeUpdate();
 	}
 
@@ -903,7 +909,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setChar(6, (wikiFile.getDeleted() ? '1' : '0'));
 		stmt.setChar(7, (wikiFile.getReadOnly() ? '1' : '0'));
 		stmt.setChar(8, (wikiFile.getAdminOnly() ? '1' : '0'));
-		stmt.setInt(9, wikiFile.getFileId());
+		stmt.setInt(9, wikiFile.getFileSize());
+		stmt.setInt(10, wikiFile.getFileId());
 		stmt.executeUpdate();
 	}
 

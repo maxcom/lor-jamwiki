@@ -145,6 +145,21 @@ public class WikiPreparedStatement {
 	}
 
 	/**
+	 * Sets the designated parameter to the given Java int value. The driver
+	 * converts this to an SQL INTEGER value when it sends it to the database.
+	 *
+	 * @param parameterIndex The first parameter is 1, the second is 2, ...
+	 * @param x The parameter value.
+	 * @throws Exception If a parameter is invalid.
+	 */
+	public void setInt(int parameterIndex, long x) throws Exception {
+		// this is a bit kludgy - cast the long to an int.  problem for very big values.
+		this.verifyParams(parameterIndex, new Integer((int)x));
+		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
+		this.params[parameterIndex - 1] = new Integer((int)x);
+	}
+
+	/**
 	 * Sets the designated parameter to SQL NULL.
 	 *
 	 * <b>Note</b>: You must specify the parameter's SQL type.

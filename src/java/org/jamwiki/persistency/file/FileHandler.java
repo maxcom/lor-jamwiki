@@ -127,6 +127,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_WIKI_FILE_READ_ONLY = "readonly";
 	protected static final String XML_WIKI_FILE_DELETED = "deleted";
 	protected static final String XML_WIKI_FILE_MIME_TYPE = "mimetype";
+	protected static final String XML_WIKI_FILE_SIZE = "filesize";
 	protected static final String XML_WIKI_FILE_VERSION_ROOT = "revision";
 	protected static final String XML_WIKI_FILE_VERSION_ID = "id";
 	protected static final String XML_WIKI_FILE_VERSION_FILE_ID = "fileid";
@@ -137,6 +138,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS = "ip";
 	protected static final String XML_WIKI_FILE_VERSION_UPLOAD_DATE = "timestamp";
 	protected static final String XML_WIKI_FILE_VERSION_MIME_TYPE = "mimetype";
+	protected static final String XML_WIKI_FILE_VERSION_SIZE = "filesize";
 	protected static final String XML_WIKI_USER_ROOT = "wikiuser";
 	protected static final String XML_WIKI_USER_ADMIN = "admin";
 	protected static final String XML_WIKI_USER_CREATE_DATE = "createdate";
@@ -350,6 +352,8 @@ public class FileHandler extends PersistencyHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_FILE_MIME_TYPE, wikiFile.getMimeType(), true));
 		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_SIZE, wikiFile.getFileSize()));
+		content.append("\n");
 		content.append("</").append(XML_WIKI_FILE_ROOT).append(">");
 		content.append("\n");
 		content.append("</mediawiki>");
@@ -394,6 +398,8 @@ public class FileHandler extends PersistencyHandler {
 		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_DATE, wikiFileVersion.getUploadDate()));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_MIME_TYPE, wikiFileVersion.getMimeType(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_SIZE, wikiFileVersion.getFileSize()));
 		content.append("\n");
 		content.append("</").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
 		content.append("\n");
@@ -913,6 +919,8 @@ public class FileHandler extends PersistencyHandler {
 					wikiFile.setDeleted(new Boolean(rootChild.getTextContent()).booleanValue());
 				} else if (childName.equals(XML_WIKI_FILE_MIME_TYPE)) {
 					wikiFile.setMimeType(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_SIZE)) {
+					wikiFile.setFileSize(new Integer(rootChild.getTextContent()).intValue());
 				}
 			}
 			return wikiFile;
@@ -960,6 +968,8 @@ public class FileHandler extends PersistencyHandler {
 							wikiFileVersion.setAuthorIpAddress(authorChild.getTextContent());
 						}
 					}
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_SIZE)) {
+					wikiFileVersion.setFileSize(new Integer(rootChild.getTextContent()).intValue());
 				}
 			}
 			return wikiFileVersion;

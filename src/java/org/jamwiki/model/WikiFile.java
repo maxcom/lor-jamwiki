@@ -28,6 +28,7 @@ public class WikiFile {
 	private boolean deleted = false;
 	private int fileId = -1;
 	private String fileName = null;
+	private long fileSize = -1;
 	private String mimeType = null;
 	private boolean readOnly = false;
 	private String url = null;
@@ -95,6 +96,20 @@ public class WikiFile {
 	 */
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	/**
+	 *
+	 */
+	public long getFileSize() {
+		return this.fileSize;
+	}
+
+	/**
+	 *
+	 */
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	/**

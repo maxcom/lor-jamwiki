@@ -27,6 +27,7 @@ public class WikiFileVersion {
 	private Integer authorId = null;
 	private String authorIpAddress = null;
 	private int fileId = -1;
+	private long fileSize = -1;
 	private int fileVersionId = -1;
 	private String mimeType = null;
 	private String uploadComment = null;
@@ -80,6 +81,20 @@ public class WikiFileVersion {
 	 */
 	public void setFileId(int fileId) {
 		this.fileId = fileId;
+	}
+
+	/**
+	 *
+	 */
+	public long getFileSize() {
+		return this.fileSize;
+	}
+
+	/**
+	 *
+	 */
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	/**
