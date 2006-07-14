@@ -138,8 +138,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (fileName == null) {
 			throw new Exception("No file found");
 		}
-		// FIXME - hard coding
-		String topicName = "Image:" + Utilities.decodeURL(fileName);
+		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
 		topic.setName(topicName);
 		wikiFile.setFileName(fileName);
 		wikiFile.setUrl(url);

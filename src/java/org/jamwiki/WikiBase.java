@@ -71,6 +71,12 @@ public class WikiBase {
 	private static PersistencyHandler handler;
 	/** Number of virtual wikis */
 	private static int virtualWikiCount;
+	public static final String NAMESPACE_COMMENTS = "Comments:";
+	public static final String NAMESPACE_IMAGE = "Image:";
+	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments:";
+	public static final String NAMESPACE_SPECIAL = "Special:";
+	public static final String NAMESPACE_USER = "User:";
+	public static final String NAMESPACE_USER_COMMENTS = "User comments:";
 
 	static {
 		try {

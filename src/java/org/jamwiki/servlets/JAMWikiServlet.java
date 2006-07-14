@@ -267,29 +267,36 @@ public abstract class JAMWikiServlet extends AbstractController {
 		// add link to user page and comments page
 		WikiUser user = Utilities.currentUser(request);
 		if (user != null) {
-			next.addObject("userpage", "User:" + user.getLogin());
-			next.addObject("usercomments", "User comments:" + user.getLogin());
+			next.addObject("userpage", WikiBase.NAMESPACE_USER + user.getLogin());
+			next.addObject("usercomments", WikiBase.NAMESPACE_USER_COMMENTS + user.getLogin());
 			next.addObject("adminUser", new Boolean(user.getAdmin()));
 		}
 		if (!this.pageInfo.getSpecial()) {
 			// FIXME - this is really ugly
 			String article = this.pageInfo.getTopicName();
-			String comments = "Comments:" + article;
-			if (article != null && article.startsWith("Comments:")) {
-				int pos = "Comments:".length();
+			String comments = WikiBase.NAMESPACE_COMMENTS + article;
+			if (article != null && article.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
+				int pos = WikiBase.NAMESPACE_COMMENTS.length();
 				article = article.substring(pos);
-				comments = "Comments:" + article;
-			} else if (article != null && article.startsWith("Special:")) {
-				int pos = "Special:".length();
+				comments = WikiBase.NAMESPACE_COMMENTS + article;
+			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_SPECIAL)) {
+				int pos = WikiBase.NAMESPACE_SPECIAL.length();
 				article = article.substring(pos);
-				comments = "Comments:" + article;
-			} else if (article != null && article.startsWith("User comments:")) {
-				int pos = "User comments:".length();
+				comments = WikiBase.NAMESPACE_COMMENTS + article;
+			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_USER_COMMENTS)) {
+				int pos = WikiBase.NAMESPACE_USER_COMMENTS.length();
 				comments = article;
-				article = "User:" + article.substring(pos);
-			} else if (article != null && article.startsWith("User:")) {
-				int pos = "User:".length();
-				comments = "User comments:" + article.substring(pos);
+				article = WikiBase.NAMESPACE_USER + article.substring(pos);
+			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_USER)) {
+				int pos = WikiBase.NAMESPACE_USER.length();
+				comments = WikiBase.NAMESPACE_USER_COMMENTS + article.substring(pos);
+			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
+				int pos = WikiBase.NAMESPACE_IMAGE_COMMENTS.length();
+				comments = article;
+				article = WikiBase.NAMESPACE_IMAGE + article.substring(pos);
+			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_IMAGE)) {
+				int pos = WikiBase.NAMESPACE_IMAGE.length();
+				comments = WikiBase.NAMESPACE_IMAGE_COMMENTS + article.substring(pos);
 			}
 			next.addObject("article", article);
 			next.addObject("comments", comments);

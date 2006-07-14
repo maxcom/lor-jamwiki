@@ -101,7 +101,7 @@ public class ParserUtil {
 				return raw;
 			}
 			// FIXME - hard coding
-			if (topic.startsWith("Image:")) {
+			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
 				return ParserUtil.parseImageLink(context, virtualWiki, topic);
 			}
 			// search for topic text ("|" followed by text)
@@ -136,11 +136,11 @@ public class ParserUtil {
 				String context = parserInfo.getContext();
 				String virtualWiki = parserInfo.getVirtualWiki();
 				// FIXME - need a utility method for user links
-				String topic = "User:" + parserInfo.getUserIpAddress();
+				String topic = WikiBase.NAMESPACE_USER + parserInfo.getUserIpAddress();
 				String text = parserInfo.getUserIpAddress();
 				if (parserInfo.getWikiUser() != null) {
 					WikiUser user = parserInfo.getWikiUser();
-					topic = "User:" + user.getLogin();
+					topic = WikiBase.NAMESPACE_USER + user.getLogin();
 					text = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
 				}
 				String link = "";
