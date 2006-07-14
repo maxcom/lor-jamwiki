@@ -104,6 +104,10 @@ public class ParserUtil {
 			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
 				return ParserUtil.parseImageLink(context, virtualWiki, topic);
 			}
+			if (topic.startsWith(":") && topic.length() > 1) {
+				// strip opening colon
+				topic = topic.substring(1);
+			}
 			// search for topic text ("|" followed by text)
 			String text = topic.trim();
 			int pos = topic.indexOf('|');
