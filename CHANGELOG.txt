@@ -2,6 +2,29 @@
 0.0.6
 =====
 
+* FEATURE: Add support for uploading files and viewing them as
+  images.
+* FEATURE: Update the look & feel of the edit preview display.
+* BUG: Shrink generated JSP class files by using <jsp:include>.
+  Resolves issues with Resin app server (reported by Alexi).
+* BUG: Resolve issue of HTML characters being incorrectly escaped
+  during edits.
+* BUG: Only show the edit preview when the preview button is clicked.
+* FEATURE: Hide the non-working Javascript edit buttons.
+* BUG: Resolve more "fails to redirect after login" issues.
+* FEATURE: Upgrade to commons-fileupload-1.1.1.jar.
+* FEATURE: Add commons-io-1.2.jar.
+* BUG: Add commons-logging-1.1.jar which is required by Spring.
+  Reported by Alexi.
+* BUG: Update cache headers to resolve issues with Opera.  Reported
+  with a suggested fix by Alexi.
+* FEATURE: Hide panic and email notification options in admin - not
+  currently supported.
+* FEATURE: Remove RSS link from the nav bar - not currently
+  supported.
+* FEATURE: Update database schema - BREAKS ANY EXISTING INSTALLATION!
+  See the release notes for the database update syntax.
+* FEATURE: Code cleanups including removal of unused files.
 
 0.0.5
 =====
