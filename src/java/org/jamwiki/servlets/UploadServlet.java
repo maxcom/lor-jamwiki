@@ -20,7 +20,6 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -66,6 +65,38 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private static String buildFileSubdirectory() {
+		// subdirectory is composed of year/month
+		GregorianCalendar cal = new GregorianCalendar();
+		String year = new Integer(cal.get(Calendar.YEAR)).toString();
+		String month = new Integer(cal.get(Calendar.MONTH) + 1).toString();
+		return "/" + year + "/" + month;
+	}
+
+	/**
+	 *
+	 */
+	private static String buildUniqueFileName(String fileName) {
+		// file is appended with a timestamp of DDHHMMSS
+		GregorianCalendar cal = new GregorianCalendar();
+		String day = new Integer(cal.get(Calendar.DAY_OF_MONTH)).toString();
+		if (day.length() == 1) day = "0" + day;
+		String hour = new Integer(cal.get(Calendar.HOUR_OF_DAY)).toString();
+		if (hour.length() == 1) hour = "0" + hour;
+		String minute = new Integer(cal.get(Calendar.MINUTE)).toString();
+		if (minute.length() == 1) minute = "0" + minute;
+		String second = new Integer(cal.get(Calendar.SECOND)).toString();
+		if (second.length() == 1) second = "0" + second;
+		int pos = fileName.lastIndexOf(".");
+		fileName = fileName.substring(0, pos) + "-" + day + hour + minute + second + fileName.substring(pos);
+		// decode, then encode to ensure that any previously encoded characters
+		// aren't encoded twice
+		return Utilities.encodeURL(Utilities.decodeURL(fileName));
+	}
+
+	/**
+	 *
+	 */
 	private Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
 		// Create a factory for disk-based file items
 		DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -79,6 +110,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void upload(HttpServletRequest request, ModelAndView next) throws Exception {
+		// FIXME - this method is a mess and needs to be split up.
 		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!file.exists()) {
 			// FIXME - hard coding
@@ -90,8 +122,6 @@ public class UploadServlet extends JAMWikiServlet {
 		Topic topic = new Topic();
 		topic.setVirtualWiki(virtualWiki);
 		topic.setTopicType(Topic.TYPE_IMAGE);
-		WikiFile wikiFile = new WikiFile();
-		wikiFile.setVirtualWiki(virtualWiki);
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
 		TopicVersion topicVersion = new TopicVersion();
@@ -114,17 +144,10 @@ public class UploadServlet extends JAMWikiServlet {
 					topic.setTopicContent(item.getString());
 				}
 			} else {
-				fieldName = item.getFieldName();
 				fileName = item.getName();
-				// decode, then encode to ensure that any previously encoded characters
-				// aren't encoded twice
-				url = Utilities.encodeURL(Utilities.decodeURL(fileName));
-				GregorianCalendar cal = new GregorianCalendar();
-				String year = new Integer(cal.get(Calendar.YEAR)).toString();
-				String month = new Integer(cal.get(Calendar.MONTH) + 1).toString();
-				String subdirectory = "/" + year + "/" + month;
-				String contentType = item.getContentType();
-				boolean isInMemory = item.isInMemory();
+				url = UploadServlet.buildUniqueFileName(fileName);
+				String subdirectory = UploadServlet.buildFileSubdirectory();
+				wikiFile.setMimeType(item.getContentType());
 				long sizeInBytes = item.getSize();
 				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 				if (!directory.exists() && !directory.mkdirs()) {
@@ -140,11 +163,14 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
 		topic.setName(topicName);
+		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
+		if (wikiFile == null) {
+			wikiFile = new WikiFile();
+			wikiFile.setVirtualWiki(virtualWiki);
+		}
 		wikiFile.setFileName(fileName);
 		wikiFile.setUrl(url);
 		wikiFileVersion.setUrl(url);
-		ServletContext context = request.getSession().getServletContext();
-		wikiFile.setMimeType(context.getMimeType(fileName));
 		wikiFileVersion.setMimeType(context.getMimeType(fileName));
 		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
 			WikiBase.getHandler().writeTopic(topic, topicVersion);
