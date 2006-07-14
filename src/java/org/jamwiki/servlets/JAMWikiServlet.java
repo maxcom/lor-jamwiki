@@ -17,6 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.util.HashMap;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -396,6 +397,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 			// search servlet highlights search terms, so add that here
 			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
 			topic.setTopicContent(contents);
+			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
+				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName);
+				next.addObject("fileVersions", fileVersions);
+			}
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);
 		this.pageInfo.setPageTitle(topicName);

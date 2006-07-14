@@ -16,9 +16,26 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
+<%@ page import="
+    org.jamwiki.Environment
+" %>
+
 <c:if test="${!empty topicObject}">
 <div id="content-article">
 <%-- FIXME - ugly, clean this up --%>
 <jamwiki:image value="${topicObject.name}" />
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
+<c:if test="${!empty fileVersions}">
+<h2>File History</h2>
+<ul>
+<c:forEach items="${fileVersions}" var="fileVersion">
+<li>
+<%-- FIXME - clean this up, verify path build correctly --%>
+<a href="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %><c:out value="${fileVersion.url}" />"><f:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+&#160;(<c:out value="${fileVersion.fileSize}" /> bytes)
+<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
+</li>
+</c:forEach>
+</ul>
+</c:if>
 </c:if>
