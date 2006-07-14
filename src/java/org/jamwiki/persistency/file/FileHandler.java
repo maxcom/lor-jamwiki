@@ -870,7 +870,7 @@ public class FileHandler extends PersistencyHandler {
 						Node authorChild = authorChildren.item(j);
 						if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_ID)) {
 							topicVersion.setAuthorId(new Integer(authorChild.getTextContent()));
-						} else if (childName.equals(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS)) {
+						} else if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS)) {
 							topicVersion.setAuthorIpAddress(authorChild.getTextContent());
 						}
 					}
@@ -964,7 +964,7 @@ public class FileHandler extends PersistencyHandler {
 						Node authorChild = authorChildren.item(j);
 						if (authorChild.getNodeName().equals(XML_WIKI_FILE_VERSION_AUTHOR_ID)) {
 							wikiFileVersion.setAuthorId(new Integer(authorChild.getTextContent()));
-						} else if (childName.equals(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS)) {
+						} else if (authorChild.getNodeName().equals(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS)) {
 							wikiFileVersion.setAuthorIpAddress(authorChild.getTextContent());
 						}
 					}
