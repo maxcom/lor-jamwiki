@@ -207,6 +207,8 @@ function onUserGroupType() {
         <input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML) ? " checked" : "" %>>
       </td>
     </tr>
+<%--
+FIXME - Notifications not supported right now, comment this out
 
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr>
@@ -237,6 +239,7 @@ function onUserGroupType() {
         <input type="checkbox" name="<%= Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY) ? " checked" : "" %>>
       </td>
     </tr>
+--%>
 
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr>
