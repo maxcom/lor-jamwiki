@@ -95,10 +95,20 @@ pre {
 	padding: 1em;
 }
 
+dt {
+	font-weight: bold;
+	margin-bottom: .1em;
+}
+
 dl {
-	list-style-type: square;
-	margin: 0;
-	padding: 0em 0em 0em 2em;
+	margin-top: .2em;
+	margin-bottom: .5em;
+}
+
+dd {
+	line-height: 1.5em;
+	margin-left: 2em;
+	margin-bottom: .1em;
 }
 
 ul {
