@@ -100,7 +100,6 @@ public class ParserUtil {
 				// empty brackets, no topic to display
 				return raw;
 			}
-			// FIXME - hard coding
 			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
 				return ParserUtil.parseImageLink(context, virtualWiki, topic);
 			}

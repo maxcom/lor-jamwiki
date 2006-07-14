@@ -104,7 +104,7 @@ public abstract class AbstractNotify implements Notify {
 			if (author != null) {
 				buffer.append(Utilities.getMessage("mail.notification.body.author", locale) + author + "\n");
 			}
-			String diff = WikiBase.getHandler().diff(this.virtualWiki, topic.getName(), 0, 1, false);
+			String diff = WikiBase.getHandler().diff(this.virtualWiki, topic.getName(), 0, 1, false, locale);
 			buffer.append("\n" + Utilities.getMessage("mail.notification.body.diff", locale) + "\n" + diff);
 			buffer.append("\n\n\n----\n\n");
 			buffer.append(Utilities.getMessage("mail.unsubscribe", locale) + " <");

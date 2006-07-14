@@ -31,7 +31,7 @@
 	<td><textarea name="description" rows="6" cols="80"></textarea></td>
 </tr>
 <tr>
-	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="attach.save" />" /></td>
+	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="common.save" />" /></td>
 </tr>
 </table>
 </form>

@@ -140,11 +140,8 @@ public class EditServlet extends JAMWikiServlet {
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
 		preview = WikiBase.parse(parserInfo, contents, topicName);
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(Utilities.getMessage("edit", request.getLocale()));
-		buffer.append(" ");
-		buffer.append(topicName);
-		this.pageInfo.setPageTitle(buffer.toString());
+		String pageTitle = Utilities.getMessage("edit.title", request.getLocale(), topicName);
+		this.pageInfo.setPageTitle(pageTitle);
 		this.pageInfo.setTopicName(topicName);
 		next.addObject("contents", contents);
 		next.addObject("editComment", editComment);

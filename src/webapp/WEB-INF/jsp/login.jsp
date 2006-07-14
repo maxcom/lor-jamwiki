@@ -40,7 +40,7 @@
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td><input type="submit" name="function" value='<f:message key="login.submit"/>'/></td>
+	<td><input type="submit" name="function" value='<f:message key="common.login" />'/></td>
 </tr>
 </table>
 </form>

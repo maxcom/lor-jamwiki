@@ -20,7 +20,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="createuser.info.text1"/></p>
+<p><f:message key="register.form.info" /></p>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${user.userId}" />" />
 <table>
@@ -57,6 +57,6 @@
 	<td>Email:</td>
 	<td><input type="text" name="email" value="<c:out value="${user.email}" />"></td>
 </tr>
-<tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="createuser.form.save"/>"></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>
 </form>

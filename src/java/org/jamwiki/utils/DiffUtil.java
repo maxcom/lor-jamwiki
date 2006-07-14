@@ -17,6 +17,7 @@
 package org.jamwiki.utils;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.incava.util.diff.Diff;
@@ -46,22 +47,21 @@ public class DiffUtil {
 	 *  text otherwise.
 	 * @return Returns an HTML-formatted table that displays the diff of the Strings.
 	 */
-	public static String diff(String newVersion, String oldVersion, boolean htmlFormat) {
+	public static String diff(String newVersion, String oldVersion, boolean htmlFormat, Locale locale) {
 		if (oldVersion == null) oldVersion = "";
 		if (newVersion == null) newVersion = "";
-		// FIXME: don't hard code
-		if (!htmlFormat && newVersion.equals(oldVersion)) return "Files are the same";
+		if (newVersion.equals(oldVersion)) return Utilities.getMessage("diff.nochange", locale);
 		DiffUtil diffUtil = new DiffUtil();
-		return diffUtil.process(newVersion, oldVersion, htmlFormat);
+		return diffUtil.process(newVersion, oldVersion, htmlFormat, locale);
 	}
 
 	/**
 	 *
 	 */
-	private String process(String newVersion, String oldVersion, boolean htmlFormat) {
+	private String process(String newVersion, String oldVersion, boolean htmlFormat, Locale locale) {
 		logger.debug("Diffing: " + oldVersion + " against: " + newVersion);
 		DiffHelper diffHelper = new DiffHelper(oldVersion, newVersion, htmlFormat);
-		return diffHelper.diff();
+		return diffHelper.diff(locale);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class DiffUtil {
 		/**
 		 *
 		 */
-		String diff() {
+		String diff(Locale locale) {
 			Diff diffObject = new Diff(this.oldArray, this.newArray);
 			List diffs = diffObject.diff();
 			Difference diff;
@@ -210,12 +210,12 @@ public class DiffUtil {
 				this.addStart = diff.getAddedStart();
 				this.addEnd = diff.getAddedEnd();
 				// add lines up to first change point
-				displayUnchanged(this.delStart, this.addStart);
+				displayUnchanged(this.delStart, this.addStart, locale);
 				// add changed lines
-				displayChanged();
+				displayChanged(locale);
 			}
 			// if lines at the end of the original Strings haven't changed display them
-			displayUnchanged(oldArray.length, newArray.length);
+			displayUnchanged(oldArray.length, newArray.length, locale);
 			if (this.htmlFormat) output.append("</table>");
 			return output.toString();
 		}
@@ -223,7 +223,7 @@ public class DiffUtil {
 		/**
 		 *
 		 */
-		private void displayUnchanged(int delMax, int addMax) {
+		private void displayUnchanged(int delMax, int addMax, Locale locale) {
 			replacements = ((delMax - this.oldCurrentLine) > (addMax - this.newCurrentLine)) ? (delMax - this.oldCurrentLine) : (addMax - this.newCurrentLine);
 			String oldLine, newLine;
 			for (int j=0; j < replacements; j++) {
@@ -240,7 +240,7 @@ public class DiffUtil {
 				// only display if within specified number of lines of a change.  subtract
 				// one from current line since that value was incremented above
 				if (canDisplay(delMax, this.delEnd, (this.oldCurrentLine - 1)) || canDisplay(addMax, this.addEnd, (this.newCurrentLine - 1))) {
-					displayLineNumber();
+					displayLineNumber(locale);
 					this.output.append(buildRow(false, oldLine, false, newLine));
 				}
 			}
@@ -249,7 +249,7 @@ public class DiffUtil {
 		/**
 		 *
 		 */
-		private void displayChanged() {
+		private void displayChanged(Locale locale) {
 			replacements = ((this.delEnd - this.delStart) > (this.addEnd - this.addStart)) ? (this.delEnd - this.delStart) : (this.addEnd - this.addStart);
 			String oldLine, newLine;
 			boolean oldChange, newChange;
@@ -270,7 +270,7 @@ public class DiffUtil {
 					this.newCurrentLine++;
 					this.addStart++;
 				}
-				displayLineNumber();
+				displayLineNumber(locale);
 				output.append(buildRow(oldChange, oldLine, newChange, newLine));
 			}
 		}
@@ -278,14 +278,14 @@ public class DiffUtil {
 		/**
 		 *
 		 */
-		private void displayLineNumber() {
+		private void displayLineNumber(Locale locale) {
 			if (this.lineNumberDisplayed) return;
 			int lineNumber = oldCurrentLine;
 			this.lineNumberDisplayed = true;
 			if (this.htmlFormat) {
-				output.append("<tr><td colspan=\"4\" class=\"diff-line\">Line " + lineNumber + ":</td></tr>");
+				output.append("<tr><td colspan=\"4\" class=\"diff-line\">" + Utilities.getMessage("diff.line", locale) + " " + lineNumber + ":</td></tr>");
 			} else {
-				output.append("Line " + lineNumber + ":\n");
+				output.append(Utilities.getMessage("diff.line", locale) + " " + lineNumber + ":\n");
 			}
 		}
 	}
