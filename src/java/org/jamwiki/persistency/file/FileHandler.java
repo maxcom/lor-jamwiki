@@ -68,12 +68,18 @@ public class FileHandler extends PersistencyHandler {
 	private static int NEXT_TOPIC_VERSION_ID = 0;
 	private static final String NEXT_TOPIC_VERSION_ID_FILE = "topic_version.id";
 	private static int NEXT_WIKI_USER_ID = 0;
+	private static int NEXT_WIKI_FILE_ID = 0;
+	private static final String NEXT_WIKI_FILE_ID_FILE = "wiki_file.id";
+	private static int NEXT_WIKI_FILE_VERSION_ID = 0;
+	private static final String NEXT_WIKI_FILE_VERSION_ID_FILE = "wiki_file_version.id";
 	private static final String NEXT_WIKI_USER_ID_FILE = "wiki_user.id";
 	private static final String READ_ONLY_DIR = "readonly";
 	private static final String RECENT_CHANGE_DIR = "changes";
 	private static final String TOPIC_DIR = "topics";
-	private static final String VERSION_DIR = "versions";
+	private static final String TOPIC_VERSION_DIR = "versions";
 	private static final String VIRTUAL_WIKI_LIST = "virtualwikis";
+	private static final String WIKI_FILE_DIR = "files";
+	private static final String WIKI_FILE_VERSION_DIR = "fileversions";
 	private static final String WIKI_USER_DIR = "wikiusers";
 	private static Properties WIKI_USER_ID_HASH = null;
 	private static final String WIKI_USER_ID_HASH_FILE = "wiki_user.hash";
@@ -111,6 +117,26 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_VERSION_EDIT_TYPE = "edittype";
 	protected static final String XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID = "previoustopicversionid";
 	protected static final String XML_TOPIC_VERSION_TEXT = "text";
+	protected static final String XML_WIKI_FILE_ROOT = "wikifile";
+	protected static final String XML_WIKI_FILE_NAME = "filename";
+	protected static final String XML_WIKI_FILE_ID = "fileid";
+	protected static final String XML_WIKI_FILE_TOPIC_ID = "topicid";
+	protected static final String XML_WIKI_FILE_VIRTUAL_WIKI = "virtualwiki";
+	protected static final String XML_WIKI_FILE_URL = "url";
+	protected static final String XML_WIKI_FILE_ADMIN_ONLY = "admin";
+	protected static final String XML_WIKI_FILE_READ_ONLY = "readonly";
+	protected static final String XML_WIKI_FILE_DELETED = "deleted";
+	protected static final String XML_WIKI_FILE_MIME_TYPE = "mimetype";
+	protected static final String XML_WIKI_FILE_VERSION_ROOT = "revision";
+	protected static final String XML_WIKI_FILE_VERSION_ID = "id";
+	protected static final String XML_WIKI_FILE_VERSION_FILE_ID = "fileid";
+	protected static final String XML_WIKI_FILE_VERSION_UPLOAD_COMMENT = "comment";
+	protected static final String XML_WIKI_FILE_VERSION_URL = "url";
+	protected static final String XML_WIKI_FILE_VERSION_AUTHOR = "contributor";
+	protected static final String XML_WIKI_FILE_VERSION_AUTHOR_ID = "id";
+	protected static final String XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS = "ip";
+	protected static final String XML_WIKI_FILE_VERSION_UPLOAD_DATE = "timestamp";
+	protected static final String XML_WIKI_FILE_VERSION_MIME_TYPE = "mimetype";
 	protected static final String XML_WIKI_USER_ROOT = "wikiuser";
 	protected static final String XML_WIKI_USER_ADMIN = "admin";
 	protected static final String XML_WIKI_USER_CREATE_DATE = "createdate";
@@ -269,7 +295,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("\n");
 		content.append("</mediawiki>");
 		String filename = topicVersionFilename(topicVersion.getTopicVersionId());
-		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName, filename);
+		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.TOPIC_VERSION_DIR, topicName, filename);
 		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
@@ -293,17 +319,88 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFile(WikiFile wikiFile) throws Exception {
-		// FIXME - implement
-		throw new UnsupportedOperationException();
+	protected void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+		if (wikiFile.getFileId() <= 0) {
+			wikiFile.setFileId(nextWikiFileId());
+		}
+		if (wikiFile.getFileId() > NEXT_WIKI_FILE_ID) {
+			NEXT_WIKI_FILE_ID = wikiFile.getFileId();
+			nextFileWrite(NEXT_WIKI_FILE_ID, getPathFor(null, null, NEXT_WIKI_FILE_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_WIKI_FILE_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_NAME, wikiFile.getFileName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_ID, wikiFile.getFileId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_TOPIC_ID, wikiFile.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VIRTUAL_WIKI, wikiFile.getVirtualWiki(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_URL, wikiFile.getUrl(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_ADMIN_ONLY, wikiFile.getAdminOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_READ_ONLY, wikiFile.getReadOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_DELETED, wikiFile.getDeleted()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_MIME_TYPE, wikiFile.getMimeType(), true));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_FILE_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		// name file after its parent topic
+		String filename = topicFilename(topicName);
+		File file = FileHandler.getPathFor(wikiFile.getVirtualWiki(), FileHandler.WIKI_FILE_DIR, filename);
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**
 	 *
 	 */
 	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception {
-		// FIXME - implement
-		throw new UnsupportedOperationException();
+		if (wikiFileVersion.getFileVersionId() <= 0) {
+			wikiFileVersion.setFileVersionId(nextWikiFileVersionId());
+		}
+		if (wikiFileVersion.getFileVersionId() > NEXT_WIKI_FILE_VERSION_ID) {
+			NEXT_WIKI_FILE_VERSION_ID = wikiFileVersion.getFileVersionId();
+			nextFileWrite(NEXT_WIKI_FILE_VERSION_ID, getPathFor(null, null, NEXT_WIKI_FILE_VERSION_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_ID, wikiFileVersion.getFileVersionId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_FILE_ID, wikiFileVersion.getFileId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_COMMENT, wikiFileVersion.getUploadComment(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_URL, wikiFileVersion.getUrl(), true));
+		content.append("\n");
+		content.append("<").append(XML_WIKI_FILE_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_AUTHOR_ID, wikiFileVersion.getAuthorId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS, wikiFileVersion.getAuthorIpAddress(), true));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_FILE_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_DATE, wikiFileVersion.getUploadDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_MIME_TYPE, wikiFileVersion.getMimeType(), true));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = wikiFileVersionFilename(wikiFileVersion.getFileVersionId());
+		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.WIKI_FILE_VERSION_DIR, topicName, filename);
+		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
 	}
 
 	/**
@@ -437,6 +534,37 @@ public class FileHandler extends PersistencyHandler {
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
 		for (int i = 0; i < files.length; i++) {
 			TopicVersion version = initTopicVersion(files[i]);
+			all.add(version);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
+	public List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+		List all = new ArrayList();
+		File[] files = retrieveWikiFileFiles(virtualWiki);
+		for (int i = 0; i < files.length; i++) {
+			String topicName = files[i].getName();
+			// strip extension
+			int pos = topicName.lastIndexOf(EXT);
+			if (pos != -1) topicName = topicName.substring(0, pos);
+			// decode
+			topicName = Utilities.decodeURL(topicName);
+			all.add(topicName);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
+	public List getAllWikiFileVersions(String virtualWiki, String topicName) throws Exception {
+		List all = new LinkedList();
+		File[] files = retrieveWikiFileVersionFiles(virtualWiki, topicName);
+		for (int i = 0; i < files.length; i++) {
+			WikiFileVersion version = initWikiFileVersion(files[i]);
 			all.add(version);
 		}
 		return all;
@@ -754,6 +882,96 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static WikiFile initWikiFile(File file) {
+		if (!file.exists()) return null;
+		try {
+			WikiFile wikiFile = new WikiFile();
+			Document document = XMLUtil.parseXML(file, false);
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_WIKI_FILE_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
+			String childName = null;
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
+				if (childName.equals(XML_WIKI_FILE_NAME)) {
+					wikiFile.setFileName(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_ID)) {
+					wikiFile.setFileId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_WIKI_FILE_TOPIC_ID)) {
+					wikiFile.setTopicId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_WIKI_FILE_VIRTUAL_WIKI)) {
+					wikiFile.setVirtualWiki(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_URL)) {
+					wikiFile.setUrl(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_ADMIN_ONLY)) {
+					wikiFile.setAdminOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+				} else if (childName.equals(XML_WIKI_FILE_READ_ONLY)) {
+					wikiFile.setReadOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+				} else if (childName.equals(XML_WIKI_FILE_DELETED)) {
+					wikiFile.setDeleted(new Boolean(rootChild.getTextContent()).booleanValue());
+				} else if (childName.equals(XML_WIKI_FILE_MIME_TYPE)) {
+					wikiFile.setMimeType(rootChild.getTextContent());
+				}
+			}
+			return wikiFile;
+		} catch (Exception e) {
+			logger.error("Failure while initializing wiki file for file " + file.getAbsolutePath(), e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static WikiFileVersion initWikiFileVersion(File file) {
+		if (!file.exists()) return null;
+		try {
+			WikiFileVersion wikiFileVersion = new WikiFileVersion();
+			Document document = XMLUtil.parseXML(file, false);
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_WIKI_FILE_VERSION_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
+			String childName = null;
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
+				if (childName.equals(XML_WIKI_FILE_VERSION_ID)) {
+					wikiFileVersion.setFileVersionId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_FILE_ID)) {
+					wikiFileVersion.setFileId(new Integer(rootChild.getTextContent()).intValue());
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_UPLOAD_COMMENT)) {
+					wikiFileVersion.setUploadComment(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_UPLOAD_DATE)) {
+					wikiFileVersion.setUploadDate(Timestamp.valueOf(rootChild.getTextContent()));
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_MIME_TYPE)) {
+					wikiFileVersion.setMimeType(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_URL)) {
+					wikiFileVersion.setUrl(rootChild.getTextContent());
+				} else if (childName.equals(XML_WIKI_FILE_VERSION_AUTHOR)) {
+					NodeList authorChildren = rootChild.getChildNodes();
+					for (int j=0; j < authorChildren.getLength(); j++) {
+						Node authorChild = authorChildren.item(j);
+						if (authorChild.getNodeName().equals(XML_WIKI_FILE_VERSION_AUTHOR_ID)) {
+							wikiFileVersion.setAuthorId(new Integer(authorChild.getTextContent()));
+						} else if (childName.equals(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS)) {
+							wikiFileVersion.setAuthorIpAddress(authorChild.getTextContent());
+						}
+					}
+				}
+			}
+			return wikiFileVersion;
+		} catch (Exception e) {
+			logger.error("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected static WikiUser initWikiUser(File file) {
 		if (!file.exists()) return null;
 		try {
@@ -845,7 +1063,7 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		String filename = topicVersionFilename(topicVersionId);
-		File file = getPathFor(virtualWiki, VERSION_DIR, topicName, filename);
+		File file = getPathFor(virtualWiki, TOPIC_VERSION_DIR, topicName, filename);
 		return initTopicVersion(file);
 	}
 
@@ -853,8 +1071,10 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
-		// FIXME - implement
-		throw new UnsupportedOperationException();
+		// wiki file named after its associated topic
+		String filename = topicFilename(topicName);
+		File file = getPathFor(virtualWiki, FileHandler.WIKI_FILE_DIR, filename);
+		return initWikiFile(file);
 	}
 
 	/**
@@ -922,6 +1142,38 @@ public class FileHandler extends PersistencyHandler {
 		}
 		NEXT_TOPIC_VERSION_ID++;
 		return nextFileWrite(NEXT_TOPIC_VERSION_ID, topicVersionIdFile);
+	}
+
+	/**
+	 *
+	 */
+	private static int nextWikiFileId() throws Exception {
+		File wikiFileIdFile = getPathFor(null, null, NEXT_WIKI_FILE_ID_FILE);
+		if (NEXT_WIKI_FILE_ID < 1) {
+			// read value from file
+			if (wikiFileIdFile.exists()) {
+				String integer = FileUtils.readFileToString(wikiFileIdFile, Environment.getValue(Environment.PROP_FILE_ENCODING));
+				NEXT_WIKI_FILE_ID = new Integer(integer).intValue();
+			}
+		}
+		NEXT_WIKI_FILE_ID++;
+		return nextFileWrite(NEXT_WIKI_FILE_ID, wikiFileIdFile);
+	}
+
+	/**
+	 *
+	 */
+	private static int nextWikiFileVersionId() throws Exception {
+		File wikiFileVersionIdFile = getPathFor(null, null, NEXT_WIKI_FILE_VERSION_ID_FILE);
+		if (NEXT_WIKI_FILE_VERSION_ID < 1) {
+			// read value from file
+			if (wikiFileVersionIdFile.exists()) {
+				String integer = FileUtils.readFileToString(wikiFileVersionIdFile, Environment.getValue(Environment.PROP_FILE_ENCODING));
+				NEXT_WIKI_FILE_VERSION_ID = new Integer(integer).intValue();
+			}
+		}
+		NEXT_WIKI_FILE_VERSION_ID++;
+		return nextFileWrite(NEXT_WIKI_FILE_VERSION_ID, wikiFileVersionIdFile);
 	}
 
 	/**
@@ -1000,7 +1252,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	private File[] retrieveTopicVersionFiles(String virtualWiki, String topicName) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, FileHandler.VERSION_DIR, topicName);
+		File file = FileHandler.getPathFor(virtualWiki, FileHandler.TOPIC_VERSION_DIR, topicName);
 		File[] files = file.listFiles();
 		if (files == null) return null;
 		Comparator comparator = new WikiFileComparator();
@@ -1013,6 +1265,28 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	private File[] retrieveUserContributionsFiles(String virtualWiki, String userString) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, FileHandler.CONTRIBUTIONS_DIR, userString);
+		File[] files = file.listFiles();
+		if (files == null) return null;
+		Comparator comparator = new WikiFileComparator();
+		Arrays.sort(files, comparator);
+		return files;
+	}
+
+	/**
+	 *
+	 */
+	private File[] retrieveWikiFileFiles(String virtualWiki) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.WIKI_FILE_DIR);
+		File[] files = file.listFiles();
+		if (files == null) return null;
+		return files;
+	}
+
+	/**
+	 *
+	 */
+	private File[] retrieveWikiFileVersionFiles(String virtualWiki, String topicName) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, FileHandler.WIKI_FILE_VERSION_DIR, topicName);
 		File[] files = file.listFiles();
 		if (files == null) return null;
 		Comparator comparator = new WikiFileComparator();
@@ -1069,6 +1343,13 @@ public class FileHandler extends PersistencyHandler {
 			logger.warn("No lockfile to unlock topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
 		lockFile.delete();
+	}
+
+	/**
+	 *
+	 */
+	protected static String wikiFileVersionFilename(int wikiFileVersionId) {
+		return wikiFileVersionId + EXT;
 	}
 
 	/**

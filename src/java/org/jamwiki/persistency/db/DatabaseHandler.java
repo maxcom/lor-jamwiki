@@ -118,7 +118,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFile(WikiFile wikiFile) throws Exception {
+	protected void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
 		if (wikiFile.getFileId() <= 0) {
 			int fileId = DatabaseHandler.queryHandler.nextWikiFileId();
 			wikiFile.setFileId(fileId);
@@ -184,6 +184,34 @@ public class DatabaseHandler extends PersistencyHandler {
 		WikiResultSet rs = DatabaseHandler.queryHandler.getAllTopicVersions(topic);
 		while (rs.next()) {
 			all.add(initTopicVersion(rs));
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
+	public List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+		List all = new ArrayList();
+		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileTopicNames(virtualWiki);
+		while (rs.next()) {
+			all.add(rs.getString("topic_name"));
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
+	public List getAllWikiFileVersions(String virtualWiki, String topicName) throws Exception {
+		List all = new ArrayList();
+		WikiFile wikiFile = lookupWikiFile(virtualWiki, topicName);
+		if (wikiFile == null) {
+			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
+		}
+		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileVersions(wikiFile);
+		while (rs.next()) {
+			all.add(initWikiFileVersion(rs));
 		}
 		return all;
 	}
@@ -416,6 +444,28 @@ public class DatabaseHandler extends PersistencyHandler {
 			return wikiFile;
 		} catch (Exception e) {
 			logger.error("Failure while initializing file", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static WikiFileVersion initWikiFileVersion(WikiResultSet rs) {
+		try {
+			WikiFileVersion wikiFileVersion = new WikiFileVersion();
+			wikiFileVersion.setFileVersionId(rs.getInt("file_version_id"));
+			wikiFileVersion.setFileId(rs.getInt("file_id"));
+			wikiFileVersion.setUploadComment(rs.getString("upload_comment"));
+			wikiFileVersion.setUrl(rs.getString("file_url"));
+			int userId = rs.getInt("wiki_user_id");
+			if (userId > 0) wikiFileVersion.setAuthorId(new Integer(userId));
+			wikiFileVersion.setUploadDate(rs.getTimestamp("upload_date"));
+			wikiFileVersion.setMimeType(rs.getString("mime_type"));
+			wikiFileVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));
+			return wikiFileVersion;
+		} catch (Exception e) {
+			logger.error("Failure while initializing wiki file version", e);
 			return null;
 		}
 	}

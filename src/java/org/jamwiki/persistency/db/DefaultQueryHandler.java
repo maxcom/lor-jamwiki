@@ -321,8 +321,17 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "and topic_id = ? ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
 		"select nextval('jam_file_seq') as file_id ";
+	protected static final String STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES =
+		"select jam_topic.topic_name "
+		+ "from jam_topic, jam_file "
+		+ "where jam_topic.topic_id = jam_file.topic_id "
+		+ "and jam_file.virtual_wiki_id = ? ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
 		"select nextval('jam_file_version_seq') as file_version_id ";
+	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSIONS =
+		"select * from jam_file_version "
+		+ "where file_id = ? "
+		+ "order by file_version_id desc ";
 	protected static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
 		"select nextval('jam_wiki_user_seq') as wiki_user_id ";
 	protected static final String STATEMENT_SELECT_WIKI_USER =
@@ -465,6 +474,25 @@ public class DefaultQueryHandler implements QueryHandler {
 	public WikiResultSet getAllTopicVersions(Topic topic) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSIONS);
 		stmt.setInt(1, topic.getTopicId());
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES);
+		stmt.setInt(1, virtualWikiId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE_VERSIONS);
+		stmt.setInt(1, wikiFile.getFileId());
 		return stmt.executeQuery();
 	}
 

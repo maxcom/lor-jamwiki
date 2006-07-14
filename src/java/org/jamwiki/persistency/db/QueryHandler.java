@@ -46,6 +46,16 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getAllWikiFileTopicNames(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
+	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet getAllWikiUserLogins() throws Exception;
 
 	/**
