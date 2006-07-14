@@ -87,8 +87,13 @@ public class UploadServlet extends JAMWikiServlet {
 		if (minute.length() == 1) minute = "0" + minute;
 		String second = new Integer(cal.get(Calendar.SECOND)).toString();
 		if (second.length() == 1) second = "0" + second;
+		String suffix = "-" + day + hour + minute + second;
 		int pos = fileName.lastIndexOf(".");
-		fileName = fileName.substring(0, pos) + "-" + day + hour + minute + second + fileName.substring(pos);
+		if (pos == -1) {
+			fileName = fileName + suffix;
+		} else {
+			fileName = fileName.substring(0, pos) + suffix + fileName.substring(pos);
+		}
 		// decode, then encode to ensure that any previously encoded characters
 		// aren't encoded twice
 		return Utilities.encodeURL(Utilities.decodeURL(fileName));
