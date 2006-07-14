@@ -132,6 +132,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String fileName = null;
 		String url = null;
+		String contentType = null;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();
 			String fieldName = item.getFieldName();
@@ -147,12 +148,12 @@ public class UploadServlet extends JAMWikiServlet {
 				fileName = item.getName();
 				url = UploadServlet.buildUniqueFileName(fileName);
 				String subdirectory = UploadServlet.buildFileSubdirectory();
-				wikiFile.setMimeType(item.getContentType());
 				long sizeInBytes = item.getSize();
 				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 				if (!directory.exists() && !directory.mkdirs()) {
 					throw new Exception("Unable to create upload directory " + directory.getAbsolutePath());
 				}
+				contentType = item.getContentType();
 				url = subdirectory + "/" + url;
 				File uploadedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), url);
 				item.write(uploadedFile);
@@ -171,7 +172,8 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setFileName(fileName);
 		wikiFile.setUrl(url);
 		wikiFileVersion.setUrl(url);
-		wikiFileVersion.setMimeType(context.getMimeType(fileName));
+		wikiFileVersion.setMimeType(contentType);
+		wikiFile.setMimeType(contentType);
 		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
 			WikiBase.getHandler().writeTopic(topic, topicVersion);
 		} else {
