@@ -18,6 +18,13 @@
   Reported by Alexi.
 * BUG: Update cache headers to resolve issues with Opera.  Reported
   with a suggested fix by Alexi.
+* BUG: Author IP address not being retrieved in file persistency mode.
+* FEATURE: Support Mediawiki image links ([[:Image:Foo]]).
+* FEATURE: Display image file history for image pages.
+* BUG: Remove several hard-coded message strings, replace with
+  messages that can be translated into local languages.
+* BUG: Fix file persistency to database persistency conversion.
+  Required removal of database sequences.
 * FEATURE: Hide panic and email notification options in admin - not
   currently supported.
 * FEATURE: Remove RSS link from the nav bar - not currently

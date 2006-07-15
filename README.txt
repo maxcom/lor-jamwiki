@@ -14,9 +14,13 @@ JAMWiki requires a web application server (such as Tomcat or Websphere) that sup
 
 In addition, JAMWiki can be run in either a file persistency mode, or a database persistency mode.  When running in a file persistency mode a directory must be available into which JAMWiki files can be written.  When running in database persistency mode JAMWiki requires a database user with permission to create tables and sequences.  JAMWiki has been tested with the following databases:
 
-  Postgres 8.0 (untested on other versions)
-  MySQL 4.1 (untested on other versions)
-  Oracle 10.2 (untested on other versions; requires the 10g or later JDBC drivers)
+  Postgres 8.0
+  Postgres 7.4
+  MySQL 4.1
+  Oracle 10.2 (requires the 10g or later JDBC drivers)
+  H2 Database (ANSI mode)
+
+Note that JAMWiki may work with any ANSI compliant database.
 
 
 INSTALLATION
@@ -24,7 +28,18 @@ INSTALLATION
 
 JAMWiki is distributed as a WAR file that can be installed onto any web application server that supports the JDK 1.4 and servlet 2.3 specifications.  Refer to the web application server documentation for specific instructions on how to deploy a WAR file.  Once the WAR file has been installed, restart the web application server and view the page http://<server>/<context>/ to begin the configuration process (<server> is the URL for your server, and <context> is the web application server context under which JAMWiki was installed).
 
-The setup process begins with the first JAMWiki pageview after setup.  Setup requires that a directory into which JAMWiki files can be written be provided, as well as the name and login of an administrative user.  If using a database for persistency then the database settings must also be provided (see the "Database Settings" section below).  Once the settings have been verified JAMWiki will create the user account, database tables or file directories, base properties, and default topics.  Once complete JAMWiki redirects to the starting page, ready for use.  That's all there is to it!
+The setup process begins with the first JAMWiki pageview after setup.  Setup requires the following:
+
+  1. A directory into which JAMWiki files can be written.
+  2. A directory (accessible to the web server) into while images and other
+     files can be uploaded.
+  3. The relative path (with respect to the web server doc root) to the image
+     upload directory.
+  4. The name and login of an administrative user.
+  5. (Optional) If using a database for persistency then the database settings
+     must also be provided (see the "Database Settings" section below).
+
+Once the settings have been verified JAMWiki will create the user account, database tables or file directories, base properties, and default topics.  Once complete JAMWiki redirects to the starting page, ready for use.  That's all there is to it!
 
 
 DATABASE SETTINGS
@@ -32,25 +47,29 @@ DATABASE SETTINGS
 
 JAMWiki can operate using files for storage, or using a database.  For larger implementations a database is highly recommended.  To utilize a database the following steps are required during initial setup:
 
-1. Install an appropriate JDBC driver in the WEB-INF/lib directory.  JDBC driver packages can normally be obtained from the database vendor.
+  1. Install an appropriate JDBC driver in the WEB-INF/lib directory.  JDBC
+     driver packages can normally be obtained from the database vendor.
+  2. Create the JAMWiki database.  JAMWiki can also use an existing database.
+  3. Create a user login for JAMWiki.  The user must have permission to create
+     tables and sequences.
+  4. During setup choose "Database" from the persistency-type dropdown menu.  For
+     Oracle, MySql and Postgres choose the appropriate database type; for all
+     other database types choose Ansi.  Fill out the driver, url, username
+     and password fields.  Check with your database vendor to determine the
+     appropriate values for each of these fields.  Some example values are below:
 
-2. Create the JAMWiki database.  JAMWiki can also use an existing database.
+       JDBC driver class: org.postgresql.Driver
+       JDBC driver class: com.mysql.jdbc.Driver
+       JDBC driver class: oracle.jdbc.driver.OracleDriver
+       Database type    : as appropriate
+       Database URL     : jdbc:postgresql://localhost:5432/<database_name>
+       Database URL     : jdbc:mysql://localhost:3306/<database_name>
+       Database URL     : jdbc:oracle:thin:@//localhost:1521/<service_name>
+       Database Username: as appropriate
+       Database Password: as appropriate
 
-3. Create a user login for JAMWiki.  The user must have permission to create tables and sequences.
-
-4. During setup choose "Database" from the persistency-type dropdown menu and fill out the driver, database type, url, username and password fields.  Check with your database vendor to determine the appropriate values for each of these fields.  Some example values are below:
-
-    JDBC driver class: org.postgresql.Driver
-    JDBC driver class: com.mysql.jdbc.Driver
-    JDBC driver class: oracle.jdbc.driver.OracleDriver
-    Database type    : as appropriate
-    Database URL     : jdbc:postgresql://localhost:5432/<database_name>
-    Database URL     : jdbc:mysql://localhost:3306/<database_name>
-    Database URL     : jdbc:oracle:thin:@//localhost:1521/<service_name>
-    Database Username: as appropriate
-    Database Password: as appropriate
-
-5. JAMWiki will verify that a connection can be established with the database and will then create all required tables.
+  5. JAMWiki will verify that a connection can be established with the
+     database and will then create all required tables.
 
 
 VIRTUAL WIKIS
