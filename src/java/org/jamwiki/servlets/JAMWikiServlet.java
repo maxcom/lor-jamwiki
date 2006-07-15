@@ -130,13 +130,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 			true
 		);
 		next.addObject("bottomArea", bottomArea);
-		String styleSheet = JAMWikiServlet.getCachedContent(
-			request.getContextPath(),
-			virtualWiki,
-			Utilities.getMessage("specialpages.stylesheet", request.getLocale()),
-			false
-		);
-		next.addObject("StyleSheet", styleSheet);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
 	}
 

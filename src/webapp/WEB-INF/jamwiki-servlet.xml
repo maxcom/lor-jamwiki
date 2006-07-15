@@ -31,6 +31,7 @@
 				<prop key="/**/Special:Upgrade">Admin</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
+				<prop key="/**/*.css">Stylesheet</prop>
 				<prop key="/**/*">Topic</prop>
 			</props>
 		</property>
@@ -49,6 +50,7 @@
 	<bean id="RSS" class="org.jamwiki.servlets.RSSServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
+	<bean id="Stylesheet" class="org.jamwiki.servlets.StylesheetServlet" />
 	<bean id="Topic" class="org.jamwiki.servlets.TopicServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
 	<bean id="VirtualWikiList" class="org.jamwiki.servlets.VirtualWikiServlet" />
