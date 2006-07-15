@@ -2,6 +2,10 @@
 0.0.7
 =====
 
+* Make more HTML code XHTML compliant.
+* FEATURE: Do not include CSS information inline, instead make
+  jamwiki.css an editable Wiki topic and load from that.
+* FEATURE: Code cleanups including removal of unused files.
 
 0.0.6
 =====
