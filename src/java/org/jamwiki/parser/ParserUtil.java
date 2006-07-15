@@ -182,24 +182,6 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	public static String escapeHtml(String html) {
-		if (html == null) return html;
-		StringBuffer escaped = new StringBuffer();
-		for (int i=0; i < html.length(); i++) {
-			if (html.charAt(i) == '<') {
-				escaped.append("&lt;");
-			} else if (html.charAt(i) == '>') {
-				escaped.append("&gt;");
-			} else {
-				escaped.append(html.charAt(i));
-			}
-		}
-		return escaped.toString();
-	}
-
-	/**
-	 *
-	 */
 	protected static String linkHtml(String link, String text, String punctuation) {
 		String html = null;
 		String linkLower = link.toLowerCase();

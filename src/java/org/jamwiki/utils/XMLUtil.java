@@ -47,7 +47,7 @@ public class XMLUtil {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("<").append(tagName).append(">");
 		if (escape) {
-			tagValue = escapeXML(tagValue);
+			tagValue = Utilities.escapeHTML(tagValue);
 		}
 		buffer.append(tagValue);
 		buffer.append("</").append(tagName).append(">");
@@ -89,18 +89,6 @@ public class XMLUtil {
 	 */
 	public static String buildTag(String tagName, long tagValue) {
 		return XMLUtil.buildTag(tagName, new Long(tagValue).toString(), false);
-	}
-
-	/**
-	 *
-	 */
-	private static String escapeXML(String text) {
-		text = StringUtils.replace(text, "&", "&amp;");
-		text = StringUtils.replace(text, "<", "&lt;");
-		text = StringUtils.replace(text, ">", "&gt;");
-		text = StringUtils.replace(text, "\"", "&quot;");
-		text = StringUtils.replace(text, "'", "&apos;");
-		return text;
 	}
 
 	/**

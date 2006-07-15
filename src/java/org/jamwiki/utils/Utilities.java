@@ -342,6 +342,19 @@ public class Utilities {
 	}
 
 	/**
+	 * Replace any occurrences of <, >, ", ', or & with their HTML equivalents.
+	 */
+	public static String escapeHTML(String input) {
+		// for obvious reasons ampersand must be replaced first
+		input = StringUtils.replace(input, "&", "&amp;");
+		input = StringUtils.replace(input, ">", "&gt;");
+		input = StringUtils.replace(input, "<", "&lt;");
+		input = StringUtils.replace(input, "\"", "&quot;");
+		input = StringUtils.replace(input, "'", "&apos;");
+		return input;
+	}
+
+	/**
 	 * Returns any trailing . , ; : characters on the given string
 	 * @param text
 	 * @return empty string if none are found

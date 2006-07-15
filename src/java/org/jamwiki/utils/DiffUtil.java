@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
+import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
 /**
@@ -84,26 +85,6 @@ public class DiffUtil {
 	/**
 	 *
 	 */
-	public static String convertToHTML(String input) {
-		StringBuffer output = new StringBuffer(input);
-		int pos = -1;
-		// FIXME - need a general String.replace() method
-		// for obvious reasons, ampersands must be escaped first
-		while ((pos = output.indexOf("&", (pos+1))) != -1) {
-			output.replace(pos, pos+1, "&amp;");
-		}
-		while ((pos = output.indexOf("<", (pos+1))) != -1) {
-			output.replace(pos, pos+1, "&lt;");
-		}
-		while ((pos = output.indexOf(">", (pos+1))) != -1) {
-			output.replace(pos, pos+1, "&gt;");
-		}
-		return output.toString();
-	}
-
-	/**
-	 *
-	 */
 	class DiffHelper {
 
 		String[] oldArray = null;
@@ -141,12 +122,12 @@ public class DiffUtil {
 				if (!StringUtils.hasText(oldLine)) {
 					oldLine += "&#160;";
 				} else {
-					oldLine = convertToHTML(oldLine);
+					oldLine = Utilities.escapeHTML(oldLine);
 				}
 				if (!StringUtils.hasText(newLine)) {
 					newLine += "&#160;";
 				} else {
-					newLine = convertToHTML(newLine);
+					newLine = Utilities.escapeHTML(newLine);
 				}
 			}
 			// build table row
