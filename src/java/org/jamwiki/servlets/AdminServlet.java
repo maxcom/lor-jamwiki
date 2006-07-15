@@ -249,10 +249,13 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_EMAIL_SMTP_USERNAME,
 				request.getParameter(Environment.PROP_EMAIL_SMTP_USERNAME)
 			);
-			Encryption.setEncryptedProperty(
-				Environment.PROP_EMAIL_SMTP_PASSWORD,
-				request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD)
-			);
+			if (StringUtils.hasText(request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD))) {
+				Encryption.setEncryptedProperty(
+					Environment.PROP_EMAIL_SMTP_PASSWORD,
+					request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD)
+				);
+				next.addObject("smtpPassword", request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD));
+			}
 			Environment.setValue(
 				Environment.PROP_EMAIL_REPLY_ADDRESS,
 				request.getParameter(Environment.PROP_EMAIL_REPLY_ADDRESS)
@@ -300,10 +303,13 @@ public class AdminServlet extends JAMWikiServlet {
 					Environment.PROP_DB_USERNAME,
 					request.getParameter(Environment.PROP_DB_USERNAME)
 				);
-				Encryption.setEncryptedProperty(
-					Environment.PROP_DB_PASSWORD,
-					request.getParameter(Environment.PROP_DB_PASSWORD)
-				);
+				if (StringUtils.hasText(request.getParameter(Environment.PROP_DB_PASSWORD))) {
+					Encryption.setEncryptedProperty(
+						Environment.PROP_DB_PASSWORD,
+						request.getParameter(Environment.PROP_DB_PASSWORD)
+					);
+					next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
+				}
 				Environment.setIntValue(
 					Environment.PROP_DBCP_MAX_ACTIVE,
 					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_MAX_ACTIVE))
@@ -425,11 +431,12 @@ public class AdminServlet extends JAMWikiServlet {
 			};
 			for (int i = 0; i < autoFill.length; i++) {
 				if (request.getParameter(autoFill[i]) != null) {
-					if (autoFill[i].equals(Environment.PROP_USERGROUP_PASSWORD)) {
+					if (autoFill[i].equals(Environment.PROP_USERGROUP_PASSWORD) && StringUtils.hasText(request.getParameter(autoFill[i]))) {
 						Encryption.setEncryptedProperty(
 							Environment.PROP_USERGROUP_PASSWORD,
 							request.getParameter(autoFill[i])
 						);
+						next.addObject("userGroupPassword", request.getParameter(autoFill[i]));
 					} else {
 						Environment.setValue(autoFill[i], request.getParameter(autoFill[i]));
 					}

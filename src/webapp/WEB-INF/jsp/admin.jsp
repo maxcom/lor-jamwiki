@@ -20,7 +20,6 @@
     org.jamwiki.Environment,
     org.jamwiki.WikiBase,
     org.jamwiki.servlets.JAMWikiServlet,
-    org.jamwiki.utils.Encryption,
     org.jamwiki.users.Usergroup,
     org.apache.commons.pool.impl.GenericObjectPool
 " errorPage="/WEB-INF/jsp/error.jsp" %>
@@ -225,7 +224,7 @@ FIXME - Notifications not supported right now, comment this out
     </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.smtp.pass"/></td>
-      <td class="normal"><input type="password" name="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD) %>" size="30"></td>
+      <td class="normal"><input type="password" name="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" value="<c:out value="${smtpPassword}" />" size="30"></td>
     </tr>
     <tr>
       <td class="normal"><f:message key="admin.caption.reply"/></td>
@@ -304,7 +303,7 @@ FIXME - Notifications not supported right now, comment this out
     <tr>
       <td class="normal"><f:message key="admin.caption.databasepass"/></td>
       <td class="normal">
-        <input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="30">
+        <input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="30">
       </td>
     </tr>
     <tr><td colspan="2">&nbsp;</td></tr>
@@ -457,7 +456,7 @@ FIXME - LDAP not supported at the moment, comment this out
    <tr>
       <td class="normal"><f:message key="admin.caption.usergroup.password"/></td>
       <td class="normal">
-        <input type="password" name="<%= Environment.PROP_USERGROUP_PASSWORD %>" id="<%= Environment.PROP_USERGROUP_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD) %>" size="10">
+        <input type="password" name="<%= Environment.PROP_USERGROUP_PASSWORD %>" id="<%= Environment.PROP_USERGROUP_PASSWORD %>" value="<c:out value="${userGroupPassword}" />" size="10">
       </td>
     </tr>
    <tr>

@@ -18,8 +18,7 @@
 --%>
 <%@ page import="
     org.jamwiki.Environment,
-    org.jamwiki.WikiBase,
-    org.jamwiki.utils.Encryption
+    org.jamwiki.WikiBase
 " errorPage="/WEB-INF/jsp/error.jsp" %>
 
 <%@ include file="page-init.jsp" %>
@@ -91,7 +90,7 @@ function onPersistenceType() {
 </tr>
 <tr>
 	<td><f:message key="admin.caption.databasepass" />:</td>
-	<td><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<%= Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD) %>" size="15"></td>
+	<td><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="15"></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
