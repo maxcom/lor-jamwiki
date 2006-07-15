@@ -16,6 +16,7 @@
  */
 package org.jamwiki;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -39,31 +40,12 @@ public abstract class AbstractNotify implements Notify {
 	/**
 	 *
 	 */
-	public abstract void addMember(String userName) throws Exception;
-
-	/**
-	 *
-	 */
-	public abstract void removeMember(String userName) throws Exception;
-
-	/**
-	 *
-	 */
-	public abstract boolean isMember(String userName) throws Exception;
-
-	/**
-	 *
-	 */
-	public abstract Collection getMembers() throws Exception;
-
-	/**
-	 *
-	 */
 	public boolean sendNotifications(String rootPath, Locale locale) throws Exception {
 		// FIXME - this is broken now.  get only users who want a notification.
 		List members = WikiBase.getHandler().getAllWikiUserLogins();
 		WikiMail mailer = WikiMail.getInstance();
-		Iterator anIterator = getMembers().iterator();
+		Iterator anIterator = new ArrayList().iterator();
+//		Iterator anIterator = getMembers().iterator();
 		while (anIterator.hasNext()) {
 			String login = (String)anIterator.next();
 			WikiUser user = WikiBase.getHandler().lookupWikiUser(login);

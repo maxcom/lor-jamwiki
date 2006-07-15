@@ -19,7 +19,6 @@
 				<prop key="/**/Special:LockList">LockList</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
-				<prop key="/**/Special:Notify">Notify</prop>
 				<prop key="/**/Special:OrphanedTopics">Topic</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
@@ -44,7 +43,6 @@
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
 	<bean id="LockList" class="org.jamwiki.servlets.LockListServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
-	<bean id="Notify" class="org.jamwiki.servlets.NotifyServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
 	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />

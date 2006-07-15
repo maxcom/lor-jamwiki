@@ -92,13 +92,6 @@ public class FileNotify extends AbstractNotify {
 	/**
 	 *
 	 */
-	public Collection getMembers() throws Exception {
-		return this.membersToNotify;
-	}
-
-	/**
-	 *
-	 */
 	private synchronized boolean writeNotifyFile() throws Exception {
 		try {
 			if (!notifyFile.exists()) createNotifyFile();
@@ -114,42 +107,6 @@ public class FileNotify extends AbstractNotify {
 			throw new Exception("Notify File could not be written");
 		}
 		return true;
-	}
-
-	/**
-	 * Adds a user to the list of members to be notified when the associated topic changes.
-	 *
-	 * @param userName  the name of the user to add
-	 * @exception Exception if the file could not be written
-	 */
-	public void addMember(String userName) throws Exception {
-		membersToNotify.add(userName);
-		writeNotifyFile();
-	}
-
-	/**
-	 * Removes a user from the list of members to be notified when the associated topic changes.
-	 *
-	 * @param userName  the name of the user to remove
-	 * @exception Exception if the file could not be written
-	 */
-	public synchronized void removeMember(String userName) throws Exception {
-		membersToNotify.remove(userName);
-		if (membersToNotify.isEmpty()) {
-			notifyFile.delete();
-		} else {
-			writeNotifyFile();
-		}
-	}
-
-	/**
-	 * Checks whether the user is in the list of members to be notified when the associated topic changes.
-	 *
-	 * @param userName  the name of the user to check
-	 * @return boolean  True if the user is in the list.
-	 */
-	public boolean isMember(String userName) {
-		return membersToNotify.contains(userName);
 	}
 
 	/**

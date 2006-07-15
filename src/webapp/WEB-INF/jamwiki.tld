@@ -67,21 +67,4 @@
       <required>false</required>
     </attribute>
   </tag>
-  <tag>
-    <name>notification</name>
-    <tag-class>org.jamwiki.tags.NotificationTag</tag-class>
-    <body-content>JSP</body-content>
-    <attribute>
-      <name>var</name>
-      <required>true</required>
-    </attribute>
-    <attribute>
-      <name>userVar</name>
-      <required>true</required>
-    </attribute>
-    <attribute>
-      <name>topicVar</name>
-      <required>true</required>
-    </attribute>
-  </tag>
 </taglib>
