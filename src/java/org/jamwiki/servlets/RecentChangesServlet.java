@@ -62,7 +62,7 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		}
 		Collection all = null;
 		try {
-			all = WikiBase.getHandler().getRecentChanges(virtualWiki, num);
+			all = WikiBase.getHandler().getRecentChanges(virtualWiki, num, true);
 		} catch (Exception e) {
 			logger.error(e);
 			throw e;

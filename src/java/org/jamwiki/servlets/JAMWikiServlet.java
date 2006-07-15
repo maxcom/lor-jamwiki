@@ -398,7 +398,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
 			topic.setTopicContent(contents);
 			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
-				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName);
+				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 				next.addObject("fileVersions", fileVersions);
 			}
 		}

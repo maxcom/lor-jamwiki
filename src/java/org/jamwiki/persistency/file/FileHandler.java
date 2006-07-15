@@ -163,142 +163,24 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addRecentChange(RecentChange change) throws Exception {
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_RECENT_CHANGE_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_ID, change.getTopicId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_NAME, change.getTopicName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_VERSION_ID, change.getTopicVersionId()));
-		content.append("\n");
-		if (change.getPreviousTopicVersionId() != null) {
-			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID, change.getPreviousTopicVersionId()));
-			content.append("\n");
-		}
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_ID, change.getAuthorId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_NAME, change.getAuthorName(), true));
-		content.append("\n");
-		if (change.getEditComment() != null) {
-			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_COMMENT, change.getEditComment(), true));
-			content.append("\n");
-		}
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_DATE, change.getEditDate()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_TYPE, change.getEditType()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_VIRTUAL_WIKI, change.getVirtualWiki(), true));
-		content.append("\n");
-		content.append("</").append(XML_RECENT_CHANGE_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = recentChangeFilename(change.getTopicVersionId());
-		File file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
-		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		// also write to user contributions directory
-		file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.CONTRIBUTIONS_DIR, change.getAuthorName(), filename);
-		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		this.saveRecentChange(change);
 	}
 
 	/**
 	 *
 	 */
 	protected void addTopic(Topic topic) throws Exception {
-		if (topic.getTopicId() <= 0) {
+		if (topic.getTopicId() < 1) {
 			topic.setTopicId(nextTopicId());
 		}
-		if (topic.getTopicId() > NEXT_TOPIC_ID) {
-			NEXT_TOPIC_ID = topic.getTopicId();
-			nextFileWrite(NEXT_TOPIC_ID, getPathFor(null, null, NEXT_TOPIC_ID_FILE));
-		}
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_TOPIC_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_TITLE, topic.getName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_ID, topic.getTopicId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VIRTUAL_WIKI, topic.getVirtualWiki(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_TEXT, topic.getTopicContent(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_ADMIN_ONLY, topic.getAdminOnly()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_LOCKED_BY, topic.getLockedBy()));
-		content.append("\n");
-		if (topic.getLockedDate() != null) {
-			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_DATE, topic.getLockedDate()));
-			content.append("\n");
-		}
-		if (topic.getLockSessionKey() != null) {
-			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_KEY, topic.getLockSessionKey(), true));
-			content.append("\n");
-		}
-		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_DELETED, topic.getDeleted()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_TYPE, topic.getTopicType()));
-		content.append("\n");
-		content.append("</").append(XML_TOPIC_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = topicFilename(topic.getName());
-		File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_DIR, filename);
-		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		this.saveTopic(topic);
 	}
 
 	/**
 	 *
 	 */
 	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
-		if (topicVersion.getTopicVersionId() <= 0) {
-			topicVersion.setTopicVersionId(nextTopicVersionId());
-		}
-		if (topicVersion.getTopicVersionId() > NEXT_TOPIC_VERSION_ID) {
-			NEXT_TOPIC_VERSION_ID = topicVersion.getTopicVersionId();
-			nextFileWrite(NEXT_TOPIC_VERSION_ID, getPathFor(null, null, NEXT_TOPIC_VERSION_ID_FILE));
-		}
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_TOPIC_VERSION_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_ID, topicVersion.getTopicVersionId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_TOPIC_ID, topicVersion.getTopicId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_DATE, topicVersion.getEditDate()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_TEXT, topicVersion.getVersionContent(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_TYPE, topicVersion.getEditType()));
-		content.append("\n");
-		content.append("<").append(XML_TOPIC_VERSION_AUTHOR).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_AUTHOR_ID, topicVersion.getAuthorId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS, topicVersion.getAuthorIpAddress(), true));
-		content.append("\n");
-		content.append("</").append(XML_TOPIC_VERSION_AUTHOR).append(">");
-		content.append("\n");
-		if (topicVersion.getEditComment() != null) {
-			content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_COMMENT, topicVersion.getEditComment(), true));
-			content.append("\n");
-		}
-		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID, topicVersion.getPreviousTopicVersionId()));
-		content.append("\n");
-		content.append("</").append(XML_TOPIC_VERSION_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = topicVersionFilename(topicVersion.getTopicVersionId());
-		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.TOPIC_VERSION_DIR, topicName, filename);
-		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		this.saveTopicVersion(virtualWiki, topicName, topicVersion);
 	}
 
 	/**
@@ -322,91 +204,17 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
-		if (wikiFile.getFileId() <= 0) {
+		if (wikiFile.getFileId() < 1) {
 			wikiFile.setFileId(nextWikiFileId());
 		}
-		if (wikiFile.getFileId() > NEXT_WIKI_FILE_ID) {
-			NEXT_WIKI_FILE_ID = wikiFile.getFileId();
-			nextFileWrite(NEXT_WIKI_FILE_ID, getPathFor(null, null, NEXT_WIKI_FILE_ID_FILE));
-		}
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_WIKI_FILE_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_NAME, wikiFile.getFileName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_ID, wikiFile.getFileId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_TOPIC_ID, wikiFile.getTopicId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VIRTUAL_WIKI, wikiFile.getVirtualWiki(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_URL, wikiFile.getUrl(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_ADMIN_ONLY, wikiFile.getAdminOnly()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_READ_ONLY, wikiFile.getReadOnly()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_DELETED, wikiFile.getDeleted()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_MIME_TYPE, wikiFile.getMimeType(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_SIZE, wikiFile.getFileSize()));
-		content.append("\n");
-		content.append("</").append(XML_WIKI_FILE_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		// name file after its parent topic
-		String filename = topicFilename(topicName);
-		File file = FileHandler.getPathFor(wikiFile.getVirtualWiki(), FileHandler.WIKI_FILE_DIR, filename);
-		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		this.saveWikiFile(topicName, wikiFile);
 	}
 
 	/**
 	 *
 	 */
 	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception {
-		if (wikiFileVersion.getFileVersionId() <= 0) {
-			wikiFileVersion.setFileVersionId(nextWikiFileVersionId());
-		}
-		if (wikiFileVersion.getFileVersionId() > NEXT_WIKI_FILE_VERSION_ID) {
-			NEXT_WIKI_FILE_VERSION_ID = wikiFileVersion.getFileVersionId();
-			nextFileWrite(NEXT_WIKI_FILE_VERSION_ID, getPathFor(null, null, NEXT_WIKI_FILE_VERSION_ID_FILE));
-		}
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_ID, wikiFileVersion.getFileVersionId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_FILE_ID, wikiFileVersion.getFileId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_COMMENT, wikiFileVersion.getUploadComment(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_URL, wikiFileVersion.getUrl(), true));
-		content.append("\n");
-		content.append("<").append(XML_WIKI_FILE_VERSION_AUTHOR).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_AUTHOR_ID, wikiFileVersion.getAuthorId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS, wikiFileVersion.getAuthorIpAddress(), true));
-		content.append("\n");
-		content.append("</").append(XML_WIKI_FILE_VERSION_AUTHOR).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_DATE, wikiFileVersion.getUploadDate()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_MIME_TYPE, wikiFileVersion.getMimeType(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_SIZE, wikiFileVersion.getFileSize()));
-		content.append("\n");
-		content.append("</").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = wikiFileVersionFilename(wikiFileVersion.getFileVersionId());
-		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.WIKI_FILE_VERSION_DIR, topicName, filename);
-		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		this.saveWikiFileVersion(virtualWiki, topicName, wikiFileVersion);
 	}
 
 	/**
@@ -416,53 +224,7 @@ public class FileHandler extends PersistencyHandler {
 		if (user.getUserId() < 1) {
 			user.setUserId(nextWikiUserId());
 		}
-		if (user.getUserId() > NEXT_WIKI_USER_ID) {
-			NEXT_WIKI_USER_ID = user.getUserId();
-			nextFileWrite(NEXT_WIKI_USER_ID, getPathFor(null, null, NEXT_WIKI_USER_ID_FILE));
-		}
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_WIKI_USER_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_ID, user.getUserId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_ADMIN, user.getAdmin()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_CREATE_DATE, user.getCreateDate()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_CREATE_IP_ADDRESS, user.getCreateIpAddress(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_DISPLAY_NAME, user.getDisplayName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_EMAIL, user.getEmail(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_ENCODED_PASSWORD, user.getEncodedPassword(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_FIRST_NAME, user.getFirstName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_LOGIN_DATE, user.getLastLoginDate()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_LOGIN_IP_ADDRESS, user.getLastLoginIpAddress(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_NAME, user.getLastName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_LOGIN, user.getLogin(), true));
-		content.append("\n");
-		content.append("</").append(XML_WIKI_USER_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = wikiUserFilename(user.getLogin());
-		File userFile = FileHandler.getPathFor(null, FileHandler.WIKI_USER_DIR, filename);
-		FileUtils.writeStringToFile(userFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
-		File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
-		if (WIKI_USER_ID_HASH == null && userIdHashFile.exists()) {
-			WIKI_USER_ID_HASH.load(new FileInputStream(userIdHashFile));
-		} else if (WIKI_USER_ID_HASH == null) {
-			WIKI_USER_ID_HASH = new Properties();
-		}
-		WIKI_USER_ID_HASH.setProperty(new Integer(user.getUserId()).toString(), user.getLogin());
-		WIKI_USER_ID_HASH.store(new FileOutputStream(userIdHashFile), null);
+		this.saveWikiUser(user);
 	}
 
 	/**
@@ -516,6 +278,7 @@ public class FileHandler extends PersistencyHandler {
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		File[] files = retrieveTopicFiles(virtualWiki);
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			String topicName = files[i].getName();
 			// strip extension
@@ -535,9 +298,10 @@ public class FileHandler extends PersistencyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public List getAllTopicVersions(String virtualWiki, String topicName) throws Exception {
+	public List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		List all = new LinkedList();
-		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
+		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, descending);
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			TopicVersion version = initTopicVersion(files[i]);
 			all.add(version);
@@ -551,6 +315,7 @@ public class FileHandler extends PersistencyHandler {
 	public List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		File[] files = retrieveWikiFileFiles(virtualWiki);
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			String topicName = files[i].getName();
 			// strip extension
@@ -566,9 +331,10 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileVersions(String virtualWiki, String topicName) throws Exception {
+	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		List all = new LinkedList();
-		File[] files = retrieveWikiFileVersionFiles(virtualWiki, topicName);
+		File[] files = retrieveWikiFileVersionFiles(virtualWiki, topicName, descending);
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			WikiFileVersion version = initWikiFileVersion(files[i]);
 			all.add(version);
@@ -582,6 +348,7 @@ public class FileHandler extends PersistencyHandler {
 	public List getAllWikiUserLogins() throws Exception {
 		List all = new ArrayList();
 		File[] files = retrieveWikiUserFiles();
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			String login = files[i].getName();
 			// strip extension
@@ -600,6 +367,7 @@ public class FileHandler extends PersistencyHandler {
 	public List getLockList(String virtualWiki) throws Exception {
 		List all = new LinkedList();
 		File[] files = retrieveLockFiles(virtualWiki);
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			String topicName = Utilities.decodeURL(files[i].getName());
 			Topic topic = lookupTopic(virtualWiki, topicName);
@@ -658,6 +426,7 @@ public class FileHandler extends PersistencyHandler {
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
 		List all = new LinkedList();
 		File[] files = retrieveReadOnlyFiles(virtualWiki);
+		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			String topicName = Utilities.decodeURL(files[i].getName());
 			Topic topic = lookupTopic(virtualWiki, topicName);
@@ -673,9 +442,9 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, int numChanges) throws Exception {
+	public Collection getRecentChanges(String virtualWiki, int numChanges, boolean descending) throws Exception {
 		List all = new LinkedList();
-		File[] files = retrieveRecentChangeFiles(virtualWiki);
+		File[] files = retrieveRecentChangeFiles(virtualWiki, descending);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			if (i >= numChanges) break;
@@ -688,9 +457,9 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		List all = new LinkedList();
-		File[] files = retrieveUserContributionsFiles(virtualWiki, userString);
+		File[] files = retrieveUserContributionsFiles(virtualWiki, userString, descending);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
 			if (i >= num) break;
@@ -1053,7 +822,7 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		// get all files, sorted.  last one is last version.
-		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName);
+		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, true);
 		if (files == null) return null;
 		File file = files[0];
 		return initTopicVersion(file);
@@ -1203,6 +972,18 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
+	 * This method causes all existing data to be deleted from the Wiki.  Use only
+	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
+	 * DELETE ALL WIKI DATA!
+	 */
+	public void purgeData() throws Exception {
+		String rootDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
+		File rootDirFile = new File(rootDir);
+		// BOOM!  Everything gone...
+		FileUtils.cleanDirectory(rootDirFile);
+	}
+
+	/**
 	 *
 	 */
 	protected static String readOnlyFilename(String topicName) {
@@ -1222,7 +1003,6 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveLockFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.LOCK_DIR);
 		File[] files = file.listFiles();
-		if (files == null) return null;
 		return files;
 	}
 
@@ -1232,18 +1012,18 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveReadOnlyFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.READ_ONLY_DIR);
 		File[] files = file.listFiles();
-		if (files == null) return null;
 		return files;
 	}
 
 	/**
 	 *
 	 */
-	private File[] retrieveRecentChangeFiles(String virtualWiki) throws Exception {
+	private File[] retrieveRecentChangeFiles(String virtualWiki, boolean descending) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.RECENT_CHANGE_DIR);
 		File[] files = file.listFiles();
 		if (files == null) return null;
-		Comparator comparator = new WikiFileComparator();
+		Comparator comparator = new WikiDescendingFileComparator();
+		if (!descending) comparator = new WikiAscendingFileComparator();
 		Arrays.sort(files, comparator);
 		return files;
 	}
@@ -1254,18 +1034,18 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveTopicFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.TOPIC_DIR);
 		File[] files = file.listFiles();
-		if (files == null) return null;
 		return files;
 	}
 
 	/**
 	 *
 	 */
-	private File[] retrieveTopicVersionFiles(String virtualWiki, String topicName) throws Exception {
+	private File[] retrieveTopicVersionFiles(String virtualWiki, String topicName, boolean descending) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, FileHandler.TOPIC_VERSION_DIR, topicName);
 		File[] files = file.listFiles();
 		if (files == null) return null;
-		Comparator comparator = new WikiFileComparator();
+		Comparator comparator = new WikiDescendingFileComparator();
+		if (!descending) comparator = new WikiAscendingFileComparator();
 		Arrays.sort(files, comparator);
 		return files;
 	}
@@ -1273,11 +1053,12 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	private File[] retrieveUserContributionsFiles(String virtualWiki, String userString) throws Exception {
+	private File[] retrieveUserContributionsFiles(String virtualWiki, String userString, boolean descending) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, FileHandler.CONTRIBUTIONS_DIR, userString);
 		File[] files = file.listFiles();
 		if (files == null) return null;
-		Comparator comparator = new WikiFileComparator();
+		Comparator comparator = new WikiDescendingFileComparator();
+		if (!descending) comparator = new WikiAscendingFileComparator();
 		Arrays.sort(files, comparator);
 		return files;
 	}
@@ -1288,18 +1069,18 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveWikiFileFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.WIKI_FILE_DIR);
 		File[] files = file.listFiles();
-		if (files == null) return null;
 		return files;
 	}
 
 	/**
 	 *
 	 */
-	private File[] retrieveWikiFileVersionFiles(String virtualWiki, String topicName) throws Exception {
+	private File[] retrieveWikiFileVersionFiles(String virtualWiki, String topicName, boolean descending) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, FileHandler.WIKI_FILE_VERSION_DIR, topicName);
 		File[] files = file.listFiles();
 		if (files == null) return null;
-		Comparator comparator = new WikiFileComparator();
+		Comparator comparator = new WikiDescendingFileComparator();
+		if (!descending) comparator = new WikiAscendingFileComparator();
 		Arrays.sort(files, comparator);
 		return files;
 	}
@@ -1310,7 +1091,6 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveWikiUserFiles() throws Exception {
 		File file = FileHandler.getPathFor(null, null, FileHandler.WIKI_USER_DIR);
 		File[] files = file.listFiles();
-		if (files == null) return null;
 		return files;
 	}
 
@@ -1326,6 +1106,286 @@ public class FileHandler extends PersistencyHandler {
 			}
 		}
 		return WIKI_USER_ID_HASH.getProperty(new Integer(userId).toString());
+	}
+
+	/**
+	 *
+	 */
+	private void saveRecentChange(RecentChange change) throws Exception {
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_RECENT_CHANGE_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_ID, change.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_NAME, change.getTopicName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_VERSION_ID, change.getTopicVersionId()));
+		content.append("\n");
+		if (change.getPreviousTopicVersionId() != null) {
+			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID, change.getPreviousTopicVersionId()));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_ID, change.getAuthorId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_NAME, change.getAuthorName(), true));
+		content.append("\n");
+		if (change.getEditComment() != null) {
+			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_COMMENT, change.getEditComment(), true));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_DATE, change.getEditDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_TYPE, change.getEditType()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_VIRTUAL_WIKI, change.getVirtualWiki(), true));
+		content.append("\n");
+		content.append("</").append(XML_RECENT_CHANGE_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = recentChangeFilename(change.getTopicVersionId());
+		File file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		// also write to user contributions directory
+		file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.CONTRIBUTIONS_DIR, change.getAuthorName(), filename);
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+	}
+
+	/**
+	 *
+	 */
+	private void saveTopic(Topic topic) throws Exception {
+		if (topic.getTopicId() > NEXT_TOPIC_ID) {
+			NEXT_TOPIC_ID = topic.getTopicId();
+			nextFileWrite(NEXT_TOPIC_ID, getPathFor(null, null, NEXT_TOPIC_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_TOPIC_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_TITLE, topic.getName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_ID, topic.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VIRTUAL_WIKI, topic.getVirtualWiki(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_TEXT, topic.getTopicContent(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_ADMIN_ONLY, topic.getAdminOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_LOCKED_BY, topic.getLockedBy()));
+		content.append("\n");
+		if (topic.getLockedDate() != null) {
+			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_DATE, topic.getLockedDate()));
+			content.append("\n");
+		}
+		if (topic.getLockSessionKey() != null) {
+			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_KEY, topic.getLockSessionKey(), true));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_DELETED, topic.getDeleted()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_TYPE, topic.getTopicType()));
+		content.append("\n");
+		content.append("</").append(XML_TOPIC_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = topicFilename(topic.getName());
+		File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_DIR, filename);
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+	}
+
+	/**
+	 *
+	 */
+	private void saveTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+		if (topicVersion.getTopicVersionId() <= 0) {
+			topicVersion.setTopicVersionId(nextTopicVersionId());
+		}
+		if (topicVersion.getTopicVersionId() > NEXT_TOPIC_VERSION_ID) {
+			NEXT_TOPIC_VERSION_ID = topicVersion.getTopicVersionId();
+			nextFileWrite(NEXT_TOPIC_VERSION_ID, getPathFor(null, null, NEXT_TOPIC_VERSION_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_TOPIC_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_ID, topicVersion.getTopicVersionId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_TOPIC_ID, topicVersion.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_DATE, topicVersion.getEditDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_TEXT, topicVersion.getVersionContent(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_TYPE, topicVersion.getEditType()));
+		content.append("\n");
+		content.append("<").append(XML_TOPIC_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_AUTHOR_ID, topicVersion.getAuthorId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS, topicVersion.getAuthorIpAddress(), true));
+		content.append("\n");
+		content.append("</").append(XML_TOPIC_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		if (topicVersion.getEditComment() != null) {
+			content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_EDIT_COMMENT, topicVersion.getEditComment(), true));
+			content.append("\n");
+		}
+		content.append(XMLUtil.buildTag(XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID, topicVersion.getPreviousTopicVersionId()));
+		content.append("\n");
+		content.append("</").append(XML_TOPIC_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = topicVersionFilename(topicVersion.getTopicVersionId());
+		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.TOPIC_VERSION_DIR, topicName, filename);
+		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+	}
+
+	/**
+	 *
+	 */
+	private void saveWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+		if (wikiFile.getFileId() > NEXT_WIKI_FILE_ID) {
+			NEXT_WIKI_FILE_ID = wikiFile.getFileId();
+			nextFileWrite(NEXT_WIKI_FILE_ID, getPathFor(null, null, NEXT_WIKI_FILE_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_WIKI_FILE_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_NAME, wikiFile.getFileName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_ID, wikiFile.getFileId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_TOPIC_ID, wikiFile.getTopicId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VIRTUAL_WIKI, wikiFile.getVirtualWiki(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_URL, wikiFile.getUrl(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_ADMIN_ONLY, wikiFile.getAdminOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_READ_ONLY, wikiFile.getReadOnly()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_DELETED, wikiFile.getDeleted()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_MIME_TYPE, wikiFile.getMimeType(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_SIZE, wikiFile.getFileSize()));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_FILE_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		// name file after its parent topic
+		String filename = topicFilename(topicName);
+		File file = FileHandler.getPathFor(wikiFile.getVirtualWiki(), FileHandler.WIKI_FILE_DIR, filename);
+		FileUtils.writeStringToFile(file, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+	}
+
+	/**
+	 *
+	 */
+	private void saveWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception {
+		if (wikiFileVersion.getFileVersionId() <= 0) {
+			wikiFileVersion.setFileVersionId(nextWikiFileVersionId());
+		}
+		if (wikiFileVersion.getFileVersionId() > NEXT_WIKI_FILE_VERSION_ID) {
+			NEXT_WIKI_FILE_VERSION_ID = wikiFileVersion.getFileVersionId();
+			nextFileWrite(NEXT_WIKI_FILE_VERSION_ID, getPathFor(null, null, NEXT_WIKI_FILE_VERSION_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_ID, wikiFileVersion.getFileVersionId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_FILE_ID, wikiFileVersion.getFileId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_COMMENT, wikiFileVersion.getUploadComment(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_URL, wikiFileVersion.getUrl(), true));
+		content.append("\n");
+		content.append("<").append(XML_WIKI_FILE_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_AUTHOR_ID, wikiFileVersion.getAuthorId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS, wikiFileVersion.getAuthorIpAddress(), true));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_FILE_VERSION_AUTHOR).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_UPLOAD_DATE, wikiFileVersion.getUploadDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_MIME_TYPE, wikiFileVersion.getMimeType(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_VERSION_SIZE, wikiFileVersion.getFileSize()));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_FILE_VERSION_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = wikiFileVersionFilename(wikiFileVersion.getFileVersionId());
+		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.WIKI_FILE_VERSION_DIR, topicName, filename);
+		FileUtils.writeStringToFile(versionFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+	}
+
+	/**
+	 *
+	 */
+	private void saveWikiUser(WikiUser user) throws Exception {
+		if (user.getUserId() > NEXT_WIKI_USER_ID) {
+			NEXT_WIKI_USER_ID = user.getUserId();
+			nextFileWrite(NEXT_WIKI_USER_ID, getPathFor(null, null, NEXT_WIKI_USER_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_WIKI_USER_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_ID, user.getUserId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_ADMIN, user.getAdmin()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_CREATE_DATE, user.getCreateDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_CREATE_IP_ADDRESS, user.getCreateIpAddress(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_DISPLAY_NAME, user.getDisplayName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_EMAIL, user.getEmail(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_ENCODED_PASSWORD, user.getEncodedPassword(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_FIRST_NAME, user.getFirstName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_LOGIN_DATE, user.getLastLoginDate()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_LOGIN_IP_ADDRESS, user.getLastLoginIpAddress(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_NAME, user.getLastName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_LOGIN, user.getLogin(), true));
+		content.append("\n");
+		content.append("</").append(XML_WIKI_USER_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = wikiUserFilename(user.getLogin());
+		File userFile = FileHandler.getPathFor(null, FileHandler.WIKI_USER_DIR, filename);
+		FileUtils.writeStringToFile(userFile, content.toString(), Environment.getValue(Environment.PROP_FILE_ENCODING));
+		File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
+		if (WIKI_USER_ID_HASH == null && userIdHashFile.exists()) {
+			WIKI_USER_ID_HASH.load(new FileInputStream(userIdHashFile));
+		} else if (WIKI_USER_ID_HASH == null) {
+			WIKI_USER_ID_HASH = new Properties();
+		}
+		WIKI_USER_ID_HASH.setProperty(new Integer(user.getUserId()).toString(), user.getLogin());
+		WIKI_USER_ID_HASH.store(new FileOutputStream(userIdHashFile), null);
 	}
 
 	/**
@@ -1353,6 +1413,27 @@ public class FileHandler extends PersistencyHandler {
 			logger.warn("No lockfile to unlock topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
 		lockFile.delete();
+	}
+
+	/**
+	 *
+	 */
+	protected void updateTopic(Topic topic) throws Exception {
+		this.saveTopic(topic);
+	}
+
+	/**
+	 *
+	 */
+	protected void updateWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+		this.saveWikiFile(topicName, wikiFile);
+	}
+
+	/**
+	 *
+	 */
+	protected void updateWikiUser(WikiUser user) throws Exception {
+		this.saveWikiUser(user);
 	}
 
 	/**
@@ -1388,12 +1469,15 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
-	 *
+	 * Return a list, sorted so that the largest values are first.
 	 */
-	class WikiFileComparator implements Comparator {
+	class WikiDescendingFileComparator implements Comparator {
 
 		/**
-		 *
+		 * Returns a positive value if first value should come after the
+		 * second value.  Returns a negative value if first value should
+		 * come before the second value.  Returns zero if the values
+		 * are equal.
 		 */
 		public int compare(Object first, Object second) {
 			String one = ((File)first).getName();
@@ -1403,6 +1487,28 @@ public class FileHandler extends PersistencyHandler {
 			pos = two.lastIndexOf(EXT);
 			int arg2 = new Integer(two.substring(0, pos)).intValue();
 			return arg2 - arg1;
+		}
+	}
+
+	/**
+	 * Return a list, sorted so that the smallest values are first.
+	 */
+	class WikiAscendingFileComparator implements Comparator {
+
+		/**
+		 * Returns a negative value if first value should come after the
+		 * second value.  Returns a positive value if first value should
+		 * come before the second value.  Returns zero if the values
+		 * are equal.
+		 */
+		public int compare(Object first, Object second) {
+			String one = ((File)first).getName();
+			String two = ((File)second).getName();
+			int pos = one.lastIndexOf(EXT);
+			int arg1 = new Integer(one.substring(0, pos)).intValue();
+			pos = two.lastIndexOf(EXT);
+			int arg2 = new Integer(two.substring(0, pos)).intValue();
+			return arg1 - arg2;
 		}
 	}
 }

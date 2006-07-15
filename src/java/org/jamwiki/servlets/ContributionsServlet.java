@@ -60,7 +60,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		Collection all = null;
 		try {
 			// FIXME - hard coding of "50"
-			all = WikiBase.getHandler().getUserContributions(virtualWiki, userString, num);
+			all = WikiBase.getHandler().getUserContributions(virtualWiki, userString, num, true);
 		} catch (Exception e) {
 			logger.error(e);
 			throw e;

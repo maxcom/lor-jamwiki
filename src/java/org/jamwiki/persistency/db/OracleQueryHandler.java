@@ -93,18 +93,6 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 		+   "and jam_topic.topic_deleted = '0' "
 		+   "order by edit_date desc "
 		+ ") where rownum <= ? ";
-	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
-		"select jam_virtual_wiki_seq.nextval as virtual_wiki_id from dual ";
-	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
-		"select jam_topic_seq.nextval as topic_id from dual ";
-	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
-		"select jam_topic_version_seq.nextval as topic_version_id from dual ";
-	private static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
-		"select jam_file_seq.nextval as file_id from dual ";
-	private static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
-		"select jam_file_version_seq.nextval as file_version_id from dual ";
-	private static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
-		"select jam_wiki_user_seq.nextval as wiki_user_id from dual ";
 
 	/**
 	 *
@@ -115,17 +103,18 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, int num) throws Exception {
+	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
 		stmt.setInt(2, num);
+		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = null;
 		if (Utilities.isIpAddress(userString)) {
 			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
@@ -135,55 +124,8 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
 		stmt.setInt(3, num);
+		// FIXME - sort order ignored
 		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
-	public int nextTopicId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
-		return rs.getInt("topic_id");
-	}
-
-	/**
-	 *
-	 */
-	public int nextTopicVersionId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
-		return rs.getInt("topic_version_id");
-	}
-
-	/**
-	 *
-	 */
-	public int nextVirtualWikiId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
-		return rs.getInt("virtual_wiki_id");
-	}
-
-	/**
-	 *
-	 */
-	public int nextWikiFileId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE);
-		return rs.getInt("file_id");
-	}
-
-	/**
-	 *
-	 */
-	public int nextWikiFileVersionId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE);
-		return rs.getInt("file_version_id");
-	}
-
-	/**
-	 *
-	 */
-	public int nextWikiUserId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
-		return rs.getInt("wiki_user_id");
 	}
 
 	/**

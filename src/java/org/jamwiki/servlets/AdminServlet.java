@@ -524,7 +524,8 @@ public class AdminServlet extends JAMWikiServlet {
 			FileHandler fromHandler = new FileHandler();
 			DatabaseHandler toHandler = new DatabaseHandler();
 			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
-			next.addObject("message", "Database values successfully written to files");
+			// FIXME - hard coding
+			next.addObject("message", "Database values successfully written to files.  Please re-login.");
 			next.addObject("messages", messages);
 		} catch (Exception e) {
 			logger.error("Failure while executing database-to-file conversion", e);
@@ -543,7 +544,8 @@ public class AdminServlet extends JAMWikiServlet {
 			FileHandler toHandler = new FileHandler();
 			DatabaseHandler fromHandler = new DatabaseHandler();
 			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
-			next.addObject("message", "Database values successfully written to files");
+			// FIXME - hard coding
+			next.addObject("message", "Database values successfully written to files.  Please re-login.");
 			next.addObject("messages", messages);
 		} catch (Exception e) {
 			logger.error("Failure while executing database-to-file conversion", e);

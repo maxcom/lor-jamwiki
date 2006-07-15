@@ -66,18 +66,6 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
 		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
 		+ "AND jam_topic.topic_deleted = '0' ";
-	private static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
-		"select max(topic_id) as topic_id from jam_topic ";
-	private static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
-		"select max(topic_version_id) as topic_version_id from jam_topic_version ";
-	private static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
-		"select max(virtual_wiki_id) as virtual_wiki_id from jam_virtual_wiki ";
-	private static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
-		"select max(file_id) as file_id from jam_file ";
-	private static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
-		"select max(file_version_id) as file_version_id from jam_file_version ";
-	private static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
-		"select max(wiki_user_id) as wiki_user_id from jam_wiki_user ";
 
 	/**
 	 *
@@ -94,74 +82,11 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_TABLE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_IMAGE_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_NOTIFICATION_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_TABLE);
-	}
-
-	/**
-	 *
-	 */
-	public int nextTopicId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("topic_id");
-		// note - for MySql this returns the last id in the system, so add one
-		return nextId + 1;
-	}
-
-	/**
-	 *
-	 */
-	public int nextTopicVersionId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("topic_version_id");
-		// note - for MySql this returns the last id in the system, so add one
-		return nextId + 1;
-	}
-
-	/**
-	 *
-	 */
-	public int nextFileId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("file_id");
-		// note - for MySql this returns the last id in the system, so add one
-		return nextId + 1;
-	}
-
-	/**
-	 *
-	 */
-	public int nextFileVersionId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("file_version_id");
-		// note - for MySql this returns the last id in the system, so add one
-		return nextId + 1;
-	}
-
-	/**
-	 *
-	 */
-	public int nextVirtualWikiId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("virtual_wiki_id");
-		// note - for MySql this returns the last id in the system, so add one
-		return nextId + 1;
-	}
-
-	/**
-	 *
-	 */
-	public int nextWikiUserId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("wiki_user_id");
-		// note - for MySql this returns the last id in the system, so add one
-		return nextId + 1;
 	}
 
 	/**

@@ -64,7 +64,7 @@ public class HistoryServlet extends JAMWikiServlet {
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
 				this.pageInfo.setPageTitle("History for " + topicName);
-				Vector changes = handler.getRecentChanges(virtualWiki, topicName);
+				Vector changes = handler.getRecentChanges(virtualWiki, topicName, true);
 				next.addObject("changes", changes);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));

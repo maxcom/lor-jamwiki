@@ -37,8 +37,6 @@ public class DefaultQueryHandler implements QueryHandler {
 
 	private static Logger logger = Logger.getLogger(DefaultQueryHandler.class.getName());
 
-	protected static final String STATEMENT_CREATE_VIRTUAL_WIKI_SEQUENCE =
-		"CREATE SEQUENCE jam_virtual_wiki_seq ";
 	protected static final String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE =
 		"CREATE TABLE jam_virtual_wiki ( "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
@@ -47,8 +45,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id), "
 		+   "CONSTRAINT jam_unique_vwiki_name UNIQUE (virtual_wiki_name) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_USER_SEQUENCE =
-		"CREATE SEQUENCE jam_wiki_user_seq ";
 	protected static final String STATEMENT_CREATE_WIKI_USER_TABLE =
 		"CREATE TABLE jam_wiki_user ( "
 		+   "wiki_user_id INTEGER NOT NULL, "
@@ -74,8 +70,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_wiki_uinfo_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_unique_wiki_uinfo_login UNIQUE (login) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_TOPIC_SEQUENCE =
-		"CREATE SEQUENCE jam_topic_seq ";
 	protected static final String STATEMENT_CREATE_TOPIC_TABLE =
 		"CREATE TABLE jam_topic ( "
 		+   "topic_id INTEGER NOT NULL, "
@@ -94,8 +88,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE =
-		"CREATE SEQUENCE jam_topic_version_seq ";
 	protected static final String STATEMENT_CREATE_TOPIC_VERSION_TABLE =
 		"CREATE TABLE jam_topic_version ( "
 		+   "topic_version_id INTEGER NOT NULL, "
@@ -112,8 +104,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_topic_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_fk_topic_ver_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_FILE_SEQUENCE =
-		"CREATE SEQUENCE jam_file_seq ";
 	protected static final String STATEMENT_CREATE_WIKI_FILE_TABLE =
 		"CREATE TABLE jam_file ( "
 		+   "file_id INTEGER NOT NULL, "
@@ -132,8 +122,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_unique_file_url UNIQUE (file_url), "
 		+   "CONSTRAINT jam_unique_file_topic_vwiki UNIQUE (virtual_wiki_id, topic_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_FILE_VERSION_SEQUENCE =
-		"CREATE SEQUENCE jam_file_version_seq ";
 	protected static final String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE =
 		"CREATE TABLE jam_file_version ( "
 		+   "file_version_id INTEGER NOT NULL, "
@@ -158,8 +146,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_pk_image PRIMARY KEY (file_version_id), "
 		+   "CONSTRAINT jam_fk_image_file_ver FOREIGN KEY (file_version_id) REFERENCES jam_file_version(file_version_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_NOTIFICATION_SEQUENCE =
-		"CREATE SEQUENCE jam_notification_seq ";
 	protected static final String STATEMENT_CREATE_NOTIFICATION_TABLE =
 		"CREATE TABLE jam_notification ( "
 		+   "notification_id INTEGER NOT NULL, "
@@ -169,8 +155,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_fk_notification_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_fk_notification_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE =
-		"CREATE SEQUENCE jam_recent_change_seq ";
 	protected static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
 		"CREATE TABLE jam_recent_change ( "
 		+   "topic_version_id INTEGER NOT NULL, "
@@ -193,6 +177,26 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ ") ";
 	protected static final String STATEMENT_DELETE_RECENT_CHANGES =
 	    "delete from jam_recent_change ";
+	protected static final String STATEMENT_DROP_VIRTUAL_WIKI_TABLE =
+		"DROP TABLE jam_virtual_wiki ";
+	protected static final String STATEMENT_DROP_WIKI_USER_TABLE =
+		"DROP TABLE jam_wiki_user ";
+	protected static final String STATEMENT_DROP_WIKI_USER_INFO_TABLE =
+		"DROP TABLE jam_wiki_user_info ";
+	protected static final String STATEMENT_DROP_TOPIC_TABLE =
+		"DROP TABLE jam_topic ";
+	protected static final String STATEMENT_DROP_TOPIC_VERSION_TABLE =
+		"DROP TABLE jam_topic_version ";
+	protected static final String STATEMENT_DROP_WIKI_FILE_TABLE =
+		"DROP TABLE jam_file ";
+	protected static final String STATEMENT_DROP_WIKI_FILE_VERSION_TABLE =
+		"DROP TABLE jam_file_version ";
+	protected static final String STATEMENT_DROP_IMAGE_TABLE =
+		"DROP TABLE jam_image ";
+	protected static final String STATEMENT_DROP_NOTIFICATION_TABLE =
+		"DROP TABLE jam_notification ";
+	protected static final String STATEMENT_DROP_RECENT_CHANGE_TABLE =
+		"DROP TABLE jam_recent_change ";
 	protected static final String STATEMENT_INSERT_TOPIC =
 		"insert into jam_topic ( "
 		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
@@ -301,7 +305,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "and topic_lock_session_key is not null "
 		+ "and topic_deleted = '0' ";
 	protected static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
-		"select nextval('jam_topic_seq') as topic_id ";
+		"select max(topic_id) as topic_id from jam_topic ";
 	protected static final String STATEMENT_SELECT_TOPIC_VERSION =
 		"select * from jam_topic_version "
 		+ "where topic_version_id = ? ";
@@ -313,30 +317,30 @@ public class DefaultQueryHandler implements QueryHandler {
 		"select max(topic_version_id) as topic_version_id from jam_topic_version "
 		+ "where topic_id = ? ";
 	protected static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
-		"select nextval('jam_topic_version_seq') as topic_version_id ";
+		"select max(topic_version_id) as topic_version_id from jam_topic_version ";
 	protected static final String STATEMENT_SELECT_VIRTUAL_WIKIS =
 		"select * from jam_virtual_wiki ";
 	protected static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
-		"select nextval('jam_virtual_wiki_seq') as virtual_wiki_id ";
+		"select max(virtual_wiki_id) as virtual_wiki_id from jam_virtual_wiki ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE =
 		"select * from jam_file "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_id = ? ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
-		"select nextval('jam_file_seq') as file_id ";
+		"select max(file_id) as file_id from jam_file ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES =
 		"select jam_topic.topic_name "
 		+ "from jam_topic, jam_file "
 		+ "where jam_topic.topic_id = jam_file.topic_id "
 		+ "and jam_file.virtual_wiki_id = ? ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
-		"select nextval('jam_file_version_seq') as file_version_id ";
+		"select max(file_version_id) as file_version_id from jam_file_version ";
 	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSIONS =
 		"select * from jam_file_version "
 		+ "where file_id = ? "
 		+ "order by file_version_id desc ";
 	protected static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
-		"select nextval('jam_wiki_user_seq') as wiki_user_id ";
+		"select max(wiki_user_id) as wiki_user_id from jam_wiki_user ";
 	protected static final String STATEMENT_SELECT_WIKI_USER =
 	    "select jam_wiki_user.wiki_user_id, jam_wiki_user.login, "
 	    +   "jam_wiki_user.display_name, jam_wiki_user.create_date, "
@@ -442,24 +446,33 @@ public class DefaultQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void createTables() throws Exception {
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_SEQUENCE);
+		WikiPreparedStatement stmt = null;
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_SEQUENCE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE);
+	}
+
+	/**
+	 *
+	 */
+	public void dropTables() throws Exception {
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_NOTIFICATION_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_IMAGE_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_VERSION_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_INFO_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE);
 	}
 
 	/**
@@ -475,9 +488,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllTopicVersions(Topic topic) throws Exception {
+	public WikiResultSet getAllTopicVersions(Topic topic, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSIONS);
 		stmt.setInt(1, topic.getTopicId());
+		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
 
@@ -494,8 +508,9 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile) throws Exception {
+	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE_VERSIONS);
+		// FIXME - sort order ignored
 		stmt.setInt(1, wikiFile.getFileId());
 		return stmt.executeQuery();
 	}
@@ -531,17 +546,18 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, int num) throws Exception {
+	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
 		stmt.setInt(2, num);
+		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = null;
 		if (Utilities.isIpAddress(userString)) {
 			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
@@ -551,6 +567,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
 		stmt.setInt(3, num);
+		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
 
@@ -789,7 +806,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public int nextTopicId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
-		return rs.getInt("topic_id");
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("topic_id");
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
@@ -797,7 +817,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public int nextTopicVersionId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
-		return rs.getInt("topic_version_id");
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("topic_version_id");
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
@@ -805,7 +828,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public int nextVirtualWikiId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
-		return rs.getInt("virtual_wiki_id");
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("virtual_wiki_id");
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
@@ -813,7 +839,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public int nextWikiFileId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE);
-		return rs.getInt("file_id");
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("file_id");
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
@@ -821,7 +850,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public int nextWikiFileVersionId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE);
-		return rs.getInt("file_version_id");
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("file_version_id");
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**
@@ -829,7 +861,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public int nextWikiUserId() throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
-		return rs.getInt("wiki_user_id");
+		int nextId = 0;
+		if (rs.size() > 0) nextId = rs.getInt("wiki_user_id");
+		// note - this returns the last id in the system, so add one
+		return nextId + 1;
 	}
 
 	/**

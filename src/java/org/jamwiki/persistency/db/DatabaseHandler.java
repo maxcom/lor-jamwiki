@@ -82,13 +82,11 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addTopic(Topic topic) throws Exception {
-		if (topic.getTopicId() <= 0) {
+		if (topic.getTopicId() < 1) {
 			int topicId = DatabaseHandler.queryHandler.nextTopicId();
 			topic.setTopicId(topicId);
-			DatabaseHandler.queryHandler.insertTopic(topic);
-		} else {
-			DatabaseHandler.queryHandler.updateTopic(topic);
 		}
+		DatabaseHandler.queryHandler.insertTopic(topic);
 	}
 
 	/**
@@ -119,13 +117,11 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
-		if (wikiFile.getFileId() <= 0) {
+		if (wikiFile.getFileId() < 1) {
 			int fileId = DatabaseHandler.queryHandler.nextWikiFileId();
 			wikiFile.setFileId(fileId);
-			DatabaseHandler.queryHandler.insertWikiFile(wikiFile);
-		} else {
-			DatabaseHandler.queryHandler.updateWikiFile(wikiFile);
 		}
+		DatabaseHandler.queryHandler.insertWikiFile(wikiFile);
 	}
 
 	/**
@@ -147,17 +143,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addWikiUser(WikiUser user) throws Exception {
-		if (user.getUserId() <= 0) {
+		if (user.getUserId() < 1) {
 			int nextUserId = DatabaseHandler.queryHandler.nextWikiUserId();
 			user.setUserId(nextUserId);
-			DatabaseHandler.queryHandler.insertWikiUser(user);
-			// FIXME - may be in LDAP
-			DatabaseHandler.queryHandler.insertWikiUserInfo(user);
-		} else {
-			DatabaseHandler.queryHandler.updateWikiUser(user);
-			// FIXME - may be in LDAP
-			DatabaseHandler.queryHandler.updateWikiUserInfo(user);
 		}
+		DatabaseHandler.queryHandler.insertWikiUser(user);
+		// FIXME - may be in LDAP
+		DatabaseHandler.queryHandler.insertWikiUserInfo(user);
 	}
 
 	/**
@@ -175,13 +167,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllTopicVersions(String virtualWiki, String topicName) throws Exception {
+	public List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		List all = new ArrayList();
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
 		}
-		WikiResultSet rs = DatabaseHandler.queryHandler.getAllTopicVersions(topic);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getAllTopicVersions(topic, descending);
 		while (rs.next()) {
 			all.add(initTopicVersion(rs));
 		}
@@ -203,13 +195,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileVersions(String virtualWiki, String topicName) throws Exception {
+	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		List all = new ArrayList();
 		WikiFile wikiFile = lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
 		}
-		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileVersions(wikiFile);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileVersions(wikiFile, descending);
 		while (rs.next()) {
 			all.add(initWikiFileVersion(rs));
 		}
@@ -263,9 +255,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, int num) throws Exception {
+	public Collection getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
 		ArrayList all = new ArrayList();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, num);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, num, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -276,9 +268,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getUserContributions(String virtualWiki, String userString, int num) throws Exception {
+	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		Collection all = new ArrayList();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, num);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, num, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -631,6 +623,18 @@ public class DatabaseHandler extends PersistencyHandler {
 	}
 
 	/**
+	 * This method causes all existing data to be deleted from the Wiki.  Use only
+	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
+	 * DELETE ALL WIKI DATA!
+	 */
+	public void purgeData() throws Exception {
+		// BOOM!  Everything gone...
+		DatabaseHandler.queryHandler.dropTables();
+		// re-create empty tables
+		DatabaseHandler.queryHandler.createTables();
+	}
+
+	/**
 	 *
 	 */
 	public static void reloadRecentChanges() throws Exception {
@@ -652,5 +656,28 @@ public class DatabaseHandler extends PersistencyHandler {
 			if (conn != null) DatabaseConnection.closeConnection(conn);
 		}
 		return true;
+	}
+
+	/**
+	 *
+	 */
+	protected void updateTopic(Topic topic) throws Exception {
+		DatabaseHandler.queryHandler.updateTopic(topic);
+	}
+
+	/**
+	 *
+	 */
+	protected void updateWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+		DatabaseHandler.queryHandler.updateWikiFile(wikiFile);
+	}
+
+	/**
+	 *
+	 */
+	protected void updateWikiUser(WikiUser user) throws Exception {
+		DatabaseHandler.queryHandler.updateWikiUser(user);
+		// FIXME - may be in LDAP
+		DatabaseHandler.queryHandler.updateWikiUserInfo(user);
 	}
 }

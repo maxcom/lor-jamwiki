@@ -93,9 +93,14 @@ public abstract class PersistencyHandler {
 	protected abstract void addWikiUser(WikiUser user) throws Exception;
 
 	/**
-	 *
+	 * Convert all data from one handler to another.  Note: this method will
+	 * delete all data in the destination handler.  Thus, when converting from
+	 * file to database, the database is completely re-initialized and all data
+	 * erased.  Do not use this method unless you know what you are doing.
 	 */
 	public static Vector convert(PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
+		// purge EVERYTHING from the destination handler
+		toHandler.purgeData();
 		Vector messages = new Vector();
 		// users
 		Collection userNames = fromHandler.getAllWikiUserLogins();
@@ -139,14 +144,14 @@ public abstract class PersistencyHandler {
 			// topic versions
 			for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 				String topicName = (String)topicIterator.next();
-				List versions = fromHandler.getAllTopicVersions(virtualWiki, topicName);
+				List versions = fromHandler.getAllTopicVersions(virtualWiki, topicName, false);
 				for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 					TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
 					try {
 						toHandler.addTopicVersion(virtualWiki, topicName, topicVersion);
 						messages.add("Added topic version " + virtualWiki + " / " + topicName + " / " + topicVersion.getTopicVersionId());
 					} catch (Exception e) {
-						String msg = "Unable to convert topic version: " + virtualWiki + " / " + topicName;
+						String msg = "Unable to convert topic version: " + virtualWiki + " / " + topicName + " / " + topicVersion.getTopicVersionId();
 						logger.error(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
@@ -196,7 +201,7 @@ public abstract class PersistencyHandler {
 			// wiki file versions
 			for (Iterator topicIterator = wikiFileNames.iterator(); topicIterator.hasNext();) {
 				String topicName = (String)topicIterator.next();
-				List versions = fromHandler.getAllWikiFileVersions(virtualWiki, topicName);
+				List versions = fromHandler.getAllWikiFileVersions(virtualWiki, topicName, false);
 				for (Iterator wikiFileVersionIterator = versions.iterator(); wikiFileVersionIterator.hasNext();) {
 					WikiFileVersion wikiFileVersion = (WikiFileVersion)wikiFileVersionIterator.next();
 					try {
@@ -225,7 +230,7 @@ public abstract class PersistencyHandler {
 //				}
 //			}
 			// recent changes
-			Collection changes = fromHandler.getRecentChanges(virtualWiki, 1000);
+			Collection changes = fromHandler.getRecentChanges(virtualWiki, 1000, false);
 			for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
 				RecentChange change = (RecentChange)changeIterator.next();
 				try {
@@ -247,7 +252,7 @@ public abstract class PersistencyHandler {
 	public void deleteReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(false);
-		addTopic(topic);
+		updateTopic(topic);
 	}
 
 	/**
@@ -256,7 +261,7 @@ public abstract class PersistencyHandler {
 	public void deleteTopic(Topic topic) throws Exception {
 		topic.setDeleted(true);
 		// update recent changes
-		addTopic(topic);
+		updateTopic(topic);
 		// reset topic existence vector
 		cachedTopicsList = new Vector();
 	}
@@ -318,7 +323,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract List getAllTopicVersions(String virtualWiki, String topicName) throws Exception;
+	public abstract List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -333,7 +338,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract List getAllWikiFileVersions(String virtualWiki, String topicName) throws Exception;
+	public abstract List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -353,14 +358,14 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection getRecentChanges(String virtualWiki, int numChanges) throws Exception;
+	public abstract Collection getRecentChanges(String virtualWiki, int numChanges, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public Vector getRecentChanges(String virtualWiki, String topicName) throws Exception {
+	public Vector getRecentChanges(String virtualWiki, String topicName, boolean descending) throws Exception {
 		Vector results = new Vector();
-		Collection versions = getAllTopicVersions(virtualWiki, topicName);
+		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
 		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
 			TopicVersion version = (TopicVersion)iterator.next();
 			RecentChange change = new RecentChange();
@@ -388,7 +393,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection getUserContributions(String virtualWiki, String userString, int num) throws Exception;
+	public abstract Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -454,7 +459,7 @@ public abstract class PersistencyHandler {
 		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
 		// FIXME - save author
 		//topic.setLockedBy(authorId);
-		addTopic(topic);
+		updateTopic(topic);
 		return true;
 	}
 
@@ -530,6 +535,13 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
+	 * This method causes all existing data to be deleted from the Wiki.  Use only
+	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
+	 * DELETE ALL WIKI DATA!
+	 */
+	public abstract void purgeData() throws Exception;
+
+	/**
 	 * Utility method for reading default topic values from files and returning
 	 * the file contents.
 	 */
@@ -578,14 +590,33 @@ public abstract class PersistencyHandler {
 		topic.setLockSessionKey(null);
 		topic.setLockedDate(null);
 		topic.setLockedBy(null);
-		addTopic(topic);
+		updateTopic(topic);
 	}
 
 	/**
 	 *
 	 */
+	protected abstract void updateTopic(Topic topic) throws Exception;
+
+	/**
+	 *
+	 */
+	protected abstract void updateWikiFile(String topicName, WikiFile wikiFile) throws Exception;
+
+	/**
+	 *
+	 */
+	protected abstract void updateWikiUser(WikiUser user) throws Exception;
+
+	/**
+	 *
+	 */
 	public synchronized void writeFile(String topicName, WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception {
-		addWikiFile(topicName, wikiFile);
+		if (wikiFile.getFileId() <= 0) {
+			addWikiFile(topicName, wikiFile);
+		} else {
+			updateWikiFile(topicName, wikiFile);
+		}
 		wikiFileVersion.setFileId(wikiFile.getFileId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version
@@ -599,7 +630,7 @@ public abstract class PersistencyHandler {
 	public void writeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		topic.setReadOnly(true);
-		addTopic(topic);
+		updateTopic(topic);
 	}
 
 	/**
@@ -610,7 +641,11 @@ public abstract class PersistencyHandler {
 		topic.setLockedBy(null);
 		topic.setLockedDate(null);
 		topic.setLockSessionKey(null);
-		addTopic(topic);
+		if (topic.getTopicId() <= 0) {
+			addTopic(topic);
+		} else {
+			updateTopic(topic);
+		}
 		if (topicVersion.getPreviousTopicVersionId() == null) {
 			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
 			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
@@ -653,6 +688,10 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public void writeWikiUser(WikiUser user) throws Exception {
-		this.addWikiUser(user);
+		if (user.getUserId() <= 0) {
+			this.addWikiUser(user);
+		} else {
+			this.updateWikiUser(user);
+		}
 	}
 }

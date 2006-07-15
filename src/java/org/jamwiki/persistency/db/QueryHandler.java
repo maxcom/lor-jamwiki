@@ -36,12 +36,17 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public void dropTables() throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet getAllTopicNames(String virtualWiki) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet getAllTopicVersions(Topic topic) throws Exception;
+	public WikiResultSet getAllTopicVersions(Topic topic, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -51,7 +56,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile) throws Exception;
+	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -71,12 +76,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, int num) throws Exception;
+	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num) throws Exception;
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception;
 
 	/**
 	 *
