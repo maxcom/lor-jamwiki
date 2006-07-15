@@ -51,9 +51,6 @@ import org.springframework.util.StringUtils;
 public class Utilities {
 
 	private static final Logger logger = Logger.getLogger(Utilities.class);
-	private static final int STATE_NO_ENTITY = 0;
-	private static final int STATE_AMPERSAND = 1;
-	private static final int STATE_AMPERSAND_HASH = 2;
 
 	/**
 	 *
@@ -201,25 +198,6 @@ public class Utilities {
 	}
 
 	/**
-	 *
-	 */
-	public static String convertToHTML(char character) {
-		switch (character) {
-			case ('<'):
-				return "&lt";
-			case ('>'):
-				return "&gt";
-			case ('\"'):
-				return "&quot";
-			case ('\''):
-				return "&apos;";
-			case ('&'):
-				return "&amp";
-		}
-		return String.valueOf(character);
-	}
-
-	/**
 	 * Create the root path for a specific WIKI without the server name.
 	 * This is useful for local redirection or local URL's (relative URL's to the server).
 	 * @param request The HttpServletRequest
@@ -259,15 +237,6 @@ public class Utilities {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		return contextPath + "/" + virtualWiki + "/";
-	}
-
-	/**
-	 *
-	 */
-	public static Cookie createUsernameCookie(String username) {
-		Cookie c = new Cookie("username", username);
-		c.setMaxAge(Environment.getIntValue(Environment.PROP_BASE_COOKIE_EXPIRE));
-		return c;
 	}
 
 	/**
