@@ -54,8 +54,6 @@ public class EditServlet extends JAMWikiServlet {
 				save(request, next);
 			} else if (isCancel(request)) {
 				cancel(request, next);
-			} else if (isPreview(request)) {
-				edit(request, next);
 			} else {
 				edit(request, next);
 			}

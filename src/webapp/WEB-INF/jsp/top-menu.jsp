@@ -17,7 +17,7 @@
 
 --%>
 <div id="menu-tab">
-<table class="menu-tab-table">
+<table class="menu-tab-table" cellspacing="0">
 <tr>
 	<td class="menu-tab-space">&#160;</td>
 <c:if test="${!special}">
