@@ -1626,34 +1626,6 @@
       <title>Troubleshooting</title>
 
       <section>
-        <title>Panic Reset</title>
-
-        <para>In the unlikely event that JAMWiki begins to misbehave in a
-        significant way, you can attempt a "panic reset" by navigating to the
-        Admin console, logging in, and selecting "Panic Reset" at the bottom
-        of the page.</para>
-
-        <para>This effectively stops and restarts the application, which may
-        affect whatever users are doing on the system.</para>
-
-        <para>If this fails, try restarting the application context, or the
-        application server itself.</para>
-      </section>
-
-      <section id="admin_reset">
-        <title>Administrator Password Reset</title>
-
-        <para>If you misplace the admin password, you can force JAMWiki to
-        generate a new one and display it to you on the first topic browsed to
-        (as with initial installation). Use a text editor to edit the
-        <systemitem>${TOMCAT_HOME}/webapps/jamwiki-2.7.x/WEB-INF/classes/jamwiki.properties</systemitem>
-        file (or another location if you have overridden the default) and
-        change the key-value pair that reads firstuse=false to firstuse=true.
-        Restart the application context or the application server and browse
-        to StartingPoints. You will be shown the new admin password.</para>
-      </section>
-
-      <section>
         <title>Clearing Locks</title>
 
         <para>When a user clicks the edit link, an exclusive lock is set on

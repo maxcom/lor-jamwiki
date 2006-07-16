@@ -508,22 +508,6 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
-	 * Do emergency repairs by clearing all locks and deleting recent changes files
-	 */
-	public void panic() throws Exception {
-		// FIXME - this needs a lot of work to be useful
-		Collection wikis = getVirtualWikiList();
-		for (Iterator iterator = wikis.iterator(); iterator.hasNext();) {
-			String virtualWikiName = (String) iterator.next();
-			List lockList = getLockList(virtualWikiName);
-			for (Iterator lockIterator = lockList.iterator(); lockIterator.hasNext();) {
-				Topic topic = (Topic)lockIterator.next();
-				unlockTopic(topic);
-			}
-		}
-	}
-
-	/**
 	 * This method causes all existing data to be deleted from the Wiki.  Use only
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!

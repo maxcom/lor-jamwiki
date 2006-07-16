@@ -516,7 +516,7 @@ FIXME - LDAP not supported at the moment, comment this out
   --%>
   <input type="password" name="fakePassword" value="" style="display:none" />
 </form>
-<hr/>
+<hr />
 <p class="subHeader"><f:message key="admin.title.refresh"/></p>
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Admin" />">
   <input type="submit" name="submit" value="<f:message key="admin.action.refresh"/>"/>
@@ -524,7 +524,7 @@ FIXME - LDAP not supported at the moment, comment this out
   <input type="hidden" name="function" value="refreshIndex"/>
   <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
-<hr/>
+<hr />
 <%-- FIXME - restore virtual wiki --%>
 <p class="subHeader"><f:message key="admin.title.readonly"/> (<%-- c:out value="${virtualWiki}"/ --%>)</p>
 <form name="readOnlyTopics" method="post" action="<jamwiki:link value="Special:Admin" />">
@@ -561,7 +561,7 @@ FIXME - LDAP not supported at the moment, comment this out
     </tr>
   </table>
 </form>
-<hr/>
+<hr />
 <p class="subHeader"><f:message key="admin.title.virtualwiki"/></p>
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
@@ -573,21 +573,18 @@ FIXME - LDAP not supported at the moment, comment this out
   <input type="hidden" name="function" value="addVirtualWiki">
   <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
 </form>
-<%--
-FIXME - Hide panic code for now
-<hr/>
-<p class="subHeader"><f:message key="admin.title.panic"/></p>
+<hr />
+<p class="subHeader"><f:message key="admin.title.recentchanges" /></p>
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
   <table class="contents">
     <tr>
-      <td><f:message key="admin.caption.panic"/></td>
+      <td><f:message key="admin.caption.recentchanges" /></td>
     </tr>
     <tr>
-      <td><input type="submit" value='<f:message key="admin.caption.reset"/>'/></td>
+      <td><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
     </tr>
   </table>
-  <input type="hidden" name="function" value="panic">
-  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>"/>
+  <input type="hidden" name="function" value="recentChanges" />
+  <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 </form>
---%>
-<hr/>
+<hr />

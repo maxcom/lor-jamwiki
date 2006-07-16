@@ -76,8 +76,6 @@ public class AdminServlet extends JAMWikiServlet {
 					upgradeConvertToFile(request, next);
 				} else if (function.equals("Convert to Database")) {
 					upgradeConvertToDatabase(request, next);
-				} else if (function.equals("Load Recent Changes")) {
-					upgradeRecentChanges(request, next);
 				} else {
 					upgradeView(request, next);
 				}
@@ -108,8 +106,8 @@ public class AdminServlet extends JAMWikiServlet {
 			if (function.equals("addVirtualWiki")) {
 				addVirtualWiki(request, next);
 			}
-			if (function.equals("panic")) {
-				panic(request, next);
+			if (function.equals("recentChanges")) {
+				recentChanges(request, next);
 			}
 			if (function.equals("readOnly")) {
 				readOnly(request, next);
@@ -203,22 +201,6 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
 		this.pageInfo.setPageTitle("Delete " + topicName);
 		this.pageInfo.setSpecial(true);
-	}
-
-	/**
-	 *
-	 */
-	private void panic(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Admin");
-		try {
-			WikiBase.getHandler().panic();
-		} catch (Exception e) {
-			logger.error("Failure during panic reset", e);
-			String message = "Failure during panic reset: " + e.getMessage();
-			next.addObject("message", message);
-		}
 	}
 
 	/**
@@ -504,6 +486,28 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			if (WikiBase.getHandler() instanceof DatabaseHandler) {
+				// FIXME - database specific
+				DatabaseHandler.reloadRecentChanges();
+				// FIXME - hard coding
+				next.addObject("message", "Recent changes successfully loaded");
+			} else {
+				next.addObject("message", "Recent changes can only be reloaded while in database persistency mode");
+			}
+		} catch (Exception e) {
+			logger.error("Failure while loading recent changes", e);
+			next.addObject("errorMessage", "Failure while loading recent changes: " + e.getMessage());
+		}
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle("Special:Admin");
+	}
+
+	/**
+	 *
+	 */
 	private void refreshIndex(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setSpecial(true);
@@ -553,23 +557,6 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
-		}
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Upgrade");
-	}
-
-	/**
-	 *
-	 */
-	private void upgradeRecentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			// FIXME - database specific
-			DatabaseHandler.reloadRecentChanges();
-			next.addObject("message", "Recent changes successfully loaded");
-		} catch (Exception e) {
-			logger.error("Failure while loading recent changes", e);
-			next.addObject("errorMessage", "Failure while loading recent changes: " + e.getMessage());
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_UPGRADE);
 		this.pageInfo.setSpecial(true);
