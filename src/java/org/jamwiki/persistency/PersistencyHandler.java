@@ -97,9 +97,15 @@ public abstract class PersistencyHandler {
 	 * erased.  Do not use this method unless you know what you are doing.
 	 */
 	public static Vector convert(PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
+		// FIXME - hard coding of messages
+		Vector messages = new Vector();
 		// purge EVERYTHING from the destination handler
 		toHandler.purgeData();
-		Vector messages = new Vector();
+		if (toHandler instanceof DatabaseHandler) {
+			messages.add("Deleting all database data.");
+		} else {
+			messages.add("Deleting all files from " + Environment.getValue(Environment.PROP_BASE_FILE_DIR));
+		}
 		// users
 		Collection userNames = fromHandler.getAllWikiUserLogins();
 		for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {

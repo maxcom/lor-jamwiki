@@ -32,8 +32,8 @@ function confirmSubmit() {
 <%-- FIXME: hard coding --%>
 <c:if test="${!empty errorMessage}"><tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" /></div></td></tr></c:if>
 <c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
-<tr><td>Convert database content to files:<br />WARNING: Deletes all existing file content!</td><td><input type="submit" name="function" value="Convert to File" /></td></tr>
-<tr><td>Convert file content to database:<br />WARNING: Deletes all existing database content!</td><td><input type="submit" name="function" value="Convert to Database" /></td></tr>
+<tr><td>Convert database content to files:<br />WARNING: Deletes all existing file content!</td><td><input type="submit" name="function" value="Convert to File" onclick="return confirmSubmit()" /></td></tr>
+<tr><td>Convert file content to database:<br />WARNING: Deletes all existing database content!</td><td><input type="submit" name="function" value="Convert to Database" onclick="return confirmSubmit()" /></td></tr>
 <tr><td>Load recent changes:</td><td><input type="submit" name="function" value="Load Recent Changes" /></td></tr>
 </table>
 </form>
