@@ -7,6 +7,7 @@ JAMWiki Contributors
 --------------------
 
   Developers:               Ryan Holliday (wrh2)
+  Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
   Documentation:
   Translations:
   Non-project contributors:
