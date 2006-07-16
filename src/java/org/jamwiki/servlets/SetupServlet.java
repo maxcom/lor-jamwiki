@@ -48,6 +48,10 @@ public class SetupServlet extends JAMWikiServlet {
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
+			if (!Utilities.isFirstUse()) {
+				// FIXME - hard coding
+				throw new Exception("System setup is already complete.  View the admin page to change settings.");
+			}
 			String function = request.getParameter("function");
 			if (function == null) function = "";
 			// FIXME - hard coding of "function" values
