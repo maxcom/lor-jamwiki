@@ -1,26 +1,32 @@
 /**
- * Stylesheet currently approximates Wikimedia monobook style as
- * specified by http://en.wikipedia.org/skins-1.5/monobook/main.css?7
+ *     Blue theme
  */
 
 /* defaults */
 
 body {
-	font: medium sans-serif;
 	background: #f9f9f9 url(../images/headbg.jpg) 0 0 no-repeat;
 	color: black;
 	margin: 0;
-	padding: 0;
+	padding: 10;
+}
+
+body, input, select {
+	font: 95% Tahoma, sans-serif;
 }
 
 a {
-	font-weight: bold;
+	border-bottom: 1px dotted #778CD7;
 	text-decoration: none;
 	color: #5555bb;
 }
 
 a:hover {
-	text-decoration: underline;
+	border-bottom: 1px solid #5555bb;
+}
+
+a.logo {
+	border: 0;
 }
 
 a.external {
@@ -32,6 +38,7 @@ a.externallink:after {
 
 a.edit {
 	color: #aa1111;
+	border-color: #aa1111;
 }
 
 table {
@@ -95,14 +102,16 @@ pre {
 	padding: 1em;
 }
 
+dl {
+	list-style-type: square;
+	margin-top: .2em;
+	margin-bottom: .5em;
+	padding: 0em 0em 0em 2em;
+}
+
 dt {
 	font-weight: bold;
 	margin-bottom: .1em;
-}
-
-dl {
-	margin-top: .2em;
-	margin-bottom: .5em;
 }
 
 dd {
@@ -124,6 +133,7 @@ ol {
 
 li {
 	font-size: 100%;
+	padding-bottom: 4px;
 }
 
 textarea {
@@ -131,23 +141,30 @@ textarea {
 	padding: .1em;
 }
 
+div.clear {
+	clear: both;
+}
+
 /* main content area */
 
 #contents {
-	border: 1px solid #999999;
-	padding: 8px;
-	background: #f9f8f9;
+	background: white;
+	padding: 14px;
+	padding-bottom: 25px;
+	border: 1px solid #D8D8E7;
 }
+
 td.main-content {
 	font-size: 80%;
 	vertical-align: top;
 }
+
 #contents-header {
-	font-weight: bold;
 	font-size: 200%;
 	padding: 0.2em 0em 0.2em 0em;
-	border-bottom: 1px solid #999999;
+	border-bottom: 1px solid #D8D8E7;
 }
+
 
 /* navbar elements */
 
@@ -166,63 +183,51 @@ td.navigation {
 }
 
 #nav-menu {
-	border: 1px solid #bbbbbb;
+	background: white;
+	border: 1px solid #D8D8E7;
+	border-bottom: 0;
 	font-size: 90%;
 	margin: 2px 0px 8px 0px;
-	padding: 8px;
-	background: #f9f8f9;
+}
+
+#nav-menu hr {
+	display: none;
 }
 
 #nav-menu ul {
-	font-size: 90%;
-}
-
-#nav-search {
-	border: 1px solid #bbbbbb;
-	font-size: 90%;
-	margin: 8px 0px 8px 0px;
 	padding: 8px;
+	list-style-type: none;
+	border-bottom: 1px solid #D8D8E7;
+}
+
+#nav-menu li {
+	padding-bottom: 4px;
+}
+
+#nav-search {	
+	background: white;
+	margin: 18px 0px 8px 0px;
+	padding: 8px;
+	padding-top: 0px;
 	text-align: center;
-	background: #f9f8f9;
+	border: 1px solid #D8D8E7;
 }
 
-/* images */
-
-img.wikiimg {
-	border: 0px;
+#nav-search form {
+	padding: 0px;
+	margin: 0px;
 }
 
-a.wikiimg {
-	text-decoration: none;
-	color: inherit;
-	font-weight: inherit;
+#nav-search br {
+	padding-top: 4px;
 }
 
-div.imgcaption {
-	padding: 0.3em 0em 0.2em 0em;
-	text-align: left;
+#nav-search input {
+	margin-top: 8px;
+	background-color: white;
+	border: 1px solid #D8D8E7;
 }
 
-div.imgleft {
-	border: 1px solid #bbbbbb;
-	float: left;
-	padding: 0.3em;
-	margin: 0.3em 0.3em 0.3em 0em;
-}
-
-div.imgright {
-	float: right;
-	border: 1px solid #bbbbbb;
-	padding: 0.3em;
-	margin: 0.3em 0em 0.3em 0.3em;
-}
-
-div.imgthumb {
-	float: right;
-	border: 1px solid #bbbbbb;
-	padding: 0.3em;
-	margin: 0.3em 0em 0.3em 0.3em;
-}
 
 /* diff page */
 
@@ -267,37 +272,34 @@ td.diff-line {
 /* table of contents */
 
 table.toc {
-	 border: 1px solid #aaaaaa;
-	 margin: 0.2em 0em 0.2em 0em;
-	 padding: 0.5em 0.3em 0.5em 0em;
+	border: 1px solid #aaaaaa;
+	margin: 0.2em 0em 0.2em 0em;
+	padding: 0.5em 0.3em 0.5em 0em;
 }
 
 /* tab menu */
 
+#menu-tab a {
+	border: 0;
+}
+
 #menu-tab {
-	margin-left: 0;
-	margin-right: 0;
-	color: #dddddd;
+	padding-right: 10px;
 }
-table.menu-tab-table {
-	border-collapse: collapse;
-	margin: 0;
-	padding: 0;
-}
+
 td.menu-tab-nonselected {
+	background: white;
 	color: blue;
-	border: 1px solid #aaa;
+	border: 1px solid #D8D8E7;
+	border-bottom: 0;
 	border-bottom: none;
-	padding: 0.1em 1em 0.1em 1em;
-	margin: 0 .3em 0 0;
+	padding: 0.2em 0.5em 0.2em 0.5em;
+	margin-right: 10;
 	font-size: 85%;
 	text-align: center;
-	background: #f9f8f9;
 }
 td.menu-tab-space {
 	font-size: 10%;
-	margin: 0;
-	padding: 0;
 	width: 5px;
 }
 td.menu-tab-close {
@@ -321,70 +323,103 @@ table.menu-user-table {
 }
 
 td.menu-user {
-	font-size: 85%;
+	font-size: 90%;
 	margin: 0;
 	padding: 0.4em 0.8em 0.4em 0.8em;
 	white-space: nowrap;
-	width: 5px;
-}
-
-/* topic pages */
-
-#content-article {
-	padding: 10px 0px 20px 0px;
 }
 
 /* footer */
 
 td.footer {
 	font-size: 80%;
-	padding: 5px 5px 5px 5px;
-	vertical-align: top;
+	color: gray;
+	padding: 15px 0px 5px 0px;
+	text-align: right;
 }
 
-/* change lists (recent changes, history */
+td.footer hr, td.footer br {
+	display: none;
+}
+
+/* change lists (recent changes, history) */
 
 #change a {
 	font-weight: normal;
 }
 
-/* older stuff */
+/* topic pages */
 
-.title {
-  background: #ffffff;
+#content-article {
+	padding: 10px 0px 10px 0px;
 }
 
+/* images */
+
+img.wikiimg {
+	border: 0px;
+}
+
+a.wikiimg {
+	text-decoration: none;
+	color: inherit;
+	font-weight: inherit;
+}
+
+div.imgcaption {
+	padding: 0.3em 0em 0.2em 0em;
+	text-align: left;
+}
+
+div.imgleft {
+	border: 1px solid #bbbbbb;
+	float: left;
+	padding: 0.3em;
+	margin: 0.3em 0.3em 0.3em 0em;
+}
+
+div.imgright {
+	float: right;
+	border: 1px solid #bbbbbb;
+	padding: 0.3em;
+	margin: 0.3em 0em 0.3em 0.3em;
+}
+
+div.imgthumb {
+	float: right;
+	border: 1px solid #bbbbbb;
+	padding: 0.3em;
+	margin: 0.3em 0em 0.3em 0.3em;
+}
+
+/* older stuff */
+
 .pageHeader {
-  font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  font-size: 200%;
+	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 200%;
 }
 
 .subHeader{
-  font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  font-size: larger;
+	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: larger;
 }
 
 .backlinks{
-  font-size: small;
-  font-style: italic;
+	font-size: small;
+	font-style: italic;
 }
 
 .red {
-  font-family: Verdana, Helvetica, sans-serif;
-  font-size: 12px ; color: #ff0000;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 12px ; color: #ff0000;
 }
 
 td.recent,th.recent{
-  background: #ffffff
-}
-
-.notify {
-  font-family: Verdana, Helvetica, sans-serif;
-  font-size: smaller ;
+	background: #ffffff
 }
 
 .searchresult{
-  background-color: gainsboro
+	background-color: gainsboro
 }
