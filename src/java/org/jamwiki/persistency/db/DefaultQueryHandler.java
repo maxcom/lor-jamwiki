@@ -146,15 +146,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "CONSTRAINT jam_pk_image PRIMARY KEY (file_version_id), "
 		+   "CONSTRAINT jam_fk_image_file_ver FOREIGN KEY (file_version_id) REFERENCES jam_file_version(file_version_id) "
 		+ ") ";
-	protected static final String STATEMENT_CREATE_NOTIFICATION_TABLE =
-		"CREATE TABLE jam_notification ( "
-		+   "notification_id INTEGER NOT NULL, "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_notification PRIMARY KEY (notification_id), "
-		+   "CONSTRAINT jam_fk_notification_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_notification_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id) "
-		+ ") ";
 	protected static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
 		"CREATE TABLE jam_recent_change ( "
 		+   "topic_version_id INTEGER NOT NULL, "
@@ -193,8 +184,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		"DROP TABLE jam_file_version ";
 	protected static final String STATEMENT_DROP_IMAGE_TABLE =
 		"DROP TABLE jam_image ";
-	protected static final String STATEMENT_DROP_NOTIFICATION_TABLE =
-		"DROP TABLE jam_notification ";
 	protected static final String STATEMENT_DROP_RECENT_CHANGE_TABLE =
 		"DROP TABLE jam_recent_change ";
 	protected static final String STATEMENT_INSERT_TOPIC =
@@ -455,7 +444,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_NOTIFICATION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE);
 	}
 
@@ -464,7 +452,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public void dropTables() throws Exception {
 		DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_NOTIFICATION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_DROP_IMAGE_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_VERSION_TABLE);
 		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE);

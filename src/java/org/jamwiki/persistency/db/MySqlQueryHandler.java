@@ -85,7 +85,6 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_IMAGE_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_NOTIFICATION_TABLE);
 		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_TABLE);
 	}
 

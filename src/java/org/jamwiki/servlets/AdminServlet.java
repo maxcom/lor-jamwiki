@@ -402,10 +402,6 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_PARSER_TOC,
 				request.getParameter(Environment.PROP_PARSER_TOC) != null
 			);
-			Environment.setBooleanValue(
-				Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY,
-				request.getParameter(Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY) != null
-			);
 			/*
 			int membershipType = Integer.parseInt(request.getParameter(Environment.PROP_USERGROUP_TYPE));
 			String usergroupType;

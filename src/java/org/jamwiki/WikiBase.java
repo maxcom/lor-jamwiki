@@ -30,10 +30,8 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.file.FileHandler;
-import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.persistency.file.FileSearchEngine;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInfo;
@@ -157,25 +155,6 @@ public class WikiBase {
 	 */
 	public static PersistencyHandler getHandler() {
 		return handler;
-	}
-
-	/**
-	 * TODO: DOCUMENT ME!
-	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topic	   TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
-	 */
-	public static Notify getNotifyInstance(String virtualWiki, String topic) throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return new FileNotify(virtualWiki, topic);
-			case DATABASE:
-				return new DatabaseNotify(virtualWiki, topic);
-			default:
-				return new FileNotify();
-		}
 	}
 
 	/**

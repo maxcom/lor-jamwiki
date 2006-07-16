@@ -34,9 +34,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.db.DatabaseNotify;
 import org.jamwiki.persistency.file.FileHandler;
-import org.jamwiki.persistency.file.FileNotify;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -214,21 +212,6 @@ public abstract class PersistencyHandler {
 					}
 				}
 			}
-//			// Notifications
-//			Collection databaseNotifications = DatabaseNotify.getAllNotifications(virtualWiki);
-//			for (Iterator iterator = databaseNotifications.iterator(); iterator.hasNext();) {
-//				DatabaseNotify databaseNotify = (DatabaseNotify) iterator.next();
-//				FileNotify fileNotify = new FileNotify(virtualWiki, databaseNotify.getTopicName());
-//				Collection notifyMembers = databaseNotify.getMembers();
-//				for (Iterator notifyMemberIterator = notifyMembers.iterator(); notifyMemberIterator.hasNext();) {
-//					String memberName = (String) notifyMemberIterator.next();
-//					try {
-//						fileNotify.addMember(memberName);
-//					} catch (Exception e) {
-//						logger.error("Unable to convert notify member to file: " + memberName + ": " + e.getMessage());
-//					}
-//				}
-//			}
 			// recent changes
 			Collection changes = fromHandler.getRecentChanges(virtualWiki, 1000, false);
 			for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {

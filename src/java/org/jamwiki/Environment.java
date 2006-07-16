@@ -69,7 +69,6 @@ public class Environment {
 	public static final String PROP_EMAIL_SMTP_HOST = "smtp-host";
 	public static final String PROP_EMAIL_SMTP_PASSWORD = "smtp-password";
 	public static final String PROP_EMAIL_SMTP_USERNAME = "smtp-username";
-	public static final String PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY = "supress-notify-within-same-day";
 	public static final String PROP_FILE_DIR_FULL_PATH = "file-dir-full-path";
 	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
 	public static final String PROP_FILE_ENCODING = "file-encoding";
@@ -315,7 +314,6 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
-		defaults.setProperty(PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY, "false");
 		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, "");
 		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, "");
 		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");

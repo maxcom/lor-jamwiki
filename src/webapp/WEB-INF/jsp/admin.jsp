@@ -232,12 +232,6 @@ FIXME - Notifications not supported right now, comment this out
         <input type="text" name="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>" value="<%= Environment.getValue(Environment.PROP_EMAIL_REPLY_ADDRESS) %>" size="50">
       </td>
     </tr>
-    <tr>
-      <td class="normal"><f:message key="admin.caption.suppressnotifywithinsameday"/></td>
-      <td class="normal">
-        <input type="checkbox" name="<%= Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_EMAIL_SUPPRESS_NOTIFY_WITHIN_SAME_DAY) ? " checked" : "" %>>
-      </td>
-    </tr>
 --%>
 
     <tr><td colspan="2">&nbsp;</td></tr>
