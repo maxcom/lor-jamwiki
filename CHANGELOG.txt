@@ -2,9 +2,21 @@
 0.0.7
 =====
 
-* Make more HTML code XHTML compliant.
+* FEATURE: Remove topic locking & implement a new edit screen to
+  allow for manual resolution of edit conflicts.
+* Remove the old topic locking code including Special:LockList
+  and Special:Unlock.
+* FEATURE: Update to Alexey's new default style.
 * FEATURE: Do not include CSS information inline, instead make
   jamwiki.css an editable Wiki topic and load from that.
+* FEATURE: Hide passwords when updating values on the admin page.
+* BUG: Remove redundant parsing code that was causing diffs to be
+  shown when no diff was made.
+* FEATURE: Remove the "Cancel" option from the edit page.
+* FEATURE: Once setup is complete disable the setup screen.
+* FEATURE: Add option to reload recent changes to the admin
+  screen (database persistency only).
+* FEATURE: Make more HTML code XHTML compliant.
 * FEATURE: Code cleanups including removal of unused files.
 
 0.0.6
