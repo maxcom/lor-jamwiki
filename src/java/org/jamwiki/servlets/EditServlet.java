@@ -232,6 +232,10 @@ public class EditServlet extends JAMWikiServlet {
 			// FIXME - hard coding
 			throw new Exception("The topic " + topicName + " has no content");
 		}
+		if (lastTopicVersion != null && lastTopicVersion.getVersionContent().equals(contents)) {
+			viewTopic(request, next, topicName);
+			return;
+		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = Utilities.currentUser(request);
 		ParserInfo parserInfo = new ParserInfo();
