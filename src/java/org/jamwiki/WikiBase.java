@@ -16,7 +16,6 @@
  */
 package org.jamwiki;
 
-import java.io.BufferedReader;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -115,12 +114,6 @@ public class WikiBase {
 			// FIXME - return empty or something else?
 			return "";
 		}
-		BufferedReader in = new BufferedReader(new StringReader(content));
-		String line;
-		StringBuffer raw = new StringBuffer();
-		while ((line = in.readLine()) != null) {
-			raw.append(line).append("\n");
-		}
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
@@ -130,7 +123,7 @@ public class WikiBase {
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInfo;
 		AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
-		return (preSave) ? parser.parsePreSave(raw.toString()) : parser.parseHTML(raw.toString(), topicName);
+		return (preSave) ? parser.parsePreSave(content) : parser.parseHTML(content, topicName);
 	}
 
 	/**
