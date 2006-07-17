@@ -17,12 +17,15 @@
 
 --%>
 <%@ page import="
-    org.jamwiki.Environment,
-    org.jamwiki.WikiBase,
-    org.jamwiki.servlets.JAMWikiServlet,
-    org.jamwiki.users.Usergroup,
-    org.apache.commons.pool.impl.GenericObjectPool
-" errorPage="/WEB-INF/jsp/error.jsp" %>
+        org.jamwiki.Environment,
+        org.jamwiki.WikiBase,
+        org.jamwiki.servlets.JAMWikiServlet,
+        org.jamwiki.users.Usergroup,
+        org.apache.commons.pool.impl.GenericObjectPool
+    "
+    errorPage="/WEB-INF/jsp/error.jsp"
+    contentType="text/html; charset=UTF-8"
+%>
 
 <%@ include file="page-init.jsp" %>
 
@@ -195,15 +198,6 @@ FIXME - Email not supported right now, comment this out
 <tr>
 	<td class="normal"><f:message key="admin.caption.filedir" /></td>
 	<td class="normal"><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= Environment.getValue(Environment.PROP_BASE_FILE_DIR) %>" size="50" /></td>
-</tr>
-<tr>
-	<td class="normal"><f:message key="admin.caption.fileEncoding" /></td>
-	<td class="normal">
-		<select name="<%= Environment.PROP_FILE_ENCODING %>">
-		<option value="utf-8"<%= Environment.getValue(Environment.PROP_FILE_ENCODING).equals("utf-8") ? " selected" : "" %>>utf-8</option>
-		<option value="iso-8859-1"<%= Environment.getValue(Environment.PROP_FILE_ENCODING).equals("iso-8859-1") ? " selected" : "" %>>iso-8859-1</option>
-		</select>
-	</td>
 </tr>
 <tr>
 	<td class="normal"><f:message key="admin.caption.persistence" /></td>

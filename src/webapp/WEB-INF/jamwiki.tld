@@ -32,11 +32,6 @@
     </attribute>
   </tag>
   <tag>
-    <name>setPageEncoding</name>
-    <tag-class>org.jamwiki.tags.PageEncodingTag</tag-class>
-    <body-content>JSP</body-content>
-  </tag>
-  <tag>
     <name>wiki-version</name>
     <tag-class>org.jamwiki.tags.WikiVersionTag</tag-class>
     <body-content>JSP</body-content>

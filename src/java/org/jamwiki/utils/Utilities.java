@@ -281,19 +281,10 @@ public class Utilities {
 	 *
 	 */
 	public static String decodeURL(String url) {
-		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
-		if (charSet == null) charSet = "UTF-8";
-		return Utilities.decodeURL(url, charSet);
-	}
-
-	/**
-	 *
-	 */
-	public static String decodeURL(String url,String charSet) {
 		try {
-			url = URLDecoder.decode(url, charSet);
+			url = URLDecoder.decode(url, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while decoding url " + url + " with charset " + charSet, e);
+			logger.error("Failure while decoding url " + url + " with charset UTF-8", e);
 		}
 		// convert underscores to spaces
 		url = StringUtils.replace(url, "_", " ");
@@ -316,25 +307,15 @@ public class Utilities {
 	}
 
 	/**
-	 * This caused problems - encoding without a charset is not well-defined
-	 * behaviour, so we'll look for a default encoding. (coljac)
-	 */
-	public static String encodeURL(String url) {
-		String charSet = Environment.getValue(Environment.PROP_FILE_ENCODING);
-		if (charSet == null) charSet = "UTF-8";
-		return Utilities.encodeURL(url, charSet);
-	}
-
-	/**
 	 *
 	 */
-	public static String encodeURL(String url,String charSet) {
+	public static String encodeURL(String url) {
 		// convert spaces to underscores
 		url = StringUtils.replace(url, " ", "_");
 		try {
-			url = URLEncoder.encode(url, charSet);
+			url = URLEncoder.encode(url, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while encoding url " + url + " with charset " + charSet, e);
+			logger.error("Failure while encoding url " + url + " with charset UTF-8", e);
 		}
 		// FIXME - un-encode colons.  handle this better.
 		url = StringUtils.replace(url, "%3A", ":");
@@ -563,7 +544,7 @@ public class Utilities {
 			File file = new File(filename);
 			if (file.exists()) {
 				// file passed in as full path
-				return FileUtils.readFileToString(file, Environment.getValue(Environment.PROP_FILE_ENCODING));
+				return FileUtils.readFileToString(file, "UTF-8");
 			}
 			// look for file in resource directories
 			Class[] parameterTypes = null;
@@ -614,5 +595,19 @@ public class Utilities {
 		}
 		if (cookie == null) return null;
 		return cookie.getValue();
+	}
+
+	/**
+	 *
+	 */
+	public static String toUTF8(String text) {
+		if (!StringUtils.hasText(text)) return text;
+		try {
+			text = new String(text.getBytes("ISO-8859-1"), "UTF-8");
+		} catch (Exception e) {
+			// bad encoding
+			logger.info("Unable to convert value " + text + " from ISO-8859-1 to UTF-8", e);
+		}
+		return text;
 	}
 }

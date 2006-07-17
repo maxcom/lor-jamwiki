@@ -18,19 +18,14 @@
 --%>
 
 <%@ page import="
-    org.jamwiki.servlets.JAMWikiServlet
-" %>
+        org.jamwiki.servlets.JAMWikiServlet
+    "
+%>
 
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 <%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
 <%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
 
-<jamwiki:setPageEncoding />
-<%
-response.setLocale(request.getLocale());
-response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-response.setHeader("Pragma", "no-cache");
-%>
 <f:setBundle basename="ApplicationResources" />
 <%
 // FIXME - this needs to be cleaned up

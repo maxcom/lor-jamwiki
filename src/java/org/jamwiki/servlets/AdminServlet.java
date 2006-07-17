@@ -352,10 +352,6 @@ public class AdminServlet extends JAMWikiServlet {
 					request.getParameter(Environment.PROP_DB_TYPE)
 				);
 			}
-			Environment.setValue(
-				Environment.PROP_FILE_ENCODING,
-				request.getParameter(Environment.PROP_FILE_ENCODING)
-			);
 			Environment.setBooleanValue(
 				Environment.PROP_PARSER_TOC,
 				request.getParameter(Environment.PROP_PARSER_TOC) != null

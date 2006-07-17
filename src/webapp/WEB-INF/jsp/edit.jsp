@@ -17,9 +17,12 @@
 
 --%>
 <%@ page import="
-    org.jamwiki.Environment,
-    org.jamwiki.servlets.JAMWikiServlet
-" errorPage="/WEB-INF/jsp/error.jsp" %>
+        org.jamwiki.Environment,
+        org.jamwiki.servlets.JAMWikiServlet
+    "
+    errorPage="/WEB-INF/jsp/error.jsp"
+    contentType="text/html; charset=UTF-8"
+%>
 
 <%@ include file="page-init.jsp" %>
 

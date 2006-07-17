@@ -24,9 +24,11 @@ called it means that a catastrophic error has occurred.
 --%>
 
 <%@ page import="
-	org.apache.log4j.Logger
-"
-isErrorPage="true" %>
+        org.apache.log4j.Logger
+    "
+    isErrorPage="true"
+    contentType="text/html; charset=UTF-8"
+%>
 
 <html>
 <head>

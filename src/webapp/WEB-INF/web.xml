@@ -7,6 +7,20 @@
 		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
 		<param-value>ApplicationResources</param-value>
 	</context-param>
+	
+	<!-- set encoding, cache headers, etc. -->
+	<filter>
+		<filter-name>JAMWikiFilter</filter-name>
+		<filter-class>org.jamwiki.servlets.JAMWikiFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>JAMWikiFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>jamwiki</servlet-name>

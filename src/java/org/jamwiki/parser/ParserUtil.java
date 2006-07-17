@@ -16,10 +16,7 @@
  */
 package org.jamwiki.parser;
 
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Hashtable;
-import java.util.Stack;
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;

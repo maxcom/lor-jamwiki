@@ -136,6 +136,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
 		String uri = request.getRequestURI().trim();
+		// FIXME - needs testing on other platforms
+		uri = Utilities.toUTF8(uri);
 		if (uri == null || uri.length() <= 0) {
 			throw new Exception("URI string is empty");
 		}
@@ -166,6 +168,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = request.getRequestURI().trim();
+		// FIXME - needs testing on other platforms
+		uri = Utilities.toUTF8(uri);
 		String contextPath = request.getContextPath().trim();
 		String virtualWiki = null;
 		if (!StringUtils.hasText(uri) || contextPath == null) {

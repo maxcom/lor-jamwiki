@@ -43,7 +43,6 @@ public class Environment {
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
-	public static final String PROP_BASE_FORCE_ENCODING = "force-encoding";
 	public static final String PROP_BASE_INITIALIZED = "props-initialized";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
@@ -71,7 +70,6 @@ public class Environment {
 	public static final String PROP_EMAIL_SMTP_USERNAME = "smtp-username";
 	public static final String PROP_FILE_DIR_FULL_PATH = "file-dir-full-path";
 	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
-	public static final String PROP_FILE_ENCODING = "file-encoding";
 	public static final String PROP_FILE_MAX_FILE_SIZE = "max-file-size";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_CLASS = "parser";
@@ -282,13 +280,6 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
-		// Tomcat assumes ISO-8859-1 in URI's. That's the reason why all Latin-1 languages can't handle special characters.
-		// However, even worse, there is no standard J2EE-way to handle this. We must set this here to ISO-8859-1.
-		// If someone needs UTF-8 URI's, he should configure URIEncoding="UTF-8" in Tomcats connector settings (server.xml)
-		// or have a look at the specific way of the user application server.
-		// also see http://weblogs.java.net/blog/joconner/archive/2005/07/charset_traps.html
-		// Note: according to RFC 3986, URL's should be encoded to UTF-8 by default. Unfortunatly, many systems don't comply
-		defaults.setProperty(PROP_BASE_FORCE_ENCODING, "ISO-8859-1");
 		defaults.setProperty(PROP_BASE_INITIALIZED, "false");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "FILE");
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
@@ -316,7 +307,6 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
 		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, "");
 		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, "");
-		defaults.setProperty(PROP_FILE_ENCODING, "utf-8");
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");

@@ -17,8 +17,9 @@
 
 --%>
 <%@ page import="
-    org.jamwiki.Environment
-" %>
+        org.jamwiki.Environment
+    "
+%>
 
 <c:if test="${!empty topicObject}">
 <div id="content-article">
