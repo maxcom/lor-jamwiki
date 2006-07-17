@@ -31,9 +31,6 @@ public class Topic {
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private boolean deleted = false;
-	private Integer lockedBy = null;
-	private Timestamp lockedDate = null;
-	private String lockSessionKey = null;
 	private String name = null;
 	private boolean readOnly = false;
 	private String topicContent = null;
@@ -74,48 +71,6 @@ public class Topic {
 	 */
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-	}
-
-	/**
-	 *
-	 */
-	public Integer getLockedBy() {
-		return this.lockedBy;
-	}
-
-	/**
-	 *
-	 */
-	public void setLockedBy(Integer lockedBy) {
-		this.lockedBy = lockedBy;
-	}
-
-	/**
-	 *
-	 */
-	public Timestamp getLockedDate() {
-		return this.lockedDate;
-	}
-
-	/**
-	 *
-	 */
-	public void setLockedDate(Timestamp lockedDate) {
-		this.lockedDate = lockedDate;
-	}
-
-	/**
-	 *
-	 */
-	public String getLockSessionKey() {
-		return this.lockSessionKey;
-	}
-
-	/**
-	 *
-	 */
-	public void setLockSessionKey(String lockSessionKey) {
-		this.lockSessionKey = lockSessionKey;
 	}
 
 	/**

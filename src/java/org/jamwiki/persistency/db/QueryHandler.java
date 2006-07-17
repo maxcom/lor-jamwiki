@@ -66,11 +66,6 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getLockList(String virtualWiki) throws Exception;
-
-	/**
-	 *
-	 */
 	public WikiResultSet getReadOnlyTopics(String virtualWiki) throws Exception;
 
 	/**

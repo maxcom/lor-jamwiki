@@ -100,9 +100,6 @@ public class AdminServlet extends JAMWikiServlet {
 			if (function.equals("properties")) {
 				properties(request, next);
 			}
-			if (function.equals("clearEditLock")) {
-				clearEditLock(request, next);
-			}
 			if (function.equals("addVirtualWiki")) {
 				addVirtualWiki(request, next);
 			}
@@ -139,27 +136,6 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki " + newWiki, e);
 			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
-			next.addObject("message", message);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void clearEditLock(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Admin");
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		try {
-			String topicName = request.getParameter("topic");
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-			WikiBase.getHandler().unlockTopic(topic);
-			String message = Utilities.getMessage("admin.message.lockcleared", request.getLocale());
-			next.addObject("message", message);
-		} catch (Exception e) {
-			logger.error("Failure while clearing locks", e);
-			String message = "Failure while clearing locks: " + e.getMessage();
 			next.addObject("message", message);
 		}
 	}

@@ -230,19 +230,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getLockList(String virtualWiki) throws Exception {
-		List all = new ArrayList();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getLockList(virtualWiki);
-		while (rs.next()) {
-			Topic topic = initTopic(rs);
-			all.add(topic);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getReadOnlyTopics(virtualWiki);
@@ -286,23 +273,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			loadVirtualWikiHashes();
 		}
 		return virtualWikiNameHash.keySet();
-	}
-
-	/**
-	 *
-	 */
-	public boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
-			// new topic
-			return true;
-		}
-		if (topic.getLockSessionKey() == null) {
-			return lockTopic(virtualWiki, topicName, key);
-		}
-		// FIXME - old code included a check to see if last version was made after the time
-		// the lock was taken.  that should be impossible with the new code.
-		return true;
 	}
 
 	/**
@@ -378,10 +348,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			topic.setVirtualWiki(virtualWiki);
 			topic.setTopicContent(rs.getString("topic_content"));
 			topic.setTopicId(rs.getInt("topic_id"));
-			int lockedBy = rs.getInt("topic_locked_by");
-			if (lockedBy > 0) topic.setLockedBy(new Integer(lockedBy));
-			topic.setLockedDate(rs.getTimestamp("topic_lock_date"));
-			topic.setLockSessionKey(rs.getString("topic_lock_session_key"));
 			topic.setReadOnly(rs.getChar("topic_read_only") != '0');
 			topic.setDeleted(rs.getChar("topic_deleted") != '0');
 			topic.setTopicType(rs.getInt("topic_type"));

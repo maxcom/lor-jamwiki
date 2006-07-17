@@ -62,7 +62,6 @@ public class FileHandler extends PersistencyHandler {
 	private static final String CONTRIBUTIONS_DIR = "contributions";
 	private static final String DELETE_DIR = "deletes";
 	private final static String EXT = ".xml";
-	private static final String LOCK_DIR = "locks";
 	private static int NEXT_TOPIC_ID = 0;
 	private static final String NEXT_TOPIC_ID_FILE = "topic.id";
 	private static int NEXT_TOPIC_VERSION_ID = 0;
@@ -100,9 +99,6 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_VIRTUAL_WIKI = "virtualwiki";
 	protected static final String XML_TOPIC_TEXT = "text";
 	protected static final String XML_TOPIC_ADMIN_ONLY = "admin";
-	protected static final String XML_TOPIC_LOCKED_BY = "lockedby";
-	protected static final String XML_TOPIC_LOCK_DATE = "lockdate";
-	protected static final String XML_TOPIC_LOCK_KEY = "lockkey";
 	protected static final String XML_TOPIC_READ_ONLY = "readonly";
 	protected static final String XML_TOPIC_DELETED = "deleted";
 	protected static final String XML_TOPIC_TYPE = "type";
@@ -364,25 +360,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getLockList(String virtualWiki) throws Exception {
-		List all = new LinkedList();
-		File[] files = retrieveLockFiles(virtualWiki);
-		if (files == null) return all;
-		for (int i = 0; i < files.length; i++) {
-			String topicName = Utilities.decodeURL(files[i].getName());
-			Topic topic = lookupTopic(virtualWiki, topicName);
-			if (topic == null) {
-				logger.error("Unable to find topic for locked file " + virtualWiki + " / " + topicName);
-				continue;
-			}
-			all.add(topic);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
 	protected static File getPathFor(String virtualWiki, String dir, String fileName) {
 		return getPathFor(virtualWiki, dir, null, fileName);
 	}
@@ -487,20 +464,6 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
-	 * Checks if lock exists
-	 */
-	public synchronized boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception {
-		String filename = lockFilename(topicName);
-		File lockFile = getPathFor(virtualWiki, LOCK_DIR, filename);
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (lockFile.exists() && topic != null) {
-			String lockKey = topic.getLockSessionKey();
-			return (lockKey != null && key.equals(lockKey));
-		}
-		return lockTopic(virtualWiki, topicName, key);
-	}
-
-	/**
 	 * Set up defaults if necessary
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
@@ -584,12 +547,6 @@ public class FileHandler extends PersistencyHandler {
 					topic.setTopicContent(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_ADMIN_ONLY)) {
 					topic.setAdminOnly(new Boolean(rootChild.getTextContent()).booleanValue());
-				} else if (childName.equals(XML_TOPIC_LOCKED_BY)) {
-					topic.setLockedBy(new Integer(rootChild.getTextContent()));
-				} else if (childName.equals(XML_TOPIC_LOCK_DATE)) {
-					topic.setLockedDate(Timestamp.valueOf(rootChild.getTextContent()));
-				} else if (childName.equals(XML_TOPIC_LOCK_KEY)) {
-					topic.setLockSessionKey(rootChild.getTextContent());
 				} else if (childName.equals(XML_TOPIC_READ_ONLY)) {
 					topic.setReadOnly(new Boolean(rootChild.getTextContent()).booleanValue());
 				} else if (childName.equals(XML_TOPIC_DELETED)) {
@@ -800,26 +757,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static String lockFilename(String topicName) {
-		return topicName;
-	}
-
-	/**
-	 * Locks a file for editing
-	 */
-	public synchronized boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
-		if (!super.lockTopic(virtualWiki, topicName, key)) {
-			return false;
-		}
-		String filename = lockFilename(topicName);
-		File lockFile = getPathFor(virtualWiki, LOCK_DIR, filename);
-		FileUtils.writeStringToFile(lockFile, topicName, Environment.getValue(Environment.PROP_FILE_ENCODING));
-		return true;
-	}
-
-	/**
-	 *
-	 */
 	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		// get all files, sorted.  last one is last version.
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, true);
@@ -1000,15 +937,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	private File[] retrieveLockFiles(String virtualWiki) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.LOCK_DIR);
-		File[] files = file.listFiles();
-		return files;
-	}
-
-	/**
-	 *
-	 */
 	private File[] retrieveReadOnlyFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.READ_ONLY_DIR);
 		File[] files = file.listFiles();
@@ -1175,16 +1103,6 @@ public class FileHandler extends PersistencyHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_ADMIN_ONLY, topic.getAdminOnly()));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_LOCKED_BY, topic.getLockedBy()));
-		content.append("\n");
-		if (topic.getLockedDate() != null) {
-			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_DATE, topic.getLockedDate()));
-			content.append("\n");
-		}
-		if (topic.getLockSessionKey() != null) {
-			content.append(XMLUtil.buildTag(XML_TOPIC_LOCK_KEY, topic.getLockSessionKey(), true));
-			content.append("\n");
-		}
 		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_DELETED, topic.getDeleted()));
@@ -1405,19 +1323,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public synchronized void unlockTopic(Topic topic) throws Exception {
-		super.unlockTopic(topic);
-		String filename = lockFilename(topic.getName());
-		File lockFile = getPathFor(topic.getVirtualWiki(), LOCK_DIR, filename);
-		if (!lockFile.exists()) {
-			logger.warn("No lockfile to unlock topic " + topic.getVirtualWiki() + " / " + topic.getName());
-		}
-		lockFile.delete();
-	}
-
-	/**
-	 *
-	 */
 	protected void updateTopic(Topic topic) throws Exception {
 		this.saveTopic(topic);
 	}
@@ -1458,14 +1363,6 @@ public class FileHandler extends PersistencyHandler {
 		String filename = readOnlyFilename(topicName);
 		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
 		FileUtils.writeStringToFile(readOnlyFile, topicName, Environment.getValue(Environment.PROP_FILE_ENCODING));
-	}
-
-	/**
-	 *
-	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion) throws Exception {
-		super.writeTopic(topic, topicVersion);
-		unlockTopic(topic);
 	}
 
 	/**

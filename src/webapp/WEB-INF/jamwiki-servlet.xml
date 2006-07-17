@@ -16,7 +16,6 @@
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Edit">Edit</prop>
 				<prop key="/**/Special:History">History</prop>
-				<prop key="/**/Special:LockList">LockList</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
 				<prop key="/**/Special:OrphanedTopics">Topic</prop>
@@ -27,7 +26,6 @@
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
-				<prop key="/**/Special:Unlock">LockList</prop>
 				<prop key="/**/Special:Upgrade">Admin</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
@@ -42,7 +40,6 @@
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
-	<bean id="LockList" class="org.jamwiki.servlets.LockListServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />

@@ -174,20 +174,6 @@ public abstract class PersistencyHandler {
 					messages.add(msg + ": " + e.getMessage());
 				}
 			}
-			// topic locks
-			Collection locks = fromHandler.getLockList(virtualWiki);
-			for (Iterator lockIterator = locks.iterator(); lockIterator.hasNext();) {
-				Topic topic = (Topic)lockIterator.next();
-				String topicName = topic.getName();
-				try {
-					toHandler.lockTopic(virtualWiki, topicName, topic.getLockSessionKey());
-					messages.add("Added locked topic " + virtualWiki + " / " + topicName);
-				} catch (Exception e) {
-					String msg = "Unable to convert locked topic: " + virtualWiki + " / " + topicName;
-					logger.error(msg, e);
-					messages.add(msg + ": " + e.getMessage());
-				}
-			}
 			// wiki files
 			Collection wikiFileNames = fromHandler.getAllWikiFileTopicNames(virtualWiki);
 			for (Iterator wikiFileIterator = wikiFileNames.iterator(); wikiFileIterator.hasNext();) {
@@ -337,11 +323,6 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract List getLockList(String virtualWiki) throws Exception;
-
-	/**
-	 *
-	 */
 	public abstract Collection getReadOnlyTopics(String virtualWiki) throws Exception;
 
 	/**
@@ -390,11 +371,6 @@ public abstract class PersistencyHandler {
 	public abstract Collection getVirtualWikiList() throws Exception;
 
 	/**
-	 *
-	 */
-	public abstract boolean holdsLock(String virtualWiki, String topicName, String key) throws Exception;
-
-	/**
 	 * Set up defaults if necessary
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
@@ -422,34 +398,6 @@ public abstract class PersistencyHandler {
 		}
 		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
 		return version.getEditDate();
-	}
-
-	/**
-	 *
-	 */
-	public boolean lockTopic(String virtualWiki, String topicName, String key) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null) return true;
-		if (topic.getLockSessionKey() != null) {
-			// a lock still exists, see if it was taken by the current user
-			if (topic.getLockSessionKey().equals(key)) {
-				// same user still has the lock, return true
-				return true;
-			}
-			// see if the existing lock has expired
-			Timestamp expireDate = new Timestamp(topic.getLockedDate().getTime() + (60000 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT)));
-			Timestamp now = new Timestamp(System.currentTimeMillis());
-			if (now.before(expireDate)) {
-				// lock is still valid, return false
-				return false;
-			}
-		}
-		topic.setLockSessionKey(key);
-		topic.setLockedDate(new Timestamp(System.currentTimeMillis()));
-		// FIXME - save author
-		//topic.setLockedBy(authorId);
-		updateTopic(topic);
-		return true;
 	}
 
 	/**
@@ -559,16 +507,6 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void unlockTopic(Topic topic) throws Exception {
-		topic.setLockSessionKey(null);
-		topic.setLockedDate(null);
-		topic.setLockedBy(null);
-		updateTopic(topic);
-	}
-
-	/**
-	 *
-	 */
 	protected abstract void updateTopic(Topic topic) throws Exception;
 
 	/**
@@ -610,10 +548,6 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion) throws Exception {
-		// release any lock that is held by setting lock fields null
-		topic.setLockedBy(null);
-		topic.setLockedDate(null);
-		topic.setLockSessionKey(null);
 		if (topic.getTopicId() <= 0) {
 			addTopic(topic);
 		} else {

@@ -75,9 +75,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "topic_id INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "topic_locked_by INTEGER, "
-		+   "topic_lock_date TIMESTAMP, "
-		+   "topic_lock_session_key VARCHAR(100), "
 		+   "topic_deleted CHAR DEFAULT '0' NOT NULL, "
 		+   "topic_read_only CHAR DEFAULT '0' NOT NULL, "
 		+   "topic_admin_only CHAR DEFAULT '0' NOT NULL, "
@@ -85,7 +82,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
 		+   "CONSTRAINT jam_fk_topic_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
-		+   "CONSTRAINT jam_fk_topic_locked_by FOREIGN KEY (topic_locked_by) REFERENCES jam_wiki_user(wiki_user_id), "
 		+   "CONSTRAINT jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id) "
 		+ ") ";
 	protected static final String STATEMENT_CREATE_TOPIC_VERSION_TABLE =
@@ -189,10 +185,9 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static final String STATEMENT_INSERT_TOPIC =
 		"insert into jam_topic ( "
 		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
-		+   "topic_locked_by, topic_lock_date, topic_read_only, topic_content, "
-		+   "topic_lock_session_key "
+		+   "topic_read_only, topic_content "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ?, ?"
+		+   "?, ?, ?, ?, ?, ? "
 		+ ") ";
 	protected static final String STATEMENT_INSERT_TOPIC_VERSION =
 		"insert into jam_topic_version ("
@@ -287,11 +282,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		"select * from jam_topic "
 		+ "where virtual_wiki_id = ? "
 		+ "and topic_read_only = ? "
-		+ "and topic_deleted = '0' ";
-	protected static final String STATEMENT_SELECT_TOPIC_LOCKED =
-		"select * from jam_topic "
-		+ "where virtual_wiki_id = ? "
-		+ "and topic_lock_session_key is not null "
 		+ "and topic_deleted = '0' ";
 	protected static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
 		"select max(topic_id) as topic_id from jam_topic ";
@@ -389,11 +379,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "virtual_wiki_id = ?, "
 		+ "topic_name = ?, "
 		+ "topic_type = ?, "
-		+ "topic_locked_by = ?, "
-		+ "topic_lock_date = ?, "
 		+ "topic_read_only = ?, "
 		+ "topic_content = ?, "
-		+ "topic_lock_session_key = ?, "
 		+ "topic_deleted = ? "
 		+ "where topic_id = ? ";
 	protected static final String STATEMENT_UPDATE_WIKI_FILE =
@@ -512,16 +499,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getLockList(String virtualWiki) throws Exception {
-		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_LOCKED);
-		stmt.setInt(1, virtualWikiId);
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
 	public WikiResultSet getReadOnlyTopics(String virtualWiki) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
@@ -603,15 +580,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(2, virtualWikiId);
 		stmt.setString(3, topic.getName());
 		stmt.setInt(4, topic.getTopicType());
-		if (topic.getLockedBy() != null) {
-			stmt.setInt(5, topic.getLockedBy().intValue());
-		} else {
-			stmt.setNull(5, Types.INTEGER);
-		}
-		stmt.setTimestamp(6, topic.getLockedDate());
-		stmt.setChar(7, (topic.getReadOnly() ? '1' : '0'));
-		stmt.setString(8, topic.getTopicContent());
-		stmt.setString(9, topic.getLockSessionKey());
+		stmt.setChar(5, (topic.getReadOnly() ? '1' : '0'));
+		stmt.setString(6, topic.getTopicContent());
 		stmt.executeUpdate();
 	}
 
@@ -903,17 +873,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topic.getName());
 		stmt.setInt(3, topic.getTopicType());
-		if (topic.getLockedBy() != null) {
-			stmt.setInt(4, topic.getLockedBy().intValue());
-		} else {
-			stmt.setNull(4, Types.INTEGER);
-		}
-		stmt.setTimestamp(5, topic.getLockedDate());
-		stmt.setChar(6, (topic.getReadOnly() ? '1' : '0'));
-		stmt.setString(7, topic.getTopicContent());
-		stmt.setString(8, topic.getLockSessionKey());
-		stmt.setChar(9, (topic.getDeleted() ? '1' : '0'));
-		stmt.setInt(10, topic.getTopicId());
+		stmt.setChar(4, (topic.getReadOnly() ? '1' : '0'));
+		stmt.setString(5, topic.getTopicContent());
+		stmt.setChar(6, (topic.getDeleted() ? '1' : '0'));
+		stmt.setInt(7, topic.getTopicId());
 		stmt.executeUpdate();
 	}
 

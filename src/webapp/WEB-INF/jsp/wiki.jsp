@@ -104,10 +104,6 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="history.jsp" flush="true" />
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_LOCKLIST)) {
-%>
-		<jsp:include page="locklist.jsp" flush="true" />
-<%
 } else if (action.equals(JAMWikiServlet.ACTION_LOGIN)) {
 %>
 		<jsp:include page="login.jsp" flush="true" />

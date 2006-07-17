@@ -66,17 +66,9 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void cancel(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		try {
-			WikiBase.getHandler().unlockTopic(topic);
-		} catch (Exception err) {
-			// FIXME - hard coding
-			throw new Exception("Unable to unlock topic " + virtualWiki + "/" + topicName);
-		}
 		// FIXME - the caching needs to be simplified
 		JAMWikiServlet.removeCachedContents();
-		viewTopic(request, next, topic.getName());
+		viewTopic(request, next, topicName);
 	}
 
 	/**
