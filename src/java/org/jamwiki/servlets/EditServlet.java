@@ -49,8 +49,6 @@ public class EditServlet extends JAMWikiServlet {
 		try {
 			if (isSave(request)) {
 				save(request, next);
-			} else if (isCancel(request)) {
-				cancel(request, next);
 			} else {
 				edit(request, next);
 			}
@@ -59,16 +57,6 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;
-	}
-
-	/**
-	 *
-	 */
-	private void cancel(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		// FIXME - the caching needs to be simplified
-		JAMWikiServlet.removeCachedContents();
-		viewTopic(request, next, topicName);
 	}
 
 	/**
@@ -92,13 +80,6 @@ public class EditServlet extends JAMWikiServlet {
 			contents = WikiBase.readRaw(virtualWiki, topicName);
 			next.addObject("contents", contents);
 		}
-	}
-
-	/**
-	 *
-	 */
-	private boolean isCancel(HttpServletRequest request) {
-		return isAction(request, "edit.action.cancel", JAMWikiServlet.ACTION_CANCEL);
 	}
 
 	/**

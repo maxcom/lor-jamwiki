@@ -72,7 +72,6 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 }
 %>
 
-<input type="submit" name="action" value="<f:message key="edit.action.cancel"/>"/>
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> />
 <f:message key="edit.isMinorEdit"/>
