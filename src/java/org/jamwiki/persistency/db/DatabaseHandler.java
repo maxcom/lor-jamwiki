@@ -492,6 +492,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
+		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic);
 		if (rs.size() == 0) return null;
 		int topicVersionId = rs.getInt("topic_version_id");
