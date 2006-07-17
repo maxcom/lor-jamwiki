@@ -16,8 +16,9 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp" %>
-
-<%@ include file="page-init.jsp" %>
-
-<%@ include file="diff-include.jsp" %>
+<c:if test="${!badinput}">
+	<c:out value="${diff}" escapeXml="false"/>
+</c:if>
+<c:if test="${badinput=='true'}">
+	<f:message key="diff.badinput"/>
+</c:if>

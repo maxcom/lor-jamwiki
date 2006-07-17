@@ -88,7 +88,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="diff.jsp" flush="true" />
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_EDIT) || action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
+} else if (action.equals(JAMWikiServlet.ACTION_EDIT) || action.equals(JAMWikiServlet.ACTION_PREVIEW) || action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
 %>
 		<jsp:include page="edit.jsp" flush="true" />
 <%
@@ -146,7 +146,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else {
 %>
-		<%@ include file="view-topic.jsp" %>
+		<%@ include file="view-topic-include.jsp" %>
 <%
 }
 %>

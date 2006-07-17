@@ -29,6 +29,7 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.search.SearchEngine;
+import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,11 +47,7 @@ public class EditServlet extends JAMWikiServlet {
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
-			if (mustLogin(request)) {
-				// FIXME - hard coding
-				next.addObject("errorMessage", "Editing a topic requires login");
-				viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
-			} else if (isSave(request)) {
+			if (isSave(request)) {
 				save(request, next);
 			} else if (isCancel(request)) {
 				cancel(request, next);
@@ -86,70 +83,22 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next) throws Exception {
-		request.getSession().setMaxInactiveInterval(60 * Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT));
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		if (!StringUtils.hasText(topicName)) {
-			// FIXME - hard coding
-			throw new Exception("Invalid or missing topic name");
-		}
-		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
-			throw new Exception(topicName + " " + Utilities.getMessage("edit.exception.pseudotopic", request.getLocale()));
-		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
-			topic = new Topic();
-			topic.setName(topicName);
-		}
-		if (topic.getReadOnly()) {
-			// FIXME - hard coding
-			throw new Exception("The topic " + topicName + " is read only");
-		}
-		if (topic.getAdminOnly() && !Utilities.isAdmin(request)) {
-			// FIXME - hard coding
-			next.addObject("errorMessage", "Editing administrative topics requires login");
-			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
+		if (loginRequired(request, next, virtualWiki, topicName)) {
 			return;
 		}
-		String key = request.getSession().getId();
-		if (!WikiBase.getHandler().lockTopic(virtualWiki, topicName, key)) {
-			// FIXME - hard coding
-			throw new Exception("The topic " + topicName + " is locked");
-		}
+		loadTopic(request, virtualWiki, topicName);
+		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
+		next.addObject("lastTopicVersionId", new Integer(lastTopicVersionId));
+		loadEdit(request, next, topicName);
 		String contents = null;
-		String editComment = null;
-		boolean minorEdit = false;
-		String preview = null;
 		if (isPreview(request)) {
-			JAMWikiServlet.removeCachedContents();
-			contents = (String)request.getParameter("contents");
-			editComment = (String)request.getParameter("editComment");
-			minorEdit = (request.getParameter("minorEdit") != null);
-		} else {
-			contents = WikiBase.readRaw(virtualWiki, topicName);
-		}
-		WikiUser user = Utilities.currentUser(request);
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(request.getContextPath());
-		parserInfo.setWikiUser(user);
-		parserInfo.setUserIpAddress(request.getRemoteAddr());
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
-		preview = WikiBase.parse(parserInfo, contents, topicName);
-		String pageTitle = Utilities.getMessage("edit.title", request.getLocale(), topicName);
-		this.pageInfo.setPageTitle(pageTitle);
-		this.pageInfo.setTopicName(topicName);
-		next.addObject("contents", contents);
-		next.addObject("editComment", editComment);
-		next.addObject("minorEdit", new Boolean(minorEdit));
-		if (isPreview(request)) {
-			Topic previewTopic = new Topic();
-			previewTopic.setName(topicName);
-			previewTopic.setTopicContent(preview);
-			next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, previewTopic);
-			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
+			preview(request, next);
 		} else {
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
+			contents = WikiBase.readRaw(virtualWiki, topicName);
+			next.addObject("contents", contents);
 		}
 	}
 
@@ -177,10 +126,115 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean mustLogin(HttpServletRequest request) {
-		return (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null);
+	private void loadEdit(HttpServletRequest request, ModelAndView next, String topicName) throws Exception {
+		String pageTitle = Utilities.getMessage("edit.title", request.getLocale(), topicName);
+		this.pageInfo.setPageTitle(pageTitle);
+		this.pageInfo.setTopicName(topicName);
+		if (request.getParameter("editComment") != null) {
+			next.addObject("editComment", request.getParameter("editComment"));
+		}
+		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
 	}
 
+	/**
+	 *
+	 */
+	private Topic loadTopic(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
+		if (!StringUtils.hasText(topicName)) {
+			// FIXME - hard coding
+			throw new Exception("Invalid or missing topic name");
+		}
+		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
+			throw new Exception(topicName + " " + Utilities.getMessage("edit.exception.pseudotopic", request.getLocale()));
+		}
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic = new Topic();
+			topic.setName(topicName);
+			topic.setVirtualWiki(virtualWiki);
+		}
+		if (topic.getReadOnly()) {
+			// FIXME - hard coding
+			throw new Exception("The topic " + topicName + " is read only");
+		}
+		return topic;
+	}
+
+	/**
+	 *
+	 */
+	private boolean loginRequired(HttpServletRequest request, ModelAndView next, String virtualWiki, String topicName) throws Exception {
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
+			// FIXME - hard coding
+			next.addObject("errorMessage", "Editing a topic requires login");
+			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
+			return true;
+		}
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
+			// FIXME - hard coding
+			next.addObject("errorMessage", "Editing administrative topics requires login");
+			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
+	private void preview(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		WikiUser user = Utilities.currentUser(request);
+		JAMWikiServlet.removeCachedContents();
+		String contents = (String)request.getParameter("contents");
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setWikiUser(user);
+		parserInfo.setUserIpAddress(request.getRemoteAddr());
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
+		String preview = WikiBase.parse(parserInfo, contents, topicName);
+		Topic previewTopic = new Topic();
+		previewTopic.setName(topicName);
+		previewTopic.setTopicContent(preview);
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, previewTopic);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
+		next.addObject("contents", contents);
+	}
+
+	/**
+	 *
+	 */
+	private void resolve(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		TopicVersion version = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		String contents1 = version.getVersionContent();
+		String contents2 = request.getParameter("contents");
+		next.addObject("lastTopicVersionId", new Integer(version.getTopicVersionId()));
+		next.addObject("contents", contents1);
+		next.addObject("contentsResolve", contents2);
+		String diff = DiffUtil.diff(contents1, contents2, true, request.getLocale());
+		next.addObject("diff", diff);
+		loadEdit(request, next, topicName);
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT_RESOLVE);
+	}
+
+	/**
+	 *
+	 */
+	private int retrieveLastTopicVersionId(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
+		int lastTopicVersionId = 0;
+		if (request.getParameter("lastTopicVersionId") == null) {
+			TopicVersion version = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+			if (version != null) lastTopicVersionId = version.getTopicVersionId();
+		} else {
+			lastTopicVersionId = new Integer(request.getParameter("lastTopicVersionId")).intValue();
+		}
+		return lastTopicVersionId;
+	}
 
 	/**
 	 *
@@ -188,29 +242,17 @@ public class EditServlet extends JAMWikiServlet {
 	private void save(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		if (topicName == null) {
-			logger.warn("Attempt to save null topic");
-			// FIXME - hard coding
-			throw new Exception("Topic must be specified");
+		if (loginRequired(request, next, virtualWiki, topicName)) {
+			return;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = loadTopic(request, virtualWiki, topicName);
+		TopicVersion lastTopicVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		if (lastTopicVersion != null && lastTopicVersion.getTopicVersionId() != retrieveLastTopicVersionId(request, virtualWiki, topicName)) {
+			// someone else has edited the topic more recently
+			resolve(request, next);
+			return;
+		}
 		TopicVersion topicVersion = new TopicVersion();
-		if (topic == null) {
-			topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
-		}
-		if (topic.getReadOnly()) {
-			logger.warn("The topic " + topicName + " is read only and cannot be saved");
-			// FIXME - hard coding
-			throw new Exception("The topic " + topicName + " is read only and cannot be saved");
-		}
-		String key = request.getSession().getId();
-		if (!WikiBase.getHandler().holdsLock(virtualWiki, topicName, key)) {
-			logger.warn("The lock on " + topicName + " has timed out");
-			// FIXME - hard coding
-			throw new Exception("The lock on " + topicName + " has timed out");
-		}
 		String contents = request.getParameter("contents");
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");

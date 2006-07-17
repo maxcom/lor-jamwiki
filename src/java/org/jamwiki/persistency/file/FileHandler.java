@@ -820,7 +820,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
+	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		// get all files, sorted.  last one is last version.
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, true);
 		if (files == null) return null;

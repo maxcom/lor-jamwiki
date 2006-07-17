@@ -455,7 +455,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected abstract TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception;
+	public abstract TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception;
 
 	/**
 	 *
