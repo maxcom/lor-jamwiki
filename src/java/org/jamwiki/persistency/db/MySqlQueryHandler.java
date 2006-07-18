@@ -40,7 +40,7 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 		+   "last_login_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin CHAR NOT NULL DEFAULT '0', "
+		+   "is_admin INTEGER NOT NULL DEFAULT 0, "
 		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id), "
 		+   "CONSTRAINT jam_unique_wiki_user_login UNIQUE (login) "
 		+ ") ";
