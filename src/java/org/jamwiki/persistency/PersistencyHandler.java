@@ -386,12 +386,12 @@ public abstract class PersistencyHandler {
 			String virtualWiki = (String)iterator.next();
 			logger.info("Creating defaults for " + virtualWiki);
 			// create the default topics
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.startingpoints", locale), user);
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.leftMenu", locale), user);
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.topArea", locale), user);
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.bottomArea", locale), user);
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale), user);
-			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale), user);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.startingpoints", locale), user, false);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.leftMenu", locale), user, true);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.topArea", locale), user, true);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.bottomArea", locale), user, true);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale), user, true);
+			setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale), user, true);
 		}
 	}
 
@@ -487,7 +487,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void setupSpecialPage(String virtualWiki, String topicName, WikiUser user) throws Exception {
+	protected void setupSpecialPage(String virtualWiki, String topicName, WikiUser user, boolean adminOnly) throws Exception {
 		if (exists(virtualWiki, topicName)) {
 			return;
 		}
@@ -501,6 +501,7 @@ public abstract class PersistencyHandler {
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
 		topic.setTopicContent(contents);
+		topic.setAdminOnly(adminOnly);
 		TopicVersion topicVersion = new TopicVersion();
 		topicVersion.setVersionContent(contents);
 		topicVersion.setAuthorIpAddress(user.getLastLoginIpAddress());

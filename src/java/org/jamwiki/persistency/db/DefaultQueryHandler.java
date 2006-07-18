@@ -185,9 +185,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static final String STATEMENT_INSERT_TOPIC =
 		"insert into jam_topic ( "
 		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
-		+   "topic_read_only, topic_content "
+		+   "topic_read_only, topic_content, topic_deleted, "
+		+   "topic_admin_only  "
 		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ? "
+		+   "?, ?, ?, ?, ?, ?, ?, ? "
 		+ ") ";
 	protected static final String STATEMENT_INSERT_TOPIC_VERSION =
 		"insert into jam_topic_version ("
@@ -582,6 +583,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(4, topic.getTopicType());
 		stmt.setInt(5, (topic.getReadOnly() ? 1 : 0));
 		stmt.setString(6, topic.getTopicContent());
+		stmt.setInt(7, (topic.getDeleted() ? 1 : 0));
+		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
 		stmt.executeUpdate();
 	}
 
