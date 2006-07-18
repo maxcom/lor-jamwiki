@@ -20,7 +20,7 @@ In addition, JAMWiki can be run in either a file persistency mode, or a database
   Oracle 10.2 (requires the 10g or later JDBC drivers)
   H2 Database (ANSI mode)
 
-Note that JAMWiki may work with any ANSI compliant database.
+Note that JAMWiki may work with any ANSI compliant database.  Also note that to support double-byte charaters the database should use UTF-8 encoding.
 
 
 INSTALLATION
