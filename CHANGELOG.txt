@@ -2,14 +2,24 @@
 0.0.7
 =====
 
+* BUG: Handle non ISO-8859-1 characters properly.  May require
+  additional configuration for some databases and application
+  servers.  Issue reported by Alexey.
+* BUG: Make web.xml and the taglib definitions more standards
+  compliant.  Note that this allows JAMWiki to run on Websphere.
 * FEATURE: Remove topic locking & implement a new edit screen to
   allow for manual resolution of edit conflicts.
-* Remove the old topic locking code including Special:LockList
-  and Special:Unlock.
+* FEATURE: Remove the old topic locking code including
+  Special:LockList and Special:Unlock.
+* BUG: Replace CHAR columns in database with INTEGER to fix a
+  problem with the H2 database - BREAKS ANY EXISTING INSTALLATION!
+  See the release notes for the database update syntax.
 * FEATURE: Update to Alexey's new default style.
 * FEATURE: Do not include CSS information inline, instead make
   jamwiki.css an editable Wiki topic and load from that.
 * FEATURE: Hide passwords when updating values on the admin page.
+* BUG: If a topic is saved with no changes, do not save a new
+  version.
 * BUG: Remove redundant parsing code that was causing diffs to be
   shown when no diff was made.
 * FEATURE: Remove the "Cancel" option from the edit page.
