@@ -187,10 +187,6 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageTitle("Special:Admin");
 		try {
-			Environment.setIntValue(
-				Environment.PROP_TOPIC_EDIT_TIME_OUT,
-				Integer.parseInt(request.getParameter(Environment.PROP_TOPIC_EDIT_TIME_OUT))
-			);
 			Environment.setValue(
 				Environment.PROP_RECENT_CHANGES_DAYS,
 				request.getParameter(Environment.PROP_RECENT_CHANGES_DAYS)

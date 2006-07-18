@@ -147,10 +147,6 @@ function onUserGroupType() {
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.editorheader" /></td></tr>
 <tr>
-	<td class="normal"><f:message key="admin.caption.edittimeout" /></td>
-	<td class="normal"><input type="text" name="<%= Environment.PROP_TOPIC_EDIT_TIME_OUT %>" size="3" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_TOPIC_EDIT_TIME_OUT) %>" /></td>
-</tr>
-<tr>
 	<td class="normal"><f:message key="admin.caption.usepreview" /></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) ? " checked" : "" %> /></td>
 </tr>
