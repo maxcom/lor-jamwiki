@@ -399,7 +399,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <NORMAL, TABLE, TD, TH, TC>^{tablestart} {
     logger.debug("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
-    return "<table " + yytext().substring(2).trim() + "><tr>";
+    return "<table " + yytext().substring(2).trim() + ">";
 }
 
 <TABLE, TD, TH, TC>^{tablecaption} {
@@ -461,8 +461,9 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     logger.debug("tablerow: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     // if a column was already open, close it
+    int oldState = yystate();
     output.append(closeTable(TABLE));
-    output.append("</tr>");
+    if (oldState != TABLE) output.append("</tr>");
     if (yytext().length() > 2) {
         output.append("<tr ").append(yytext().substring(2).trim()).append(">");
     } else {
