@@ -78,7 +78,7 @@ import org.jamwiki.utils.Utilities;
         endState();
     }
     if (yystate() == TABLE) {
-        output.append("</td>");
+        output.append("</tr></table>");
         endState();
     }
     return (output.length() == 0) ? null : output.toString();
@@ -417,7 +417,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     // if a column was already open, close it
     output.append(closeTable(TH));
     if (yystate() != TH) beginState(TH);
-    if (yytext().length() > 1) {
+    if (yytext().trim().length() > 1) {
         int start = 1;
         int end = yytext().indexOf("|", start+1);
         output.append("<th ").append(yytext().substring(start, end).trim()).append(">");
@@ -440,7 +440,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     // if a column was already open, close it
     output.append(closeTable(TD));
     if (yystate() != TD) beginState(TD);
-    if (yytext().length() > 2) {
+    if (yytext().trim().length() > 2) {
         int start = 1;
         int end = yytext().indexOf("|", start+1);
         output.append("<td ").append(yytext().substring(start, end).trim()).append(">");
@@ -464,7 +464,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     int oldState = yystate();
     output.append(closeTable(TABLE));
     if (oldState != TABLE) output.append("</tr>");
-    if (yytext().length() > 2) {
+    if (yytext().trim().length() > 2) {
         output.append("<tr ").append(yytext().substring(2).trim()).append(">");
     } else {
         output.append("<tr>");
