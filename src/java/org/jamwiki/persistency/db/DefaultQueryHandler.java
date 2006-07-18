@@ -54,7 +54,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "last_login_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
 		+   "create_ip_address VARCHAR(15) NOT NULL, "
 		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin CHAR DEFAULT '0' NOT NULL, "
+		+   "is_admin INTEGER DEFAULT 0 NOT NULL, "
 		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id), "
 		+   "CONSTRAINT jam_unique_wiki_user_login UNIQUE (login) "
 		+ ") ";
@@ -75,9 +75,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "topic_id INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "topic_deleted CHAR DEFAULT '0' NOT NULL, "
-		+   "topic_read_only CHAR DEFAULT '0' NOT NULL, "
-		+   "topic_admin_only CHAR DEFAULT '0' NOT NULL, "
+		+   "topic_deleted INTEGER DEFAULT 0 NOT NULL, "
+		+   "topic_read_only INTEGER DEFAULT 0 NOT NULL, "
+		+   "topic_admin_only INTEGER DEFAULT 0 NOT NULL, "
 		+   "topic_content " + text() + ", "
 		+   "topic_type INTEGER NOT NULL, "
 		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
@@ -105,9 +105,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		+   "file_id INTEGER NOT NULL, "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "file_name VARCHAR(200) NOT NULL, "
-		+   "file_deleted CHAR DEFAULT '0' NOT NULL, "
-		+   "file_read_only CHAR DEFAULT '0' NOT NULL, "
-		+   "file_admin_only CHAR DEFAULT '0' NOT NULL, "
+		+   "file_deleted INTEGER DEFAULT 0 NOT NULL, "
+		+   "file_read_only INTEGER DEFAULT 0 NOT NULL, "
+		+   "file_admin_only INTEGER DEFAULT 0 NOT NULL, "
 		+   "file_url VARCHAR(200) NOT NULL, "
 		+   "mime_type VARCHAR(100) NOT NULL, "
 		+   "topic_id INTEGER NOT NULL, "
@@ -503,7 +503,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setChar(2, '1');
+		stmt.setInt(2, 1);
 		return stmt.executeQuery();
 	}
 
@@ -580,7 +580,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(2, virtualWikiId);
 		stmt.setString(3, topic.getName());
 		stmt.setInt(4, topic.getTopicType());
-		stmt.setChar(5, (topic.getReadOnly() ? '1' : '0'));
+		stmt.setInt(5, (topic.getReadOnly() ? 1 : 0));
 		stmt.setString(6, topic.getTopicContent());
 		stmt.executeUpdate();
 	}
@@ -632,9 +632,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(4, wikiFile.getUrl());
 		stmt.setString(5, wikiFile.getMimeType());
 		stmt.setInt(6, wikiFile.getTopicId());
-		stmt.setChar(7, (wikiFile.getDeleted() ? '1' : '0'));
-		stmt.setChar(8, (wikiFile.getReadOnly() ? '1' : '0'));
-		stmt.setChar(9, (wikiFile.getAdminOnly() ? '1' : '0'));
+		stmt.setInt(7, (wikiFile.getDeleted() ? 1 : 0));
+		stmt.setInt(8, (wikiFile.getReadOnly() ? 1 : 0));
+		stmt.setInt(9, (wikiFile.getAdminOnly() ? 1 : 0));
 		stmt.setInt(10, wikiFile.getFileSize());
 		stmt.executeUpdate();
 	}
@@ -672,7 +672,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setTimestamp(5, user.getLastLoginDate());
 		stmt.setString(6, user.getCreateIpAddress());
 		stmt.setString(7, user.getLastLoginIpAddress());
-		stmt.setChar(8, (user.getAdmin() ? '1' : '0'));
+		stmt.setInt(8, (user.getAdmin() ? 1 : 0));
 		stmt.executeUpdate();
 	}
 
@@ -873,9 +873,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topic.getName());
 		stmt.setInt(3, topic.getTopicType());
-		stmt.setChar(4, (topic.getReadOnly() ? '1' : '0'));
+		stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
 		stmt.setString(5, topic.getTopicContent());
-		stmt.setChar(6, (topic.getDeleted() ? '1' : '0'));
+		stmt.setInt(6, (topic.getDeleted() ? 1 : 0));
 		stmt.setInt(7, topic.getTopicId());
 		stmt.executeUpdate();
 	}
@@ -891,9 +891,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(3, wikiFile.getUrl());
 		stmt.setString(4, wikiFile.getMimeType());
 		stmt.setInt(5, wikiFile.getTopicId());
-		stmt.setChar(6, (wikiFile.getDeleted() ? '1' : '0'));
-		stmt.setChar(7, (wikiFile.getReadOnly() ? '1' : '0'));
-		stmt.setChar(8, (wikiFile.getAdminOnly() ? '1' : '0'));
+		stmt.setInt(6, (wikiFile.getDeleted() ? 1 : 0));
+		stmt.setInt(7, (wikiFile.getReadOnly() ? 1 : 0));
+		stmt.setInt(8, (wikiFile.getAdminOnly() ? 1 : 0));
 		stmt.setInt(9, wikiFile.getFileSize());
 		stmt.setInt(10, wikiFile.getFileId());
 		stmt.executeUpdate();
@@ -908,7 +908,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(2, user.getDisplayName());
 		stmt.setTimestamp(3, user.getLastLoginDate());
 		stmt.setString(4, user.getLastLoginIpAddress());
-		stmt.setChar(5, (user.getAdmin() ? '1' : '0'));
+		stmt.setInt(5, (user.getAdmin() ? 1 : 0));
 		stmt.setInt(6, user.getUserId());
 		stmt.executeUpdate();
 	}

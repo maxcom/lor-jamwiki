@@ -343,13 +343,13 @@ public class DatabaseHandler extends PersistencyHandler {
 			int virtualWikiId = rs.getInt("virtual_wiki_id");
 			String virtualWiki = lookupVirtualWikiName(virtualWikiId);
 			Topic topic = new Topic();
-			topic.setAdminOnly(rs.getChar("topic_admin_only") != '0');
+			topic.setAdminOnly(rs.getInt("topic_admin_only") != 0);
 			topic.setName(rs.getString("topic_name"));
 			topic.setVirtualWiki(virtualWiki);
 			topic.setTopicContent(rs.getString("topic_content"));
 			topic.setTopicId(rs.getInt("topic_id"));
-			topic.setReadOnly(rs.getChar("topic_read_only") != '0');
-			topic.setDeleted(rs.getChar("topic_deleted") != '0');
+			topic.setReadOnly(rs.getInt("topic_read_only") != 0);
+			topic.setDeleted(rs.getInt("topic_deleted") != 0);
 			topic.setTopicType(rs.getInt("topic_type"));
 			return topic;
 		} catch (Exception e) {
@@ -391,13 +391,13 @@ public class DatabaseHandler extends PersistencyHandler {
 			String virtualWiki = lookupVirtualWikiName(virtualWikiId);
 			WikiFile wikiFile = new WikiFile();
 			wikiFile.setFileId(rs.getInt("file_id"));
-			wikiFile.setAdminOnly(rs.getChar("file_admin_only") != '0');
+			wikiFile.setAdminOnly(rs.getInt("file_admin_only") != 0);
 			wikiFile.setFileName(rs.getString("file_name"));
 			wikiFile.setVirtualWiki(virtualWiki);
 			wikiFile.setUrl(rs.getString("file_url"));
 			wikiFile.setTopicId(rs.getInt("topic_id"));
-			wikiFile.setReadOnly(rs.getChar("file_read_only") != '0');
-			wikiFile.setDeleted(rs.getChar("file_deleted") != '0');
+			wikiFile.setReadOnly(rs.getInt("file_read_only") != 0);
+			wikiFile.setDeleted(rs.getInt("file_deleted") != 0);
 			wikiFile.setMimeType(rs.getString("mime_type"));
 			wikiFile.setFileSize(rs.getInt("file_size"));
 			return wikiFile;
@@ -443,7 +443,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
 			user.setCreateIpAddress(rs.getString("create_ip_address"));
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-			user.setAdmin(rs.getChar("is_admin") != '0');
+			user.setAdmin(rs.getInt("is_admin") != 0);
 			// FIXME - may be in LDAP
 			user.setEmail(rs.getString("email"));
 			user.setFirstName(rs.getString("first_name"));
