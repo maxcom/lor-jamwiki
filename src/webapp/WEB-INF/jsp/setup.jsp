@@ -46,7 +46,6 @@ function onPersistenceType() {
 
 <form name="setup" method="post" action="<jamwiki:link value="Special:Setup" />">
 <table style="border:2px solid #333333;padding=1em;">
-<%-- FIXME: hard coding --%>
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" />
 <c:forEach items="${errors}" var="message"><c:out value="${message}" /><br /></c:forEach>
@@ -106,19 +105,19 @@ function onPersistenceType() {
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td><f:message key="admin.caption.adminlogin"/>:</td>
+	<td><f:message key="setup.caption.adminlogin"/>:</td>
 	<td><input type="text" name="login" value="<c:out value="${login}" />" /></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.newpassword"/>:</td>
+	<td><f:message key="register.caption.newpassword"/>:</td>
 	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" /></td>
 </tr>
 <tr>
-	<td><f:message key="admin.caption.confirmpassword" />:</td>
+	<td><f:message key="register.caption.confirmpassword" />:</td>
 	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
-<tr><td colspan="2" align="center"><input type="submit" name="function" value="Commit" /></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="admin.action.save" />" /></td></tr>
 <tr><td colspan="2">&#160;</td></tr>
 </table>
 </form>

@@ -21,10 +21,8 @@
 <tr>
 	<td class="menu-tab-space">&#160;</td>
 <c:if test="${!special}">
-	<%-- FIXME: hard coding --%>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${article}"><f:message key="menu.article" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<%-- FIXME: hard coding --%>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="menu.comments" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">

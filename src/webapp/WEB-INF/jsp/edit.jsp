@@ -30,8 +30,7 @@
 if (action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
 %>
 
-<%-- FIXME - hard coding --%>
-<p>WARNING: Someone else has edited this topic.  The current version of the topic is show in the first box below, and your version is shown in the second box below.  Please manually resolve any differences and re-save.</p>
+<p><f:message key="edit.exception.conflict" /></p>
 
 <%
 }
@@ -41,8 +40,7 @@ if (action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
 
-<%-- FIXME - hard coding --%>
-<blockquote><hr /><font color="red">Preview: changes have not been saved</font><hr /></blockquote>
+<blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
 <%@ include file="view-topic-include.jsp" %>
 
 <%
@@ -60,8 +58,7 @@ FIXME - restore the Javascript edit buttons
 <p>
 <textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
-<%-- FIXME - hard coding --%>
-<p>Edit Comment: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" /></p>
+<p><f:message key="edit.caption.comment" />: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" /></p>
 <p>
 <input type="submit" name="action" value="<f:message key="edit.action.save"/>"/>
 

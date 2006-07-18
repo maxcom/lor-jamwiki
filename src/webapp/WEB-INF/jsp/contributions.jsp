@@ -28,7 +28,6 @@
 <div id="change">
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Contributions" />">
-<%-- FIXME: hard coding --%>
 <input type="hidden" name="contributor" value="<c:out value="${contributor}" />" />
 
 <br />
@@ -50,7 +49,7 @@ if (request.getParameter("num") != null) {
 <option value="500"<%= (num == 500) ? " selected=\"selected\"" : "" %>>500</option>
 </select>
 &#160;
-<input type="Submit" value="Change" />
+<input type="Submit" value="<f:message key="common.change" />" />
 
 <br /><br />
 
@@ -58,10 +57,9 @@ if (request.getParameter("num") != null) {
 
 <c:forEach items="${contributions}" var="contribution">
 <li>
-	<%-- FIXME: hard coding --%>
-	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${contribution.topicName}" />&version2=<c:out value="${contribution.previousTopicVersionId}" />&version1=<c:out value="${contribution.topicVersionId}" />">diff</a>)
+	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${contribution.topicName}" />&version2=<c:out value="${contribution.previousTopicVersionId}" />&version1=<c:out value="${contribution.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
 	&#160;
-	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${contribution.topicName}" />&type=all">history</a>)
+	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${contribution.topicName}" />&type=all"><f:message key="common.caption.history" /></a>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${contribution.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />

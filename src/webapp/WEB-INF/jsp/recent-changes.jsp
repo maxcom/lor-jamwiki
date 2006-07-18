@@ -49,7 +49,7 @@ if (request.getParameter("num") != null) {
 <option value="500"<%= (num == 500) ? " selected=\"selected\"" : "" %>>500</option>
 </select>
 &#160;
-<input type="Submit" value="Change" />
+<input type="Submit" value="<f:message key="common.change" />" />
 
 <br /><br />
 
@@ -57,10 +57,9 @@ if (request.getParameter("num") != null) {
 
 <c:forEach items="${changes}" var="change">
 <li>
-	<%-- FIXME: hard coding --%>
-	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&version2=<c:out value="${change.previousTopicVersionId}" />&version1=<c:out value="${change.topicVersionId}" />">diff</a>)
+	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&version2=<c:out value="${change.previousTopicVersionId}" />&version1=<c:out value="${change.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
 	&#160;
-	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />&type=all">history</a>)
+	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />&type=all"><f:message key="common.caption.history" /></a>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
@@ -69,7 +68,7 @@ if (request.getParameter("num") != null) {
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
-	(<jamwiki:link value="User comments:${change.authorName}">Comments</jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions?contributor=${change.authorName}">Contribs</jamwiki:link>)
+	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions?contributor=${change.authorName}"><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </c:forEach>
 </ul>

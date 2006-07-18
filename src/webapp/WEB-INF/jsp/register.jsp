@@ -31,32 +31,31 @@
 	<div style="color:red;size=110%;"><c:forEach items="${errors}" var="message"><c:out value="${message}" /><br /></c:forEach></div>
 </td></tr>
 </c:if>
-<%-- FIXME: hard coding --%>
 <%-- FIXME - handle LDAP --%>
 <tr>
-	<td>Login:</td>
+	<td><f:message key="common.login" />:</td>
 	<td><input type="text" name="login" value="<c:out value="${user.login}" />"></td>
 </tr>
 <c:if test="${user.userId > 0}">
 <tr>
-	<td>Old Password:</td>
+	<td><f:message key="register.caption.oldpassword" />:</td>
 	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />"></td>
 </tr>
 </c:if>
 <tr>
-	<td>New Password:</td>
+	<td><f:message key="register.caption.newpassword" />:</td>
 	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />"></td>
 </tr>
 <tr>
-	<td>Confirm Password:</td>
+	<td><f:message key="register.caption.confirmpassword" />:</td>
 	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />"></td>
 </tr>
 <tr>
-	<td>Display Name:</td>
+	<td><f:message key="register.caption.displayname" />:</td>
 	<td><input type="text" name="displayName" value="<c:out value="${user.displayName}" />"></td>
 </tr>
 <tr>
-	<td>Email:</td>
+	<td><f:message key="register.caption.email" />:</td>
 	<td><input type="text" name="email" value="<c:out value="${user.email}" />"></td>
 </tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>

@@ -34,7 +34,7 @@
 		<c:redirect url="${defaultVirtualWiki}/${defaultTopic}" />
 	</c:when>
 	<c:otherwise>
-		<%-- FIXME - remove hard-coding, support virtual wiki, URL escape defaultTopic --%>
+		<%-- FIXME - support virtual wiki --%>
 		<c:redirect url="${defaultVirtualWiki}/Special:Setup" />
 	</c:otherwise>
 </c:choose>
