@@ -46,6 +46,8 @@ if (request.getParameter("num") != null) {
 <option value="25"<%= (num == 25) ? " selected=\"selected\"" : "" %>>25</option>
 <option value="50"<%= (num == 50) ? " selected=\"selected\"" : "" %>>50</option>
 <option value="100"<%= (num == 100) ? " selected=\"selected\"" : "" %>>100</option>
+<option value="250"<%= (num == 250) ? " selected=\"selected\"" : "" %>>250</option>
+<option value="500"<%= (num == 500) ? " selected=\"selected\"" : "" %>>500</option>
 </select>
 &#160;
 <input type="Submit" value="Change" />
