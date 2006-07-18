@@ -26,6 +26,10 @@
 <%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
 <%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
 
+<%
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+response.setHeader("Pragma", "no-cache");
+%>
 <f:setBundle basename="ApplicationResources" />
 <%
 // FIXME - this needs to be cleaned up

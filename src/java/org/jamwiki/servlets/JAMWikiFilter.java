@@ -23,7 +23,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 /**
@@ -46,11 +45,6 @@ public class JAMWikiFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		response.setContentType("text/html;charset=" + this.encoding);
-		if (response instanceof HttpServletResponse) {
-			HttpServletResponse httpResponse = (HttpServletResponse)response;
-			httpResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-			httpResponse.setHeader("Pragma", "no-cache");
-		}
 		request.setCharacterEncoding(this.encoding);
 		chain.doFilter(request, response);
 	}
