@@ -47,7 +47,7 @@ table {
 }
 
 h1 {
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #D8D8E7;
 	color: black;
 	font-size: 200%;
 	font-weight: normal;
@@ -57,7 +57,7 @@ h1 {
 }
 
 h2 {
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #D8D8E7;
 	color: black;
 	font-size: 175%;
 	font-weight: normal;
@@ -94,10 +94,10 @@ h5 {
 }
 
 pre {
-	background-color: #f9f9f9;
-	border: 1px dashed #2f6fab;
+	background-color: #FBFBFD;
+	border: 1px dashed #7E7ECB;
 	color: black;
-	font-size: 110%;
+	font-size: 105%;
 	line-height: 1.1em;
 	padding: 1em;
 }
@@ -170,7 +170,7 @@ td.main-content {
 
 td.navigation {
 	font-size: 90%;
-	padding: 5px 5px 5px 0px;
+	padding: 5px 10px 5px 0px;
 	vertical-align: top;
 	width: 180px;
 }
@@ -272,9 +272,12 @@ td.diff-line {
 /* table of contents */
 
 table.toc {
-	border: 1px solid #aaaaaa;
-	margin: 0.2em 0em 0.2em 0em;
-	padding: 0.5em 0.3em 0.5em 0em;
+	border: 1px solid #D8D8E7;
+	margin: 0.2em 0em 0.2em 0em;	
+}
+
+table.toc td {
+	padding: 0.5em 0.8em 0.5em 0.8em;
 }
 
 /* tab menu */
