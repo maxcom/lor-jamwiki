@@ -368,7 +368,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
-		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR))) {
+		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			return null;
 		}
 		StringBuffer buffer = new StringBuffer();
@@ -467,6 +467,9 @@ public class FileHandler extends PersistencyHandler {
 	 * Set up defaults if necessary
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			return;
+		}
 		// create the virtual wiki list file if necessary
 		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		// get the virtual wiki list and set up the file system

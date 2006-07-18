@@ -279,6 +279,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			return;
+		}
 		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
 			DatabaseHandler.queryHandler = new PostgresQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {

@@ -272,6 +272,9 @@ public abstract class PersistencyHandler {
 	 * See if a topic exists and if it has not been deleted.
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
+		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
+			return false;
+		}
 		// first check a cache of recently looked-up topics for performance reasons
 		String key = virtualWiki + "/" + topicName;
 		if (cachedTopicsList.contains(key)) {
@@ -374,6 +377,9 @@ public abstract class PersistencyHandler {
 	 * Set up defaults if necessary
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			return;
+		}
 		Collection all = getVirtualWikiList();
 		if (user != null && user.getUserId() < 1) addWikiUser(user);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
