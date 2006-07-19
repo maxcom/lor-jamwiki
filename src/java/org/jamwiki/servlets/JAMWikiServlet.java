@@ -26,6 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.search.AbstractSearchEngine;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -389,8 +390,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 			parserInfo.setUserIpAddress(request.getRemoteAddr());
 			parserInfo.setVirtualWiki(virtualWiki);
 			contents = WikiBase.parse(parserInfo, topic.getTopicContent(), topicName);
-			// search servlet highlights search terms, so add that here
-			contents = Utilities.highlightHTML(contents, request.getParameter("highlight"));
+			if (StringUtils.hasText(request.getParameter("highlight"))) {
+				// search servlet highlights search terms, so add that here
+				contents = AbstractSearchEngine.highlightHTML(contents, request.getParameter("highlight"));
+			}
 			topic.setTopicContent(contents);
 			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);

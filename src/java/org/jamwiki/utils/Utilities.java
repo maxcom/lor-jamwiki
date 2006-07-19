@@ -410,33 +410,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Provide the capability to highlight terms within a block of HTML.
-	 */
-	// FIXME - this code is really ugly and confusing...
-	public static String highlightHTML(String contents, String highlightparam) {
-		if (!StringUtils.hasText(highlightparam)) return contents;
-		String highlighttext = "<b style=\"color:black;background-color:#ffff66\">###</b>";
-		contents = markToReplaceOutsideHTML(contents, highlightparam);
-		for (int i = 0; i < highlightparam.length(); i++) {
-			String myhighlightparam = highlightparam.substring(0, i) + highlightparam.substring(i, i + 1).toUpperCase();
-			if ((i + 1) < highlightparam.length()) {
-				myhighlightparam += highlightparam.substring(i + 1);
-			}
-			String highlight = highlighttext;
-			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
-			contents = StringUtils.replace(contents, '\u0000' + myhighlightparam, highlight);
-			myhighlightparam = highlightparam.substring(0, i) + highlightparam.substring(i, i + 1).toLowerCase();
-			if ((i + 1) < highlightparam.length()) {
-				myhighlightparam += highlightparam.substring(i + 1);
-			}
-			highlight = highlighttext;
-			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
-			contents = StringUtils.replace(contents, '\u0000' + myhighlightparam, highlight);
-		}
-		return contents;
-	}
-
-	/**
 	 *
 	 */
 	public static boolean isAdmin(HttpServletRequest request) {
@@ -480,58 +453,6 @@ public class Utilities {
 		}
 		// all tests passed, it's an IP address
 		return true;
-	}
-
-	/**
-	 * Mark all needles in a haystack, so that they can be replaced later. Take special care on HTML,
-	 * so that no needle is replaced inside a HTML tag.
-	 *
-	 * @param haystack The haystack to go through.
-	 * @param needle   The needle to search.
-	 * @return The haystack with all needles (outside HTML) marked with the char \u0000
-	 */
-	private static String markToReplaceOutsideHTML(String haystack, String needle) {
-		if (needle.length() == 0) {
-			return haystack;
-		}
-		StringBuffer sb = new StringBuffer();
-		boolean inHTMLmode = false;
-		int l = haystack.length();
-		for (int j = 0; j < l; j++) {
-			char c = haystack.charAt(j);
-			switch (c) {
-				case '<':
-					if (((j + 1) < l) && (haystack.charAt(j + 1) != ' ')) {
-						inHTMLmode = true;
-					}
-					break;
-				case '>':
-					if (inHTMLmode) {
-						inHTMLmode = false;
-					}
-					break;
-			}
-			if ((c == needle.charAt(0) || Math.abs(c - needle.charAt(0)) == 32) &&
-				!inHTMLmode) {
-				boolean ok = true;
-				if ((j + needle.length()) > l ||
-					!haystack.substring(j, j + needle.length()).equalsIgnoreCase(needle)) {
-					ok = false;
-				}
-				if (ok) {
-					sb.append('\u0000');
-					for (int k = 0; k < needle.length(); k++) {
-						sb.append(haystack.charAt(j + k));
-					}
-					j = j + needle.length() - 1;
-				} else {
-					sb.append(c);
-				}
-			} else {
-				sb.append(c);
-			}
-		}
-		return sb.toString();
 	}
 
 	/**
