@@ -90,7 +90,7 @@ public class LoginServlet extends JAMWikiServlet {
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 		}
-		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password);
+		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password, false);
 		if (user == null) {
 			next.addObject("errorMessage", Utilities.getMessage("error.login", request.getLocale()));
 			next.addObject("redirect", redirect);

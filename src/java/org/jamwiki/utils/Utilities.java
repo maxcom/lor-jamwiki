@@ -252,9 +252,9 @@ public class Utilities {
 		StringTokenizer tokens = new StringTokenizer(userInfo, JAMWikiServlet.USER_COOKIE_DELIMITER);
 		if (tokens.countTokens() != 2) return null;
 		String login = tokens.nextToken();
-		String password = Encryption.decrypt(tokens.nextToken());
+		String encryptedPassword = tokens.nextToken();
 		try {
-			user = WikiBase.getHandler().lookupWikiUser(login, password);
+			user = WikiBase.getHandler().lookupWikiUser(login, encryptedPassword, true);
 		} catch (Exception e) {
 			// FIXME - safe to ignore?
 		}

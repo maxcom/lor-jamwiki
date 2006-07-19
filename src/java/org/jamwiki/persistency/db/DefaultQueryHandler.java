@@ -27,7 +27,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -754,10 +753,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, String password) throws Exception {
+	public WikiResultSet lookupWikiUser(String login, String encryptedPassword) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
 		stmt.setString(1, login);
-		stmt.setString(2, Encryption.encrypt(password));
+		stmt.setString(2, encryptedPassword);
 		return stmt.executeQuery();
 	}
 

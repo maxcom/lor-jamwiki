@@ -122,7 +122,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add("Login cannot be empty");
 		}
 		String oldPassword = request.getParameter("oldPassword");
-		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword) == null) {
+		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword, false) == null) {
 			errors.add("Invalid old password");
 		}
 		String newPassword = request.getParameter("newPassword");

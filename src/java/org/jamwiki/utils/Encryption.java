@@ -16,6 +16,9 @@
  */
 package org.jamwiki.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -34,6 +37,9 @@ public class Encryption {
 	private static Logger logger = Logger.getLogger(Encryption.class);
 	public static final String DES_ALGORITHM = "DES";
 	public static final String ENCRYPTION_KEY = "JAMWiki Key 12345";
+	private static final char[] hexDigits = {
+		'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+	};
 
 	/**
 	 * Hide the constructor by making it private.
@@ -47,22 +53,54 @@ public class Encryption {
 	 * @param unencryptedString The unencrypted String value that is to be encrypted.
 	 * @return An encrypted version of the String that was passed to this method.
 	 */
-	public static String encrypt(String unencryptedString) throws Exception {
+	public static String encrypt64(String unencryptedString) throws Exception {
 		if (!StringUtils.hasText(unencryptedString)) {
 			return unencryptedString;
 		}
+		byte[] unencryptedBytes = unencryptedString.getBytes("UTF8");
+		return encrypt64(unencryptedBytes);
+	}
+
+	/**
+	 * Encrypt a String value using the DES encryption algorithm.
+	 *
+	 * @param unencryptedString The unencrypted String value that is to be encrypted.
+	 * @return An encrypted version of the String that was passed to this method.
+	 */
+	public static String encrypt64(byte[] unencryptedBytes) throws Exception {
 		try {
 			SecretKey key = createKey();
 			Cipher cipher = Cipher.getInstance(key.getAlgorithm());
 			cipher.init(Cipher.ENCRYPT_MODE, key);
-			byte[] unencryptedBytes = unencryptedString.getBytes("UTF8");
 			byte[] encryptedBytes = Base64.encodeBase64(cipher.doFinal(unencryptedBytes));
 			return bytes2String(encryptedBytes);
 		} catch (Exception e) {
-			logger.error("Encryption error while processing value '" + unencryptedString + "'", e);
+			logger.error("Encryption error while processing value '" + bytes2String(unencryptedBytes) + "'", e);
 			throw e;
 		}
 	}
+
+	/**
+	 *
+	 */
+	public static String encrypt(String unencryptedString) throws Exception {
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("SHA-512");
+		} catch (NoSuchAlgorithmException e) {
+			logger.error("JDK does not support the SHA-512 encryption algorithm");
+			throw e;
+		}
+		try {
+			md.update(unencryptedString.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			logger.error("Unsupporting encoding UTF-8");
+			throw e;
+		}
+		byte raw[] = md.digest();
+		return encrypt64(raw);
+    }
 
 	/**
 	 * Unencrypt a String value using the DES encryption algorithm.
@@ -70,7 +108,7 @@ public class Encryption {
 	 * @param encryptedString The encrypted String value that is to be unencrypted.
 	 * @return An unencrypted version of the String that was passed to this method.
 	 */
-	public static String decrypt(String encryptedString) {
+	public static String decrypt64(String encryptedString) {
 		if (encryptedString == null || encryptedString.trim().length() <= 0) {
 			return encryptedString;
 		}
@@ -121,7 +159,7 @@ public class Encryption {
 	 * @return The unencrypted value of the property.
 	 */
 	public static String getEncryptedProperty(String name) {
-		return Encryption.decrypt(Environment.getValue(name));
+		return Encryption.decrypt64(Environment.getValue(name));
 	}
 
 	/**
@@ -131,7 +169,7 @@ public class Encryption {
 	 * @value The enencrypted value of the property.
 	 */
 	public static void setEncryptedProperty(String name, String value) throws Exception {
-		value = Encryption.encrypt(value);
+		value = Encryption.encrypt64(value);
 		Environment.setValue(name, value);
 	}
 }

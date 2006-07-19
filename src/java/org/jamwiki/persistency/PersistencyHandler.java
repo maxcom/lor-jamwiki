@@ -434,7 +434,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract WikiUser lookupWikiUser(String login, String password) throws Exception;
+	public abstract WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception;
 
 	/**
 	 *
