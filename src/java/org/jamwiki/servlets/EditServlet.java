@@ -114,11 +114,10 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private Topic loadTopic(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
 		if (!StringUtils.hasText(topicName)) {
-			// FIXME - hard coding
-			throw new Exception("Invalid or missing topic name");
+			throw new Exception(Utilities.getMessage("edit.exception.notopic", request.getLocale()));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
-			throw new Exception(topicName + " " + Utilities.getMessage("edit.exception.pseudotopic", request.getLocale()));
+			throw new Exception(Utilities.getMessage("edit.exception.pseudotopic", request.getLocale(), topicName));
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -127,8 +126,7 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setVirtualWiki(virtualWiki);
 		}
 		if (topic.getReadOnly()) {
-			// FIXME - hard coding
-			throw new Exception("The topic " + topicName + " is read only");
+			throw new Exception(Utilities.getMessage("error.readonly", request.getLocale()));
 		}
 		return topic;
 	}
@@ -138,15 +136,13 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private boolean loginRequired(HttpServletRequest request, ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
-			// FIXME - hard coding
-			next.addObject("errorMessage", "Editing a topic requires login");
+			next.addObject("errorMessage", Utilities.getMessage("edit.exception.login", request.getLocale()));
 			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
 			return true;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
-			// FIXME - hard coding
-			next.addObject("errorMessage", "Editing administrative topics requires login");
+			next.addObject("errorMessage", Utilities.getMessage("edit.exception.loginadmin", request.getLocale(), topicName));
 			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
 			return true;
 		}
@@ -229,8 +225,7 @@ public class EditServlet extends JAMWikiServlet {
 		String contents = request.getParameter("contents");
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");
-			// FIXME - hard coding
-			throw new Exception("The topic " + topicName + " has no content");
+			throw new Exception(Utilities.getMessage("edit.exception.nocontent", request.getLocale(), topicName));
 		}
 		if (lastTopicVersion != null && lastTopicVersion.getVersionContent().equals(contents)) {
 			viewTopic(request, next, topicName);

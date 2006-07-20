@@ -50,10 +50,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
 			if (!Utilities.isUpgrade()) {
-				// FIXME - hard coding
-				throw new Exception("No upgrade is currently required.");
+				throw new Exception(Utilities.getMessage("upgrade.error.notrequired", request.getLocale()));
 			}
-			// FIXME - hard coding of "function" values
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
 				view(request, next);
@@ -79,8 +77,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 		Environment.saveProperties();
 		next.addObject("messages", messages);
-		// FIXME - hard coding
-		next.addObject("message", "Upgrade complete.  See below for any failure messages.");
+		next.addObject("message", Utilities.getMessage("upgrade.caption.upgradecomplete", request.getLocale()));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageTitle("Special:Upgrade");

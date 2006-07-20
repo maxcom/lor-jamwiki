@@ -49,12 +49,10 @@ public class SetupServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
 			if (!Utilities.isFirstUse()) {
-				// FIXME - hard coding
-				throw new Exception("System setup is already complete.  View the admin page to change settings.");
+				throw new Exception(Utilities.getMessage("setup.error.notrequired", request.getLocale()));
 			}
 			String function = request.getParameter("function");
 			if (function == null) function = "";
-			// FIXME - hard coding of "function" values
 			if (!StringUtils.hasText(function)) {
 				setup(request, next);
 			} else {
@@ -146,27 +144,25 @@ public class SetupServlet extends JAMWikiServlet {
 		File baseDir = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
 		if (!baseDir.exists()) {
 			// invalid base directory
-			// FIXME - hard coding
-			errors.add(Environment.getValue(Environment.PROP_BASE_FILE_DIR) + " is not a valid directory");
+			errors.add(Utilities.getMessage("error.directoryinvalid", request.getLocale(), Environment.getValue(Environment.PROP_BASE_FILE_DIR)));
 		}
 		File fullDir = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!fullDir.exists()) {
 			// invalid base directory
-			// FIXME - hard coding
-			errors.add(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH) + " is not a valid directory");
+			errors.add(Utilities.getMessage("error.directoryinvalid", request.getLocale(), Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
 		}
 		if (!StringUtils.hasText(user.getLogin())) {
 			user.setLogin("");
-			errors.add("Login cannot be empty");
+			errors.add(Utilities.getMessage("error.loginempty", request.getLocale()));
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (newPassword != null || confirmPassword != null) {
 			if (newPassword == null) {
-				errors.add("New password field must be entered");
+				errors.add(Utilities.getMessage("error.newpasswordempty", request.getLocale()));
 			} else if (confirmPassword == null) {
-				errors.add("Password confirmation must be entered");
+				errors.add(Utilities.getMessage("error.passwordconfirm", request.getLocale()));
 			} else if (!newPassword.equals(confirmPassword)) {
 				errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
 			}
@@ -174,7 +170,7 @@ public class SetupServlet extends JAMWikiServlet {
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			// test database
 			if (!DatabaseHandler.testDatabase()) {
-				errors.add("A connection could not be established with the database; please re-check the settings");
+				errors.add(Utilities.getMessage("error.databaseconnection", request.getLocale()));
 			}
 		}
 		return errors;

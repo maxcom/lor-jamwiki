@@ -63,7 +63,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
-		this.pageInfo.setPageTitle("Account Details");
+		this.pageInfo.setPageTitle(Utilities.getMessage("register.title", request.getLocale()));
 	}
 
 	/**
@@ -117,26 +117,25 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
 		Vector errors = new Vector();
-		// FIXME - hard coding
 		if (!StringUtils.hasText(user.getLogin())) {
-			errors.add("Login cannot be empty");
+			errors.add(Utilities.getMessage("error.loginempty", request.getLocale()));
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword, false) == null) {
-			errors.add("Invalid old password");
+			errors.add(Utilities.getMessage("register.error.oldpasswordinvalid", request.getLocale()));
 		}
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (user.getUserId() < 1 && !StringUtils.hasText(newPassword)) {
-			errors.add("Password cannot be empty");
+			errors.add(Utilities.getMessage("register.error.passwordempty", request.getLocale()));
 		}
 		if (StringUtils.hasText(newPassword) || StringUtils.hasText(confirmPassword)) {
 			if (!StringUtils.hasText(newPassword)) {
-				errors.add("New password field must be entered");
+				errors.add(Utilities.getMessage("error.newpasswordempty", request.getLocale()));
 			} else if (!StringUtils.hasText(confirmPassword)) {
-				errors.add("Password confirmation must be entered");
+				errors.add(Utilities.getMessage("error.passwordconfirm", request.getLocale()));
 			} else if (!newPassword.equals(confirmPassword)) {
-				errors.add("Passwords do not match, please re-enter");
+				errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
 			}
 		}
 		return errors;

@@ -118,8 +118,7 @@ public class UploadServlet extends JAMWikiServlet {
 		// FIXME - this method is a mess and needs to be split up.
 		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!file.exists()) {
-			// FIXME - hard coding
-			throw new Exception("Uploads not supported, no valid directory to upload into");
+			throw new Exception(Utilities.getMessage("upload.error.nodirectory", request.getLocale()));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = Utilities.currentUser(request);
@@ -157,7 +156,7 @@ public class UploadServlet extends JAMWikiServlet {
 				fileSize = item.getSize();
 				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 				if (!directory.exists() && !directory.mkdirs()) {
-					throw new Exception("Unable to create upload directory " + directory.getAbsolutePath());
+					throw new Exception(Utilities.getMessage("upload.error.directorycreate", request.getLocale(),  directory.getAbsolutePath()));
 				}
 				contentType = item.getContentType();
 				url = subdirectory + "/" + url;
@@ -196,8 +195,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		// FIXME - hard coding
-		this.pageInfo.setPageTitle("File Upload");
+		this.pageInfo.setPageTitle(Utilities.getMessage("upload.title", request.getLocale()));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPLOAD);
 		this.pageInfo.setSpecial(true);
 	}
