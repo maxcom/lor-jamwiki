@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -89,6 +90,22 @@ public class XMLUtil {
 	 */
 	public static String buildTag(String tagName, long tagValue) {
 		return XMLUtil.buildTag(tagName, new Long(tagValue).toString(), false);
+	}
+
+	/**
+	 * Get Node text content.  This method duplicates the Node.getTextContent()
+	 * method from JDK 1.5.
+	 *
+	 * @param baseNode The node.
+	 * @return The text content of the node.
+	 */
+	public static String getTextContent(Node baseNode) throws Exception {
+		// if element, first child will be a text element with content
+		Node child = baseNode.getFirstChild();
+		if (child != null && child.getNodeType() == Node.TEXT_NODE) {
+			return child.getNodeValue();
+		}
+		return "";
 	}
 
 	/**

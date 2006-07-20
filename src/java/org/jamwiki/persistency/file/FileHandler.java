@@ -496,25 +496,25 @@ public class FileHandler extends PersistencyHandler {
 				rootChild = rootChildren.item(i);
 				childName = rootChild.getNodeName();
 				if (childName.equals(XML_RECENT_CHANGE_TOPIC_ID)) {
-					change.setTopicId(new Integer(rootChild.getTextContent()).intValue());
+					change.setTopicId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_NAME)) {
-					change.setTopicName(rootChild.getTextContent());
+					change.setTopicName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_VERSION_ID)) {
-					change.setTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
+					change.setTopicVersionId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID)) {
-					change.setPreviousTopicVersionId(new Integer(rootChild.getTextContent()));
+					change.setPreviousTopicVersionId(new Integer(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_ID)) {
-					change.setAuthorId(new Integer(rootChild.getTextContent()));
+					change.setAuthorId(new Integer(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_NAME)) {
-					change.setAuthorName(rootChild.getTextContent());
+					change.setAuthorName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_COMMENT)) {
-					change.setEditComment(rootChild.getTextContent());
+					change.setEditComment(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_DATE)) {
-					change.setEditDate(Timestamp.valueOf(rootChild.getTextContent()));
+					change.setEditDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_TYPE)) {
-					change.setEditType(new Integer(rootChild.getTextContent()).intValue());
+					change.setEditType(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_RECENT_CHANGE_VIRTUAL_WIKI)) {
-					change.setVirtualWiki(rootChild.getTextContent());
+					change.setVirtualWiki(XMLUtil.getTextContent(rootChild));
 				}
 			}
 			return change;
@@ -541,21 +541,21 @@ public class FileHandler extends PersistencyHandler {
 				rootChild = rootChildren.item(i);
 				childName = rootChild.getNodeName();
 				if (childName.equals(XML_TOPIC_TITLE)) {
-					topic.setName(rootChild.getTextContent());
+					topic.setName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_ID)) {
-					topic.setTopicId(new Integer(rootChild.getTextContent()).intValue());
+					topic.setTopicId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_TOPIC_VIRTUAL_WIKI)) {
-					topic.setVirtualWiki(rootChild.getTextContent());
+					topic.setVirtualWiki(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_TEXT)) {
-					topic.setTopicContent(rootChild.getTextContent());
+					topic.setTopicContent(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_ADMIN_ONLY)) {
-					topic.setAdminOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+					topic.setAdminOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_TOPIC_READ_ONLY)) {
-					topic.setReadOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+					topic.setReadOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_TOPIC_DELETED)) {
-					topic.setDeleted(new Boolean(rootChild.getTextContent()).booleanValue());
+					topic.setDeleted(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_TOPIC_TYPE)) {
-					topic.setTopicType(new Integer(rootChild.getTextContent()).intValue());
+					topic.setTopicType(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				}
 			}
 			return topic;
@@ -582,29 +582,29 @@ public class FileHandler extends PersistencyHandler {
 				rootChild = rootChildren.item(i);
 				childName = rootChild.getNodeName();
 				if (childName.equals(XML_TOPIC_VERSION_ID)) {
-					topicVersion.setTopicVersionId(new Integer(rootChild.getTextContent()).intValue());
+					topicVersion.setTopicVersionId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_TOPIC_VERSION_TOPIC_ID)) {
-					topicVersion.setTopicId(new Integer(rootChild.getTextContent()).intValue());
+					topicVersion.setTopicId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_COMMENT)) {
-					topicVersion.setEditComment(rootChild.getTextContent());
+					topicVersion.setEditComment(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_DATE)) {
-					topicVersion.setEditDate(Timestamp.valueOf(rootChild.getTextContent()));
+					topicVersion.setEditDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_TOPIC_VERSION_EDIT_TYPE)) {
-					topicVersion.setEditType(new Integer(rootChild.getTextContent()).intValue());
+					topicVersion.setEditType(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_TOPIC_VERSION_TEXT)) {
-					topicVersion.setVersionContent(rootChild.getTextContent());
+					topicVersion.setVersionContent(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_VERSION_AUTHOR)) {
 					NodeList authorChildren = rootChild.getChildNodes();
 					for (int j=0; j < authorChildren.getLength(); j++) {
 						Node authorChild = authorChildren.item(j);
 						if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_ID)) {
-							topicVersion.setAuthorId(new Integer(authorChild.getTextContent()));
+							topicVersion.setAuthorId(new Integer(XMLUtil.getTextContent(authorChild)));
 						} else if (authorChild.getNodeName().equals(XML_TOPIC_VERSION_AUTHOR_IP_ADDRESS)) {
-							topicVersion.setAuthorIpAddress(authorChild.getTextContent());
+							topicVersion.setAuthorIpAddress(XMLUtil.getTextContent(authorChild));
 						}
 					}
 				} else if (childName.equals(XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID)) {
-					topicVersion.setPreviousTopicVersionId(new Integer(rootChild.getTextContent()));
+					topicVersion.setPreviousTopicVersionId(new Integer(XMLUtil.getTextContent(rootChild)));
 				}
 			}
 			return topicVersion;
@@ -631,25 +631,25 @@ public class FileHandler extends PersistencyHandler {
 				rootChild = rootChildren.item(i);
 				childName = rootChild.getNodeName();
 				if (childName.equals(XML_WIKI_FILE_NAME)) {
-					wikiFile.setFileName(rootChild.getTextContent());
+					wikiFile.setFileName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_ID)) {
-					wikiFile.setFileId(new Integer(rootChild.getTextContent()).intValue());
+					wikiFile.setFileId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_WIKI_FILE_TOPIC_ID)) {
-					wikiFile.setTopicId(new Integer(rootChild.getTextContent()).intValue());
+					wikiFile.setTopicId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_WIKI_FILE_VIRTUAL_WIKI)) {
-					wikiFile.setVirtualWiki(rootChild.getTextContent());
+					wikiFile.setVirtualWiki(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_URL)) {
-					wikiFile.setUrl(rootChild.getTextContent());
+					wikiFile.setUrl(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_ADMIN_ONLY)) {
-					wikiFile.setAdminOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+					wikiFile.setAdminOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_WIKI_FILE_READ_ONLY)) {
-					wikiFile.setReadOnly(new Boolean(rootChild.getTextContent()).booleanValue());
+					wikiFile.setReadOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_WIKI_FILE_DELETED)) {
-					wikiFile.setDeleted(new Boolean(rootChild.getTextContent()).booleanValue());
+					wikiFile.setDeleted(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_WIKI_FILE_MIME_TYPE)) {
-					wikiFile.setMimeType(rootChild.getTextContent());
+					wikiFile.setMimeType(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_SIZE)) {
-					wikiFile.setFileSize(new Integer(rootChild.getTextContent()).intValue());
+					wikiFile.setFileSize(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				}
 			}
 			return wikiFile;
@@ -676,29 +676,29 @@ public class FileHandler extends PersistencyHandler {
 				rootChild = rootChildren.item(i);
 				childName = rootChild.getNodeName();
 				if (childName.equals(XML_WIKI_FILE_VERSION_ID)) {
-					wikiFileVersion.setFileVersionId(new Integer(rootChild.getTextContent()).intValue());
+					wikiFileVersion.setFileVersionId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_FILE_ID)) {
-					wikiFileVersion.setFileId(new Integer(rootChild.getTextContent()).intValue());
+					wikiFileVersion.setFileId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_UPLOAD_COMMENT)) {
-					wikiFileVersion.setUploadComment(rootChild.getTextContent());
+					wikiFileVersion.setUploadComment(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_UPLOAD_DATE)) {
-					wikiFileVersion.setUploadDate(Timestamp.valueOf(rootChild.getTextContent()));
+					wikiFileVersion.setUploadDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_MIME_TYPE)) {
-					wikiFileVersion.setMimeType(rootChild.getTextContent());
+					wikiFileVersion.setMimeType(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_URL)) {
-					wikiFileVersion.setUrl(rootChild.getTextContent());
+					wikiFileVersion.setUrl(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_AUTHOR)) {
 					NodeList authorChildren = rootChild.getChildNodes();
 					for (int j=0; j < authorChildren.getLength(); j++) {
 						Node authorChild = authorChildren.item(j);
 						if (authorChild.getNodeName().equals(XML_WIKI_FILE_VERSION_AUTHOR_ID)) {
-							wikiFileVersion.setAuthorId(new Integer(authorChild.getTextContent()));
+							wikiFileVersion.setAuthorId(new Integer(XMLUtil.getTextContent(authorChild)));
 						} else if (authorChild.getNodeName().equals(XML_WIKI_FILE_VERSION_AUTHOR_IP_ADDRESS)) {
-							wikiFileVersion.setAuthorIpAddress(authorChild.getTextContent());
+							wikiFileVersion.setAuthorIpAddress(XMLUtil.getTextContent(authorChild));
 						}
 					}
 				} else if (childName.equals(XML_WIKI_FILE_VERSION_SIZE)) {
-					wikiFileVersion.setFileSize(new Integer(rootChild.getTextContent()).intValue());
+					wikiFileVersion.setFileSize(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				}
 			}
 			return wikiFileVersion;
@@ -725,29 +725,29 @@ public class FileHandler extends PersistencyHandler {
 				rootChild = rootChildren.item(i);
 				childName = rootChild.getNodeName();
 				if (childName.equals(XML_WIKI_USER_ID)) {
-					user.setUserId(new Integer(rootChild.getTextContent()).intValue());
+					user.setUserId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				} else if (childName.equals(XML_WIKI_USER_ADMIN)) {
-					user.setAdmin(new Boolean(rootChild.getTextContent()).booleanValue());
+					user.setAdmin(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_WIKI_USER_CREATE_DATE)) {
-					user.setCreateDate(Timestamp.valueOf(rootChild.getTextContent()));
+					user.setCreateDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_WIKI_USER_CREATE_IP_ADDRESS)) {
-					user.setCreateIpAddress(rootChild.getTextContent());
+					user.setCreateIpAddress(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_DISPLAY_NAME)) {
-					user.setDisplayName(rootChild.getTextContent());
+					user.setDisplayName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_EMAIL)) {
-					user.setEmail(rootChild.getTextContent());
+					user.setEmail(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_ENCODED_PASSWORD)) {
-					user.setEncodedPassword(rootChild.getTextContent());
+					user.setEncodedPassword(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_FIRST_NAME)) {
-					user.setFirstName(rootChild.getTextContent());
+					user.setFirstName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LAST_LOGIN_DATE)) {
-					user.setLastLoginDate(Timestamp.valueOf(rootChild.getTextContent()));
+					user.setLastLoginDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_WIKI_USER_LAST_LOGIN_IP_ADDRESS)) {
-					user.setLastLoginIpAddress(rootChild.getTextContent());
+					user.setLastLoginIpAddress(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LAST_NAME)) {
-					user.setLastName(rootChild.getTextContent());
+					user.setLastName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LOGIN)) {
-					user.setLogin(rootChild.getTextContent());
+					user.setLogin(XMLUtil.getTextContent(rootChild));
 				}
 			}
 			return user;
