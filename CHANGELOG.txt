@@ -10,6 +10,8 @@
   has been upgraded and then attempt to perform any needed
   upgrade setup.
 * FEATURE: Various code cleanups.
+* BUG: Remove several hard-coded message strings, replace with
+  messages that can be translated into local languages.
 
 0.0.7
 =====
