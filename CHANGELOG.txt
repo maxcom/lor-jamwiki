@@ -3,7 +3,8 @@
 =====
 
 * BUG: File persistency broken on JDK 1.4 due to use of JDK 1.5
-  method.  Should be resolved.
+  method.  Should be resolved (feedback from JDK 1.4 users is
+  requested).
 * FEATURE: User passwords are now encrypted using the SHA-512
   algorithm to add security.
 * FEATURE: System should now automatically detect when JAMWiki
