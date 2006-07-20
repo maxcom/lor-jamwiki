@@ -61,8 +61,8 @@ public class AdminServlet extends JAMWikiServlet {
 			// FIXME - hard coding of "function" values
 			if (!Utilities.isAdmin(request)) {
 				String redirect = "Special:Admin";
-				if (isTopic(request, "Special:Upgrade")) {
-					redirect = "Special:Upgrade";
+				if (isTopic(request, "Special:Convert")) {
+					redirect = "Special:Convert";
 				} else if (isTopic(request, "Special:Delete")) {
 					redirect = "Special:Delete";
 				}
@@ -71,13 +71,14 @@ public class AdminServlet extends JAMWikiServlet {
 				loadDefaults(request, next, this.pageInfo);
 				return next;
 			}
-			if (isTopic(request, "Special:Upgrade")) {
+			if (isTopic(request, "Special:Convert")) {
+				// FIXME - hard coding of "function" values
 				if (function.equals("Convert to File")) {
-					upgradeConvertToFile(request, next);
+					convertToFile(request, next);
 				} else if (function.equals("Convert to Database")) {
-					upgradeConvertToDatabase(request, next);
+					convertToDatabase(request, next);
 				} else {
-					upgradeView(request, next);
+					convertView(request, next);
 				}
 				loadDefaults(request, next, this.pageInfo);
 				return next;
@@ -138,6 +139,55 @@ public class AdminServlet extends JAMWikiServlet {
 			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
 			next.addObject("message", message);
 		}
+	}
+
+	/**
+	 *
+	 */
+	private void convertToDatabase(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			FileHandler fromHandler = new FileHandler();
+			DatabaseHandler toHandler = new DatabaseHandler();
+			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
+			// FIXME - hard coding
+			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
+			next.addObject("messages", messages);
+		} catch (Exception e) {
+			logger.error("Failure while executing database-to-file conversion", e);
+			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
+		}
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle("Special:Convert");
+	}
+
+	/**
+	 *
+	 */
+	private void convertToFile(HttpServletRequest request, ModelAndView next) throws Exception {
+		try {
+			FileHandler toHandler = new FileHandler();
+			DatabaseHandler fromHandler = new DatabaseHandler();
+			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
+			// FIXME - hard coding
+			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
+			next.addObject("messages", messages);
+		} catch (Exception e) {
+			logger.error("Failure while executing database-to-file conversion", e);
+			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
+		}
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle("Special:Convert");
+	}
+
+	/**
+	 *
+	 */
+	private void convertView(HttpServletRequest request, ModelAndView next) throws Exception {
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle("Special:Convert");
 	}
 
 	/**
@@ -489,55 +539,6 @@ public class AdminServlet extends JAMWikiServlet {
 			String message = "Failure while refreshing search index: " + e.getMessage();
 			next.addObject("message", message);
 		}
-	}
-
-	/**
-	 *
-	 */
-	private void upgradeConvertToDatabase(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			FileHandler fromHandler = new FileHandler();
-			DatabaseHandler toHandler = new DatabaseHandler();
-			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
-			// FIXME - hard coding
-			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
-			next.addObject("messages", messages);
-		} catch (Exception e) {
-			logger.error("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
-		}
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Upgrade");
-	}
-
-	/**
-	 *
-	 */
-	private void upgradeConvertToFile(HttpServletRequest request, ModelAndView next) throws Exception {
-		try {
-			FileHandler toHandler = new FileHandler();
-			DatabaseHandler fromHandler = new DatabaseHandler();
-			Vector messages = PersistencyHandler.convert(fromHandler, toHandler);
-			// FIXME - hard coding
-			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
-			next.addObject("messages", messages);
-		} catch (Exception e) {
-			logger.error("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
-		}
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Upgrade");
-	}
-
-	/**
-	 *
-	 */
-	private void upgradeView(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_UPGRADE);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Upgrade");
 	}
 
 	/**

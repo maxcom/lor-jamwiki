@@ -26,7 +26,7 @@
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
-				<prop key="/**/Special:Upgrade">Admin</prop>
+				<prop key="/**/Special:Convert">Admin</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
 				<prop key="/**/*.css">Stylesheet</prop>

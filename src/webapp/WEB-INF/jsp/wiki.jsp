@@ -78,9 +78,9 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="admin-delete.jsp" flush="true" />
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_UPGRADE)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_CONVERT)) {
 %>
-		<jsp:include page="admin-upgrade.jsp" flush="true" />
+		<jsp:include page="admin-convert.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
 %>
