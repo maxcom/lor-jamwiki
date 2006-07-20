@@ -42,6 +42,25 @@ The setup process begins with the first JAMWiki pageview after setup.  Setup req
 Once the settings have been verified JAMWiki will create the user account, database tables or file directories, base properties, and default topics.  Once complete JAMWiki redirects to the starting page, ready for use.  That's all there is to it!
 
 
+UPGRADES
+========
+
+The process for upgrading JAMWiki is:
+
+  1. Download the latest JAMWiki WAR file.
+  2. Back up all database and/or file data prior to upgrading.
+  3. Back up the jamwiki.properties file and the log4j.properties file that can
+     be found in the /WEB-INF/classes directory.
+  4. If you have created any virtual wikis, back up the web.xml file that can be
+     found in the /WEB-INF directory.
+  5. Install the new JAMWiki WAR file.  See your web application server's
+     documentation for instructions.
+  6. Copy the files backed up in steps three and four back into their old
+     locations, overwriting any new files.
+  7. View any page on the Wiki.  You will be redirected to the upgrade page
+     and any required upgrade steps will be automatically performed.
+
+
 DATABASE SETTINGS
 =================
 
