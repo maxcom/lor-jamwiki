@@ -30,11 +30,17 @@
 
 <%
 // FIXME - cleanup
-if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP)) {
+if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP) && !action.equals(JAMWikiServlet.ACTION_ERROR)) {
       // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
       String firstUseUrl = "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
 %>
       <jsp:forward page="<%= firstUseUrl %>" />
+<%
+} else if (Utilities.isUpgrade() && !action.equals(JAMWikiServlet.ACTION_UPGRADE) && !action.equals(JAMWikiServlet.ACTION_ERROR)) {
+      // Websphere seems to choke on quotation marks in a jsp:forward, so define a variable
+      String upgradeUrl = "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
+%>
+      <jsp:forward page="<%= upgradeUrl %>" />
 <%
 }
 %>
@@ -133,6 +139,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 } else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
 %>
 		<jsp:include page="all-topics.jsp" flush="true" />
+<%
+} else if (action.equals(JAMWikiServlet.ACTION_UPGRADE)) {
+%>
+		<jsp:include page="upgrade.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
 %>

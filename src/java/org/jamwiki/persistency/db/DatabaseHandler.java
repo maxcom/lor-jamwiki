@@ -591,18 +591,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			encryptedPassword = Encryption.encrypt(password);
 		}
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, encryptedPassword);
-		// FIXME - remove a few releases after 0.0.8, this is here for backwards compatibility
-		if (rs.size() == 0 && !encrypted) {
-			encryptedPassword = Encryption.encrypt64(password);
-			rs = DatabaseHandler.queryHandler.lookupWikiUser(login, encryptedPassword);
-			if (rs.size() != 0) {
-				// old Base64 encoding, re-encode with stronger encryption
-				int userId = rs.getInt("wiki_user_id");
-				WikiUser user = lookupWikiUser(userId);
-				user.setEncodedPassword(Encryption.encrypt(password));
-				WikiBase.getHandler().writeWikiUser(user);
-			}
-		}
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
 		return lookupWikiUser(userId);

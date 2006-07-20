@@ -824,20 +824,7 @@ public class FileHandler extends PersistencyHandler {
 		if (!encrypted) {
 			encryptedPassword = Encryption.encrypt(password);
 		}
-		// FIXME - remove a few releases after 0.0.8, this is here for backwards compatibility
-		if (user.getEncodedPassword().equals(encryptedPassword)) {
-			return user;
-		}
-		if (!encrypted) {
-			encryptedPassword = Encryption.encrypt64(password);
-			if (user.getEncodedPassword().equals(encryptedPassword)) {
-				// old Base64 encoding, re-encode with stronger encryption
-				user.setEncodedPassword(Encryption.encrypt(password));
-				WikiBase.getHandler().writeWikiUser(user);
-				return user;
-			}
-		}
-		return null;
+		return (user.getEncodedPassword().equals(encryptedPassword) ? user : null);
 	}
 
 	/**

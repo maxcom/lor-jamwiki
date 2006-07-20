@@ -18,6 +18,7 @@ package org.jamwiki;
 
 import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -27,17 +28,17 @@ public class WikiVersion {
 	private int major = 0;
 	private int minor = 0;
 	private int patch = 0;
-	private static WikiVersion currentVersion = null;
 	private static Logger logger = Logger.getLogger(WikiVersion.class);
-
-	static {
-		currentVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-	}
 
 	/**
 	 *
 	 */
-	private WikiVersion(String version) {
+	public WikiVersion(String version) {
+		if (!StringUtils.hasText(version)) {
+			// FIXME - should throw an exception
+			logger.error("Invalid Wiki version: " + version);
+			return;
+		}
 		StringTokenizer tokens = new StringTokenizer(version, ".");
 		if (tokens.countTokens() != 3) {
 			// FIXME - should throw an exception
@@ -52,26 +53,17 @@ public class WikiVersion {
 	/**
 	 *
 	 */
+	public boolean before(WikiVersion version) {
+		return this.before(version.major, version.minor, version.patch);
+	}
+
+	/**
+	 *
+	 */
 	public boolean before(int major, int minor, int patch) {
 		if (this.major < major ) return true;
 		if (this.major == major && this.minor < minor) return true;
 		if (this.major == major && this.minor == minor && this.patch < patch) return true;
 		return false;
-	}
-
-	/**
-	 *
-	 */
-	public static WikiVersion getCurrentVersion() {
-		return currentVersion;
-	}
-
-	/**
-	 *
-	 */
-	public static void setCurrentVersion(int major, int minor, int patch) {
-		currentVersion.major = major;
-		currentVersion.minor = minor;
-		currentVersion.patch = patch;
 	}
 }

@@ -40,6 +40,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiVersion;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.servlets.JAMWikiServlet;
@@ -422,6 +423,15 @@ public class Utilities {
 	 */
 	public static boolean isFirstUse() {
 		return !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED);
+	}
+
+	/**
+	 *
+	 */
+	public static boolean isUpgrade() {
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		WikiVersion currentVersion = new WikiVersion(WikiBase.WIKI_VERSION);
+		return (oldVersion.before(currentVersion));
 	}
 
 	/**
