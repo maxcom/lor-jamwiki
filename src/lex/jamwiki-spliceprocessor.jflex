@@ -6,13 +6,9 @@
  */
 package org.jamwiki.parser;
 
-import java.net.URLEncoder;
-import java.util.Hashtable;
 import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
-import org.jamwiki.utils.Utilities;
 
 %%
 
@@ -101,7 +97,7 @@ import org.jamwiki.utils.Utilities;
      *
      */
     public void setReplacementText(String replacementText) {
-        // replacementText must end with a newline
+        // replacementText must end with a newline, otherwise sections get spliced together
         if (replacementText == null) return;
         if (!replacementText.endsWith("\n") && !replacementText.endsWith("\r")) {
             replacementText += "\r\n";
@@ -197,7 +193,7 @@ htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
     return processHeading(5, yytext());
 }
 
-/* ----- other ----- */
+/* ----- default ----- */
 
 <PRE, NOWIKI, NORMAL>{whitespace} {
     return returnText(yytext());

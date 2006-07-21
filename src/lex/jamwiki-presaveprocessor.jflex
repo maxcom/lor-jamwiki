@@ -1,11 +1,11 @@
 /*
- * This class adds paragraph tags as appropriate.
+ * This class parses items such as signatures which should be converted
+ * prior to saving an article.
  */
 package org.jamwiki.parser;
 
 import java.util.Stack;
 import org.apache.log4j.Logger;
-import org.jamwiki.WikiBase;
 
 %%
 

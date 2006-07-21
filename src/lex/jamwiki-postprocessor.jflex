@@ -5,7 +5,6 @@ package org.jamwiki.parser;
 
 import java.util.Stack;
 import org.apache.log4j.Logger;
-import org.jamwiki.WikiBase;
 
 %%
 
