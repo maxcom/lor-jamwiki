@@ -1,7 +1,7 @@
 /*
  * This class provides the capability to slice and splice an article to
  * insert or remove a section of text.  In this case a "section" is
- * defined as a body of text between to heading tags of the same level,
+ * defined as a body of text between two heading tags of the same level,
  * such as two &lt;h2&gt; tags.
  */
 package org.jamwiki.parser;
