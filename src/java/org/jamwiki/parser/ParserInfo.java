@@ -28,8 +28,11 @@ public class ParserInfo {
 	public static final int MODE_PREVIEW = 2;
 	/** Save mode indicates that the topic was edited and is being saved. */
 	public static final int MODE_SAVE = 3;
+	public static final int MODE_SPLICE = 4;
+	public static final int MODE_SLICE = 5;
 	private String context = null;
 	private int mode = MODE_NORMAL;
+	private String topicName = null;
 	/** IP address of the current user. */
 	private String userIpAddress = null;
 	private String virtualWiki = null;
@@ -80,6 +83,20 @@ public class ParserInfo {
 	 */
 	public void setTableOfContents(TableOfContents tableOfContents) {
 		this.tableOfContents = tableOfContents;
+	}
+
+	/**
+	 *
+	 */
+	public String getTopicName() {
+		return this.topicName;
+	}
+
+	/**
+	 *
+	 */
+	public void setTopicName(String topicName) {
+		this.topicName = topicName;
 	}
 
 	/**

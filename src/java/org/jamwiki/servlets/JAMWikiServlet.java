@@ -388,6 +388,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			ParserInfo parserInfo = new ParserInfo();
 			parserInfo.setContext(request.getContextPath());
 			parserInfo.setWikiUser(user);
+			parserInfo.setTopicName(topicName);
 			parserInfo.setUserIpAddress(request.getRemoteAddr());
 			parserInfo.setVirtualWiki(virtualWiki);
 			contents = WikiBase.parse(parserInfo, topic.getTopicContent(), topicName);

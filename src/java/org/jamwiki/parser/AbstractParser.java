@@ -69,6 +69,16 @@ public abstract class AbstractParser {
 	public abstract String parsePreSave(String raw) throws IOException;
 
 	/**
+	 *
+	 */
+	public abstract String parseSlice(String rawtext, String topicName, int targetSection) throws IOException;
+
+	/**
+	 *
+	 */
+	public abstract String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws IOException;
+
+	/**
 	 * For setting general information about this parser.
 	 *
 	 * @param parserInfo General information about this parser.

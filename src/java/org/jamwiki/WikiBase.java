@@ -114,6 +114,46 @@ public class WikiBase {
 			// FIXME - return empty or something else?
 			return "";
 		}
+		AbstractParser parser = parserInstance(parserInfo);
+		return (preSave) ? parser.parsePreSave(content) : parser.parseHTML(content, topicName);
+	}
+
+	/**
+	 *
+	 */
+	public static String parseSlice(String virtualWiki, String topicName, int targetSection) throws Exception {
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null || topic.getTopicContent() == null) {
+			return "";
+		}
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setTopicName(topicName);
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_SLICE);
+		AbstractParser parser = parserInstance(parserInfo);
+		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
+	}
+
+	/**
+	 *
+	 */
+	public static String parseSplice(String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null || topic.getTopicContent() == null) {
+			return "";
+		}
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setTopicName(topicName);
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_SPLICE);
+		AbstractParser parser = parserInstance(parserInfo);
+		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
+	}
+
+	/**
+	 *
+	 */
+	private static AbstractParser parserInstance(ParserInfo parserInfo) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
@@ -122,8 +162,7 @@ public class WikiBase {
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInfo;
-		AbstractParser parser = (AbstractParser)constructor.newInstance(initArgs);
-		return (preSave) ? parser.parsePreSave(content) : parser.parseHTML(content, topicName);
+		return (AbstractParser)constructor.newInstance(initArgs);
 	}
 
 	/**

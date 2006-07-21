@@ -51,6 +51,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.eq
 <p>
 <input type="hidden" name="topic" value="<c:out value="${topic}"/>" />
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
+<input type="hidden" name="section" value="<c:out value="${section}"/>" />
 <%--
 FIXME - restore the Javascript edit buttons
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>

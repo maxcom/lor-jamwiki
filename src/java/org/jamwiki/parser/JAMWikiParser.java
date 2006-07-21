@@ -103,4 +103,35 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setParserInfo(parserInfo);
 		return this.lex(lexer);
 	}
+
+	/**
+	 *
+	 */
+	public String parseSlice(String rawtext, String topicName, int targetSection) throws IOException {
+		long start = System.currentTimeMillis();
+		StringBuffer contents = new StringBuffer();
+		Reader raw = new StringReader(rawtext.toString());
+		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
+		lexer.setParserInfo(parserInfo);
+		lexer.setTargetSection(targetSection);
+		contents = this.lex(lexer);
+		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		return contents.toString();
+	}
+
+	/**
+	 *
+	 */
+	public String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws IOException {
+		long start = System.currentTimeMillis();
+		StringBuffer contents = new StringBuffer();
+		Reader raw = new StringReader(rawtext.toString());
+		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
+		lexer.setParserInfo(parserInfo);
+		lexer.setReplacementText(replacementText);
+		lexer.setTargetSection(targetSection);
+		contents = this.lex(lexer);
+		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		return contents.toString();
+	}
 }

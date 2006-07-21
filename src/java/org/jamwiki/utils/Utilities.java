@@ -175,8 +175,26 @@ public class Utilities {
 		}
 		String url = Utilities.buildInternalLink(context, virtualWiki, topic, section, query);
 		if (!WikiBase.exists(virtualWiki, topic)) {
-			url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
-			url += "?topic=" + Utilities.encodeURL(topic);
+			url = Utilities.buildWikiEditLink(context, virtualWiki, topic);
+		}
+		return url;
+	}
+
+	/**
+	 *
+	 */
+	public static String buildWikiEditLink(String context, String virtualWiki, String topic) {
+		return Utilities.buildWikiEditLink(context, virtualWiki, topic, -1);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildWikiEditLink(String context, String virtualWiki, String topic, int section) {
+		String url = Utilities.buildInternalLink(context, virtualWiki, "Special:Edit");
+		url += "?topic=" + Utilities.encodeURL(topic);
+		if (section > 0) {
+			url += "&section=" + section;
 		}
 		return url;
 	}

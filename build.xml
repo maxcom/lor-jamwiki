@@ -4,13 +4,14 @@
 
     <target name="cleanLexers" description="Cleans up after lexer generation">
         <!-- delete old generated lexer source files -->
-        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreProcessor.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreSaveProcessor.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPostProcessor.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/alt/BackLinkLex.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiFormatLex.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLayoutLex.java"/>
-        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLinkLex.java"/>
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreProcessor.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreSaveProcessor.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPostProcessor.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiSpliceProcessor.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/BackLinkLex.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiFormatLex.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLayoutLex.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLinkLex.java" />
     </target>
 
     <target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">
@@ -33,6 +34,7 @@
         <jflex file="${dir.src.lex}/jamwiki-preprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/jamwiki-presaveprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/jamwiki-postprocessor.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/jamwiki-spliceprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-backlinks.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-format.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-layout.jflex" destdir="${dir.src.java}" />

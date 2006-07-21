@@ -77,7 +77,13 @@ public class EditServlet extends JAMWikiServlet {
 			preview(request, next);
 		} else {
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
-			contents = WikiBase.readRaw(virtualWiki, topicName);
+			if (StringUtils.hasText(request.getParameter("section"))) {
+				// load section of topic
+				int section = (new Integer(request.getParameter("section"))).intValue();
+				contents = WikiBase.parseSlice(virtualWiki, topicName, section);
+			} else {
+				contents = WikiBase.readRaw(virtualWiki, topicName);
+			}
 			next.addObject("contents", contents);
 		}
 	}
@@ -105,6 +111,9 @@ public class EditServlet extends JAMWikiServlet {
 		this.pageInfo.setTopicName(topicName);
 		if (request.getParameter("editComment") != null) {
 			next.addObject("editComment", request.getParameter("editComment"));
+		}
+		if (request.getParameter("section") != null) {
+			next.addObject("section", request.getParameter("section"));
 		}
 		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
 	}
@@ -161,6 +170,7 @@ public class EditServlet extends JAMWikiServlet {
 		ParserInfo parserInfo = new ParserInfo();
 		parserInfo.setContext(request.getContextPath());
 		parserInfo.setWikiUser(user);
+		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
@@ -223,6 +233,11 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		TopicVersion topicVersion = new TopicVersion();
 		String contents = request.getParameter("contents");
+		if (StringUtils.hasText(request.getParameter("section"))) {
+			// load section of topic
+			int section = (new Integer(request.getParameter("section"))).intValue();
+			contents = WikiBase.parseSplice(virtualWiki, topicName, section, contents);
+		}
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");
 			throw new Exception(Utilities.getMessage("edit.exception.nocontent", request.getLocale(), topicName));
@@ -236,6 +251,7 @@ public class EditServlet extends JAMWikiServlet {
 		ParserInfo parserInfo = new ParserInfo();
 		parserInfo.setContext(request.getContextPath());
 		parserInfo.setWikiUser(user);
+		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_SAVE);

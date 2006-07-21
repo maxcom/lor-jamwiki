@@ -85,6 +85,18 @@ public class ParserUtil {
 	/**
 	 *
 	 */
+	protected static String buildWikiEditLink(String context, String virtualWiki, String topicName, int section) {
+    	String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
+    	output += "<a href=\"" + Utilities.buildWikiEditLink(context, virtualWiki, topicName, section) + "\">";
+    	// FIXME - hard coding of edit
+    	output += "edit";
+    	output += "</a>]</div>";
+    	return output;
+	}
+
+	/**
+	 *
+	 */
 	protected static String buildWikiLink(String context, String virtualWiki, String raw) {
 		try {
 			if (raw == null || raw.length() <= 4) {
