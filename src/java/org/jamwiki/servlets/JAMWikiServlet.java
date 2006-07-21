@@ -51,7 +51,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String ACTION_EDIT_RESOLVE = "action_edit_resolve";
 	public static final String ACTION_EDIT_USER = "edit_user";
 	public static final String ACTION_ERROR = "action_error";
+	public static final String ACTION_EXPORT = "action_export";
 	public static final String ACTION_HISTORY = "action_history";
+	public static final String ACTION_IMPORT = "action_import";
 	public static final String ACTION_LOGIN = "action_login";
 	public static final String ACTION_LOGOUT = "action_logout";
 	public static final String ACTION_ORPHANED_TOPICS = "orphaned_topics";

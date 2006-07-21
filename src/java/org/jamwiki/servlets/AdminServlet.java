@@ -153,6 +153,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
 			next.addObject("messages", messages);
 		} catch (Exception e) {
+			// FIXME - hard coding
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
 		}
@@ -173,6 +174,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
 			next.addObject("messages", messages);
 		} catch (Exception e) {
+			// FIXME - hard coding
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
 		}
@@ -210,6 +212,7 @@ public class AdminServlet extends JAMWikiServlet {
 			// FIXME - hard coding
 			next.addObject("message", "Topic " + topicName + " deleted successfully");
 		} catch (Exception e) {
+			// FIXME - hard coding
 			logger.error("Failure while deleting topic " + topicName, e);
 			next.addObject("errorMessage", "Failure while deleting topic " + topicName + ": " + e.getMessage());
 		}
@@ -459,6 +462,7 @@ public class AdminServlet extends JAMWikiServlet {
 			String message = Utilities.getMessage("admin.message.changessaved", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
+			// FIXME - hard coding
 			logger.error("Failure while processing property values", e);
 			String message = "Failure while processing property values: " + e.getMessage();
 			next.addObject("message", message);
@@ -535,6 +539,7 @@ public class AdminServlet extends JAMWikiServlet {
 			String message = Utilities.getMessage("admin.message.indexrefreshed", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
+			// FIXME - hard coding
 			logger.error("Failure while refreshing search index", e);
 			String message = "Failure while refreshing search index: " + e.getMessage();
 			next.addObject("message", message);

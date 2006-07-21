@@ -112,6 +112,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="history.jsp" flush="true" />
 <%
+} else if (action.equals(JAMWikiServlet.ACTION_IMPORT)) {
+%>
+		<jsp:include page="import.jsp" flush="true" />
+<%
 } else if (action.equals(JAMWikiServlet.ACTION_LOGIN)) {
 %>
 		<jsp:include page="login.jsp" flush="true" />

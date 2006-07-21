@@ -16,7 +16,9 @@
 				<prop key="/**/Special:Delete">Admin</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Edit">Edit</prop>
+				<prop key="/**/Special:Export">Export</prop>
 				<prop key="/**/Special:History">History</prop>
+				<prop key="/**/Special:Import">Import</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
 				<prop key="/**/Special:OrphanedTopics">Topic</prop>
@@ -40,7 +42,9 @@
 	<bean id="Contributions" class="org.jamwiki.servlets.ContributionsServlet" />
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
+	<bean id="Export" class="org.jamwiki.servlets.ExportServlet" />
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
+	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
