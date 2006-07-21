@@ -47,13 +47,6 @@ import org.jamwiki.utils.Utilities;
     protected int targetSection = 0;
     protected String replacementText = null;
     protected boolean inTargetSection = false;
-    
-    /**
-     *
-     */
-    protected boolean allowHtml() {
-        return (allowHtml && yystate() != PRE && yystate() != NOWIKI);
-    }
 
     /**
      * Begin a new state and store the old state onto the stack.
@@ -78,6 +71,21 @@ import org.jamwiki.utils.Utilities;
     /**
      *
      */
+    protected String processHeading(int level, String headingText) {
+        this.section++;
+        if (inTargetSection && this.sectionDepth == level) {
+            inTargetSection = false;
+        } else if (this.targetSection == this.section) {
+            inTargetSection = true;
+            this.sectionDepth = level;
+            if (this.parserInfo.getMode() == ParserInfo.MODE_SPLICE) return this.replacementText;
+        }
+        return returnText(headingText);
+    }
+    
+    /**
+     *
+     */
     private String returnText(String text) {
         return (inTargetSection && this.parserInfo.getMode() == ParserInfo.MODE_SPLICE || !inTargetSection && this.parserInfo.getMode() == ParserInfo.MODE_SLICE) ? "" : text;
     }
@@ -93,6 +101,11 @@ import org.jamwiki.utils.Utilities;
      *
      */
     public void setReplacementText(String replacementText) {
+        // replacementText must end with a newline
+        if (replacementText == null) return;
+        if (!replacementText.endsWith("\n") && !replacementText.endsWith("\r")) {
+            replacementText += "\r\n";
+        }
         this.replacementText = replacementText;
     }
     
@@ -165,63 +178,23 @@ htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
 /* ----- headings ----- */
 
 <NORMAL>^{h1} {
-    this.section++;
-    if (inTargetSection && this.sectionDepth == 1) {
-        inTargetSection = false;
-    } else if (this.targetSection == this.section) {
-        inTargetSection = true;
-        this.sectionDepth = 1;
-        if (this.parserInfo.getMode() == ParserInfo.MODE_SPLICE) return replacementText;
-    }
-    return returnText(yytext());
+    return processHeading(1, yytext());
 }
 
 <NORMAL>^{h2} {
-    this.section++;
-    if (inTargetSection && this.sectionDepth == 2) {
-        inTargetSection = false;
-    } else if (this.targetSection == this.section) {
-        inTargetSection = true;
-        this.sectionDepth = 2;
-        if (this.parserInfo.getMode() == ParserInfo.MODE_SPLICE) return replacementText;
-    }
-    return returnText(yytext());
+    return processHeading(2, yytext());
 }
 
 <NORMAL>^{h3} {
-    this.section++;
-    if (inTargetSection && this.sectionDepth == 3) {
-        inTargetSection = false;
-    } else if (this.targetSection == this.section) {
-        inTargetSection = true;
-        this.sectionDepth = 3;
-        if (this.parserInfo.getMode() == ParserInfo.MODE_SPLICE) return replacementText;
-    }
-    return returnText(yytext());
+    return processHeading(3, yytext());
 }
 
 <NORMAL>^{h4} {
-    this.section++;
-    if (inTargetSection && this.sectionDepth == 4) {
-        inTargetSection = false;
-    } else if (this.targetSection == this.section) {
-        inTargetSection = true;
-        this.sectionDepth = 4;
-        if (this.parserInfo.getMode() == ParserInfo.MODE_SPLICE) return replacementText;
-    }
-    return returnText(yytext());
+    return processHeading(4, yytext());
 }
 
 <NORMAL>^{h5} {
-    this.section++;
-    if (inTargetSection && this.sectionDepth == 5) {
-        inTargetSection = false;
-    } else if (this.targetSection == this.section) {
-        inTargetSection = true;
-        this.sectionDepth = 5;
-        if (this.parserInfo.getMode() == ParserInfo.MODE_SPLICE) return replacementText;
-    }
-    return returnText(yytext());
+    return processHeading(5, yytext());
 }
 
 /* ----- other ----- */
