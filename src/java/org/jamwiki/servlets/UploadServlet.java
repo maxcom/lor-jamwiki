@@ -23,8 +23,6 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -102,18 +100,6 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
-		// Create a factory for disk-based file items
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setRepository(new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setSizeMax(Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		return upload.parseRequest(request).iterator();
-	}
-
-	/**
-	 *
-	 */
 	private void upload(HttpServletRequest request, ModelAndView next) throws Exception {
 		// FIXME - this method is a mess and needs to be split up.
 		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
@@ -122,7 +108,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = Utilities.currentUser(request);
-		Iterator iterator = processMultipartRequest(request);
+		Iterator iterator = Utilities.processMultipartRequest(request);
 		Topic topic = new Topic();
 		topic.setVirtualWiki(virtualWiki);
 		topic.setTopicType(Topic.TYPE_IMAGE);

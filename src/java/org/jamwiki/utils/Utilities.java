@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -481,6 +483,18 @@ public class Utilities {
 		}
 		// all tests passed, it's an IP address
 		return true;
+	}
+
+	/**
+	 *
+	 */
+	public static Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
+		// Create a factory for disk-based file items
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		factory.setRepository(new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		upload.setSizeMax(Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
+		return upload.parseRequest(request).iterator();
 	}
 
 	/**

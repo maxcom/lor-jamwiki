@@ -16,31 +16,20 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page import="
-        org.jamwiki.servlets.JAMWikiServlet
-    "
-    errorPage="/WEB-INF/jsp/error.jsp"
+<%@ page errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=UTF-8"
 %>
 
 <%@ include file="page-init.jsp" %>
 
-<form name="adminDelete" method="get" action="<jamwiki:link value="Special:Delete" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${topic}" />" />
-<table style="border:2px solid #333333;padding=1em;">
-<c:if test="${!empty errorMessage}"><tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" /></div></td></tr></c:if>
-<c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
-<%-- FIXME: hard coding --%>
-<tr><td>Reason for deletion: </td><td><input type="text" name="deleteComment" value="" /></td></tr>
-<tr><td colspan="2"><input type="submit" name="function" value="Delete" /></td></tr>
+<form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">
+<table border="0">
+<tr>
+	<td><f:message key="import.caption.source" />:</td>
+	<td><input type="file" name="contents" size="50" /></td>
+</tr>
+<tr>
+	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="import.button.import" />" /></td>
+</tr>
 </table>
 </form>
-
-<c:if test="${!empty messages}">
-<br />
-<table>
-<c:forEach items="${messages}" var="message">
-<tr><td><c:out value="${message}" /></td></tr>
-</c:forEach>
-</table>
-</c:if>

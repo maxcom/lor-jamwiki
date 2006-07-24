@@ -16,9 +16,12 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,8 +42,9 @@ public class ImportServlet extends JAMWikiServlet {
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
-			if (!StringUtils.hasText(request.getParameter("function"))) {
-				importView(request, next);
+			String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
+			if (contentType.indexOf("multipart") != -1) {
+				importFile(request, next);
 			} else {
 				importView(request, next);
 			}
@@ -56,17 +60,19 @@ public class ImportServlet extends JAMWikiServlet {
 	 */
 	private void importFile(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_IMPORT);
-		this.pageInfo.setPageTitle("Special:Import");
-		String filename = "";
-		try {
-			// do stuff
-		} catch (Exception e) {
-			// FIXME - hard coding
-			logger.error("Failure during file import for file " + filename, e);
-			next.addObject("errorMessage", "Failure during file import for file " + filename + ": " + e.getMessage());
+		Iterator iterator = Utilities.processMultipartRequest(request);
+		while (iterator.hasNext()) {
+			FileItem item = (FileItem)iterator.next();
+			String fieldName = item.getFieldName();
+			if (item.isFormField()) {
+				// process form fields
+			} else {
+				String xml = item.getString("UTF-8");
+				// FIXME - process XML
+			}
 		}
+		// FIXME - redirect where?
+		importView(request, next);
 	}
 
 	/**
