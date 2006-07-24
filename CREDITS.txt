@@ -10,6 +10,7 @@ JAMWiki Contributors
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
   Documentation:
   Translations:
+     Chinese:               Jiading (ewen0930)
   Non-project contributors:
 
 
