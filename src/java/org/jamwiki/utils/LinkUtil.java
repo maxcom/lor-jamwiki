@@ -34,21 +34,44 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildImageLink(String context, String virtualWiki, String topicName) throws Exception {
-		return LinkUtil.buildImageLink(context, virtualWiki, topicName, false, false, null, null, true);
+	public static String buildEditLinkUrl(String context, String virtualWiki, String topic) throws Exception {
+		return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, null, -1);
 	}
 
 	/**
 	 *
 	 */
-	public static String buildImageLink(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, boolean suppressLink) throws Exception {
+	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
+		if (StringUtils.hasText(query)) {
+			if (!query.startsWith("?")) query = "?" + query;
+			query += "&topic=" + Utilities.encodeURL(topic);
+		} else {
+			query = "?topic=" + Utilities.encodeURL(topic);
+		}
+		if (section > 0) {
+			query += "&section=" + section;
+		}
+		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, "Special:Edit", null, query);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName) throws Exception {
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, false, false, null, null, true);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, boolean suppressLink) throws Exception {
 		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			// doesn't exist, return topic name as text IF it's an image
 			return (topicName.startsWith(WikiBase.NAMESPACE_IMAGE)) ? topicName : "";
 		}
 		String html = "";
-		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildWikiLink(context, virtualWiki, topicName) + "\">";
+		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
 			html += "<div ";
 			if (thumb) {
@@ -86,44 +109,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLink(String context, String virtualWiki, String page) {
-		return buildInternalLink(context, virtualWiki, page, null, null);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildInternalLink(String context, String virtualWiki, String page, String section) {
-		return buildInternalLink(context, virtualWiki, page, section, null);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildInternalLink(String context, String virtualWiki, String page, String section, String query) {
-		String url = context;
-		// context never ends with a "/" per servlet specification
-		url += "/";
-		// get the virtual wiki, which should have been set by the parent servlet
-		url += Utilities.encodeURL(virtualWiki);
-		url += "/";
-		url += Utilities.encodeURL(page);
-		if (StringUtils.hasText(section)) {
-			if (section.startsWith("#")) {
-				section = section.substring(1);
-			}
-			url += "#" + Utilities.encodeURL(section);
-		}
-		if (StringUtils.hasText(query)) {
-			url += query;
-		}
-		return url;
-	}
-
-	/**
-	 *
-	 */
-	public static String buildWikiLink(String context, String virtualWiki, String topic) throws Exception {
+	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic) throws Exception {
 		if (!StringUtils.hasText(topic)) {
 			return null;
 		}
@@ -140,28 +126,38 @@ public class LinkUtil {
 			section = topic.substring(pos+1).trim();
 			topic = topic.substring(0, pos).trim();
 		}
-		String url = LinkUtil.buildInternalLink(context, virtualWiki, topic, section, query);
+		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic, String section) throws Exception {
+		return buildInternalLinkUrl(context, virtualWiki, topic, section, null);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic, String section, String query) throws Exception {
 		if (!WikiBase.exists(virtualWiki, topic)) {
-			url = LinkUtil.buildWikiEditLink(context, virtualWiki, topic);
+			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
 		}
-		return url;
-	}
-
-	/**
-	 *
-	 */
-	public static String buildWikiEditLink(String context, String virtualWiki, String topic) {
-		return LinkUtil.buildWikiEditLink(context, virtualWiki, topic, -1);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildWikiEditLink(String context, String virtualWiki, String topic, int section) {
-		String url = LinkUtil.buildInternalLink(context, virtualWiki, "Special:Edit");
-		url += "?topic=" + Utilities.encodeURL(topic);
-		if (section > 0) {
-			url += "&section=" + section;
+		String url = context;
+		// context never ends with a "/" per servlet specification
+		url += "/";
+		// get the virtual wiki, which should have been set by the parent servlet
+		url += Utilities.encodeURL(virtualWiki);
+		url += "/";
+		url += Utilities.encodeURL(topic);
+		if (StringUtils.hasText(section)) {
+			if (section.startsWith("#")) {
+				section = section.substring(1);
+			}
+			url += "#" + Utilities.encodeURL(section);
+		}
+		if (StringUtils.hasText(query)) {
+			url += query;
 		}
 		return url;
 	}

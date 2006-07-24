@@ -64,7 +64,7 @@ public class SearchServlet extends JAMWikiServlet {
 		// FIXME - if topic doesn't exist, should probably go to an edit page
 		// or else give an error message
 		// FIXME - need a better way to do redirects
-		String redirectURL = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, text);
+		String redirectURL = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, text);
 		redirect(redirectURL, response);
 	}
 
@@ -101,7 +101,7 @@ public class SearchServlet extends JAMWikiServlet {
 					contents.append("<div class=\"searchresult\">");
 					contents.append("<a href=\"");
 					contents.append(
-						LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, result.getTopic())
+						LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, result.getTopic())
 					);
 					if (result.getFoundWord().length() > 0) {
 						contents.append("?highlight=");
@@ -115,7 +115,7 @@ public class SearchServlet extends JAMWikiServlet {
 						contents.append(result.getTextBefore());
 						contents.append("<a style=\"background:yellow\" href=\"");
 						contents.append(
-							LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, result.getTopic())
+							LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, result.getTopic())
 						);
 						contents.append("?highlight=");
 						contents.append(Utilities.encodeURL(result.getFoundWord()));

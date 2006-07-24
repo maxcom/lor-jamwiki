@@ -47,14 +47,14 @@ public class ImageLinkTag extends TagSupport {
 			}
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			String virtualWiki = retrieveVirtualWiki(request);
-			String url = null;
+			String html = null;
 			try {
-				url = LinkUtil.buildImageLink(request.getContextPath(), virtualWiki, this.value);
-				if (url != null) {
-					this.pageContext.getOut().print(url);
+				html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value);
+				if (html != null) {
+					this.pageContext.getOut().print(html);
 				}
 			} catch (Exception e) {
-				logger.error("Failure while building url " + url + " with value " + this.value);
+				logger.error("Failure while building url " + html + " with value " + this.value);
 				throw new JspException(e);
 			}
 			return EVAL_PAGE;

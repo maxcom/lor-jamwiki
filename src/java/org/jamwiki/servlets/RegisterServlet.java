@@ -106,7 +106,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			WikiBase.getHandler().writeWikiUser(user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			String redirect = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			String redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, topic);
 			// FIXME - can a redirect be done with Spring?
 			redirect(redirect, response);
 			return true;

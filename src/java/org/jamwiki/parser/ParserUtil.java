@@ -86,9 +86,15 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String buildWikiEditLink(String context, String virtualWiki, String topicName, int section) {
+	protected static String buildEditLinkUrl(String context, String virtualWiki, String topicName, int section) {
     	String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
-    	output += "<a href=\"" + LinkUtil.buildWikiEditLink(context, virtualWiki, topicName, section) + "\">";
+    	String url = "";
+    	try {
+			url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topicName, null, section);
+		} catch (Exception e) {
+			logger.error("Failure while building link for topic " + virtualWiki + " / " + topicName, e);
+		}
+    	output += "<a href=\"" + url + "\">";
     	// FIXME - hard coding of edit
     	output += "edit";
     	output += "</a>]</div>";
@@ -98,7 +104,7 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String buildWikiLink(String context, String virtualWiki, String raw) {
+	protected static String buildInternalLinkUrl(String context, String virtualWiki, String raw) {
 		try {
 			if (raw == null || raw.length() <= 4) {
 				// no topic, display the raw text
@@ -124,7 +130,7 @@ public class ParserUtil {
 				text = topic.substring(pos+1).trim();
 				topic = topic.substring(0, pos).trim();
 			}
-			String url = LinkUtil.buildWikiLink(context, virtualWiki, topic);
+			String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic);
 			String css = "";
 			// strip out any section indicator (#) from the topic
 			// FIXME - probably better handled in a utility method
@@ -162,7 +168,7 @@ public class ParserUtil {
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
 					link += "<a href=\"";
-					link += LinkUtil.buildWikiLink(context, virtualWiki, topic);
+					link += LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic);
 					link += "\"";
 					if (!WikiBase.exists(virtualWiki, topic)) {
 						link += " class=\"edit\"";
@@ -254,6 +260,6 @@ public class ParserUtil {
 				caption = token;
 			}
 		}
-		return LinkUtil.buildImageLink(context, virtualWiki, topic, frame, thumb, align, caption, false);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, false);
 	}
 }

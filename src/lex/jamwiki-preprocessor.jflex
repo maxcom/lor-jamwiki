@@ -387,7 +387,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildWikiLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), yytext());
+    return ParserUtil.buildInternalLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
@@ -509,7 +509,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     String tagText = yytext().substring(1, yytext().indexOf("=", 1)).trim();
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 1);
-    output += ParserUtil.buildWikiEditLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
     output += "<a name=\"" + tagName + "\"></a><h1>" + tagText + "</h1>";
     return output;
 }
@@ -519,7 +519,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     String tagText = yytext().substring(2, yytext().indexOf("==", 2)).trim();
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 2);
-    output += ParserUtil.buildWikiEditLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
     output += "<a name=\"" + tagName + "\"></a><h2>" + tagText + "</h2>";
     return output;
 }
@@ -529,7 +529,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     String tagText = yytext().substring(3, yytext().indexOf("===", 3)).trim();
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 3);
-    output += ParserUtil.buildWikiEditLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
     output += "<a name=\"" + tagName + "\"></a><h3>" + tagText + "</h3>";
     return output;
 }
@@ -539,7 +539,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     String tagText = yytext().substring(4, yytext().indexOf("====", 4)).trim();
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 4);
-    output += ParserUtil.buildWikiEditLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
     output += "<a name=\"" + tagName + "\"></a><h4>" + tagText + "</h4>";
     return output;
 }
@@ -549,7 +549,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     String tagText = yytext().substring(5, yytext().indexOf("=====", 5)).trim();
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 5);
-    output += ParserUtil.buildWikiEditLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), this.parserInfo.getTopicName(), nextSection());
     output += "<a name=\"" + tagName + "\"></a><h5>" + tagText + "</h5>";
     return output;
 }

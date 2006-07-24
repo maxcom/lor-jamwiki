@@ -358,7 +358,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			if (!StringUtils.hasText(topic)) {
 				topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			}
-			redirect = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, topic);
 			if (request.getQueryString() != null) {
 				redirect += "?" + request.getQueryString();
 			}

@@ -65,8 +65,12 @@ import org.jamwiki.utils.Utilities;
 		link = link.trim();
 		description = description.trim();
 		if (exists(link)) {
-			return "<a class=\"topic\" href=\"" + LinkUtil.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), link)
+			try {
+				return "<a class=\"topic\" href=\"" + LinkUtil.buildInternalLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), link)
 				+ "\">" + description + "</a>";
+			} catch (Exception e) {
+				return link;
+			}
 		} else if (description.equals(link)) {
 			return "<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeURL(link)
 				+ "\">" + description + "</a>";

@@ -74,7 +74,7 @@ public class LoginServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(redirect)) {
 			redirect = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		}
-		redirect = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, redirect);
+		redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, redirect);
 		// FIXME - can a redirect be done with Spring?
 		redirect(redirect, response);
 	}
@@ -89,7 +89,7 @@ public class LoginServlet extends JAMWikiServlet {
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			redirect = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, topic);
 		}
 		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password, false);
 		if (user == null) {
