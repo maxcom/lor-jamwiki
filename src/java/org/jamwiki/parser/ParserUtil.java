@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
@@ -87,7 +88,7 @@ public class ParserUtil {
 	 */
 	protected static String buildWikiEditLink(String context, String virtualWiki, String topicName, int section) {
     	String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
-    	output += "<a href=\"" + Utilities.buildWikiEditLink(context, virtualWiki, topicName, section) + "\">";
+    	output += "<a href=\"" + LinkUtil.buildWikiEditLink(context, virtualWiki, topicName, section) + "\">";
     	// FIXME - hard coding of edit
     	output += "edit";
     	output += "</a>]</div>";
@@ -123,7 +124,7 @@ public class ParserUtil {
 				text = topic.substring(pos+1).trim();
 				topic = topic.substring(0, pos).trim();
 			}
-			String url = Utilities.buildWikiLink(context, virtualWiki, topic);
+			String url = LinkUtil.buildWikiLink(context, virtualWiki, topic);
 			String css = "";
 			// strip out any section indicator (#) from the topic
 			// FIXME - probably better handled in a utility method
@@ -161,7 +162,7 @@ public class ParserUtil {
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
 					link += "<a href=\"";
-					link += Utilities.buildWikiLink(context, virtualWiki, topic);
+					link += LinkUtil.buildWikiLink(context, virtualWiki, topic);
 					link += "\"";
 					if (!WikiBase.exists(virtualWiki, topic)) {
 						link += " class=\"edit\"";
@@ -253,6 +254,6 @@ public class ParserUtil {
 				caption = token;
 			}
 		}
-		return Utilities.buildImageLink(context, virtualWiki, topic, frame, thumb, align, caption, false);
+		return LinkUtil.buildImageLink(context, virtualWiki, topic, frame, thumb, align, caption, false);
 	}
 }

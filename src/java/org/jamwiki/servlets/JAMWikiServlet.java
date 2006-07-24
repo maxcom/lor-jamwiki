@@ -27,6 +27,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.search.AbstractSearchEngine;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -357,7 +358,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			if (!StringUtils.hasText(topic)) {
 				topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 			}
-			redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			redirect = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 			if (request.getQueryString() != null) {
 				redirect += "?" + request.getQueryString();
 			}

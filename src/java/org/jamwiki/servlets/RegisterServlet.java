@@ -24,6 +24,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -105,7 +106,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			WikiBase.getHandler().writeWikiUser(user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			String redirect = Utilities.buildInternalLink(request.getContextPath(), virtualWiki, topic);
+			String redirect = LinkUtil.buildInternalLink(request.getContextPath(), virtualWiki, topic);
 			// FIXME - can a redirect be done with Spring?
 			redirect(redirect, response);
 			return true;

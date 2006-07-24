@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.servlets.JAMWikiServlet;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -52,7 +52,7 @@ public class LinkTag extends BodyTagSupport {
 			String virtualWiki = retrieveVirtualWiki(request);
 			try {
 				// return raw link of the form "/wiki/en/Special:Edit"
-				url = Utilities.buildWikiLink(request.getContextPath(), virtualWiki, this.value);
+				url = LinkUtil.buildWikiLink(request.getContextPath(), virtualWiki, this.value);
 				if (StringUtils.hasText(this.text)) {
 					// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
 					String css = "";

@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.WikiBase;
 import org.jamwiki.servlets.JAMWikiServlet;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -49,7 +49,7 @@ public class ImageLinkTag extends TagSupport {
 			String virtualWiki = retrieveVirtualWiki(request);
 			String url = null;
 			try {
-				url = Utilities.buildImageLink(request.getContextPath(), virtualWiki, this.value);
+				url = LinkUtil.buildImageLink(request.getContextPath(), virtualWiki, this.value);
 				if (url != null) {
 					this.pageContext.getOut().print(url);
 				}

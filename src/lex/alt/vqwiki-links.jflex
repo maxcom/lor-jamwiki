@@ -9,6 +9,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.Lexer;
 import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 
 %%
@@ -64,7 +65,7 @@ import org.jamwiki.utils.Utilities;
 		link = link.trim();
 		description = description.trim();
 		if (exists(link)) {
-			return "<a class=\"topic\" href=\"" + Utilities.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), link)
+			return "<a class=\"topic\" href=\"" + LinkUtil.buildInternalLink(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), link)
 				+ "\">" + description + "</a>";
 		} else if (description.equals(link)) {
 			return "<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeURL(link)
