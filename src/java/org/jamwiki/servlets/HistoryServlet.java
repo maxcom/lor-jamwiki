@@ -70,8 +70,7 @@ public class HistoryServlet extends JAMWikiServlet {
 				TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 				String displayName = request.getRemoteAddr();
 				WikiUser user = Utilities.currentUser(request);
-				ParserInfo parserInfo = new ParserInfo();
-				parserInfo.setContext(request.getContextPath());
+				ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
 				parserInfo.setWikiUser(user);
 				parserInfo.setTopicName(topicName);
 				parserInfo.setUserIpAddress(request.getRemoteAddr());

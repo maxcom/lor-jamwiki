@@ -34,6 +34,24 @@ public class ParserUtil {
 	private static Logger logger = Logger.getLogger(ParserUtil.class.getName());
 
 	/**
+	 *
+	 */
+	protected static String buildEditLinkUrl(ParserInfo parserInfo, int section) {
+		if (!parserInfo.getAllowSectionEdit()) return "";
+		String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
+		String url = "";
+		try {
+			url = LinkUtil.buildEditLinkUrl(parserInfo.getContext(), parserInfo.getVirtualWiki(), parserInfo.getTopicName(), null, section);
+		} catch (Exception e) {
+			logger.error("Failure while building link for topic " + parserInfo.getVirtualWiki() + " / " + parserInfo.getTopicName(), e);
+		}
+		output += "<a href=\"" + url + "\">";
+		output += Utilities.getMessage("common.sectionedit", parserInfo.getLocale());
+		output += "</a>]</div>";
+		return output;
+	}
+
+	/**
 	 * Given a String that represents a Wiki HTML link (a URL with an optional
 	 * link text that is enclosed in brackets), return a formatted HTML anchor tag.
 	 *
@@ -81,24 +99,6 @@ public class ParserUtil {
 		}
 		String html = linkHtml(link, text, punctuation);
 		return (html != null) ? html : raw;
-	}
-
-	/**
-	 *
-	 */
-	protected static String buildEditLinkUrl(String context, String virtualWiki, String topicName, int section) {
-    	String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
-    	String url = "";
-    	try {
-			url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topicName, null, section);
-		} catch (Exception e) {
-			logger.error("Failure while building link for topic " + virtualWiki + " / " + topicName, e);
-		}
-    	output += "<a href=\"" + url + "\">";
-    	// FIXME - hard coding of edit
-    	output += "edit";
-    	output += "</a>]</div>";
-    	return output;
 	}
 
 	/**

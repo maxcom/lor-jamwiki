@@ -363,13 +363,6 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String parsePreSave(ParserInfo parserInfo, String content) throws Exception {
-		return Utilities.parse(parserInfo, content, null, true);
-	}
-
-	/**
-	 *
-	 */
 	private static String parse(ParserInfo parserInfo, String content, String topicName, boolean preSave) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
@@ -382,33 +375,8 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String parseSlice(String virtualWiki, String topicName, int targetSection) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null || topic.getTopicContent() == null) {
-			return "";
-		}
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setTopicName(topicName);
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_SLICE);
-		AbstractParser parser = parserInstance(parserInfo);
-		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
-	}
-
-	/**
-	 *
-	 */
-	public static String parseSplice(String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null || topic.getTopicContent() == null) {
-			return "";
-		}
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setTopicName(topicName);
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_SPLICE);
-		AbstractParser parser = parserInstance(parserInfo);
-		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
+	public static String parsePreSave(ParserInfo parserInfo, String content) throws Exception {
+		return Utilities.parse(parserInfo, content, null, true);
 	}
 
 	/**
@@ -424,6 +392,38 @@ public class Utilities {
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInfo;
 		return (AbstractParser)constructor.newInstance(initArgs);
+	}
+
+	/**
+	 *
+	 */
+	public static String parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null || topic.getTopicContent() == null) {
+			return "";
+		}
+		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		parserInfo.setTopicName(topicName);
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_SLICE);
+		AbstractParser parser = parserInstance(parserInfo);
+		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
+	}
+
+	/**
+	 *
+	 */
+	public static String parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null || topic.getTopicContent() == null) {
+			return "";
+		}
+		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		parserInfo.setTopicName(topicName);
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setMode(ParserInfo.MODE_SPLICE);
+		AbstractParser parser = parserInstance(parserInfo);
+		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
 	}
 
 	/**

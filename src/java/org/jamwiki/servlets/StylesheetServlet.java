@@ -37,7 +37,7 @@ public class StylesheetServlet extends JAMWikiServlet {
 		try {
 			String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 			String topicName = JAMWikiServlet.getTopicFromURI(request);
-			String stylesheet = JAMWikiServlet.getCachedContent(request.getContextPath(), virtualWiki, Utilities.getMessage("specialpages.stylesheet", request.getLocale()), false);
+			String stylesheet = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.stylesheet", request.getLocale()), false);
 			response.setContentType("text/css");
 			PrintWriter out = response.getWriter();
 			out.print(stylesheet);

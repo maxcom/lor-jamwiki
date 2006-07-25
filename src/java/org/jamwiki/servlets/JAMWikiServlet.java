@@ -112,26 +112,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
-		String leftMenu = JAMWikiServlet.getCachedContent(
-			request.getContextPath(),
-			virtualWiki,
-			Utilities.getMessage("specialpages.leftMenu", request.getLocale()),
-			true
-		);
+		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.leftMenu", request.getLocale()), true);
 		next.addObject("leftMenu", leftMenu);
-		String topArea = JAMWikiServlet.getCachedContent(
-			request.getContextPath(),
-			virtualWiki,
-			Utilities.getMessage("specialpages.topArea", request.getLocale()),
-			true
-		);
+		String topArea = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.topArea", request.getLocale()), true);
 		next.addObject("topArea", topArea);
-		String bottomArea = JAMWikiServlet.getCachedContent(
-			request.getContextPath(),
-			virtualWiki,
-			Utilities.getMessage("specialpages.bottomArea", request.getLocale()),
-			true
-		);
+		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.bottomArea", request.getLocale()), true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
 	}
@@ -225,7 +210,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	public static String getCachedContent(String context, String virtualWiki, String topicName, boolean cook) {
+	public static String getCachedContent(HttpServletRequest request, String virtualWiki, String topicName, boolean cook) {
 		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
 		if (content == null) {
 			try {
@@ -239,8 +224,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					content = topic.getTopicContent();
 				}
 				if (cook) {
-					ParserInfo parserInfo = new ParserInfo();
-					parserInfo.setContext(context);
+					ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
 					parserInfo.setVirtualWiki(virtualWiki);
 					content = Utilities.parse(parserInfo, content, topicName);
 				}
@@ -301,6 +285,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			}
 			next.addObject("article", article);
 			next.addObject("comments", comments);
+			next.addObject("edit", "Special:Edit?topic=" + Utilities.encodeURL(this.pageInfo.getTopicName()));
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
 		if (!StringUtils.hasText(this.pageInfo.getTopicName())) {
@@ -385,8 +370,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (topic != null) {
 			String displayName = request.getRemoteAddr();
 			WikiUser user = Utilities.currentUser(request);
-			ParserInfo parserInfo = new ParserInfo();
-			parserInfo.setContext(request.getContextPath());
+			ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
 			parserInfo.setWikiUser(user);
 			parserInfo.setTopicName(topicName);
 			parserInfo.setUserIpAddress(request.getRemoteAddr());

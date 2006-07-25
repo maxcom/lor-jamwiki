@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser;
 
+import java.util.Locale;
 import org.jamwiki.model.WikiUser;
 
 /**
@@ -30,17 +31,35 @@ public class ParserInfo {
 	public static final int MODE_SAVE = 3;
 	public static final int MODE_SPLICE = 4;
 	public static final int MODE_SLICE = 5;
+	private boolean allowSectionEdit = true;
 	private String context = null;
+	private Locale locale = null;
 	private int mode = MODE_NORMAL;
+	private TableOfContents tableOfContents = new TableOfContents();
 	private String topicName = null;
 	/** IP address of the current user. */
 	private String userIpAddress = null;
 	private String virtualWiki = null;
 	/** Current WikiUser (if any). */
 	private WikiUser wikiUser = null;
-	private TableOfContents tableOfContents = new TableOfContents();
 
-	public ParserInfo() {
+	public ParserInfo(String context, Locale locale) {
+		this.context = context;
+		this.locale = locale;
+	}
+
+	/**
+	 *
+	 */
+	public boolean getAllowSectionEdit() {
+		return allowSectionEdit;
+	}
+
+	/**
+	 *
+	 */
+	public void setAllowSectionEdit(boolean allowSectionEdit) {
+		this.allowSectionEdit = allowSectionEdit;
 	}
 
 	/**
@@ -55,6 +74,20 @@ public class ParserInfo {
 	 */
 	public void setContext(String context) {
 		this.context = context;
+	}
+
+	/**
+	 *
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+
+	/**
+	 *
+	 */
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 	/**

@@ -80,7 +80,7 @@ public class EditServlet extends JAMWikiServlet {
 			if (StringUtils.hasText(request.getParameter("section"))) {
 				// load section of topic
 				int section = (new Integer(request.getParameter("section"))).intValue();
-				contents = Utilities.parseSlice(virtualWiki, topicName, section);
+				contents = Utilities.parseSlice(request, virtualWiki, topicName, section);
 			} else {
 				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 				contents = (topic == null) ? "" : topic.getTopicContent();
@@ -168,8 +168,7 @@ public class EditServlet extends JAMWikiServlet {
 		WikiUser user = Utilities.currentUser(request);
 		JAMWikiServlet.removeCachedContents();
 		String contents = (String)request.getParameter("contents");
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(request.getContextPath());
+		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
 		parserInfo.setWikiUser(user);
 		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
@@ -237,7 +236,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = Utilities.parseSplice(virtualWiki, topicName, section, contents);
+			contents = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
 		}
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");
@@ -249,8 +248,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = Utilities.currentUser(request);
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(request.getContextPath());
+		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
 		parserInfo.setWikiUser(user);
 		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());

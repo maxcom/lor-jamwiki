@@ -26,7 +26,7 @@
 	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="menu.comments" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${!readOnly}">
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Edit" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.editpage" /></a></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="${edit}"><f:message key="menu.editpage" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>
 	<c:if test="${!readOnly}">
