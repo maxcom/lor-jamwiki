@@ -3,6 +3,11 @@
 =====
 
 
+0.0.9
+=====
+
+* BUG: Fix infinite redirection error when installing.
+
 0.0.8
 =====
 
