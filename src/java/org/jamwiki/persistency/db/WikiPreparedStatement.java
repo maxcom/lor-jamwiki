@@ -75,7 +75,11 @@ public class WikiPreparedStatement {
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			rs = this.statement.executeQuery();
-			logger.info("Executed " + this.sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+			long execution = System.currentTimeMillis() - start;
+			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
+				logger.warn("Slow query: " + sql);
+			}
+			logger.debug("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + this.sql, e);
@@ -106,7 +110,11 @@ public class WikiPreparedStatement {
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			int result = this.statement.executeUpdate();
-			logger.info("Executed " + this.sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+			long execution = System.currentTimeMillis() - start;
+			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
+				logger.warn("Slow query: " + sql);
+			}
+			logger.debug("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + this.sql, e);

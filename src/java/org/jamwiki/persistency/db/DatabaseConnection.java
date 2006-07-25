@@ -41,6 +41,8 @@ import org.jamwiki.utils.Encryption;
 public class DatabaseConnection {
 
 	private static final Logger logger = Logger.getLogger(DatabaseConnection.class);
+	/** Any queries that take longer than this value (specified in milliseconds) will print a warning to the log. */
+	protected static final int SLOW_QUERY_LIMIT = 250;
 	private static boolean poolInitialized = false;
 	private static GenericObjectPool connectionPool = null;
 
@@ -127,7 +129,11 @@ public class DatabaseConnection {
 			long start = System.currentTimeMillis();
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+			long execution = System.currentTimeMillis() - start;
+			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
+				logger.warn("Slow query: " + sql);
+			}
+			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + sql, e);
@@ -170,7 +176,11 @@ public class DatabaseConnection {
 			stmt = conn.createStatement();
 			logger.info("Executing SQL: " + sql);
 			int result = stmt.executeUpdate(sql);
-			logger.info("Executed " + sql + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+			long execution = System.currentTimeMillis() - start;
+			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
+				logger.warn("Slow query: " + sql);
+			}
+			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + sql, e);

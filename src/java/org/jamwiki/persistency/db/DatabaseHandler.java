@@ -288,7 +288,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	protected void handleErrors(Object[] params) {
 		if (params == null) return;
 		try {
-			logger.info("Rolling back database transactions");
+			logger.warn("Rolling back database transactions");
 			Connection conn = (Connection)params[0];
 			conn.rollback();
 		} catch (Exception e) {
