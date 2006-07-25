@@ -96,8 +96,8 @@ public class ImageLinkTag extends TagSupport {
 	/**
 	 *
 	 */
-    public void release() {
+	public void release() {
 		super.release();
 		this.value = null;
-    }
+	}
 }

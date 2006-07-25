@@ -87,9 +87,9 @@ public class DecodeTag extends TagSupport {
 	/**
 	 *
 	 */
-    public void release() {
+	public void release() {
 		super.release();
 		this.var = null;
 		this.value = null;
-    }
+	}
 }

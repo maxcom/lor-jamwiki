@@ -135,9 +135,9 @@ public class LinkTag extends BodyTagSupport {
 	/**
 	 *
 	 */
-    public void release() {
+	public void release() {
 		super.release();
 		this.value = null;
 		this.text = null;
-    }
+	}
 }
