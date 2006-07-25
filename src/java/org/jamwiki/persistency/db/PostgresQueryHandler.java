@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 /**
@@ -57,8 +58,8 @@ public class PostgresQueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
-	public void reloadRecentChanges() throws Exception {
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
+	public void reloadRecentChanges(Connection conn) throws Exception {
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES, conn);
 	}
 }

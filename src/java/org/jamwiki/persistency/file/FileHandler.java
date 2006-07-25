@@ -158,14 +158,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addRecentChange(RecentChange change) throws Exception {
+	protected void addRecentChange(RecentChange change, Object[] params) throws Exception {
 		this.saveRecentChange(change);
 	}
 
 	/**
 	 *
 	 */
-	protected void addTopic(Topic topic) throws Exception {
+	protected void addTopic(Topic topic, Object[] params) throws Exception {
 		if (topic.getTopicId() < 1) {
 			topic.setTopicId(nextTopicId());
 		}
@@ -175,14 +175,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion, Object[] params) throws Exception {
 		this.saveTopicVersion(virtualWiki, topicName, topicVersion);
 	}
 
 	/**
 	 *
 	 */
-	protected void addVirtualWiki(String virtualWiki) throws Exception {
+	protected void addVirtualWiki(String virtualWiki, Object[] params) throws Exception {
 		Collection all = new ArrayList();
 		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
 		if (file.exists()) {
@@ -199,7 +199,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+	protected void addWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
 		if (wikiFile.getFileId() < 1) {
 			wikiFile.setFileId(nextWikiFileId());
 		}
@@ -209,14 +209,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception {
+	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion, Object[] params) throws Exception {
 		this.saveWikiFileVersion(virtualWiki, topicName, wikiFileVersion);
 	}
 
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user) throws Exception {
+	protected void addWikiUser(WikiUser user, Object[] params) throws Exception {
 		if (user.getUserId() < 1) {
 			user.setUserId(nextWikiUserId());
 		}
@@ -464,6 +464,12 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	protected void handleErrors(Object[] params) {
+	}
+
+	/**
 	 * Set up defaults if necessary
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
@@ -477,6 +483,14 @@ public class FileHandler extends PersistencyHandler {
 			createVirtualWikiList(virtualList);
 		}
 		super.initialize(locale, user);
+	}
+
+	/**
+	 *
+	 */
+	protected Object[] initParams() throws Exception {
+		// no extra params needed
+		return null;
 	}
 
 	/**
@@ -920,7 +934,7 @@ public class FileHandler extends PersistencyHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	public void purgeData() throws Exception {
+	public void purgeData(Object[] params) throws Exception {
 		String rootDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
 		File rootDirFile = new File(rootDir);
 		// BOOM!  Everything gone...
@@ -939,6 +953,20 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected static String recentChangeFilename(int topicVersionId) {
 		return topicVersionId + EXT;
+	}
+
+	/**
+	 *
+	 */
+	protected void releaseParams(Object[] params) {
+	}
+
+	/**
+	 *
+	 */
+	protected void reloadRecentChanges(Object[] params) throws Exception {
+		// FIXME - implement this
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -1330,21 +1358,21 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void updateTopic(Topic topic) throws Exception {
+	protected void updateTopic(Topic topic, Object[] params) throws Exception {
 		this.saveTopic(topic);
 	}
 
 	/**
 	 *
 	 */
-	protected void updateWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+	protected void updateWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
 		this.saveWikiFile(topicName, wikiFile);
 	}
 
 	/**
 	 *
 	 */
-	protected void updateWikiUser(WikiUser user) throws Exception {
+	protected void updateWikiUser(WikiUser user, Object[] params) throws Exception {
 		this.saveWikiUser(user);
 	}
 

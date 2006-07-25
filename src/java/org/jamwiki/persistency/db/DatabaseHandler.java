@@ -74,82 +74,89 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addRecentChange(RecentChange change) throws Exception {
-		DatabaseHandler.queryHandler.insertRecentChange(change);
+	protected void addRecentChange(RecentChange change, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.insertRecentChange(change, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void addTopic(Topic topic) throws Exception {
+	protected void addTopic(Topic topic, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
 		if (topic.getTopicId() < 1) {
-			int topicId = DatabaseHandler.queryHandler.nextTopicId();
+			int topicId = DatabaseHandler.queryHandler.nextTopicId(conn);
 			topic.setTopicId(topicId);
 		}
-		DatabaseHandler.queryHandler.insertTopic(topic);
+		DatabaseHandler.queryHandler.insertTopic(topic, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
+	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
 		if (topicVersion.getTopicVersionId() < 1) {
-			int topicVersionId = DatabaseHandler.queryHandler.nextTopicVersionId();
+			int topicVersionId = DatabaseHandler.queryHandler.nextTopicVersionId(conn);
 			topicVersion.setTopicVersionId(topicVersionId);
 		}
 		if (topicVersion.getEditDate() == null) {
 			Timestamp editDate = new Timestamp(System.currentTimeMillis());
 			topicVersion.setEditDate(editDate);
 		}
-		DatabaseHandler.queryHandler.insertTopicVersion(topicVersion);
+		DatabaseHandler.queryHandler.insertTopicVersion(topicVersion, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void addVirtualWiki(String virtualWikiName) throws Exception {
-		int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId();
-		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWikiId, virtualWikiName);
+	protected void addVirtualWiki(String virtualWikiName, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId(conn);
+		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWikiId, virtualWikiName, conn);
 		DatabaseHandler.loadVirtualWikiHashes();
 	}
 
 	/**
 	 *
 	 */
-	protected void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
+	protected void addWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
 		if (wikiFile.getFileId() < 1) {
-			int fileId = DatabaseHandler.queryHandler.nextWikiFileId();
+			int fileId = DatabaseHandler.queryHandler.nextWikiFileId(conn);
 			wikiFile.setFileId(fileId);
 		}
-		DatabaseHandler.queryHandler.insertWikiFile(wikiFile);
+		DatabaseHandler.queryHandler.insertWikiFile(wikiFile, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void addWikiFileVersion(String virtualWiki, String wikiFileName, WikiFileVersion wikiFileVersion) throws Exception {
+	protected void addWikiFileVersion(String virtualWiki, String wikiFileName, WikiFileVersion wikiFileVersion, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
 		if (wikiFileVersion.getFileVersionId() < 1) {
-			int fileVersionId = DatabaseHandler.queryHandler.nextWikiFileVersionId();
+			int fileVersionId = DatabaseHandler.queryHandler.nextWikiFileVersionId(conn);
 			wikiFileVersion.setFileVersionId(fileVersionId);
 		}
 		if (wikiFileVersion.getUploadDate() == null) {
 			Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
 			wikiFileVersion.setUploadDate(uploadDate);
 		}
-		DatabaseHandler.queryHandler.insertWikiFileVersion(wikiFileVersion);
+		DatabaseHandler.queryHandler.insertWikiFileVersion(wikiFileVersion, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user) throws Exception {
+	protected void addWikiUser(WikiUser user, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
 		if (user.getUserId() < 1) {
-			int nextUserId = DatabaseHandler.queryHandler.nextWikiUserId();
+			int nextUserId = DatabaseHandler.queryHandler.nextWikiUserId(conn);
 			user.setUserId(nextUserId);
 		}
-		DatabaseHandler.queryHandler.insertWikiUser(user);
+		DatabaseHandler.queryHandler.insertWikiUser(user, conn);
 		// FIXME - may be in LDAP
-		DatabaseHandler.queryHandler.insertWikiUserInfo(user);
+		DatabaseHandler.queryHandler.insertWikiUserInfo(user, conn);
 	}
 
 	/**
@@ -278,6 +285,20 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected void handleErrors(Object[] params) {
+		if (params == null) return;
+		try {
+			logger.info("Rolling back database transactions");
+			Connection conn = (Connection)params[0];
+			conn.rollback();
+		} catch (Exception e) {
+			logger.error("Unable to rollback connection", e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
 		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			return;
@@ -294,23 +315,47 @@ public class DatabaseHandler extends PersistencyHandler {
 		String sql = null;
 		WikiResultSet rs = null;
 		boolean tablesExist = false;
-		sql = "select 1 from jam_virtual_wiki ";
+		Connection conn = null;
 		try {
-			rs = DatabaseConnection.executeQuery(sql);
-			tablesExist = rs.next();
-		} catch (Exception e) {
-			// thrown if table doesn't exist, so safe to ignore
-		}
-		if (!tablesExist) {
-			// set up tables
-			DatabaseHandler.queryHandler.createTables();
-		}
-		sql = "select * from jam_virtual_wiki ";
-		rs = DatabaseConnection.executeQuery(sql);
-		if (rs.size() == 0) {
-			addVirtualWiki(WikiBase.DEFAULT_VWIKI);
+			conn = DatabaseConnection.getConnection();
+			sql = "select 1 from jam_virtual_wiki ";
+			try {
+				rs = DatabaseConnection.executeQuery(sql, conn);
+				tablesExist = rs.next();
+			} catch (Exception e) {
+				// thrown if table doesn't exist, so safe to ignore
+			}
+			if (!tablesExist) {
+				try {
+					// set up tables
+					DatabaseHandler.queryHandler.createTables(conn);
+				} catch (Exception e) {
+					logger.error("Unable to set up database tables", e);
+					// clean up anything that might have been created
+					DatabaseHandler.queryHandler.dropTables(conn);
+				}
+			}
+			sql = "select * from jam_virtual_wiki ";
+			rs = DatabaseConnection.executeQuery(sql, conn);
+			if (rs.size() == 0) {
+				writeVirtualWiki(WikiBase.DEFAULT_VWIKI);
+			}
+		} finally {
+			if (conn != null) DatabaseConnection.closeConnection(conn);
 		}
 		super.initialize(locale, user);
+	}
+
+	/**
+	 *
+	 */
+	protected Object[] initParams() throws Exception {
+		// add a connection to the params array.  BE SURE TO RELEASE IT!
+		Connection conn = DatabaseConnection.getConnection();
+		conn.setAutoCommit(false);
+		Object[] params = new Object[1];
+		params[0] = conn;
+		return params;
 	}
 
 	/**
@@ -601,18 +646,33 @@ public class DatabaseHandler extends PersistencyHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	public void purgeData() throws Exception {
+	public void purgeData(Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
 		// BOOM!  Everything gone...
-		DatabaseHandler.queryHandler.dropTables();
-		// re-create empty tables
-		DatabaseHandler.queryHandler.createTables();
+		DatabaseHandler.queryHandler.dropTables(conn);
+		try {
+			// re-create empty tables
+			DatabaseHandler.queryHandler.createTables(conn);
+		} catch (Exception e) {
+			// creation failure, don't leave tables half-committed
+			DatabaseHandler.queryHandler.dropTables(conn);
+		}
 	}
 
 	/**
 	 *
 	 */
-	public static void reloadRecentChanges() throws Exception {
-		DatabaseHandler.queryHandler.reloadRecentChanges();
+	protected void releaseParams(Object[] params) {
+		Connection conn = (Connection)params[0];
+		DatabaseConnection.closeConnection(conn);
+	}
+
+	/**
+	 *
+	 */
+	protected void reloadRecentChanges(Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.reloadRecentChanges(conn);
 	}
 
 	/**
@@ -635,23 +695,26 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void updateTopic(Topic topic) throws Exception {
-		DatabaseHandler.queryHandler.updateTopic(topic);
+	protected void updateTopic(Topic topic, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.updateTopic(topic, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void updateWikiFile(String topicName, WikiFile wikiFile) throws Exception {
-		DatabaseHandler.queryHandler.updateWikiFile(wikiFile);
+	protected void updateWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.updateWikiFile(wikiFile, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void updateWikiUser(WikiUser user) throws Exception {
-		DatabaseHandler.queryHandler.updateWikiUser(user);
+	protected void updateWikiUser(WikiUser user, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.updateWikiUser(user, conn);
 		// FIXME - may be in LDAP
-		DatabaseHandler.queryHandler.updateWikiUserInfo(user);
+		DatabaseHandler.queryHandler.updateWikiUserInfo(user, conn);
 	}
 }

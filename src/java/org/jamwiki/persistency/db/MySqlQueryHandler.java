@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.log4j.Logger;
@@ -76,23 +77,23 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
-	public void createTables() throws Exception {
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_IMAGE_TABLE);
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_TABLE);
+	public void createTables(Connection conn) throws Exception {
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_VIRTUAL_WIKI_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_INFO_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_IMAGE_TABLE, conn);
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_RECENT_CHANGE_TABLE, conn);
 	}
 
 	/**
 	 *
 	 */
-	public void reloadRecentChanges() throws Exception {
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
+	public void reloadRecentChanges(Connection conn) throws Exception {
+		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES, conn);
 	}
 }

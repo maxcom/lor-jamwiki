@@ -275,7 +275,6 @@ public class DatabaseConnection {
 	 */
 	public static void closeConnection(Connection conn) {
 		if (conn == null) {
-			logger.info("Attempt to call DatabaseConnection.closeConnection() with null connection value");
 			return;
 		}
 		try {

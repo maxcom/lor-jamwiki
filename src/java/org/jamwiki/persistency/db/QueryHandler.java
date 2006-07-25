@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.sql.Connection;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -31,12 +32,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void createTables() throws Exception;
+	public void createTables(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void dropTables() throws Exception;
+	public void dropTables(Connection conn);
 
 	/**
 	 *
@@ -86,42 +87,42 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void insertRecentChange(RecentChange change) throws Exception;
+	public void insertRecentChange(RecentChange change, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertTopic(Topic topic) throws Exception;
+	public void insertTopic(Topic topic, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertTopicVersion(TopicVersion topicVersion) throws Exception;
+	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName) throws Exception;
+	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertWikiFile(WikiFile wikiFile) throws Exception;
+	public void insertWikiFile(WikiFile wikiFile, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion) throws Exception;
+	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertWikiUser(WikiUser user) throws Exception;
+	public void insertWikiUser(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertWikiUserInfo(WikiUser user) throws Exception;
+	public void insertWikiUserInfo(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -161,55 +162,55 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public int nextTopicId() throws Exception;
+	public int nextTopicId(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public int nextTopicVersionId() throws Exception;
+	public int nextTopicVersionId(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public int nextVirtualWikiId() throws Exception;
+	public int nextVirtualWikiId(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public int nextWikiFileId() throws Exception;
+	public int nextWikiFileId(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public int nextWikiFileVersionId() throws Exception;
+	public int nextWikiFileVersionId(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public int nextWikiUserId() throws Exception;
+	public int nextWikiUserId(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void reloadRecentChanges() throws Exception;
+	public void reloadRecentChanges(Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void updateTopic(Topic topic) throws Exception;
+	public void updateTopic(Topic topic, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void updateWikiFile(WikiFile wikiFile) throws Exception;
+	public void updateWikiFile(WikiFile wikiFile, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void updateWikiUser(WikiUser user) throws Exception;
+	public void updateWikiUser(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUser user) throws Exception;
+	public void updateWikiUserInfo(WikiUser user, Connection conn) throws Exception;
 }

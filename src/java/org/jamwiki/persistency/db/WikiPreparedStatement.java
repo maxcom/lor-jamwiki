@@ -57,10 +57,21 @@ public class WikiPreparedStatement {
 	 */
 	public WikiResultSet executeQuery() throws Exception {
 		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			return this.executeQuery(conn);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet executeQuery(Connection conn) throws Exception {
 		ResultSet rs = null;
 		try {
 			long start = System.currentTimeMillis();
-			conn = DatabaseConnection.getConnection();
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			rs = this.statement.executeQuery();
@@ -69,7 +80,7 @@ public class WikiPreparedStatement {
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + this.sql, e);
 		} finally {
-			DatabaseConnection.closeConnection(conn, this.statement, rs);
+			DatabaseConnection.closeConnection(null, this.statement, rs);
 		}
 	}
 
@@ -79,8 +90,19 @@ public class WikiPreparedStatement {
 	public int executeUpdate() throws Exception {
 		Connection conn = null;
 		try {
-			long start = System.currentTimeMillis();
 			conn = DatabaseConnection.getConnection();
+			return this.executeUpdate(conn);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public int executeUpdate(Connection conn) throws Exception {
+		try {
+			long start = System.currentTimeMillis();
 			this.statement = conn.prepareStatement(this.sql);
 			this.loadStatement();
 			int result = this.statement.executeUpdate();
@@ -89,7 +111,7 @@ public class WikiPreparedStatement {
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + this.sql, e);
 		} finally {
-			DatabaseConnection.closeConnection(conn, this.statement);
+			DatabaseConnection.closeConnection(null, this.statement);
 		}
 	}
 

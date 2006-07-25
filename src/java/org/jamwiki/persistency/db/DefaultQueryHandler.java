@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
 import org.apache.log4j.Logger;
@@ -421,32 +422,54 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void createTables() throws Exception {
+	public void createTables(Connection conn) throws Exception {
 		WikiPreparedStatement stmt = null;
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_IMAGE_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE, conn);
 	}
 
 	/**
 	 *
 	 */
-	public void dropTables() throws Exception {
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_IMAGE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_VERSION_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_INFO_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE);
-		DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE);
+	public void dropTables(Connection conn) {
+		// note that this method is called during creation failures, so be careful to
+		// catch errors that might result from a partial failure during install.  also
+		// note that the coding style violation here is intentional since it makes the
+		// actual work of the method more obvious.
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_IMAGE_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_VERSION_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_VERSION_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_INFO_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE, conn);
+		} catch (Exception e) { logger.error(e.getMessage()); }
 	}
 
 	/**
@@ -545,7 +568,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertRecentChange(RecentChange change) throws Exception {
+	public void insertRecentChange(RecentChange change, Connection conn) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(change.getVirtualWiki());
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
 		stmt.setInt(1, change.getTopicVersionId());
@@ -567,13 +590,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(9, change.getEditType());
 		stmt.setInt(10, virtualWikiId);
 		stmt.setString(11, change.getVirtualWiki());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertTopic(Topic topic) throws Exception {
+	public void insertTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(topic.getVirtualWiki());
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
 		stmt.setInt(1, topic.getTopicId());
@@ -584,13 +607,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(6, topic.getTopicContent());
 		stmt.setInt(7, (topic.getDeleted() ? 1 : 0));
 		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertTopicVersion(TopicVersion topicVersion) throws Exception {
+	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
 		stmt.setInt(1, topicVersion.getTopicVersionId());
 		stmt.setInt(2, topicVersion.getTopicId());
@@ -609,23 +632,23 @@ public class DefaultQueryHandler implements QueryHandler {
 		} else {
 			stmt.setNull(9, Types.INTEGER);
 		}
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName) throws Exception {
+	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, virtualWikiName);
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertWikiFile(WikiFile wikiFile) throws Exception {
+	public void insertWikiFile(WikiFile wikiFile, Connection conn) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(wikiFile.getVirtualWiki());
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE);
 		stmt.setInt(1, wikiFile.getFileId());
@@ -638,13 +661,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(8, (wikiFile.getReadOnly() ? 1 : 0));
 		stmt.setInt(9, (wikiFile.getAdminOnly() ? 1 : 0));
 		stmt.setInt(10, wikiFile.getFileSize());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion) throws Exception {
+	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE_VERSION);
 		stmt.setInt(1, wikiFileVersion.getFileVersionId());
 		stmt.setInt(2, wikiFileVersion.getFileId());
@@ -659,13 +682,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
 		stmt.setString(8, wikiFileVersion.getMimeType());
 		stmt.setInt(9, wikiFileVersion.getFileSize());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertWikiUser(WikiUser user) throws Exception {
+	public void insertWikiUser(WikiUser user, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
 		stmt.setInt(1, user.getUserId());
 		stmt.setString(2, user.getLogin());
@@ -675,13 +698,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(6, user.getCreateIpAddress());
 		stmt.setString(7, user.getLastLoginIpAddress());
 		stmt.setInt(8, (user.getAdmin() ? 1 : 0));
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void insertWikiUserInfo(WikiUser user) throws Exception {
+	public void insertWikiUserInfo(WikiUser user, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
 		stmt.setInt(1, user.getUserId());
 		stmt.setString(2, user.getLogin());
@@ -689,7 +712,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(4, user.getFirstName());
 		stmt.setString(5, user.getLastName());
 		stmt.setString(6, user.getEncodedPassword());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
@@ -763,8 +786,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int nextTopicId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE);
+	public int nextTopicId(Connection conn) throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("topic_id");
 		// note - this returns the last id in the system, so add one
@@ -774,8 +797,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int nextTopicVersionId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE);
+	public int nextTopicVersionId(Connection conn) throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("topic_version_id");
 		// note - this returns the last id in the system, so add one
@@ -785,8 +808,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int nextVirtualWikiId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE);
+	public int nextVirtualWikiId(Connection conn) throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("virtual_wiki_id");
 		// note - this returns the last id in the system, so add one
@@ -796,8 +819,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int nextWikiFileId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE);
+	public int nextWikiFileId(Connection conn) throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("file_id");
 		// note - this returns the last id in the system, so add one
@@ -807,8 +830,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int nextWikiFileVersionId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE);
+	public int nextWikiFileVersionId(Connection conn) throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("file_version_id");
 		// note - this returns the last id in the system, so add one
@@ -818,8 +841,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public int nextWikiUserId() throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE);
+	public int nextWikiUserId(Connection conn) throws Exception {
+		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("wiki_user_id");
 		// note - this returns the last id in the system, so add one
@@ -845,9 +868,9 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void reloadRecentChanges() throws Exception {
-		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES);
+	public void reloadRecentChanges(Connection conn) throws Exception {
+		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES, conn);
 	}
 
 	/**
@@ -869,7 +892,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateTopic(Topic topic) throws Exception {
+	public void updateTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(topic.getVirtualWiki());
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC);
 		stmt.setInt(1, virtualWikiId);
@@ -879,13 +902,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(5, topic.getTopicContent());
 		stmt.setInt(6, (topic.getDeleted() ? 1 : 0));
 		stmt.setInt(7, topic.getTopicId());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void updateWikiFile(WikiFile wikiFile) throws Exception {
+	public void updateWikiFile(WikiFile wikiFile, Connection conn) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(wikiFile.getVirtualWiki());
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_FILE);
 		stmt.setInt(1, virtualWikiId);
@@ -898,13 +921,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(8, (wikiFile.getAdminOnly() ? 1 : 0));
 		stmt.setInt(9, wikiFile.getFileSize());
 		stmt.setInt(10, wikiFile.getFileId());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void updateWikiUser(WikiUser user) throws Exception {
+	public void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER);
 		stmt.setString(1, user.getLogin());
 		stmt.setString(2, user.getDisplayName());
@@ -912,13 +935,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(4, user.getLastLoginIpAddress());
 		stmt.setInt(5, (user.getAdmin() ? 1 : 0));
 		stmt.setInt(6, user.getUserId());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUser user) throws Exception {
+	public void updateWikiUserInfo(WikiUser user, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
 		stmt.setString(1, user.getLogin());
 		stmt.setString(2, user.getEmail());
@@ -926,6 +949,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(4, user.getLastName());
 		stmt.setString(5, user.getEncodedPassword());
 		stmt.setInt(6, user.getUserId());
-		stmt.executeUpdate();
+		stmt.executeUpdate(conn);
 	}
 }
