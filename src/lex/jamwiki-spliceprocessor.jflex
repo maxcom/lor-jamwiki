@@ -69,7 +69,7 @@ import org.jamwiki.Environment;
      */
     protected String processHeading(int level, String headingText) {
         this.section++;
-        if (inTargetSection && this.sectionDepth == level) {
+        if (inTargetSection && this.sectionDepth >= level) {
             inTargetSection = false;
         } else if (this.targetSection == this.section) {
             inTargetSection = true;
