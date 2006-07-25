@@ -20,9 +20,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -443,35 +442,22 @@ public class Utilities {
 	 * Read a file and return its contents as a String.
 	 */
 	public static String readFile(String filename) throws Exception {
-		StringBuffer output = new StringBuffer();
-		InputStreamReader reader = null;
-		try {
-			File file = new File(filename);
-			if (file.exists()) {
-				// file passed in as full path
-				return FileUtils.readFileToString(file, "UTF-8");
-			}
-			// look for file in resource directories
-			Class[] parameterTypes = null;
-			Method method = Thread.class.getMethod("getContextClassLoader", parameterTypes);
-			Object[] args = null;
-			ClassLoader loader = (ClassLoader)method.invoke(Thread.currentThread(), args);
-			InputStream stream = loader.getResourceAsStream(filename);
-			if (stream == null) {
-				throw new FileNotFoundException("File " + filename + " is not available for reading");
-			}
-			reader = new InputStreamReader(stream);
-			char[] buf = new char[4096];
-			int c;
-			while ((c = reader.read(buf, 0, buf.length)) != -1) {
-				output.append(buf, 0, c);
-			}
-			return output.toString();
-		} finally {
-			try {
-				if (reader != null) reader.close();
-			} catch (Exception e) {}
+		File file = new File(filename);
+		if (file.exists()) {
+			// file passed in as full path
+			return FileUtils.readFileToString(file, "UTF-8");
 		}
+		// look for file in resource directories
+		Class[] parameterTypes = null;
+		Method method = Thread.class.getMethod("getContextClassLoader", parameterTypes);
+		Object[] args = null;
+		ClassLoader loader = (ClassLoader)method.invoke(Thread.currentThread(), args);
+		URL url = loader.getResource(filename);
+		file = FileUtils.toFile(url);
+		if (file == null || !file.exists()) {
+			throw new FileNotFoundException("File " + filename + " is not available for reading");
+		}
+		return FileUtils.readFileToString(file, "UTF-8");
 	}
 
 	/**
