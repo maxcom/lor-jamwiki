@@ -159,7 +159,8 @@ public class RSSServlet extends JAMWikiServlet {
 				if (author == null) author = "An unknown author";
 				itemBuffer.append("Last changed by " + author + " on " + WikiBase.getHandler().lastRevisionDate(virtualWiki, topicName));
 				itemBuffer.append("<p>\n<![CDATA[");
-				String content = WikiBase.readRaw(virtualWiki, topicName);
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+				String content = (topic == null) ? "" : topic.getTopicContent();
 				if (content.length() > 200) {
 					content = content.substring(0, 197) + "...";
 				}

@@ -150,7 +150,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			if (!topicName.equalsIgnoreCase(topicFoundIn)) {
 				logger.debug("checking links in topic " + topicFoundIn + " to " + topicName);
 				// read the raw content of the topic the hit was in
-				String topicContents = WikiBase.readRaw(virtualWiki, topicFoundIn);
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+				String topicContents = (topic == null) ? "" : topic.getTopicContent();
 				StringReader reader = new StringReader(topicContents);
 				BackLinkLex backLinkLex = new BackLinkLex(reader);
 				// lex the whole file with a back link lexer that simply catalogues all the valid intrawiki links

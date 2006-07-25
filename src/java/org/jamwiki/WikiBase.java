@@ -270,14 +270,4 @@ public class WikiBase {
 		instance.getHandler().initialize(locale, user);
 		JAMWikiServlet.removeCachedContents();
 	}
-
-	/**
-	 * Reads a file and returns the raw contents. Used for the editing version.
-	 */
-	public static synchronized String readRaw(String virtualWiki, String topicName) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		// FIXME - return null or empty?
-		if (topic == null) return "";
-		return topic.getTopicContent();
-	}
 }

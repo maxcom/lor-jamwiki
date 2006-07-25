@@ -82,7 +82,8 @@ public class EditServlet extends JAMWikiServlet {
 				int section = (new Integer(request.getParameter("section"))).intValue();
 				contents = Utilities.parseSlice(virtualWiki, topicName, section);
 			} else {
-				contents = WikiBase.readRaw(virtualWiki, topicName);
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+				contents = (topic == null) ? "" : topic.getTopicContent();
 			}
 			next.addObject("contents", contents);
 		}
