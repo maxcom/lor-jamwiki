@@ -86,7 +86,9 @@ public class EditServlet extends JAMWikiServlet {
 				throw new Exception(Utilities.getMessage("edit.exception.notopic", request.getLocale()));
 			}
 			contents = topicVersion.getVersionContent();
-			next.addObject("topicVersionId", new Integer(topicVersionId));
+			if (lastTopicVersionId != topicVersionId) {
+				next.addObject("topicVersionId", new Integer(topicVersionId));
+			}
 		} else if (StringUtils.hasText(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
