@@ -2,6 +2,20 @@
 0.1.0
 =====
 
+* FEATURE: Add support for editing sub-sections of a topic.
+* FEATURE: Add support for transaction rollback to avoid
+  half-committed edits from being saved (database only).
+* FEATURE: Allow editing of old topic versions from the
+  history tab (provides a way to rollback changes).
+* FEATURE: Chinese translations from Jiading (ewen0930).
+* FEATURE: Support Wiki links to a virtual wiki (for example
+  [[:virtual:Topic]]).
+* FEATURE: Add logging for slow database queries.
+* FEATURE: Do not display a textarea with Wiki syntax when
+  viewing an old topic version.
+* BUG: Remove several hard-coded message strings, replace with
+  messages that can be translated into local languages.
+* FEATURE: Code cleanups including removal of unused files.
 
 0.0.9
 =====
