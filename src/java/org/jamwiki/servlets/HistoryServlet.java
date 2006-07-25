@@ -80,6 +80,6 @@ public class HistoryServlet extends JAMWikiServlet {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		topic.setTopicContent(topicVersion.getVersionContent());
 		String pageTitle = topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate());
-		viewTopic(request, next, pageTitle, topic);
+		viewTopic(request, next, pageTitle, topic, false);
 	}
 }

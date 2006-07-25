@@ -369,7 +369,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		viewTopic(request, next, topicName, topic);
+		viewTopic(request, next, topicName, topic, true);
 	}
 
 	/**
@@ -380,7 +380,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param topicName The topic being viewed.  This value must be a valid topic that
 	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
-	protected void viewTopic(HttpServletRequest request, ModelAndView next, String pageTitle, Topic topic) throws Exception {
+	protected void viewTopic(HttpServletRequest request, ModelAndView next, String pageTitle, Topic topic, boolean sectionEdit) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {
@@ -393,6 +393,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			parserInfo.setTopicName(topicName);
 			parserInfo.setUserIpAddress(request.getRemoteAddr());
 			parserInfo.setVirtualWiki(virtualWiki);
+			parserInfo.setAllowSectionEdit(sectionEdit);
 			contents = Utilities.parse(parserInfo, topic.getTopicContent(), topicName);
 			if (StringUtils.hasText(request.getParameter("highlight"))) {
 				// search servlet highlights search terms, so add that here
