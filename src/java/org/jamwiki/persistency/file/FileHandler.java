@@ -958,7 +958,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void releaseParams(Object[] params) {
+	protected void releaseParams(Object[] params) throws Exception {
 	}
 
 	/**

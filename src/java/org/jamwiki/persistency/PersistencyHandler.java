@@ -222,8 +222,11 @@ public abstract class PersistencyHandler {
 				}
 			}
 			return messages;
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -237,8 +240,11 @@ public abstract class PersistencyHandler {
 			Topic topic = lookupTopic(virtualWiki, topicName);
 			topic.setReadOnly(false);
 			updateTopic(topic, params);
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -254,8 +260,11 @@ public abstract class PersistencyHandler {
 			updateTopic(topic, params);
 			// reset topic existence vector
 			cachedTopicsList = new Vector();
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -431,8 +440,11 @@ public abstract class PersistencyHandler {
 				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
 				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
 			}
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -533,7 +545,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected abstract void releaseParams(Object[] params);
+	protected abstract void releaseParams(Object[] params) throws Exception;
 
 	/**
 	 *
@@ -543,8 +555,11 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			this.reloadRecentChanges(params);
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -612,8 +627,11 @@ public abstract class PersistencyHandler {
 				// write version
 				addWikiFileVersion(wikiFile.getVirtualWiki(), wikiFile.getFileName(), wikiFileVersion, params);
 			}
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -625,8 +643,11 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			this.writeReadOnlyTopic(virtualWiki, topicName, params);
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -647,8 +668,11 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			this.writeTopic(topic, topicVersion, params);
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -700,8 +724,11 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			this.addVirtualWiki(virtualWiki, params);
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 
@@ -717,8 +744,11 @@ public abstract class PersistencyHandler {
 			} else {
 				this.updateWikiUser(user, params);
 			}
-		} finally {
+		} catch (Exception e) {
 			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 }
