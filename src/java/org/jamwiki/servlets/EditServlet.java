@@ -75,18 +75,28 @@ public class EditServlet extends JAMWikiServlet {
 		String contents = null;
 		if (isPreview(request)) {
 			preview(request, next);
-		} else {
-			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
-			if (StringUtils.hasText(request.getParameter("section"))) {
-				// load section of topic
-				int section = (new Integer(request.getParameter("section"))).intValue();
-				contents = Utilities.parseSlice(request, virtualWiki, topicName, section);
-			} else {
-				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-				contents = (topic == null) ? "" : topic.getTopicContent();
-			}
-			next.addObject("contents", contents);
+			return;
 		}
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
+		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+			// editing an older version
+			int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
+			TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+			if (topicVersion == null) {
+				throw new Exception(Utilities.getMessage("edit.exception.notopic", request.getLocale()));
+			}
+			contents = topicVersion.getVersionContent();
+			next.addObject("topicVersionId", new Integer(topicVersionId));
+		} else if (StringUtils.hasText(request.getParameter("section"))) {
+			// editing a section of a topic
+			int section = (new Integer(request.getParameter("section"))).intValue();
+			contents = Utilities.parseSlice(request, virtualWiki, topicName, section);
+		} else {
+			// editing a full new or existing topic
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+			contents = (topic == null) ? "" : topic.getTopicContent();
+		}
+		next.addObject("contents", contents);
 	}
 
 	/**

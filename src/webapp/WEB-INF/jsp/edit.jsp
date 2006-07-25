@@ -36,6 +36,7 @@ if (action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
 }
 %>
 
+<c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
@@ -52,6 +53,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.eq
 <input type="hidden" name="topic" value="<c:out value="${topic}"/>" />
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
 <input type="hidden" name="section" value="<c:out value="${section}"/>" />
+<input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
 <%--
 FIXME - restore the Javascript edit buttons
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
