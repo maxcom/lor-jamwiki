@@ -313,6 +313,7 @@ public class Utilities {
 	 *
 	 */
 	public static boolean isUpgrade() {
+		if (Utilities.isFirstUse()) return false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		WikiVersion currentVersion = new WikiVersion(WikiBase.WIKI_VERSION);
 		return (oldVersion.before(currentVersion));

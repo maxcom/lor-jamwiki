@@ -42,6 +42,7 @@ import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 /**
  * This class represents the core of JAMWiki. It has some central methods, like parsing the URI, and keeps an
@@ -177,6 +178,10 @@ public class WikiBase {
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			return true;
 		}
+		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			// not initialized yet
+			return false;
+		}
 		return handler.exists(virtualWiki, topicName);
 	}
 
@@ -186,6 +191,10 @@ public class WikiBase {
 	 * @return the current handler instance
 	 */
 	public static PersistencyHandler getHandler() {
+		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			// not initialized yet
+			return null;
+		}
 		return handler;
 	}
 
