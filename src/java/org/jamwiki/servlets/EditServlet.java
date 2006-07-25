@@ -80,7 +80,7 @@ public class EditServlet extends JAMWikiServlet {
 			if (StringUtils.hasText(request.getParameter("section"))) {
 				// load section of topic
 				int section = (new Integer(request.getParameter("section"))).intValue();
-				contents = WikiBase.parseSlice(virtualWiki, topicName, section);
+				contents = Utilities.parseSlice(virtualWiki, topicName, section);
 			} else {
 				contents = WikiBase.readRaw(virtualWiki, topicName);
 			}
@@ -174,7 +174,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
-		String preview = WikiBase.parse(parserInfo, contents, topicName);
+		String preview = Utilities.parse(parserInfo, contents, topicName);
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
 		previewTopic.setTopicContent(preview);
@@ -236,7 +236,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = WikiBase.parseSplice(virtualWiki, topicName, section, contents);
+			contents = Utilities.parseSplice(virtualWiki, topicName, section, contents);
 		}
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");
@@ -255,7 +255,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_SAVE);
-		contents = WikiBase.parsePreSave(parserInfo, contents);
+		contents = Utilities.parsePreSave(parserInfo, contents);
 		topic.setTopicContent(contents);
 		topicVersion.setVersionContent(contents);
 		topicVersion.setEditComment(request.getParameter("editComment"));

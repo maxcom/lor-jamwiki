@@ -117,7 +117,7 @@ public class PrintableServlet extends JAMWikiServlet {
 		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
-		String onepage = WikiBase.parse(parserInfo, topic.getTopicContent(), topicName);
+		String onepage = Utilities.parse(parserInfo, topic.getTopicContent(), topicName);
 		Collection result = new ArrayList();
 		if (onepage != null) {
 			PrintableEntry entry = new PrintableEntry();

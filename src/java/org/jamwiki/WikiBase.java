@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,8 +31,6 @@ import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileSearchEngine;
-import org.jamwiki.parser.AbstractParser;
-import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.search.SearchRefreshThread;
@@ -41,7 +38,6 @@ import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
-import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
 /**
@@ -91,79 +87,6 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		WikiBase.init();
-	}
-
-	/**
-	 *
-	 */
-	public static synchronized String parse(ParserInfo parserInfo, String content, String topicName) throws Exception {
-		return WikiBase.parse(parserInfo, content, topicName, false);
-	}
-
-	/**
-	 *
-	 */
-	public static synchronized String parsePreSave(ParserInfo parserInfo, String content) throws Exception {
-		return WikiBase.parse(parserInfo, content, null, true);
-	}
-
-	/**
-	 *
-	 */
-	private static String parse(ParserInfo parserInfo, String content, String topicName, boolean preSave) throws Exception {
-		if (content == null) {
-			// FIXME - return empty or something else?
-			return "";
-		}
-		AbstractParser parser = parserInstance(parserInfo);
-		return (preSave) ? parser.parsePreSave(content) : parser.parseHTML(content, topicName);
-	}
-
-	/**
-	 *
-	 */
-	public static String parseSlice(String virtualWiki, String topicName, int targetSection) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null || topic.getTopicContent() == null) {
-			return "";
-		}
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setTopicName(topicName);
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_SLICE);
-		AbstractParser parser = parserInstance(parserInfo);
-		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
-	}
-
-	/**
-	 *
-	 */
-	public static String parseSplice(String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null || topic.getTopicContent() == null) {
-			return "";
-		}
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setTopicName(topicName);
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_SPLICE);
-		AbstractParser parser = parserInstance(parserInfo);
-		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
-	}
-
-	/**
-	 *
-	 */
-	private static AbstractParser parserInstance(ParserInfo parserInfo) throws Exception {
-		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
-		logger.debug("Using parser: " + parserClass);
-		Class clazz = Class.forName(parserClass);
-		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInfo");
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[1];
-		initArgs[0] = parserInfo;
-		return (AbstractParser)constructor.newInstance(initArgs);
 	}
 
 	/**

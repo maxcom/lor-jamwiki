@@ -60,15 +60,14 @@ public class HistoryServlet extends JAMWikiServlet {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_HISTORY);
 		this.pageInfo.setTopicName(topicName);
 		try {
-			handler = WikiBase.getHandler();
 			String type = request.getParameter("type");
 			if (type.equals("all")) {
 				this.pageInfo.setPageTitle("History for " + topicName);
-				Vector changes = handler.getRecentChanges(virtualWiki, topicName, true);
+				Vector changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, true);
 				next.addObject("changes", changes);
 			} else if (type.equals("version")) {
 				int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
-				TopicVersion topicVersion = handler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+				TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 				String displayName = request.getRemoteAddr();
 				WikiUser user = Utilities.currentUser(request);
 				ParserInfo parserInfo = new ParserInfo();
@@ -77,7 +76,7 @@ public class HistoryServlet extends JAMWikiServlet {
 				parserInfo.setTopicName(topicName);
 				parserInfo.setUserIpAddress(request.getRemoteAddr());
 				parserInfo.setVirtualWiki(virtualWiki);
-				String cookedContents = WikiBase.parse(parserInfo, topicVersion.getVersionContent(), topicName);
+				String cookedContents = Utilities.parse(parserInfo, topicVersion.getVersionContent(), topicName);
 				next.addObject("topicVersion", topicVersion);
 				next.addObject("cookedContents", cookedContents);
 				this.pageInfo.setPageTitle(topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
