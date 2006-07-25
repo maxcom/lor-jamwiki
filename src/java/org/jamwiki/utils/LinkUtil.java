@@ -34,6 +34,38 @@ public class LinkUtil {
 	/**
 	 *
 	 */
+	public static String buildEditLinkHtml(String context, String virtualWiki, String topic) throws Exception {
+		return buildEditLinkHtml(context, virtualWiki, topic, null, -1, null);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildEditLinkHtml(String context, String virtualWiki, String topic, String query, int section, String text) throws Exception {
+		String url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, section);
+		if (!StringUtils.hasText(text)) {
+			text = topic;
+			int pos = topic.indexOf('?');
+			if (pos > 0) {
+				text = topic.substring(0, pos).trim();
+			}
+			pos = text.indexOf('#');
+			if (pos > 0) {
+				text = text.substring(0, pos).trim();
+			}
+		}
+		String css = "";
+		if (!WikiBase.exists(virtualWiki, topic)) {
+			// FIXME - hard coding
+			css = " class=\"edit\"";
+		}
+		url = "<a href=\"" + url + "\"" + css + ">" + text + "</a>";
+		return url;
+	}
+
+	/**
+	 *
+	 */
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic) throws Exception {
 		return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, null, -1);
 	}
@@ -109,31 +141,31 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic) throws Exception {
-		if (!StringUtils.hasText(topic)) {
-			return null;
-		}
-		// search for hash mark
-		String section = "";
-		String query = "";
-		int pos = topic.indexOf('?');
-		if (pos > 0) {
-			query = topic.substring(pos).trim();
-			topic = topic.substring(0, pos).trim();
-		}
-		pos = topic.indexOf('#');
-		if (pos > 0) {
-			section = topic.substring(pos+1).trim();
-			topic = topic.substring(0, pos).trim();
-		}
-		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
+	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text) throws Exception {
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text);
 	}
 
 	/**
 	 *
 	 */
-	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic, String section) throws Exception {
-		return buildInternalLinkUrl(context, virtualWiki, topic, section, null);
+	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text) throws Exception {
+		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
+		String css = "";
+		if (!StringUtils.hasText(text)) text = topic;
+		if (!WikiBase.exists(virtualWiki, topic)) {
+			css = " class=\"edit\"";
+		}
+		return "<a title=\"" + text + "\" href=\"" + url + "\"" + css + ">" + text + "</a>";
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic) throws Exception {
+		if (!StringUtils.hasText(topic)) {
+			return null;
+		}
+		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic));
 	}
 
 	/**
@@ -151,14 +183,57 @@ public class LinkUtil {
 		url += "/";
 		url += Utilities.encodeURL(topic);
 		if (StringUtils.hasText(section)) {
-			if (section.startsWith("#")) {
-				section = section.substring(1);
-			}
-			url += "#" + Utilities.encodeURL(section);
+			if (!section.startsWith("#")) url += "#";
+			url += Utilities.encodeURL(section);
 		}
 		if (StringUtils.hasText(query)) {
+			if (!query.startsWith("?")) url += "?";
 			url += query;
 		}
 		return url;
+	}
+
+	/**
+	 *
+	 */
+	private static String parseQuery(String text) {
+		String query = null;
+		int pos = text.indexOf('?');
+		if (pos > 0) {
+			if (text.length() > pos) {
+				query = text.substring(pos+1).trim();
+			}
+		}
+		return query;
+	}
+
+	/**
+	 *
+	 */
+	private static String parseSection(String text) {
+		String section = null;
+		int pos = text.indexOf('#');
+		if (pos > 0) {
+			if (text.length() > pos) {
+				section = text.substring(pos+1).trim();
+			}
+		}
+		return section;
+	}
+
+	/**
+	 *
+	 */
+	private static String parseTopic(String text) {
+		String topic = null;
+		int pos = text.indexOf('#');
+		if (pos > 0) {
+			topic = text.substring(0, pos).trim();
+		}
+		pos = text.indexOf('?');
+		if (pos > 0) {
+			topic = text.substring(0, pos).trim();
+		}
+		return topic;
 	}
 }

@@ -54,7 +54,7 @@ public class ImageLinkTag extends TagSupport {
 					this.pageContext.getOut().print(html);
 				}
 			} catch (Exception e) {
-				logger.error("Failure while building url " + html + " with value " + this.value);
+				logger.error("Failure while building url " + html + " with value " + this.value, e);
 				throw new JspException(e);
 			}
 			return EVAL_PAGE;

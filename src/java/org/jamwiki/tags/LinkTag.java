@@ -51,29 +51,16 @@ public class LinkTag extends BodyTagSupport {
 			String url = null;
 			String virtualWiki = retrieveVirtualWiki(request);
 			try {
-				// return raw link of the form "/wiki/en/Special:Edit"
-				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, this.value);
 				if (StringUtils.hasText(this.text)) {
 					// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-					String css = "";
-					String topic = this.value;
-					int pos = topic.indexOf('?');
-					if (pos > 0) {
-						topic = topic.substring(0, pos).trim();
-					}
-					pos = topic.indexOf('#');
-					if (pos > 0) {
-						topic = topic.substring(0, pos).trim();
-					}
-					if (!WikiBase.exists(virtualWiki, topic)) {
-						// FIXME - hard coding
-						css = " class=\"edit\"";
-					}
-					url = "<a href=\"" + url + "\"" + css + ">" + this.text + "</a>";
+					url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, this.value, this.text);
+				} else {
+					// return raw link of the form "/wiki/en/Special:Edit"
+					url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, this.value);
 				}
 				this.pageContext.getOut().print(url);
 			} catch (Exception e) {
-				logger.error("Failure while building url " + url + " with value " + value);
+				logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 				throw new JspException(e);
 			}
 			return EVAL_PAGE;

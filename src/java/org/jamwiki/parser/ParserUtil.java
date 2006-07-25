@@ -130,15 +130,7 @@ public class ParserUtil {
 				text = topic.substring(pos+1).trim();
 				topic = topic.substring(0, pos).trim();
 			}
-			String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic);
-			String css = "";
-			// strip out any section indicator (#) from the topic
-			// FIXME - probably better handled in a utility method
-			if ((pos = topic.indexOf("#")) != -1) topic = topic.substring(0, pos);
-			if (!WikiBase.exists(virtualWiki, topic)) {
-				css = " class=\"edit\"";
-			}
-			return "<a title=\"" + text + "\" href=\"" + url + "\"" + css + ">" + text + "</a>";
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text);
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw);
 			return "";
@@ -167,15 +159,7 @@ public class ParserUtil {
 					// FIXME - mediawiki specific.
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
-					link += "<a href=\"";
-					link += LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic);
-					link += "\"";
-					if (!WikiBase.exists(virtualWiki, topic)) {
-						link += " class=\"edit\"";
-					}
-					link += ">";
-					link += text;
-					link += "</a>";
+					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text);
 				}
 				signature += link;
 			}
