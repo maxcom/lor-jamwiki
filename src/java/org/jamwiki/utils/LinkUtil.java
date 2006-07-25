@@ -225,7 +225,7 @@ public class LinkUtil {
 	 *
 	 */
 	private static String parseTopic(String text) {
-		String topic = null;
+		String topic = text;
 		int pos = text.indexOf('#');
 		if (pos > 0) {
 			topic = text.substring(0, pos).trim();
