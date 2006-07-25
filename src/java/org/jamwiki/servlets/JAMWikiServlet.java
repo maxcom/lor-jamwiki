@@ -285,7 +285,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 			}
 			next.addObject("article", article);
 			next.addObject("comments", comments);
-			next.addObject("edit", "Special:Edit?topic=" + Utilities.encodeURL(this.pageInfo.getTopicName()));
+			String editLink = "Special:Edit?topic=" + Utilities.encodeURL(this.pageInfo.getTopicName());
+			if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+				editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
+			}
+			next.addObject("edit", editLink);
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
 		if (!StringUtils.hasText(this.pageInfo.getTopicName())) {
@@ -365,9 +369,23 @@ public abstract class JAMWikiServlet extends AbstractController {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		viewTopic(request, next, topicName, topic);
+	}
+
+	/**
+	 * Action used when viewing a topic.
+	 *
+	 * @param request The servlet request object.
+	 * @param next The Spring ModelAndView object.
+	 * @param topicName The topic being viewed.  This value must be a valid topic that
+	 *  can be loaded as a org.jamwiki.model.Topic object.
+	 */
+	protected void viewTopic(HttpServletRequest request, ModelAndView next, String pageTitle, Topic topic) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {
+			String virtualWiki = topic.getVirtualWiki();
+			String topicName = topic.getName();
 			String displayName = request.getRemoteAddr();
 			WikiUser user = Utilities.currentUser(request);
 			ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
@@ -385,9 +403,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 				next.addObject("fileVersions", fileVersions);
 			}
+			this.pageInfo.setTopicName(topicName);
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);
-		this.pageInfo.setPageTitle(topicName);
-		this.pageInfo.setTopicName(topicName);
+		this.pageInfo.setPageTitle(pageTitle);
 	}
 }

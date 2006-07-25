@@ -68,9 +68,6 @@ function inactive(element) {
 
 <br />
 
-<c:choose>
-	<c:when test="${param.type=='all'}">
-
 <div id="change">
 
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="historyForm">
@@ -88,7 +85,7 @@ function inactive(element) {
 	<input type="checkbox" name='<c:out value="diff:${change.topicVersionId}"/>' onclick="inactive(this)" />
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<a href="<jamwiki:link value="Special:History" />?type=version&topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+	<a href="<jamwiki:link value="Special:History" />?topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
@@ -102,13 +99,3 @@ function inactive(element) {
 </form>
 
 </div>
-
-	</c:when>
-	<c:when test="${param.type=='version'}">
-<c:out value="${cookedContents}" escapeXml="${false}"/>
-<hr/>
-<form>
-<textarea readonly="true" cols="80" rows="26"><c:out value="${topicVersion.versionContent}" escapeXml="${false}"/></textarea>
-</form>
-	</c:when>
-</c:choose>
