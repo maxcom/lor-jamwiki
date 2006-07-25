@@ -269,6 +269,18 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
+	 * See if a virtual wiki exists
+	 */
+	public boolean exists(String virtualWiki) throws Exception {
+		Collection virtualWikis = this.getVirtualWikiList();
+		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+			String value = (String)iterator.next();
+			if (value.equals(virtualWiki)) return true;
+		}
+		return false;
+	}
+
+	/**
 	 * See if a topic exists and if it has not been deleted.
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {

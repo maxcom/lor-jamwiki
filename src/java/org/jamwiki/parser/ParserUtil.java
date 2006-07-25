@@ -112,12 +112,22 @@ public class ParserUtil {
 			}
 			// strip the first and last brackets
 			String topic = raw.substring(2, raw.length() - 2).trim();
-			if (topic.length() <= 0) {
+			if (!StringUtils.hasText(topic)) {
 				// empty brackets, no topic to display
 				return raw;
 			}
 			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
+				// parse as an image
 				return ParserUtil.parseImageLink(context, virtualWiki, topic);
+			}
+			if (topic.startsWith(":") && StringUtils.countOccurrencesOf(topic, ":") >= 2) {
+				// see if this is a virtual wiki
+				int pos = topic.indexOf(":", 1);
+				String tmp = topic.substring(1, pos);
+				if (WikiBase.getHandler().exists(tmp) && topic.length() > pos) {
+					virtualWiki = tmp;
+					topic = topic.substring(pos + 1);
+				}
 			}
 			if (topic.startsWith(":") && topic.length() > 1) {
 				// strip opening colon
