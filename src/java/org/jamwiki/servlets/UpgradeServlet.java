@@ -25,11 +25,13 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseUpgrades;
 import org.jamwiki.persistency.file.FileUpgrades;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,7 +52,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
+		ModelAndView next = new ModelAndView("upgrade");
 		try {
 			if (!Utilities.isUpgrade()) {
 				throw new Exception(Utilities.getMessage("upgrade.error.notrequired", request.getLocale()));
@@ -62,9 +64,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 				upgrade(request, next);
 			}
 		} catch (Exception e) {
+			next = new ModelAndView("wiki");
 			viewError(request, next, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -83,7 +85,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 		Environment.saveProperties();
 		next.addObject("messages", messages);
-		next.addObject("message", Utilities.getMessage("upgrade.caption.upgradecomplete", request.getLocale()));
+		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
+		String message = Utilities.getMessage("upgrade.caption.upgradecomplete", request.getLocale());
+		message += "<br />" + LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName());
+		next.addObject("message", message);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageTitle("Special:Upgrade");

@@ -46,7 +46,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
+		ModelAndView next = new ModelAndView("setup");
 		try {
 			if (!Utilities.isFirstUse()) {
 				throw new Exception(Utilities.getMessage("setup.error.notrequired", request.getLocale()));
@@ -59,9 +59,9 @@ public class SetupServlet extends JAMWikiServlet {
 				initialize(request, next);
 			}
 		} catch (Exception e) {
+			next = new ModelAndView("wiki");
 			viewError(request, next, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
 		return next;
 	}
 
@@ -85,6 +85,7 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.saveProperties();
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			WikiBase.initialise(request.getLocale(), user);
+			next = new ModelAndView("wiki");
 			viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
 	}

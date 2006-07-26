@@ -32,7 +32,6 @@ response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
 <%
-// FIXME - this needs to be cleaned up
 String action = (String)request.getAttribute(JAMWikiServlet.PARAMETER_ACTION);
 if (action == null) {
 	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);

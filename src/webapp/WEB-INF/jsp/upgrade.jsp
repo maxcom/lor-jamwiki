@@ -22,6 +22,10 @@
 
 <%@ include file="page-init.jsp" %>
 
+<html>
+<head></head>
+<body>
+
 <script type="text/javascript" language="JavaScript">
 <!--
 function confirmSubmit() {
@@ -30,11 +34,11 @@ function confirmSubmit() {
 // -->
 </script>
 
-<form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Upgrade" />">
+<form name="adminUpgrade" method="get">
 <input type="hidden" name="function" value="upgrade" />
 <table style="border:2px solid #333333;padding=1em;">
 <%-- FIXME: hard coding --%>
-<c:if test="${!empty message}"><tr><td align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
+<c:if test="${!empty message}"><tr><td align="center"><div style="color:green;size=110%;"><c:out value="${message}" escapeXml="false" /></div></td></tr></c:if>
 <tr><td>An upgrade to JAMWiki has been installed.  Please back up all data, and then click the "Submit" button to complete the upgrade process.</td></tr>
 <tr><td align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
 </table>
@@ -48,3 +52,6 @@ function confirmSubmit() {
 </c:forEach>
 </table>
 </c:if>
+
+</body>
+</html>

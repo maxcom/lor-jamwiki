@@ -23,7 +23,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 
 /**
  * Make sure character encoding is properly set to UTF-8.  See
@@ -32,7 +36,8 @@ import org.apache.log4j.Logger;
 public class JAMWikiFilter implements Filter {
 
 	private static Logger logger = Logger.getLogger(JAMWikiFilter.class.getName());
-	String encoding = "UTF-8";
+	private String encoding = "UTF-8";
+	private FilterConfig config = null;
 
 	/**
 	 *
@@ -46,6 +51,7 @@ public class JAMWikiFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		response.setContentType("text/html;charset=" + this.encoding);
 		request.setCharacterEncoding(this.encoding);
+		if (redirectNeeded(request, response)) return;
 		chain.doFilter(request, response);
 	}
 
@@ -54,5 +60,37 @@ public class JAMWikiFilter implements Filter {
 	 */
 	public void init(FilterConfig config) throws ServletException {
 		this.encoding = config.getInitParameter("encoding");
+		this.config = config;
+	}
+
+	/**
+	 *
+	 */
+	private boolean redirectNeeded(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
+		if (!(servletRequest instanceof HttpServletRequest) || !(servletResponse instanceof HttpServletResponse)) {
+			return false;
+		}
+		HttpServletRequest request = (HttpServletRequest)servletRequest;
+		HttpServletResponse response = (HttpServletResponse)servletResponse;
+		if (Utilities.isFirstUse() && !JAMWikiServlet.isTopic(request, "Special:Setup")) {
+			// redirect to setup page
+			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
+			redirect(request, response, url);
+			return true;
+		} else if (Utilities.isUpgrade() && !JAMWikiServlet.isTopic(request, "Special:Upgrade")) {
+			// redirect to upgrade page
+			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
+			redirect(request, response, url);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
+	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
+		response.sendRedirect(url);
+		return;
 	}
 }

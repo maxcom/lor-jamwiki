@@ -26,6 +26,10 @@
 
 <%@ include file="page-init.jsp" %>
 
+<html>
+<head></head>
+<body>
+
 <script type="text/javascript">
 function onPersistenceType() {
 	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.FILE %>") {
@@ -44,7 +48,7 @@ function onPersistenceType() {
 }
 </script>
 
-<form name="setup" method="post" action="<jamwiki:link value="Special:Setup" />">
+<form name="setup" method="post">
 <table style="border:2px solid #333333;padding=1em;">
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" />
@@ -134,3 +138,6 @@ function onPersistenceType() {
 <script>
 onPersistenceType();
 </script>
+
+</body>
+</html>
