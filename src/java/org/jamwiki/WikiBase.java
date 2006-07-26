@@ -226,19 +226,12 @@ public class WikiBase {
 	public static int getVirtualWikiCount() {
 		if (virtualWikiCount == 0) {
 			try {
-				virtualWikiCount = getVirtualWikiList().size();
+				virtualWikiCount = WikiBase.getHandler().getVirtualWikiList().size();
 			} catch (Exception e) {
 				logger.warn(e);
 			}
 		}
 		return virtualWikiCount;
-	}
-
-	/**
-	 * Return a list of all virtual wikis on the server
-	 */
-	public static Collection getVirtualWikiList() throws Exception {
-		return WikiBase.handler.getVirtualWikiList();
 	}
 
 	/**

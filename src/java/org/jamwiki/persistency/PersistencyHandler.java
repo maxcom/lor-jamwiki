@@ -299,11 +299,11 @@ public abstract class PersistencyHandler {
 	/**
 	 * See if a virtual wiki exists
 	 */
-	public boolean exists(String virtualWiki) throws Exception {
+	public boolean exists(String virtualWikiName) throws Exception {
 		Collection virtualWikis = this.getVirtualWikiList();
 		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-			String value = (String)iterator.next();
-			if (value.equals(virtualWiki)) return true;
+			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+			if (virtualWikiName.equals(virtualWiki.getName())) return true;
 		}
 		return false;
 	}
@@ -437,15 +437,15 @@ public abstract class PersistencyHandler {
 			Collection all = getVirtualWikiList();
 			if (user != null && user.getUserId() < 1) addWikiUser(user, params);
 			for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-				String virtualWiki = (String)iterator.next();
-				logger.info("Creating defaults for " + virtualWiki);
+				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+				logger.info("Creating defaults for " + virtualWiki.getName());
 				// create the default topics
-				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
-				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
-				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.topArea", locale), user, true, params);
-				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
-				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
-				setupSpecialPage(virtualWiki, Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
+				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
+				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
+				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.topArea", locale), user, true, params);
+				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
+				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
+				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
 			}
 		} catch (Exception e) {
 			this.handleErrors(params);

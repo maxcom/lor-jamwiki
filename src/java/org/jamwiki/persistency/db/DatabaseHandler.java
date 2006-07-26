@@ -118,7 +118,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			virtualWiki.setVirtualWikiId(virtualWikiId);
 		}
 		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWiki, conn);
-		DatabaseHandler.loadVirtualWikiHashes();
 	}
 
 	/**
@@ -283,7 +282,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (virtualWikiNameHash == null) {
 			loadVirtualWikiHashes();
 		}
-		return virtualWikiNameHash.keySet();
+		return virtualWikiNameHash.values();
 	}
 
 	/**
@@ -744,5 +743,13 @@ public class DatabaseHandler extends PersistencyHandler {
 		DatabaseHandler.queryHandler.updateWikiUser(user, conn);
 		// FIXME - may be in LDAP
 		DatabaseHandler.queryHandler.updateWikiUserInfo(user, conn);
+	}
+
+	/**
+	 *
+	 */
+	public void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception {
+		super.writeVirtualWiki(virtualWiki);
+		DatabaseHandler.loadVirtualWikiHashes();
 	}
 }

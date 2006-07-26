@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -67,14 +68,15 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		request.getSession().invalidate();
 		Utilities.removeCookie(response, JAMWikiServlet.USER_COOKIE);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
-			redirect = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			redirect = virtualWiki.getDefaultTopicName();
 		}
-		redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, redirect);
+		redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, redirect);
 		// FIXME - can a redirect be done with Spring?
 		redirect(redirect, response);
 	}
@@ -83,13 +85,14 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
-			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, topic);
+			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			String topic = virtualWiki.getDefaultTopicName();
+			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic);
 		}
 		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password, false);
 		if (user == null) {

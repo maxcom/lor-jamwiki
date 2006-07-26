@@ -462,6 +462,7 @@ onUserGroupType()
 <tr>
 	<td class="normal"><c:out value="${wiki.name}" /></td>
 	<td class="normal"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
+	<td><input type="submit" value="<f:message key="common.update" />" /></td>
 </tr>
 </form>
 </c:forEach>
@@ -471,9 +472,9 @@ onUserGroupType()
 <tr>
 	<td class="normal"><input type="text" name="name" /></td>
 	<td class="normal"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
+	<td><input type="submit" value="<f:message key="common.add" />" /></td>
 </tr>
 </form>
-<tr><td align="center" colspan="2"><input type="submit" value="<f:message key="common.add" />" /></td></tr>
 </table>
 </form>
 

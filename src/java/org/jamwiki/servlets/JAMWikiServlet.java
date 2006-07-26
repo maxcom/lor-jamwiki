@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.search.AbstractSearchEngine;
@@ -340,13 +341,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	protected void viewLogin(HttpServletRequest request, ModelAndView next, String topic) throws Exception {
 		this.pageInfo = new WikiPageInfo();
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			if (!StringUtils.hasText(topic)) {
-				topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+				VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+				topic = virtualWiki.getDefaultTopicName();
 			}
-			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, topic, null, request.getQueryString());
+			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic, null, request.getQueryString());
 		}
 		next.addObject("redirect", redirect);
 		this.pageInfo.setPageTitle(Utilities.getMessage("login.title", request.getLocale()));

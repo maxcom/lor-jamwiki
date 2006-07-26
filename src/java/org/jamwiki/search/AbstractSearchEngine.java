@@ -60,6 +60,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.search.lucene.HTMLParser;
 import org.jamwiki.search.lucene.LuceneTools;
@@ -483,10 +484,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 */
 	public synchronized void rebuild() throws Exception {
 		logger.info("Building index");
-		Collection allWikis = WikiBase.getVirtualWikiList();
-		if (!allWikis.contains(WikiBase.DEFAULT_VWIKI)) {
-			allWikis.add(WikiBase.DEFAULT_VWIKI);
-		}
+		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
 		try {
 			// check, if classes are here:
 			Class.forName("org.jamwiki.search.lucene.HTMLParser");
@@ -495,7 +493,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			canParseHTML = false;
 		}
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
-			String currentWiki = (String) iterator.next();
+			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+			String currentWiki = virtualWiki.getName();
 			logger.debug("indexing virtual wiki " + currentWiki);
 			File indexFile = new File(indexPath, "index" + currentWiki);
 			logger.debug("Index file path = " + indexFile);

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
@@ -75,7 +76,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
 		this.pageInfo.setPageTitle(Utilities.getMessage("register.title", request.getLocale()));
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
 		String userIdString = request.getParameter("userId");
 		if (StringUtils.hasText(userIdString)) {
@@ -105,8 +106,9 @@ public class RegisterServlet extends JAMWikiServlet {
 		} else {
 			WikiBase.getHandler().writeWikiUser(user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
-			String topic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			String redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, topic);
+			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			String topic = virtualWiki.getDefaultTopicName();
+			String redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic);
 			// FIXME - can a redirect be done with Spring?
 			redirect(redirect, response);
 			return true;

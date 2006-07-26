@@ -113,7 +113,7 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			// FIXME - remove this
 			readOnlyList(request, next);
-			Collection virtualWikiList = WikiBase.getVirtualWikiList();
+			Collection virtualWikiList = WikiBase.getHandler().getVirtualWikiList();
 			next.addObject("wikis", virtualWikiList);
 		} catch (Exception e) {
 			viewError(request, next, e);
