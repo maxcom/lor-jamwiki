@@ -71,7 +71,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String ACTION_TODO_TOPICS = "todo_topics";
 	public static final String ACTION_UPGRADE = "action_upgrade";
 	public static final String ACTION_UPLOAD = "action_upload";
-	public static final String ACTION_VIRTUAL_WIKI_LIST = "action_virtual_wiki_list";
 	public static final String PARAMETER_ACTION = "action";
 	public static final String PARAMETER_SPECIAL = "special";
 	public static final String PARAMETER_TITLE = "title";

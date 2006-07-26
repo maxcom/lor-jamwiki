@@ -72,7 +72,6 @@ if (Utilities.isFirstUse() && !action.equals(JAMWikiServlet.ACTION_SETUP) && !ac
 		<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >
-		<%@ include file="navbar-virtual-wiki.jsp"%>
 		<%@ include file="navbar-history-list.jsp"%>
 		<div id="contents-header"><c:out value="${title}"/></div>
 <%
@@ -151,10 +150,6 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 } else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
 %>
 		<jsp:include page="upload.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_VIRTUAL_WIKI_LIST)) {
-%>
-		<jsp:include page="virtualwikilist.jsp" flush="true" />
 <%
 } else {
 %>

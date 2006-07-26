@@ -31,7 +31,6 @@
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
 				<prop key="/**/Special:Upgrade">Upgrade</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
-				<prop key="/**/Special:VirtualWikiList">VirtualWikiList</prop>
 				<prop key="/**/*.css">Stylesheet</prop>
 				<prop key="/**/*">Topic</prop>
 			</props>
@@ -56,7 +55,6 @@
 	<bean id="Topic" class="org.jamwiki.servlets.TopicServlet" />
 	<bean id="Upgrade" class="org.jamwiki.servlets.UpgradeServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
-	<bean id="VirtualWikiList" class="org.jamwiki.servlets.VirtualWikiServlet" />
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
 		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
