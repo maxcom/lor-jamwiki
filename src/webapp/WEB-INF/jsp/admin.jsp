@@ -449,15 +449,32 @@ onUserGroupType()
 
 <!-- Virtual Wikis -->
 <p class="subHeader"><f:message key="admin.title.virtualwiki" /></p>
-<form action="<jamwiki:link value="Special:Admin" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td><f:message key="common.name" /> <input type="textfield" name="newVirtualWiki" /></td>
-	<td><input type="submit" value="<f:message key="common.add" />" /></td>
+	<th><f:message key="common.name" /></th>
+	<th><f:message key="admin.caption.defaulttopic" /></th>
 </tr>
-</table>
+<c:forEach items="${wikis}" var="wiki">
+<form action="<jamwiki:link value="Special:Admin" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki">
 <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
+<input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
+<tr>
+	<td class="normal"><c:out value="${wiki.name}" /></td>
+	<td class="normal"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
+</tr>
+</form>
+</c:forEach>
+<form action="<jamwiki:link value="Special:Admin" />" method="post">
+<input type="hidden" name="function" value="addVirtualWiki">
+<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
+<tr>
+	<td class="normal"><input type="text" name="name" /></td>
+	<td class="normal"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
+</tr>
+</form>
+<tr><td align="center" colspan="2"><input type="submit" value="<f:message key="common.add" />" /></td></tr>
+</table>
 </form>
 
 <hr />

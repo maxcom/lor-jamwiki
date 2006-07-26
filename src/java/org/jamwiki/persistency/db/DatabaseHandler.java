@@ -32,6 +32,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
@@ -110,10 +111,13 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addVirtualWiki(String virtualWikiName, Object[] params) throws Exception {
+	protected void addVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
-		int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId(conn);
-		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWikiId, virtualWikiName, conn);
+		if (virtualWiki.getVirtualWikiId() < 1) {
+			int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId(conn);
+			virtualWiki.setVirtualWikiId(virtualWikiId);
+		}
+		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWiki, conn);
 		DatabaseHandler.loadVirtualWikiHashes();
 	}
 
@@ -335,11 +339,6 @@ public class DatabaseHandler extends PersistencyHandler {
 					DatabaseHandler.queryHandler.dropTables(conn);
 				}
 			}
-			sql = "select * from jam_virtual_wiki ";
-			rs = DatabaseConnection.executeQuery(sql, conn);
-			if (rs.size() == 0) {
-				writeVirtualWiki(WikiBase.DEFAULT_VWIKI);
-			}
 		} finally {
 			if (conn != null) DatabaseConnection.closeConnection(conn);
 		}
@@ -426,6 +425,22 @@ public class DatabaseHandler extends PersistencyHandler {
 			return topicVersion;
 		} catch (Exception e) {
 			logger.error("Failure while initializing topic version", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static VirtualWiki initVirtualWiki(WikiResultSet rs) {
+		try {
+			VirtualWiki virtualWiki = new VirtualWiki();
+			virtualWiki.setVirtualWikiId(rs.getInt("virtual_wiki_id"));
+			virtualWiki.setName(rs.getString("virtual_wiki_name"));
+			virtualWiki.setDefaultTopicName(rs.getString("default_topic_name"));
+			return virtualWiki;
+		} catch (Exception e) {
+			logger.error("Failure while initializing virtual wiki", e);
 			return null;
 		}
 	}
@@ -520,10 +535,9 @@ public class DatabaseHandler extends PersistencyHandler {
 		try {
 			WikiResultSet rs = DatabaseHandler.queryHandler.getVirtualWikis();
 			while (rs.next()) {
-				Integer value = new Integer(rs.getInt("virtual_wiki_id"));
-				String key = rs.getString("virtual_wiki_name");
-				virtualWikiNameHash.put(key, value);
-				virtualWikiIdHash.put(value, key);
+				VirtualWiki virtualWiki = initVirtualWiki(rs);
+				virtualWikiNameHash.put(virtualWiki.getName(), virtualWiki);
+				virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
 			}
 		} catch (Exception e) {
 			logger.error("Failure while loading virtual wiki hashtable ", e);
@@ -551,7 +565,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
-		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWiki, topicName);
 		if (rs.size() == 0) return null;
 		return initTopic(rs);
@@ -569,15 +582,22 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception {
+		if (virtualWikiNameHash == null) {
+			loadVirtualWikiHashes();
+		}
+		return (VirtualWiki)virtualWikiNameHash.get(virtualWikiName);
+	}
+
+	/**
+	 *
+	 */
 	protected static int lookupVirtualWikiId(String virtualWikiName) throws Exception {
 		if (virtualWikiNameHash == null) {
 			loadVirtualWikiHashes();
 		}
-		Integer virtualWikiId = (Integer)virtualWikiNameHash.get(virtualWikiName);
-		if (virtualWikiId == null) {
-			throw new Exception("Virtual wiki " + virtualWikiName + " not found");
-		}
-		return virtualWikiId.intValue();
+		VirtualWiki virtualWiki = (VirtualWiki)virtualWikiNameHash.get(virtualWikiName);
+		return (virtualWiki != null) ? virtualWiki.getVirtualWikiId() : -1;
 	}
 
 	/**
@@ -587,18 +607,14 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (virtualWikiIdHash == null) {
 			loadVirtualWikiHashes();
 		}
-		String virtualWikiName = (String)virtualWikiIdHash.get(new Integer(virtualWikiId));
-		if (virtualWikiName == null) {
-			throw new Exception("Virtual wiki " + virtualWikiId + " not found");
-		}
-		return virtualWikiName;
+		VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIdHash.get(new Integer(virtualWikiId));
+		return (virtualWiki != null) ? virtualWiki.getName() : null;
 	}
 
 	/**
 	 *
 	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
-		int virtualWikiId = lookupVirtualWikiId(virtualWiki);
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFile(virtualWiki, topic.getTopicId());
@@ -702,6 +718,14 @@ public class DatabaseHandler extends PersistencyHandler {
 	protected void updateTopic(Topic topic, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
 		DatabaseHandler.queryHandler.updateTopic(topic, conn);
+	}
+
+	/**
+	 *
+	 */
+	protected void updateVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.updateVirtualWiki(virtualWiki, conn);
 	}
 
 	/**

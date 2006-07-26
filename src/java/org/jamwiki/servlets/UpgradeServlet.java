@@ -26,6 +26,9 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.persistency.db.DatabaseHandler;
+import org.jamwiki.persistency.db.DatabaseUpgrades;
+import org.jamwiki.persistency.file.FileUpgrades;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -74,6 +77,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (oldVersion.before(0, 0, 8)) {
 			messages = upgrade008(messages);
 		}
+		if (oldVersion.before(0, 1, 0)) {
+			messages = upgrade010(messages);
+		}
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 		Environment.saveProperties();
 		next.addObject("messages", messages);
@@ -116,6 +122,26 @@ public class UpgradeServlet extends JAMWikiServlet {
 				logger.error(msg, e);
 				messages.add(msg + ": " + e.getMessage());
 			}
+		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	private Vector upgrade010(Vector messages) {
+		// update virtual wiki
+		try {
+			if (WikiBase.getHandler() instanceof DatabaseHandler) {
+				messages = DatabaseUpgrades.upgrade010(messages);
+			} else {
+				messages = FileUpgrades.upgrade010(messages);
+			}
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to update virtual wiki table";
+			logger.error(msg, e);
+			messages.add(msg + ": " + e.getMessage());
 		}
 		return messages;
 	}

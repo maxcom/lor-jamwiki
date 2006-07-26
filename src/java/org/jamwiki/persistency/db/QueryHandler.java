@@ -20,6 +20,7 @@ import java.sql.Connection;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
@@ -102,7 +103,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName, Connection conn) throws Exception;
+	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -198,6 +199,11 @@ public interface QueryHandler {
 	 *
 	 */
 	public void updateTopic(Topic topic, Connection conn) throws Exception;
+
+	/**
+	 *
+	 */
+	public void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
 
 	/**
 	 *

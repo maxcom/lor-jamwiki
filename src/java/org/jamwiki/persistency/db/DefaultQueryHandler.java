@@ -24,6 +24,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
@@ -41,6 +42,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		"CREATE TABLE jam_virtual_wiki ( "
 		+   "virtual_wiki_id INTEGER NOT NULL, "
 		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
+		+   "default_topic_name VARCHAR(200) NOT NULL, "
 		+   "create_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
 		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id), "
 		+   "CONSTRAINT jam_unique_vwiki_name UNIQUE (virtual_wiki_name) "
@@ -231,9 +233,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "AND jam_topic.topic_deleted = '0' ";
 	protected static final String STATEMENT_INSERT_VIRTUAL_WIKI =
 		"insert into jam_virtual_wiki ("
-		+   "virtual_wiki_id, virtual_wiki_name "
+		+   "virtual_wiki_id, virtual_wiki_name, default_topic_name "
 		+ ") values ( "
-		+   "?, ? "
+		+   "?, ?, ? "
 		+ ") ";
 	protected static final String STATEMENT_INSERT_WIKI_FILE =
 	    "insert into jam_file ( "
@@ -384,6 +386,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		+ "topic_content = ?, "
 		+ "topic_deleted = ? "
 		+ "where topic_id = ? ";
+	protected static final String STATEMENT_UPDATE_VIRTUAL_WIKI =
+		"update jam_virtual_wiki set "
+		+ "default_topic_name = ? "
+		+ "where virtual_wiki_id = ? ";
 	protected static final String STATEMENT_UPDATE_WIKI_FILE =
 		"update jam_file set "
 		+ "virtual_wiki_id = ?, "
@@ -638,10 +644,11 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertVirtualWiki(int virtualWikiId, String virtualWikiName, Connection conn) throws Exception {
+	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, virtualWikiName);
+		stmt.setInt(1, virtualWiki.getVirtualWikiId());
+		stmt.setString(2, virtualWiki.getName());
+		stmt.setString(3, virtualWiki.getDefaultTopicName());
 		stmt.executeUpdate(conn);
 	}
 
@@ -902,6 +909,16 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(5, topic.getTopicContent());
 		stmt.setInt(6, (topic.getDeleted() ? 1 : 0));
 		stmt.setInt(7, topic.getTopicId());
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
+		stmt.setString(1, virtualWiki.getDefaultTopicName());
+		stmt.setInt(2, virtualWiki.getVirtualWikiId());
 		stmt.executeUpdate(conn);
 	}
 

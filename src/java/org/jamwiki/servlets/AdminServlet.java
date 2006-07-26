@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
@@ -112,6 +113,8 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			// FIXME - remove this
 			readOnlyList(request, next);
+			Collection virtualWikiList = WikiBase.getVirtualWikiList();
+			next.addObject("wikis", virtualWikiList);
 		} catch (Exception e) {
 			viewError(request, next, e);
 		}
@@ -123,20 +126,24 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) throws Exception {
-		String newWiki = request.getParameter("newVirtualWiki");
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageTitle("Special:Admin");
 		WikiUser user = Utilities.currentUser(request);
 		try {
-			logger.debug("Adding new Wiki: " + newWiki);
-			WikiBase.getHandler().writeVirtualWiki(newWiki);
+			VirtualWiki virtualWiki = new VirtualWiki();
+			if (StringUtils.hasText(request.getParameter("virtualWikiId"))) {
+				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
+			}
+			virtualWiki.setName(request.getParameter("name"));
+			virtualWiki.setDefaultTopicName(request.getParameter("defaultTopicName"));
+			WikiBase.getHandler().writeVirtualWiki(virtualWiki);
 			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
 			WikiBase.initialise(request.getLocale(), user);
 		} catch (Exception e) {
-			logger.error("Failure while adding virtual wiki " + newWiki, e);
-			String message = "Failure while adding virtual wiki " + newWiki + ": " + e.getMessage();
+			logger.error("Failure while adding virtual wiki", e);
+			String message = "Failure while adding virtual wiki: " + e.getMessage();
 			next.addObject("message", message);
 		}
 	}

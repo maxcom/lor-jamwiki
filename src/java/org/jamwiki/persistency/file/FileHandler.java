@@ -41,6 +41,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
@@ -66,6 +67,8 @@ public class FileHandler extends PersistencyHandler {
 	private static final String NEXT_TOPIC_ID_FILE = "topic.id";
 	private static int NEXT_TOPIC_VERSION_ID = 0;
 	private static final String NEXT_TOPIC_VERSION_ID_FILE = "topic_version.id";
+	private static int NEXT_VIRTUAL_WIKI_ID = 0;
+	private static final String NEXT_VIRTUAL_WIKI_ID_FILE = "virtual_wiki.id";
 	private static int NEXT_WIKI_USER_ID = 0;
 	private static int NEXT_WIKI_FILE_ID = 0;
 	private static final String NEXT_WIKI_FILE_ID_FILE = "wiki_file.id";
@@ -76,7 +79,8 @@ public class FileHandler extends PersistencyHandler {
 	private static final String RECENT_CHANGE_DIR = "changes";
 	private static final String TOPIC_DIR = "topics";
 	private static final String TOPIC_VERSION_DIR = "versions";
-	private static final String VIRTUAL_WIKI_LIST = "virtualwikis";
+	private static final String VIRTUAL_WIKI_DIR = "virtualwiki";
+//	private static final String VIRTUAL_WIKI_LIST = "virtualwikis";
 	private static final String WIKI_FILE_DIR = "files";
 	private static final String WIKI_FILE_VERSION_DIR = "fileversions";
 	private static final String WIKI_USER_DIR = "wikiusers";
@@ -113,6 +117,10 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_VERSION_EDIT_TYPE = "edittype";
 	protected static final String XML_TOPIC_VERSION_PREVIOUS_TOPIC_VERSION_ID = "previoustopicversionid";
 	protected static final String XML_TOPIC_VERSION_TEXT = "text";
+	protected static final String XML_VIRTUAL_WIKI_ROOT = "virtualwiki";
+	protected static final String XML_VIRTUAL_WIKI_NAME = "name";
+	protected static final String XML_VIRTUAL_WIKI_ID = "id";
+	protected static final String XML_VIRTUAL_WIKI_DEFAULT_TOPIC_NAME = "defaulttopic";
 	protected static final String XML_WIKI_FILE_ROOT = "wikifile";
 	protected static final String XML_WIKI_FILE_NAME = "filename";
 	protected static final String XML_WIKI_FILE_ID = "fileid";
@@ -182,18 +190,11 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addVirtualWiki(String virtualWiki, Object[] params) throws Exception {
-		Collection all = new ArrayList();
-		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
-		if (file.exists()) {
-			List lines = FileUtils.readLines(file, "UTF-8");
-			for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
-				String line = (String)iterator.next();
-				all.add(line);
-			}
+	protected void addVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception {
+		if (virtualWiki.getVirtualWikiId() < 1) {
+			virtualWiki.setVirtualWikiId(nextVirtualWikiId());
 		}
-		all.add(virtualWiki);
-		FileUtils.writeLines(file, "UTF-8", all);
+		this.saveVirtualWiki(virtualWiki);
 	}
 
 	/**
@@ -221,13 +222,6 @@ public class FileHandler extends PersistencyHandler {
 			user.setUserId(nextWikiUserId());
 		}
 		this.saveWikiUser(user);
-	}
-
-	/**
-	 *
-	 */
-	private void createVirtualWikiList(File virtualList) throws Exception {
-		FileUtils.writeStringToFile(virtualList, WikiBase.DEFAULT_VWIKI, "UTF-8");
 	}
 
 	/**
@@ -450,15 +444,12 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection getVirtualWikiList() throws Exception {
-		Collection all = new ArrayList();
-		File file = getPathFor("", null, VIRTUAL_WIKI_LIST);
-		List lines = FileUtils.readLines(file, "UTF-8");
-		for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
-			String line = (String)iterator.next();
-			all.add(line);
-		}
-		if (!all.contains(WikiBase.DEFAULT_VWIKI)) {
-			all.add(WikiBase.DEFAULT_VWIKI);
+		List all = new LinkedList();
+		File[] files = retrieveVirtualWikiFiles();
+		if (files == null) return all;
+		for (int i = 0; i < files.length; i++) {
+			VirtualWiki virtualWiki = initVirtualWiki(files[i]);
+			all.add(virtualWiki);
 		}
 		return all;
 	}
@@ -476,11 +467,12 @@ public class FileHandler extends PersistencyHandler {
 		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			return;
 		}
-		// create the virtual wiki list file if necessary
-		File virtualList = getPathFor("", null, VIRTUAL_WIKI_LIST);
-		// get the virtual wiki list and set up the file system
-		if (!virtualList.exists()) {
-			createVirtualWikiList(virtualList);
+		// create the default virtual wiki if necessary
+		if (lookupVirtualWiki(WikiBase.DEFAULT_VWIKI) == null) {
+			VirtualWiki virtualWiki = new VirtualWiki();
+			virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
+			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+			writeVirtualWiki(virtualWiki);
 		}
 		super.initialize(locale, user);
 	}
@@ -624,6 +616,37 @@ public class FileHandler extends PersistencyHandler {
 			return topicVersion;
 		} catch (Exception e) {
 			logger.error("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected static VirtualWiki initVirtualWiki(File file) {
+		if (!file.exists()) return null;
+		try {
+			VirtualWiki virtualWiki = new VirtualWiki();
+			Document document = XMLUtil.parseXML(file, false);
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_VIRTUAL_WIKI_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
+			String childName = null;
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
+				if (childName.equals(XML_VIRTUAL_WIKI_ID)) {
+					virtualWiki.setVirtualWikiId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
+				} else if (childName.equals(XML_VIRTUAL_WIKI_NAME)) {
+					virtualWiki.setName(XMLUtil.getTextContent(rootChild));
+				} else if (childName.equals(XML_VIRTUAL_WIKI_DEFAULT_TOPIC_NAME)) {
+					virtualWiki.setDefaultTopicName(XMLUtil.getTextContent(rootChild));
+				}
+			}
+			return virtualWiki;
+		} catch (Exception e) {
+			logger.error("Failure while initializing virtual wiki for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -803,6 +826,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public VirtualWiki lookupVirtualWiki(String virtualWiki) throws Exception {
+		String filename = virtualWikiFilename(virtualWiki);
+		File file = getPathFor(null, FileHandler.VIRTUAL_WIKI_DIR, filename);
+		return initVirtualWiki(file);
+	}
+
+	/**
+	 *
+	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
 		// wiki file named after its associated topic
 		String filename = topicFilename(topicName);
@@ -879,6 +911,22 @@ public class FileHandler extends PersistencyHandler {
 		}
 		NEXT_TOPIC_VERSION_ID++;
 		return nextFileWrite(NEXT_TOPIC_VERSION_ID, topicVersionIdFile);
+	}
+
+	/**
+	 *
+	 */
+	private static int nextVirtualWikiId() throws Exception {
+		File virtualWikiIdFile = getPathFor(null, null, NEXT_VIRTUAL_WIKI_ID_FILE);
+		if (NEXT_VIRTUAL_WIKI_ID < 1) {
+			// read value from file
+			if (virtualWikiIdFile.exists()) {
+				String integer = FileUtils.readFileToString(virtualWikiIdFile, "UTF-8");
+				NEXT_VIRTUAL_WIKI_ID = new Integer(integer).intValue();
+			}
+		}
+		NEXT_VIRTUAL_WIKI_ID++;
+		return nextFileWrite(NEXT_VIRTUAL_WIKI_ID, virtualWikiIdFile);
 	}
 
 	/**
@@ -1029,6 +1077,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	private File[] retrieveVirtualWikiFiles() throws Exception {
+		File file = FileHandler.getPathFor(null, null, FileHandler.VIRTUAL_WIKI_DIR);
+		File[] files = file.listFiles();
+		return files;
+	}
+
+	/**
+	 *
+	 */
 	private File[] retrieveWikiFileFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.WIKI_FILE_DIR);
 		File[] files = file.listFiles();
@@ -1149,6 +1206,33 @@ public class FileHandler extends PersistencyHandler {
 		content.append("</mediawiki>");
 		String filename = topicFilename(topic.getName());
 		File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_DIR, filename);
+		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
+	}
+
+	/**
+	 *
+	 */
+	private void saveVirtualWiki(VirtualWiki virtualWiki) throws Exception {
+		if (virtualWiki.getVirtualWikiId() > NEXT_VIRTUAL_WIKI_ID) {
+			NEXT_VIRTUAL_WIKI_ID = virtualWiki.getVirtualWikiId();
+			nextFileWrite(NEXT_VIRTUAL_WIKI_ID, getPathFor(null, null, NEXT_VIRTUAL_WIKI_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_VIRTUAL_WIKI_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_ID, virtualWiki.getVirtualWikiId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_NAME, virtualWiki.getName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_DEFAULT_TOPIC_NAME, virtualWiki.getDefaultTopicName(), true));
+		content.append("\n");
+		content.append("</").append(XML_VIRTUAL_WIKI_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = virtualWikiFilename(virtualWiki.getName());
+		File file = FileHandler.getPathFor(null, FileHandler.VIRTUAL_WIKI_DIR, filename);
 		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
 	}
 
@@ -1365,6 +1449,13 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected void updateVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception {
+		this.saveVirtualWiki(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
 	protected void updateWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
 		this.saveWikiFile(topicName, wikiFile);
 	}
@@ -1374,6 +1465,13 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected void updateWikiUser(WikiUser user, Object[] params) throws Exception {
 		this.saveWikiUser(user);
+	}
+
+	/**
+	 *
+	 */
+	protected static String virtualWikiFilename(String virtualWikiName) {
+		return virtualWikiName + EXT;
 	}
 
 	/**

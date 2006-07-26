@@ -30,6 +30,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
@@ -73,7 +74,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected abstract void addVirtualWiki(String virtualWiki, Object[] params) throws Exception;
+	protected abstract void addVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception;
 
 	/**
 	 *
@@ -125,25 +126,25 @@ public abstract class PersistencyHandler {
 			}
 			Collection virtualWikis = fromHandler.getVirtualWikiList();
 			for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
-				String virtualWiki = (String) virtualWikiIterator.next();
+				VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIterator.next();
 				try {
 					toHandler.addVirtualWiki(virtualWiki, params);
-					messages.add("Added virtual wiki " + virtualWiki);
+					messages.add("Added virtual wiki " + virtualWiki.getName());
 				} catch (Exception e) {
-					String msg = "Unable to convert virtual wiki " + virtualWiki;
+					String msg = "Unable to convert virtual wiki " + virtualWiki.getName();
 					logger.error(msg, e);
 					messages.add(msg + ": " + e.getMessage());
 				}
 				// topics
-				Collection topicNames = fromHandler.getAllTopicNames(virtualWiki);
+				Collection topicNames = fromHandler.getAllTopicNames(virtualWiki.getName());
 				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
 					try {
-						Topic topic = fromHandler.lookupTopic(virtualWiki, topicName);
+						Topic topic = fromHandler.lookupTopic(virtualWiki.getName(), topicName);
 						toHandler.addTopic(topic, params);
-						messages.add("Added topic " + virtualWiki + " / " + topicName);
+						messages.add("Added topic " + virtualWiki.getName() + " / " + topicName);
 					} catch (Exception e) {
-						String msg = "Unable to convert topic: " + virtualWiki + " / " + topicName;
+						String msg = "Unable to convert topic: " + virtualWiki.getName() + " / " + topicName;
 						logger.error(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
@@ -151,42 +152,42 @@ public abstract class PersistencyHandler {
 				// topic versions
 				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
-					List versions = fromHandler.getAllTopicVersions(virtualWiki, topicName, false);
+					List versions = fromHandler.getAllTopicVersions(virtualWiki.getName(), topicName, false);
 					for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 						TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
 						try {
-							toHandler.addTopicVersion(virtualWiki, topicName, topicVersion, params);
-							messages.add("Added topic version " + virtualWiki + " / " + topicName + " / " + topicVersion.getTopicVersionId());
+							toHandler.addTopicVersion(virtualWiki.getName(), topicName, topicVersion, params);
+							messages.add("Added topic version " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId());
 						} catch (Exception e) {
-							String msg = "Unable to convert topic version: " + virtualWiki + " / " + topicName + " / " + topicVersion.getTopicVersionId();
+							String msg = "Unable to convert topic version: " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId();
 							logger.error(msg, e);
 							messages.add(msg + ": " + e.getMessage());
 						}
 					}
 				}
 				// read-only topics
-				Collection readOnlys = fromHandler.getReadOnlyTopics(virtualWiki);
+				Collection readOnlys = fromHandler.getReadOnlyTopics(virtualWiki.getName());
 				for (Iterator readOnlyIterator = readOnlys.iterator(); readOnlyIterator.hasNext();) {
 					String topicName = (String)readOnlyIterator.next();
 					try {
-						toHandler.writeReadOnlyTopic(virtualWiki, topicName, params);
-						messages.add("Added read-only topic " + virtualWiki + " / " + topicName);
+						toHandler.writeReadOnlyTopic(virtualWiki.getName(), topicName, params);
+						messages.add("Added read-only topic " + virtualWiki.getName() + " / " + topicName);
 					} catch (Exception e) {
-						String msg = "Unable to convert read-only topic: " + virtualWiki + " / " + topicName;
+						String msg = "Unable to convert read-only topic: " + virtualWiki.getName() + " / " + topicName;
 						logger.error(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
 				}
 				// wiki files
-				Collection wikiFileNames = fromHandler.getAllWikiFileTopicNames(virtualWiki);
+				Collection wikiFileNames = fromHandler.getAllWikiFileTopicNames(virtualWiki.getName());
 				for (Iterator wikiFileIterator = wikiFileNames.iterator(); wikiFileIterator.hasNext();) {
 					String topicName = (String)wikiFileIterator.next();
 					try {
-						WikiFile wikiFile = fromHandler.lookupWikiFile(virtualWiki, topicName);
+						WikiFile wikiFile = fromHandler.lookupWikiFile(virtualWiki.getName(), topicName);
 						toHandler.addWikiFile(topicName, wikiFile, params);
-						messages.add("Added wiki file " + virtualWiki + " / " + topicName);
+						messages.add("Added wiki file " + virtualWiki.getName() + " / " + topicName);
 					} catch (Exception e) {
-						String msg = "Unable to convert wiki file: " + virtualWiki + " / " + topicName;
+						String msg = "Unable to convert wiki file: " + virtualWiki.getName() + " / " + topicName;
 						logger.error(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
@@ -194,28 +195,28 @@ public abstract class PersistencyHandler {
 				// wiki file versions
 				for (Iterator topicIterator = wikiFileNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
-					List versions = fromHandler.getAllWikiFileVersions(virtualWiki, topicName, false);
+					List versions = fromHandler.getAllWikiFileVersions(virtualWiki.getName(), topicName, false);
 					for (Iterator wikiFileVersionIterator = versions.iterator(); wikiFileVersionIterator.hasNext();) {
 						WikiFileVersion wikiFileVersion = (WikiFileVersion)wikiFileVersionIterator.next();
 						try {
-							toHandler.addWikiFileVersion(virtualWiki, topicName, wikiFileVersion, params);
-							messages.add("Added wiki file version " + virtualWiki + " / " + topicName + " / " + wikiFileVersion.getFileVersionId());
+							toHandler.addWikiFileVersion(virtualWiki.getName(), topicName, wikiFileVersion, params);
+							messages.add("Added wiki file version " + virtualWiki.getName() + " / " + topicName + " / " + wikiFileVersion.getFileVersionId());
 						} catch (Exception e) {
-							String msg = "Unable to convert wiki file version: " + virtualWiki + " / " + topicName;
+							String msg = "Unable to convert wiki file version: " + virtualWiki.getName() + " / " + topicName;
 							logger.error(msg, e);
 							messages.add(msg + ": " + e.getMessage());
 						}
 					}
 				}
 				// recent changes
-				Collection changes = fromHandler.getRecentChanges(virtualWiki, 1000, false);
+				Collection changes = fromHandler.getRecentChanges(virtualWiki.getName(), 1000, false);
 				for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
 					RecentChange change = (RecentChange)changeIterator.next();
 					try {
 						toHandler.addRecentChange(change, params);
-						messages.add("Added recent change " + virtualWiki + " / " + change.getTopicName());
+						messages.add("Added recent change " + virtualWiki.getName() + " / " + change.getTopicName());
 					} catch (Exception e) {
-						String msg = "Unable to convert recent change: " + virtualWiki + " / " + change.getTopicName();
+						String msg = "Unable to convert recent change: " + virtualWiki.getName() + " / " + change.getTopicName();
 						logger.error(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
@@ -427,6 +428,12 @@ public abstract class PersistencyHandler {
 		Object params[] = null;
 		try {
 			params = this.initParams();
+			if (lookupVirtualWiki(WikiBase.DEFAULT_VWIKI) == null) {
+				VirtualWiki virtualWiki = new VirtualWiki();
+				virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
+				virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+				writeVirtualWiki(virtualWiki);
+			}
 			Collection all = getVirtualWikiList();
 			if (user != null && user.getUserId() < 1) addWikiUser(user, params);
 			for (Iterator iterator = all.iterator(); iterator.hasNext();) {
@@ -478,6 +485,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract VirtualWiki lookupVirtualWiki(String virtualWiki) throws Exception;
 
 	/**
 	 *
@@ -603,6 +615,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	protected abstract void updateVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
 	protected abstract void updateWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception;
 
 	/**
@@ -719,11 +736,15 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void writeVirtualWiki(String virtualWiki) throws Exception {
+	public void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
-			this.addVirtualWiki(virtualWiki, params);
+			if (virtualWiki.getVirtualWikiId() <= 0) {
+				this.addVirtualWiki(virtualWiki, params);
+			} else {
+				this.updateVirtualWiki(virtualWiki, params);
+			}
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
