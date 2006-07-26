@@ -56,11 +56,16 @@ public class SetupServlet extends JAMWikiServlet {
 			if (!StringUtils.hasText(function)) {
 				setup(request, next);
 			} else {
-				initialize(request, next);
+				if (initialize(request, next)) {
+					next = new ModelAndView("wiki");
+					viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+					loadDefaults(request, next, this.pageInfo);
+				}
 			}
 		} catch (Exception e) {
 			next = new ModelAndView("wiki");
 			viewError(request, next, e);
+			loadDefaults(request, next, this.pageInfo);
 		}
 		return next;
 	}
@@ -68,7 +73,7 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void initialize(HttpServletRequest request, ModelAndView next) throws Exception {
+	private boolean initialize(HttpServletRequest request, ModelAndView next) throws Exception {
 		setProperties(request, next);
 		WikiUser user = new WikiUser();
 		setAdminUser(request, next, user);
@@ -79,14 +84,14 @@ public class SetupServlet extends JAMWikiServlet {
 			this.pageInfo.setPageTitle("Special:Setup");
 			next.addObject("errors", errors);
 			next.addObject("login", user.getLogin());
+			return false;
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 			Environment.saveProperties();
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			WikiBase.initialise(request.getLocale(), user);
-			next = new ModelAndView("wiki");
-			viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+			return true;
 		}
 	}
 

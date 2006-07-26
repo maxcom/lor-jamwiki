@@ -148,17 +148,17 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(int userId) throws Exception;
+	public WikiResultSet lookupWikiUser(int userId, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login) throws Exception;
+	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, String password) throws Exception;
+	public WikiResultSet lookupWikiUser(String login, String password, Connection conn) throws Exception;
 
 	/**
 	 *

@@ -405,6 +405,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 				next.addObject("fileVersions", fileVersions);
 			}
+			this.pageInfo.setSpecial(false);
 			this.pageInfo.setTopicName(topicName);
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);

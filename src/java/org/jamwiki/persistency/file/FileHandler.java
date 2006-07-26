@@ -845,15 +845,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(int userId) throws Exception {
+	protected WikiUser lookupWikiUser(int userId, Object[] params) throws Exception {
 		String login = retrieveWikiUserLogin(userId);
-		return lookupWikiUser(login);
+		return lookupWikiUser(login, params);
 	}
 
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login) throws Exception {
+	protected WikiUser lookupWikiUser(String login, Object[] params) throws Exception {
 		if (login == null) return null;
 		String filename = wikiUserFilename(login);
 		File file = getPathFor(null, WIKI_USER_DIR, filename);
@@ -863,8 +863,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
-		WikiUser user = lookupWikiUser(login);
+	protected WikiUser lookupWikiUser(String login, String password, boolean encrypted, Object[] params) throws Exception {
+		WikiUser user = lookupWikiUser(login, params);
 		if (user == null || password == null) return null;
 		String encryptedPassword = password;
 		if (!encrypted) {

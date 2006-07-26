@@ -115,7 +115,7 @@ public abstract class PersistencyHandler {
 			for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
 				String userName = (String)userIterator.next();
 				try {
-					WikiUser user = fromHandler.lookupWikiUser(userName);
+					WikiUser user = fromHandler.lookupWikiUser(userName, params);
 					toHandler.addWikiUser(user, params);
 					messages.add("Added user " + userName);
 				} catch (Exception e) {
@@ -499,22 +499,70 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract WikiUser lookupWikiUser(int userId) throws Exception;
+	public WikiUser lookupWikiUser(int userId) throws Exception {
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			return this.lookupWikiUser(userId, params);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
+		}
+	}
 
 	/**
 	 *
 	 */
-	public abstract WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception;
+	protected abstract WikiUser lookupWikiUser(int userId, Object[] params) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract WikiUser lookupWikiUser(String login) throws Exception;
+	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			return this.lookupWikiUser(login, password, encrypted, params);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
+		}
+	}
 
 	/**
 	 *
 	 */
-	public String lookupWikiUserLogin(Integer authorId) throws Exception {
+	protected abstract WikiUser lookupWikiUser(String login, String password, boolean encrypted, Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(String login) throws Exception {
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			return this.lookupWikiUser(login, params);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected abstract WikiUser lookupWikiUser(String login, Object params[]) throws Exception;
+
+	/**
+	 *
+	 */
+	private String lookupWikiUserLogin(Integer authorId) throws Exception {
 		String login = (String)cachedUserLoginHash.get(authorId);
 		if (login != null) {
 			return login;
@@ -715,7 +763,7 @@ public abstract class PersistencyHandler {
 		}
 		String authorName = topicVersion.getAuthorIpAddress();
 		if (topicVersion.getAuthorId() != null) {
-			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue());
+			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			authorName = user.getLogin();
 			if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
 		}

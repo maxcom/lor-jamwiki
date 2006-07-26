@@ -28,6 +28,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Properties;
 import javax.naming.InitialContext;
+import org.apache.commons.io.FileUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
@@ -108,10 +109,14 @@ public class Environment {
 	 * Constructor loads property values from the property file.
 	 */
 	private Environment() {
-		initDefaultProperties();
-		logger.debug("Default properties initialized: " + defaults.toString());
-		props = loadProperties(PROPERTY_FILE_NAME, defaults);
-		logger.debug("Property file loaded: " + props.toString());
+		try {
+			initDefaultProperties();
+			logger.debug("Default properties initialized: " + defaults.toString());
+			props = loadProperties(PROPERTY_FILE_NAME, defaults);
+			logger.debug("Property file loaded: " + props.toString());
+		} catch (Exception e) {
+			logger.error("Failure while initializing property values", e);
+		}
 	}
 
 	/**
@@ -263,8 +268,14 @@ public class Environment {
 		File file = null;
 		try {
 			file = findProperties(propertyFile);
-			logger.info("Loading properties from " + file.toString());
-			properties.load(new FileInputStream(file));
+			if (file == null) {
+				logger.warn("Property file " + propertyFile + " does not exist");
+			} else if (!file.exists()) {
+				logger.warn("Property file " + file.toString() + " does not exist");
+			} else {
+				logger.warn("Loading properties from " + file.toString());
+				properties.load(new FileInputStream(file));
+			}
 		} catch (Exception e) {
 			logger.error("Failure while trying to load properties file " + file.toString(), e);
 		}
@@ -346,15 +357,7 @@ public class Environment {
 			return file;
 		}
 		URL url = Environment.getURL(filename);
-		if (url == null) {
-			throw new FileNotFoundException("Unable to find property file " + filename);
-		}
-		try {
-			file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			throw new FileNotFoundException("Unsupported encoding UTF-8 for file " + filename);
-		}
-		return file;
+		return FileUtils.toFile(url);
 	}
 
 	/**

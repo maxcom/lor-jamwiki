@@ -624,8 +624,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(int userId) throws Exception {
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(userId);
+	protected WikiUser lookupWikiUser(int userId, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(userId, conn);
 		if (rs.size() == 0) return null;
 		return initWikiUser(rs);
 	}
@@ -633,27 +634,29 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login) throws Exception {
+	protected WikiUser lookupWikiUser(String login, Object[] params) throws Exception {
 		// FIXME - handle LDAP
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login);
+		Connection conn = (Connection)params[0];
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, conn);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
-		return lookupWikiUser(userId);
+		return lookupWikiUser(userId, params);
 	}
 
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
+	protected WikiUser lookupWikiUser(String login, String password, boolean encrypted, Object[] params) throws Exception {
 		// FIXME - handle LDAP
+		Connection conn = (Connection)params[0];
 		String encryptedPassword = password;
 		if (!encrypted) {
 			encryptedPassword = Encryption.encrypt(password);
 		}
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, encryptedPassword);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, encryptedPassword, conn);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
-		return lookupWikiUser(userId);
+		return lookupWikiUser(userId, params);
 	}
 
 	/**
