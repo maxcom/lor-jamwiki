@@ -84,7 +84,6 @@ public class WikiBase {
 	 * @throws Exception If the handler cannot be instanciated.
 	 */
 	private WikiBase() throws Exception {
-		int persistenceType = -1;
 		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
 		if (type != null && type.equals("DATABASE")) {
 			WikiBase.handler = new DatabaseHandler();
@@ -124,6 +123,13 @@ public class WikiBase {
 			return null;
 		}
 		return WikiBase.handler;
+	}
+
+	/**
+	 *
+	 */
+	public static void setHandler(PersistencyHandler handler) {
+		WikiBase.handler = handler;
 	}
 
 	/**

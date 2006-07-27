@@ -658,6 +658,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void releaseParams(Object[] params) throws Exception {
+		if (params == null) return;
 		Connection conn = (Connection)params[0];
 		try {
 			conn.commit();

@@ -155,7 +155,7 @@ public class AdminServlet extends JAMWikiServlet {
 		try {
 			FileHandler fromHandler = new FileHandler();
 			DatabaseHandler toHandler = new DatabaseHandler();
-			Vector messages = WikiBase.getHandler().convert(fromHandler, toHandler);
+			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
 			// FIXME - hard coding
 			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
 			next.addObject("messages", messages);
@@ -176,7 +176,7 @@ public class AdminServlet extends JAMWikiServlet {
 		try {
 			FileHandler toHandler = new FileHandler();
 			DatabaseHandler fromHandler = new DatabaseHandler();
-			Vector messages = WikiBase.getHandler().convert(fromHandler, toHandler);
+			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
 			// FIXME - hard coding
 			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
 			next.addObject("messages", messages);

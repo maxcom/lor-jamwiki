@@ -99,10 +99,12 @@ public abstract class PersistencyHandler {
 	 * file to database, the database is completely re-initialized and all data
 	 * erased.  Do not use this method unless you know what you are doing.
 	 */
-	public Vector convert(PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
+	public Vector convert(WikiUser user, Locale locale, PersistencyHandler fromHandler, PersistencyHandler toHandler) throws Exception {
 		Object params[] = null;
 		try {
-			params = this.initParams();
+			params = toHandler.initParams();
+			WikiBase.setHandler(fromHandler);
+			this.resetCache();
 			// FIXME - hard coding of messages
 			Vector messages = new Vector();
 			// purge EVERYTHING from the destination handler
@@ -117,8 +119,8 @@ public abstract class PersistencyHandler {
 			for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
 				String userName = (String)userIterator.next();
 				try {
-					WikiUser user = fromHandler.lookupWikiUser(userName);
-					toHandler.addWikiUser(user, params);
+					WikiUser wikiUser = fromHandler.lookupWikiUser(userName);
+					toHandler.addWikiUser(wikiUser, params);
 					messages.add("Added user " + userName);
 				} catch (Exception e) {
 					String msg = "Unable to convert user: " + userName;
@@ -131,7 +133,7 @@ public abstract class PersistencyHandler {
 				VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIterator.next();
 				try {
 					toHandler.addVirtualWiki(virtualWiki, params);
-					this.loadVirtualWikiHashes();
+					fromHandler.loadVirtualWikiHashes();
 					messages.add("Added virtual wiki " + virtualWiki.getName());
 				} catch (Exception e) {
 					String msg = "Unable to convert virtual wiki " + virtualWiki.getName();
@@ -227,10 +229,11 @@ public abstract class PersistencyHandler {
 			}
 			return messages;
 		} catch (Exception e) {
-			this.handleErrors(params);
+			toHandler.handleErrors(params);
 			throw e;
 		} finally {
-			this.releaseParams(params);
+			toHandler.releaseParams(params);
+			WikiBase.reset(locale, user);
 		}
 	}
 
@@ -423,10 +426,12 @@ public abstract class PersistencyHandler {
 		}
 		Object params[] = null;
 		try {
+			this.resetCache();
 			params = this.initParams();
 			setupDefaultVirtualWiki();
 			setupAdminUser(user, params);
 			setupSpecialPages(locale, user, params);
+			this.loadVirtualWikiHashes();
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -606,6 +611,17 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected abstract void reloadRecentChanges(Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
+	protected void resetCache() {
+		PersistencyHandler.virtualWikiIdHash = null;
+		PersistencyHandler.virtualWikiNameHash = null;
+		PersistencyHandler.cachedTopicsList = new Vector();
+		PersistencyHandler.cachedNonTopicsList = new Vector();
+		PersistencyHandler.cachedUserLoginHash = new Hashtable();
+	}
 
 	/**
 	 *
