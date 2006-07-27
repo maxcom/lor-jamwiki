@@ -27,8 +27,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.*;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.users.Usergroup;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -145,7 +147,8 @@ public class RSSServlet extends JAMWikiServlet {
 				if (userid != null) {
 					author = usergroup.getFullnameById(userid);
 				}
-				java.util.Date lastRevisionDate = WikiBase.getHandler().lastRevisionDate(virtualWiki, topicName);
+				TopicVersion version = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+				java.util.Date lastRevisionDate = version.getEditDate();
 				String url = baseURL + "Wiki?" + topicName;
 				result.append("	<rdf:li rdf:resource=\"" + url + "\" />\n");
 				itemBuffer.append(" <item rdf:about=\"" + url + "\">\n");
@@ -157,7 +160,7 @@ public class RSSServlet extends JAMWikiServlet {
 				itemBuffer.append("]]></link>\n");
 				itemBuffer.append("  <description>");
 				if (author == null) author = "An unknown author";
-				itemBuffer.append("Last changed by " + author + " on " + WikiBase.getHandler().lastRevisionDate(virtualWiki, topicName));
+				itemBuffer.append("Last changed by " + author + " on " + lastRevisionDate);
 				itemBuffer.append("<p>\n<![CDATA[");
 				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 				String content = (topic == null) ? "" : topic.getTopicContent();

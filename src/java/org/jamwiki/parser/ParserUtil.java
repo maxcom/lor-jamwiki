@@ -124,7 +124,7 @@ public class ParserUtil {
 				// see if this is a virtual wiki
 				int pos = topic.indexOf(":", 1);
 				String tmp = topic.substring(1, pos);
-				if (WikiBase.getHandler().exists(tmp) && topic.length() > pos) {
+				if (WikiBase.getHandler().lookupVirtualWiki(tmp) != null && topic.length() > pos) {
 					virtualWiki = tmp;
 					topic = topic.substring(pos + 1);
 				}

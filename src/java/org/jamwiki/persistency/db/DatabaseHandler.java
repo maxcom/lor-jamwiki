@@ -172,7 +172,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+	protected List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		List all = new ArrayList();
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -188,7 +188,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+	protected List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileTopicNames(virtualWiki);
 		while (rs.next()) {

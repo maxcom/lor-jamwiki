@@ -289,7 +289,7 @@ public class FileHandler extends PersistencyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	public List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+	protected List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		List all = new LinkedList();
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, descending);
 		if (files == null) return all;
@@ -303,7 +303,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+	protected List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		File[] files = retrieveWikiFileFiles(virtualWiki);
 		if (files == null) return all;

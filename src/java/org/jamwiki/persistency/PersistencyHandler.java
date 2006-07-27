@@ -300,18 +300,6 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
-	 * See if a virtual wiki exists
-	 */
-	public boolean exists(String virtualWikiName) throws Exception {
-		Collection virtualWikis = this.getVirtualWikiList();
-		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-			if (virtualWikiName.equals(virtualWiki.getName())) return true;
-		}
-		return false;
-	}
-
-	/**
 	 * See if a topic exists and if it has not been deleted.
 	 */
 	public boolean exists(String virtualWiki, String topicName) throws Exception {
@@ -344,7 +332,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	protected abstract List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -354,7 +342,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract List getAllWikiFileTopicNames(String virtualWiki) throws Exception;
+	protected abstract List getAllWikiFileTopicNames(String virtualWiki) throws Exception;
 
 	/**
 	 *
@@ -457,17 +445,6 @@ public abstract class PersistencyHandler {
 	 * retrieve and save data.
 	 */
 	public abstract boolean isInitialized();
-
-	/**
-	 *
-	 */
-	public Date lastRevisionDate(String virtualWiki, String topicName) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			return null;
-		}
-		TopicVersion version = lookupLastTopicVersion(virtualWiki, topicName);
-		return version.getEditDate();
-	}
 
 	/**
 	 *
