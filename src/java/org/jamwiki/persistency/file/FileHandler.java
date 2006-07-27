@@ -363,9 +363,6 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
-		if (!WikiBase.getHandler().isInitialized()) {
-			return null;
-		}
 		StringBuffer buffer = new StringBuffer();
 		if (!StringUtils.hasText(virtualWiki)) {
 			// this is questionable, but the virtual wiki list does it
@@ -773,6 +770,8 @@ public class FileHandler extends PersistencyHandler {
 			// properties not initialized
 			return false;
 		}
+		File file = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
+		if (!file.exists()) return false;
 		return true;
 	}
 
