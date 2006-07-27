@@ -363,7 +363,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected static File getPathFor(String virtualWiki, String dir1, String dir2, String fileName) {
-		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+		if (!WikiBase.getHandler().isInitialized()) {
 			return null;
 		}
 		StringBuffer buffer = new StringBuffer();
@@ -445,23 +445,6 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void handleErrors(Object[] params) {
-	}
-
-	/**
-	 * Set up defaults if necessary
-	 */
-	public void initialize(Locale locale, WikiUser user) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
-			return;
-		}
-		// create the default virtual wiki if necessary
-		if (lookupVirtualWiki(WikiBase.DEFAULT_VWIKI) == null) {
-			VirtualWiki virtualWiki = new VirtualWiki();
-			virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
-			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-			writeVirtualWiki(virtualWiki);
-		}
-		super.initialize(locale, user);
 	}
 
 	/**
@@ -779,6 +762,18 @@ public class FileHandler extends PersistencyHandler {
 			logger.error("Failure while initializing user for file " + file.getAbsolutePath(), e);
 			return null;
 		}
+	}
+
+	/**
+	 * Return <code>true</code> if the handler is initialized and ready to
+	 * retrieve and save data.
+	 */
+	public boolean isInitialized() {
+		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			// properties not initialized
+			return false;
+		}
+		return true;
 	}
 
 	/**

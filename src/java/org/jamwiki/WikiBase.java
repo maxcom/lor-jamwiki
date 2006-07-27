@@ -62,8 +62,6 @@ public class WikiBase {
 	private static final Logger logger = Logger.getLogger(WikiBase.class);
 	/** The handler that looks after read/write operations for a persitence type */
 	private static PersistencyHandler handler;
-	/** Number of virtual wikis */
-	private static int virtualWikiCount;
 	public static final String NAMESPACE_COMMENTS = "Comments:";
 	public static final String NAMESPACE_IMAGE = "Image:";
 	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments:";
@@ -73,7 +71,7 @@ public class WikiBase {
 
 	static {
 		try {
-			instance = new WikiBase();
+			WikiBase.instance = new WikiBase();
 		} catch (Exception e) {
 			logger.error("Failure while initializing WikiBase", e);
 		}
@@ -86,7 +84,14 @@ public class WikiBase {
 	 * @throws Exception If the handler cannot be instanciated.
 	 */
 	private WikiBase() throws Exception {
-		WikiBase.init();
+		int persistenceType = -1;
+		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
+		if (type != null && type.equals("DATABASE")) {
+			WikiBase.handler = new DatabaseHandler();
+		} else {
+			WikiBase.handler = new FileHandler();
+		}
+		new SearchRefreshThread(Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL));
 	}
 
 	/**
@@ -105,7 +110,7 @@ public class WikiBase {
 			// not initialized yet
 			return false;
 		}
-		return handler.exists(virtualWiki, topicName);
+		return WikiBase.handler.exists(virtualWiki, topicName);
 	}
 
 	/**
@@ -114,11 +119,11 @@ public class WikiBase {
 	 * @return the current handler instance
 	 */
 	public static PersistencyHandler getHandler() {
-		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+		if (!WikiBase.handler.isInitialized()) {
 			// not initialized yet
 			return null;
 		}
-		return handler;
+		return WikiBase.handler;
 	}
 
 	/**
@@ -126,7 +131,7 @@ public class WikiBase {
 	 */
 	public static Collection getOrphanedTopics(String virtualWiki) throws Exception {
 		Collection results = new HashSet();
-		Collection all = getHandler().getAllTopicNames(virtualWiki);
+		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
 			Collection matches = getSearchEngineInstance().findLinkedTo(
@@ -175,7 +180,7 @@ public class WikiBase {
 	 */
 	public static Collection getToDoWikiTopics(String virtualWiki) throws Exception {
 		Collection results = new TreeSet();
-		Collection all = getHandler().getAllTopicNames(virtualWiki);
+		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
 		Set topicNames = new HashSet();
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
@@ -192,7 +197,7 @@ public class WikiBase {
 		for (Iterator iterator = topicNames.iterator(); iterator.hasNext();) {
 			String topicName = (String) iterator.next();
 			if (!PseudoTopicHandler.isPseudoTopic(topicName)
-				&& !handler.exists(virtualWiki, topicName)
+				&& !WikiBase.handler.exists(virtualWiki, topicName)
 				&& !"\\\\\\\\link\\\\\\\\".equals(topicName)) {
 				results.add(topicName);
 			}
@@ -219,48 +224,16 @@ public class WikiBase {
 	}
 
 	/**
-	 * get a count of the number of virtual wikis in the system
-	 *
-	 * @return the number of virtual wikis
-	 */
-	public static int getVirtualWikiCount() {
-		if (virtualWikiCount == 0) {
-			try {
-				virtualWikiCount = WikiBase.getHandler().getVirtualWikiList().size();
-			} catch (Exception e) {
-				logger.warn(e);
-			}
-		}
-		return virtualWikiCount;
-	}
-
-	/**
-	 * Singleton. Retrieves an intance of <code>WikiBase</code> and creates one if it doesn't exist yet.
-	 *
-	 * @return Instance of this class
-	 * @throws Exception If the storage produces errors
-	 */
-	private static void init() throws Exception {
-		int persistenceType = -1;
-		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
-		if (type != null && type.equals("DATABASE")) {
-			WikiBase.handler = new DatabaseHandler();
-		} else {
-			WikiBase.handler = new FileHandler();
-		}
-		new SearchRefreshThread(Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL));
-	}
-
-	/**
 	 * TODO: DOCUMENT ME!
 	 *
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public static void initialise(Locale locale, WikiUser user) throws Exception {
-		int persistenceType = WikiBase.getPersistenceType();
+	public static void reset(Locale locale, WikiUser user) throws Exception {
 		WikiMail.init();
-		instance = new WikiBase();
-		instance.getHandler().initialize(locale, user);
+		WikiBase.instance = new WikiBase();
+		if (!WikiBase.handler.isInitialized()) {
+			WikiBase.handler.initialize(locale, user);
+		}
 		JAMWikiServlet.removeCachedContents();
 	}
 }

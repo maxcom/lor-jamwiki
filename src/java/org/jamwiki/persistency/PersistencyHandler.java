@@ -436,25 +436,9 @@ public abstract class PersistencyHandler {
 		Object params[] = null;
 		try {
 			params = this.initParams();
-			if (lookupVirtualWiki(WikiBase.DEFAULT_VWIKI) == null) {
-				VirtualWiki virtualWiki = new VirtualWiki();
-				virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
-				virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-				writeVirtualWiki(virtualWiki);
-			}
-			Collection all = getVirtualWikiList();
-			if (user != null && user.getUserId() < 1) addWikiUser(user, params);
-			for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				logger.info("Creating defaults for " + virtualWiki.getName());
-				// create the default topics
-				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
-				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
-				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.topArea", locale), user, true, params);
-				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
-				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
-				setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
-			}
+			setupDefaultVirtualWiki();
+			setupAdminUser(user, params);
+			setupSpecialPages(locale, user, params);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -467,6 +451,12 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected abstract Object[] initParams() throws Exception;
+
+	/**
+	 * Return <code>true</code> if the handler is initialized and ready to
+	 * retrieve and save data.
+	 */
+	public abstract boolean isInitialized();
 
 	/**
 	 *
@@ -643,16 +633,44 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void setupSpecialPage(String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Object[] params) throws Exception {
+	private void setupAdminUser(WikiUser user, Object[] params) throws Exception {
+		if (user == null) {
+			throw new Exception("Admin user not specified");
+		}
+		if (lookupWikiUser(user.getUserId(), params) != null) {
+			logger.info("Admin user already exists");
+		}
+		addWikiUser(user, params);
+	}
+
+	/**
+	 *
+	 */
+	private void setupDefaultVirtualWiki() throws Exception {
+		if (lookupVirtualWiki(WikiBase.DEFAULT_VWIKI) != null) {
+			logger.info("Default virtual wiki already exists");
+			return;
+		}
+		VirtualWiki virtualWiki = new VirtualWiki();
+		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
+		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+		writeVirtualWiki(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
+	private void setupSpecialPage(String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Object[] params) throws Exception {
 		if (exists(virtualWiki, topicName)) {
 			logger.warn("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
 		}
-		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-		if (!StringUtils.hasText(baseFileDir)) {
+		if (!this.isInitialized()) {
 			// do not set up special pages until initial property values set
+			logger.warn("Attempt to setup special pages prior to initializing system");
 			return;
 		}
+		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
 		String contents = PersistencyHandler.readSpecialPage(topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);
@@ -666,6 +684,45 @@ public abstract class PersistencyHandler {
 		// FIXME - hard coding
 		topicVersion.setEditComment("Automatically created by system setup");
 		writeTopic(topic, topicVersion, params);
+	}
+
+	/**
+	 *
+	 */
+	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki) throws Exception {
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			// create the default topics
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.topArea", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void setupSpecialPages(Locale locale, WikiUser user, Object[] params) throws Exception {
+		Collection all = getVirtualWikiList();
+		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
+			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+			// create the default topics
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.topArea", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
+			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
+		}
 	}
 
 	/**

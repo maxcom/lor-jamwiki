@@ -52,7 +52,10 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
 	private static QueryHandler queryHandler = null;
 
-	static {
+	/**
+	 *
+	 */
+	public DatabaseHandler() {
 		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
 			DatabaseHandler.queryHandler = new PostgresQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
@@ -62,12 +65,6 @@ public class DatabaseHandler extends PersistencyHandler {
 		} else {
 			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}
-	}
-
-	/**
-	 *
-	 */
-	public DatabaseHandler() {
 	}
 
 	/**
@@ -231,13 +228,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public static String getDatabaseType() {
-		return Environment.getValue(Environment.PROP_DB_TYPE);
-	}
-
-	/**
-	 *
-	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getReadOnlyTopics(virtualWiki);
@@ -288,44 +278,23 @@ public class DatabaseHandler extends PersistencyHandler {
 	}
 
 	/**
-	 *
+	 * Set up database tables, and then call the parent method to initialize
+	 * default values.
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+		if (this.isInitialized()) {
+			logger.warn("Attempt to initialize when initialization already complete");
 			return;
 		}
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
-			DatabaseHandler.queryHandler = new PostgresQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
-			DatabaseHandler.queryHandler = new MySqlQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {
-			DatabaseHandler.queryHandler = new OracleQueryHandler();
-		} else {
-			DatabaseHandler.queryHandler = new DefaultQueryHandler();
-		}
-		String sql = null;
-		WikiResultSet rs = null;
-		boolean tablesExist = false;
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			sql = "select 1 from jam_virtual_wiki ";
-			try {
-				rs = DatabaseConnection.executeQuery(sql, conn);
-				tablesExist = rs.next();
-			} catch (Exception e) {
-				// thrown if table doesn't exist, so safe to ignore
-			}
-			if (!tablesExist) {
-				try {
-					// set up tables
-					DatabaseHandler.queryHandler.createTables(conn);
-				} catch (Exception e) {
-					logger.error("Unable to set up database tables", e);
-					// clean up anything that might have been created
-					DatabaseHandler.queryHandler.dropTables(conn);
-				}
-			}
+			// set up tables
+			DatabaseHandler.queryHandler.createTables(conn);
+		} catch (Exception e) {
+			logger.error("Unable to set up database tables", e);
+			// clean up anything that might have been created
+			DatabaseHandler.queryHandler.dropTables(conn);
 		} finally {
 			if (conn != null) DatabaseConnection.closeConnection(conn);
 		}
@@ -507,10 +476,22 @@ public class DatabaseHandler extends PersistencyHandler {
 	}
 
 	/**
-	 *
+	 * Return <code>true</code> if the handler is initialized and ready to
+	 * retrieve and save data.
 	 */
-	public static boolean isMySQL() {
-		return Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL);
+	public boolean isInitialized() {
+		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			// properties not initialized
+			return false;
+		}
+		String sql = "select 1 from jam_virtual_wiki ";
+		try {
+			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
+			return rs.next();
+		} catch (Exception e) {
+			// tables don't exist, or some other problem
+			return false;
+		}
 	}
 
 	/**
@@ -691,23 +672,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	protected void reloadRecentChanges(Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
 		DatabaseHandler.queryHandler.reloadRecentChanges(conn);
-	}
-
-	/**
-	 *
-	 */
-	public static boolean testDatabase() {
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-		} catch (Exception e) {
-			// database settings incorrect
-			logger.error("Invalid database settings", e);
-			return false;
-		} finally {
-			if (conn != null) DatabaseConnection.closeConnection(conn);
-		}
-		return true;
 	}
 
 	/**

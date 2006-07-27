@@ -293,4 +293,21 @@ public class DatabaseConnection {
 			logger.error("Failure while closing connection", e);
 		}
 	}
+
+	/**
+	 *
+	 */
+	public static boolean testDatabase() {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+		} catch (Exception e) {
+			// database settings incorrect
+			logger.error("Invalid database settings", e);
+			return false;
+		} finally {
+			if (conn != null) DatabaseConnection.closeConnection(conn);
+		}
+		return true;
+	}
 }

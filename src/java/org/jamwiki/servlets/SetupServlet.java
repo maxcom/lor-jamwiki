@@ -26,6 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
+import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -89,8 +90,8 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 			Environment.saveProperties();
+			WikiBase.reset(request.getLocale(), user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
-			WikiBase.initialise(request.getLocale(), user);
 			return true;
 		}
 	}
@@ -175,7 +176,7 @@ public class SetupServlet extends JAMWikiServlet {
 		}
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			// test database
-			if (!DatabaseHandler.testDatabase()) {
+			if (!DatabaseConnection.testDatabase()) {
 				errors.add(Utilities.getMessage("error.databaseconnection", request.getLocale()));
 			}
 		}

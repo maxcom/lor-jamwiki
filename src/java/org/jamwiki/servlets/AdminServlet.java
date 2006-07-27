@@ -138,9 +138,9 @@ public class AdminServlet extends JAMWikiServlet {
 			virtualWiki.setName(request.getParameter("name"));
 			virtualWiki.setDefaultTopicName(request.getParameter("defaultTopicName"));
 			WikiBase.getHandler().writeVirtualWiki(virtualWiki);
+			WikiBase.getHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
 			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
 			next.addObject("message", message);
-			WikiBase.initialise(request.getLocale(), user);
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki", e);
 			String message = "Failure while adding virtual wiki: " + e.getMessage();
@@ -465,7 +465,8 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 			}
 			Environment.saveProperties();
-			WikiBase.initialise(request.getLocale(), null);
+			// re-initialize to reset PersistencyHandler settings (if needed)
+			WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 			String message = Utilities.getMessage("admin.message.changessaved", request.getLocale());
 			next.addObject("message", message);
 		} catch (Exception e) {
