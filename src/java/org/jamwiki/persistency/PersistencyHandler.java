@@ -55,6 +55,8 @@ public abstract class PersistencyHandler {
 	private static Hashtable cachedUserLoginHash = new Hashtable();
 	// FIXME - possibly make this a property, or configurable based on number of topics in the system
 	private static int MAX_CACHED_LIST_SIZE = 2000;
+	protected static Hashtable virtualWikiIdHash = null;
+	protected static Hashtable virtualWikiNameHash = null;
 
 	/**
 	 *
@@ -129,6 +131,7 @@ public abstract class PersistencyHandler {
 				VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIterator.next();
 				try {
 					toHandler.addVirtualWiki(virtualWiki, params);
+					this.loadVirtualWikiHashes();
 					messages.add("Added virtual wiki " + virtualWiki.getName());
 				} catch (Exception e) {
 					String msg = "Unable to convert virtual wiki " + virtualWiki.getName();
@@ -411,7 +414,12 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection getVirtualWikiList() throws Exception;
+	public Collection getVirtualWikiList() throws Exception {
+		if (virtualWikiNameHash == null) {
+			loadVirtualWikiHashes();
+		}
+		return virtualWikiNameHash.values();
+	}
 
 	/**
 	 *
@@ -474,6 +482,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	protected abstract void loadVirtualWikiHashes() throws Exception;
+
+	/**
+	 *
+	 */
 	public abstract TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception;
 
 	/**
@@ -504,7 +517,34 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract VirtualWiki lookupVirtualWiki(String virtualWiki) throws Exception;
+	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception {
+		if (virtualWikiNameHash == null) {
+			loadVirtualWikiHashes();
+		}
+		return (VirtualWiki)virtualWikiNameHash.get(virtualWikiName);
+	}
+
+	/**
+	 *
+	 */
+	public int lookupVirtualWikiId(String virtualWikiName) throws Exception {
+		if (virtualWikiNameHash == null) {
+			this.loadVirtualWikiHashes();
+		}
+		VirtualWiki virtualWiki = (VirtualWiki)virtualWikiNameHash.get(virtualWikiName);
+		return (virtualWiki != null) ? virtualWiki.getVirtualWikiId() : -1;
+	}
+
+	/**
+	 *
+	 */
+	public String lookupVirtualWikiName(int virtualWikiId) throws Exception {
+		if (virtualWikiIdHash == null) {
+			this.loadVirtualWikiHashes();
+		}
+		VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIdHash.get(new Integer(virtualWikiId));
+		return (virtualWiki != null) ? virtualWiki.getName() : null;
+	}
 
 	/**
 	 *
@@ -605,6 +645,7 @@ public abstract class PersistencyHandler {
 	 */
 	protected void setupSpecialPage(String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Object[] params) throws Exception {
 		if (exists(virtualWiki, topicName)) {
+			logger.warn("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
 		}
 		String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
@@ -775,6 +816,8 @@ public abstract class PersistencyHandler {
 		} finally {
 			this.releaseParams(params);
 		}
+		// update the hashtable AFTER the commit
+		this.loadVirtualWikiHashes();
 	}
 
 	/**

@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -443,20 +444,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getVirtualWikiList() throws Exception {
-		List all = new LinkedList();
-		File[] files = retrieveVirtualWikiFiles();
-		if (files == null) return all;
-		for (int i = 0; i < files.length; i++) {
-			VirtualWiki virtualWiki = initVirtualWiki(files[i]);
-			all.add(virtualWiki);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
 	protected void handleErrors(Object[] params) {
 	}
 
@@ -488,7 +475,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static RecentChange initRecentChange(File file) {
+	private RecentChange initRecentChange(File file) {
 		if (!file.exists()) return null;
 		try {
 			RecentChange change = new RecentChange();
@@ -533,7 +520,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static Topic initTopic(File file) {
+	private Topic initTopic(File file) {
 		if (!file.exists()) return null;
 		try {
 			Topic topic = new Topic();
@@ -574,7 +561,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static TopicVersion initTopicVersion(File file) {
+	private TopicVersion initTopicVersion(File file) {
 		if (!file.exists()) return null;
 		try {
 			TopicVersion topicVersion = new TopicVersion();
@@ -623,7 +610,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static VirtualWiki initVirtualWiki(File file) {
+	private VirtualWiki initVirtualWiki(File file) {
 		if (!file.exists()) return null;
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
@@ -654,7 +641,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static WikiFile initWikiFile(File file) {
+	private WikiFile initWikiFile(File file) {
 		if (!file.exists()) return null;
 		try {
 			WikiFile wikiFile = new WikiFile();
@@ -699,7 +686,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static WikiFileVersion initWikiFileVersion(File file) {
+	private WikiFileVersion initWikiFileVersion(File file) {
 		if (!file.exists()) return null;
 		try {
 			WikiFileVersion wikiFileVersion = new WikiFileVersion();
@@ -748,7 +735,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static WikiUser initWikiUser(File file) {
+	private WikiUser initWikiUser(File file) {
 		if (!file.exists()) return null;
 		try {
 			WikiUser user = new WikiUser();
@@ -791,6 +778,30 @@ public class FileHandler extends PersistencyHandler {
 		} catch (Exception e) {
 			logger.error("Failure while initializing user for file " + file.getAbsolutePath(), e);
 			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected void loadVirtualWikiHashes() throws Exception {
+		PersistencyHandler.virtualWikiNameHash = new Hashtable();
+		PersistencyHandler.virtualWikiIdHash = new Hashtable();
+		try {
+			File[] files = retrieveVirtualWikiFiles();
+			if (files == null) return;
+			for (int i = 0; i < files.length; i++) {
+				VirtualWiki virtualWiki = initVirtualWiki(files[i]);
+				PersistencyHandler.virtualWikiNameHash.put(virtualWiki.getName(), virtualWiki);
+				PersistencyHandler.virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
+			}
+		} catch (Exception e) {
+			logger.error("Failure while loading virtual wiki hashtable ", e);
+			// if there is an error make sure the hashtable is reset since it wasn't
+			// properly initialized
+			PersistencyHandler.virtualWikiNameHash = null;
+			PersistencyHandler.virtualWikiIdHash = null;
+			throw e;
 		}
 	}
 
@@ -842,15 +853,6 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Object[] params) throws Exception {
 		return this.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-	}
-
-	/**
-	 *
-	 */
-	public VirtualWiki lookupVirtualWiki(String virtualWiki) throws Exception {
-		String filename = virtualWikiFilename(virtualWiki);
-		File file = getPathFor(null, FileHandler.VIRTUAL_WIKI_DIR, filename);
-		return initVirtualWiki(file);
 	}
 
 	/**
