@@ -49,7 +49,7 @@ if (request.getParameter("num") != null) {
 <option value="500"<%= (num == 500) ? " selected=\"selected\"" : "" %>>500</option>
 </select>
 &#160;
-<input type="Submit" value="<f:message key="common.change" />" />
+<input type="submit" value="<f:message key="common.change" />" />
 
 <br /><br />
 

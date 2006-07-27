@@ -44,7 +44,7 @@
 <body>
 <c:if test="${hideform != 'true'}">
   <div id="hideprint">
-  <form action="Wiki" method="GET">
+  <form action="Wiki" method="get">
   <input type="hidden" name="topic" value="<c:out value="${topic}"/>">
   <input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_PRINT %>">
   <f:message key="print.depth"/> <input type="text" name="depth" value="<c:out value="${depth}"/>">
