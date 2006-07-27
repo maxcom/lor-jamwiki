@@ -563,6 +563,19 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		Topic topic = lookupTopic(virtualWiki, topicName, params);
+		if (topic == null) return null;
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic, conn);
+		if (rs.size() == 0) return null;
+		int topicVersionId = rs.getInt("topic_version_id");
+		return lookupTopicVersion(virtualWiki, topicName, topicVersionId, params);
+	}
+
+	/**
+	 *
+	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWiki, topicName);
 		if (rs.size() == 0) return null;
@@ -572,8 +585,28 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWiki, topicName, conn);
+		if (rs.size() == 0) return null;
+		return initTopic(rs);
+	}
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		if (rs.size() == 0) return null;
+		return initTopicVersion(rs);
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(virtualWiki, topicName, topicVersionId, conn);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);
 	}
@@ -624,6 +657,15 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public WikiUser lookupWikiUser(int userId) throws Exception {
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(userId);
+		if (rs.size() == 0) return null;
+		return initWikiUser(rs);
+	}
+
+	/**
+	 *
+	 */
 	protected WikiUser lookupWikiUser(int userId, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(userId, conn);
@@ -634,29 +676,27 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected WikiUser lookupWikiUser(String login, Object[] params) throws Exception {
+	public WikiUser lookupWikiUser(String login) throws Exception {
 		// FIXME - handle LDAP
-		Connection conn = (Connection)params[0];
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, conn);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
-		return lookupWikiUser(userId, params);
+		return lookupWikiUser(userId);
 	}
 
 	/**
 	 *
 	 */
-	protected WikiUser lookupWikiUser(String login, String password, boolean encrypted, Object[] params) throws Exception {
+	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
 		// FIXME - handle LDAP
-		Connection conn = (Connection)params[0];
 		String encryptedPassword = password;
 		if (!encrypted) {
 			encryptedPassword = Encryption.encrypt(password);
 		}
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, encryptedPassword, conn);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(login, encryptedPassword);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
-		return lookupWikiUser(userId, params);
+		return lookupWikiUser(userId);
 	}
 
 	/**
@@ -664,7 +704,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	public void purgeData(Object[] params) throws Exception {
+	protected void purgeData(Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
 		// BOOM!  Everything gone...
 		DatabaseHandler.queryHandler.dropTables(conn);

@@ -115,7 +115,7 @@ public abstract class PersistencyHandler {
 			for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
 				String userName = (String)userIterator.next();
 				try {
-					WikiUser user = fromHandler.lookupWikiUser(userName, params);
+					WikiUser user = fromHandler.lookupWikiUser(userName);
 					toHandler.addWikiUser(user, params);
 					messages.add("Added user " + userName);
 				} catch (Exception e) {
@@ -479,12 +479,27 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public abstract TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
 	public abstract Topic lookupTopic(String virtualWiki, String topicName) throws Exception;
 
 	/**
 	 *
 	 */
+	public abstract Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
 	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Object[] params) throws Exception;
 
 	/**
 	 *
@@ -499,18 +514,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(int userId) throws Exception {
-		Object params[] = null;
-		try {
-			params = this.initParams();
-			return this.lookupWikiUser(userId, params);
-		} catch (Exception e) {
-			this.handleErrors(params);
-			throw e;
-		} finally {
-			this.releaseParams(params);
-		}
-	}
+	public abstract WikiUser lookupWikiUser(int userId) throws Exception;
 
 	/**
 	 *
@@ -520,44 +524,12 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
-		Object params[] = null;
-		try {
-			params = this.initParams();
-			return this.lookupWikiUser(login, password, encrypted, params);
-		} catch (Exception e) {
-			this.handleErrors(params);
-			throw e;
-		} finally {
-			this.releaseParams(params);
-		}
-	}
+	public abstract WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception;
 
 	/**
 	 *
 	 */
-	protected abstract WikiUser lookupWikiUser(String login, String password, boolean encrypted, Object[] params) throws Exception;
-
-	/**
-	 *
-	 */
-	public WikiUser lookupWikiUser(String login) throws Exception {
-		Object params[] = null;
-		try {
-			params = this.initParams();
-			return this.lookupWikiUser(login, params);
-		} catch (Exception e) {
-			this.handleErrors(params);
-			throw e;
-		} finally {
-			this.releaseParams(params);
-		}
-	}
-
-	/**
-	 *
-	 */
-	protected abstract WikiUser lookupWikiUser(String login, Object params[]) throws Exception;
+	public abstract WikiUser lookupWikiUser(String login) throws Exception;
 
 	/**
 	 *
@@ -584,7 +556,7 @@ public abstract class PersistencyHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	public abstract void purgeData(Object[] params) throws Exception;
+	protected abstract void purgeData(Object[] params) throws Exception;
 
 	/**
 	 * Utility method for reading default topic values from files and returning
@@ -720,7 +692,7 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public void writeReadOnlyTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
+		Topic topic = lookupTopic(virtualWiki, topicName, params);
 		topic.setReadOnly(true);
 		updateTopic(topic, params);
 	}
@@ -732,6 +704,10 @@ public abstract class PersistencyHandler {
 		Object params[] = null;
 		try {
 			params = this.initParams();
+			WikiUser user = null;
+			if (topicVersion.getAuthorId() != null) {
+				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
+			}
 			this.writeTopic(topic, topicVersion, params);
 		} catch (Exception e) {
 			this.handleErrors(params);
@@ -751,7 +727,7 @@ public abstract class PersistencyHandler {
 			updateTopic(topic, params);
 		}
 		if (topicVersion.getPreviousTopicVersionId() == null) {
-			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName());
+			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName(), params);
 			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
 		}
 		// reset topic non-existence vector

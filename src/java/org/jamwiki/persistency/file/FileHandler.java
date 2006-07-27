@@ -808,6 +808,13 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Object[] params) throws Exception {
+		return this.lookupLastTopicVersion(virtualWiki, topicName);
+	}
+
+	/**
+	 *
+	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		String filename = topicFilename(topicName);
 		File file = getPathFor(virtualWiki, FileHandler.TOPIC_DIR, filename);
@@ -817,10 +824,24 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
+		return this.lookupTopic(virtualWiki, topicName);
+	}
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		String filename = topicVersionFilename(topicVersionId);
 		File file = getPathFor(virtualWiki, TOPIC_VERSION_DIR, topicName, filename);
 		return initTopicVersion(file);
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Object[] params) throws Exception {
+		return this.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 	}
 
 	/**
@@ -845,15 +866,22 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected WikiUser lookupWikiUser(int userId, Object[] params) throws Exception {
+	public WikiUser lookupWikiUser(int userId) throws Exception {
 		String login = retrieveWikiUserLogin(userId);
-		return lookupWikiUser(login, params);
+		return lookupWikiUser(login);
 	}
 
 	/**
 	 *
 	 */
-	protected WikiUser lookupWikiUser(String login, Object[] params) throws Exception {
+	protected WikiUser lookupWikiUser(int userId, Object[] params) throws Exception {
+		return this.lookupWikiUser(userId);
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(String login) throws Exception {
 		if (login == null) return null;
 		String filename = wikiUserFilename(login);
 		File file = getPathFor(null, WIKI_USER_DIR, filename);
@@ -863,8 +891,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected WikiUser lookupWikiUser(String login, String password, boolean encrypted, Object[] params) throws Exception {
-		WikiUser user = lookupWikiUser(login, params);
+	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
+		WikiUser user = lookupWikiUser(login);
 		if (user == null || password == null) return null;
 		String encryptedPassword = password;
 		if (!encrypted) {
@@ -982,7 +1010,7 @@ public class FileHandler extends PersistencyHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	public void purgeData(Object[] params) throws Exception {
+	protected void purgeData(Object[] params) throws Exception {
 		String rootDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
 		File rootDirFile = new File(rootDir);
 		// BOOM!  Everything gone...
@@ -1212,33 +1240,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	private void saveVirtualWiki(VirtualWiki virtualWiki) throws Exception {
-		if (virtualWiki.getVirtualWikiId() > NEXT_VIRTUAL_WIKI_ID) {
-			NEXT_VIRTUAL_WIKI_ID = virtualWiki.getVirtualWikiId();
-			nextFileWrite(NEXT_VIRTUAL_WIKI_ID, getPathFor(null, null, NEXT_VIRTUAL_WIKI_ID_FILE));
-		}
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_VIRTUAL_WIKI_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_ID, virtualWiki.getVirtualWikiId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_NAME, virtualWiki.getName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_DEFAULT_TOPIC_NAME, virtualWiki.getDefaultTopicName(), true));
-		content.append("\n");
-		content.append("</").append(XML_VIRTUAL_WIKI_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = virtualWikiFilename(virtualWiki.getName());
-		File file = FileHandler.getPathFor(null, FileHandler.VIRTUAL_WIKI_DIR, filename);
-		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
-	}
-
-	/**
-	 *
-	 */
 	private void saveTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
 		if (topicVersion.getTopicVersionId() <= 0) {
 			topicVersion.setTopicVersionId(nextTopicVersionId());
@@ -1282,6 +1283,33 @@ public class FileHandler extends PersistencyHandler {
 		String filename = topicVersionFilename(topicVersion.getTopicVersionId());
 		File versionFile = FileHandler.getPathFor(virtualWiki, FileHandler.TOPIC_VERSION_DIR, topicName, filename);
 		FileUtils.writeStringToFile(versionFile, content.toString(), "UTF-8");
+	}
+
+	/**
+	 *
+	 */
+	private void saveVirtualWiki(VirtualWiki virtualWiki) throws Exception {
+		if (virtualWiki.getVirtualWikiId() > NEXT_VIRTUAL_WIKI_ID) {
+			NEXT_VIRTUAL_WIKI_ID = virtualWiki.getVirtualWikiId();
+			nextFileWrite(NEXT_VIRTUAL_WIKI_ID, getPathFor(null, null, NEXT_VIRTUAL_WIKI_ID_FILE));
+		}
+		StringBuffer content = new StringBuffer();
+		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
+		content.append("\n");
+		content.append("<").append(XML_VIRTUAL_WIKI_ROOT).append(">");
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_ID, virtualWiki.getVirtualWikiId()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_NAME, virtualWiki.getName(), true));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_VIRTUAL_WIKI_DEFAULT_TOPIC_NAME, virtualWiki.getDefaultTopicName(), true));
+		content.append("\n");
+		content.append("</").append(XML_VIRTUAL_WIKI_ROOT).append(">");
+		content.append("\n");
+		content.append("</mediawiki>");
+		String filename = virtualWikiFilename(virtualWiki.getName());
+		File file = FileHandler.getPathFor(null, FileHandler.VIRTUAL_WIKI_DIR, filename);
+		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
 	}
 
 	/**

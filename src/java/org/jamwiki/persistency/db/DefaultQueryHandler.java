@@ -734,6 +734,15 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupLastTopicVersion(Topic topic, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
+		stmt.setInt(1, topic.getTopicId());
+		return stmt.executeQuery(conn);
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupTopic(String virtualWiki, String topicName) throws Exception {
 		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
@@ -745,10 +754,30 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupTopic(String virtualWiki, String topicName, Connection conn) throws Exception {
+		int virtualWikiId = DatabaseHandler.lookupVirtualWikiId(virtualWiki);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setString(2, topicName);
+		return stmt.executeQuery(conn);
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION);
 		stmt.setInt(1, topicVersionId);
 		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION);
+		stmt.setInt(1, topicVersionId);
+		return stmt.executeQuery(conn);
 	}
 
 	/**
@@ -765,6 +794,15 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupWikiUser(int userId) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER);
+		stmt.setInt(1, userId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupWikiUser(int userId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER);
 		stmt.setInt(1, userId);
@@ -774,20 +812,20 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception {
+	public WikiResultSet lookupWikiUser(String login) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
 		stmt.setString(1, login);
-		return stmt.executeQuery(conn);
+		return stmt.executeQuery();
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, String encryptedPassword, Connection conn) throws Exception {
+	public WikiResultSet lookupWikiUser(String login, String encryptedPassword) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
 		stmt.setString(1, login);
 		stmt.setString(2, encryptedPassword);
-		return stmt.executeQuery(conn);
+		return stmt.executeQuery();
 	}
 
 	/**

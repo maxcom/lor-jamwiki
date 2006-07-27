@@ -133,7 +133,17 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupLastTopicVersion(Topic topic, Connection conn) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupTopic(String virtualWiki, String topicName) throws Exception;
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupTopic(String virtualWiki, String topicName, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -143,7 +153,17 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Connection conn) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupWikiFile(String virtualWiki, int topicId) throws Exception;
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupWikiUser(int userId) throws Exception;
 
 	/**
 	 *
@@ -153,12 +173,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception;
+	public WikiResultSet lookupWikiUser(String login) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, String password, Connection conn) throws Exception;
+	public WikiResultSet lookupWikiUser(String login, String password) throws Exception;
 
 	/**
 	 *
