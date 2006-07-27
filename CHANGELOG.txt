@@ -2,6 +2,9 @@
 0.1.1
 =====
 
+* FEATURE: Remove copyvio'd background image from Mediawiki.
+  Existing JAMWiki installs will want to replace "headbg.jpg" in
+  the StyleSheet topic with "denalibg.jpg".
 
 0.1.0
 =====
