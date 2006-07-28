@@ -19,6 +19,7 @@ package org.jamwiki.persistency.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -38,387 +39,64 @@ import org.jamwiki.utils.Utilities;
 public class DefaultQueryHandler implements QueryHandler {
 
 	private static Logger logger = Logger.getLogger(DefaultQueryHandler.class.getName());
+	protected static final String SQL_PROPERTY_FILE_NAME = "sql.ansi.properties";
 
-	protected static final String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE =
-		"CREATE TABLE jam_virtual_wiki ( "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "default_topic_name VARCHAR(200) NOT NULL, "
-		+   "create_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "CONSTRAINT jam_pk_vwiki PRIMARY KEY (virtual_wiki_id), "
-		+   "CONSTRAINT jam_unique_vwiki_name UNIQUE (virtual_wiki_name) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_USER_TABLE =
-		"CREATE TABLE jam_wiki_user ( "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "login VARCHAR(100) NOT NULL, "
-		+   "display_name VARCHAR(100), "
-		+   "create_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "last_login_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "create_ip_address VARCHAR(15) NOT NULL, "
-		+   "last_login_ip_address VARCHAR(15) NOT NULL, "
-		+   "is_admin INTEGER DEFAULT 0 NOT NULL, "
-		+   "CONSTRAINT jam_pk_wiki_user PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_unique_wiki_user_login UNIQUE (login) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_USER_INFO_TABLE =
-		"CREATE TABLE jam_wiki_user_info ( "
-		+   "wiki_user_id INTEGER NOT NULL, "
-		+   "login VARCHAR(100) NOT NULL, "
-		+   "email VARCHAR(100), "
-		+   "first_name VARCHAR(100), "
-		+   "last_name VARCHAR(100), "
-		+   "encoded_password VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_wiki_uinfo PRIMARY KEY (wiki_user_id), "
-		+   "CONSTRAINT jam_fk_wiki_uinfo_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_unique_wiki_uinfo_login UNIQUE (login) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_TOPIC_TABLE =
-		"CREATE TABLE jam_topic ( "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "topic_deleted INTEGER DEFAULT 0 NOT NULL, "
-		+   "topic_read_only INTEGER DEFAULT 0 NOT NULL, "
-		+   "topic_admin_only INTEGER DEFAULT 0 NOT NULL, "
-		+   "topic_content " + text() + ", "
-		+   "topic_type INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_topic PRIMARY KEY (topic_id), "
-		+   "CONSTRAINT jam_fk_topic_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
-		+   "CONSTRAINT jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_TOPIC_VERSION_TABLE =
-		"CREATE TABLE jam_topic_version ( "
-		+   "topic_version_id INTEGER NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "edit_comment VARCHAR(200), "
-		+   "version_content " + text() + ", "
-		+   "wiki_user_id INTEGER, "
-		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
-		+   "edit_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "edit_type INTEGER NOT NULL, "
-		+   "previous_topic_version_id INTEGER, "
-		+   "CONSTRAINT jam_pk_topic_ver PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_topic_ver_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_fk_topic_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_topic_ver_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_FILE_TABLE =
-		"CREATE TABLE jam_file ( "
-		+   "file_id INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "file_name VARCHAR(200) NOT NULL, "
-		+   "file_deleted INTEGER DEFAULT 0 NOT NULL, "
-		+   "file_read_only INTEGER DEFAULT 0 NOT NULL, "
-		+   "file_admin_only INTEGER DEFAULT 0 NOT NULL, "
-		+   "file_url VARCHAR(200) NOT NULL, "
-		+   "mime_type VARCHAR(100) NOT NULL, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "file_size INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_file PRIMARY KEY (file_id), "
-		+   "CONSTRAINT jam_fk_file_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id), "
-		+   "CONSTRAINT jam_fk_file_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_unique_file_url UNIQUE (file_url), "
-		+   "CONSTRAINT jam_unique_file_topic_vwiki UNIQUE (virtual_wiki_id, topic_id) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE =
-		"CREATE TABLE jam_file_version ( "
-		+   "file_version_id INTEGER NOT NULL, "
-		+   "file_id INTEGER NOT NULL, "
-		+   "upload_comment VARCHAR(200), "
-		+   "file_url VARCHAR(200) NOT NULL, "
-		+   "wiki_user_id INTEGER, "
-		+   "wiki_user_ip_address VARCHAR(15) NOT NULL, "
-		+   "upload_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "mime_type VARCHAR(100) NOT NULL, "
-		+   "file_size INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_file_ver PRIMARY KEY (file_version_id), "
-		+   "CONSTRAINT jam_fk_file_ver_file FOREIGN KEY (file_id) REFERENCES jam_file(file_id), "
-		+   "CONSTRAINT jam_fk_file_ver_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_unique_file_ver_url UNIQUE (file_url) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_IMAGE_TABLE =
-		"CREATE TABLE jam_image ( "
-		+   "file_version_id INTEGER NOT NULL, "
-		+   "width INTEGER NOT NULL, "
-		+   "height INTEGER NOT NULL, "
-		+   "CONSTRAINT jam_pk_image PRIMARY KEY (file_version_id), "
-		+   "CONSTRAINT jam_fk_image_file_ver FOREIGN KEY (file_version_id) REFERENCES jam_file_version(file_version_id) "
-		+ ") ";
-	protected static final String STATEMENT_CREATE_RECENT_CHANGE_TABLE =
-		"CREATE TABLE jam_recent_change ( "
-		+   "topic_version_id INTEGER NOT NULL, "
-		+   "previous_topic_version_id INTEGER, "
-		+   "topic_id INTEGER NOT NULL, "
-		+   "topic_name VARCHAR(200) NOT NULL, "
-		+   "edit_date TIMESTAMP DEFAULT " + now() + " NOT NULL, "
-		+   "edit_comment VARCHAR(200), "
-		+   "wiki_user_id INTEGER, "
-		+   "display_name VARCHAR(200) NOT NULL, "
-		+   "edit_type INTEGER NOT NULL, "
-		+   "virtual_wiki_id INTEGER NOT NULL, "
-		+   "virtual_wiki_name VARCHAR(100) NOT NULL, "
-		+   "CONSTRAINT jam_pk_rchange PRIMARY KEY (topic_version_id), "
-		+   "CONSTRAINT jam_fk_rchange_topic_ver FOREIGN KEY (topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
-		+   "CONSTRAINT jam_fk_rchange_prv_topic_ver FOREIGN KEY (previous_topic_version_id) REFERENCES jam_topic_version(topic_version_id), "
-		+   "CONSTRAINT jam_fk_rchange_topic FOREIGN KEY (topic_id) REFERENCES jam_topic(topic_id), "
-		+   "CONSTRAINT jam_fk_rchange_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
-		+   "CONSTRAINT jam_fk_rchange_vwiki FOREIGN KEY (virtual_wiki_id) REFERENCES jam_virtual_wiki(virtual_wiki_id) "
-		+ ") ";
-	protected static final String STATEMENT_DELETE_RECENT_CHANGES =
-	    "delete from jam_recent_change ";
-	protected static final String STATEMENT_DROP_VIRTUAL_WIKI_TABLE =
-		"DROP TABLE jam_virtual_wiki ";
-	protected static final String STATEMENT_DROP_WIKI_USER_TABLE =
-		"DROP TABLE jam_wiki_user ";
-	protected static final String STATEMENT_DROP_WIKI_USER_INFO_TABLE =
-		"DROP TABLE jam_wiki_user_info ";
-	protected static final String STATEMENT_DROP_TOPIC_TABLE =
-		"DROP TABLE jam_topic ";
-	protected static final String STATEMENT_DROP_TOPIC_VERSION_TABLE =
-		"DROP TABLE jam_topic_version ";
-	protected static final String STATEMENT_DROP_WIKI_FILE_TABLE =
-		"DROP TABLE jam_file ";
-	protected static final String STATEMENT_DROP_WIKI_FILE_VERSION_TABLE =
-		"DROP TABLE jam_file_version ";
-	protected static final String STATEMENT_DROP_IMAGE_TABLE =
-		"DROP TABLE jam_image ";
-	protected static final String STATEMENT_DROP_RECENT_CHANGE_TABLE =
-		"DROP TABLE jam_recent_change ";
-	protected static final String STATEMENT_INSERT_TOPIC =
-		"insert into jam_topic ( "
-		+   "topic_id, virtual_wiki_id, topic_name, topic_type, "
-		+   "topic_read_only, topic_content, topic_deleted, "
-		+   "topic_admin_only  "
-		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ? "
-		+ ") ";
-	protected static final String STATEMENT_INSERT_TOPIC_VERSION =
-		"insert into jam_topic_version ("
-		+   "topic_version_id, topic_id, edit_comment, version_content, "
-		+   "wiki_user_id, edit_type, wiki_user_ip_address, edit_date, "
-		+   "previous_topic_version_id "
-		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ?, ? "
-		+ ") ";
-	protected static final String STATEMENT_INSERT_RECENT_CHANGE =
-		"insert into jam_recent_change ("
-		+   "topic_version_id, previous_topic_version_id, topic_id, "
-		+   "topic_name, edit_date, edit_comment, wiki_user_id, "
-		+   "display_name, edit_type, virtual_wiki_id, virtual_wiki_name "
-		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-		+ ") ";
-	protected static final String STATEMENT_INSERT_RECENT_CHANGES =
-		"INSERT INTO jam_recent_change ( "
-		+   "topic_version_id, topic_id, "
-		+   "topic_name, edit_date, wiki_user_id, display_name, "
-		+   "edit_type, virtual_wiki_id, virtual_wiki_name, edit_comment, "
-		+   "previous_topic_version_id "
-		+ ") "
-		+ "SELECT "
-		+   "jam_topic_version.topic_version_id, jam_topic.topic_id, "
-		+   "jam_topic.topic_name, jam_topic_version.edit_date, "
-		+   "jam_topic_version.wiki_user_id, "
-		// FIXME - need the equivalent of "coalesce(login, ip_address)"
-		+   "jam_topic_version.wiki_user_ip_address, "
-		+   "jam_topic_version.edit_type, jam_virtual_wiki.virtual_wiki_id, "
-		+   "jam_virtual_wiki.virtual_wiki_name, jam_topic_version.edit_comment, "
-		+   "jam_topic_version.previous_topic_version_id "
-		+ "FROM jam_topic, jam_virtual_wiki, jam_topic_version "
-		+ "LEFT OUTER JOIN jam_wiki_user ON ( "
-		+    "jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
-		+ ") "
-		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
-		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
-		+ "AND jam_topic.topic_deleted = '0' ";
-	protected static final String STATEMENT_INSERT_VIRTUAL_WIKI =
-		"insert into jam_virtual_wiki ("
-		+   "virtual_wiki_id, virtual_wiki_name, default_topic_name "
-		+ ") values ( "
-		+   "?, ?, ? "
-		+ ") ";
-	protected static final String STATEMENT_INSERT_WIKI_FILE =
-	    "insert into jam_file ( "
-	    +   "file_id, virtual_wiki_id, file_name, "
-	    +   "file_url, mime_type, topic_id, "
-	    +   "file_deleted, file_read_only, file_admin_only, "
-	    +   "file_size "
-	    + ") values ( "
-	    +   "?, ?, ?, ?, ?, ?, ?, ?, ?, ? "
-	    + ") ";
-	protected static final String STATEMENT_INSERT_WIKI_FILE_VERSION =
-	    "insert into jam_file_version ( "
-	    +   "file_version_id, file_id, upload_comment, "
-	    +   "file_url, wiki_user_id, wiki_user_ip_address, "
-	    +   "upload_date, mime_type, file_size "
-	    + ") values ( "
-	    +   "?, ?, ?, ?, ?, ?, ?, ?, ? "
-	    + ") ";
-	protected static final String STATEMENT_INSERT_WIKI_USER =
-		"insert into jam_wiki_user ( "
-		+   "wiki_user_id, login, display_name, create_date, "
-		+   "last_login_date, create_ip_address, last_login_ip_address, "
-		+   "is_admin "
-		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ?, ?, ? "
-		+ ") ";
-	protected static final String STATEMENT_INSERT_WIKI_USER_INFO =
-		"insert into jam_wiki_user_info ("
-		+   "wiki_user_id, login, email, first_name, last_name, encoded_password "
-		+ ") values ( "
-		+   "?, ?, ?, ?, ?, ? "
-		+ ") ";
-	protected static final String STATEMENT_SELECT_RECENT_CHANGES =
-		"select * from jam_recent_change "
-		+ "where virtual_wiki_name = ? "
-		+ "order by edit_date desc "
-		+ "limit ? ";
-	protected static final String STATEMENT_SELECT_TOPIC =
-		"select * from jam_topic "
-		+ "where virtual_wiki_id = ? "
-		+ "and topic_name = ? ";
-	protected static final String STATEMENT_SELECT_TOPICS =
-		"select * from jam_topic "
-		+ "where virtual_wiki_id = ? "
-		+ "and topic_deleted = '0' ";
-	protected static final String STATEMENT_SELECT_TOPIC_READ_ONLY =
-		"select * from jam_topic "
-		+ "where virtual_wiki_id = ? "
-		+ "and topic_read_only = ? "
-		+ "and topic_deleted = '0' ";
-	protected static final String STATEMENT_SELECT_TOPIC_SEQUENCE =
-		"select max(topic_id) as topic_id from jam_topic ";
-	protected static final String STATEMENT_SELECT_TOPIC_VERSION =
-		"select * from jam_topic_version "
-		+ "where topic_version_id = ? ";
-	protected static final String STATEMENT_SELECT_TOPIC_VERSIONS =
-		"select * from jam_topic_version "
-		+ "where topic_id = ? "
-		+ "order by topic_version_id desc ";
-	protected static final String STATEMENT_SELECT_TOPIC_VERSION_LAST =
-		"select max(topic_version_id) as topic_version_id from jam_topic_version "
-		+ "where topic_id = ? ";
-	protected static final String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE =
-		"select max(topic_version_id) as topic_version_id from jam_topic_version ";
-	protected static final String STATEMENT_SELECT_VIRTUAL_WIKIS =
-		"select * from jam_virtual_wiki ";
-	protected static final String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE =
-		"select max(virtual_wiki_id) as virtual_wiki_id from jam_virtual_wiki ";
-	protected static final String STATEMENT_SELECT_WIKI_FILE =
-		"select * from jam_file "
-		+ "where virtual_wiki_id = ? "
-		+ "and topic_id = ? ";
-	protected static final String STATEMENT_SELECT_WIKI_FILE_SEQUENCE =
-		"select max(file_id) as file_id from jam_file ";
-	protected static final String STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES =
-		"select jam_topic.topic_name "
-		+ "from jam_topic, jam_file "
-		+ "where jam_topic.topic_id = jam_file.topic_id "
-		+ "and jam_file.virtual_wiki_id = ? ";
-	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE =
-		"select max(file_version_id) as file_version_id from jam_file_version ";
-	protected static final String STATEMENT_SELECT_WIKI_FILE_VERSIONS =
-		"select * from jam_file_version "
-		+ "where file_id = ? "
-		+ "order by file_version_id desc ";
-	protected static final String STATEMENT_SELECT_WIKI_USER_SEQUENCE =
-		"select max(wiki_user_id) as wiki_user_id from jam_wiki_user ";
-	protected static final String STATEMENT_SELECT_WIKI_USER =
-	    "select jam_wiki_user.wiki_user_id, jam_wiki_user.login, "
-	    +   "jam_wiki_user.display_name, jam_wiki_user.create_date, "
-	    +   "jam_wiki_user.last_login_date, jam_wiki_user.create_ip_address, "
-	    +   "jam_wiki_user.last_login_ip_address, jam_wiki_user.is_admin, "
-	    +   "jam_wiki_user_info.email, jam_wiki_user_info.first_name, "
-	    +   "jam_wiki_user_info.last_name, jam_wiki_user_info.encoded_password "
-	    + "from jam_wiki_user "
-	    + "left outer join jam_wiki_user_info "
-	    + "on (jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) "
-	    + "where jam_wiki_user.wiki_user_id = ? ";
-	protected static final String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS =
-		"select "
-		+   "jam_topic_version.topic_version_id, jam_topic_version.topic_id, "
-		+   "jam_topic_version.previous_topic_version_id, jam_topic.topic_name, "
-		+   "jam_topic_version.edit_date, jam_topic_version.edit_comment, "
-		+   "jam_topic_version.wiki_user_id, jam_topic_version.edit_type, "
-		+   "jam_topic_version.wiki_user_ip_address as display_name, "
-		+   "jam_topic.virtual_wiki_id, jam_virtual_wiki.virtual_wiki_name "
-		+ "from jam_topic, jam_virtual_wiki, jam_topic_version "
-		+ "where jam_virtual_wiki.virtual_wiki_id = jam_topic.virtual_wiki_id "
-		+ "and jam_topic.topic_id = jam_topic_version.topic_id "
-		+ "and jam_virtual_wiki.virtual_wiki_name = ? "
-		+ "and jam_topic_version.wiki_user_ip_address = ? "
-		+ "and jam_topic_version.wiki_user_id is null "
-		+ "and jam_topic.topic_deleted = '0' "
-		+ "order by edit_date desc "
-		+ "limit ? ";
-	protected static final String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN =
-		"select "
-		+   "jam_topic_version.topic_version_id, jam_topic_version.topic_id, "
-		+   "jam_topic_version.previous_topic_version_id, jam_topic.topic_name, "
-		+   "jam_topic_version.edit_date, jam_topic_version.edit_comment, "
-		+   "jam_topic_version.wiki_user_id, jam_topic_version.edit_type, "
-		+   "jam_wiki_user.login as display_name, jam_topic.virtual_wiki_id, "
-		+   "jam_virtual_wiki.virtual_wiki_name "
-		+ "from jam_topic, jam_virtual_wiki, jam_topic_version, jam_wiki_user "
-		+ "where jam_virtual_wiki.virtual_wiki_id = jam_topic.virtual_wiki_id "
-		+ "and jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
-		+ "and jam_topic.topic_id = jam_topic_version.topic_id "
-		+ "and jam_virtual_wiki.virtual_wiki_name = ? "
-		+ "and jam_wiki_user.login = ? "
-		+ "and jam_topic.topic_deleted = '0' "
-		+ "order by edit_date desc "
-		+ "limit ? ";
-	protected static final String STATEMENT_SELECT_WIKI_USER_PASSWORD =
-	    "select wiki_user_id from jam_wiki_user_info "
-	    + "where login = ? "
-	    + "and encoded_password = ? ";
-	protected static final String STATEMENT_SELECT_WIKI_USER_LOGIN =
-	    "select wiki_user_id from jam_wiki_user_info "
-	    + "where login = ? ";
-	protected static final String STATEMENT_SELECT_WIKI_USER_LOGINS =
-	    "select login from jam_wiki_user_info ";
-	protected static final String STATEMENT_UPDATE_TOPIC =
-		"update jam_topic set "
-		+ "virtual_wiki_id = ?, "
-		+ "topic_name = ?, "
-		+ "topic_type = ?, "
-		+ "topic_read_only = ?, "
-		+ "topic_content = ?, "
-		+ "topic_deleted = ? "
-		+ "where topic_id = ? ";
-	protected static final String STATEMENT_UPDATE_VIRTUAL_WIKI =
-		"update jam_virtual_wiki set "
-		+ "default_topic_name = ? "
-		+ "where virtual_wiki_id = ? ";
-	protected static final String STATEMENT_UPDATE_WIKI_FILE =
-		"update jam_file set "
-		+ "virtual_wiki_id = ?, "
-		+ "file_name = ?, "
-		+ "file_url = ?, "
-		+ "mime_type = ?, "
-		+ "topic_id = ?, "
-		+ "file_deleted = ?, "
-		+ "file_read_only = ?, "
-		+ "file_admin_only = ?, "
-		+ "file_size = ? "
-		+ "where file_id = ? ";
-	protected static final String STATEMENT_UPDATE_WIKI_USER =
-		"update jam_wiki_user set "
-		+ "login = ?, "
-		+ "display_name = ?, "
-		+ "last_login_date = ?, "
-		+ "last_login_ip_address = ?, "
-		+ "is_admin = ? "
-		+ "where wiki_user_id = ? ";
-	protected static final String STATEMENT_UPDATE_WIKI_USER_INFO =
-		"update jam_wiki_user_info set "
-		+ "login = ?, "
-		+ "email = ?, "
-		+ "first_name = ?, "
-		+ "last_name = ?, "
-		+ "encoded_password = ? "
-		+ "where wiki_user_id = ? ";
+	protected static String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE = null;
+	protected static String STATEMENT_CREATE_WIKI_USER_TABLE = null;
+	protected static String STATEMENT_CREATE_WIKI_USER_INFO_TABLE = null;
+	protected static String STATEMENT_CREATE_TOPIC_TABLE = null;
+	protected static String STATEMENT_CREATE_TOPIC_VERSION_TABLE = null;
+	protected static String STATEMENT_CREATE_WIKI_FILE_TABLE = null;
+	protected static String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = null;
+	protected static String STATEMENT_CREATE_IMAGE_TABLE = null;
+	protected static String STATEMENT_CREATE_RECENT_CHANGE_TABLE = null;
+	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
+	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
+	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
+	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
+	protected static String STATEMENT_DROP_TOPIC_TABLE = null;
+	protected static String STATEMENT_DROP_TOPIC_VERSION_TABLE = null;
+	protected static String STATEMENT_DROP_WIKI_FILE_TABLE = null;
+	protected static String STATEMENT_DROP_WIKI_FILE_VERSION_TABLE = null;
+	protected static String STATEMENT_DROP_IMAGE_TABLE = null;
+	protected static String STATEMENT_DROP_RECENT_CHANGE_TABLE = null;
+	protected static String STATEMENT_INSERT_TOPIC = null;
+	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
+	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
+	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
+	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
+	protected static String STATEMENT_INSERT_WIKI_FILE = null;
+	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
+	protected static String STATEMENT_INSERT_WIKI_USER = null;
+	protected static String STATEMENT_INSERT_WIKI_USER_INFO = null;
+	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
+	protected static String STATEMENT_SELECT_TOPIC = null;
+	protected static String STATEMENT_SELECT_TOPICS = null;
+	protected static String STATEMENT_SELECT_TOPIC_READ_ONLY = null;
+	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
+	protected static String STATEMENT_SELECT_TOPIC_VERSIONS = null;
+	protected static String STATEMENT_SELECT_TOPIC_VERSION_LAST = null;
+	protected static String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
+	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_WIKI_FILE = null;
+	protected static String STATEMENT_SELECT_WIKI_FILE_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES = null;
+	protected static String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_WIKI_FILE_VERSIONS = null;
+	protected static String STATEMENT_SELECT_WIKI_USER = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_PASSWORD = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_LOGIN = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_LOGINS = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_SEQUENCE = null;
+	protected static String STATEMENT_UPDATE_TOPIC = null;
+	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
+	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
+	protected static String STATEMENT_UPDATE_WIKI_USER = null;
+	protected static String STATEMENT_UPDATE_WIKI_USER_INFO = null;
 
 	/**
 	 *
@@ -570,6 +248,68 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public WikiResultSet getVirtualWikis() throws Exception {
 		return DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKIS);
+	}
+
+	/**
+	 *
+	 */
+	protected void init(Properties props) {
+		STATEMENT_CREATE_VIRTUAL_WIKI_TABLE      = props.getProperty("STATEMENT_CREATE_VIRTUAL_WIKI_TABLE");
+		STATEMENT_CREATE_WIKI_USER_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_USER_TABLE");
+		STATEMENT_CREATE_WIKI_USER_INFO_TABLE    = props.getProperty("STATEMENT_CREATE_WIKI_USER_INFO_TABLE");
+		STATEMENT_CREATE_TOPIC_TABLE             = props.getProperty("STATEMENT_CREATE_TOPIC_TABLE");
+		STATEMENT_CREATE_TOPIC_VERSION_TABLE     = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TABLE");
+		STATEMENT_CREATE_WIKI_FILE_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_FILE_TABLE");
+		STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = props.getProperty("STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE");
+		STATEMENT_CREATE_IMAGE_TABLE             = props.getProperty("STATEMENT_CREATE_IMAGE_TABLE");
+		STATEMENT_CREATE_RECENT_CHANGE_TABLE     = props.getProperty("STATEMENT_CREATE_RECENT_CHANGE_TABLE");
+		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
+		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
+		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
+		STATEMENT_DROP_WIKI_USER_INFO_TABLE      = props.getProperty("STATEMENT_DROP_WIKI_USER_INFO_TABLE");
+		STATEMENT_DROP_TOPIC_TABLE               = props.getProperty("STATEMENT_DROP_TOPIC_TABLE");
+		STATEMENT_DROP_TOPIC_VERSION_TABLE       = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TABLE");
+		STATEMENT_DROP_WIKI_FILE_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_FILE_TABLE");
+		STATEMENT_DROP_WIKI_FILE_VERSION_TABLE   = props.getProperty("STATEMENT_DROP_WIKI_FILE_VERSION_TABLE");
+		STATEMENT_DROP_IMAGE_TABLE               = props.getProperty("STATEMENT_DROP_IMAGE_TABLE");
+		STATEMENT_DROP_RECENT_CHANGE_TABLE       = props.getProperty("STATEMENT_DROP_RECENT_CHANGE_TABLE");
+		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
+		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
+		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
+		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
+		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
+		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
+		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
+		STATEMENT_INSERT_WIKI_USER               = props.getProperty("STATEMENT_INSERT_WIKI_USER");
+		STATEMENT_INSERT_WIKI_USER_INFO          = props.getProperty("STATEMENT_INSERT_WIKI_USER_INFO");
+		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
+		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
+		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
+		STATEMENT_SELECT_TOPIC_READ_ONLY         = props.getProperty("STATEMENT_SELECT_TOPIC_READ_ONLY");
+		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
+		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
+		STATEMENT_SELECT_TOPIC_VERSIONS          = props.getProperty("STATEMENT_SELECT_TOPIC_VERSIONS");
+		STATEMENT_SELECT_TOPIC_VERSION_LAST      = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_LAST");
+		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
+		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
+		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
+		STATEMENT_SELECT_WIKI_FILE               = props.getProperty("STATEMENT_SELECT_WIKI_FILE");
+		STATEMENT_SELECT_WIKI_FILE_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_FILE_SEQUENCE");
+		STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES   = props.getProperty("STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES");
+		STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE = props.getProperty("STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE");
+		STATEMENT_SELECT_WIKI_FILE_VERSIONS      = props.getProperty("STATEMENT_SELECT_WIKI_FILE_VERSIONS");
+		STATEMENT_SELECT_WIKI_USER               = props.getProperty("STATEMENT_SELECT_WIKI_USER");
+		STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS");
+		STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN");
+		STATEMENT_SELECT_WIKI_USER_LOGIN         = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGIN");
+		STATEMENT_SELECT_WIKI_USER_LOGINS        = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGINS");
+		STATEMENT_SELECT_WIKI_USER_PASSWORD      = props.getProperty("STATEMENT_SELECT_WIKI_USER_PASSWORD");
+		STATEMENT_SELECT_WIKI_USER_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_USER_SEQUENCE");
+		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
+		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
+		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
+		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
+		STATEMENT_UPDATE_WIKI_USER_INFO          = props.getProperty("STATEMENT_UPDATE_WIKI_USER_INFO");
 	}
 
 	/**

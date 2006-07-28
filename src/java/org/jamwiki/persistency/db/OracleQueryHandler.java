@@ -16,12 +16,9 @@
  */
 package org.jamwiki.persistency.db;
 
-import java.sql.Connection;
-import java.sql.Types;
+import java.util.Properties;
 import org.apache.log4j.Logger;
-import org.jamwiki.model.Topic;
-import org.jamwiki.model.TopicVersion;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.Environment;
 
 /**
  *
@@ -29,111 +26,16 @@ import org.jamwiki.utils.Utilities;
 public class OracleQueryHandler extends DefaultQueryHandler {
 
 	private static Logger logger = Logger.getLogger(OracleQueryHandler.class.getName());
-
-	private static final String STATEMENT_INSERT_RECENT_CHANGES =
-		"INSERT INTO jam_recent_change ( "
-		+   "topic_version_id, topic_id, "
-		+   "topic_name, edit_date, wiki_user_id, display_name, "
-		+   "edit_type, virtual_wiki_id, virtual_wiki_name, edit_comment, "
-		+   "previous_topic_version_id "
-		+ ") "
-		+ "SELECT "
-		+   "jam_topic_version.topic_version_id, jam_topic.topic_id, "
-		+   "jam_topic.topic_name, jam_topic_version.edit_date, "
-		+   "jam_topic_version.wiki_user_id, "
-		+   "nvl(jam_wiki_user.login, jam_topic_version.wiki_user_ip_address), "
-		+   "jam_topic_version.edit_type, jam_virtual_wiki.virtual_wiki_id, "
-		+   "jam_virtual_wiki.virtual_wiki_name, jam_topic_version.edit_comment, "
-		+   "jam_topic_version.previous_topic_version_id "
-		+ "FROM jam_topic, jam_virtual_wiki, jam_topic_version "
-		+ "LEFT OUTER JOIN jam_wiki_user ON ( "
-		+    "jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
-		+ ") "
-		+ "WHERE jam_topic.topic_id = jam_topic_version.topic_id "
-		+ "AND jam_topic.virtual_wiki_id = jam_virtual_wiki.virtual_wiki_id "
-		+ "AND jam_topic.topic_deleted = '0' ";
-	private static final String STATEMENT_SELECT_RECENT_CHANGES =
-		"select * from ( "
-		+   "select * from jam_recent_change "
-		+     "where virtual_wiki_name = ? "
-		+     "order by edit_date desc "
-		+ ") where rownum <= ? ";
-	private static final String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS =
-		"select * from ("
-		+   "select "
-		+     "jam_topic_version.topic_version_id, jam_topic_version.topic_id, "
-		+     "jam_topic_version.previous_topic_version_id, jam_topic.topic_name, "
-		+     "jam_topic_version.edit_date, jam_topic_version.edit_comment, "
-		+     "jam_topic_version.wiki_user_id, jam_topic_version.edit_type, "
-		+     "jam_topic_version.wiki_user_ip_address as display_name, "
-		+     "jam_topic.virtual_wiki_id, jam_virtual_wiki.virtual_wiki_name "
-		+   "from jam_topic, jam_virtual_wiki, jam_topic_version "
-		+   "where jam_virtual_wiki.virtual_wiki_id = jam_topic.virtual_wiki_id "
-		+   "and jam_topic.topic_id = jam_topic_version.topic_id "
-		+   "and jam_virtual_wiki.virtual_wiki_name = ? "
-		+   "and jam_topic_version.wiki_user_ip_address = ? "
-		+   "and jam_topic_version.wiki_user_id is null "
-		+   "and jam_topic.topic_deleted = '0' "
-		+   "order by edit_date desc "
-		+ ") where rownum <= ? ";
-	private static final String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN =
-		"select * from ("
-		+   "select "
-		+     "jam_topic_version.topic_version_id, jam_topic_version.topic_id, "
-		+     "jam_topic_version.previous_topic_version_id, jam_topic.topic_name, "
-		+     "jam_topic_version.edit_date, jam_topic_version.edit_comment, "
-		+     "jam_topic_version.wiki_user_id, jam_topic_version.edit_type, "
-		+     "jam_wiki_user.login as display_name, jam_topic.virtual_wiki_id, "
-		+     "jam_virtual_wiki.virtual_wiki_name "
-		+   "from jam_topic, jam_virtual_wiki, jam_topic_version, jam_wiki_user "
-		+   "where jam_virtual_wiki.virtual_wiki_id = jam_topic.virtual_wiki_id "
-		+   "and jam_wiki_user.wiki_user_id = jam_topic_version.wiki_user_id "
-		+   "and jam_topic.topic_id = jam_topic_version.topic_id "
-		+   "and jam_virtual_wiki.virtual_wiki_name = ? "
-		+   "and jam_wiki_user.login = ? "
-		+   "and jam_topic.topic_deleted = '0' "
-		+   "order by edit_date desc "
-		+ ") where rownum <= ? ";
+	private static final String SQL_PROPERTY_FILE_NAME = "sql.oracle.properties";
+	private static Properties props = null;
+	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
 	protected OracleQueryHandler() {
-	}
-
-	/**
-	 *
-	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
-		stmt.setString(1, virtualWiki);
-		stmt.setInt(2, num);
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = null;
-		if (Utilities.isIpAddress(userString)) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
-		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
-		}
-		stmt.setString(1, virtualWiki);
-		stmt.setString(2, userString);
-		stmt.setInt(3, num);
-		// FIXME - sort order ignored
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
-	public void reloadRecentChanges(Connection conn) throws Exception {
-		DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DELETE_RECENT_CHANGES, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES, conn);
+		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
+		super.init(props);
 	}
 }
