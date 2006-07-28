@@ -5,6 +5,9 @@
 * FEATURE: Remove copyvio'd background image from Mediawiki.
   Existing JAMWiki installs will want to replace "headbg.jpg" in
   the StyleSheet topic with "denalibg.jpg".
+* FEATURE: Keep ugly logo, but make background transparent.
+  Existing JAMWiki installs will want to replace "logo.jpg" in
+  the StyleSheet topic with "logo.gif".
 
 0.1.0
 =====
