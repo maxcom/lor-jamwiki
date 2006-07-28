@@ -11,6 +11,7 @@ JAMWiki Contributors
   Documentation:
   Translations:
      Chinese:               Jiading (ewen0930)
+     Hungarian:             Daniel Tar (bDaneE)
   Non-project contributors:
 
 
