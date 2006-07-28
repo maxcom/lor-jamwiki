@@ -10,7 +10,8 @@ JAMWiki Contributors
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
   Documentation:
   Translations:
-     Chinese:               Jiading (ewen0930)
+     Chinese (simplified):  Jiading (ewen0930)
+     Chinese (traditional): Jiading (ewen0930)
      Hungarian:             Daniel Tar (bDaneE)
   Non-project contributors:
 
