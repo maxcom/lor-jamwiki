@@ -51,6 +51,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
 	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
 	private static QueryHandler queryHandler = null;
+	private boolean initialized = false;
 
 	/**
 	 *
@@ -299,6 +300,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			if (conn != null) DatabaseConnection.closeConnection(conn);
 		}
 		super.initialize(locale, user);
+		this.initialized = true;
 	}
 
 	/**
@@ -483,6 +485,9 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			// properties not initialized
 			return false;
+		}
+		if (this.initialized) {
+			return true;
 		}
 		String sql = "select 1 from jam_virtual_wiki ";
 		try {

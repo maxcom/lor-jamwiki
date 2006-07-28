@@ -81,7 +81,6 @@ public class FileHandler extends PersistencyHandler {
 	private static final String TOPIC_DIR = "topics";
 	private static final String TOPIC_VERSION_DIR = "versions";
 	private static final String VIRTUAL_WIKI_DIR = "virtualwiki";
-//	private static final String VIRTUAL_WIKI_LIST = "virtualwikis";
 	private static final String WIKI_FILE_DIR = "files";
 	private static final String WIKI_FILE_VERSION_DIR = "fileversions";
 	private static final String WIKI_USER_DIR = "wikiusers";
@@ -157,6 +156,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_WIKI_USER_LAST_NAME = "lastname";
 	protected static final String XML_WIKI_USER_LOGIN = "login";
 	protected static final String XML_WIKI_USER_ID = "userid";
+	private boolean initialized = false;
 
 	/**
 	 *
@@ -442,6 +442,19 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void handleErrors(Object[] params) {
+	}
+
+	/**
+	 * Set up database tables, and then call the parent method to initialize
+	 * default values.
+	 */
+	public void initialize(Locale locale, WikiUser user) throws Exception {
+		if (this.isInitialized()) {
+			logger.warn("Attempt to initialize when initialization already complete");
+			return;
+		}
+		super.initialize(locale, user);
+		this.initialized = true;
 	}
 
 	/**
@@ -769,6 +782,9 @@ public class FileHandler extends PersistencyHandler {
 		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			// properties not initialized
 			return false;
+		}
+		if (this.initialized) {
+			return true;
 		}
 		File file = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
 		if (!file.exists()) return false;
