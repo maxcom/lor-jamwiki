@@ -16,23 +16,16 @@
  */
 package org.jamwiki;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.Properties;
-import javax.naming.InitialContext;
-import org.apache.commons.io.FileUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
-import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Utilities;
 
 /**
  * Provides environmental information to the JAMWiki system.
@@ -356,54 +349,31 @@ public class Environment {
 		if (file.exists()) {
 			return file;
 		}
-		URL url = Environment.getURL(filename);
-		return FileUtils.toFile(url);
+		// search for file in class loader path
+		return Environment.getPropertyFile(filename);
 	}
 
 	/**
-	 * Utility methods for retrieving property files from the class path, taken from
-	 * the org.apache.log4j.helpers.Loader class.
+	 * Utility methods for retrieving property files from the class path, based on
+	 * code from the org.apache.log4j.helpers.Loader class.
 	 *
-	 * @param filename Given a filename return a URL object for the file.  The filename
+	 * @param filename Given a filename return a File object for the file.  The filename
 	 *  may be relative to the class path or the directory from which the JVM was
 	 *  initialized.
 	 */
-	private static URL getURL(String filename) {
-		Method method = null;
-		ClassLoader loader = null;
-		URL url = null;
+	private static File getPropertyFile(String filename) {
+		File file = null;
 		try {
-			// first try to use the standard class loader path
-			method = Thread.class.getMethod("getContextClassLoader", null);
-		} catch (NoSuchMethodException e) {
+			file = Utilities.getClassLoaderRoot();
+		} catch (Exception e) {
 			logger.error("Error while searching for resource " + filename, e);
 			return null;
 		}
 		try {
-			loader = (ClassLoader)method.invoke(Thread.currentThread(), null);
-		} catch (IllegalAccessException e) {
-			logger.error("Error while searching for resource " + filename, e);
-			return null;
-		} catch (InvocationTargetException e) {
-			logger.error("Error while searching for resource " + filename, e);
-			return null;
+			file = new File(file, filename);
+		} catch (Exception e) {
+			logger.warn("Could not create filename for " + filename);
 		}
-		if (loader != null) {
-			url = loader.getResource(filename);
-			if (url != null) return url;
-		}
-		// no luck, maybe it's a new file...
-		if (loader != null) {
-			url = loader.getResource("/");
-			if (url != null) {
-				try {
-					return new URL(url.toString() + filename);
-				} catch (Exception e) {
-					logger.warn("Could not build URL for " + filename);
-				}
-			}
-		}
-		// last attempt with the class path
-		return ClassLoader.getSystemResource(filename);
+		return file;
 	}
 }

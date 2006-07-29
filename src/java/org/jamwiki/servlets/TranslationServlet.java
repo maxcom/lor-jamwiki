@@ -16,9 +16,11 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.File;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -59,6 +61,7 @@ public class TranslationServlet extends JAMWikiServlet {
 				translate(request, next);
 			}
 			next.addObject("translations", new TreeMap(this.translations));
+			next.addObject("codes", this.retrieveTranslationCodes());
 			if (request.getParameter("language") != null) next.addObject("language", request.getParameter("language"));
 		} catch (Exception e) {
 			viewError(request, next, e);
@@ -83,6 +86,27 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private TreeSet retrieveTranslationCodes() throws Exception {
+		TreeSet translations = new TreeSet();
+		File propertyRoot = Utilities.getClassLoaderRoot();
+		File[] files = propertyRoot.listFiles();
+		File file;
+		String filename;
+		for (int i = 0; i < files.length; i++) {
+			file = files[i];
+			if (!file.isFile()) continue;
+			filename = file.getName();
+			if (!StringUtils.hasText(filename)) continue;
+			if (!filename.startsWith("ApplicationResources_") || !filename.endsWith(".properties")) continue;
+			String code = filename.substring("ApplicationResources_".length(), filename.length() - ".properties".length());
+			if (StringUtils.hasText(code)) translations.add(code);
+		}
+		return translations;
+	}
+
+	/**
+	 *
+	 */
 	private void translate(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
 		this.pageInfo.setSpecial(true);
@@ -94,7 +118,7 @@ public class TranslationServlet extends JAMWikiServlet {
 			if (!name.startsWith("translations[") || !name.endsWith("]")) {
 				continue;
 			}
-			String key = name.substring("translations[".length(), name.length() - 1);
+			String key = name.substring("translations[".length(), name.length() - "]".length());
 			String value = request.getParameter(name);
 			this.translations.setProperty(key, value);
 		}

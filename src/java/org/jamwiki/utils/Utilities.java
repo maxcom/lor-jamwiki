@@ -258,6 +258,37 @@ public class Utilities {
 	}
 
 	/**
+	 *
+	 */
+	public static File getClassLoaderRoot() throws Exception {
+		Method method = null;
+		ClassLoader loader = null;
+		URL url = null;
+		File file = null;
+		// first try to use the standard class loader path
+		method = Thread.class.getMethod("getContextClassLoader", null);
+		loader = (ClassLoader)method.invoke(Thread.currentThread(), null);
+		if (loader == null) {
+			throw new Exception("Unable to find class loader");
+		}
+		url = loader.getResource("/");
+		if (url != null) {
+			file = FileUtils.toFile(url);
+		} else {
+			url = ClassLoader.getSystemResource("/");
+			if (url == null) {
+				throw new Exception("Unable to find class loader root");
+			}
+			file = FileUtils.toFile(url);
+		}
+		if (file == null | !file.exists() || !file.isDirectory()) {
+			throw new Exception("Found invalid class loader root " + file);
+		}
+		return file;
+
+	}
+
+	/**
 	 * Get messages for the given locale
 	 * @param locale locale
 	 * @return
