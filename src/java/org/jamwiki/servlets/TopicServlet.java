@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,7 +52,7 @@ public class TopicServlet extends JAMWikiServlet {
 			} else if (isTopic(request, "Special:ToDoTopics")) {
 				toDoTopics(request, next);
 			} else {
-				viewTopic(request, next, JAMWikiServlet.getTopicFromURI(request));
+				viewTopic(request, next);
 			}
 		} catch (Exception e) {
 			viewError(request, next, e);
@@ -100,5 +101,18 @@ public class TopicServlet extends JAMWikiServlet {
 		this.pageInfo.setPageTitle(title);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_TODO_TOPICS);
 		this.pageInfo.setSpecial(true);
+	}
+
+	/**
+	 *
+	 */
+	private void viewTopic(HttpServletRequest request, ModelAndView next) throws Exception {
+		String topic = JAMWikiServlet.getTopicFromURI(request);
+		if (!StringUtils.hasText(topic)) {
+			String virtualWikiName = getVirtualWikiFromURI(request);
+			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			topic = virtualWiki.getDefaultTopicName();
+		}
+		super.viewTopic(request, next, topic);
 	}
 }

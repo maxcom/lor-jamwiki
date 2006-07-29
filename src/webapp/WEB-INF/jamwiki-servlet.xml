@@ -30,6 +30,7 @@
 				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/*.css">Stylesheet</prop>
 				<prop key="/**/*">Topic</prop>
+				<prop key="/**/">Topic</prop>
 			</props>
 		</property>
 	</bean>
