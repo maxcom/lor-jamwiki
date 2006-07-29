@@ -32,6 +32,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -75,6 +76,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String buildUniqueFileName(String fileName) {
+		if (!StringUtils.hasText(fileName)) return null;
 		// file is appended with a timestamp of DDHHMMSS
 		GregorianCalendar cal = new GregorianCalendar();
 		String day = new Integer(cal.get(Calendar.DAY_OF_MONTH)).toString();
@@ -95,6 +97,25 @@ public class UploadServlet extends JAMWikiServlet {
 		// decode, then encode to ensure that any previously encoded characters
 		// aren't encoded twice
 		return Utilities.encodeURL(Utilities.decodeURL(fileName));
+	}
+
+	/**
+	 *
+	 */
+	private static String sanitizeFilename(String filename) {
+		if (!StringUtils.hasText(filename)) return null;
+		// some browsers set the full path, so strip to just the file name
+		int pos = filename.lastIndexOf("/");
+		if (pos != -1) {
+			if ((pos + 1) >= filename.length()) return "";
+			filename = filename.substring(pos + 1);
+		}
+		pos = filename.lastIndexOf("\\");
+		if (pos != -1) {
+			if ((pos + 1) >= filename.length()) return "";
+			filename = filename.substring(pos + 1);
+		}
+		return filename;
 	}
 
 	/**
@@ -136,7 +157,10 @@ public class UploadServlet extends JAMWikiServlet {
 					topic.setTopicContent(item.getString());
 				}
 			} else {
-				fileName = item.getName();
+				fileName = sanitizeFilename(item.getName());
+				if (fileName == null) {
+					throw new Exception(Utilities.getMessage("upload.error.filename", request.getLocale()));
+				}
 				url = UploadServlet.buildUniqueFileName(fileName);
 				String subdirectory = UploadServlet.buildFileSubdirectory();
 				fileSize = item.getSize();
@@ -151,7 +175,7 @@ public class UploadServlet extends JAMWikiServlet {
 			}
 		}
 		if (fileName == null) {
-			throw new Exception("No file found");
+			throw new Exception(Utilities.getMessage("upload.error.filenotfound", request.getLocale()));
 		}
 		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
 		topic.setName(topicName);
