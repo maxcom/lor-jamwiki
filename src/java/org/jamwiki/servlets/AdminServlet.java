@@ -67,7 +67,7 @@ public class AdminServlet extends JAMWikiServlet {
 				} else if (isTopic(request, "Special:Delete")) {
 					redirect = "Special:Delete";
 				}
-				next.addObject("errorMessage", "Only administrators may access this page");
+				next.addObject("errorMessage", Utilities.getMessage("admin.message.loginrequired", request.getLocale()));
 				viewLogin(request, next, redirect);
 				loadDefaults(request, next, this.pageInfo);
 				return next;
