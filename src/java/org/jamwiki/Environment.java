@@ -231,7 +231,7 @@ public class Environment {
 		FileOutputStream out = null;
 		try {
 			out = new FileOutputStream(file);
-			props.store(out, comments);
+			properties.store(out, comments);
 		} finally {
 			if (out != null) {
 				try {
@@ -392,11 +392,16 @@ public class Environment {
 			url = loader.getResource(filename);
 			if (url != null) return url;
 		}
-		// now attempt the the class loader that loaded this class
-		loader = Environment.class.getClassLoader();
+		// no luck, maybe it's a new file...
 		if (loader != null) {
-			url = loader.getResource(filename);
-			if (url != null) return url;
+			url = loader.getResource("/");
+			if (url != null) {
+				try {
+					return new URL(url.toString() + filename);
+				} catch (Exception e) {
+					logger.warn("Could not build URL for " + filename);
+				}
+			}
 		}
 		// last attempt with the class path
 		return ClassLoader.getSystemResource(filename);

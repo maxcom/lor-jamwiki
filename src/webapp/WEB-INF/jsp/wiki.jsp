@@ -62,13 +62,17 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="admin.jsp" flush="true" />
 <%
+} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_CONVERT)) {
+%>
+		<jsp:include page="admin-convert.jsp" flush="true" />
+<%
 } else if (action.equals(JAMWikiServlet.ACTION_ADMIN_DELETE)) {
 %>
 		<jsp:include page="admin-delete.jsp" flush="true" />
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_CONVERT)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_TRANSLATION)) {
 %>
-		<jsp:include page="admin-convert.jsp" flush="true" />
+		<jsp:include page="admin-translation.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
 %>

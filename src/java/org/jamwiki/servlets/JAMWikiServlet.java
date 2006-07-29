@@ -42,8 +42,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private static final Logger logger = Logger.getLogger(JAMWikiServlet.class);
 	// constants used as the action parameter in calls to this servlet
 	public static final String ACTION_ADMIN = "action_admin";
-	public static final String ACTION_ADMIN_DELETE = "action_admin_delete";
 	public static final String ACTION_ADMIN_CONVERT = "action_admin_convert";
+	public static final String ACTION_ADMIN_DELETE = "action_admin_delete";
+	public static final String ACTION_ADMIN_TRANSLATION = "action_admin_translation";
 	public static final String ACTION_ALL_TOPICS = "all_topics";
 	public static final String ACTION_CANCEL = "Cancel";
 	public static final String ACTION_CONTRIBUTIONS = "action_contributions";
@@ -84,7 +85,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	// FIXME - make configurable
 	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
 	private static HashMap cachedContents = new HashMap();
-	WikiPageInfo pageInfo = new WikiPageInfo();
+	protected WikiPageInfo pageInfo = new WikiPageInfo();
 
 	/**
 	 *

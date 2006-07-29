@@ -2,10 +2,6 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename"><value>messages</value></property>
-	</bean>
-
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
@@ -29,6 +25,7 @@
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
+				<prop key="/**/Special:Translation">Translation</prop>
 				<prop key="/**/Special:Upgrade">Upgrade</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
 				<prop key="/**/*.css">Stylesheet</prop>
@@ -53,8 +50,10 @@
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
 	<bean id="Stylesheet" class="org.jamwiki.servlets.StylesheetServlet" />
 	<bean id="Topic" class="org.jamwiki.servlets.TopicServlet" />
+	<bean id="Translation" class="org.jamwiki.servlets.TranslationServlet" />
 	<bean id="Upgrade" class="org.jamwiki.servlets.UpgradeServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
+
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
 		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
