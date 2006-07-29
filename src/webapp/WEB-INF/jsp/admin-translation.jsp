@@ -39,7 +39,7 @@
 <td>&#160;&#160;&#160;&#160;&#160;</td>
 <td>
 <form name="adminTranslation" method="get" action="<jamwiki:link value="Special:Translation" />">
-<input type="text" name="language" size="5" value="<c:out value="${language}" />" />&#160;&#160;<input type="submit" name="submit" />
+<input type="text" name="language" size="5" value="<c:out value="${language}" />" />&#160;&#160;<input type="submit" name="submit" value="<f:message key="common.change" />" />
 </form>
 </td>
 </tr>
