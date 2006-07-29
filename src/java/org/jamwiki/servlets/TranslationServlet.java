@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,6 +45,13 @@ public class TranslationServlet extends JAMWikiServlet {
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
+			if (!Utilities.isAdmin(request)) {
+				String redirect = "Special:Translation";
+				next.addObject("errorMessage", Utilities.getMessage("admin.message.loginrequired", request.getLocale()));
+				viewLogin(request, next, redirect);
+				loadDefaults(request, next, this.pageInfo);
+				return next;
+			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
 				view(request, next);
