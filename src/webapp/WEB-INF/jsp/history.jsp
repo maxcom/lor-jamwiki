@@ -79,7 +79,7 @@ function inactive(element) {
 <br /><br />
 
 <ul>
-		<c:forEach items="${changes}" var="change">
+<c:forEach items="${changes}" var="change">
 <li>
 	&#160;
 	<input type="checkbox" name='<c:out value="diff:${change.topicVersionId}"/>' onclick="inactive(this)" />
@@ -89,8 +89,10 @@ function inactive(element) {
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
+	<%-- FIXME: need a better way to denote minor edits --%>
+	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
-		</c:forEach>
+</c:forEach>
 </ul>
 
 <br />

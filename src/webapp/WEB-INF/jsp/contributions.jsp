@@ -55,18 +55,19 @@ if (request.getParameter("num") != null) {
 
 <ul>
 
-<c:forEach items="${contributions}" var="contribution">
+<c:forEach items="${contributions}" var="change">
 <li>
-	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${contribution.topicName}" />&version2=<c:out value="${contribution.previousTopicVersionId}" />&version1=<c:out value="${contribution.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
+	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&version2=<c:out value="${change.previousTopicVersionId}" />&version1=<c:out value="${change.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
 	&#160;
-	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${contribution.topicName}" />&type=all"><f:message key="common.caption.history" /></a>)
+	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />&type=all"><f:message key="common.caption.history" /></a>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<f:formatDate value="${contribution.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
+	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
 	&#160;
-	<a href='<jamwiki:link value="${contribution.topicName}"/>'><c:out value="${contribution.topicName}"/></a>
-	&#160;
-	<c:if test="${!empty contribution.editComment}">&#160;(<i><c:out value="${contribution.editComment}" /></i>)</c:if>
+	<a href='<jamwiki:link value="${change.topicName}"/>'><c:out value="${change.topicName}"/></a>
+	<%-- FIXME: need a better way to denote minor edits --%>
+	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
+	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </c:forEach>
 </ul>
 </form>

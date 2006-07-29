@@ -115,6 +115,13 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public boolean getMinor() {
+		return this.editType == TopicVersion.EDIT_MINOR;
+	}
+
+	/**
+	 *
+	 */
 	public Integer getPreviousTopicVersionId() {
 		return this.previousTopicVersionId;
 	}
