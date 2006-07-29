@@ -17,6 +17,7 @@ import org.jamwiki.Environment;
 %implements org.jamwiki.parser.Lexer
 %type String
 %unicode
+%ignorecase
 
 /* code included in the constructor */
 %init{
@@ -129,8 +130,8 @@ nowikistart        = "<nowiki>"
 nowikiend          = "</nowiki>"
 
 /* pre */
-htmlprestart       = (<[ ]*[Pp][Rr][Ee][ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*[Pp][Rr][Ee][ ]*>)
+htmlprestart       = (<[ ]*pre[ ]*>)
+htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 
 /* comments */
 htmlcomment        = "<!--" [^(\-\->)]* ~"-->"

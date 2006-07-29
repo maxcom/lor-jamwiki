@@ -41,6 +41,7 @@ import org.jamwiki.utils.Utilities;
 %implements org.jamwiki.parser.Lexer
 %type String
 %unicode
+%ignorecase
 
 /* code included in the constructor */
 %init{
@@ -283,35 +284,35 @@ htmlprestart       = (<[ ]*[Pp][Rr][Ee][ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*[Pp][Rr][Ee][ ]*>)
 
 /* allowed html */
-htmlbreak          = (<[ ]*[Bb][Rr][ ]*[\/]?[ ]*>)
-htmlboldstart      = (<[ ]*[Bb][ ]*>)
-htmlboldend        = (<[ ]*\/[ ]*[Bb][ ]*>)
-htmlcodestart      = (<[ ]*[Cc][Oo][Dd][Ee][ ]*>)
-htmlcodeend        = (<[ ]*\/[ ]*[Cc][Oo][Dd][Ee][ ]*>)
-htmldivstart       = (<[ ]*[Dd][Ii][Vv][ ]*>)|(<[ ]*[Dd][Ii][Vv][ ]+[^>\/]+>)
-htmldivend         = (<[ ]*\/[ ]*[Dd][Ii][Vv][ ]*>)
-htmlitalicstart    = (<[ ]*[Ii][ ]*>)
-htmlitalicend      = (<[ ]*\/[ ]*[Ii][ ]*>)
-htmlspanstart      = (<[ ]*[Ss][Pp][Aa][Nn][ ]*>)|(<[ ]*[Ss][Pp][Aa][Nn][ ]+[^>\/]+>)
-htmlspanend        = (<[ ]*\/[ ]*[Ss][Pp][Aa][Nn][ ]*>)
-htmlstrikestart    = (<[ ]*[Ss][Tt][Rr][Ii][Kk][Ee][ ]*>)
-htmlstrikeend      = (<[ ]*\/[ ]*[Ss][Tt][Rr][Ii][Kk][Ee][ ]*>)
-htmlsubstart       = (<[ ]*[Ss][Uu][Bb][ ]*>)
-htmlsubend         = (<[ ]*\/[ ]*[Ss][Uu][Bb][ ]*>)
-htmlsupstart       = (<[ ]*[Ss][Uu][Pp][ ]*>)
-htmlsupend         = (<[ ]*\/[ ]*[Ss][Uu][Pp][ ]*>)
-htmltablestart     = (<[ ]*[Tt][Aa][Bb][Ll][Ee][ ]*>)|(<[ ]*[Tt][Aa][Bb][Ll][Ee][ ]+[^>\/]+>)
-htmltableend       = (<[ ]*\/[ ]*[Tt][Aa][Bb][Ll][Ee][ ]*>)
-htmltdstart        = (<[ ]*[Tt][Dd][ ]*>)|(<[ ]*[Tt][Dd][ ]+[^>\/]+>)
-htmltdend          = (<[ ]*\/[ ]*[Tt][Dd][ ]*>)
-htmlthstart        = (<[ ]*[Tt][Hh][ ]*>)|(<[ ]*[Tt][Dd][ ]+[^>\/]+>)
-htmlthend          = (<[ ]*\/[ ]*[Tt][Hh][ ]*>)
-htmltrstart        = (<[ ]*[Tt][Rr][ ]*>)|(<[ ]*[Tt][Rr][ ]+[^>\/]+>)
-htmltrend          = (<[ ]*\/[ ]*[Tt][Rr][ ]*>)
-htmlttstart        = (<[ ]*[Tt][Tt][ ]*>)
-htmlttend          = (<[ ]*\/[ ]*[Tt][Tt][ ]*>)
-htmlunderlinestart = (<[ ]*[Uu][ ]*>)
-htmlunderlineend   = (<[ ]*\/[ ]*[Uu][ ]*>)
+htmlbreak          = (<[ ]*br[ ]*[\/]?[ ]*>)
+htmlboldstart      = (<[ ]*b[ ]*>)
+htmlboldend        = (<[ ]*\/[ ]*b[ ]*>)
+htmlcodestart      = (<[ ]*code[ ]*>)
+htmlcodeend        = (<[ ]*\/[ ]*code[ ]*>)
+htmldivstart       = (<[ ]*div[ ]*>)|(<[ ]*div[ ]+[^>\/]+>)
+htmldivend         = (<[ ]*\/[ ]*div[ ]*>)
+htmlitalicstart    = (<[ ]*i[ ]*>)
+htmlitalicend      = (<[ ]*\/[ ]*i[ ]*>)
+htmlspanstart      = (<[ ]*span[ ]*>)|(<[ ]*span[ ]+[^>\/]+>)
+htmlspanend        = (<[ ]*\/[ ]*span[ ]*>)
+htmlstrikestart    = (<[ ]*strike[ ]*>)
+htmlstrikeend      = (<[ ]*\/[ ]*strike[ ]*>)
+htmlsubstart       = (<[ ]*sub[ ]*>)
+htmlsubend         = (<[ ]*\/[ ]*sub[ ]*>)
+htmlsupstart       = (<[ ]*sup[ ]*>)
+htmlsupend         = (<[ ]*\/[ ]*sup[ ]*>)
+htmltablestart     = (<[ ]*table[ ]*>)|(<[ ]*table[ ]+[^>\/]+>)
+htmltableend       = (<[ ]*\/[ ]*table[ ]*>)
+htmltdstart        = (<[ ]*td[ ]*>)|(<[ ]*td[ ]+[^>\/]+>)
+htmltdend          = (<[ ]*\/[ ]*td[ ]*>)
+htmlthstart        = (<[ ]*th[ ]*>)|(<[ ]*th[ ]+[^>\/]+>)
+htmlthend          = (<[ ]*\/[ ]*th[ ]*>)
+htmltrstart        = (<[ ]*tr[ ]*>)|(<[ ]*tr[ ]+[^>\/]+>)
+htmltrend          = (<[ ]*\/[ ]*tr[ ]*>)
+htmlttstart        = (<[ ]*tt[ ]*>)
+htmlttend          = (<[ ]*\/[ ]*tt[ ]*>)
+htmlunderlinestart = (<[ ]*u[ ]*>)
+htmlunderlineend   = (<[ ]*\/[ ]*u[ ]*>)
 
 /* processing commands */
 notoc              = "__NOTOC__"
@@ -592,7 +593,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     return (wikiitalic) ? "<i>" : "</i>";
 }
 
-/* ----- html ----- */
+/* ----- allowed html ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlbreak} {
     logger.debug("htmlbreak: " + yytext() + " (" + yystate() + ")");
