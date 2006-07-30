@@ -27,7 +27,8 @@
 <%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
 
 <%
-response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+// no-cache headers
+response.setHeader("Cache-Control", "max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
 response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
