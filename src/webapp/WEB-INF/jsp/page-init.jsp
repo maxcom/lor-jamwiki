@@ -29,6 +29,7 @@
 <%
 // no-cache headers
 response.setHeader("Cache-Control", "private, s-maxage=0, max-age=0, must-revalidate");
+response.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
 response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
