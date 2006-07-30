@@ -117,6 +117,10 @@ function onUserGroupType() {
 	<td class="normal"><input type="text" name="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
 </tr>
 <tr>
+	<td class="normal"><f:message key="admin.caption.logoimage" /></td>
+	<td class="normal"><input type="text" name="<%= Environment.PROP_BASE_LOGO_IMAGE %>" value="<%= Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE) %>" size="30" /></td>
+</tr>
+<tr>
 	<td class="normal"><f:message key="admin.caption.useversioning" /></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_VERSIONING_ON %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON) ? " checked" : "" %> /></td>
 </tr>

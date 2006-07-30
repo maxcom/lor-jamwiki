@@ -38,6 +38,7 @@ public class Environment {
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
 	public static final String PROP_BASE_INITIALIZED = "props-initialized";
+	public static final String PROP_BASE_LOGO_IMAGE = "logo-image";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_DB_DRIVER= "driver";
@@ -282,6 +283,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
+		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo.gif");
 		defaults.setProperty(PROP_BASE_INITIALIZED, "false");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "FILE");
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");

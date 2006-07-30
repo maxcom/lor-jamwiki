@@ -1,7 +1,6 @@
 These topics may only be edited by a user with admin privileges:
 
 * [[LeftMenu]]
-* [[TopArea]]
 * [[BottomArea]]
 * [[AdminOnlyTopics]]
 * [[StyleSheet]]

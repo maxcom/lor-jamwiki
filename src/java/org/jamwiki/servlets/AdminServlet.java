@@ -248,6 +248,10 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setPageTitle("Special:Admin");
 		try {
 			Environment.setValue(
+				Environment.PROP_BASE_LOGO_IMAGE,
+				request.getParameter(Environment.PROP_BASE_LOGO_IMAGE)
+			);
+			Environment.setValue(
 				Environment.PROP_RECENT_CHANGES_DAYS,
 				request.getParameter(Environment.PROP_RECENT_CHANGES_DAYS)
 			);

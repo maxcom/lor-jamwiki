@@ -29,7 +29,7 @@ import org.jamwiki.Environment;
  * The static addTableOfContents(String) method may be called to automatically
  * adds a table of contents on the right side of an article.  This method
  * works with all lexers, because it parses the HTML for headers. However it
- * doesn't care where it is. So if you have a header on the TopArea / LeftMenu /
+ * doesn't care where it is. So if you have a header on the LeftMenu or
  * BottomArea, it will also add a TOC there...
  *
  * The static addTableOfContents(TableOfContents, StringBuffer) method

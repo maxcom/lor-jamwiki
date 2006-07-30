@@ -1727,10 +1727,6 @@
           </listitem>
 
           <listitem>
-            <para>TopArea - controls the page header area</para>
-          </listitem>
-
-          <listitem>
             <para>BottomArea - controls the page footer</para>
           </listitem>
 
@@ -1822,14 +1818,6 @@
           <para>To edit these files, access them from the AdminOnlyTopics
           page, as above. Then select the area you are interested in editing,
           and click the "Edit" button.</para>
-
-          <para>The TopArea and BottomArea files are wrapped in special
-          "[&lt;html&gt;][&lt;/html&gt;]" tags. There should be one at the
-          beginning of the file and one at the end. These tags are used to
-          signal JAMWiki that the following content should be treated as
-          literal HTML. If these tags are not added, then JAMWiki will
-          translate the html characters and the raw HTML source will be
-          displayed.</para>
 
           <para>The LeftMenu file is not wrapped in these tags (unless you add
           them)- this is so the links to pages within the wiki are shown

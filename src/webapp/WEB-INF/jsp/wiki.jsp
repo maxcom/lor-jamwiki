@@ -34,7 +34,8 @@
 <tr>
 	<td class="navigation">
 		<div id="logo">
-		<c:out value="${topArea}" escapeXml="false"/>
+		<%-- FIXME - need image width and height --%>
+		<a class="logo" href="<jamwiki:link value="${defaultTopic}" />"><img border="0" src="../images/<c:out value="${logo}" />" alt="" /></a>
 		</div>
 		<br />
 		<c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">

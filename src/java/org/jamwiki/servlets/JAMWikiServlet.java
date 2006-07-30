@@ -103,8 +103,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *
 	 */
 	private static void buildLayout(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
+		if (virtualWikiName == null) {
+			// FIXME: hard coding
+			throw new Exception("Invalid virtual wiki");
+		}
+		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 		if (virtualWiki == null) {
+			// FIXME: hard coding
 			throw new Exception("Invalid virtual wiki");
 		}
 		String topic = JAMWikiServlet.getTopicFromRequest(request);
@@ -113,13 +119,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
-		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.leftMenu", request.getLocale()), true);
+		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWikiName, Utilities.getMessage("specialpages.leftMenu", request.getLocale()), true);
 		next.addObject("leftMenu", leftMenu);
-		String topArea = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.topArea", request.getLocale()), true);
-		next.addObject("topArea", topArea);
-		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.bottomArea", request.getLocale()), true);
+		next.addObject("defaultTopic", virtualWiki.getDefaultTopicName());
+		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
+		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWikiName, Utilities.getMessage("specialpages.bottomArea", request.getLocale()), true);
 		next.addObject("bottomArea", bottomArea);
-		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWiki);
+		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWikiName);
 	}
 
 	/**

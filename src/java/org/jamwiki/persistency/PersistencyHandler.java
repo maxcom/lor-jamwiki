@@ -689,7 +689,6 @@ public abstract class PersistencyHandler {
 			// create the default topics
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.topArea", locale), user, true, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
@@ -711,7 +710,6 @@ public abstract class PersistencyHandler {
 			// create the default topics
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.topArea", locale), user, true, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
 			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);

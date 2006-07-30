@@ -12,7 +12,6 @@ Some potentially useful functions:
 
 There are also several [[AdminOnlyTopics]] including:
 
-* [[TopArea]]
 * [[LeftMenu]]
 * [[BottomArea]]
 * [[StyleSheet]]
