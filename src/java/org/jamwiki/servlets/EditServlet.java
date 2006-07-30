@@ -105,14 +105,14 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean isPreview(HttpServletRequest request) {
-		return isAction(request, "edit.action.preview", JAMWikiServlet.ACTION_PREVIEW);
+		return StringUtils.hasText(request.getParameter("preview"));
 	}
 
 	/**
 	 *
 	 */
 	private boolean isSave(HttpServletRequest request) {
-		return isAction(request, "edit.action.save", JAMWikiServlet.ACTION_SAVE);
+		return StringUtils.hasText(request.getParameter("save"));
 	}
 
 	/**

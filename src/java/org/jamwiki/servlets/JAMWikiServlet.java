@@ -184,23 +184,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	protected static boolean isAction(HttpServletRequest request, String key, String constant) {
-		String action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
-		if (!StringUtils.hasText(action)) {
-			return false;
-		}
-		if (key != null &&  action.equals(Utilities.getMessage(key, request.getLocale()))) {
-			return true;
-		}
-		if (constant != null && action.equals(constant)) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 *
-	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
 			String topic = JAMWikiServlet.getTopicFromURI(request);
