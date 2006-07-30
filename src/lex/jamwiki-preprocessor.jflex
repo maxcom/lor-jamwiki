@@ -268,7 +268,7 @@ inputcharacter     = [^\r\n]
 whitespace         = {newline} | [ \t\f]
 lessthan           = "<"
 greaterthan        = ">"
-htmltag            = br|b|code|div|font|i|span|strike|sub|sup|table|td|th|tr|tt|u
+htmltag            = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
 
 /* non-container expressions */
 hr                 = "----"
