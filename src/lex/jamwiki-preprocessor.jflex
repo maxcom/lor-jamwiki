@@ -259,7 +259,6 @@ inputcharacter     = [^\r\n]
 whitespace         = {newline} | [ \t\f]
 htmltagopen        = "<"
 htmltagclose       = ">"
-ampersand          = "&"
 
 /* non-container expressions */
 hr                 = "----"
@@ -291,6 +290,8 @@ htmlcodestart      = (<[ ]*code[ ]*>)
 htmlcodeend        = (<[ ]*\/[ ]*code[ ]*>)
 htmldivstart       = (<[ ]*div[ ]*>)|(<[ ]*div[ ]+[^>\/]+>)
 htmldivend         = (<[ ]*\/[ ]*div[ ]*>)
+htmlfontstart       = (<[ ]*font[ ]*>)|(<[ ]*font[ ]+[^>\/]+>)
+htmlfontend         = (<[ ]*\/[ ]*font[ ]*>)
 htmlitalicstart    = (<[ ]*i[ ]*>)
 htmlitalicend      = (<[ ]*\/[ ]*i[ ]*>)
 htmlspanstart      = (<[ ]*span[ ]*>)|(<[ ]*span[ ]+[^>\/]+>)
@@ -630,6 +631,16 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     return (allowHtml()) ? "</div>" : Utilities.escapeHTML(yytext());
 }
 
+<NORMAL, TABLE, TD, TH, TC, LIST>{htmlfontstart} {
+    logger.debug("htmlfontstart: " + yytext() + " (" + yystate() + ")");
+    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST>{htmlfontend} {
+    logger.debug("htmlfontend: " + yytext() + " (" + yystate() + ")");
+    return (allowHtml()) ? "</div>" : Utilities.escapeHTML(yytext());
+}
+
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlitalicstart} {
     logger.debug("htmlitalicstart: " + yytext() + " (" + yystate() + ")");
     return (allowHtml()) ? "<i>" : Utilities.escapeHTML(yytext());
@@ -741,11 +752,6 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 }
 
 /* ----- other ----- */
-
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{ampersand} {
-    logger.debug("ampersand: " + yytext() + " (" + yystate() + ")");
-    return "&amp;";
-}
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
     logger.debug("htmltagopen: " + yytext() + " (" + yystate() + ")");
