@@ -744,20 +744,19 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{ampersand} {
     logger.debug("ampersand: " + yytext() + " (" + yystate() + ")");
-    // if html not allowed, escape it
-    return (allowHtml()) ? yytext() : "&amp;";
+    return "&amp;";
 }
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
     logger.debug("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    // if html not allowed, escape it
-    return (allowHtml()) ? yytext() : "&lt;";
+    // escape html not recognized by above tags
+    return "&lt;";
 }
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{htmltagclose} {
     logger.debug("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    // if html not allowed, escape it
-    return (allowHtml()) ? yytext() : "&gt;";
+    // escape html not recognized by above tags
+    return "&gt;";
 }
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{whitespace} {
