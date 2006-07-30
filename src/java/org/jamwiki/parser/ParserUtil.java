@@ -18,6 +18,8 @@ package org.jamwiki.parser;
 
 import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -32,6 +34,17 @@ import org.springframework.util.StringUtils;
 public class ParserUtil {
 
 	private static Logger logger = Logger.getLogger(ParserUtil.class.getName());
+	private static Pattern TAG_PATTERN = null;
+	private static Pattern JAVASCRIPT_PATTERN = null;
+
+	static {
+		try {
+			TAG_PATTERN = Pattern.compile("<[ ]*([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
+			JAVASCRIPT_PATTERN = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
+		} catch (Exception e) {
+			logger.error("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 *
@@ -255,5 +268,48 @@ public class ParserUtil {
 			}
 		}
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, false);
+	}
+
+	/**
+	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
+	 * a bad thing, so clean up HTML tags to remove any such attributes.
+	 */
+	protected static String sanitizeHtmlTagAttributes(String tag) {
+		Matcher m = TAG_PATTERN.matcher(tag);
+		if (!m.find()) {
+			logger.error("Failure while attempting to match html tag for pattern " + tag);
+			return tag;
+		}
+		String tagOpen = m.group(1);
+		String attributes = m.group(2);
+		String tagClose = m.group(4);
+		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
+			m = JAVASCRIPT_PATTERN.matcher(attributes);
+			if (m.find()) {
+				logger.warn("Attempt to include Javascript in Wiki syntax " + tag);
+				attributes = "";
+			}
+		}
+		tag = "<" + tagOpen.toLowerCase().trim();
+		tag += attributes;
+		if (!attributes.endsWith(" ")) tag += " ";
+		if (tagClose.indexOf("/") != -1) {
+			tagClose = "/>";
+		}
+		tag += tagClose.trim();
+		return tag;
+	}
+
+	/**
+	 * Clean up HTML tags to make them XHTML compliant (lowercase, no
+	 * unnecessary spaces).
+	 */
+	protected static String sanitizeHtmlTag(String tag) {
+		tag = StringUtils.deleteAny(tag, " ").toLowerCase();
+		if (tag.endsWith("/>")) {
+			// spaces were stripped, so make sure tag is of the form "<br />"
+			tag = tag.substring(0, tag.length() - 2) + " />";
+		}
+		return tag;
 	}
 }

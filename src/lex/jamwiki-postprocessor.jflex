@@ -72,12 +72,15 @@ inputcharacter     = [^\r\n\<]
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
-nowikistart        = "<nowiki>"
-nowikiend          = "</nowiki>"
+nowikistart        = (<[ ]*nowiki[ ]*>)
+nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+
+/* javascript */
+javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
 
 /* processing commands */
 toc                = "__TOC__"
@@ -93,7 +96,7 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 
 %%
 
-/* ----- parsing tags ----- */
+/* ----- nowiki ----- */
 
 <PRE, NORMAL, P, NONPARAGRAPH>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
@@ -106,6 +109,8 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
     endState();
     return "";
 }
+
+/* ----- pre ----- */
 
 <NORMAL, P, NONPARAGRAPH>{htmlprestart} {
     logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
@@ -124,6 +129,13 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 <NORMAL, P, NONPARAGRAPH>{toc} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
     return this.parserInfo.getTableOfContents().attemptTOCInsertion();
+}
+
+/* ----- javascript ----- */
+
+<NORMAL, P, NONPARAGRAPH>{javascript} {
+    logger.debug("javascript: " + yytext() + " (" + yystate() + ")");
+    return yytext();
 }
 
 /* ----- layout ----- */

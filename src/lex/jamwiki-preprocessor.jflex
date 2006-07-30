@@ -46,6 +46,7 @@ import org.jamwiki.utils.Utilities;
 /* code included in the constructor */
 %init{
     allowHtml = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
+    allowJavascript = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -90,6 +91,7 @@ import org.jamwiki.utils.Utilities;
     protected Stack states = new Stack();
     protected ParserInfo parserInfo = null;;
     protected boolean allowHtml = false;
+    protected boolean allowJavascript = false;
     protected boolean wikibold = false;
     protected boolean wikiitalic = false;
     protected int nextSection = 0;
@@ -121,6 +123,13 @@ import org.jamwiki.utils.Utilities;
      */
     protected boolean allowHtml() {
         return (allowHtml && yystate() != PRE && yystate() != NOWIKI);
+    }
+    
+    /**
+     *
+     */
+    protected boolean allowJavascript() {
+        return (allowJavascript && yystate() != PRE && yystate() != NOWIKI);
     }
 
     /**
@@ -257,8 +266,9 @@ import org.jamwiki.utils.Utilities;
 newline            = \r|\n|\r\n
 inputcharacter     = [^\r\n]
 whitespace         = {newline} | [ \t\f]
-htmltagopen        = "<"
-htmltagclose       = ">"
+lessthan           = "<"
+greaterthan        = ">"
+htmltag            = br|b|code|div|font|i|span|strike|sub|sup|table|td|th|tr|tt|u
 
 /* non-container expressions */
 hr                 = "----"
@@ -275,52 +285,29 @@ liststart          = [\*#\:;]+
 listend            = [^\*#\:;\r\n]
 
 /* nowiki */
-nowikistart        = "<nowiki>"
-nowikiend          = "</nowiki>"
+nowikistart        = (<[ ]*nowiki[ ]*>)
+nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlprestart       = (<[ ]*[Pp][Rr][Ee][ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*[Pp][Rr][Ee][ ]*>)
+htmlprestart       = (<[ ]*pre[ ]*>)
+htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 
 /* allowed html */
-htmlbreak          = (<[ ]*br[ ]*[\/]?[ ]*>)
-htmlboldstart      = (<[ ]*b[ ]*>)
-htmlboldend        = (<[ ]*\/[ ]*b[ ]*>)
-htmlcodestart      = (<[ ]*code[ ]*>)
-htmlcodeend        = (<[ ]*\/[ ]*code[ ]*>)
-htmldivstart       = (<[ ]*div[ ]*>)|(<[ ]*div[ ]+[^>\/]+>)
-htmldivend         = (<[ ]*\/[ ]*div[ ]*>)
-htmlfontstart       = (<[ ]*font[ ]*>)|(<[ ]*font[ ]+[^>\/]+>)
-htmlfontend         = (<[ ]*\/[ ]*font[ ]*>)
-htmlitalicstart    = (<[ ]*i[ ]*>)
-htmlitalicend      = (<[ ]*\/[ ]*i[ ]*>)
-htmlspanstart      = (<[ ]*span[ ]*>)|(<[ ]*span[ ]+[^>\/]+>)
-htmlspanend        = (<[ ]*\/[ ]*span[ ]*>)
-htmlstrikestart    = (<[ ]*strike[ ]*>)
-htmlstrikeend      = (<[ ]*\/[ ]*strike[ ]*>)
-htmlsubstart       = (<[ ]*sub[ ]*>)
-htmlsubend         = (<[ ]*\/[ ]*sub[ ]*>)
-htmlsupstart       = (<[ ]*sup[ ]*>)
-htmlsupend         = (<[ ]*\/[ ]*sup[ ]*>)
-htmltablestart     = (<[ ]*table[ ]*>)|(<[ ]*table[ ]+[^>\/]+>)
-htmltableend       = (<[ ]*\/[ ]*table[ ]*>)
-htmltdstart        = (<[ ]*td[ ]*>)|(<[ ]*td[ ]+[^>\/]+>)
-htmltdend          = (<[ ]*\/[ ]*td[ ]*>)
-htmlthstart        = (<[ ]*th[ ]*>)|(<[ ]*th[ ]+[^>\/]+>)
-htmlthend          = (<[ ]*\/[ ]*th[ ]*>)
-htmltrstart        = (<[ ]*tr[ ]*>)|(<[ ]*tr[ ]+[^>\/]+>)
-htmltrend          = (<[ ]*\/[ ]*tr[ ]*>)
-htmlttstart        = (<[ ]*tt[ ]*>)
-htmlttend          = (<[ ]*\/[ ]*tt[ ]*>)
-htmlunderlinestart = (<[ ]*u[ ]*>)
-htmlunderlineend   = (<[ ]*\/[ ]*u[ ]*>)
+htmltagopen        = (<[ ]*) {htmltag} ([ ]*[\/]?[ ]*>)
+htmltagclose       = (<[ ]*\/[ ]*) {htmltag} ([ ]*>)
+htmltagattributes  = (<[ ]*) {htmltag} ([ ]+[^>\/]+[\/]?[ ]*>)
+
+/* javascript */
+jsopen             = (<[ ]*script[ ]*[\/]?[ ]*>)
+jsclose            = (<[ ]*\/[ ]*script[ ]*>)
+jsattributes       = (<[ ]*script[ ]+[^>\/]+[\/]?[ ]*>)
 
 /* processing commands */
 notoc              = "__NOTOC__"
 toc                = "__TOC__"
 
 /* comments */
-htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
+htmlcomment        = "<!--" ~"-->"
 
 /* tables */
 tablestart         = "{|" {inputcharacter}* {newline}
@@ -337,11 +324,11 @@ wikilink           = "[[" [^(\]\])\n\r]* ~"]]"
 htmllink           = "[" [^\]\n\r]* ~"]"
 htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mailto://"  [^ \n\r\t]+) | ("ftp://"  [^ \n\r\t]+) | ("file://"  [^ \n\r\t]+)
 
-%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE
+%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT
 
 %%
 
-/* ----- parsing tags ----- */
+/* ----- nowiki ----- */
 
 <PRE, NORMAL, TABLE, TD, TH, TC, LIST>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
@@ -354,6 +341,8 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     endState();
     return yytext();
 }
+
+/* ----- pre ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlprestart} {
     logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
@@ -594,183 +583,72 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     return (wikiitalic) ? "<i>" : "</i>";
 }
 
-/* ----- allowed html ----- */
+/* ----- html ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlbreak} {
-    logger.debug("htmlbreak: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<br />" : Utilities.escapeHTML(yytext());
+<NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
+    logger.debug("htmltagopen: " + yytext() + " (" + yystate() + ")");
+    return (allowHtml()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlboldstart} {
-    logger.debug("htmlboldstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<b>" : Utilities.escapeHTML(yytext());
+<NORMAL, TABLE, TD, TH, TC, LIST>{htmltagclose} {
+    logger.debug("htmltagclose: " + yytext() + " (" + yystate() + ")");
+    return (allowHtml()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlboldend} {
-    logger.debug("htmlboldend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</b>" : Utilities.escapeHTML(yytext());
+<NORMAL, TABLE, TD, TH, TC, LIST>{htmltagattributes} {
+    logger.debug("htmltagattributes: " + yytext() + " (" + yystate() + ")");
+    return (allowHtml()) ? ParserUtil.sanitizeHtmlTagAttributes(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlcodestart} {
-    logger.debug("htmlcodestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<code>" : Utilities.escapeHTML(yytext());
+/* ----- javascript ----- */
+
+<NORMAL, TABLE, TD, TH, TC, LIST>{jsopen} {
+    logger.debug("jsopen: " + yytext() + " (" + yystate() + ")");
+    if (allowJavascript()) {
+        beginState(JAVASCRIPT);
+        return ParserUtil.sanitizeHtmlTag(yytext());
+    }
+    return Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlcodeend} {
-    logger.debug("htmlcodeend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</code>" : Utilities.escapeHTML(yytext());
+<NORMAL, TABLE, TD, TH, TC, LIST>{jsattributes} {
+    logger.debug("jsattributes: " + yytext() + " (" + yystate() + ")");
+    if (allowJavascript()) {
+        beginState(JAVASCRIPT);
+        return ParserUtil.sanitizeHtmlTag(yytext());
+    }
+    return Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmldivstart} {
-    logger.debug("htmldivstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmldivend} {
-    logger.debug("htmldivend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</div>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlfontstart} {
-    logger.debug("htmlfontstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlfontend} {
-    logger.debug("htmlfontend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</div>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlitalicstart} {
-    logger.debug("htmlitalicstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<i>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlitalicend} {
-    logger.debug("htmlitalicend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</i>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlspanstart} {
-    logger.debug("htmlspanstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlspanend} {
-    logger.debug("htmlspanend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</span>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlstrikestart} {
-    logger.debug("htmlstrikestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<strike>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlstrikeend} {
-    logger.debug("htmlstrikeend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</strike>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlsubstart} {
-    logger.debug("htmlsubstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<sub>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlsubend} {
-    logger.debug("htmlsubend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</sub>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlsupstart} {
-    logger.debug("htmlsupstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<sup>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlsupend} {
-    logger.debug("htmlsupend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</sup>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltablestart} {
-    logger.debug("htmltablestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltableend} {
-    logger.debug("htmltableend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</table>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltdstart} {
-    logger.debug("htmltdstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltdend} {
-    logger.debug("htmltdend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</td>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlthstart} {
-    logger.debug("htmlthstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlthend} {
-    logger.debug("htmlthend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</th>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltrstart} {
-    logger.debug("htmltrstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? yytext() : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltrend} {
-    logger.debug("htmltrend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</tr>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlttstart} {
-    logger.debug("htmlttstart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<tt>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlttend} {
-    logger.debug("htmlttend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</tt>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlunderlinestart} {
-    logger.debug("htmlunderlinestart: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "<u>" : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlunderlineend} {
-    logger.debug("htmlunderlineend: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? "</u>" : Utilities.escapeHTML(yytext());
+<JAVASCRIPT>{jsclose} {
+    logger.debug("jsclose: " + yytext() + " (" + yystate() + ")");
+    if (allowJavascript()) {
+        endState();
+        return ParserUtil.sanitizeHtmlTag(yytext());
+    }
+    return Utilities.escapeHTML(yytext());
 }
 
 /* ----- other ----- */
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
-    logger.debug("htmltagopen: " + yytext() + " (" + yystate() + ")");
+<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
+    logger.debug("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&lt;";
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{htmltagclose} {
-    logger.debug("htmltagclose: " + yytext() + " (" + yystate() + ")");
+<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
+    logger.debug("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&gt;";
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{whitespace} {
+<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>. {
+<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>. {
     // no need to log this
     return yytext();
 }

@@ -287,6 +287,10 @@ public class AdminServlet extends JAMWikiServlet {
 				request.getParameter(Environment.PROP_PARSER_ALLOW_HTML) != null
 			);
 			Environment.setBooleanValue(
+				Environment.PROP_PARSER_ALLOW_JAVASCRIPT,
+				request.getParameter(Environment.PROP_PARSER_ALLOW_JAVASCRIPT) != null
+			);
+			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_FORCE_USERNAME,
 				request.getParameter(Environment.PROP_TOPIC_FORCE_USERNAME) != null
 			);

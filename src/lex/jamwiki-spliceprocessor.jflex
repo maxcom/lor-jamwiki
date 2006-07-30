@@ -126,15 +126,18 @@ h4                 = "====" [^=\n]+ ~"===="
 h5                 = "=====" [^=\n]+ ~"====="
 
 /* nowiki */
-nowikistart        = "<nowiki>"
-nowikiend          = "</nowiki>"
+nowikistart        = (<[ ]*nowiki[ ]*>)
+nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 
+/* javascript */
+javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
+
 /* comments */
-htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
+htmlcomment        = "<!--" ~"-->"
 
 %state NORMAL, NOWIKI, PRE
 
@@ -151,6 +154,8 @@ htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
     endState();
     return returnText(yytext());
 }
+
+/* ----- nowiki ----- */
 
 <NORMAL>{htmlprestart} {
     if (allowHtml) {
@@ -192,6 +197,13 @@ htmlcomment        = "<!--" [^(\-\->)]* ~"-->"
 
 <NORMAL>^{h5} {
     return processHeading(5, yytext());
+}
+
+/* ----- javascript ----- */
+
+<NORMAL>{javascript} {
+    logger.debug("javascript: " + yytext() + " (" + yystate() + ")");
+    return yytext();
 }
 
 /* ----- default ----- */

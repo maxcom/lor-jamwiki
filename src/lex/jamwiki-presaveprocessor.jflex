@@ -68,12 +68,15 @@ newline            = \r|\n|\r\n
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
-nowikistart        = "<nowiki>"
-nowikiend          = "</nowiki>"
+nowikistart        = (<[ ]*nowiki[ ]*>)
+nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+
+/* javascript */
+javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
 
 /* processing commands */
 wikisig3           = "~~~"
@@ -84,7 +87,7 @@ wikisig5           = "~~~~~"
 
 %%
 
-/* ----- parsing tags ----- */
+/* ----- nowiki ----- */
 
 <PRE, NORMAL>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
@@ -97,6 +100,8 @@ wikisig5           = "~~~~~"
     endState();
     return yytext();
 }
+
+/* ----- pre ----- */
 
 <NORMAL>{htmlprestart} {
     logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
@@ -125,6 +130,13 @@ wikisig5           = "~~~~~"
 <NORMAL>{wikisig5} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
     return ParserUtil.buildWikiSignature(this.parserInfo, false, true);
+}
+
+/* ----- javascript ----- */
+
+<NORMAL>{javascript} {
+    logger.debug("javascript: " + yytext() + " (" + yystate() + ")");
+    return yytext();
 }
 
 /* ----- other ----- */

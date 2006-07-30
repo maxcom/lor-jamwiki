@@ -164,6 +164,10 @@ function onUserGroupType() {
 	<td class="normal"><f:message key="admin.caption.allowhtml" /></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML) ? " checked" : "" %> /></td>
 </tr>
+<tr>
+	<td class="normal"><f:message key="admin.caption.allowjavascript" /></td>
+	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT) ? " checked" : "" %> /></td>
+</tr>
 
 <%--
 FIXME - Email not supported right now, comment this out
