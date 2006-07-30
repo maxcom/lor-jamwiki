@@ -28,7 +28,7 @@
 
 <%
 // no-cache headers
-response.setHeader("Cache-Control", "max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
+response.setHeader("Cache-Control", "private, s-maxage=0, max-age=0, must-revalidate");
 response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
