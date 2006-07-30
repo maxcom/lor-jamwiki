@@ -2,12 +2,26 @@
 0.1.1
 =====
 
-* FEATURE: Remove copyvio'd background image from Mediawiki.
-  Existing JAMWiki installs will want to replace "headbg.jpg" in
-  the StyleSheet topic with "denalibg.jpg".
-* FEATURE: Keep ugly logo, but make background transparent.
-  Existing JAMWiki installs will want to replace "logo.jpg" in
-  the StyleSheet topic with "logo.gif".
+* FEATURE: Minor edit status now stored and displayed.
+* FEATURE: Add Special:Translation GUI for entering language translations.
+* FEATURE: TopArea is no longer an editable topic - admin property
+  added to set the logo image.
+* BUG: Parser would allow Javascript in Wiki syntax.  Disabled unless
+  explicitly enabled via the admin tool.
+* FEATURE: Parser will reformat badly written HTML (such as "< sTriKe >").
+* BUG: Parser is now more strict about what HTML is allowed.
+* BUG: Uploaded file sometimes includes full path from user's browser.
+  Hopefully fixed (feedback requested).
+* FEATURE: http://server/context/virtual/ redirects to default topic.
+* FEATURE: Empty jamwiki.properties file removed from WAR file to prevent
+  accidentally overwriting properties during upgrade.
+* FEATURE: Move all SQL to property files.
+* FEATURE: Remove copyvio'd background image from Mediawiki.  Existing
+  JAMWiki installs will want to replace "headbg.jpg" in the StyleSheet
+  topic with "denalibg.jpg".
+* FEATURE: Keep ugly logo, but make background transparent.  Existing
+  JAMWiki installs will want to replace "logo.jpg" in the StyleSheet
+  topic with "logo.gif".
 * FEATURE: More Chinese translations from Jiading (ewen0930).
 * FEATURE: Hungarian translations from Daniel Tar (bDaneE).
 
@@ -17,26 +31,25 @@
 * FEATURE: Add support for editing sub-sections of a topic.
 * FEATURE: Add support for transaction rollback to avoid
   half-committed edits from being saved (database only).
-* FEATURE: Allow editing of old topic versions from the
-  history tab (provides a way to rollback changes).
+* FEATURE: Allow editing of old topic versions from the history tab
+  (provides a way to rollback changes).
 * FEATURE: Chinese translations from Jiading (ewen0930).
 * FEATURE: Support Wiki links to a virtual wiki (for example
   [[:virtual:Topic]]).
-* FEATURE: Allow each virtual wiki to have a different default
-  topic (requested by colinbes)
-* FEATURE: Add default_topic_name column to jam_virtual_wiki.
-  Upgrade should be automatic, so no manual SQL needs to be
-  executed.
-* FEATURE: Use a simpler page layout during setup/upgrade to
-  avoid possible errors.
+* FEATURE: Allow each virtual wiki to have a different default topic
+  (requested by colinbes)
+* FEATURE: Add default_topic_name column to jam_virtual_wiki.  Upgrade
+  should be automatic, so no manual SQL needs to be executed.
+* FEATURE: Use a simpler page layout during setup/upgrade to avoid
+  possible errors.
 * FEATURE: Add logging for slow database queries.
-* FEATURE: Do not display a textarea with Wiki syntax when
-  viewing an old topic version.
+* FEATURE: Do not display a textarea with Wiki syntax when viewing an old
+  topic version.
 * FEATURE: Cache CSS for 30 minutes rather than setting nocache.
 * FEATURE: Add XHTML transitional doctype declaration.
 * FEATURE: Remove navbar-virtual-wiki.jsp - not useful.
-* BUG: Remove several hard-coded message strings, replace with
-  messages that can be translated into local languages.
+* BUG: Remove several hard-coded message strings, replace with messages that
+  can be translated into local languages.
 * FEATURE: Code cleanups including removal of unused files.
 
 0.0.9
@@ -47,51 +60,48 @@
 0.0.8
 =====
 
-* BUG: File persistency broken on JDK 1.4 due to use of JDK 1.5
-  method.  Should be resolved (feedback from JDK 1.4 users is
-  requested).
-* FEATURE: User passwords are now encrypted using the SHA-512
-  algorithm to add security.
-* FEATURE: System should now automatically detect when JAMWiki
-  has been upgraded and then attempt to perform any needed
-  upgrade setup.
+* BUG: File persistency broken on JDK 1.4 due to use of JDK 1.5 method.
+  Should be resolved (feedback from JDK 1.4 users is requested).
+* FEATURE: User passwords are now encrypted using the SHA-512 algorithm to
+  add security.
+* FEATURE: System should now automatically detect when JAMWiki has been
+  upgraded and then attempt to perform any needed upgrade setup.
 * FEATURE: Various code cleanups.
-* BUG: Remove several hard-coded message strings, replace with
-  messages that can be translated into local languages.
+* BUG: Remove several hard-coded message strings, replace with messages that
+  can be translated into local languages.
 
 0.0.7
 =====
 
-* BUG: Handle non ISO-8859-1 characters properly.  May require
-  additional configuration for some databases and application
-  servers.  Issue reported by Alexey.
-* BUG: Make web.xml and the taglib definitions more standards
-  compliant.  Note that this allows JAMWiki to run on Websphere.
-* FEATURE: Remove topic locking & implement a new edit screen to
-  allow for manual resolution of edit conflicts.
-* FEATURE: Remove the old topic locking code including
-  Special:LockList and Special:Unlock.
-* BUG: Replace CHAR columns in database with INTEGER to fix a
-  problem with the H2 database - BREAKS ANY EXISTING INSTALLATION!
-  See the release notes for the database update syntax.
+* BUG: Handle non ISO-8859-1 characters properly.  May require additional
+  configuration for some databases and application servers.  Issue reported
+  by Alexey.
+* BUG: Make web.xml and the taglib definitions more standards compliant.
+  Note that this allows JAMWiki to run on Websphere.
+* FEATURE: Remove topic locking & implement a new edit screen to allow for
+  manual resolution of edit conflicts.
+* FEATURE: Remove the old topic locking code including Special:LockList and
+  Special:Unlock.
+* BUG: Replace CHAR columns in database with INTEGER to fix a problem with
+  the H2 database - BREAKS ANY EXISTING INSTALLATION! See the release notes
+  for the database update syntax.
 * FEATURE: Update to Alexey's new default style.
-* FEATURE: Do not include CSS information inline, instead make
-  jamwiki.css an editable Wiki topic and load from that.
+* FEATURE: Do not include CSS information inline, instead make jamwiki.css an
+  editable Wiki topic and load from that.
 * FEATURE: Hide passwords when updating values on the admin page.
 * BUG: Resolved some table syntax parsing issues.
 * BUG: If an error occurs the setup process might not create the
   StartingPoints topic.
 * BUG: Admin-only topics not marked admin-only during setup.
-* FEATURE: Recent changes and user contributions now have options
-  to view latest 250 and 500 changes.
-* BUG: If a topic is saved with no changes, do not save a new
-  version.
-* BUG: Remove redundant parsing code that was causing diffs to be
-  shown when no diff was made.
+* FEATURE: Recent changes and user contributions now have options to view
+  latest 250 and 500 changes.
+* BUG: If a topic is saved with no changes, do not save a new version.
+* BUG: Remove redundant parsing code that was causing diffs to be shown
+  when no diff was made.
 * FEATURE: Remove the "Cancel" option from the edit page.
 * FEATURE: Once setup is complete disable the setup screen.
-* FEATURE: Add option to reload recent changes to the admin
-  screen (database persistency only).
+* FEATURE: Add option to reload recent changes to the admin screen
+  (database persistency only).
 * FEATURE: Make more HTML code XHTML compliant.
 * FEATURE: Code cleanups including removal of unused files.
 * FEATURE: Default log level changed to "WARN".
@@ -99,35 +109,33 @@
 0.0.6
 =====
 
-* FEATURE: Add support for uploading files and viewing them as
-  images.
+* FEATURE: Add support for uploading files and viewing them as images.
 * FEATURE: Update the look & feel of the edit preview display.
-* BUG: Shrink generated JSP class files by using <jsp:include>.
-  Resolves issues with Resin app server (reported by Alexi).
-* BUG: Resolve issue of HTML characters being incorrectly escaped
-  during edits.
+* BUG: Shrink generated JSP class files by using <jsp:include>.  Resolves
+  issues with Resin app server (reported by Alexi).
+* BUG: Resolve issue of HTML characters being incorrectly escaped during
+  edits.
 * BUG: Only show the edit preview when the preview button is clicked.
 * FEATURE: Hide the non-working Javascript edit buttons.
 * BUG: Resolve more "fails to redirect after login" issues.
 * FEATURE: Upgrade to commons-fileupload-1.1.1.jar.
 * FEATURE: Add commons-io-1.2.jar.
-* BUG: Add commons-logging-1.1.jar which is required by Spring.
-  Reported by Alexi.
-* BUG: Update cache headers to resolve issues with Opera.  Reported
-  with a suggested fix by Alexi.
+* BUG: Add commons-logging-1.1.jar which is required by Spring.  Reported
+  by Alexi.
+* BUG: Update cache headers to resolve issues with Opera.  Reported with a
+  suggested fix by Alexi.
 * BUG: Author IP address not being retrieved in file persistency mode.
 * FEATURE: Support Mediawiki image links ([[:Image:Foo]]).
 * FEATURE: Display image file history for image pages.
-* BUG: Remove several hard-coded message strings, replace with
-  messages that can be translated into local languages.
-* BUG: Fix file persistency to database persistency conversion.
-  Required removal of database sequences.
+* BUG: Remove several hard-coded message strings, replace with messages
+  that can be translated into local languages.
+* BUG: Fix file persistency to database persistency conversion.  Required
+  removal of database sequences.
 * FEATURE: Hide panic and email notification options in admin - not
   currently supported.
-* FEATURE: Remove RSS link from the nav bar - not currently
-  supported.
-* FEATURE: Update database schema - BREAKS ANY EXISTING INSTALLATION!
-  See the release notes for the database update syntax.
+* FEATURE: Remove RSS link from the nav bar - not currently supported.
+* FEATURE: Update database schema - BREAKS ANY EXISTING INSTALLATION!  See
+  the release notes for the database update syntax.
 * FEATURE: Code cleanups including removal of unused files.
 
 0.0.5
@@ -136,54 +144,53 @@
 * FEATURE: Add support for MySql 4.1.
 * FEATURE: Add support for Oracle 10g.
 * FEATURE: Code cleanups including abstraction of database code.
-* BUG: Do not allow directories to be created in the filesystem root
-  during setup.
+* BUG: Do not allow directories to be created in the filesystem root during
+  setup.
 * BUG: User menu link for user was broken if display name not set.
 * FEATURE: Hide Special:Attach - not currently supported.
-* FEATURE: Display an explanation message on the login page when
-  requiring login to an admin page.
+* FEATURE: Display an explanation message on the login page when requiring
+  login to an admin page.
 * BUG: Login to Special:Delete went to Special:Admin.
 * FEATURE: Log sql execution time info for debugging.
-* FEATURE: Remove the "Admin" link from the footer, display in the
-  user menu ONLY for users who are admins.
-* FEATURE: Update database schema - BREAKS ANY EXISTING INSTALLATION!
-  See the release notes for the database update syntax.
-* FEATURE: User contributions page now has the same style as the
-  recent changes and history pages.
+* FEATURE: Remove the "Admin" link from the footer, display in the user menu
+  ONLY for users who are admins.
+* FEATURE: Update database schema - BREAKS ANY EXISTING INSTALLATION!  See
+  the release notes for the database update syntax.
+* FEATURE: User contributions page now has the same style as the recent
+  changes and history pages.
 * FEATURE: Add unique constraints to several database fields.
 
 0.0.4
 =====
 
-* FEATURE: Add "Account", "User" and "Comments" links to user
-  navigation bar.
+* FEATURE: Add "Account", "User" and "Comments" links to user navigation bar.
 * FEATURE: Add "Remember Me" login option.
-* FEATURE: Add ability to view all contributions made by a
-  specific user (Special:Contributions).
+* FEATURE: Add ability to view all contributions made by a specific user
+  (Special:Contributions).
 * FEATURE: Add ability to update user account information.
 * FEATURE: Change navbar search to default "Search", not "Jump to".
-* FEATURE: "Comments" tab works now and is colored to reflect
-  whether a comments page exists yet or not.
-* FEATURE: Error handling added to avoid ugly stack traces being
-  shown to end users and ensure that errors are logged.
+* FEATURE: "Comments" tab works now and is colored to reflect whether a
+  comments page exists yet or not.
+* FEATURE: Error handling added to avoid ugly stack traces being shown to
+  end users and ensure that errors are logged.
 * FEATURE: Support MediaWiki signatures - "~~~", "~~~~" and "~~~~~".
 * FEATURE: Support MediaWiki "__TOC__" directive.
 * FEATURE: Change Special:Registration URL to Special:Account.
-* BUG: If user login required actually check for logged in user prior
-  to editing.
+* BUG: If user login required actually check for logged in user prior to
+  editing.
 * FEATURE: Hide LDAP and other unused / unsupported options in admin tool.
 * FEATURE: Always encode passwords by default, remove option to have
   unencoded passwords.
-* FEATURE: Code cleanups including deletion of unused code.  PDF search
-  no longer supported.  War file size should now be about 450K smaller.
+* FEATURE: Code cleanups including deletion of unused code.  PDF search no
+  longer supported.  War file size should now be about 450K smaller.
 * FEATURE: New utility class for handling prepared statements.
 * FEATURE: Added new WikiPageInfo class to hold basic page data.
-* FEATURE: Utilize more of the Spring framework functionality, should
-  ensure that cache headers always get set properly.
+* FEATURE: Utilize more of the Spring framework functionality, should ensure
+  that cache headers always get set properly.
 * FEATURE: Update from JFlex 1.3.5 to 1.4.1 - slightly faster.
-* FEATURE: Add previous_topic_version_id column to jam_topic_version.
-  BREAKS ANY EXISTING INSTALLATION!  See the release notes for the
-  database update syntax.
+* FEATURE: Add previous_topic_version_id column to jam_topic_version.  BREAKS
+  ANY EXISTING INSTALLATION!  See the release notes for the database update
+  syntax.
 * BUG: "Article" tab from comments pages fixed.
 
 0.0.3
@@ -195,8 +202,8 @@
 * FEATURE: Setup now requires creation of a default admin account.
 * FEATURE: Remove admin password option from admin pages.
 * FEATURE: Top navigation now shows login/logout option.
-* FEATURE: Code cleanups including deletion of unused code.  War file
-  size should now be about 200K smaller.
+* FEATURE: Code cleanups including deletion of unused code.  War file size
+  should now be about 200K smaller.
 * FEATURE: Remove and update several database field values.  BREAKS ANY
   EXISTING INSTALLATION!
 * FEATURE: Include copy of LGPL in WAR file distribution.
@@ -218,7 +225,7 @@
 * FEATURE: Add links to jamwiki.org in default setup.
 * BUG: Fix link from logo.
 * BUG: Background of external link image not transparent.
-* BUG: Editing cached topic was not viewable until the second page view
-  after the edit.
+* BUG: Editing cached topic was not viewable until the second page view after
+  the edit.
 * FEATURE: Rename and reorganize database tables.  BREAKS ANY EXISTING
   INSTALLATION!
