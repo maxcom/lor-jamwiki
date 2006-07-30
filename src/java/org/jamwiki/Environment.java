@@ -71,7 +71,6 @@ public class Environment {
 	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
 	public static final String PROP_SEARCH_EXTLINKS_INDEXING_ENABLED = "extlinks-indexing";
 	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
-	public static final String PROP_TOPIC_ALLOW_VWIKI_LIST = "allow-jamwiki-list";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
@@ -318,7 +317,6 @@ public class Environment {
 		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
 		defaults.setProperty(PROP_SEARCH_EXTLINKS_INDEXING_ENABLED, "false");
 		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
-		defaults.setProperty(PROP_TOPIC_ALLOW_VWIKI_LIST, "true");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
 		defaults.setProperty(PROP_TOPIC_VERSIONING_ON, "true");

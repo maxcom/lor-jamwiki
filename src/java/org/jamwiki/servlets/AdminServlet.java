@@ -287,10 +287,6 @@ public class AdminServlet extends JAMWikiServlet {
 				request.getParameter(Environment.PROP_TOPIC_FORCE_USERNAME) != null
 			);
 			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_ALLOW_VWIKI_LIST,
-				request.getParameter(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) != null
-			);
-			Environment.setBooleanValue(
 				Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED,
 				request.getParameter(Environment.PROP_SEARCH_EXTLINKS_INDEXING_ENABLED) != null
 			);

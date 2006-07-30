@@ -124,10 +124,6 @@ function onUserGroupType() {
 	<td class="normal"><f:message key="admin.caption.forceusername" /></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) ? " checked" : "" %> /></td>
 </tr>
-<tr>
-	<td class="normal"><f:message key="admin.caption.allowvirtualwikilist" /></td>
-	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_ALLOW_VWIKI_LIST %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_ALLOW_VWIKI_LIST) ? " checked" : "" %> /></td>
-</tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.recentchangesheader" /></td></tr>
 <tr>
