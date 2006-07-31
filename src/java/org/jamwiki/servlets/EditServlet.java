@@ -186,6 +186,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_PREVIEW);
+		parserInfo.setAllowSectionEdit(false);
 		String preview = Utilities.parse(parserInfo, contents, topicName);
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
