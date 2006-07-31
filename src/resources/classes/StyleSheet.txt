@@ -97,7 +97,7 @@ pre {
 	background-color: #FBFBFD;
 	border: 1px dashed #7E7ECB;
 	color: black;
-	font-size: 105%;
+	font-size: 110%;
 	line-height: 1.1em;
 	padding: 1em;
 }
@@ -403,24 +403,15 @@ div.imgthumb {
 	font-size: 200%;
 }
 
-.subHeader{
+.subHeader {
 	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	font-size: larger;
 }
 
-.backlinks{
-	font-size: small;
-	font-style: italic;
-}
-
 .red {
 	font-family: Verdana, Helvetica, sans-serif;
 	font-size: 12px ; color: #ff0000;
-}
-
-td.recent,th.recent{
-	background: #ffffff
 }
 
 .searchresult{
