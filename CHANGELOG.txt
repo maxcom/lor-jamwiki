@@ -10,6 +10,7 @@
   explicitly enabled via the admin tool.
 * FEATURE: Parser will reformat badly written HTML (such as "< sTriKe >").
 * BUG: Parser is now more strict about what HTML is allowed.
+* BUG: Edits could not be saved or previewed on non-English versions.
 * BUG: Uploaded file sometimes includes full path from user's browser.
   Hopefully fixed (feedback requested).
 * FEATURE: http://server/context/virtual/ redirects to default topic.
@@ -22,6 +23,8 @@
 * FEATURE: Keep ugly logo, but make background transparent.  Existing
   JAMWiki installs will want to replace "logo.jpg" in the StyleSheet
   topic with "logo.gif".
+* FEATURE: Update HTTP cache headers.
+* FEATURE: Use sans-serif as default font.
 * FEATURE: More Chinese translations from Jiading (ewen0930).
 * FEATURE: Hungarian translations from Daniel Tar (bDaneE).
 
