@@ -49,7 +49,6 @@ public class JAMWikiFilter implements Filter {
 	 * Set request encoding to UTF-8.
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		response.setContentType("text/html;charset=" + this.encoding);
 		request.setCharacterEncoding(this.encoding);
 		if (redirectNeeded(request, response)) return;
 		chain.doFilter(request, response);

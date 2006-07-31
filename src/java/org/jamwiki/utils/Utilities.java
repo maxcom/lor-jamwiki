@@ -86,6 +86,28 @@ public class Utilities {
 	}
 
 	/**
+	 *
+	 */
+	public static String convertEncoding(String text, String fromEncoding, String toEncoding) {
+		if (!StringUtils.hasText(text)) return text;
+		if (!StringUtils.hasText(fromEncoding)) {
+			logger.warn("No character encoding specified to convert from, using UTF-8");
+			fromEncoding = "UTF-8";
+		}
+		if (!StringUtils.hasText(toEncoding)) {
+			logger.warn("No character encoding specified to convert to, using UTF-8");
+			toEncoding = "UTF-8";
+		}
+		try {
+			text = new String(text.getBytes(fromEncoding), toEncoding);
+		} catch (Exception e) {
+			// bad encoding
+			logger.info("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
+		}
+		return text;
+	}
+
+	/**
 	 * Create the root path for a specific WIKI without the server name.
 	 * This is useful for local redirection or local URL's (relative URL's to the server).
 	 * @param request The HttpServletRequest
@@ -517,19 +539,5 @@ public class Utilities {
 		}
 		if (cookie == null) return null;
 		return cookie.getValue();
-	}
-
-	/**
-	 *
-	 */
-	public static String toUTF8(String text) {
-		if (!StringUtils.hasText(text)) return text;
-		try {
-			text = new String(text.getBytes("ISO-8859-1"), "UTF-8");
-		} catch (Exception e) {
-			// bad encoding
-			logger.info("Unable to convert value " + text + " from ISO-8859-1 to UTF-8", e);
-		}
-		return text;
 	}
 }

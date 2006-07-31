@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TranslationServlet extends JAMWikiServlet {
 
 	private static Logger logger = Logger.getLogger(TranslationServlet.class.getName());
-	private Properties translations = new Properties();
+	private SortedProperties translations = new SortedProperties();
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -87,7 +88,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	private TreeSet retrieveTranslationCodes() throws Exception {
-		TreeSet translations = new TreeSet();
+		TreeSet codes = new TreeSet();
 		File propertyRoot = Utilities.getClassLoaderRoot();
 		File[] files = propertyRoot.listFiles();
 		File file;
@@ -99,9 +100,9 @@ public class TranslationServlet extends JAMWikiServlet {
 			if (!StringUtils.hasText(filename)) continue;
 			if (!filename.startsWith("ApplicationResources_") || !filename.endsWith(".properties")) continue;
 			String code = filename.substring("ApplicationResources_".length(), filename.length() - ".properties".length());
-			if (StringUtils.hasText(code)) translations.add(code);
+			if (StringUtils.hasText(code)) codes.add(code);
 		}
-		return translations;
+		return codes;
 	}
 
 	/**
@@ -131,7 +132,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		String language = request.getParameter("language");
 		String filename = filename(request);
-		this.translations = Environment.loadProperties("ApplicationResources.properties");
+		this.translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		if (StringUtils.hasText(language)) {
 			filename = filename(request);
 			this.translations.putAll(Environment.loadProperties(filename));
