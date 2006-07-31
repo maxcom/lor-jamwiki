@@ -13,6 +13,7 @@
 * BUG: Edits could not be saved or previewed on non-English versions.
 * BUG: Uploaded file sometimes includes full path from user's browser.
   Hopefully fixed (feedback requested).
+* FEATURE: Add tabs to the admin pages to improve navigation.
 * FEATURE: http://server/context/virtual/ redirects to default topic.
 * FEATURE: Empty jamwiki.properties file removed from WAR file to prevent
   accidentally overwriting properties during upgrade.
