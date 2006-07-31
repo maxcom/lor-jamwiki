@@ -12,7 +12,7 @@ body {
 }
 
 body, input, select {
-	font: 95% Tahoma, sans-serif;
+	font: 95% sans-serif, Tahoma;
 }
 
 a {
