@@ -30,6 +30,9 @@ function confirmSubmit() {
 // -->
 </script>
 
+<%-- FIXME: hard coding --%>
+<div align="center" width="90%" style="border:1px dashed red;padding:3px;margin:10px 75px 5px 75px;"><font color="red">This tool is <b>BETA</b>.  It is STRONGLY encouraged that all data be backed up prior to running any conversions.  Testing is encouraged, and reports for both working and non-working configurations can be reported at <a href="http://jamwiki.org/wiki/en/Bug_Reports#Open_Issues">jamwiki.org</a>.</font></div>
+
 <p class="subHeader">Special:Convert</p>
 
 <form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Convert" />">

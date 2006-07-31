@@ -22,6 +22,8 @@
 
 <%@ include file="page-init.jsp" %>
 
+<%-- FIXME: hard coding --%>
+<div align="center" width="90%" style="border:1px dashed red;padding:3px;margin:10px 75px 5px 75px;"><font color="red">This tool is <b>BETA</b>.  Some users have reported that it corrupts message data while others have had no problems.  Testing is encouraged, and reports for both working and non-working configurations can be reported at <a href="http://jamwiki.org/wiki/en/Known_Issues#International_Character_Sets">jamwiki.org</a>.</font></div>
 <p><f:message key="translation.message.instructions" /></p>
 <table>
 <tr>
