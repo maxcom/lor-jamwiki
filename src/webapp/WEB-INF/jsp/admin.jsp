@@ -429,6 +429,7 @@ onUserGroupType()
 	<td><input type="text" name="readOnlyTopic"></td>
 	<td><input type="submit" name="addReadOnly" value="<f:message key="admin.action.add" />" /></td>
 </tr>
+<c:if test="${not empty readOnlyTopics}">
 <tr>
 	<td>
 		<table border="0">
@@ -446,6 +447,7 @@ onUserGroupType()
 	</td>
 	<td valign="middle"><input type="submit" name="removeReadOnly" value="<f:message key="admin.action.remove" />"></td>
 </tr>
+</c:if>
 </table>
 </form>
 
