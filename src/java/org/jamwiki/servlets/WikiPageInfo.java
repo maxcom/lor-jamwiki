@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 public class WikiPageInfo {
 
 	private static final Logger logger = Logger.getLogger(WikiPageInfo.class);
+	protected boolean admin = false;
 	protected String pageAction = "";
 	protected String pageTitle = "";
 	protected String topicName = "";
@@ -35,6 +36,20 @@ public class WikiPageInfo {
 	 *
 	 */
 	protected WikiPageInfo() {
+	}
+
+	/**
+	 *
+	 */
+	protected boolean getAdmin() {
+		return this.admin;
+	}
+
+	/**
+	 *
+	 */
+	protected void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 
 	/**

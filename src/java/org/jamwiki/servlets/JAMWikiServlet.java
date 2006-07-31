@@ -74,6 +74,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String ACTION_UPGRADE = "action_upgrade";
 	public static final String ACTION_UPLOAD = "action_upload";
 	public static final String PARAMETER_ACTION = "action";
+	public static final String PARAMETER_ADMIN = "admin";
 	public static final String PARAMETER_SPECIAL = "special";
 	public static final String PARAMETER_TITLE = "title";
 	public static final String PARAMETER_TOPIC = "topic";
@@ -289,6 +290,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				logger.error("Unable to load topic value in JAMWikiServlet", e);
 			}
 		}
+		next.addObject(JAMWikiServlet.PARAMETER_ADMIN, new Boolean(this.pageInfo.getAdmin()));
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(this.pageInfo.getSpecial()));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "JAMWiki - " + this.pageInfo.getPageTitle());
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, this.pageInfo.getPageAction());

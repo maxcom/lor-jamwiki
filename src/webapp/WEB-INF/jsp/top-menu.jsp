@@ -20,7 +20,7 @@
 <table class="menu-tab-table" cellspacing="0">
 <tr>
 	<td class="menu-tab-space">&#160;</td>
-<c:if test="${!special}">
+<c:if test="${!special && !admin}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${article}"><f:message key="menu.article" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="menu.comments" /></jamwiki:link></td>
@@ -41,6 +41,13 @@
 </c:if>
 <c:if test="${special}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${topic}"><f:message key="menu.special" /></jamwiki:link></td>
+</c:if>
+<c:if test="${admin}">
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Admin">Special:Admin</jamwiki:link></td>
+	<td class="menu-tab-space">&#160;</td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Translation">Special:Translation</jamwiki:link></td>
+	<td class="menu-tab-space">&#160;</td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Convert">Special:Convert</jamwiki:link></td>
 </c:if>
 	<td class="menu-tab-close">&#160;</td>
 </tr>

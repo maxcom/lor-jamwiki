@@ -110,7 +110,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	private void translate(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
-		this.pageInfo.setSpecial(true);
+		this.pageInfo.setAdmin(true);
 		this.pageInfo.setPageTitle("Special:Translation");
 		Enumeration names = request.getParameterNames();
 		String name;
@@ -138,7 +138,7 @@ public class TranslationServlet extends JAMWikiServlet {
 			this.translations.putAll(Environment.loadProperties(filename));
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
-		this.pageInfo.setSpecial(true);
+		this.pageInfo.setAdmin(true);
 		this.pageInfo.setPageTitle("Special:Translation");
 	}
 }
