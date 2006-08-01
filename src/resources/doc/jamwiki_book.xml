@@ -188,10 +188,6 @@
         </listitem>
 
         <listitem>
-          <para>RSS Feeds for recent changes</para>
-        </listitem>
-
-        <listitem>
           <para>Email alerts for page notification</para>
         </listitem>
 
@@ -1829,12 +1825,6 @@
     <section>
       <title>Installing Plugins</title>
 
-      <para>Plugins add extra functionality to the JAMWiki system. A list of
-      plugins is available at <ulink
-      url="http://jamwiki.org/downloads.php">http://jamwiki.org/downloads.php</ulink>.
-      As of this writing, plugins exist to incorporate external RSS feeds and
-      HTML, generate charts, and pretty-printers for HTML and SQL.</para>
-
       <para>To install a new plugin in your environment:</para>
 
       <orderedlist>
@@ -2587,15 +2577,6 @@
                 url="???">http://www.jamwiki.org/plugins/htmlsrc.zip</ulink></entry>
 
                 <entry>Pretty-print HTML source code in a topic.</entry>
-              </row>
-
-              <row>
-                <entry>RSS</entry>
-
-                <entry><ulink
-                url="???">http://www.jamwiki.org/plugins/rss.zip</ulink></entry>
-
-                <entry>Include External RSS feeds in topics.</entry>
               </row>
 
               <row>

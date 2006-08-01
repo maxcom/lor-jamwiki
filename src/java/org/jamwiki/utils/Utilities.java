@@ -108,48 +108,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Create the root path for a specific WIKI without the server name.
-	 * This is useful for local redirection or local URL's (relative URL's to the server).
-	 * @param request The HttpServletRequest
-	 * @param virtualWiki The name of the current virtual Wiki
-	 * @return the root path for this viki
-	 */
-	public static String createLocalRootPath(HttpServletRequest request, String virtualWiki) {
-		String contextPath = "";
-		contextPath += request.getContextPath();
-		if (virtualWiki == null || virtualWiki.length() < 1) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		return contextPath + "/" + virtualWiki + "/";
-	}
-
-	/**
-	 * Create the root path for a specific WIKI with a specific server
-	 * @param request The HttpServletRequest
-	 * @param virtualWiki The name of the current virtual Wiki
-	 * @param server the specific server given for the path.
-	 *			   If it is set to "null" or an empty string, it will take
-	 *			   the servername from the given request.
-	 * @return the root path for this viki
-	 */
-	public static String createRootPath(HttpServletRequest request, String virtualWiki, String server) {
-		String contextPath = "";
-		if (server == null || server.trim().equals("")) {
-			contextPath = "http://" + request.getServerName();
-		} else {
-			contextPath = "http://" + server;
-		}
-		if (request.getServerPort() != 80) {
-			contextPath += ":" + request.getServerPort();
-		}
-		contextPath += request.getContextPath();
-		if (virtualWiki == null || virtualWiki.length() < 1) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		return contextPath + "/" + virtualWiki + "/";
-	}
-
-	/**
 	 *
 	 */
 	public static WikiUser currentUser(HttpServletRequest request) {
@@ -170,21 +128,6 @@ public class Utilities {
 		}
 		if (user != null) request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 		return user;
-	}
-
-	/**
-	 * Converts back file name encoded by encodeSafeFileName().
-	 */
-	public static String decodeSafeFileName(String name) {
-		// URL decode the rest of the name
-		try {
-			name = URLDecoder.decode(name, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while decoding " + name + " with charset UTF-8", e);
-		}
-		// replace spaces with underscores
-		name = StringUtils.replace(name, " ", "_");
-		return name;
 	}
 
 	/**
@@ -263,13 +206,6 @@ public class Utilities {
 		if (buffer.length() == 0) return "";
 		buffer = buffer.reverse();
 		return buffer.toString();
-	}
-
-	/**
-	 * Localised
-	 */
-	public static String formatDate(Date date) {
-		return DateFormat.getDateInstance().format(date);
 	}
 
 	/**
@@ -495,6 +431,7 @@ public class Utilities {
 	 * Read a file and return its contents as a String.
 	 */
 	public static String readFile(String filename) throws Exception {
+		// FIXME - this method is no longer needed and can be removed or simplified
 		File file = new File(filename);
 		if (file.exists()) {
 			// file passed in as full path

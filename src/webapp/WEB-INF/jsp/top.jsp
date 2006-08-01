@@ -38,6 +38,5 @@ if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environ
 	<link href="jamwiki.css" type="text/css" rel="stylesheet" />
 	<link rel="search" title="<f:message key="generalmenu.search"/>" href="<c:out value="${pathRoot}"/>Special:Search" />
 	<link rel="index" title="<f:message key="generalmenu.search"/>" href="<c:out value="${pathRoot}"/>Special:AllTopics" />
-	<link rel="alternate" type="application/rss+xml" title="RSS Feed" href="<c:out value="${pathRoot}"/>Special:RSS" />
 </head>
 <body>

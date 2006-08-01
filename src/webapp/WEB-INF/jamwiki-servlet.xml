@@ -21,7 +21,6 @@
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:Account">Register</prop>
-				<prop key="/**/Special:RSS">RSS</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:ToDoTopics">Topic</prop>
@@ -46,7 +45,6 @@
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
 	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />
-	<bean id="RSS" class="org.jamwiki.servlets.RSSServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
 	<bean id="Stylesheet" class="org.jamwiki.servlets.StylesheetServlet" />
