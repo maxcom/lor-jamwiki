@@ -12,7 +12,6 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.Lexer;
 import org.jamwiki.parser.ParserInfo;
-import org.jamwiki.utils.Utilities;
 
 %%
 

@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**

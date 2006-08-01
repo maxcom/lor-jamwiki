@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
-import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
