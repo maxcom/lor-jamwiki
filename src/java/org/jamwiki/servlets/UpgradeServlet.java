@@ -55,7 +55,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("upgrade");
 		try {
 			if (!Utilities.isUpgrade()) {
-				throw new Exception(Utilities.getMessage("upgrade.error.notrequired", request.getLocale()));
+				throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
 			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
@@ -66,6 +66,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			next = new ModelAndView("wiki");
 			viewError(request, next, e);
+			loadDefaults(request, next, this.pageInfo);
 		}
 		return next;
 	}
@@ -86,9 +87,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Environment.saveProperties();
 		next.addObject("messages", messages);
 		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
-		String message = Utilities.getMessage("upgrade.caption.upgradecomplete", request.getLocale());
-		message += "<br />" + LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName());
-		next.addObject("message", message);
+		String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName());
+		next.addObject("message", new WikiMessage("upgrade.caption.upgradecomplete", htmlLink));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setPageTitle("Special:Upgrade");

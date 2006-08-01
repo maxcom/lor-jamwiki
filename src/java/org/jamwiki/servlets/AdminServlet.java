@@ -67,7 +67,7 @@ public class AdminServlet extends JAMWikiServlet {
 				} else if (isTopic(request, "Special:Delete")) {
 					redirect = "Special:Delete";
 				}
-				next.addObject("errorMessage", Utilities.getMessage("admin.message.loginrequired", request.getLocale()));
+				next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));
 				viewLogin(request, next, redirect);
 				loadDefaults(request, next, this.pageInfo);
 				return next;
@@ -139,12 +139,11 @@ public class AdminServlet extends JAMWikiServlet {
 			virtualWiki.setDefaultTopicName(request.getParameter("defaultTopicName"));
 			WikiBase.getHandler().writeVirtualWiki(virtualWiki);
 			WikiBase.getHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
-			String message = Utilities.getMessage("admin.message.virtualwikiadded", request.getLocale());
-			next.addObject("message", message);
+			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
 		} catch (Exception e) {
 			logger.error("Failure while adding virtual wiki", e);
 			String message = "Failure while adding virtual wiki: " + e.getMessage();
-			next.addObject("message", message);
+			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
 	}
 
@@ -156,13 +155,11 @@ public class AdminServlet extends JAMWikiServlet {
 			FileHandler fromHandler = new FileHandler();
 			DatabaseHandler toHandler = new DatabaseHandler();
 			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
-			// FIXME - hard coding
-			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
+			next.addObject("message", new WikiMessage("convert.database.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {
-			// FIXME - hard coding
 			logger.error("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
+			next.addObject("errorMessage", new WikiMessage("convert.database.failure", e.getMessage()));
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
 		this.pageInfo.setAdmin(true);
@@ -177,13 +174,11 @@ public class AdminServlet extends JAMWikiServlet {
 			FileHandler toHandler = new FileHandler();
 			DatabaseHandler fromHandler = new DatabaseHandler();
 			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
-			// FIXME - hard coding
-			next.addObject("message", "Database values successfully written to files.  You may need to logout and re-login.");
+			next.addObject("message", new WikiMessage("convert.file.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {
-			// FIXME - hard coding
 			logger.error("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", "Failure while executing database-to-file-conversion: " + e.getMessage());
+			next.addObject("errorMessage", new WikiMessage("convert.file.failure", e.getMessage()));
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
 		this.pageInfo.setAdmin(true);
@@ -208,20 +203,18 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle("Delete " + topicName);
+		this.pageInfo.setPageTitle("Special:Delete");
 		try {
 			if (topicName == null) {
-				next.addObject("errorMessage", "No topic found");
+				next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
 				return;
 			}
 			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 			WikiBase.getHandler().deleteTopic(topic);
-			// FIXME - hard coding
-			next.addObject("message", "Topic " + topicName + " deleted successfully");
+			next.addObject("message", new WikiMessage("delete.success", topicName));
 		} catch (Exception e) {
-			// FIXME - hard coding
 			logger.error("Failure while deleting topic " + topicName, e);
-			next.addObject("errorMessage", "Failure while deleting topic " + topicName + ": " + e.getMessage());
+			next.addObject("errorMessage", new WikiMessage("delete.failure", topicName, e.getMessage()));
 		}
 	}
 
@@ -231,11 +224,11 @@ public class AdminServlet extends JAMWikiServlet {
 	private void deleteView(HttpServletRequest request, ModelAndView next) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		if (topicName == null) {
-			next.addObject("errorMessage", "No topic found");
+			next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
 		}
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle("Delete " + topicName);
+		this.pageInfo.setPageTitle("Special:Delete");
 		this.pageInfo.setSpecial(true);
 	}
 
@@ -471,13 +464,11 @@ public class AdminServlet extends JAMWikiServlet {
 			Environment.saveProperties();
 			// re-initialize to reset PersistencyHandler settings (if needed)
 			WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
-			String message = Utilities.getMessage("admin.message.changessaved", request.getLocale());
-			next.addObject("message", message);
+			next.addObject("message", new WikiMessage("admin.message.changessaved"));
 		} catch (Exception e) {
 			// FIXME - hard coding
 			logger.error("Failure while processing property values", e);
-			String message = "Failure while processing property values: " + e.getMessage();
-			next.addObject("message", message);
+			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
 	}
 
@@ -500,6 +491,7 @@ public class AdminServlet extends JAMWikiServlet {
 				WikiBase.getHandler().deleteReadOnlyTopic(virtualWiki, topicName);
 			}
 		}
+		next.addObject("message", new WikiMessage("admin.message.readonly"));
 	}
 
 	/**
@@ -525,14 +517,13 @@ public class AdminServlet extends JAMWikiServlet {
 			// FIXME - database specific
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
 				WikiBase.getHandler().reloadRecentChanges();
-				// FIXME - hard coding
-				next.addObject("message", "Recent changes successfully loaded");
+				next.addObject("message", new WikiMessage("admin.caption.recentchanges"));
 			} else {
-				next.addObject("message", "Recent changes can only be reloaded while in database persistency mode");
+				next.addObject("message", new WikiMessage("admin.caption.recentchangesdb"));
 			}
 		} catch (Exception e) {
 			logger.error("Failure while loading recent changes", e);
-			next.addObject("errorMessage", "Failure while loading recent changes: " + e.getMessage());
+			next.addObject("errorMessage", new WikiMessage("admin.caption.recentchangesdb", e.getMessage()));
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
@@ -548,13 +539,12 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setPageTitle("Special:Admin");
 		try {
 			WikiBase.getSearchEngineInstance().refreshIndex();
-			String message = Utilities.getMessage("admin.message.indexrefreshed", request.getLocale());
-			next.addObject("message", message);
+			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
 			// FIXME - hard coding
 			logger.error("Failure while refreshing search index", e);
 			String message = "Failure while refreshing search index: " + e.getMessage();
-			next.addObject("message", message);
+			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
 	}
 

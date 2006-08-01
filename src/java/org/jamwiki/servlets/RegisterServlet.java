@@ -121,24 +121,24 @@ public class RegisterServlet extends JAMWikiServlet {
 	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		if (!StringUtils.hasText(user.getLogin())) {
-			errors.add(Utilities.getMessage("error.loginempty", request.getLocale()));
+			errors.add(new WikiMessage("error.loginempty"));
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword, false) == null) {
-			errors.add(Utilities.getMessage("register.error.oldpasswordinvalid", request.getLocale()));
+			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (user.getUserId() < 1 && !StringUtils.hasText(newPassword)) {
-			errors.add(Utilities.getMessage("register.error.passwordempty", request.getLocale()));
+			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
 		if (StringUtils.hasText(newPassword) || StringUtils.hasText(confirmPassword)) {
 			if (!StringUtils.hasText(newPassword)) {
-				errors.add(Utilities.getMessage("error.newpasswordempty", request.getLocale()));
+				errors.add(new WikiMessage("error.newpasswordempty"));
 			} else if (!StringUtils.hasText(confirmPassword)) {
-				errors.add(Utilities.getMessage("error.passwordconfirm", request.getLocale()));
+				errors.add(new WikiMessage("error.passwordconfirm"));
 			} else if (!newPassword.equals(confirmPassword)) {
-				errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
+				errors.add(new WikiMessage("admin.caption.passwordnomatch"));
 			}
 		}
 		return errors;

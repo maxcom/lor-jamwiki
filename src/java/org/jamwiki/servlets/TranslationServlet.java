@@ -50,7 +50,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		try {
 			if (!Utilities.isAdmin(request)) {
 				String redirect = "Special:Translation";
-				next.addObject("errorMessage", Utilities.getMessage("admin.message.loginrequired", request.getLocale()));
+				next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));
 				viewLogin(request, next, redirect);
 				loadDefaults(request, next, this.pageInfo);
 				return next;

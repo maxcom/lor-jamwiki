@@ -106,7 +106,7 @@ function onUserGroupType() {
 </script>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
-<c:if test="${!empty message}"><p class="red"><c:out value="${message}" /></p></c:if>
+<c:if test="${!empty message}"><p class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p></c:if>
 
 <p class="subHeader"><f:message key="admin.title.settings" /></p>
 

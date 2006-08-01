@@ -35,8 +35,8 @@ function cancel() {
 
 <div class="contents">
 	<%-- FIXME - hard coding --%>
-	<p>A system error has occurred.  The error message is:</p>
-	<p><font style="color: red;font-weight:bold"><c:out value="${errorMessage}" /></font></p>
+	<p><f:message key="error.caption" /></p>
+	<p><font style="color: red;font-weight:bold"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></font></p>
 	<form><input type="button" onClick="cancel();" value="<f:message key="common.back" />" /></form>
 </div>
 

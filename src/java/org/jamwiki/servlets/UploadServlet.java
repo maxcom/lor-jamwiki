@@ -125,7 +125,7 @@ public class UploadServlet extends JAMWikiServlet {
 		// FIXME - this method is a mess and needs to be split up.
 		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!file.exists()) {
-			throw new Exception(Utilities.getMessage("upload.error.nodirectory", request.getLocale()));
+			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = Utilities.currentUser(request);
@@ -159,14 +159,14 @@ public class UploadServlet extends JAMWikiServlet {
 			} else {
 				fileName = sanitizeFilename(item.getName());
 				if (fileName == null) {
-					throw new Exception(Utilities.getMessage("upload.error.filename", request.getLocale()));
+					throw new WikiException(new WikiMessage("upload.error.filename"));
 				}
 				url = UploadServlet.buildUniqueFileName(fileName);
 				String subdirectory = UploadServlet.buildFileSubdirectory();
 				fileSize = item.getSize();
 				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 				if (!directory.exists() && !directory.mkdirs()) {
-					throw new Exception(Utilities.getMessage("upload.error.directorycreate", request.getLocale(),  directory.getAbsolutePath()));
+					throw new WikiException(new WikiMessage("upload.error.directorycreate",  directory.getAbsolutePath()));
 				}
 				contentType = item.getContentType();
 				url = subdirectory + "/" + url;
@@ -175,7 +175,7 @@ public class UploadServlet extends JAMWikiServlet {
 			}
 		}
 		if (fileName == null) {
-			throw new Exception(Utilities.getMessage("upload.error.filenotfound", request.getLocale()));
+			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
 		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
 		topic.setName(topicName);

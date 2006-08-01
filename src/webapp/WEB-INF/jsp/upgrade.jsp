@@ -37,9 +37,8 @@ function confirmSubmit() {
 <form name="adminUpgrade" method="get">
 <input type="hidden" name="function" value="upgrade" />
 <table style="border:2px solid #333333;padding=1em;">
-<%-- FIXME: hard coding --%>
-<c:if test="${!empty message}"><tr><td align="center"><div style="color:green;size=110%;"><c:out value="${message}" escapeXml="false" /></div></td></tr></c:if>
-<tr><td>An upgrade to JAMWiki has been installed.  Please back up all data, and then click the "Submit" button to complete the upgrade process.</td></tr>
+<c:if test="${!empty message}"><tr><td align="center"><div style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div></td></tr></c:if>
+<tr><td><f:message key="upgrade.caption.detected" /></td></tr>
 <tr><td align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
 </table>
 </form>

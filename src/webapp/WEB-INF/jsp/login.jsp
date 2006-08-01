@@ -26,7 +26,7 @@
 <input type="hidden" name="redirect" value="<c:out value="${redirect}"/>" />
 <table>
 <c:if test="${!empty errorMessage}">
-<tr><td colspan="2" class="red"><c:out value="${errorMessage}" /></td></tr>
+<tr><td colspan="2" class="red"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></td></tr>
 </c:if>
 <tr>
 	<td><f:message key="login.username"/></td>

@@ -83,7 +83,7 @@ public class EditServlet extends JAMWikiServlet {
 			int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 			TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 			if (topicVersion == null) {
-				throw new Exception(Utilities.getMessage("edit.exception.notopic", request.getLocale()));
+				throw new WikiException(new WikiMessage("edit.exception.notopic"));
 			}
 			contents = topicVersion.getVersionContent();
 			if (lastTopicVersionId != topicVersionId) {
@@ -136,10 +136,10 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private Topic loadTopic(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
 		if (!StringUtils.hasText(topicName)) {
-			throw new Exception(Utilities.getMessage("edit.exception.notopic", request.getLocale()));
+			throw new WikiException(new WikiMessage("edit.exception.notopic"));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
-			throw new Exception(Utilities.getMessage("edit.exception.pseudotopic", request.getLocale(), topicName));
+			throw new WikiException(new WikiMessage("edit.exception.pseudotopic", topicName));
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -148,7 +148,7 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setVirtualWiki(virtualWiki);
 		}
 		if (topic.getReadOnly()) {
-			throw new Exception(Utilities.getMessage("error.readonly", request.getLocale()));
+			throw new WikiException(new WikiMessage("error.readonly"));
 		}
 		return topic;
 	}
@@ -158,13 +158,13 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private boolean loginRequired(HttpServletRequest request, ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
-			next.addObject("errorMessage", Utilities.getMessage("edit.exception.login", request.getLocale()));
+			next.addObject("errorMessage", new WikiMessage("edit.exception.login"));
 			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
 			return true;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
-			next.addObject("errorMessage", Utilities.getMessage("edit.exception.loginadmin", request.getLocale(), topicName));
+			next.addObject("errorMessage", new WikiMessage("edit.exception.loginadmin", topicName));
 			viewLogin(request, next, JAMWikiServlet.getTopicFromURI(request));
 			return true;
 		}
@@ -253,7 +253,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");
-			throw new Exception(Utilities.getMessage("edit.exception.nocontent", request.getLocale(), topicName));
+			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
 		if (lastTopicVersion != null && lastTopicVersion.getVersionContent().equals(contents)) {
 			viewTopic(request, next, topicName);

@@ -52,10 +52,10 @@ function onPersistenceType() {
 <table style="border:2px solid #333333;padding=1em;">
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" />
-<c:forEach items="${errors}" var="message"><c:out value="${message}" /><br /></c:forEach>
+<c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach>
 </div></td></tr>
 </c:if>
-<c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
+<c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><f:message key="${message.key}" /></div></td></tr></c:if>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
 	<td><f:message key="admin.caption.filedir" />:</td>

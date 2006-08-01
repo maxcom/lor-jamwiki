@@ -315,12 +315,20 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param e The exception that is the source of the error.
 	 */
 	protected void viewError(HttpServletRequest request, ModelAndView next, Exception e) {
-		logger.error("Servlet error", e);
+		if (!(e instanceof WikiException)) {
+			logger.error("Servlet error", e);
+		}
 		this.pageInfo = new WikiPageInfo();
+		// FIXME - hard coding
 		this.pageInfo.setPageTitle("System Error");
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ERROR);
 		this.pageInfo.setSpecial(true);
-		next.addObject("errorMessage", e.getMessage());
+		if (e instanceof WikiException) {
+			WikiException we = (WikiException)e;
+			next.addObject("errorMessage", we.getWikiMessage());
+		} else {
+			next.addObject("errorMessage", new WikiMessage("error.unknown", e.getMessage()));
+		}
 	}
 
 	/**

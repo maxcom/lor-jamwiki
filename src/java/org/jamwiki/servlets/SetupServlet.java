@@ -50,7 +50,7 @@ public class SetupServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("setup");
 		try {
 			if (!Utilities.isFirstUse()) {
-				throw new Exception(Utilities.getMessage("setup.error.notrequired", request.getLocale()));
+				throw new WikiException(new WikiMessage("setup.error.notrequired"));
 			}
 			String function = request.getParameter("function");
 			if (function == null) function = "";
@@ -151,33 +151,33 @@ public class SetupServlet extends JAMWikiServlet {
 		File baseDir = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
 		if (!baseDir.exists()) {
 			// invalid base directory
-			errors.add(Utilities.getMessage("error.directoryinvalid", request.getLocale(), Environment.getValue(Environment.PROP_BASE_FILE_DIR)));
+			errors.add(new WikiMessage("error.directoryinvalid", Environment.getValue(Environment.PROP_BASE_FILE_DIR)));
 		}
 		File fullDir = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!fullDir.exists()) {
 			// invalid base directory
-			errors.add(Utilities.getMessage("error.directoryinvalid", request.getLocale(), Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
+			errors.add(new WikiMessage("error.directoryinvalid", Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
 		}
 		if (!StringUtils.hasText(user.getLogin())) {
 			user.setLogin("");
-			errors.add(Utilities.getMessage("error.loginempty", request.getLocale()));
+			errors.add(new WikiMessage("error.loginempty"));
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (newPassword != null || confirmPassword != null) {
 			if (newPassword == null) {
-				errors.add(Utilities.getMessage("error.newpasswordempty", request.getLocale()));
+				errors.add(new WikiMessage("error.newpasswordempty"));
 			} else if (confirmPassword == null) {
-				errors.add(Utilities.getMessage("error.passwordconfirm", request.getLocale()));
+				errors.add(new WikiMessage("error.passwordconfirm"));
 			} else if (!newPassword.equals(confirmPassword)) {
-				errors.add(Utilities.getMessage("admin.message.passwordsnomatch", request.getLocale()));
+				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			// test database
 			if (!DatabaseConnection.testDatabase()) {
-				errors.add(Utilities.getMessage("error.databaseconnection", request.getLocale()));
+				errors.add(new WikiMessage("error.databaseconnection"));
 			}
 		}
 		return errors;
