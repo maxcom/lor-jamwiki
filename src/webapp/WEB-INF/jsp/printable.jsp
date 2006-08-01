@@ -39,7 +39,7 @@
       }
 	}
 </style>
-<title><f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></title>
+<title><f:message key="common.sitename" /> - <f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></title>
 </head>
 <body>
 <c:if test="${hideform != 'true'}">
