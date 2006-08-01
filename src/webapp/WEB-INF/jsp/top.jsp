@@ -20,7 +20,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><c:out value="${title}" /></title>
+	<title><f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <%
 if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC).length() > 0) {

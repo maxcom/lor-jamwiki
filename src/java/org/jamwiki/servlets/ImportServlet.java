@@ -80,7 +80,7 @@ public class ImportServlet extends JAMWikiServlet {
 	 */
 	private void importView(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_IMPORT);
-		this.pageInfo.setPageTitle("Special:Import");
+		this.pageInfo.setPageTitle(new WikiMessage("import.title"));
 		this.pageInfo.setSpecial(true);
 	}
 }

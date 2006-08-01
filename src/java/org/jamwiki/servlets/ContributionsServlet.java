@@ -67,8 +67,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("contributions", all);
 		next.addObject("num", new Integer(num));
 		next.addObject("contributor", userString);
-		String message = Utilities.getMessage("contributions.title", request.getLocale(), userString);
-		this.pageInfo.setPageTitle(message);
+		this.pageInfo.setPageTitle(new WikiMessage("contributions.title", userString));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_CONTRIBUTIONS);
 		this.pageInfo.setSpecial(true);
 	}

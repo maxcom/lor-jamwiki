@@ -57,7 +57,7 @@
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >
 		<%@ include file="navbar-history-list.jsp"%>
-		<div id="contents-header"><c:out value="${title}"/></div>
+		<div id="contents-header"><f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></div>
 <%
 if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>

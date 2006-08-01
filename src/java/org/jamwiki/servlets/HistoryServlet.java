@@ -60,7 +60,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_HISTORY);
 		this.pageInfo.setTopicName(topicName);
-		this.pageInfo.setPageTitle("History for " + topicName);
+		this.pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
 		Vector changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, true);
 		next.addObject("changes", changes);
 	}
@@ -79,7 +79,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		topic.setTopicContent(topicVersion.getVersionContent());
-		String pageTitle = topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate());
+		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
 		viewTopic(request, next, pageTitle, topic, false);
 	}
 }

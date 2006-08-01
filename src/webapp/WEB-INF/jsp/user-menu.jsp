@@ -28,7 +28,7 @@
 	<td class="menu-user"><jamwiki:link value="${usercomments}"><f:message key="usermenu.usercomments" /></jamwiki:link></td>
 	<td class="menu-user"><jamwiki:link value="Special:Account"><f:message key="usermenu.account" /></jamwiki:link></td>
 	<td class="menu-user"><jamwiki:link value="Special:Logout"><f:message key="common.logout" /></jamwiki:link></td>
-	<c:if test="${adminUser}"><td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="admin.title" /></jamwiki:link></c:if>
+	<c:if test="${adminUser}"><td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="usermenu.admin" /></jamwiki:link></c:if>
 </c:otherwise>
 </c:choose>
 </tr>

@@ -128,7 +128,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Admin");
+		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		WikiUser user = Utilities.currentUser(request);
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
@@ -163,7 +163,7 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Convert");
+		this.pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Convert");
+		this.pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void convertView(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Convert");
+		this.pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setSpecial(true);
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle("Special:Delete");
+		this.pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
 		try {
 			if (topicName == null) {
 				next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
@@ -228,7 +228,7 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		this.pageInfo.setTopicName(topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle("Special:Delete");
+		this.pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
 		this.pageInfo.setSpecial(true);
 	}
 
@@ -238,7 +238,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void properties(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Admin");
+		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		try {
 			Environment.setValue(
 				Environment.PROP_BASE_LOGO_IMAGE,
@@ -478,7 +478,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void readOnly(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Admin");
+		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (request.getParameter("addReadOnly") != null) {
 			String topicName = request.getParameter("readOnlyTopic");
@@ -527,7 +527,7 @@ public class AdminServlet extends JAMWikiServlet {
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Admin");
+		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 	}
 
 	/**
@@ -536,7 +536,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void refreshIndex(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Admin");
+		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		try {
 			WikiBase.getSearchEngineInstance().refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
@@ -554,6 +554,6 @@ public class AdminServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Admin");
+		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 	}
 }

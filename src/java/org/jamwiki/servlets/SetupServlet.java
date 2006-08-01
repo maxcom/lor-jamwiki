@@ -82,7 +82,7 @@ public class SetupServlet extends JAMWikiServlet {
 		if (errors.size() > 0) {
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
 			this.pageInfo.setSpecial(true);
-			this.pageInfo.setPageTitle("Special:Setup");
+			this.pageInfo.setPageTitle(new WikiMessage("setup.title"));
 			next.addObject("errors", errors);
 			next.addObject("login", user.getLogin());
 			return false;
@@ -140,7 +140,7 @@ public class SetupServlet extends JAMWikiServlet {
 	private void setup(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
 		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Setup");
+		this.pageInfo.setPageTitle(new WikiMessage("setup.title"));
 	}
 
 	/**

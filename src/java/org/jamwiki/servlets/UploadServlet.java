@@ -205,7 +205,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageTitle(Utilities.getMessage("upload.title", request.getLocale()));
+		this.pageInfo.setPageTitle(new WikiMessage("upload.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPLOAD);
 		this.pageInfo.setSpecial(true);
 	}

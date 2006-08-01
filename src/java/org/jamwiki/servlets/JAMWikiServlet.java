@@ -76,7 +76,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String PARAMETER_ACTION = "action";
 	public static final String PARAMETER_ADMIN = "admin";
 	public static final String PARAMETER_SPECIAL = "special";
-	public static final String PARAMETER_TITLE = "title";
+	public static final String PARAMETER_TITLE = "pageTitle";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
 	public static final String PARAMETER_USER = "user";
@@ -292,7 +292,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_ADMIN, new Boolean(this.pageInfo.getAdmin()));
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(this.pageInfo.getSpecial()));
-		next.addObject(JAMWikiServlet.PARAMETER_TITLE, "JAMWiki - " + this.pageInfo.getPageTitle());
+		next.addObject(JAMWikiServlet.PARAMETER_TITLE, this.pageInfo.getPageTitle());
 		next.addObject(JAMWikiServlet.PARAMETER_ACTION, this.pageInfo.getPageAction());
 		// reset pageInfo object - seems not to reset with each servlet call
 		this.pageInfo = new WikiPageInfo();
@@ -320,7 +320,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		this.pageInfo = new WikiPageInfo();
 		// FIXME - hard coding
-		this.pageInfo.setPageTitle("System Error");
+		this.pageInfo.setPageTitle(new WikiMessage("error.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ERROR);
 		this.pageInfo.setSpecial(true);
 		if (e instanceof WikiException) {
@@ -351,7 +351,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic, null, request.getQueryString());
 		}
 		next.addObject("redirect", redirect);
-		this.pageInfo.setPageTitle(Utilities.getMessage("login.title", request.getLocale()));
+		this.pageInfo.setPageTitle(new WikiMessage("login.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
 		this.pageInfo.setSpecial(true);
 	}
@@ -370,7 +370,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		viewTopic(request, next, topicName, topic, true);
+		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
+		viewTopic(request, next, pageTitle, topic, true);
 	}
 
 	/**
@@ -381,7 +382,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param topicName The topic being viewed.  This value must be a valid topic that
 	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
-	protected void viewTopic(HttpServletRequest request, ModelAndView next, String pageTitle, Topic topic, boolean sectionEdit) throws Exception {
+	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiMessage pageTitle, Topic topic, boolean sectionEdit) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic != null) {

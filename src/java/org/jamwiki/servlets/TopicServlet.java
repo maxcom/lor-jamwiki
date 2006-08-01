@@ -67,10 +67,9 @@ public class TopicServlet extends JAMWikiServlet {
 	private void allTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
-		String title = "Special:AllTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		this.pageInfo.setPageTitle(title);
+		this.pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ALL_TOPICS);
 		this.pageInfo.setSpecial(true);
 	}
@@ -81,10 +80,9 @@ public class TopicServlet extends JAMWikiServlet {
 	private void orphanedTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getOrphanedTopics(virtualWiki);
-		String title = "Special:OrphanedTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		this.pageInfo.setPageTitle(title);
+		this.pageInfo.setPageTitle(new WikiMessage("orphaned.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ORPHANED_TOPICS);
 		this.pageInfo.setSpecial(true);
 	}
@@ -95,10 +93,9 @@ public class TopicServlet extends JAMWikiServlet {
 	private void toDoTopics(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getToDoWikiTopics(virtualWiki);
-		String title = "Special:ToDoTopics";
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		this.pageInfo.setPageTitle(title);
+		this.pageInfo.setPageTitle(new WikiMessage("todo.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_TODO_TOPICS);
 		this.pageInfo.setSpecial(true);
 	}

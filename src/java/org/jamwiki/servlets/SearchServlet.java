@@ -76,10 +76,9 @@ public class SearchServlet extends JAMWikiServlet {
 		try {
 			String searchField = request.getParameter("text");
 			if (request.getParameter("text") == null) {
-				this.pageInfo.setPageTitle("Special:Search");
+				this.pageInfo.setPageTitle(new WikiMessage("search.title"));
 			} else {
-				String message = Utilities.getMessage("searchresult.title", request.getLocale(), searchField);
-				this.pageInfo.setPageTitle(message);
+				this.pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
 			}
 			// forward back to the search page if the request is blank or null
 			if (!StringUtils.hasText(searchField)) {

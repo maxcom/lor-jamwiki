@@ -119,8 +119,7 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void loadEdit(HttpServletRequest request, ModelAndView next, String topicName) throws Exception {
-		String pageTitle = Utilities.getMessage("edit.title", request.getLocale(), topicName);
-		this.pageInfo.setPageTitle(pageTitle);
+		this.pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		this.pageInfo.setTopicName(topicName);
 		if (request.getParameter("editComment") != null) {
 			next.addObject("editComment", request.getParameter("editComment"));

@@ -91,7 +91,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		next.addObject("message", new WikiMessage("upgrade.caption.upgradecomplete", htmlLink));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
 		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Upgrade");
+		this.pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}
 
 	/**
@@ -157,6 +157,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
 		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle("Special:Upgrade");
+		this.pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}
 }

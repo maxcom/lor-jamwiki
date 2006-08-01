@@ -96,7 +96,7 @@ public class PrintableServlet extends JAMWikiServlet {
 		next.addObject("contentList", result);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PRINT);
 		this.pageInfo.setTopicName(topic);
-		this.pageInfo.setPageTitle(topic);
+		this.pageInfo.setPageTitle(new WikiMessage("topic.title", topic));
 	}
 
 	/**

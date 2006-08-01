@@ -67,7 +67,7 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		}
 		next.addObject("changes", all);
 		next.addObject("num", new Integer(num));
-		this.pageInfo.setPageTitle(Utilities.getMessage("recentchanges.title", request.getLocale()));
+		this.pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_RECENT_CHANGES);
 		this.pageInfo.setSpecial(true);
 	}

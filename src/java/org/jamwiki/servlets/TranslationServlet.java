@@ -111,7 +111,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	private void translate(HttpServletRequest request, ModelAndView next) throws Exception {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Translation");
+		this.pageInfo.setPageTitle(new WikiMessage("translation.title"));
 		Enumeration names = request.getParameterNames();
 		String name;
 		while (names.hasMoreElements()) {
@@ -139,6 +139,6 @@ public class TranslationServlet extends JAMWikiServlet {
 		}
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
 		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle("Special:Translation");
+		this.pageInfo.setPageTitle(new WikiMessage("translation.title"));
 	}
 }

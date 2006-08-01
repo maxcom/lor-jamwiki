@@ -28,7 +28,7 @@ public class WikiPageInfo {
 	private static final Logger logger = Logger.getLogger(WikiPageInfo.class);
 	protected boolean admin = false;
 	protected String pageAction = "";
-	protected String pageTitle = "";
+	protected WikiMessage pageTitle = null;
 	protected String topicName = "";
 	protected boolean special = false;
 
@@ -69,14 +69,14 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	protected String getPageTitle() {
+	protected WikiMessage getPageTitle() {
 		return this.pageTitle;
 	}
 
 	/**
 	 *
 	 */
-	protected void setPageTitle(String pageTitle) {
+	protected void setPageTitle(WikiMessage pageTitle) {
 		this.pageTitle = pageTitle;
 	}
 
