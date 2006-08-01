@@ -28,7 +28,6 @@ called it means that a catastrophic error has occurred.
     "
     isErrorPage="true"
     contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"
 %>
 
 <%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
