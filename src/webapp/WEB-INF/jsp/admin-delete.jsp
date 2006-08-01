@@ -30,9 +30,8 @@
 <table style="border:2px solid #333333;padding=1em;">
 <c:if test="${!empty errorMessage}"><tr><td colspan="2" align="center"><div style="color:red;size=110%;"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /><f:param value="${errorMessage.params[1]}" /></f:message></div></td></tr></c:if>
 <c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div></td></tr></c:if>
-<%-- FIXME: hard coding --%>
-<tr><td>Reason for deletion: </td><td><input type="text" name="deleteComment" value="" /></td></tr>
-<tr><td colspan="2"><input type="submit" name="function" value="Delete" /></td></tr>
+<tr><td><f:message key="delete.reason" />: </td><td><input type="text" name="deleteComment" value="" /></td></tr>
+<tr><td colspan="2"><input type="submit" name="delete" value="<f:message key="common.delete" />" /></td></tr>
 </table>
 </form>
 

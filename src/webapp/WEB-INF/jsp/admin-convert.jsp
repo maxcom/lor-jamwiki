@@ -25,30 +25,26 @@
 <script type="text/javascript" language="JavaScript">
 <!--
 function confirmSubmit() {
-	return confirm("Are you sure?");
+	return confirm("<f:message key="common.confirm" />");
 }
 // -->
 </script>
 
-<%-- FIXME: hard coding --%>
-<div align="center" width="90%" style="border:1px dashed red;padding:3px;margin:10px 75px 5px 75px;"><font color="red">This tool is <b>BETA</b>.  It is STRONGLY encouraged that all data be backed up prior to running any conversions.  Testing is encouraged, and reports for both working and non-working configurations can be reported at <a href="http://jamwiki.org/wiki/en/Bug_Reports#Open_Issues">jamwiki.org</a>.</font></div>
-
-<p class="subHeader">Special:Convert</p>
+<div align="center" width="90%" style="border:1px dashed red;padding:3px;margin:10px 75px 5px 75px;"><font color="red"><f:message key="convert.warning.beta" /></font></div>
 
 <form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Convert" />">
 
 <table border="0" class="contents">
-<%-- FIXME: hard coding --%>
 <c:if test="${!empty errorMessage}"><tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" /></div></td></tr></c:if>
 <c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
 <tr>
-	<td class="normal">Convert database content to files:<br />WARNING: Deletes all existing file content!</td>
-	<td class="normal"><input type="submit" name="function" value="Convert to File" onclick="return confirmSubmit()" /></td>
+	<td class="normal"><f:message key="convert.tofile" /></td>
+	<td class="normal"><input type="submit" name="tofile" onclick="return confirmSubmit()" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td class="normal">Convert file content to database:<br />WARNING: Deletes all existing database content!</td>
-	<td class="normal"><input type="submit" name="function" value="Convert to Database" onclick="return confirmSubmit()" /></td>
+	<td class="normal"><f:message key="convert.todatabase" /></td>
+	<td class="normal"><input type="submit" name="todatabase" onclick="return confirmSubmit()" /></td>
 </tr>
 </table>
 </form>

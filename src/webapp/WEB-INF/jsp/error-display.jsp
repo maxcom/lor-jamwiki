@@ -34,7 +34,6 @@ function cancel() {
 </script>
 
 <div class="contents">
-	<%-- FIXME - hard coding --%>
 	<p><f:message key="error.caption" /></p>
 	<p><font style="color: red;font-weight:bold"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></font></p>
 	<form><input type="button" onClick="cancel();" value="<f:message key="common.back" />" /></form>

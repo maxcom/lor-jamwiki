@@ -106,13 +106,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private static void buildLayout(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (virtualWikiName == null) {
-			// FIXME: hard coding
-			throw new Exception("Invalid virtual wiki");
+			logger.error("No virtual wiki available for page request " + request.getRequestURI());
+			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 		}
 		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 		if (virtualWiki == null) {
-			// FIXME: hard coding
-			throw new Exception("Invalid virtual wiki");
+			logger.error("No virtual wiki found for " + virtualWikiName);
+			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 		}
 		String topic = JAMWikiServlet.getTopicFromRequest(request);
 		if (topic == null) {
@@ -319,7 +320,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 			logger.error("Servlet error", e);
 		}
 		this.pageInfo = new WikiPageInfo();
-		// FIXME - hard coding
 		this.pageInfo.setPageTitle(new WikiMessage("error.title"));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ERROR);
 		this.pageInfo.setSpecial(true);

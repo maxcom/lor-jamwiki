@@ -58,8 +58,6 @@ public class AdminServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
 			String function = request.getParameter("function");
-			if (function == null) function = "";
-			// FIXME - hard coding of "function" values
 			if (!Utilities.isAdmin(request)) {
 				String redirect = "Special:Admin";
 				if (isTopic(request, "Special:Convert")) {
@@ -73,10 +71,9 @@ public class AdminServlet extends JAMWikiServlet {
 				return next;
 			}
 			if (isTopic(request, "Special:Convert")) {
-				// FIXME - hard coding of "function" values
-				if (function.equals("Convert to File")) {
+				if (StringUtils.hasText(request.getParameter("tofile"))) {
 					convertToFile(request, next);
-				} else if (function.equals("Convert to Database")) {
+				} else if (StringUtils.hasText(request.getParameter("todatabase"))) {
 					convertToDatabase(request, next);
 				} else {
 					convertView(request, next);
@@ -85,7 +82,7 @@ public class AdminServlet extends JAMWikiServlet {
 				return next;
 			}
 			if (isTopic(request, "Special:Delete")) {
-				if (function.equals("Delete")) {
+				if (StringUtils.hasText(request.getParameter("delete"))) {
 					delete(request, next);
 				} else {
 					deleteView(request, next);
@@ -93,6 +90,7 @@ public class AdminServlet extends JAMWikiServlet {
 				loadDefaults(request, next, this.pageInfo);
 				return next;
 			}
+			if (function == null) function = "";
 			if (!StringUtils.hasText(function)) {
 				view(request, next);
 			}

@@ -30,9 +30,11 @@ called it means that a catastrophic error has occurred.
     contentType="text/html; charset=UTF-8"
 %>
 
+<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+
 <html>
 <head>
-<title>JAMWiki System Error</title>
+<title><f:message key="common.sitename" /> - <f:message key="error.title" /></title>
 <script language="JavaScript">
 function cancel() {
 	history.go(-1);
@@ -41,9 +43,8 @@ function cancel() {
 </head>
 <body>
 <%
-// FIXME - hard coding
 Logger logger = Logger.getLogger("org.jamwiki.jsp");
-String errorMessage = "No message available";
+String errorMessage = "";
 if (exception != null) {
 	logger.error("Error in JSP page", exception);
 	errorMessage = exception.toString();
@@ -51,7 +52,7 @@ if (exception != null) {
 %>
 
 <%-- FIXME - hard coding --%>
-<p>A system error has occurred.  The error message is:</p>
+<p><f:message key="error.heading" /></p>
 <p><font style="color: red;font-weight:bold"><%= errorMessage %></font></p>
 <%
 if (exception != null) {
@@ -60,7 +61,7 @@ if (exception != null) {
 <%
 }
 %>
-<form><input type="button" onClick="cancel();" value="Back" /></form>
+<form><input type="button" onClick="cancel();" value="<f:message key="common.back" />" /></form>
 
 </body>
 </html>
