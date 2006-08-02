@@ -67,9 +67,9 @@ import org.apache.log4j.Logger;
 %}
 
 /* character expressions */
-newline            = \r|\n|\r\n
-inputcharacter     = [^\r\n\<]
+newline            = ((\r\n) | (\n))
 whitespace         = {newline} | [ \t\f]
+inputcharacter     = ([^ \n\r\t])
 
 /* nowiki */
 nowikistart        = (<[ ]*nowiki[ ]*>)
@@ -86,11 +86,14 @@ javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
 toc                = "__TOC__"
 
 /* paragraph */
-nonparagraphstart  = "<table" | "<div" | "<h1" | "<h2" | "<h3" | "<h4" | "<h5" | "<pre" | "<ul" | "<dl" | "<ol" | "</td>" | "<span"
-nonparagraphend    = "</table>" | "</div>" | "</h1>" | "</h2>" | "</h3>" | "</h4>" | "</h5>" | "</pre>" | "</ul>" | "</dl>" | "</ol>" | "<td" [^\>]* ~">" | "</span>"
+emptyline          = ({newline} {newline} {newline})
+
+nonparagraphtag    = table|div|h1|h2|h3|h4|h5|pre|ul|dl|ol|span
+nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
+nonparagraphend    = ((<[ ]*\/[ ]*) {nonparagraphtag} ([ ]*>)) | ((<[ ]*) td ([^/>]*>))
+anchorname         = (<[ ]*a[ ]*name[ ]*=[^/]+\/[ ]*[a]?[ ]*>)
 paragraphend       = ({newline} {newline})
-paragraphstart     = {nonparagraphend} {inputcharacter}
-paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
+paragraphstart     = ({inputcharacter})
 
 %state NOWIKI, PRE, NORMAL, P, NONPARAGRAPH
 
@@ -140,6 +143,23 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
 
 /* ----- layout ----- */
 
+<NORMAL, P>{emptyline} {
+    logger.debug("emptyline: " + yytext() + " (" + yystate() + ")");
+    StringBuffer output = new StringBuffer();
+    if (yystate() == P) {
+        output.append("</p>");
+        endState();
+    }
+    return output.toString() + "\n<p><br /></p>";
+}
+
+<NORMAL, P, NONPARAGRAPH>{anchorname} {
+    // for layout purposes and <a name="foo"></a> link should be returned without
+    // changes, but should not affect paragraph layout in any way.
+    logger.debug("anchorname: " + yytext() + " (" + yystate() + ")");
+    return yytext();
+}
+
 <NORMAL, P, NONPARAGRAPH>{nonparagraphstart} {
     logger.debug("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
@@ -151,30 +171,16 @@ paragraphstart2    = {inputcharacter} | "<i>" | "<b>" | "<a href"
     return output.toString() + yytext();
 }
 
-<NONPARAGRAPH>{nonparagraphend} {
+<NORMAL, P, NONPARAGRAPH>{nonparagraphend} {
     logger.debug("nonparagraphend: " + yytext() + " (" + yystate() + ")");
     endState();
-    if (yystate() != NONPARAGRAPH) {
-        // if not non-paragraph, roll back to allow potential paragraph start
-        yypushback(yytext().length());
-    }
     return yytext();
 }
 
 <NORMAL>{paragraphstart} {
     logger.debug("paragraphstart: " + yytext() + " (" + yystate() + ")");
     beginState(P);
-    // start paragraph, then rollback to allow normal processing
-    yypushback(1);
-    return yytext() + "<p>";
-}
-
-<NORMAL>^{paragraphstart2} {
-    logger.debug("paragraphstart2: " + yytext() + " (" + yystate() + ")");
-    beginState(P);
-    // start paragraph, then rollback to allow normal processing
-    yypushback(yytext().length());
-    return "<p>";
+    return "<p>" + yytext();
 }
 
 <P>{paragraphend} {
