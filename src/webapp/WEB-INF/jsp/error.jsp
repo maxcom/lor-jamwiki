@@ -27,10 +27,9 @@ called it means that a catastrophic error has occurred.
         org.apache.log4j.Logger
     "
     isErrorPage="true"
-    contentType="text/html; charset=UTF-8"
 %>
 
-<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+<%@ include file="page-init.jsp" %>
 
 <html>
 <head>

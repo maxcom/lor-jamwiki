@@ -21,8 +21,8 @@
         org.jamwiki.WikiBase
     "
     errorPage="error.jsp"
-    contentType="text/html; charset=UTF-8"
 %>
+
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 
 <c:set var="initialized"><%= Environment.getValue(Environment.PROP_BASE_INITIALIZED) %></c:set>
