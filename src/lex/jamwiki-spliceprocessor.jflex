@@ -61,6 +61,10 @@ import org.jamwiki.Environment;
      */
     protected void endState() {
         // revert to previous state
+        if (states.empty()) {
+            logger.warn("Attempt to call endState for an empty stack with text: " + yytext());
+            return;
+        }
         int next = ((Integer)states.pop()).intValue();
         yybegin(next);
     }

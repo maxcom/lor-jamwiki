@@ -54,6 +54,10 @@ import org.apache.log4j.Logger;
      */
     protected void endState() {
         // revert to previous state
+        if (states.empty()) {
+            logger.warn("Attempt to call endState for an empty stack with text: " + yytext());
+            return;
+        }
         int next = ((Integer)states.pop()).intValue();
         yybegin(next);
     }
@@ -173,7 +177,11 @@ paragraphstart     = ({inputcharacter})
 
 <NORMAL, P, NONPARAGRAPH>{nonparagraphend} {
     logger.debug("nonparagraphend: " + yytext() + " (" + yystate() + ")");
-    endState();
+    if (yystate() == NONPARAGRAPH) {
+        endState();
+    } else {
+        logger.warn("Attempt to end nonparagraph state while state is not nonparagraph for text: " + yytext());
+    }
     return yytext();
 }
 
