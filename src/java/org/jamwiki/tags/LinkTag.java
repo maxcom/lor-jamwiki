@@ -32,8 +32,9 @@ import org.springframework.util.StringUtils;
 public class LinkTag extends BodyTagSupport {
 
 	private static Logger logger = Logger.getLogger(LinkTag.class);
-	private String value = null;
+	private String style = null;
 	private String text = null;
+	private String value = null;
 
 	/**
 	 *
@@ -53,7 +54,7 @@ public class LinkTag extends BodyTagSupport {
 			try {
 				if (StringUtils.hasText(this.text)) {
 					// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-					url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, this.value, this.text);
+					url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, this.value, this.text, this.style);
 				} else {
 					// return raw link of the form "/wiki/en/Special:Edit"
 					url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, this.value);
@@ -107,6 +108,20 @@ public class LinkTag extends BodyTagSupport {
 	/**
 	 *
 	 */
+	public String getStyle() {
+		return this.style;
+	}
+
+	/**
+	 *
+	 */
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	/**
+	 *
+	 */
 	public String getText() {
 		return this.text;
 	}
@@ -137,7 +152,8 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public void release() {
 		super.release();
-		this.value = null;
+		this.style = null;
 		this.text = null;
+		this.value = null;
 	}
 }

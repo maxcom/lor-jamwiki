@@ -395,6 +395,16 @@ div.imgthumb {
 	margin: 0.3em 0em 0.3em 0.3em;
 }
 
+/* search results */
+
+.highlight {
+	background:yellow;
+}
+
+.searchresult{
+	background-color: gainsboro
+}
+
 /* older stuff */
 
 .pageHeader {
@@ -412,8 +422,4 @@ div.imgthumb {
 .red {
 	font-family: Verdana, Helvetica, sans-serif;
 	font-size: 12px ; color: #ff0000;
-}
-
-.searchresult{
-	background-color: gainsboro
 }

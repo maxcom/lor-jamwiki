@@ -62,6 +62,10 @@
       <required>true</required>
     </attribute>
     <attribute>
+      <name>style</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
       <name>text</name>
       <required>false</required>
     </attribute>

@@ -91,49 +91,8 @@ public class SearchServlet extends JAMWikiServlet {
 			if (request.getParameter("fuzzy") != null) fuzzy = true;
 			SearchEngine sedb = WikiBase.getSearchEngineInstance();
 			Collection results = sedb.findMultiple(virtualWiki, searchField, fuzzy);
-			StringBuffer contents = new StringBuffer();
-			if (results != null && results.size() > 0) {
-				Iterator it = results.iterator();
-				while (it.hasNext()) {
-					SearchResultEntry result = (SearchResultEntry) it.next();
-					contents.append("<p>");
-					contents.append("<div class=\"searchresult\">");
-					contents.append("<a href=\"");
-					contents.append(
-						LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, result.getTopic())
-					);
-					if (result.getFoundWord().length() > 0) {
-						contents.append("?highlight=");
-						contents.append(Utilities.encodeURL(result.getFoundWord()));
-					}
-					contents.append("\">" + result.getTopic() + "</a>");
-					contents.append("</div>");
-					if (result.getTextBefore().length() > 0 || result.getTextAfter().length() > 0
-						|| result.getFoundWord().length() > 0) {
-						contents.append("<br />");
-						contents.append(result.getTextBefore());
-						contents.append("<a style=\"background:yellow\" href=\"");
-						contents.append(
-							LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, result.getTopic())
-						);
-						contents.append("?highlight=");
-						contents.append(Utilities.encodeURL(result.getFoundWord()));
-						contents.append("\">");
-						contents.append(result.getFoundWord());
-						contents.append("</a> ");
-						contents.append(result.getTextAfter());
-					}
-					contents.append("</p>");
-				}
-			} else {
-				next.addObject("text", searchField);
-				contents.append("<p>");
-				String message = Utilities.getMessage("searchresult.notfound", request.getLocale(), searchField);
-				contents.append(message);
-				contents.append("</p>");
-			}
-			next.addObject("results", contents.toString());
-			next.addObject("titlelink", "Special:Search");
+			next.addObject("searchField", searchField);
+			next.addObject("results", results);
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH_RESULTS);
 			this.pageInfo.setSpecial(true);
 			return;

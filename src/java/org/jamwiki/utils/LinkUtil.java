@@ -141,21 +141,30 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text);
+	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text, String style) throws Exception {
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text, style);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text) throws Exception {
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, null);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
-		String css = "";
 		if (!StringUtils.hasText(text)) text = topic;
-		if (!WikiBase.exists(virtualWiki, topic)) {
-			css = " class=\"edit\"";
+		if (!WikiBase.exists(virtualWiki, topic) && !StringUtils.hasText(style)) {
+			style = "edit";
 		}
-		return "<a title=\"" + text + "\" href=\"" + url + "\"" + css + ">" + text + "</a>";
+		if (StringUtils.hasText(style)) {
+			style = " class=\"" + style + "\"";
+		}
+		return "<a title=\"" + text + "\" href=\"" + url + "\"" + style + ">" + text + "</a>";
 	}
 
 	/**

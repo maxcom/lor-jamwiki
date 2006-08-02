@@ -153,7 +153,7 @@ public class ParserUtil {
 				text = topic.substring(pos+1).trim();
 				topic = topic.substring(0, pos).trim();
 			}
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text);
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw);
 			return "";
@@ -182,7 +182,7 @@ public class ParserUtil {
 					// FIXME - mediawiki specific.
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
-					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text);
+					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
 				}
 				signature += link;
 			}
