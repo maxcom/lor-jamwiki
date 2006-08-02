@@ -59,6 +59,9 @@ public class JAMWikiParser extends AbstractParser {
 	public String parseHTML(String rawtext, String topicName) throws IOException {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
+		// some parser expressions require that lines end in a newline, so add a newline
+		// to the end of the content for good measure
+		rawtext += '\n';
 		Reader raw = new StringReader(rawtext.toString());
 		contents = this.parsePreProcess(raw);
 		if (this.parserInfo.getMode() != ParserInfo.MODE_NORMAL) {

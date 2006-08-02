@@ -179,8 +179,33 @@ import org.jamwiki.utils.Utilities;
     /**
      *
      */
+    private static boolean isListTag(char value) {
+        if (value == '*') {
+            return true;
+        }
+        if (value == '#') {
+            return true;
+        }
+        if (value == ':') {
+            return true;
+        }
+        if (value == ';') {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     *
+     */
     protected String listItem(String text) {
-        text = text.trim();
+        int count = 0;
+        for (int i=0; i < text.length(); i++) {
+            if (!isListTag(text.charAt(i))) break;
+            count++;
+        }
+        // trim all but the list tags
+        text = text.substring(0, count);
         StringBuffer output = new StringBuffer();
         // build a stack of html tags based on current values passed to lexer
         Stack currentOpenStack = new Stack();
@@ -237,6 +262,21 @@ import org.jamwiki.utils.Utilities;
     /**
      *
      */
+    protected int listTagCount(String text) {
+        int count = 0;
+        for (int i=0; i < text.length(); i++) {
+            if (isListTag(text.charAt(i))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
+    }
+    
+    /**
+     *
+     */
     protected int nextSection() {
     	this.nextSection++;
     	return this.nextSection;
@@ -280,9 +320,13 @@ h5                 = "=====" [^=\n]+ ~"====="
 bold               = "'''"
 italic             = "''"
 
-/* container expressions */
-liststart          = [\*#\:;]+
-listend            = [^\*#\:;\r\n]
+/* lists */
+/*
+  the approach is to match the entire list item, change to a list state,
+  parse out the lists tags, and then re-parse the remaining content.
+*/
+listitem           = [\*#\:;]+ [^\n]* [\n]
+listend            = [^\*#\:;\r\n] [^\n]* [\n]
 
 /* nowiki */
 nowikistart        = (<[ ]*nowiki[ ]*>)
@@ -547,18 +591,21 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 /* ----- lists ----- */
 
-<NORMAL, TABLE, TD, TH, TC>^{liststart} {
+<NORMAL, TABLE, TD, TH, TC>^{listitem} {
     logger.debug("start of list: " + yytext() + " (" + yystate() + ")");
     // switch to list processing mode
     beginState(LIST);
+    // now that state is list, push back and re-process this line
     yypushback(yylength());
     return "";
 }
 
-<LIST>^{liststart} {
+<LIST>^{listitem} {
     logger.debug("list item: " + yytext() + " (" + yystate() + ")");
-    // process list item
-    return listItem(yytext());
+    // process list item content (without the list markup)
+    String output = listItem(yytext());
+    yypushback(yylength() - listTagCount(yytext()));
+    return output;
 }
 
 <LIST>^{listend} {
