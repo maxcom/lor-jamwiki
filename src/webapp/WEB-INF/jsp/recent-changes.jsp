@@ -64,10 +64,10 @@ if (request.getParameter("num") != null) {
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
 	&#160;
-	<a href='<jamwiki:link value="${change.topicName}"/>'><c:out value="${change.topicName}"/></a>
+	<jamwiki:link value="${change.topicName}" text="${change.topicName}" />
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
-	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
+	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions?contributor=${change.authorName}"><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<%-- FIXME: need a better way to denote minor edits --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>

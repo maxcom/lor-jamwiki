@@ -88,7 +88,7 @@ function inactive(element) {
 	<a href="<jamwiki:link value="Special:History" />?topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
-	<jamwiki:link value="User:${change.authorName}"><c:out value="${change.authorName}" /></jamwiki:link>
+	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	<%-- FIXME: need a better way to denote minor edits --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
