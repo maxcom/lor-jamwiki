@@ -51,7 +51,7 @@ public class DiffUtil {
 	public static String diff(String newVersion, String oldVersion, boolean htmlFormat, Locale locale) {
 		if (oldVersion == null) oldVersion = "";
 		if (newVersion == null) newVersion = "";
-		if (newVersion.equals(oldVersion)) return Utilities.getMessage("diff.nochange", locale);
+		if (newVersion.equals(oldVersion)) return "";
 		DiffUtil diffUtil = new DiffUtil();
 		return diffUtil.process(newVersion, oldVersion, htmlFormat, locale);
 	}

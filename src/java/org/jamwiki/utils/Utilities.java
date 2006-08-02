@@ -259,36 +259,6 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String getMessage(String key, Locale locale, Object param1) {
-		Object[] objects = new Object[1];
-		objects[0] = param1;
-		return Utilities.getMessage(key, locale, objects);
-	}
-
-	/**
-	 *
-	 */
-	public static String getMessage(String key, Locale locale, Object param1, Object param2) {
-		Object[] objects = new Object[2];
-		objects[0] = param1;
-		objects[1] = param2;
-		return Utilities.getMessage(key, locale, objects);
-	}
-
-	/**
-	 *
-	 */
-	public static String getMessage(String key, Locale locale, Object[] objects) {
-		MessageFormat formatter = new MessageFormat("");
-		formatter.setLocale(locale);
-		String message = Utilities.getMessage(key, locale);
-		formatter.applyPattern(message);
-		return formatter.format(objects);
-	}
-
-	/**
-	 *
-	 */
 	public static boolean isAdmin(HttpServletRequest request) {
 		WikiUser user = currentUser(request);
 		return (user != null && user.getAdmin());

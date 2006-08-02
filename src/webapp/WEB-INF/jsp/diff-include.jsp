@@ -17,8 +17,9 @@
 
 --%>
 <c:if test="${!badinput}">
-	<c:out value="${diff}" escapeXml="false"/>
+	<c:if test="${!empty diff}"><c:out value="${diff}" escapeXml="false"/></c:if>
+	<c:if test="${empty diff}"><p><f:message key="diff.nochange" /></p></c:if>
 </c:if>
 <c:if test="${badinput=='true'}">
-	<f:message key="diff.badinput"/>
+	<f:message key="diff.badinput" />
 </c:if>

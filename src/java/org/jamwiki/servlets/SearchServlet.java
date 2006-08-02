@@ -25,7 +25,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.search.SearchResultEntry;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
