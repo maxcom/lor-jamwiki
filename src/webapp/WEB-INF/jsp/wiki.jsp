@@ -55,7 +55,7 @@
 		<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >
-		<div style="border:1px dashed red;color:red;padding:10px 50px 10px 50px;margin:10px">HELP NEEDED!  There is currently a bug in JAMWiki that affects some non-English browsers.  Please help us track it down by editing the <a href="/wiki/en/Sandbox#Non-ASCII_tests">Sandbox</a> topic and trying to add non-ASCII text to it (such as accented characters or Asian characters).  Your test edit will help us figure out if the bug has been fixed, and if not what browsers and languages are affected.  The help is appreciated!</div>
+		<div style="border:1px dashed red;color:red;padding:10px 50px 10px 50px;margin:10px"><b>HELP NEEDED!</b>  There may currently be a bug in JAMWiki that affects some non-English browsers.  Please help us track it down by editing the <a href="/wiki/en/Sandbox#Non-ASCII_tests">Sandbox</a> topic and trying to add non-ASCII text to it (such as accented characters or Asian characters).  Your test edit will help us figure out if the bug has been fixed, and if not what browsers and languages are affected.  The help is appreciated!</div>
 		<%@ include file="navbar-history-list.jsp"%>
 		<div id="contents-header"><f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></div>
 <%

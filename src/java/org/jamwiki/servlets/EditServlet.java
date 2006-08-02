@@ -83,7 +83,7 @@ public class EditServlet extends JAMWikiServlet {
 			int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 			TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, topicVersionId);
 			if (topicVersion == null) {
-				throw new WikiException(new WikiMessage("edit.exception.notopic"));
+				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
 			contents = topicVersion.getVersionContent();
 			if (lastTopicVersionId != topicVersionId) {
@@ -135,7 +135,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private Topic loadTopic(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
 		if (!StringUtils.hasText(topicName)) {
-			throw new WikiException(new WikiMessage("edit.exception.notopic"));
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			throw new WikiException(new WikiMessage("edit.exception.pseudotopic", topicName));
