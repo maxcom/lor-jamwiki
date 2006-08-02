@@ -59,7 +59,7 @@ public class LinkUtil {
 			// FIXME - hard coding
 			css = " class=\"edit\"";
 		}
-		url = "<a href=\"" + url + "\"" + css + ">" + text + "</a>";
+		url = "<a href=\"" + url + "\"" + css + ">" + Utilities.escapeHTML(text) + "</a>";
 		return url;
 	}
 
@@ -76,12 +76,12 @@ public class LinkUtil {
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
 		if (StringUtils.hasText(query)) {
 			if (!query.startsWith("?")) query = "?" + query;
-			query += "&topic=" + Utilities.encodeURL(topic);
+			query += "&amp;topic=" + Utilities.encodeURL(topic);
 		} else {
 			query = "?topic=" + Utilities.encodeURL(topic);
 		}
 		if (section > 0) {
-			query += "&section=" + section;
+			query += "&amp;section=" + section;
 		}
 		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, "Special:Edit", null, query);
 	}
@@ -163,8 +163,10 @@ public class LinkUtil {
 		}
 		if (StringUtils.hasText(style)) {
 			style = " class=\"" + style + "\"";
+		} else {
+			style = "";
 		}
-		return "<a title=\"" + text + "\" href=\"" + url + "\"" + style + ">" + text + "</a>";
+		return "<a title=\"" + Utilities.escapeHTML(text) + "\" href=\"" + url + "\"" + style + ">" + Utilities.escapeHTML(text) + "</a>";
 	}
 
 	/**
