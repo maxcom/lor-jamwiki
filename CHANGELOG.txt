@@ -2,6 +2,19 @@
 0.1.2
 =====
 
+* BUG: Set response encoding to UTF-8 for servlet 2.4 compatible servlet
+  engines.
+* BUG: Do not display section edit links during preview.
+* FEATURE: Remove numerous hard-coded message strings, including those
+  thrown in exceptions.
+* FEATURE: Remove the RSS code.  Will be implemented differently in a
+  future version of JAMWiki.
+* FEATURE: Move default topic pages into a language-specific directory
+  to allow for future translations.
+* FEATURE: Simplify the "Printable page" code, remove the option to print
+  X number of pages.
+* BUG: Fix another cross-site scripting vulnerability reported by NickJ.
+* FEATURE: Make the generated HTML more XHTML compliant.
 
 0.1.1
 =====
