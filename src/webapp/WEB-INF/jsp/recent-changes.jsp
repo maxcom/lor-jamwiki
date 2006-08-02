@@ -57,9 +57,9 @@ if (request.getParameter("num") != null) {
 
 <c:forEach items="${changes}" var="change">
 <li>
-	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&version2=<c:out value="${change.previousTopicVersionId}" />&version1=<c:out value="${change.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
+	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&amp;version2=<c:out value="${change.previousTopicVersionId}" />&amp;version1=<c:out value="${change.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
 	&#160;
-	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />&type=all"><f:message key="common.caption.history" /></a>)
+	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />"><f:message key="common.caption.history" /></a>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />

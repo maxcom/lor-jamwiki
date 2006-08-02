@@ -30,7 +30,7 @@
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>
 	<c:if test="${!readOnly}">
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />&type=all"><f:message key="menu.history" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.history" /></a></td>
 	</c:if>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>

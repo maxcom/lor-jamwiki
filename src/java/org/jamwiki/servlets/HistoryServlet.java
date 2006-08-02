@@ -24,6 +24,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -39,8 +40,7 @@ public class HistoryServlet extends JAMWikiServlet {
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
 		try {
-			String type = request.getParameter("type");
-			if (type != null && type.equals("all")) {
+			if (!StringUtils.hasText(request.getParameter("topicVersionId"))) {
 				history(request, next);
 			} else {
 				viewVersion(request, next);
