@@ -37,7 +37,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
-import org.jamwiki.utils.Utilities;
 
 /**
  *

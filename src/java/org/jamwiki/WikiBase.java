@@ -68,6 +68,12 @@ public class WikiBase {
 	public static final String NAMESPACE_SPECIAL = "Special:";
 	public static final String NAMESPACE_USER = "User:";
 	public static final String NAMESPACE_USER_COMMENTS = "User comments:";
+	public static final String SPECIAL_PAGE_DIR = "pages";
+	public static final String SPECIAL_PAGE_STARTING_POINTS = "StartingPoints";
+	public static final String SPECIAL_PAGE_LEFT_MENU = "LeftMenu";
+	public static final String SPECIAL_PAGE_BOTTOM_AREA = "BottomArea";
+	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
+	public static final String SPECIAL_PAGE_ADMIN_ONLY_TOPICS = "AdminOnlyTopics";
 
 	static {
 		try {

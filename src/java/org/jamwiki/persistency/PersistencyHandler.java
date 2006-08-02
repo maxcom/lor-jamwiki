@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -574,14 +575,40 @@ public abstract class PersistencyHandler {
 	 * Utility method for reading default topic values from files and returning
 	 * the file contents.
 	 */
-	private static String readSpecialPage(String topicName) throws Exception {
-		String filename = Utilities.encodeURL(topicName) + ".txt";
+	private static String readSpecialPage(Locale locale, String topicName) throws Exception {
 		String contents = null;
-		try {
-			contents = Utilities.readFile(filename);
-		} catch (Exception e) {
-			logger.error("Failure while reading from file " + filename, e);
-			throw new Exception("Failure while reading from file " + filename + " " + e.getMessage());
+		String filename = null;
+		String language = null;
+		String country = null;
+		if (locale != null) {
+			language = locale.getLanguage();
+			country = locale.getCountry();
+		}
+		String subdirectory = WikiBase.SPECIAL_PAGE_DIR + File.separator;
+		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
+			try {
+				filename = subdirectory + Utilities.encodeURL(topicName + "_" + language + "_" + country) + ".txt";
+				contents = Utilities.readFile(filename);
+			} catch (Exception e) {
+				logger.info("File " + filename + " does not exist");
+			}
+		}
+		if (contents == null && StringUtils.hasText(language)) {
+			try {
+				filename = subdirectory + Utilities.encodeURL(topicName + "_" + language) + ".txt";
+				contents = Utilities.readFile(filename);
+			} catch (Exception e) {
+				logger.info("File " + filename + " does not exist");
+			}
+		}
+		if (contents == null) {
+			try {
+				filename = subdirectory + Utilities.encodeURL(topicName) + ".txt";
+				contents = Utilities.readFile(filename);
+			} catch (Exception e) {
+				logger.info("File " + filename + " could not be read", e);
+				throw e;
+			}
 		}
 		return contents;
 	}
@@ -653,7 +680,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	private void setupSpecialPage(String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Object[] params) throws Exception {
+	private void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Object[] params) throws Exception {
 		if (exists(virtualWiki, topicName)) {
 			logger.warn("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
@@ -664,7 +691,7 @@ public abstract class PersistencyHandler {
 			return;
 		}
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
-		String contents = PersistencyHandler.readSpecialPage(topicName);
+		String contents = PersistencyHandler.readSpecialPage(locale, topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
@@ -687,11 +714,11 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			// create the default topics
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_ADMIN_ONLY_TOPICS, user, true, params);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -708,11 +735,11 @@ public abstract class PersistencyHandler {
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			// create the default topics
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.startingpoints", locale), user, false, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.leftMenu", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.bottomArea", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.stylesheet", locale), user, true, params);
-			setupSpecialPage(virtualWiki.getName(), Utilities.getMessage("specialpages.adminonlytopics", locale), user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, params);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_ADMIN_ONLY_TOPICS, user, true, params);
 		}
 	}
 

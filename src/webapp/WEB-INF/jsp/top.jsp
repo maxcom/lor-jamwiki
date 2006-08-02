@@ -28,11 +28,6 @@ if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environ
 	<link rel="start" title="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" href="<c:out value="${pathRoot}"/><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" />
 	<link rel="home" title="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" href="<c:out value="${pathRoot}"/><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" />
 <%
-} else {
-%>
-	<link rel="start"  title="<f:message key="specialpages.startingpoints"/>" href="<c:out value="${pathRoot}"/><f:message key="specialpages.startingpoints"/>" />
-	<link rel="home"  title="<f:message key="specialpages.startingpoints"/>" href="<c:out value="${pathRoot}"/><f:message key="specialpages.startingpoints"/>" />
-<%
 }
 %>
 	<link href="jamwiki.css" type="text/css" rel="stylesheet" />

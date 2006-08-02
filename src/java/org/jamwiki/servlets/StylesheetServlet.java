@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,7 +38,7 @@ public class StylesheetServlet extends JAMWikiServlet {
 		try {
 			String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 			String topicName = JAMWikiServlet.getTopicFromURI(request);
-			String stylesheet = JAMWikiServlet.getCachedContent(request, virtualWiki, Utilities.getMessage("specialpages.stylesheet", request.getLocale()), false);
+			String stylesheet = JAMWikiServlet.getCachedContent(request, virtualWiki, WikiBase.SPECIAL_PAGE_STYLESHEET, false);
 			response.setContentType("text/css");
 			// cache for 30 minutes (60 * 30 = 1800)
 			// FIXME - make configurable

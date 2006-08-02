@@ -120,11 +120,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
-		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWikiName, Utilities.getMessage("specialpages.leftMenu", request.getLocale()), true);
+		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
 		next.addObject("leftMenu", leftMenu);
 		next.addObject("defaultTopic", virtualWiki.getDefaultTopicName());
 		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
-		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWikiName, Utilities.getMessage("specialpages.bottomArea", request.getLocale()), true);
+		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWikiName);
 	}
@@ -205,23 +205,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
 		if (content == null) {
 			try {
-				String baseFileDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
-				if (!StringUtils.hasText(baseFileDir)) {
-					// system not set up yet, just read the default file
-					// FIXME - filename should be set better
-					content = Utilities.readFile(topicName + ".txt");
-				} else {
-					Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-					content = topic.getTopicContent();
-				}
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+				content = topic.getTopicContent();
 				if (cook) {
 					ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
 					parserInfo.setVirtualWiki(virtualWiki);
 					content = Utilities.parse(parserInfo, content, topicName);
 				}
-				synchronized (cachedContents) {
-					cachedContents.put(virtualWiki + "-" + topicName, content);
-				}
+				cachedContents.put(virtualWiki + "-" + topicName, content);
 			} catch (Exception e) {
 				logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
 				return null;
