@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.Utilities;
 
 /**
  * Experimental class. This class may be used in two ways:
@@ -213,7 +214,7 @@ public class TableOfContents {
 			adjustedLevel = ((entry.level - minLevel) + 1);
 			closeList(adjustedLevel, text);
 			openList(adjustedLevel, text);
-			text.append("<a href=\"#").append(entry.name).append("\">").append(entry.text).append("</a>");
+			text.append("<a href=\"#").append(entry.name).append("\">").append(Utilities.escapeHTML(entry.text)).append("</a>");
 		}
 		closeList(0, text);
 		text.append("</td></tr></table>");

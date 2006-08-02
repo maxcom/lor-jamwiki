@@ -312,4 +312,16 @@ public class ParserUtil {
 		}
 		return tag;
 	}
+
+	/**
+	 * Strip Wiki markup from text
+	 */
+	protected static String stripMarkup(String text) {
+		// FIXME - this could be a bit more thorough and also strip HTML
+		text = StringUtils.delete(text, "'''");
+		text = StringUtils.delete(text, "''");
+		text = StringUtils.delete(text, "[[");
+		text = StringUtils.delete(text, "]]");
+		return text;
+	}
 }

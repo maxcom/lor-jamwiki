@@ -93,6 +93,11 @@ import org.jamwiki.utils.Utilities;
     protected boolean allowHtml = false;
     protected boolean allowJavascript = false;
     protected boolean wikibold = false;
+    protected boolean wikih1 = false;
+    protected boolean wikih2 = false;
+    protected boolean wikih3 = false;
+    protected boolean wikih4 = false;
+    protected boolean wikih5 = false;
     protected boolean wikiitalic = false;
     protected int nextSection = 0;
     protected Stack listOpenStack = new Stack();
@@ -312,15 +317,22 @@ inputcharacter     = [^\r\n]
 whitespace         = {newline} | [ \t\f]
 lessthan           = "<"
 greaterthan        = ">"
+quotation          = "\""
+apostrophe         = "\'"
 htmltag            = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
 
 /* non-container expressions */
 hr                 = "----"
 h1                 = "=" [^=\n]+ ~"="
+h1close            = "="
 h2                 = "==" [^=\n]+ ~"=="
+h2close            = "=="
 h3                 = "===" [^=\n]+ ~"==="
+h3close            = "==="
 h4                 = "====" [^=\n]+ ~"===="
+h4close            = "===="
 h5                 = "=====" [^=\n]+ ~"====="
+h5close            = "====="
 bold               = "'''"
 italic             = "''"
 
@@ -545,52 +557,112 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 <NORMAL>^{h1} {
     logger.debug("h1: " + yytext() + " (" + yystate() + ")");
-    String tagText = yytext().substring(1, yytext().indexOf("=", 1)).trim();
+    String tagText = ParserUtil.stripMarkup(yytext().substring(1, yytext().length() - 1).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 1);
     output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h1>" + tagText + "</h1>";
+    output += "<a name=\"" + tagName + "\"></a><h1>";
+    // pushback to process heading text
+    yypushback(yytext().length() - 1);
+    this.wikih1 = true;
     return output;
+}
+
+<NORMAL>{h1close} {
+    logger.debug("h1close: " + yytext() + " (" + yystate() + ")");
+    if (this.wikih1) {
+        this.wikih1 = false;
+        return "</h1>";
+    }
+    return yytext();
 }
 
 <NORMAL>^{h2} {
     logger.debug("h2: " + yytext() + " (" + yystate() + ")");
-    String tagText = yytext().substring(2, yytext().indexOf("==", 2)).trim();
+    String tagText = ParserUtil.stripMarkup(yytext().substring(2, yytext().length() - 2).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 2);
     output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h2>" + tagText + "</h2>";
+    output += "<a name=\"" + tagName + "\"></a><h2>";
+    // pushback to process heading text
+    yypushback(yytext().length() - 2);
+    this.wikih2 = true;
     return output;
+}
+
+<NORMAL>{h2close} {
+    logger.debug("h2close: " + yytext() + " (" + yystate() + ")");
+    if (this.wikih2) {
+        this.wikih2 = false;
+        return "</h2>";
+    }
+    return yytext();
 }
 
 <NORMAL>^{h3} {
     logger.debug("h3: " + yytext() + " (" + yystate() + ")");
-    String tagText = yytext().substring(3, yytext().indexOf("===", 3)).trim();
+    String tagText = ParserUtil.stripMarkup(yytext().substring(3, yytext().length() - 3).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 3);
     output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h3>" + tagText + "</h3>";
+    output += "<a name=\"" + tagName + "\"></a><h3>";
+    // pushback to process heading text
+    yypushback(yytext().length() - 3);
+    this.wikih3 = true;
     return output;
+}
+
+<NORMAL>{h3close} {
+    logger.debug("h3close: " + yytext() + " (" + yystate() + ")");
+    if (this.wikih3) {
+        this.wikih3 = false;
+        return "</h3>";
+    }
+    return yytext();
 }
 
 <NORMAL>^{h4} {
     logger.debug("h4: " + yytext() + " (" + yystate() + ")");
-    String tagText = yytext().substring(4, yytext().indexOf("====", 4)).trim();
+    String tagText = ParserUtil.stripMarkup(yytext().substring(4, yytext().length() - 4).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 4);
     output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h4>" + tagText + "</h4>";
+    output += "<a name=\"" + tagName + "\"></a><h4>";
+    // pushback to process heading text
+    yypushback(yytext().length() - 4);
+    this.wikih4 = true;
     return output;
+}
+
+<NORMAL>{h4close} {
+    logger.debug("h4close: " + yytext() + " (" + yystate() + ")");
+    if (this.wikih4) {
+        this.wikih4 = false;
+        return "</h4>";
+    }
+    return yytext();
 }
 
 <NORMAL>^{h5} {
     logger.debug("h5: " + yytext() + " (" + yystate() + ")");
-    String tagText = yytext().substring(5, yytext().indexOf("=====", 5)).trim();
+    String tagText = ParserUtil.stripMarkup(yytext().substring(5, yytext().length() - 5).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 5);
     output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h5>" + tagText + "</h5>";
+    output += "<a name=\"" + tagName + "\"></a><h5>";
+    // pushback to process heading text
+    yypushback(yytext().length() - 5);
+    this.wikih5 = true;
     return output;
+}
+
+<NORMAL>{h5close} {
+    logger.debug("h5close: " + yytext() + " (" + yystate() + ")");
+    if (this.wikih5) {
+        this.wikih5 = false;
+        return "</h5>";
+    }
+    return yytext();
 }
 
 /* ----- lists ----- */
@@ -692,6 +764,18 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     logger.debug("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&gt;";
+}
+
+<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
+    logger.debug("quotation: " + yytext() + " (" + yystate() + ")");
+    // escape html not recognized by above tags
+    return "&quot;";
+}
+
+<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
+    logger.debug("apostrophe: " + yytext() + " (" + yystate() + ")");
+    // escape html not recognized by above tags
+    return "&apos;";
 }
 
 <PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {
