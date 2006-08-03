@@ -382,8 +382,8 @@ tablerow           = "|-" {inputcharacter}* {newline}
 tablecaption       = "|+"
 
 /* wiki links */
-wikilink           = "[[" [^(\]\])\n\r]* ~"]]"
-htmllink           = "[" [^\]\n\r]* ~"]"
+wikilink           = "[[" [^(\]\])\n\r]+ "]]"
+htmllink           = "[" [^\]\n\r]+ "]"
 htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mailto://"  [^ \n\r\t]+) | ("ftp://"  [^ \n\r\t]+) | ("file://"  [^ \n\r\t]+)
 
 %state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT
