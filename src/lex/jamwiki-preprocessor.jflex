@@ -398,7 +398,7 @@ htmlcomment        = "<!--" ~"-->"
 /* tables */
 tablestart         = "{|" {inputcharacter}* {newline}
 tableend           = "|}"
-tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n]* "|" [^\|]
+tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n]+ "|" [^\|]
 tablecells         = "||"
 tablecellsstyle    = "||" ([^\|\n]+) "|" ([^|])
 tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
@@ -543,9 +543,9 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     // if a column was already open, close it
     output.append(closeTable(TD));
     if (yystate() != TD) beginState(TD);
-    output.append(openTableCell(yytext(), "td", '|'));
     // extra character matched by both regular expressions so push it back
     yypushback(1);
+    output.append(openTableCell(yytext(), "td", '|'));
     return output.toString();
 }
 
