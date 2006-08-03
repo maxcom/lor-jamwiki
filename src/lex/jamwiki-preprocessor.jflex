@@ -127,14 +127,14 @@ import org.jamwiki.utils.Utilities;
      *
      */
     protected boolean allowHtml() {
-        return (allowHtml && yystate() != PRE && yystate() != NOWIKI);
+        return (allowHtml && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
     }
     
     /**
      *
      */
     protected boolean allowJavascript() {
-        return (allowJavascript && yystate() != PRE && yystate() != NOWIKI);
+        return (allowJavascript && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
     }
 
     /**
@@ -386,13 +386,13 @@ wikilink           = "[[" [^(\]\])\n\r]+ "]]"
 htmllink           = "[" [^\]\n\r]+ "]"
 htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mailto://"  [^ \n\r\t]+) | ("ftp://"  [^ \n\r\t]+) | ("file://"  [^ \n\r\t]+)
 
-%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT
+%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE
 
 %%
 
 /* ----- nowiki ----- */
 
-<PRE, NORMAL, TABLE, TD, TH, TC, LIST>{nowikistart} {
+<WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, LIST>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
@@ -422,23 +422,23 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     return yytext();
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRE>^{wikiprestart} {
+<NORMAL, TABLE, TD, TH, TC, LIST, WIKIPRE>^{wikiprestart} {
     logger.debug("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(1);
-    if (yystate() != PRE) {
-        beginState(PRE);
+    if (yystate() != WIKIPRE) {
+        beginState(WIKIPRE);
         return "<pre>";
     }
     return "";
 }
 
-<PRE>^{wikipreend} {
+<WIKIPRE>^{wikipreend} {
     logger.debug("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
-    return "</pre>";
+    return "</pre>\n";
 }
 
 /* ----- processing commands ----- */
@@ -775,36 +775,36 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 
 /* ----- other ----- */
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
     logger.debug("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&lt;";
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
     logger.debug("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&gt;";
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
     logger.debug("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&quot;";
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
     logger.debug("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&apos;";
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>. {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>. {
     // no need to log this
     return yytext();
 }
