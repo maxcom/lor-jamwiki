@@ -68,7 +68,7 @@ import org.apache.log4j.Logger;
 %}
 
 /* character expressions */
-newline            = \r|\n|\r\n
+newline            = ((\r\n) | (\n))
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
