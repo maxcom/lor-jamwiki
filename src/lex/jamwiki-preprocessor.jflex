@@ -292,6 +292,30 @@ import org.jamwiki.utils.Utilities;
     }
     
     /**
+     * Take Wiki text of the form "|" or "| style='foo' |" and convert to
+     * and HTML <td> or <th> tag.
+     *
+     * @param text The text to be parsed.
+     * @param tag The HTML tag text, either "td" or "th".
+     * @param markup The Wiki markup for the tag, either "|" or "!"
+     */
+    protected String openTableCell(String text, String tag, char markup) {
+        if (text == null) return "";
+        text = text.trim();
+        int pos = 0;
+        while (pos < text.length() && text.charAt(pos) == markup) {
+            pos++;
+        }
+        if (pos >= text.length()) {
+            return "<" + tag + ">";
+        }
+        text = text.substring(pos);
+        pos = text.indexOf(markup);
+        if (pos != -1) text = text.substring(0, pos);
+        return "<" + tag + " " + text.trim() + ">";
+    }
+    
+    /**
      *
      */
     protected String updateToc(String name, String text, int level) {
@@ -376,6 +400,7 @@ tablestart         = "{|" {inputcharacter}* {newline}
 tableend           = "|}"
 tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n]* "|" [^\|]
 tablecells         = "||"
+tablecellsstyle    = "||" ([^\|\n]+) "|" ([^|])
 tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
 tableheadings      = "||" | "!!"
 tablerow           = "|-" {inputcharacter}* {newline}
@@ -518,13 +543,7 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     // if a column was already open, close it
     output.append(closeTable(TD));
     if (yystate() != TD) beginState(TD);
-    if (yytext().trim().length() > 2) {
-        int start = 1;
-        int end = yytext().indexOf("|", start+1);
-        output.append("<td ").append(yytext().substring(start, end).trim()).append(">");
-    } else {
-        output.append("<td>");
-    }
+    output.append(openTableCell(yytext(), "td", '|'));
     // extra character matched by both regular expressions so push it back
     yypushback(1);
     return output.toString();
@@ -533,6 +552,13 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
 <TD>{tablecells} {
     logger.debug("tablecells: " + yytext() + " (" + yystate() + ")");
     return "</td><td>";
+}
+
+<TD>{tablecellsstyle} {
+    logger.debug("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
+    // one extra character matched by the pattern, so roll it back
+    yypushback(1);
+    return "</td>" + openTableCell(yytext(), "td", '|');
 }
 
 <TABLE, TD, TH, TC>^{tablerow} {
