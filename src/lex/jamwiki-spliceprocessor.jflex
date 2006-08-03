@@ -137,9 +137,6 @@ nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 
-/* javascript */
-javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
-
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
@@ -201,13 +198,6 @@ htmlcomment        = "<!--" ~"-->"
 
 <NORMAL>^{h5} {
     return processHeading(5, yytext());
-}
-
-/* ----- javascript ----- */
-
-<NORMAL>{javascript} {
-    logger.debug("javascript: " + yytext() + " (" + yystate() + ")");
-    return yytext();
 }
 
 /* ----- default ----- */
