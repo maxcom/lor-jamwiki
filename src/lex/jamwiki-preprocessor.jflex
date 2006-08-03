@@ -312,9 +312,9 @@ import org.jamwiki.utils.Utilities;
 %}
 
 /* character expressions */
-newline            = \r|\n|\r\n
-inputcharacter     = [^\r\n]
+newline            = ((\r\n) | (\n))
 whitespace         = {newline} | [ \t\f]
+inputcharacter     = [^\r\n]
 lessthan           = "<"
 greaterthan        = ">"
 quotation          = "\""
@@ -351,6 +351,8 @@ nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+wikiprestart       = (" ") ([^ \t\r\n])
+wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
 htmltagopen        = (<[ ]*) {htmltag} ([ ]*[\/]?[ ]*>)
@@ -418,6 +420,25 @@ htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mail
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
     return yytext();
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST, PRE>^{wikiprestart} {
+    logger.debug("wikiprestart: " + yytext() + " (" + yystate() + ")");
+    // rollback the one non-pre character so it can be processed
+    yypushback(1);
+    if (yystate() != PRE) {
+        beginState(PRE);
+        return "<pre>";
+    }
+    return "";
+}
+
+<PRE>^{wikipreend} {
+    logger.debug("wikipreend: " + yytext() + " (" + yystate() + ")");
+    endState();
+    // rollback the one non-pre character so it can be processed
+    yypushback(1);
+    return "</pre>";
 }
 
 /* ----- processing commands ----- */
