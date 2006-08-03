@@ -39,8 +39,6 @@ public class JAMWikiFilter implements Filter {
 	private static Logger logger = Logger.getLogger(JAMWikiFilter.class.getName());
 	private String encoding = "UTF-8";
 	private FilterConfig config = null;
-	/** A flag to indicate whether the server supports the response.setCharacterEncoding API. */
-	private static boolean SERVLET24_SUPPORT = true;
 
 	/**
 	 *
@@ -52,10 +50,13 @@ public class JAMWikiFilter implements Filter {
 	 * Set request encoding to UTF-8.
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		request.setCharacterEncoding(this.encoding);
-		setResponseEncoding(response);
+		request.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
 		if (redirectNeeded(request, response)) return;
 		chain.doFilter(request, response);
+		// reset since JSPs will set it to the default
+		response.setContentType("text/html; charset=UTF-8");
+		request.setCharacterEncoding("UTF-8");
 	}
 
 	/**
@@ -95,23 +96,5 @@ public class JAMWikiFilter implements Filter {
 	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
 		response.sendRedirect(url);
 		return;
-	}
-
-	/**
-	 *
-	 */
-	private void setResponseEncoding(ServletResponse response) {
-		// try to set the response encoding.  this method is servlet 2.4 and
-		// later only, so use reflection in case of a servlet 2.3 container.
-		if (!SERVLET24_SUPPORT) return;
-		try {
-			Class[] parameterTypes = null;
-			Method m = response.getClass().getMethod("setCharacterEncoding", new Class[]{String.class});
-			Object[] args = new Object[]{this.encoding};
-			m.invoke(response, args);
-		} catch (Exception e) {
-			logger.warn("Unable to set response encoding.  For full UTF-8 support consider upgrading to a web application server that supports the servlet 2.4 standard.");
-			SERVLET24_SUPPORT = false;
-		}
 	}
 }
