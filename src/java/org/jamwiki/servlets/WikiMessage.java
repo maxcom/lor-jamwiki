@@ -17,6 +17,7 @@
 package org.jamwiki.servlets;
 
 import org.apache.log4j.Logger;
+import org.jamwiki.utils.Utilities;
 
 /**
  * This class is a utility class useful for storing messages key and object
@@ -29,37 +30,70 @@ public class WikiMessage {
 	private String[] params = null;
 
 	/**
+	 * Create a new message that is mapped to the specified ApplicationResources
+	 * key value using parameter param1.
 	 *
+	 * @param key The ApplicationResources key that corresponds to the message
+	 *  to display.
 	 */
 	public WikiMessage(String key) {
 		this.key = key;
 	}
 
 	/**
+	 * Create a new message that is mapped to the specified ApplicationResources
+	 * key value using parameter param1.
 	 *
+	 * @param key The ApplicationResources key that corresponds to the message
+	 *  to display.
+	 * @param param1 The parameter that corresponds to the {0} param in the
+	 *  specified message key value.  Note that this parameter is automatically
+	 *  HTML escaped to prevent erorrs in display.
 	 */
 	public WikiMessage(String key, String param1) {
 		this.key = key;
 		this.params = new String[1];
-		params[0] = param1;
+		params[0] = Utilities.escapeHTML(param1);
 	}
 
 	/**
+	 * Create a new message that is mapped to the specified ApplicationResources
+	 * key value using parameter param1.
 	 *
+	 * @param key The ApplicationResources key that corresponds to the message
+	 *  to display.
+	 * @param param1 The parameter that corresponds to the {0} param in the
+	 *  specified message key value.  Note that this parameter is automatically
+	 *  HTML escaped to prevent erorrs in display.
+	 * @param param2 The parameter that corresponds to the {1} param in the
+	 *  specified message key value.  Note that this parameter is automatically
+	 *  HTML escaped to prevent erorrs in display.
 	 */
 	public WikiMessage(String key, String param1, String param2) {
 		this.key = key;
 		this.params = new String[2];
-		params[0] = param1;
-		params[1] = param2;
+		params[0] = Utilities.escapeHTML(param1);
+		params[1] = Utilities.escapeHTML(param2);
 	}
 
 	/**
+	 * Create a new message that is mapped to the specified ApplicationResources
+	 * key value using parameter param1.
 	 *
+	 * @param key The ApplicationResources key that corresponds to the message
+	 *  to display.
+	 * @param params An array of parameters that correspond to the {0}, {1}, etc
+	 *  params in the specified message key value.  Note that these parameters are
+	 *  automatically HTML escaped to prevent erorrs in display.
 	 */
 	public WikiMessage(String key, String[] params) {
 		this.key = key;
-		this.params = params;
+		if (params != null) {
+			this.params = new String[params.length];
+			for (int i=0; i < params.length; i++) {
+				this.params[i] = Utilities.escapeHTML(params[i]);
+			}
+		}
 	}
 
 	/**

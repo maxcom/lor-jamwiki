@@ -179,6 +179,7 @@ public class Utilities {
 	 * Replace any occurrences of <, >, ", ', or & with their HTML equivalents.
 	 */
 	public static String escapeHTML(String input) {
+		if (!StringUtils.hasText(input)) return input;
 		// for obvious reasons ampersand must be replaced first
 		input = StringUtils.replace(input, "&", "&amp;");
 		input = StringUtils.replace(input, ">", "&gt;");
