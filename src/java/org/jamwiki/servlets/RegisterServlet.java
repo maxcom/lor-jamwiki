@@ -137,7 +137,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			} else if (!StringUtils.hasText(confirmPassword)) {
 				errors.add(new WikiMessage("error.passwordconfirm"));
 			} else if (!newPassword.equals(confirmPassword)) {
-				errors.add(new WikiMessage("admin.caption.passwordnomatch"));
+				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
 		return errors;
