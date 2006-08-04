@@ -222,14 +222,10 @@ public class LinkUtil {
 	 *
 	 */
 	private static String parseSection(String text) {
-		String section = null;
 		int pos = text.indexOf('#');
-		if (pos > 0) {
-			if (text.length() > pos) {
-				section = text.substring(pos+1).trim();
-			}
-		}
-		return section;
+		if (pos == -1 || text.length() <= pos) return null;
+		String section = text.substring(pos+1).trim();
+		return Utilities.encodeURL(section);
 	}
 
 	/**

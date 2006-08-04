@@ -69,7 +69,7 @@ if (request.getParameter("num") != null) {
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
-	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions?contributor=${change.authorName}"><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)
+	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<a href="<jamwiki:link value="Special:Contributions" />?contributor=<jamwiki:encode value="${change.authorName}" />"><f:message key="recentchanges.caption.contributions" /></a>)
 	<%-- FIXME: need a better way to denote minor edits --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>

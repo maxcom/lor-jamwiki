@@ -207,6 +207,13 @@ public class ParserUtil {
 	 */
 	protected static String linkHtml(String link, String text, String punctuation) {
 		String html = null;
+		// in case of script attack, replace script tags (cannot use escapeHTML due
+		// to the possibility of ampersands in the link)
+		link = StringUtils.replace(link, "<", "&lt;");
+		link = StringUtils.replace(link, ">", "&gt;");
+		link = StringUtils.replace(link, "\"", "&quot;");
+		link = StringUtils.replace(link, "'", "&apos;");
+		text = Utilities.escapeHTML(text);
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("http://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""

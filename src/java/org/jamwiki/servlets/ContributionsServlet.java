@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -66,7 +67,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("contributions", all);
 		next.addObject("num", new Integer(num));
 		next.addObject("contributor", userString);
-		this.pageInfo.setPageTitle(new WikiMessage("contributions.title", userString));
+		this.pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_CONTRIBUTIONS);
 		this.pageInfo.setSpecial(true);
 	}
