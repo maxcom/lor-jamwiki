@@ -407,9 +407,10 @@ tablerow           = "|-" {inputcharacter}* {newline}
 tablecaption       = "|+"
 
 /* wiki links */
-wikilink           = "[[" [^(\]\])\n\r]+ "]]"
-htmllink           = "[" [^\]\n\r]+ "]"
-htmllinkraw        = ("https://" [^ \n\r\t]+) | ("http://" [^ \n\r\t]+) | ("mailto://"  [^ \n\r\t]+) | ("ftp://"  [^ \n\r\t]+) | ("file://"  [^ \n\r\t]+)
+wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
+protocol           = "http://" | "https://" | "mailto://" | "ftp://" | "file://"
+htmllink           = "[" ({protocol}) ([^\]\n\r]+) ~"]"
+htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 
 %state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE
 
