@@ -39,7 +39,6 @@ public class PrintableServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			next = new ModelAndView("wiki");
 			viewError(request, next, e);
-			loadDefaults(request, next, this.pageInfo);
 		}
 		loadDefaults(request, next, this.pageInfo);
 		return next;
