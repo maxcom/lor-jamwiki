@@ -2,18 +2,26 @@
 0.1.2
 =====
 
-* BUG: Set response encoding to UTF-8 for servlet 2.4 compatible servlet
-  engines.
+* BUG: Resolve issue with non-ASCII characters for translated languages.
+* BUG: Fix parser issues with lists followed by HTML or Wiki text.
+* BUG: Fix style handling for Wiki tables.
+* FEATURE: Implemented Wiki pre-formatted text syntax (space + text).
+* BUG: Make parser paragraph handling more intelligent.
+* BUG: Multiple empty lines of text should be parsed as empty paragraphs.
+* BUG: Allow Wiki markup in headings.
 * BUG: Do not display section edit links during preview.
+* BUG: Fix numerous cross-site scripting vulnerability reported by NickJ.
 * FEATURE: Remove numerous hard-coded message strings, including those
   thrown in exceptions.
+* FEATURE: Updated Chinese and Hungarian translations from ewen0930 and
+  bDaneE.
 * FEATURE: Remove the RSS code.  Will be implemented differently in a
   future version of JAMWiki.
+* FEATURE: Remove the "history list" code - it was unused.
 * FEATURE: Move default topic pages into a language-specific directory
   to allow for future translations.
 * FEATURE: Simplify the "Printable page" code, remove the option to print
   X number of pages.
-* BUG: Fix another cross-site scripting vulnerability reported by NickJ.
 * FEATURE: Make the generated HTML more XHTML compliant.
 
 0.1.1
