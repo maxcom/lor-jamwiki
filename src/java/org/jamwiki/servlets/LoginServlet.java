@@ -98,6 +98,7 @@ public class LoginServlet extends JAMWikiServlet {
 		if (user == null) {
 			next.addObject("errorMessage", new WikiMessage("error.login"));
 			next.addObject("redirect", redirect);
+			this.pageInfo.setPageTitle(new WikiMessage("login.title"));
 			this.pageInfo.setSpecial(true);
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
 			return false;

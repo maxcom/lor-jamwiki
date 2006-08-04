@@ -39,7 +39,7 @@
 </tr>
 <tr>
 	<td>&#160;</td>
-	<td><input type="checkbox" value="true" name="remember" />&#160;Remember Me</td>
+	<td><input type="checkbox" value="true" name="remember" />&#160;<f:message key="login.rememberme" /></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
