@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
+
+	<!--
+	NOTE: do not use the context-param element to initialize the
+	ApplicationResources resource bundle here due to a bug in the JSTL and
+	Tomcat4 that causes response encoding to be finalized and thus prevents
+	setting page encoding to UTF-8.  Instead, load the resource bundle in
+	page-init.jsp.
+	-->
 	
 	<!-- set encoding, cache headers, etc. -->
 	<filter>

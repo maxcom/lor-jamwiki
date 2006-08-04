@@ -28,7 +28,6 @@ called it means that a catastrophic error has occurred.
     "
     isErrorPage="true"
     contentType="text/html; charset=utf-8"
-    pageEncoding="UTF-8"
 %>
 
 <%@ include file="page-init.jsp" %>

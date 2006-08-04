@@ -22,7 +22,6 @@
     "
     errorPage="error.jsp"
     contentType="text/html; charset=utf-8"
-    pageEncoding="UTF-8"
 %>
 
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
