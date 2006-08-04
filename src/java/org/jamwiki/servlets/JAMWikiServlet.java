@@ -374,30 +374,31 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiMessage pageTitle, Topic topic, boolean sectionEdit) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
-		if (topic != null) {
-			String virtualWiki = topic.getVirtualWiki();
-			String topicName = topic.getName();
-			String displayName = request.getRemoteAddr();
-			WikiUser user = Utilities.currentUser(request);
-			ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
-			parserInfo.setWikiUser(user);
-			parserInfo.setTopicName(topicName);
-			parserInfo.setUserIpAddress(request.getRemoteAddr());
-			parserInfo.setVirtualWiki(virtualWiki);
-			parserInfo.setAllowSectionEdit(sectionEdit);
-			contents = Utilities.parse(parserInfo, topic.getTopicContent(), topicName);
-			if (StringUtils.hasText(request.getParameter("highlight"))) {
-				// search servlet highlights search terms, so add that here
-				contents = AbstractSearchEngine.highlightHTML(contents, request.getParameter("highlight"));
-			}
-			topic.setTopicContent(contents);
-			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
-				List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
-				next.addObject("fileVersions", fileVersions);
-			}
-			this.pageInfo.setSpecial(false);
-			this.pageInfo.setTopicName(topicName);
+		if (topic == null) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
+		String virtualWiki = topic.getVirtualWiki();
+		String topicName = topic.getName();
+		String displayName = request.getRemoteAddr();
+		WikiUser user = Utilities.currentUser(request);
+		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		parserInfo.setWikiUser(user);
+		parserInfo.setTopicName(topicName);
+		parserInfo.setUserIpAddress(request.getRemoteAddr());
+		parserInfo.setVirtualWiki(virtualWiki);
+		parserInfo.setAllowSectionEdit(sectionEdit);
+		contents = Utilities.parse(parserInfo, topic.getTopicContent(), topicName);
+		if (StringUtils.hasText(request.getParameter("highlight"))) {
+			// search servlet highlights search terms, so add that here
+			contents = AbstractSearchEngine.highlightHTML(contents, request.getParameter("highlight"));
+		}
+		topic.setTopicContent(contents);
+		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
+			List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+			next.addObject("fileVersions", fileVersions);
+		}
+		this.pageInfo.setSpecial(false);
+		this.pageInfo.setTopicName(topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);
 		this.pageInfo.setPageTitle(pageTitle);
 	}
