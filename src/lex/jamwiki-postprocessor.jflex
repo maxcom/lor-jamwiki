@@ -89,11 +89,10 @@ javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
 /* processing commands */
 toc                = "__TOC__"
 
-/* paragraph */
-emptyline          = ({newline} {newline} {newline})
 
-/* table cells */
-tablecell          = ((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>))
+/* paragraph */
+noparagraph        = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>))) | "<" [ ]* "hr" ~">"
+emptyline          = ({newline} {newline} {newline})
 nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|span|p
 nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
 nonparagraphend    = ((<[ ]*\/[ ]*) {nonparagraphtag} ([ ]*>)) | ((<[ ]*) td ([^/>]*>))
@@ -149,9 +148,9 @@ paragraphstart     = ({inputcharacter})
 
 /* ----- layout ----- */
 
-<NORMAL, NONPARAGRAPH>{tablecell} {
-    // table cells _with no newlines_ are a special case - paragraphs not displayed
-    logger.debug("tablecell: " + yytext() + " (" + yystate() + ")");
+<NORMAL, NONPARAGRAPH>{noparagraph} {
+    // <hr> and <td> tags _with no newlines_ should be ignored for the sake of paragraph parsing
+    logger.debug("noparagraph: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
