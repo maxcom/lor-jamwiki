@@ -21,7 +21,7 @@
         org.jamwiki.servlets.JAMWikiServlet
     "
     errorPage="/WEB-INF/jsp/error.jsp"
-    contentType="text/html; charset=UTF-8"
+    contentType="text/html; charset=utf-8"
     pageEncoding="UTF-8"
 %>
 
@@ -31,7 +31,7 @@
 <html>
 <head>
 	<title><f:message key="common.sitename" /> - <f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <%
 if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC).length() > 0) {
 %>

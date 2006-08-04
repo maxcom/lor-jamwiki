@@ -27,7 +27,7 @@ called it means that a catastrophic error has occurred.
         org.apache.log4j.Logger
     "
     isErrorPage="true"
-    contentType="text/html; charset=UTF-8"
+    contentType="text/html; charset=utf-8"
     pageEncoding="UTF-8"
 %>
 
