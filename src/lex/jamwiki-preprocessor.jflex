@@ -342,7 +342,6 @@ inputcharacter     = [^\r\n]
 lessthan           = "<"
 greaterthan        = ">"
 quotation          = "\""
-apostrophe         = "\'"
 htmltag            = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
 
 /* non-container expressions */
@@ -818,12 +817,6 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
     logger.debug("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&quot;";
-}
-
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
-    logger.debug("apostrophe: " + yytext() + " (" + yystate() + ")");
-    // escape html not recognized by above tags
-    return "&apos;";
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {
