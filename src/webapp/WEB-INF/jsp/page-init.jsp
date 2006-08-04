@@ -34,6 +34,7 @@ response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
 <%
+response.setContentType("text/html; charset=utf-8");
 String action = (String)request.getAttribute(JAMWikiServlet.PARAMETER_ACTION);
 if (action == null) {
 	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
