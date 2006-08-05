@@ -29,20 +29,21 @@ public class WikiVersionTag extends TagSupport {
 
 	private static final Logger logger = Logger.getLogger(WikiVersionTag.class);
 
-	private String var;
+	private String var = null;
 
 	/**
 	 *
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			if (var == null) {
+			if (this.var == null) {
 				this.pageContext.getOut().print(WikiBase.WIKI_VERSION);
 			} else {
-				pageContext.setAttribute(var, WikiBase.WIKI_VERSION);
+				this.pageContext.setAttribute(this.var, WikiBase.WIKI_VERSION);
 			}
-		} catch (IOException e) {
-			logger.warn(e);
+		} catch (Exception e) {
+			logger.error("Failure while retrieving Wiki version for var " + this.var, e);
+			throw new JspException(e);
 		}
 		return EVAL_PAGE;
 	}

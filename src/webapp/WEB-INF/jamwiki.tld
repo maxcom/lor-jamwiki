@@ -12,7 +12,7 @@
   <tag>
     <name>encode</name>
     <tag-class>org.jamwiki.tags.EncodeTag</tag-class>
-    <body-content>JSP</body-content>
+    <body-content>empty</body-content>
     <attribute>
       <name>value</name>
       <required>true</required>
@@ -24,7 +24,7 @@
   </tag>
   <tag>
     <name>decode</name>
-    <tag-class>org.jamwiki.tags.EncodeTag</tag-class>
+    <tag-class>org.jamwiki.tags.DecodeTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>value</name>
@@ -38,7 +38,7 @@
   <tag>
     <name>wiki-version</name>
     <tag-class>org.jamwiki.tags.WikiVersionTag</tag-class>
-    <body-content>JSP</body-content>
+    <body-content>empty</body-content>
     <attribute>
       <name>var</name>
       <required>false</required>

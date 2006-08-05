@@ -29,31 +29,32 @@ public class EncodeTag extends TagSupport {
 
 	private static final Logger logger = Logger.getLogger(EncodeTag.class);
 
-	private String var;
-	private String value;
+	private String var = null;
+	private String value = null;
 
 	/**
 	 *
 	 */
 	public int doEndTag() throws JspException {
+		String encodedValue = null;
 		try {
-			value = (String)ExpressionUtil.evalNotNull("encode", "value", value, Object.class, this, pageContext);
-			try {
-				value = Utilities.encodeURL(value);
-				if (var == null) {
-					this.pageContext.getOut().print(value);
-				} else {
-					this.pageContext.setAttribute(var, value);
-				}
-			} catch (Exception e) {
-				logger.error("Failure while encoding value " + value);
-				throw new JspException(e);
-			}
-			return EVAL_PAGE;
-		} finally {
-			// FIXME - var & value not getting reset, so explicitly call release
-			release();
+			encodedValue = (String)ExpressionUtil.evalNotNull("encode", "value", this.value, Object.class, this, pageContext);
+		} catch (JspException e) {
+			logger.error("Failure in link tag for " + this.value + " / " + this.var, e);
+			throw e;
 		}
+		try {
+			encodedValue = Utilities.encodeURL(encodedValue);
+			if (this.var == null) {
+				this.pageContext.getOut().print(encodedValue);
+			} else {
+				this.pageContext.setAttribute(this.var, encodedValue);
+			}
+		} catch (Exception e) {
+			logger.error("Failure while encoding value " + encodedValue);
+			throw new JspException(e);
+		}
+		return EVAL_PAGE;
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class EncodeTag extends TagSupport {
 	 *
 	 */
 	public String getVar() {
-		return var;
+		return this.var;
 	}
 
 	/**
@@ -82,14 +83,5 @@ public class EncodeTag extends TagSupport {
 	 */
 	public void setVar(String var) {
 		this.var = var;
-	}
-
-	/**
-	 *
-	 */
-	public void release() {
-		super.release();
-		this.var = null;
-		this.value = null;
 	}
 }

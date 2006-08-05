@@ -38,30 +38,26 @@ public class ImageLinkTag extends TagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
+		String linkValue = null;
 		try {
-			try {
-				this.value = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
-			} catch (JspException e) {
-				logger.error("Image link tag evaluated empty for value " + this.value, e);
-				throw e;
-			}
-			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-			String virtualWiki = retrieveVirtualWiki(request);
-			String html = null;
-			try {
-				html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, this.value);
-				if (html != null) {
-					this.pageContext.getOut().print(html);
-				}
-			} catch (Exception e) {
-				logger.error("Failure while building url " + html + " with value " + this.value, e);
-				throw new JspException(e);
-			}
-			return EVAL_PAGE;
-		} finally {
-			// FIXME - var & value not getting reset, so explicitly call release
-			release();
+			linkValue = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
+		} catch (JspException e) {
+			logger.error("Image link tag evaluated empty for value " + this.value, e);
+			throw e;
 		}
+		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
+		String virtualWiki = retrieveVirtualWiki(request);
+		String html = null;
+		try {
+			html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, linkValue);
+			if (html != null) {
+				this.pageContext.getOut().print(html);
+			}
+		} catch (Exception e) {
+			logger.error("Failure while building url " + html + " with value " + this.value, e);
+			throw new JspException(e);
+		}
+		return EVAL_PAGE;
 	}
 
 	/**
@@ -91,13 +87,5 @@ public class ImageLinkTag extends TagSupport {
 	 */
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	/**
-	 *
-	 */
-	public void release() {
-		super.release();
-		this.value = null;
 	}
 }

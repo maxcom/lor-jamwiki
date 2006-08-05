@@ -29,31 +29,32 @@ public class DecodeTag extends TagSupport {
 
 	private static final Logger logger = Logger.getLogger(DecodeTag.class);
 
-	private String var;
-	private String value;
+	private String var = null;
+	private String value = null;
 
 	/**
 	 *
 	 */
 	public int doEndTag() throws JspException {
+		String decodedValue = null;
 		try {
-			value = (String)ExpressionUtil.evalNotNull("decode", "value", value, Object.class, this, pageContext);
-			try {
-				value = Utilities.decodeURL(value);
-				if (var == null) {
-					this.pageContext.getOut().print(value);
-				} else {
-					this.pageContext.setAttribute(var, value);
-				}
-			} catch (Exception e) {
-				logger.error("Failure while decoding value " + value);
-				throw new JspException(e);
-			}
-			return EVAL_PAGE;
-		} finally {
-			// FIXME - var & value not getting reset, so explicitly call release
-			release();
+			decodedValue = (String)ExpressionUtil.evalNotNull("decode", "value", this.value, Object.class, this, pageContext);
+		} catch (JspException e) {
+			logger.error("Failure in link tag for " + this.value + " / " + this.var, e);
+			throw e;
 		}
+		try {
+			decodedValue = Utilities.decodeURL(decodedValue);
+			if (this.var == null) {
+				this.pageContext.getOut().print(decodedValue);
+			} else {
+				this.pageContext.setAttribute(this.var, decodedValue);
+			}
+		} catch (Exception e) {
+			logger.error("Failure while decoding value " + decodedValue);
+			throw new JspException(e);
+		}
+		return EVAL_PAGE;
 	}
 
 	/**
@@ -82,14 +83,5 @@ public class DecodeTag extends TagSupport {
 	 */
 	public void setVar(String var) {
 		this.var = var;
-	}
-
-	/**
-	 *
-	 */
-	public void release() {
-		super.release();
-		this.var = null;
-		this.value = null;
 	}
 }

@@ -40,42 +40,39 @@ public class LinkTag extends BodyTagSupport {
 	 *
 	 */
 	public int doEndTag() throws JspException {
+		String tagValue = null;
 		try {
-			try {
-				this.value = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
-			} catch (JspException e) {
-				logger.error("Failure in link tag for " + this.value + " / " + this.text, e);
-				throw e;
-			}
-			buildLinkText();
-			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-			String url = null;
-			String virtualWiki = retrieveVirtualWiki(request);
-			try {
-				if (StringUtils.hasText(this.text)) {
-					// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-					url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, this.value, this.text, this.style);
-				} else {
-					// return raw link of the form "/wiki/en/Special:Edit"
-					url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, this.value);
-				}
-				this.pageContext.getOut().print(url);
-			} catch (Exception e) {
-				logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
-				throw new JspException(e);
-			}
-			return EVAL_PAGE;
-		} finally {
-			// FIXME - var & value not getting reset, so explicitly call release
-			release();
+			tagValue = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
+		} catch (JspException e) {
+			logger.error("Failure in link tag for " + this.value + " / " + this.text, e);
+			throw e;
 		}
+		String tagText = buildLinkText();
+		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
+		String url = null;
+		String virtualWiki = retrieveVirtualWiki(request);
+		try {
+			if (StringUtils.hasText(tagText)) {
+				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, tagValue, tagText, this.style);
+			} else {
+				// return raw link of the form "/wiki/en/Special:Edit"
+				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, tagValue);
+			}
+			this.pageContext.getOut().print(url);
+		} catch (Exception e) {
+			logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			throw new JspException(e);
+		}
+		return EVAL_PAGE;
 	}
 
 	/**
 	 *
 	 */
-	private void buildLinkText() throws JspException {
+	private String buildLinkText() throws JspException {
 		String body = null;
+		String tagText = null;
 		if (this.getBodyContent() != null) {
 			body = this.getBodyContent().getString();
 		}
@@ -83,11 +80,11 @@ public class LinkTag extends BodyTagSupport {
 			throw new JspException("Attribute 'text' and body content may not both be specified for link tag");
 		}
 		if (StringUtils.hasText(this.text)) {
-			this.text = (String)ExpressionUtil.evalNotNull("link", "text", text, Object.class, this, pageContext);
+			tagText = (String)ExpressionUtil.evalNotNull("link", "text", this.text, Object.class, this, pageContext);
+		} else if (StringUtils.hasText(body)) {
+			tagText = body;
 		}
-		if (StringUtils.hasText(body)) {
-			this.text = body;
-		}
+		return tagText;
 	}
 
 	/**
@@ -145,15 +142,5 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	/**
-	 *
-	 */
-	public void release() {
-		super.release();
-		this.style = null;
-		this.text = null;
-		this.value = null;
 	}
 }
