@@ -25,13 +25,9 @@
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="menu.comments" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${edit}"><f:message key="menu.editpage" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	</c:if>
-	<c:if test="${!readOnly}">
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.history" /></a></td>
-	</c:if>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>

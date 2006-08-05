@@ -113,11 +113,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 			virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 		}
-		String topic = JAMWikiServlet.getTopicFromRequest(request);
-		if (topic == null) {
-			topic = JAMWikiServlet.getTopicFromURI(request);
-		}
-		next.addObject(PARAMETER_TOPIC, topic);
 		// build the layout contents
 		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
 		next.addObject("leftMenu", leftMenu);
@@ -272,14 +267,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 			}
 			next.addObject("edit", editLink);
 		}
-		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
 		if (!StringUtils.hasText(this.pageInfo.getTopicName())) {
 			try {
-				next.addObject(JAMWikiServlet.PARAMETER_TOPIC, JAMWikiServlet.getTopicFromURI(request));
+				this.pageInfo.setTopicName(JAMWikiServlet.getTopicFromURI(request));
 			} catch (Exception e) {
 				logger.error("Unable to load topic value in JAMWikiServlet", e);
 			}
 		}
+		next.addObject(JAMWikiServlet.PARAMETER_TOPIC, this.pageInfo.getTopicName());
 		next.addObject(JAMWikiServlet.PARAMETER_ADMIN, new Boolean(this.pageInfo.getAdmin()));
 		next.addObject(JAMWikiServlet.PARAMETER_SPECIAL, new Boolean(this.pageInfo.getSpecial()));
 		next.addObject(JAMWikiServlet.PARAMETER_TITLE, this.pageInfo.getPageTitle());
