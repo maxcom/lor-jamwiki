@@ -97,11 +97,14 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
 	protected static String STATEMENT_UPDATE_WIKI_USER = null;
 	protected static String STATEMENT_UPDATE_WIKI_USER_INFO = null;
+	private static Properties props = null;
 
 	/**
 	 *
 	 */
 	protected DefaultQueryHandler() {
+		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME);
+		this.init(props);
 	}
 
 	/**
