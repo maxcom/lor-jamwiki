@@ -219,32 +219,52 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static File getClassLoaderRoot() throws Exception {
+	public static File getClassLoaderFile(String filename) throws Exception {
 		Method method = null;
 		ClassLoader loader = null;
 		URL url = null;
 		File file = null;
-		// first try to use the standard class loader path
-		method = Thread.class.getMethod("getContextClassLoader", null);
-		loader = (ClassLoader)method.invoke(Thread.currentThread(), null);
+		try {
+			// first try to use the standard class loader path
+			method = Thread.class.getMethod("getContextClassLoader", null);
+			loader = (ClassLoader)method.invoke(Thread.currentThread(), null);
+		} catch (Exception e) {
+			// that didn't work... try something else
+		}
+		if (loader == null) {
+			// attempt the the class loader that loaded this class
+			loader = Utilities.class.getClassLoader();
+		}
 		if (loader == null) {
 			throw new Exception("Unable to find class loader");
 		}
-		url = loader.getResource("/");
+		url = loader.getResource(filename);
 		if (url != null) {
 			file = FileUtils.toFile(url);
 		} else {
-			url = ClassLoader.getSystemResource("/");
+			url = ClassLoader.getSystemResource(filename);
 			if (url == null) {
-				throw new Exception("Unable to find class loader root");
+				throw new Exception("Unable to find " + filename);
 			}
 			file = FileUtils.toFile(url);
 		}
-		if (file == null | !file.exists() || !file.isDirectory()) {
+		if (file == null | !file.exists()) {
 			throw new Exception("Found invalid class loader root " + file);
 		}
 		return file;
+	}
 
+	/**
+	 * Attempt to get the class loader root directory by retrieving a file
+	 * that MUST exist in the class loader root and then returning its
+	 * parent directory.
+	 */
+	public static File getClassLoaderRoot() throws Exception {
+		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
+		if (!file.exists()) {
+			throw new Exception("Unable to find class loader root");
+		}
+		return file.getParentFile();
 	}
 
 	/**

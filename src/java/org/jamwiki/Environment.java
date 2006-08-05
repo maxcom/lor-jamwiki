@@ -366,16 +366,17 @@ public class Environment {
 	private static File getPropertyFile(String filename) {
 		File file = null;
 		try {
-			file = Utilities.getClassLoaderRoot();
+			file = Utilities.getClassLoaderFile(filename);
+			return file;
 		} catch (Exception e) {
-			logger.error("Error while searching for resource " + filename, e);
-			return null;
+			// file might not exist
 		}
 		try {
-			file = new File(file, filename);
+			file = new File(Utilities.getClassLoaderRoot(), filename);
+			return file;
 		} catch (Exception e) {
-			logger.warn("Could not create filename for " + filename);
+			logger.error("Error while searching for resource " + filename, e);
 		}
-		return file;
+		return null;
 	}
 }
