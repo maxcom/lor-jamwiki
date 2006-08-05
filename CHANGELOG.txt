@@ -2,6 +2,15 @@
 0.1.3
 =====
 
+* BUG: Configuring a database with the "ansi" option failed and
+  throws errors for subsequent database queries.
+* FEATURE: Add better exception handling for errors thrown during the
+  setup process.
+* BUG: Fix Resin issue by making JAMWiki taglibs more standards-compliant.
+* BUG: Fix Resin issue with CSS by not setting response encoding in
+  the JAMWikiFilter.
+* BUG: Update upgrade message to not escape URL.
+* BUG: Update property file loading to fix WebSphere issue.
 
 0.1.2
 =====
