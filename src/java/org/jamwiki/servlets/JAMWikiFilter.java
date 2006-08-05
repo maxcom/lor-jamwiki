@@ -51,12 +51,8 @@ public class JAMWikiFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html; charset=utf-8");
 		if (redirectNeeded(request, response)) return;
 		chain.doFilter(request, response);
-		// reset since JSPs will set it to the default
-		response.setContentType("text/html; charset=utf-8");
-		request.setCharacterEncoding("UTF-8");
 	}
 
 	/**
