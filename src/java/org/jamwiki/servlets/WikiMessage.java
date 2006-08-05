@@ -109,4 +109,14 @@ public class WikiMessage {
 	public String[] getParams() {
 		return this.params;
 	}
+
+	/**
+	 * This set method allows message parameters to be set without being escaped.
+	 * Note that this can be a gaping security hole as it opens the site up to
+	 * cross-site scripting attacks.  USE THIS METHOD ONLY IF YOU KNOW WHAT YOU ARE
+	 * DOING!
+	 */
+	public void setParamsWithoutEscaping(String[] params) {
+		this.params = params;
+	}
 }
