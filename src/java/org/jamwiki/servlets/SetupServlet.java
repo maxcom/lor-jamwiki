@@ -54,21 +54,45 @@ public class SetupServlet extends JAMWikiServlet {
 			}
 			String function = request.getParameter("function");
 			if (function == null) function = "";
-			if (!StringUtils.hasText(function)) {
-				setup(request, next);
-			} else {
-				if (initialize(request, next)) {
-					next = new ModelAndView("wiki");
-					viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-					loadDefaults(request, next, this.pageInfo);
+			try {
+				if (!StringUtils.hasText(function)) {
+					setup(request, next);
+				} else {
+					if (initialize(request, next)) {
+						next = new ModelAndView("wiki");
+						viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+						loadDefaults(request, next, this.pageInfo);
+					}
 				}
+			} catch (Exception e) {
+				handleSetupError(request, next, e);
 			}
-		} catch (Exception e) {
+		} catch (WikiException e) {
 			next = new ModelAndView("wiki");
 			viewError(request, next, e);
 			loadDefaults(request, next, this.pageInfo);
 		}
 		return next;
+	}
+
+	/**
+	 *
+	 */
+	private void handleSetupError(HttpServletRequest request, ModelAndView next, Exception e) {
+		// reset properties
+		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, false);
+		if (!(e instanceof WikiException)) {
+			logger.error("Setup error", e);
+		}
+		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+		this.pageInfo.setSpecial(true);
+		this.pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		if (e instanceof WikiException) {
+			WikiException we = (WikiException)e;
+			next.addObject("errorMessage", we.getWikiMessage());
+		} else {
+			next.addObject("errorMessage", new WikiMessage("error.unknown", e.getMessage()));
+		}
 	}
 
 	/**
@@ -89,9 +113,9 @@ public class SetupServlet extends JAMWikiServlet {
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
-			Environment.saveProperties();
 			WikiBase.reset(request.getLocale(), user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+			Environment.saveProperties();
 			return true;
 		}
 	}
