@@ -82,7 +82,7 @@ function inactive(element) {
 <c:forEach items="${changes}" var="change">
 <li>
 	&#160;
-	<input type="checkbox" name='<c:out value="diff:${change.topicVersionId}"/>' onclick="inactive(this)" />
+	<input type="checkbox" name="<c:out value="diff:${change.topicVersionId}" />" onclick="inactive(this)" id="<c:out value="diff:${change.topicVersionId}" />" />
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<a href="<jamwiki:link value="Special:History" />?topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
@@ -91,7 +91,9 @@ function inactive(element) {
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	<%-- FIXME: need a better way to denote minor edits --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
-	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
+	<c:if test="${!empty change.editComment}">
+	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<i><c:out value="${change.editComment}" /></i>)</label>
+	</c:if>
 </c:forEach>
 </ul>
 

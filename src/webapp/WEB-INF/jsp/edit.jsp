@@ -61,7 +61,7 @@ FIXME - restore the Javascript edit buttons
 <p>
 <textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
-<p><f:message key="edit.caption.comment" />: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" /></p>
+<p><label for="editComment"><f:message key="edit.caption.comment" /></label>: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" id="editComment" /></p>
 <p>
 <input type="submit" name="save" value="<f:message key="edit.action.save"/>"/>
 
@@ -76,8 +76,8 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
 
 &nbsp;&nbsp;&nbsp;
-<input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> />
-<f:message key="edit.isMinorEdit"/>
+<input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" />
+<label for="minorEdit"><f:message key="edit.isMinorEdit"/></label>
 </p>
 
 <%

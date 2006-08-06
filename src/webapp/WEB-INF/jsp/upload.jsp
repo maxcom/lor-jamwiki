@@ -25,12 +25,12 @@
 <form name="form1" method="post" action="<jamwiki:link value="Special:Upload" />" enctype="multipart/form-data">
 <table border="0">
 <tr>
-	<td><f:message key="import.caption.source" />:</td>
-	<td><input type="file" name="contents" size="50" /></td>
+	<td><label for="uploadSource"><f:message key="import.caption.source" /></label>:</td>
+	<td><input type="file" name="contents" size="50" id="uploadSource" /></td>
 </tr>
 <tr>
-	<td>File Description:</td>
-	<td><textarea name="description" rows="6" cols="80"></textarea></td>
+	<td><label for="uploadDescription">File Description</label>:</td>
+	<td><textarea name="description" rows="6" cols="80" id="uploadDescription"></textarea></td>
 </tr>
 <tr>
 	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="common.save" />" /></td>

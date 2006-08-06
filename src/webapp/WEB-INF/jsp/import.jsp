@@ -25,8 +25,8 @@
 <form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">
 <table border="0">
 <tr>
-	<td><f:message key="import.caption.source" />:</td>
-	<td><input type="file" name="contents" size="50" /></td>
+	<td><label for="importFile"><f:message key="import.caption.source" /></label>:</td>
+	<td><input type="file" name="contents" size="50" id="importFile" /></td>
 </tr>
 <tr>
 	<td colspan="2" align="center"><input type="submit" name="save" value="<f:message key="import.button.import" />" /></td>

@@ -33,30 +33,30 @@
 </c:if>
 <%-- FIXME - handle LDAP --%>
 <tr>
-	<td><f:message key="common.login" />:</td>
-	<td><input type="text" name="login" value="<c:out value="${user.login}" />"></td>
+	<td><label for="registerLogin"><f:message key="common.login" /></label>:</td>
+	<td><input type="text" name="login" value="<c:out value="${user.login}" />" id="registerLogin" /></td>
 </tr>
 <c:if test="${user.userId > 0}">
 <tr>
-	<td><f:message key="register.caption.oldpassword" />:</td>
-	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />"></td>
+	<td><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</td>
+	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></td>
 </tr>
 </c:if>
 <tr>
-	<td><f:message key="register.caption.newpassword" />:</td>
-	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />"></td>
+	<td><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</td>
+	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></td>
 </tr>
 <tr>
-	<td><f:message key="register.caption.confirmpassword" />:</td>
-	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />"></td>
+	<td><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</td>
+	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></td>
 </tr>
 <tr>
-	<td><f:message key="register.caption.displayname" />:</td>
-	<td><input type="text" name="displayName" value="<c:out value="${user.displayName}" />"></td>
+	<td><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</td>
+	<td><input type="text" name="displayName" value="<c:out value="${user.displayName}" />" id="registerDisplayName" /></td>
 </tr>
 <tr>
-	<td><f:message key="register.caption.email" />:</td>
-	<td><input type="text" name="email" value="<c:out value="${user.email}" />"></td>
+	<td><label for="registerEmail"><f:message key="register.caption.email" /></label>:</td>
+	<td><input type="text" name="email" value="<c:out value="${user.email}" />" id="registerEmail" /></td>
 </tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>

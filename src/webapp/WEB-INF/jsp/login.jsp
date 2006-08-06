@@ -29,16 +29,16 @@
 <tr><td colspan="2" class="red"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></td></tr>
 </c:if>
 <tr>
-	<td><f:message key="login.username"/></td>
-	<td><input type="text" name="username" value='<c:out value="${param.username}"/>'/></td>
+	<td><label for="loginUsername"><f:message key="login.username"/></label></td>
+	<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
 </tr>
 <tr>
-	<td><f:message key="login.password"/></td>
-	<td><input type="password" name="password"/></td>
+	<td><label for="loginPassword"><f:message key="login.password"/></label></td>
+	<td><input type="password" name="password" id="loginPassword" /></td>
 </tr>
 <tr>
 	<td>&#160;</td>
-	<td><input type="checkbox" value="true" name="remember" />&#160;<f:message key="login.rememberme" /></td>
+	<td><input type="checkbox" value="true" name="remember" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></td>
 </tr>
 <tr>
 	<td>&nbsp;</td>
