@@ -46,24 +46,24 @@
             <src path="${dir.src.java}"/>
             <include name="org/jamwiki/**"/>
             <classpath>
-                <pathelement path="${dir.src.java}"/>
-                <pathelement path="${dir.lib}/log4j.jar"/>
-                <pathelement path="${dir.lib}/activation.jar"/>
-                <pathelement path="${dir.lib}/commons-dbcp.jar"/>
+                <pathelement path="${dir.src.java}" />
+                <pathelement path="${dir.lib}/log4j.jar" />
+                <pathelement path="${dir.lib}/activation.jar" />
+                <pathelement path="${dir.lib}/commons-dbcp.jar" />
                 <pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar" />
                 <pathelement path="${dir.lib}/commons-io-1.2.jar" />
                 <pathelement path="${dir.lib}/commons-logging-1.1.jar" />
-                <pathelement path="${dir.lib}/commons-pool-1.3.jar"/>
-                <pathelement path="${dir.lib}/jstl.jar"/>
-                <pathelement path="${dir.lib}/log4j.jar"/>
-                <pathelement path="${dir.lib}/mail.jar"/>
-                <pathelement path="${dir.lib}/servlet.jar"/>
-                <pathelement path="${dir.lib}/standard.jar"/>
-                <pathelement path="${dir.lib}/spring.jar"/>
-                <pathelement path="${dir.lib}/lucene-core-2.0.0.jar"/>
-                <pathelement path="${dir.lib}/PDFBox-0.6.2.jar"/>
-                <pathelement path="${dir.lib}/javadiff-1.0.3.jar"/>
-                <pathelement path="${dir.lib}/commons-codec.jar"/>
+                <pathelement path="${dir.lib}/commons-pool-1.3.jar" />
+                <pathelement path="${dir.lib}/jstl.jar" />
+                <pathelement path="${dir.lib}/log4j-1.2.13.jar" />
+                <pathelement path="${dir.lib}/mail.jar" />
+                <pathelement path="${dir.lib}/servlet.jar" />
+                <pathelement path="${dir.lib}/standard.jar" />
+                <pathelement path="${dir.lib}/spring.jar" />
+                <pathelement path="${dir.lib}/lucene-core-2.0.0.jar" />
+                <pathelement path="${dir.lib}/PDFBox-0.6.2.jar" />
+                <pathelement path="${dir.lib}/javadiff-1.0.3.jar" />
+                <pathelement path="${dir.lib}/commons-codec.jar" />
             </classpath>
         </javac>
     </target>
