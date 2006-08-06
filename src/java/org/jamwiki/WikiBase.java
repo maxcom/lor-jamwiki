@@ -47,7 +47,7 @@ import org.springframework.util.StringUtils;
 public class WikiBase {
 
 	// FIXME - remove this
-	public final static String WIKI_VERSION = "0.1.3";
+	public final static String WIKI_VERSION = "0.1.4";
 	/** An instance to myself. Singleton pattern. */
 	private static WikiBase instance;
 	/** The topics are stored in a flat file */
