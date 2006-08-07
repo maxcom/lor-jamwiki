@@ -16,13 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Collection;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.search.AbstractSearchEngine;
 import org.springframework.util.StringUtils;
 

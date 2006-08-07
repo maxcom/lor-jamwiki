@@ -22,7 +22,6 @@ import java.sql.Types;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -163,8 +162,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllTopicNames(String virtualWiki) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(virtualWiki);
+	public WikiResultSet getAllTopicNames(int virtualWikiId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS);
 		stmt.setInt(1, virtualWikiId);
 		return stmt.executeQuery();
@@ -183,8 +181,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllWikiFileTopicNames(String virtualWiki) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(virtualWiki);
+	public WikiResultSet getAllWikiFileTopicNames(int virtualWikiId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES);
 		stmt.setInt(1, virtualWikiId);
 		return stmt.executeQuery();
@@ -210,8 +207,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getReadOnlyTopics(String virtualWiki) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(virtualWiki);
+	public WikiResultSet getReadOnlyTopics(int virtualWikiId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, 1);
@@ -318,8 +314,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertRecentChange(RecentChange change, Connection conn) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(change.getVirtualWiki());
+	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
 		stmt.setInt(1, change.getTopicVersionId());
 		if (change.getPreviousTopicVersionId() != null) {
@@ -346,8 +341,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertTopic(Topic topic, Connection conn) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(topic.getVirtualWiki());
+	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
 		stmt.setInt(1, topic.getTopicId());
 		stmt.setInt(2, virtualWikiId);
@@ -399,8 +393,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertWikiFile(WikiFile wikiFile, Connection conn) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(wikiFile.getVirtualWiki());
+	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE);
 		stmt.setInt(1, wikiFile.getFileId());
 		stmt.setInt(2, virtualWikiId);
@@ -487,8 +480,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(String virtualWiki, String topicName) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(virtualWiki);
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
@@ -498,8 +490,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(String virtualWiki, String topicName, Connection conn) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(virtualWiki);
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
@@ -527,8 +518,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiFile(String virtualWiki, int topicId) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(virtualWiki);
+	public WikiResultSet lookupWikiFile(int virtualWikiId, int topicId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicId);
@@ -681,8 +671,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateTopic(Topic topic, Connection conn) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(topic.getVirtualWiki());
+	public void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topic.getName());
@@ -707,8 +696,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateWikiFile(WikiFile wikiFile, Connection conn) throws Exception {
-		int virtualWikiId = WikiBase.getHandler().lookupVirtualWikiId(wikiFile.getVirtualWiki());
+	public void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_FILE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, wikiFile.getFileName());

@@ -43,7 +43,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllTopicNames(String virtualWiki) throws Exception;
+	public WikiResultSet getAllTopicNames(int virtualWikiId) throws Exception;
 
 	/**
 	 *
@@ -53,7 +53,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getAllWikiFileTopicNames(String virtualWiki) throws Exception;
+	public WikiResultSet getAllWikiFileTopicNames(int virtualWikiId) throws Exception;
 
 	/**
 	 *
@@ -68,7 +68,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getReadOnlyTopics(String virtualWiki) throws Exception;
+	public WikiResultSet getReadOnlyTopics(int virtualWikiId) throws Exception;
 
 	/**
 	 *
@@ -88,12 +88,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void insertRecentChange(RecentChange change, Connection conn) throws Exception;
+	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 *
 	 */
-	public void insertTopic(Topic topic, Connection conn) throws Exception;
+	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -108,7 +108,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void insertWikiFile(WikiFile wikiFile, Connection conn) throws Exception;
+	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -138,12 +138,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(String virtualWiki, String topicName) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(String virtualWiki, String topicName, Connection conn) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -158,7 +158,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiFile(String virtualWiki, int topicId) throws Exception;
+	public WikiResultSet lookupWikiFile(int virtualWikiId, int topicId) throws Exception;
 
 	/**
 	 *
@@ -218,7 +218,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void updateTopic(Topic topic, Connection conn) throws Exception;
+	public void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 *
@@ -228,7 +228,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void updateWikiFile(WikiFile wikiFile, Connection conn) throws Exception;
+	public void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 *

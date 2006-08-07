@@ -28,7 +28,6 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.persistency.PersistencyHandler;
-import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -71,20 +70,22 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void addRecentChange(RecentChange change, Object[] params) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(change.getVirtualWiki());
 		Connection conn = (Connection)params[0];
-		DatabaseHandler.queryHandler.insertRecentChange(change, conn);
+		DatabaseHandler.queryHandler.insertRecentChange(change, virtualWikiId, conn);
 	}
 
 	/**
 	 *
 	 */
 	protected void addTopic(Topic topic, Object[] params) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		Connection conn = (Connection)params[0];
 		if (topic.getTopicId() < 1) {
 			int topicId = DatabaseHandler.queryHandler.nextTopicId(conn);
 			topic.setTopicId(topicId);
 		}
-		DatabaseHandler.queryHandler.insertTopic(topic, conn);
+		DatabaseHandler.queryHandler.insertTopic(topic, virtualWikiId, conn);
 	}
 
 	/**
@@ -124,7 +125,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			int fileId = DatabaseHandler.queryHandler.nextWikiFileId(conn);
 			wikiFile.setFileId(fileId);
 		}
-		DatabaseHandler.queryHandler.insertWikiFile(wikiFile, conn);
+		int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
+		DatabaseHandler.queryHandler.insertWikiFile(wikiFile, virtualWikiId, conn);
 	}
 
 	/**
@@ -162,7 +164,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getAllTopicNames(virtualWiki);
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getAllTopicNames(virtualWikiId);
 		while (rs.next()) {
 			all.add(rs.getString("topic_name"));
 		}
@@ -190,7 +193,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileTopicNames(virtualWiki);
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileTopicNames(virtualWikiId);
 		while (rs.next()) {
 			all.add(rs.getString("topic_name"));
 		}
@@ -230,7 +234,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
 		Collection all = new ArrayList();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getReadOnlyTopics(virtualWiki);
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getReadOnlyTopics(virtualWikiId);
 		while (rs.next()) {
 			all.add(rs.getString("topic_name"));
 		}
@@ -550,7 +555,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWiki, topicName);
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName);
 		if (rs.size() == 0) return null;
 		return initTopic(rs);
 	}
@@ -559,8 +565,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		Connection conn = (Connection)params[0];
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWiki, topicName, conn);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName, conn);
 		if (rs.size() == 0) return null;
 		return initTopic(rs);
 	}
@@ -590,7 +597,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFile(virtualWiki, topic.getTopicId());
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFile(virtualWikiId, topic.getTopicId());
 		if (rs.size() == 0) return null;
 		return initWikiFile(rs);
 	}
@@ -683,8 +691,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void updateTopic(Topic topic, Object[] params) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		Connection conn = (Connection)params[0];
-		DatabaseHandler.queryHandler.updateTopic(topic, conn);
+		DatabaseHandler.queryHandler.updateTopic(topic, virtualWikiId, conn);
 	}
 
 	/**
@@ -699,8 +708,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void updateWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
 		Connection conn = (Connection)params[0];
-		DatabaseHandler.queryHandler.updateWikiFile(wikiFile, conn);
+		DatabaseHandler.queryHandler.updateWikiFile(wikiFile, virtualWikiId, conn);
 	}
 
 	/**
