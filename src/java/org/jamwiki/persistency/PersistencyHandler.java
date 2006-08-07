@@ -685,11 +685,6 @@ public abstract class PersistencyHandler {
 			logger.warn("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
 		}
-		if (!this.isInitialized()) {
-			// do not set up special pages until initial property values set
-			logger.warn("Attempt to setup special pages prior to initializing system");
-			return;
-		}
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
 		String contents = PersistencyHandler.readSpecialPage(locale, topicName);
 		Topic topic = new Topic();
