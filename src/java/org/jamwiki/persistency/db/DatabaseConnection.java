@@ -24,8 +24,6 @@ import java.sql.Statement;
 import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import org.apache.commons.dbcp.AbandonedConfig;
-import org.apache.commons.dbcp.AbandonedObjectPool;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDriver;
@@ -52,11 +50,7 @@ public class DatabaseConnection {
 	public static void setUpConnectionPool(String url, String userName, String password) throws Exception {
 		closeConnectionPool();
 		Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER));
-		AbandonedConfig config = new AbandonedConfig();
-		config.setRemoveAbandoned(Environment.getBooleanValue(Environment.PROP_DBCP_REMOVE_ABANDONED));
-		config.setLogAbandoned(Environment.getBooleanValue(Environment.PROP_DBCP_LOG_ABANDONED));
-		config.setRemoveAbandonedTimeout(Environment.getIntValue(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT));
-		connectionPool = new AbandonedObjectPool(null, config);
+		connectionPool = new GenericObjectPool();
 		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
 		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
 		connectionPool.setMinEvictableIdleTimeMillis(Environment.getIntValue(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) * 1000);
