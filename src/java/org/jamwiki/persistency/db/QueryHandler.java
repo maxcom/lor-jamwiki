@@ -148,12 +148,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
+	public WikiResultSet lookupTopicVersion(int topicVersionId) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Connection conn) throws Exception;
+	public WikiResultSet lookupTopicVersion(int topicVersionId, Connection conn) throws Exception;
 
 	/**
 	 *

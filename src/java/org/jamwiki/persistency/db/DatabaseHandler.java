@@ -576,7 +576,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);
 	}
@@ -586,7 +586,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(virtualWiki, topicName, topicVersionId, conn);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId, conn);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);
 	}
