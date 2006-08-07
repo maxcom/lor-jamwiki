@@ -515,7 +515,7 @@ public class AdminServlet extends JAMWikiServlet {
 			// FIXME - database specific
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
 				WikiBase.getHandler().reloadRecentChanges();
-				next.addObject("message", new WikiMessage("admin.caption.recentchanges"));
+				next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 			} else {
 				next.addObject("message", new WikiMessage("admin.caption.recentchangesdb"));
 			}
