@@ -16,13 +16,7 @@
  */
 package org.jamwiki;
 
-import java.io.StringReader;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
@@ -31,7 +25,6 @@ import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileSearchEngine;
-import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.search.SearchRefreshThread;
 import org.jamwiki.servlets.JAMWikiServlet;
@@ -107,7 +100,7 @@ public class WikiBase {
 	 * @return TODO: DOCUMENT ME!
 	 * @throws Exception TODO: DOCUMENT ME!
 	 */
-	public static synchronized boolean exists(String virtualWiki, String topicName) throws Exception {
+	public static boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			return true;
 		}
@@ -139,27 +132,6 @@ public class WikiBase {
 	}
 
 	/**
-	 * Find all topics without links to them
-	 */
-	public static Collection getOrphanedTopics(String virtualWiki) throws Exception {
-		Collection results = new HashSet();
-		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			String topicName = (String) iterator.next();
-			Collection matches = getSearchEngineInstance().findLinkedTo(
-				virtualWiki,
-				topicName
-			);
-			logger.debug(topicName + ": " + matches.size() + " matches");
-			if (matches.size() == 0) {
-				results.add(topicName);
-			}
-		}
-		logger.debug(results.size() + " orphaned topics found");
-		return results;
-	}
-
-	/**
 	 *
 	 */
 	public static int getPersistenceType() {
@@ -185,37 +157,6 @@ public class WikiBase {
 			default:
 				return FileSearchEngine.getInstance();
 		}
-	}
-
-	/**
-	 * Find all topics that haven't been written but are linked to
-	 */
-	public static Collection getToDoWikiTopics(String virtualWiki) throws Exception {
-		Collection results = new TreeSet();
-		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
-		Set topicNames = new HashSet();
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			String topicName = (String) iterator.next();
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-			String content = topic.getTopicContent();
-			StringReader reader = new StringReader(content);
-			BackLinkLex lexer = new BackLinkLex(reader);
-			while (lexer.yylex() != null) {
-				;
-			}
-			reader.close();
-			topicNames.addAll(lexer.getLinks());
-		}
-		for (Iterator iterator = topicNames.iterator(); iterator.hasNext();) {
-			String topicName = (String) iterator.next();
-			if (!PseudoTopicHandler.isPseudoTopic(topicName)
-				&& !WikiBase.handler.exists(virtualWiki, topicName)
-				&& !"\\\\\\\\link\\\\\\\\".equals(topicName)) {
-				results.add(topicName);
-			}
-		}
-		logger.debug(results.size() + " todo topics found");
-		return results;
 	}
 
 	/**
