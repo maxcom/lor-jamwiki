@@ -165,7 +165,6 @@ td.main-content {
 	border-bottom: 1px solid #D8D8E7;
 }
 
-
 /* navbar elements */
 
 td.navigation {
@@ -227,7 +226,6 @@ td.navigation {
 	background-color: white;
 	border: 1px solid #D8D8E7;
 }
-
 
 /* diff page */
 
@@ -403,6 +401,24 @@ div.imgthumb {
 
 .searchresult{
 	background-color: gainsboro
+}
+
+/* recent changes, user contributions, history */
+
+li.minorchange {
+	color: #666666;
+}
+
+li.standardchange {
+	color: black;
+}
+
+li.deletechange {
+	color: #880000;
+}
+
+li.movechange {
+	color: #666666;
 }
 
 /* older stuff */

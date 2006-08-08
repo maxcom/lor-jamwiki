@@ -129,6 +129,20 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public boolean getMove() {
+		return this.editType == TopicVersion.EDIT_MOVE;
+	}
+
+	/**
+	 *
+	 */
+	public boolean getNormal() {
+		return this.editType == TopicVersion.EDIT_NORMAL;
+	}
+
+	/**
+	 *
+	 */
 	public Integer getPreviousTopicVersionId() {
 		return this.previousTopicVersionId;
 	}
