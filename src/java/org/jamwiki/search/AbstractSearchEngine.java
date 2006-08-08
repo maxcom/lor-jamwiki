@@ -51,7 +51,6 @@ import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.RAMDirectory;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.parser.alt.BackLinkLex;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.Utilities;
