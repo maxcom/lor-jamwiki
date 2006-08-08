@@ -296,8 +296,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 *
 	 * @return A collection of SearchResultEntry, containing the search results
 	 */
-	protected Collection doSearch(String virtualWiki, String text,
-		boolean caseInsensitiveSearch, boolean doTextBeforeAndAfterParsing) {
+	protected Collection doSearch(String virtualWiki, String text, boolean caseInsensitiveSearch, boolean doTextBeforeAndAfterParsing) {
 		if (indexPath == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -322,88 +321,97 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// actually perform the search
 			Hits hits = searcher.search(query);
-			for (int i = 0; i < hits.length(); i++) {
-				SearchResultEntry entry = new SearchResultEntry();
-				entry.setTopic(hits.doc(i).get(ITYPE_TOPIC_PLAIN));
-				entry.setRanking(hits.score(i));
-				boolean canBeAdded = true;
-				boolean found = false;
-				if (doTextBeforeAndAfterParsing) {
-					String content = hits.doc(i).get(ITYPE_CONTENT_PLAIN);
-					if (content != null) {
-						if (!caseInsensitiveSearch) {
-							if (content.indexOf(text) != -1) {
-								found = true;
-							}
-						} else {
-							if (content.toLowerCase().indexOf(text.toLowerCase()) != -1) {
-								found = true;
-							}
-							if (!found) {
-								HashSet terms = new HashSet();
-								LuceneTools.getTerms(query, terms, false);
-								Token token;
-								TokenStream stream = new SimpleKeepNumbersAnalyzer().tokenStream(ITYPE_CONTENT,
-									new java.io.StringReader(content));
-								while ((token = stream.next()) != null) {
-									// does query contain current token?
-									if (terms.contains(token.termText())) {
-										found = true;
-									}
-								}
-							}
-							if (!found) {
-								// we had a keyword hit
-								int firstword = LuceneTools.findAfter(content, 1, 0);
-								if (firstword == -1) {
-									firstword = 0;
-								}
-								entry.setTextBefore("");
-								entry.setFoundWord(content.substring(0, firstword));
-								if ((firstword + 1) < content.length()) {
-									firstword++;
-								}
-								int lastword = LuceneTools.findAfter(content, 1, 19);
-								if (lastword < 0) {
-									lastword = content.length();
-								}
-								if (firstword < 0) {
-									firstword = 0;
-								}
-								entry.setTextAfter(content.substring(Math.min(firstword, lastword), Math.max(firstword, lastword)) + " ...");
-							} else {
-								// we had a regular hit
-								String[] tempresult = LuceneTools.outputHits(hits.doc(i).get(ITYPE_CONTENT_PLAIN),
-									query,
-									new Analyzer[] {
-										new SimpleKeepNumbersAnalyzer(),
-										new SimpleKeepNumbersAnalyzer()
-									}
-								);
-								entry.setTextBefore("... " + tempresult[0]);
-								entry.setTextAfter(tempresult[2] + " ...");
-								entry.setFoundWord(tempresult[1]);
-							}
-						}
-					}
-					if (!caseInsensitiveSearch && !found) {
-						canBeAdded = false;
-					}
-				} else {
-					canBeAdded = true;
-					entry.setTextBefore("");
-					entry.setTextAfter("");
-					entry.setFoundWord(entry.getTopic());
-				}
-				if (canBeAdded) {
-					result.add(entry);
-				}
-			}
+			result = processHits(hits, text, caseInsensitiveSearch, query, doTextBeforeAndAfterParsing);
 		} catch (IOException e) {
 			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index");
 			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
 			logger.fatal("Excpetion while searching for " + text, e);
+		}
+		return result;
+	}
+
+	/**
+	 *
+	 */
+	protected Collection processHits(Hits hits, String text, boolean caseInsensitiveSearch, BooleanQuery query, boolean doTextBeforeAndAfterParsing) throws Exception {
+		Collection result = new ArrayList();
+		for (int i = 0; i < hits.length(); i++) {
+			SearchResultEntry entry = new SearchResultEntry();
+			entry.setTopic(hits.doc(i).get(ITYPE_TOPIC_PLAIN));
+			entry.setRanking(hits.score(i));
+			boolean canBeAdded = true;
+			boolean found = false;
+			if (doTextBeforeAndAfterParsing) {
+				String content = hits.doc(i).get(ITYPE_CONTENT_PLAIN);
+				if (content != null) {
+					if (!caseInsensitiveSearch) {
+						if (content.indexOf(text) != -1) {
+							found = true;
+						}
+					} else {
+						if (content.toLowerCase().indexOf(text.toLowerCase()) != -1) {
+							found = true;
+						}
+						if (!found) {
+							HashSet terms = new HashSet();
+							LuceneTools.getTerms(query, terms, false);
+							Token token;
+							TokenStream stream = new SimpleKeepNumbersAnalyzer().tokenStream(ITYPE_CONTENT,
+								new java.io.StringReader(content));
+							while ((token = stream.next()) != null) {
+								// does query contain current token?
+								if (terms.contains(token.termText())) {
+									found = true;
+								}
+							}
+						}
+						if (!found) {
+							// we had a keyword hit
+							int firstword = LuceneTools.findAfter(content, 1, 0);
+							if (firstword == -1) {
+								firstword = 0;
+							}
+							entry.setTextBefore("");
+							entry.setFoundWord(content.substring(0, firstword));
+							if ((firstword + 1) < content.length()) {
+								firstword++;
+							}
+							int lastword = LuceneTools.findAfter(content, 1, 19);
+							if (lastword < 0) {
+								lastword = content.length();
+							}
+							if (firstword < 0) {
+								firstword = 0;
+							}
+							entry.setTextAfter(content.substring(Math.min(firstword, lastword), Math.max(firstword, lastword)) + " ...");
+						} else {
+							// we had a regular hit
+							String[] tempresult = LuceneTools.outputHits(hits.doc(i).get(ITYPE_CONTENT_PLAIN),
+								query,
+								new Analyzer[] {
+									new SimpleKeepNumbersAnalyzer(),
+									new SimpleKeepNumbersAnalyzer()
+								}
+							);
+							entry.setTextBefore("... " + tempresult[0]);
+							entry.setTextAfter(tempresult[2] + " ...");
+							entry.setFoundWord(tempresult[1]);
+						}
+					}
+				}
+				if (!caseInsensitiveSearch && !found) {
+					canBeAdded = false;
+				}
+			} else {
+				canBeAdded = true;
+				entry.setTextBefore("");
+				entry.setTextAfter("");
+				entry.setFoundWord(entry.getTopic());
+			}
+			if (canBeAdded) {
+				result.add(entry);
+			}
 		}
 		return result;
 	}
