@@ -16,16 +16,17 @@
  */
 package org.jamwiki.search.lucene;
 
-import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.*;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashSet;
+import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 
 /**
  *
@@ -156,181 +157,11 @@ public final class LuceneTools {
 	 * @exception IOException TODO: Document this exception.
 	 */
 	public final static void getTerms(Query query, HashSet terms, boolean prohibited) throws IOException {
-		if (query instanceof BooleanQuery) {
-			getTermsFromBooleanQuery((BooleanQuery) query, terms, prohibited);
-		} else if (query instanceof PhraseQuery) {
-			getTermsFromPhraseQuery((PhraseQuery) query, terms);
-		} else if (query instanceof TermQuery) {
-			getTermsFromTermQuery((TermQuery) query, terms);
-		} else if (query instanceof PrefixQuery) {
-			getTermsFromPrefixQuery((PrefixQuery) query, terms, prohibited);
-		} else if (query instanceof RangeQuery) {
-			getTermsFromRangeQuery((RangeQuery) query, terms, prohibited);
-		} else if (query instanceof MultiTermQuery) {
-			getTermsFromMultiTermQuery((MultiTermQuery) query, terms, prohibited);
-		}
-	}
-
-	/**
-	 * Extracts all term texts of a given BooleanQuery. Term texts will be returned in lower-case.
-	 *
-	 * @param query BooleanQuery to extract term texts from
-	 * @param terms HashSet where extracted term texts should be put into (Elements: String)
-	 * @param prohibited <code>true</code> to extract "prohibited" terms, too
-	 * @exception IOException TODO: Document this exception.
-	 */
-	private final static void getTermsFromBooleanQuery(BooleanQuery query, HashSet terms, boolean prohibited) throws IOException {
-		BooleanClause[] queryClauses = query.getClauses();
+		BooleanClause[] queryClauses = ((BooleanQuery)query).getClauses();
 		int i;
 		for (i = 0; i < queryClauses.length; i++) {
 			if (prohibited || !queryClauses[i].isProhibited()) {
 				getTerms(queryClauses[i].getQuery(), terms, prohibited);
-			}
-		}
-	}
-
-	/**
-	 * Extracts all term texts of a given MultiTermQuery. Term texts will be returned in lower-case.
-	 *
-	 * @param query MultiTermQuery to extract term texts from
-	 * @param terms HashSet where extracted term texts should be put into (Elements: String)
-	 * @param prohibited <code>true</code> to extract "prohibited" terms, too
-	 * @exception IOException TODO: Document this exception.
-	 */
-	private final static void getTermsFromMultiTermQuery(MultiTermQuery query, HashSet terms, boolean prohibited) throws IOException {
-		// FIXME - was query.getQuery(), this may not be correct
-		getTerms(query, terms, prohibited);
-	}
-
-	/**
-	 * Extracts all term texts of a given PhraseQuery. Term texts will be returned in lower-case.
-	 *
-	 * @param query PhraseQuery to extract term texts from
-	 * @param terms HashSet where extracted term texts should be put into (Elements: String)
-	 */
-	private final static void getTermsFromPhraseQuery(PhraseQuery query, HashSet terms) {
-		Term[] queryTerms = query.getTerms();
-		int i;
-		for (i = 0; i < queryTerms.length; i++) {
-			terms.add(getTermsFromTerm(queryTerms[i]));
-		}
-	}
-
-	/**
-	 * Extracts all term texts of a given PrefixQuery. Term texts will be returned in lower-case.
-	 *
-	 * @param query PrefixQuery to extract term texts from
-	 * @param terms HashSet where extracted term texts should be put into (Elements: String)
-	 * @param prohibited <code>true</code> to extract "prohibited" terms, too
-	 * @exception IOException TODO: Document this exception.
-	 */
-	private final static void getTermsFromPrefixQuery(PrefixQuery query, HashSet terms, boolean prohibited) throws IOException {
-		// FIXME - was query.getQuery(), this may not be correct
-		getTerms(query, terms, prohibited);
-	}
-
-	/**
-	 * Extracts all term texts of a given RangeQuery. Term texts will be returned in lower-case.
-	 *
-	 * @param query RangeQuery to extract term texts from
-	 * @param terms HashSet where extracted term texts should be put into (Elements: String)
-	 * @param prohibited <code>true</code> to extract "prohibited" terms, too
-	 * @exception IOException TODO: Document this exception.
-	 */
-	private final static void getTermsFromRangeQuery(RangeQuery query, HashSet terms, boolean prohibited) throws IOException {
-		// FIXME - was query.getQuery(), this may not be correct
-		getTerms(query, terms, prohibited);
-	}
-
-	/**
-	 * Extracts the term of a given Term. The term will be returned in lower-case.
-	 *
-	 * @param term Term to extract term from
-	 * @return the Term's term text
-	 */
-	private final static String getTermsFromTerm(Term term) {
-		return term.text().toLowerCase();
-	}
-
-	/**
-	 * Extracts all term texts of a given TermQuery. Term texts will be returned in lower-case.
-	 *
-	 * @param query TermQuery to extract term texts from
-	 * @param terms HashSet where extracted term texts should be put into (Elements: String)
-	 */
-	private final static void getTermsFromTermQuery(TermQuery query, HashSet terms) {
-		terms.add(getTermsFromTerm(query.getTerm()));
-	}
-
-	/**
-	 * TODO: Document this method.
-	 *
-	 * @param term TODO: Document this parameter.
-	 * @return TODO: Document the result.
-	 */
-	public static String highlightTerm(String term) {
-		return "<B style=\"color:black;background-color:#ffff66\">" + term + "</B>";
-	}
-
-	/**
-	 * Highlights a text in accordance to a given query.
-	 *
-	 * @param text text to highlight terms in
-	 * @param highlighter TermHighlighter to use to highlight terms in the text
-	 * @param query Query which contains the terms to be highlighted in the text
-	 * @param analyzer Analyzer used to construct the Query
-	 * @return highlighted text
-	 * @exception IOException TODO: Document this exception.
-	 */
-	public final static String highlightTerms(String text, TermHighlighter highlighter, Query query, Analyzer analyzer) throws IOException {
-		StringBuffer newText = new StringBuffer();
-		TokenStream stream = null;
-		try {
-			HashSet terms = new HashSet();
-			org.apache.lucene.analysis.Token token;
-			String tokenText;
-			int startOffset;
-			int endOffset;
-			int lastEndOffset = 0;
-			// get terms in query
-			getTerms(query, terms, false);
-			boolean foundBodyStart = false;
-			stream = analyzer.tokenStream(null, new StringReader(text));
-			while ((token = stream.next()) != null) {
-				if (!token.termText().equalsIgnoreCase("body") && !foundBodyStart) {
-					continue;
-				} else {
-					if (!foundBodyStart) {
-						token = stream.next();
-					}
-					foundBodyStart = true;
-				}
-				startOffset = token.startOffset();
-				endOffset = token.endOffset();
-				tokenText = text.substring(startOffset, endOffset);
-				// append text between end of last token (or beginning of text) and start of current token
-				if (startOffset > lastEndOffset) {
-					newText.append(text.substring(lastEndOffset, startOffset));
-				}
-				// does query contain current token?
-				if (terms.contains(token.termText())) {
-					newText.append(highlightTerm(tokenText));
-				} else {
-					newText.append(tokenText);
-				}
-				lastEndOffset = endOffset;
-			}
-			// append text after end of last token
-			if (lastEndOffset < text.length()) {
-				newText.append(text.substring(lastEndOffset));
-			}
-			return newText.toString();
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (Exception e) {
-				}
 			}
 		}
 	}
