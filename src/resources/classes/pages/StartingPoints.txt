@@ -7,8 +7,6 @@ Some potentially useful functions:
 * [[Special:Search|Search]] - search the Wiki
 * [[Special:Account|Register]] - create an account so that edits are propertly credited
 * [[Special:AllTopics|All Topics]] - a list of all the topics in the Wiki
-* [[Special:OrphanedTopics|Orphaned Topics]] - topics that have no links from any other topics, use with caution on a big Wiki
-* [[Special:ToDoTopics|To Do Topics]] - dangling topic links waiting for someone to write about them
 
 There are also several [[AdminOnlyTopics]] including:
 

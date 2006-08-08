@@ -3,8 +3,6 @@
 * [[Special:Search|Search]]
 ----
 * [[Special:AllTopics|All Topics]]
-* [[Special:OrphanedTopics|Orphaned Topics]]
-* [[Special:ToDoTopics|To Do Topics]]
 * [[Special:Upload|Upload File]]
 * [[AdminOnlyTopics]]
 ----
