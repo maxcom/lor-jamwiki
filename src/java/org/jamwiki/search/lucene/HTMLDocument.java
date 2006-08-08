@@ -1,5 +1,3 @@
-package org.jamwiki.search.lucene;
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -53,6 +51,7 @@ package org.jamwiki.search.lucene;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.jamwiki.search.lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,87 +66,76 @@ import org.apache.lucene.document.Field.Store;
  *
  */
 public class HTMLDocument {
-  /**
-   * TODO: Document this field.
-   */
-  static char dirSep = System.getProperty("file.separator").charAt(0);
 
-  /**
-   *Creates a new HTMLDocument.
-   */
-  private HTMLDocument() {
-  }
+	static char dirSep = System.getProperty("file.separator").charAt(0);
 
-  /**
-   * TODO: Document this method.
-   *
-   * @param f TODO: Document this parameter.
-   * @return TODO: Document the result.
-   * @exception IOException TODO: Document this exception.
-   * @exception InterruptedException TODO: Document this exception.
-   */
-  public static Document Document(File f)
-	  throws IOException, InterruptedException {
-	// make a new, empty document
-	Document doc = new Document();
+	/**
+	 * Creates a new HTMLDocument.
+	 */
+	private HTMLDocument() {
+	}
 
-	// Add the url as a field named "url".  Use an UnIndexed field, so
-	// that the url is just stored with the document, but is not searchable.
-	doc.add(new Field("url", f.getPath().replace(dirSep, '/'), Store.YES, Index.NO));
+	/**
+	 * TODO: Document this method.
+	 *
+	 * @param f TODO: Document this parameter.
+	 * @return TODO: Document the result.
+	 * @exception IOException TODO: Document this exception.
+	 * @exception InterruptedException TODO: Document this exception.
+	 */
+	public static Document Document(File f) throws IOException, InterruptedException {
+		// make a new, empty document
+		Document doc = new Document();
+		// Add the url as a field named "url".  Use an UnIndexed field, so
+		// that the url is just stored with the document, but is not searchable.
+		doc.add(new Field("url", f.getPath().replace(dirSep, '/'), Store.YES, Index.NO));
+		// Add the last modified date of the file a field named "modified".  Use a
+		// Keyword field, so that it's searchable, but so that no attempt is made
+		// to tokenize the field into words.
+		doc.add(new Field("modified", DateTools.timeToString(f.lastModified(), Resolution.SECOND), Store.YES, Index.UN_TOKENIZED));
+		// Add the uid as a field, so that index can be incrementally maintained.
+		// This field is not stored with document, it is indexed, but it is not
+		// tokenized prior to indexing.
+		doc.add(new Field("uid", uid(f), Store.NO, Index.NO));
+		HTMLParser parser = new HTMLParser(f);
+		// Add the tag-stripped contents as a Reader-valued Text field so it will
+		// get tokenized and indexed.
+		doc.add(new Field("contents", parser.getReader()));
+		// Add the summary as an UnIndexed field, so that it is stored and returned
+		// with hit documents for display.
+		doc.add(new Field("summary", parser.getSummary(), Store.NO, Index.NO));
+		// Add the title as a separate Text field, so that it can be searched
+		// separately.
+		doc.add(new Field("title", parser.getTitle(), Store.YES, Index.UN_TOKENIZED));
+		// return the document
+		return doc;
+	}
 
-	// Add the last modified date of the file a field named "modified".  Use a
-	// Keyword field, so that it's searchable, but so that no attempt is made
-	// to tokenize the field into words.
-	doc.add(new Field("modified", DateTools.timeToString(f.lastModified(), Resolution.SECOND), Store.YES, Index.UN_TOKENIZED));
+	/**
+	 * TODO: Document this method.
+	 *
+	 * @param f TODO: Document this parameter.
+	 * @return TODO: Document the result.
+	 */
+	public static String uid(File f) {
+		// Append path and date into a string in such a way that lexicographic
+		// sorting gives the same results as a walk of the file hierarchy.  Thus
+		// null (\u0000) is used both to separate directory components and to
+		// separate the path from the date.
+		return f.getPath().replace(dirSep, '\u0000') + "\u0000" + DateTools.timeToString(f.lastModified(), Resolution.SECOND);
+	}
 
-	// Add the uid as a field, so that index can be incrementally maintained.
-	// This field is not stored with document, it is indexed, but it is not
-	// tokenized prior to indexing.
-	doc.add(new Field("uid", uid(f), Store.NO, Index.NO));
-
-	HTMLParser parser = new HTMLParser(f);
-
-	// Add the tag-stripped contents as a Reader-valued Text field so it will
-	// get tokenized and indexed.
-	doc.add(new Field("contents", parser.getReader()));
-
-	// Add the summary as an UnIndexed field, so that it is stored and returned
-	// with hit documents for display.
-	doc.add(new Field("summary", parser.getSummary(), Store.NO, Index.NO));
-
-	// Add the title as a separate Text field, so that it can be searched
-	// separately.
-	doc.add(new Field("title", parser.getTitle(), Store.YES, Index.UN_TOKENIZED));
-
-	// return the document
-	return doc;
-  }
-
-  /**
-   * TODO: Document this method.
-   *
-   * @param f TODO: Document this parameter.
-   * @return TODO: Document the result.
-   */
-  public static String uid(File f) {
-	// Append path and date into a string in such a way that lexicographic
-	// sorting gives the same results as a walk of the file hierarchy.  Thus
-	// null (\u0000) is used both to separate directory components and to
-	// separate the path from the date.
-	return f.getPath().replace(dirSep, '\u0000') + "\u0000" + DateTools.timeToString(f.lastModified(), Resolution.SECOND);
-  }
-
-  /**
-   * TODO: Document this method.
-   *
-   * @param uid TODO: Document this parameter.
-   * @return TODO: Document the result.
-   */
-  public static String uid2url(String uid) {
-	String url = uid.replace('\u0000', '/');
-	// replace nulls with slashes
-	return url.substring(0, url.lastIndexOf('/'));
-	// remove date from end
-  }
+	/**
+	 * TODO: Document this method.
+	 *
+	 * @param uid TODO: Document this parameter.
+	 * @return TODO: Document the result.
+	 */
+	public static String uid2url(String uid) {
+		String url = uid.replace('\u0000', '/');
+		// replace nulls with slashes
+		return url.substring(0, url.lastIndexOf('/'));
+		// remove date from end
+	}
 }
 

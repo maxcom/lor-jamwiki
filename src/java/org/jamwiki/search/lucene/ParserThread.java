@@ -1,5 +1,3 @@
-package org.jamwiki.search.lucene;
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -53,6 +51,7 @@ package org.jamwiki.search.lucene;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.jamwiki.search.lucene;
 
 import java.io.IOException;
 
@@ -60,47 +59,41 @@ import java.io.IOException;
  *
  */
 class ParserThread extends Thread {
-  /**
-   * TODO: Document this field.
-   */
-  HTMLParser parser;
 
-  /**
-   *Creates a new ParserThread.
-   *
-   * @param p TODO: Document this parameter.
-   */
-  ParserThread(HTMLParser p) {
-	parser = p;
-  }
+	HTMLParser parser;
 
-  /**
-   * Runs this class.
-   */
-  public void run() {
-	// convert pipeOut to pipeIn
-	try {
-	  try {
-		// parse document to pipeOut
-		parser.HTMLDocument();
-	  }
-	  catch (ParseException e) {
-		System.out.println("Parse Aborted: " + e.getMessage());
-	  }
-	  catch (TokenMgrError e) {
-		System.out.println("Parse Aborted: " + e.getMessage());
-	  }
-	  finally {
-		parser.pipeOut.close();
-		synchronized (parser) {
-		  parser.summary.setLength(HTMLParser.SUMMARY_LENGTH);
-		  parser.titleComplete = true;
-		  parser.notifyAll();
+	/**
+	 *Creates a new ParserThread.
+	 *
+	 * @param p TODO: Document this parameter.
+	 */
+	ParserThread(HTMLParser p) {
+		parser = p;
+	}
+
+	/**
+	 * Runs this class.
+	 */
+	public void run() {
+		// convert pipeOut to pipeIn
+		try {
+			try {
+				// parse document to pipeOut
+				parser.HTMLDocument();
+			} catch (ParseException e) {
+				System.out.println("Parse Aborted: " + e.getMessage());
+			} catch (TokenMgrError e) {
+				System.out.println("Parse Aborted: " + e.getMessage());
+			} finally {
+				parser.pipeOut.close();
+				synchronized (parser) {
+					parser.summary.setLength(HTMLParser.SUMMARY_LENGTH);
+					parser.titleComplete = true;
+					parser.notifyAll();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-	  }
 	}
-	catch (IOException e) {
-	  e.printStackTrace();
-	}
-  }
 }

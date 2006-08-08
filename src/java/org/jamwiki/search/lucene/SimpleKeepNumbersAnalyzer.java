@@ -1,10 +1,3 @@
-/*
- * Original from: lucene source code package
- * Changes as described in http://www.geocrawler.com/archives/3/2624/2000/11/0/4746798/
- */
-
-package org.jamwiki.search.lucene;
-
 /* ====================================================================
  * The Apache Software License, Version 1.1
  *
@@ -57,17 +50,26 @@ package org.jamwiki.search.lucene;
  * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
+ *
+ * Original from: lucene source code package
+ * Changes as described in http://www.geocrawler.com/archives/3/2624/2000/11/0/4746798/
  */
 
-import java.io.Reader;
+package org.jamwiki.search.lucene;
 
+import java.io.Reader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 
-/** An Analyzer that filters LetterTokenizer with LowerCaseFilter. */
-
+/**
+ * An Analyzer that filters LetterTokenizer with LowerCaseFilter.
+ */
 public final class SimpleKeepNumbersAnalyzer extends Analyzer {
-  public final TokenStream tokenStream(String fieldName, Reader reader) {
-	return new LowerCaseKeepNumbersTokenizer(reader);
-  }
+
+	/**
+	 *
+	 */
+	public final TokenStream tokenStream(String fieldName, Reader reader) {
+		return new LowerCaseKeepNumbersTokenizer(reader);
+	}
 }
