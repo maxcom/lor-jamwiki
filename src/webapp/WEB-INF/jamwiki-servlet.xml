@@ -9,7 +9,7 @@
 				<prop key="/**/Special:AllTopics">Topic</prop>
 				<prop key="/**/Special:Contributions">Contributions</prop>
 				<prop key="/**/Special:Convert">Admin</prop>
-				<prop key="/**/Special:Delete">Admin</prop>
+				<prop key="/**/Special:Delete">Delete</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Edit">Edit</prop>
 				<prop key="/**/Special:Export">Export</prop>
@@ -36,6 +36,7 @@
 
 	<bean id="Admin" class="org.jamwiki.servlets.AdminServlet" />
 	<bean id="Contributions" class="org.jamwiki.servlets.ContributionsServlet" />
+	<bean id="Delete" class="org.jamwiki.servlets.DeleteServlet" />
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
 	<bean id="Export" class="org.jamwiki.servlets.ExportServlet" />

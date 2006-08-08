@@ -162,6 +162,14 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected void deleteRecentChanges(Topic topic, Object params[]) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.deleteRecentChanges(topic.getTopicId(), conn);
+	}
+
+	/**
+	 *
+	 */
 	public List getAllTopicNames(String virtualWiki) throws Exception {
 		List all = new ArrayList();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);

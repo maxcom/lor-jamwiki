@@ -73,6 +73,13 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public boolean getDelete() {
+		return this.editType == TopicVersion.EDIT_DELETE;
+	}
+
+	/**
+	 *
+	 */
 	public String getEditComment() {
 		return this.editComment;
 	}

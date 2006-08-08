@@ -62,8 +62,6 @@ public class AdminServlet extends JAMWikiServlet {
 				String redirect = "Special:Admin";
 				if (isTopic(request, "Special:Convert")) {
 					redirect = "Special:Convert";
-				} else if (isTopic(request, "Special:Delete")) {
-					redirect = "Special:Delete";
 				}
 				next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));
 				viewLogin(request, next, redirect);
@@ -77,15 +75,6 @@ public class AdminServlet extends JAMWikiServlet {
 					convertToDatabase(request, next);
 				} else {
 					convertView(request, next);
-				}
-				loadDefaults(request, next, this.pageInfo);
-				return next;
-			}
-			if (isTopic(request, "Special:Delete")) {
-				if (StringUtils.hasText(request.getParameter("delete"))) {
-					delete(request, next);
-				} else {
-					deleteView(request, next);
 				}
 				loadDefaults(request, next, this.pageInfo);
 				return next;
@@ -190,44 +179,6 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
 		this.pageInfo.setAdmin(true);
 		this.pageInfo.setPageTitle(new WikiMessage("convert.title"));
-	}
-
-	/**
-	 *
-	 */
-	private void delete(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setTopicName(topicName);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
-		try {
-			if (topicName == null) {
-				next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
-				return;
-			}
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-			WikiBase.getHandler().deleteTopic(topic);
-			next.addObject("message", new WikiMessage("delete.success", topicName));
-		} catch (Exception e) {
-			logger.error("Failure while deleting topic " + topicName, e);
-			next.addObject("errorMessage", new WikiMessage("delete.failure", topicName, e.getMessage()));
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void deleteView(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		if (topicName == null) {
-			next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
-		}
-		this.pageInfo.setTopicName(topicName);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
-		this.pageInfo.setSpecial(true);
 	}
 
 	/**

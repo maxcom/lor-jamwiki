@@ -65,8 +65,9 @@ if (request.getParameter("num") != null) {
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
 	&#160;
 	<jamwiki:link value="${change.topicName}" text="${change.topicName}" />
-	<%-- FIXME: need a better way to denote minor edits --%>
+	<%-- FIXME: need a better way to denote minor edits & deletions --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
+	<c:if test="${change.delete}">&#160;<b>d</b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </c:forEach>
 </ul>

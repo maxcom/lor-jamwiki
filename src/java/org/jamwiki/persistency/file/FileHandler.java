@@ -240,8 +240,23 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic) throws Exception {
-		super.deleteTopic(topic);
+	protected void deleteRecentChanges(Topic topic, Object params[]) throws Exception {
+		List topicVersions = this.getAllTopicVersions(topic.getVirtualWiki(), topic.getName(), false);
+		for (Iterator topicVersionIterator = topicVersions.iterator(); topicVersionIterator.hasNext();) {
+			TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
+			String filename = recentChangeFilename(topicVersion.getTopicVersionId());
+			File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
+			if (!file.delete()) {
+				logger.error("Unable to delete recent change file " + file.getAbsolutePath());
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+		super.deleteTopic(topic, topicVersion);
 		String filename = topicFilename(topic.getName());
 		// move file from topic directory to delete directory
 		File oldFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);

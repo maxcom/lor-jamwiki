@@ -89,8 +89,9 @@ function inactive(element) {
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
-	<%-- FIXME: need a better way to denote minor edits --%>
+	<%-- FIXME: need a better way to denote minor edits & deletions --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
+	<c:if test="${change.delete}">&#160;<b>d</b></c:if>
 	<c:if test="${!empty change.editComment}">
 	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<i><c:out value="${change.editComment}" /></i>)</label>
 	</c:if>

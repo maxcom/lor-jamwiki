@@ -38,6 +38,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public void deleteRecentChanges(int topicId, Connection conn) throws Exception;
+
+	/**
+	 *
+	 */
 	public void dropTables(Connection conn);
 
 	/**

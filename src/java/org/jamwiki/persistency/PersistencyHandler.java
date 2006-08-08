@@ -259,13 +259,19 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic) throws Exception {
+	protected abstract void deleteRecentChanges(Topic topic, Object params[]) throws Exception;
+
+	/**
+	 *
+	 */
+	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
-			topic.setDeleted(true);
-			// update recent changes
-			updateTopic(topic, params);
+			// delete old recent changes
+			deleteRecentChanges(topic, params);
+			// update topic to indicate deleted, add delete topic version
+			writeTopic(topic, topicVersion, params);
 			// reset topic existence vector
 			cachedTopicsList = new Vector();
 		} catch (Exception e) {

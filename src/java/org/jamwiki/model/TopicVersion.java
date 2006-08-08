@@ -28,6 +28,7 @@ public class TopicVersion {
 	public static final int EDIT_MINOR = 2;
 	public static final int EDIT_REVERT = 3;
 	public static final int EDIT_MOVE = 4;
+	public static final int EDIT_DELETE = 5;
 	private Integer authorId = null;
 	private String authorIpAddress = null;
 	private String editComment = null;
