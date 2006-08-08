@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
@@ -56,7 +57,6 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.search.lucene.HTMLParser;
 import org.jamwiki.search.lucene.LuceneTools;
-import org.jamwiki.search.lucene.SimpleKeepNumbersAnalyzer;
 import org.springframework.util.StringUtils;
 
 /*
@@ -121,7 +121,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 * @return A collection of SearchResultEntry, containing the search results
 	 */
 	public Collection findMultiple(String virtualWiki, String text, boolean fuzzy) {
-		return doSearch(virtualWiki, text, true, true);
+		return doSearch(virtualWiki, text);
 	}
 
 	/**
@@ -233,41 +233,33 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 *
 	 * @param virtualWiki The virtual wiki to use
 	 * @param text The text to find
-	 * @param caseInsensitiveSearch true, if case does not matter in search, false otherwise
 	 *
 	 * @return A collection of SearchResultEntry, containing the search results
 	 */
-	protected Collection doSearch(String virtualWiki, String text, boolean caseInsensitiveSearch, boolean doTextBeforeAndAfterParsing) {
+	protected Collection doSearch(String virtualWiki, String text) {
 		if (indexPath == null) {
 			return Collections.EMPTY_LIST;
 		}
 		String indexFilename = getSearchIndexPath(virtualWiki);
-		Analyzer analyzer = new SimpleKeepNumbersAnalyzer();
+		Analyzer analyzer = new StandardAnalyzer();
 		Collection result = new ArrayList();
 		logger.debug("search text: " + text);
 		try {
 			BooleanQuery query = new BooleanQuery();
 			QueryParser qp;
-			if (caseInsensitiveSearch) {
-				qp = new QueryParser(ITYPE_TOPIC, analyzer);
-				query.add(qp.parse(text), Occur.SHOULD);
-				qp = new QueryParser(ITYPE_CONTENT, analyzer);
-				query.add(qp.parse(text), Occur.SHOULD);
-			} else {
-				qp = new QueryParser(ITYPE_TOPIC, analyzer);
-				query.add(qp.parse("\"" + text + "\""), Occur.SHOULD);
-				qp = new QueryParser(ITYPE_CONTENT, analyzer);
-				query.add(qp.parse("\"" + text + "\""), Occur.SHOULD);
-			}
+			qp = new QueryParser(ITYPE_TOPIC, analyzer);
+			query.add(qp.parse(text), Occur.SHOULD);
+			qp = new QueryParser(ITYPE_CONTENT, analyzer);
+			query.add(qp.parse(text), Occur.SHOULD);
 			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// actually perform the search
 			Hits hits = searcher.search(query);
-			result = processHits(hits, text, caseInsensitiveSearch, query, doTextBeforeAndAfterParsing);
+			result = processHits(hits, text, query);
 		} catch (IOException e) {
 			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index");
 			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
-			logger.fatal("Excpetion while searching for " + text, e);
+			logger.fatal("Exception while searching for " + text, e);
 		}
 		return result;
 	}
@@ -275,84 +267,66 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/**
 	 *
 	 */
-	protected Collection processHits(Hits hits, String text, boolean caseInsensitiveSearch, BooleanQuery query, boolean doTextBeforeAndAfterParsing) throws Exception {
+	protected Collection processHits(Hits hits, String text, BooleanQuery query) throws Exception {
 		Collection result = new ArrayList();
 		for (int i = 0; i < hits.length(); i++) {
 			SearchResultEntry entry = new SearchResultEntry();
 			entry.setTopic(hits.doc(i).get(ITYPE_TOPIC_PLAIN));
 			entry.setRanking(hits.score(i));
-			boolean canBeAdded = true;
 			boolean found = false;
-			if (doTextBeforeAndAfterParsing) {
-				String content = hits.doc(i).get(ITYPE_CONTENT_PLAIN);
-				if (content != null) {
-					if (!caseInsensitiveSearch) {
-						if (content.indexOf(text) != -1) {
-							found = true;
-						}
-					} else {
-						if (content.toLowerCase().indexOf(text.toLowerCase()) != -1) {
-							found = true;
-						}
-						if (!found) {
-							HashSet terms = new HashSet();
-							LuceneTools.getTerms(query, terms, false);
-							Token token;
-							TokenStream stream = new SimpleKeepNumbersAnalyzer().tokenStream(ITYPE_CONTENT,
-								new java.io.StringReader(content));
-							while ((token = stream.next()) != null) {
-								// does query contain current token?
-								if (terms.contains(token.termText())) {
-									found = true;
-								}
-							}
-						}
-						if (!found) {
-							// we had a keyword hit
-							int firstword = LuceneTools.findAfter(content, 1, 0);
-							if (firstword == -1) {
-								firstword = 0;
-							}
-							entry.setTextBefore("");
-							entry.setFoundWord(content.substring(0, firstword));
-							if ((firstword + 1) < content.length()) {
-								firstword++;
-							}
-							int lastword = LuceneTools.findAfter(content, 1, 19);
-							if (lastword < 0) {
-								lastword = content.length();
-							}
-							if (firstword < 0) {
-								firstword = 0;
-							}
-							entry.setTextAfter(content.substring(Math.min(firstword, lastword), Math.max(firstword, lastword)) + " ...");
-						} else {
-							// we had a regular hit
-							String[] tempresult = LuceneTools.outputHits(hits.doc(i).get(ITYPE_CONTENT_PLAIN),
-								query,
-								new Analyzer[] {
-									new SimpleKeepNumbersAnalyzer(),
-									new SimpleKeepNumbersAnalyzer()
-								}
-							);
-							entry.setTextBefore("... " + tempresult[0]);
-							entry.setTextAfter(tempresult[2] + " ...");
-							entry.setFoundWord(tempresult[1]);
-						}
+			String content = hits.doc(i).get(ITYPE_CONTENT_PLAIN);
+			if (content == null) {
+				logger.error("Null search result returned");
+				continue;
+			}
+			if (content.toLowerCase().indexOf(text.toLowerCase()) != -1) {
+				found = true;
+			}
+			if (!found) {
+				HashSet terms = new HashSet();
+				LuceneTools.getTerms(query, terms, false);
+				Token token;
+				TokenStream stream = new StandardAnalyzer().tokenStream(ITYPE_CONTENT, new java.io.StringReader(content));
+				while ((token = stream.next()) != null) {
+					// does query contain current token?
+					if (terms.contains(token.termText())) {
+						found = true;
 					}
 				}
-				if (!caseInsensitiveSearch && !found) {
-					canBeAdded = false;
+			}
+			if (!found) {
+				// we had a keyword hit
+				int firstword = LuceneTools.findAfter(content, 1, 0);
+				if (firstword == -1) {
+					firstword = 0;
 				}
-			} else {
-				canBeAdded = true;
 				entry.setTextBefore("");
-				entry.setTextAfter("");
-				entry.setFoundWord(entry.getTopic());
+				entry.setFoundWord(content.substring(0, firstword));
+				if ((firstword + 1) < content.length()) {
+					firstword++;
+				}
+				int lastword = LuceneTools.findAfter(content, 1, 19);
+				if (lastword < 0) {
+					lastword = content.length();
+				}
+				if (firstword < 0) {
+					firstword = 0;
+				}
+				entry.setTextAfter(content.substring(Math.min(firstword, lastword), Math.max(firstword, lastword)) + " ...");
+			} else {
+				// we had a regular hit
+				String[] tempresult = LuceneTools.outputHits(hits.doc(i).get(ITYPE_CONTENT_PLAIN),
+					query,
+					new Analyzer[] {
+						new StandardAnalyzer(),
+						new StandardAnalyzer()
+					}
+				);
+				entry.setTextBefore("... " + tempresult[0]);
+				entry.setTextAfter(tempresult[2] + " ...");
+				entry.setFoundWord(tempresult[1]);
 			}
-			if (canBeAdded) {
-				result.add(entry);
-			}
+			result.add(entry);
 		}
 		return result;
 	}
@@ -389,7 +363,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			reader.close();
 			directory.close();
 			// add new document
-			IndexWriter writer = new IndexWriter(directory, new SimpleKeepNumbersAnalyzer(), false);
+			IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(), false);
 			writer.optimize();
 			Document doc = createDocument(virtualWiki, topic);
 			try {
@@ -447,7 +421,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			do {
 				// initially create index in ram
 				RAMDirectory ram = new RAMDirectory();
-				Analyzer analyzer = new SimpleKeepNumbersAnalyzer();
+				Analyzer analyzer = new StandardAnalyzer();
 				IndexWriter writer = new IndexWriter(ram, analyzer, true);
 				try {
 					Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
