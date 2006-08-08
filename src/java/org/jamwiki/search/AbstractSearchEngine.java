@@ -112,64 +112,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	}
 
 	/**
-	 * Find topics that contain the given term.
-	 * Note: Use this method ONLY to search for topics!
-	 *
-	 * @param virtualWiki The virtual wiki to use
-	 * @param text The text to find
-	 * @param fuzzy true, if fuzzy search should be used, false otherwise
-	 *
-	 * @return A collection of SearchResultEntry, containing the search results
-	 */
-	public Collection find(String virtualWiki, String text, boolean doTextBeforeAndAfterParsing) {
-		return doSearch(virtualWiki, text, false, doTextBeforeAndAfterParsing);
-	}
-
-	/**
-	 * Find topics that contain a link to the given topic name
-	 * @param virtualWiki the virtual wiki to look in
-	 * @param topicName the topic being searched for
-	 * @return A collection of SearchResultEntry, containing the search results
-	 */
-	public Collection findLinkedTo(String virtualWiki, String topicName) throws Exception {
-		// create a set to hold the valid back linked topics
-		Set results = new HashSet();
-		// find all topics that actually mention the name of the topic in the text somewhere
-		Collection all = doSearch(virtualWiki, topicName, false, false);
-		// iterate the results from the general search
-		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
-			SearchResultEntry searchResultEntry = (SearchResultEntry) iterator.next();
-			// the topic where the hit was is the topic that will potentially contain a link back to our topicName
-			String topicFoundIn = searchResultEntry.getTopic();
-			if (!topicName.equalsIgnoreCase(topicFoundIn)) {
-				logger.debug("checking links in topic " + topicFoundIn + " to " + topicName);
-				// read the raw content of the topic the hit was in
-				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-				String topicContents = (topic == null) ? "" : topic.getTopicContent();
-				StringReader reader = new StringReader(topicContents);
-				BackLinkLex backLinkLex = new BackLinkLex(reader);
-				// lex the whole file with a back link lexer that simply catalogues all the valid intrawiki links
-				while (backLinkLex.yylex() != null) ;
-				reader.close();
-				// get the intrawiki links
-				List backLinks = backLinkLex.getLinks();
-				logger.debug("links: " + backLinks);
-				if (Utilities.containsStringIgnoreCase(backLinks, topicName)) {
-					// only add the topic if there is an actual link
-					results.add(searchResultEntry);
-					logger.debug("'" + topicFoundIn + "' does contain a link to '" + topicName + "'");
-				} else {
-					logger.debug("'" + topicFoundIn + "' contains no link to '" + topicName + "'");
-				}
-			} else {
-				// the topic itself does not count as a back link
-				logger.debug("the topic itself is not a back link");
-			}
-		}
-		return results;
-	}
-
-	/**
 	 * Find topics that contain any of the space delimited terms.
 	 * Note: Use this method for full text search.
 	 *

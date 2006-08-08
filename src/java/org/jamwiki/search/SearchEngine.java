@@ -38,16 +38,6 @@ public interface SearchEngine {
 	public void refreshIndex() throws Exception;
 
 	/**
-	 * Find topics that contain the given term
-	 */
-	public Collection find(String virtualWiki, String text, boolean doTextBeforeAfterParse) throws Exception;
-
-	/**
-	 * Find topics that contain the given term
-	 */
-	public Collection findLinkedTo(String virtualWiki, String topicName) throws Exception;
-
-	/**
 	 * Find topics that contain any of the space delimited terms
 	 */
 	public Collection findMultiple(String virtualWiki, String text, boolean fuzzy) throws Exception;
