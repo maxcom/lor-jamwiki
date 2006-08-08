@@ -1,6 +1,4 @@
-/**
- *     Blue theme
- */
+/* blue theme */
 
 /* defaults */
 
@@ -414,7 +412,7 @@ li.standardchange {
 }
 
 li.deletechange {
-	color: #880000;
+	color: #770000;
 }
 
 li.movechange {
