@@ -64,7 +64,8 @@ if (request.getParameter("num") != null) {
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
 	&#160;
-	<jamwiki:link value="${change.topicName}" text="${change.topicName}" />
+	<c:if test="${!change.delete}"><jamwiki:link value="${change.topicName}" text="${change.topicName}" /></c:if>
+	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
