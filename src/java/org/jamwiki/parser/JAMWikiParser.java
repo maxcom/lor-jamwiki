@@ -18,6 +18,7 @@ package org.jamwiki.parser;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -53,6 +54,22 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
+	 *
+	 */
+	public Collection parseForSearch(String rawtext, String topicName) throws Exception {
+		long start = System.currentTimeMillis();
+		// some parser expressions require that lines end in a newline, so add a newline
+		// to the end of the content for good measure
+		rawtext += '\n';
+		Reader raw = new StringReader(rawtext.toString());
+		JAMWikiSearchIndexer lexer = new JAMWikiSearchIndexer(raw);
+		lexer.setParserInfo(this.parserInfo);
+		this.lex(lexer);
+		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		return lexer.getTopicLinks();
+	}
+
+	/**
 	 * Parse text for online display.
 	 */
 	public String parseHTML(String rawtext, String topicName) throws Exception {
@@ -79,7 +96,7 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	private StringBuffer parsePreProcess(Reader raw) throws Exception {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
-		lexer.setParserInfo(parserInfo);
+		lexer.setParserInfo(this.parserInfo);
 		return this.lex(lexer);
 	}
 
@@ -93,7 +110,7 @@ public class JAMWikiParser extends AbstractParser {
 	public String parsePreSave(String contents) throws Exception {
 		StringReader raw = new StringReader(contents);
 		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
-		lexer.setParserInfo(parserInfo);
+		lexer.setParserInfo(this.parserInfo);
 		return this.lex(lexer).toString();
 	}
 
@@ -102,7 +119,7 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	private StringBuffer parsePostProcess(Reader raw) throws Exception {
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(raw);
-		lexer.setParserInfo(parserInfo);
+		lexer.setParserInfo(this.parserInfo);
 		return this.lex(lexer);
 	}
 
@@ -114,7 +131,7 @@ public class JAMWikiParser extends AbstractParser {
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
-		lexer.setParserInfo(parserInfo);
+		lexer.setParserInfo(this.parserInfo);
 		lexer.setTargetSection(targetSection);
 		contents = this.lex(lexer);
 		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
@@ -129,7 +146,7 @@ public class JAMWikiParser extends AbstractParser {
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
-		lexer.setParserInfo(parserInfo);
+		lexer.setParserInfo(this.parserInfo);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		contents = this.lex(lexer);

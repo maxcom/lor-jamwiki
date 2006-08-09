@@ -17,6 +17,7 @@
 package org.jamwiki.parser;
 
 import java.io.Reader;
+import java.util.Collection;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -49,6 +50,11 @@ public abstract class AbstractParser {
 	public ParserInfo getParserInfo() {
 		return parserInfo;
 	}
+
+	/**
+	 *
+	 */
+	public abstract Collection parseForSearch(String rawtext, String topicName) throws Exception;
 
 	/**
 	 * Returns a HTML representation of the given wiki raw text for online representation.

@@ -82,6 +82,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	protected static final String ITYPE_CONTENT_PLAIN = "content_plain";
 	/** Index type "topic plain" */
 	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
+	/** Index type "topic plain" */
+	protected static final String ITYPE_TOPIC_LINK = "topic_link";
 	/** File separator */
 	protected static String sep = System.getProperty("file.separator");
 	/** Temp directory - where to store the indexes (initialized via getInstance method) */
@@ -423,17 +425,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) topicContent = "";
 		StringBuffer contents = new StringBuffer(topicContent);
-//		// find links
-//		List links = new ArrayList();
-//		List linksNonsecure = extractByKeyword(contents, "http://", false);
-//		for (Iterator iter = linksNonsecure.iterator(); iter.hasNext();) {
-//			links.add("http://" + (String)iter.next());
-//		}
-//		List linksSecure = extractByKeyword(contents, "https://", false);
-//		for (Iterator iter = linksSecure.iterator(); iter.hasNext();) {
-//			links.add("https://" + (String)iter.next());
-//		}
-		// add remaining information
+		// add document information to search index
 		String fileName = getFilename(virtualWiki, topicName);
 		if (fileName != null) {
 			logger.debug("Indexing topic " + topicName + " in file " + fileName);
@@ -448,6 +440,10 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		}
 		doc.add(new Field(ITYPE_CONTENT, new StringReader(contents.toString())));
 		doc.add(new Field(ITYPE_CONTENT_PLAIN, contents.toString(), Store.YES, Index.NO));
+		Collection links = Utilities.parseForSearch(topicContent, topicName);
+		for (Iterator iter = links.iterator(); iter.hasNext();) {
+			doc.add(new Field(ITYPE_TOPIC_LINK, (String)iter.next(), Store.YES, Index.UN_TOKENIZED));
+		}
 		return doc;
 	}
 

@@ -362,6 +362,15 @@ public class Utilities {
 	/**
 	 *
 	 */
+	public static Collection parseForSearch(String topicContent, String topicName) throws Exception {
+		ParserInfo parserInfo = new ParserInfo();
+		AbstractParser parser = parserInstance(parserInfo);
+		return parser.parseForSearch(topicContent, topicName);
+	}
+
+	/**
+	 *
+	 */
 	private static AbstractParser parserInstance(ParserInfo parserInfo) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);

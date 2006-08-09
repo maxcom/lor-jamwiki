@@ -119,19 +119,19 @@ public class ParserUtil {
 	 */
 	protected static String buildInternalLinkUrl(String context, String virtualWiki, String raw) {
 		try {
-			if (raw == null || raw.length() <= 4) {
-				// no topic, display the raw text
+			String content = ParserUtil.extractLinkContent(raw);
+			if (!StringUtils.hasText(content)) {
+				// invalid link
 				return raw;
 			}
-			// strip the first and last brackets
-			String topic = raw.substring(2, raw.length() - 2).trim();
+			String topic = ParserUtil.extractLinkTopic(content);
 			if (!StringUtils.hasText(topic)) {
-				// empty brackets, no topic to display
+				// invalid topic
 				return raw;
 			}
 			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
-				return ParserUtil.parseImageLink(context, virtualWiki, topic);
+				return ParserUtil.parseImageLink(context, virtualWiki, content);
 			}
 			if (topic.startsWith(":") && StringUtils.countOccurrencesOf(topic, ":") >= 2) {
 				// see if this is a virtual wiki
@@ -146,13 +146,7 @@ public class ParserUtil {
 				// strip opening colon
 				topic = topic.substring(1);
 			}
-			// search for topic text ("|" followed by text)
-			String text = topic.trim();
-			int pos = topic.indexOf('|');
-			if (pos > 0) {
-				text = topic.substring(pos+1).trim();
-				topic = topic.substring(0, pos).trim();
-			}
+			String text = ParserUtil.extractLinkText(content);
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw);
@@ -200,6 +194,60 @@ public class ParserUtil {
 			// FIXME - return empty or a failure indicator?
 			return "";
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected static String extractLinkContent(String raw) {
+		if (raw == null || raw.length() <= 4 || !raw.startsWith("[[") || !raw.endsWith("]]")) {
+			logger.warn("ParserUtil.extractLinkContent called with invalid raw text: " + raw);
+			return null;
+		}
+		// strip the first and last brackets
+		String content = raw.substring(2, raw.length() - 2).trim();
+		if (!StringUtils.hasText(content)) {
+			// empty brackets, no topic to display
+			return null;
+		}
+		return content.trim();
+	}
+
+	/**
+	 *
+	 */
+	protected static String extractLinkText(String raw) {
+		if (raw == null) {
+			logger.warn("ParserUtil.extractLinkText called with invalid raw text: " + raw);
+			return null;
+		}
+		// search for topic text ("|" followed by text)
+		String text = raw;
+		int pos = text.indexOf('|');
+		if (pos > 0) {
+			text = text.substring(pos+1);
+		}
+		return text.trim();
+	}
+
+	/**
+	 *
+	 */
+	protected static String extractLinkTopic(String raw) {
+		if (raw == null) {
+			logger.warn("ParserUtil.extractLinkTopic called with invalid raw text: " + raw);
+			return null;
+		}
+		String topic = raw;
+		int pos = raw.indexOf("|");
+		if (pos == 0) {
+			// topic cannot start with "|"
+			return null;
+		}
+		if (pos != -1) {
+			topic = topic.substring(0, raw.indexOf('|'));
+		}
+		return topic.trim();
 	}
 
 	/**

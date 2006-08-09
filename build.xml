@@ -7,6 +7,7 @@
         <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreProcessor.java" />
         <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreSaveProcessor.java" />
         <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPostProcessor.java" />
+        <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiSearchIndexer.java" />
         <delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiSpliceProcessor.java" />
         <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiFormatLex.java" />
         <delete file="${dir.src.java}/org/jamwiki/parser/alt/VQWikiLayoutLex.java" />
@@ -33,6 +34,7 @@
         <jflex file="${dir.src.lex}/jamwiki-preprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/jamwiki-presaveprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/jamwiki-postprocessor.jflex" destdir="${dir.src.java}" />
+        <jflex file="${dir.src.lex}/jamwiki-searchindexer.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/jamwiki-spliceprocessor.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-format.jflex" destdir="${dir.src.java}" />
         <jflex file="${dir.src.lex}/alt/vqwiki-layout.jflex" destdir="${dir.src.java}" />
