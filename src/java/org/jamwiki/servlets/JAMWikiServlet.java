@@ -204,6 +204,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					parserInfo.setContext(request.getContextPath());
 					parserInfo.setLocale(request.getLocale());
 					parserInfo.setVirtualWiki(virtualWiki);
+					parserInfo.setTopicName(topicName);
 					content = Utilities.parse(parserInfo, content, topicName);
 				}
 				cachedContents.put(virtualWiki + "-" + topicName, content);
