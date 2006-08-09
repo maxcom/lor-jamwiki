@@ -417,7 +417,7 @@ tablecaption       = "|+"
 
 /* wiki links */
 wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
-protocol           = "http://" | "https://" | "mailto://" | "ftp://" | "file://"
+protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllink           = "[" ({protocol}) ([^\]\n\r]+) ~"]"
 htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 

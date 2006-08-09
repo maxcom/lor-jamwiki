@@ -263,6 +263,10 @@ public class ParserUtil {
 		link = StringUtils.replace(link, "'", "&apos;");
 		text = Utilities.escapeHTML(text);
 		String linkLower = link.toLowerCase();
+		if (linkLower.startsWith("mailto://")) {
+			// fix bad mailto syntax
+			link = "mailto:" + link.substring("mailto://".length());
+		}
 		if (linkLower.startsWith("http://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
@@ -275,7 +279,7 @@ public class ParserUtil {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
-		} else if (linkLower.startsWith("mailto://")) {
+		} else if (linkLower.startsWith("mailto:")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
 				 + link + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
