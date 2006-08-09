@@ -126,85 +126,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	}
 
 	/**
-	 * Provide the capability to highlight terms within a block of HTML.
-	 */
-	// FIXME - this code is really ugly and confusing...
-	public static String highlightHTML(String contents, String highlightparam) {
-		if (!StringUtils.hasText(highlightparam)) return contents;
-		String highlighttext = "<b style=\"color:black;background-color:#ffff66\">###</b>";
-		contents = markToReplaceOutsideHTML(contents, highlightparam);
-		for (int i = 0; i < highlightparam.length(); i++) {
-			String myhighlightparam = highlightparam.substring(0, i) + highlightparam.substring(i, i + 1).toUpperCase();
-			if ((i + 1) < highlightparam.length()) {
-				myhighlightparam += highlightparam.substring(i + 1);
-			}
-			String highlight = highlighttext;
-			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
-			contents = StringUtils.replace(contents, '\u0000' + myhighlightparam, highlight);
-			myhighlightparam = highlightparam.substring(0, i) + highlightparam.substring(i, i + 1).toLowerCase();
-			if ((i + 1) < highlightparam.length()) {
-				myhighlightparam += highlightparam.substring(i + 1);
-			}
-			highlight = highlighttext;
-			highlight = StringUtils.replace(highlight, "###", myhighlightparam);
-			contents = StringUtils.replace(contents, '\u0000' + myhighlightparam, highlight);
-		}
-		return contents;
-	}
-
-	/**
-	 * Mark all needles in a haystack, so that they can be replaced later. Take special care on HTML,
-	 * so that no needle is replaced inside a HTML tag.
-	 *
-	 * @param haystack The haystack to go through.
-	 * @param needle   The needle to search.
-	 * @return The haystack with all needles (outside HTML) marked with the char \u0000
-	 */
-	private static String markToReplaceOutsideHTML(String haystack, String needle) {
-		if (needle.length() == 0) {
-			return haystack;
-		}
-		StringBuffer sb = new StringBuffer();
-		boolean inHTMLmode = false;
-		int l = haystack.length();
-		for (int j = 0; j < l; j++) {
-			char c = haystack.charAt(j);
-			switch (c) {
-				case '<':
-					if (((j + 1) < l) && (haystack.charAt(j + 1) != ' ')) {
-						inHTMLmode = true;
-					}
-					break;
-				case '>':
-					if (inHTMLmode) {
-						inHTMLmode = false;
-					}
-					break;
-			}
-			if ((c == needle.charAt(0) || Math.abs(c - needle.charAt(0)) == 32) &&
-				!inHTMLmode) {
-				boolean ok = true;
-				if ((j + needle.length()) > l ||
-					!haystack.substring(j, j + needle.length()).equalsIgnoreCase(needle)) {
-					ok = false;
-				}
-				if (ok) {
-					sb.append('\u0000');
-					for (int k = 0; k < needle.length(); k++) {
-						sb.append(haystack.charAt(j + k));
-					}
-					j = j + needle.length() - 1;
-				} else {
-					sb.append(c);
-				}
-			} else {
-				sb.append(c);
-			}
-		}
-		return sb.toString();
-	}
-
-	/**
 	 * @param indexPath
 	 */
 	protected void initSearchEngine() throws Exception {
@@ -267,7 +188,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 				results.add(result);
 			}
 		} catch (IOException e) {
-			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index");
+			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index", e);
 			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + text, e);
@@ -281,7 +202,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	private String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
-		// Get 3 best fragments and seperate with a "..."
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
 		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
 			summary = Utilities.escapeHTML(content.substring(0, Math.min(200, content.length())));
@@ -503,18 +423,16 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) topicContent = "";
 		StringBuffer contents = new StringBuffer(topicContent);
-		// find attachments
-		List attachments = extractByKeyword(contents, "attach:", true);
-		// find links
-		List links = new ArrayList();
-		List linksNonsecure = extractByKeyword(contents, "http://", false);
-		for (Iterator iter = linksNonsecure.iterator(); iter.hasNext();) {
-			links.add("http://" + (String)iter.next());
-		}
-		List linksSecure = extractByKeyword(contents, "https://", false);
-		for (Iterator iter = linksSecure.iterator(); iter.hasNext();) {
-			links.add("https://" + (String)iter.next());
-		}
+//		// find links
+//		List links = new ArrayList();
+//		List linksNonsecure = extractByKeyword(contents, "http://", false);
+//		for (Iterator iter = linksNonsecure.iterator(); iter.hasNext();) {
+//			links.add("http://" + (String)iter.next());
+//		}
+//		List linksSecure = extractByKeyword(contents, "https://", false);
+//		for (Iterator iter = linksSecure.iterator(); iter.hasNext();) {
+//			links.add("https://" + (String)iter.next());
+//		}
 		// add remaining information
 		String fileName = getFilename(virtualWiki, topicName);
 		if (fileName != null) {
@@ -531,47 +449,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		doc.add(new Field(ITYPE_CONTENT, new StringReader(contents.toString())));
 		doc.add(new Field(ITYPE_CONTENT_PLAIN, contents.toString(), Store.YES, Index.NO));
 		return doc;
-	}
-
-	/**
-	 * Get a list of all keywords in a given text. The list returned contains all words
-	 * following the keyword. For example if the keyword is "attach:" all attachments
-	 * are returned.
-	 * @param contents The content to search
-	 * @param keyword  The keyword to search
-	 * @return A list of all words
-	 */
-	private ArrayList extractByKeyword(StringBuffer contents, String keyword, boolean possibleQuoted) {
-		ArrayList returnList = new ArrayList();
-		int attPos = contents.toString().indexOf(keyword);
-		while (attPos != -1) {
-			int endPos = attPos + keyword.length() + 1;
-			boolean beginQuote = contents.charAt(attPos + keyword.length()) == '\"';
-			while (endPos < contents.length()) {
-				// attach: can have quotes, so we need a special handling if there are
-				// begin and end quotes.
-				if (possibleQuoted && beginQuote) {
-					if (contents.charAt(endPos) == '\"' ||
-						contents.charAt(endPos) == '\n' ||
-						contents.charAt(endPos) == '\r') {
-						attPos++;
-						break;
-					}
-				} else if (contents.charAt(endPos) == ' ' ||
-					contents.charAt(endPos) == ')' ||
-					contents.charAt(endPos) == '|' ||
-					contents.charAt(endPos) == '\"' ||
-					contents.charAt(endPos) == '\n' ||
-					contents.charAt(endPos) == '\r' ||
-					contents.charAt(endPos) == '\t') {
-					break;
-				}
-				endPos++;
-			}
-			returnList.add(contents.substring(attPos + keyword.length(), endPos));
-			attPos = contents.toString().indexOf(keyword, endPos);
-		}
-		return returnList;
 	}
 
 	/**

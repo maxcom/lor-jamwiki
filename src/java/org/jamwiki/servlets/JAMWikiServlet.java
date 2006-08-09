@@ -381,10 +381,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setAllowSectionEdit(sectionEdit);
 		contents = Utilities.parse(parserInfo, topic.getTopicContent(), topicName);
-		if (StringUtils.hasText(request.getParameter("highlight"))) {
-			// search servlet highlights search terms, so add that here
-			contents = AbstractSearchEngine.highlightHTML(contents, request.getParameter("highlight"));
-		}
 		topic.setTopicContent(contents);
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 			List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
