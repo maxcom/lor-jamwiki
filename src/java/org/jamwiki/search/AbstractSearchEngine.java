@@ -41,10 +41,16 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IndexInput;
@@ -55,8 +61,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.search.lucene.HTMLParser;
-import org.jamwiki.search.lucene.LuceneTools;
 import org.springframework.util.StringUtils;
 
 /*
@@ -64,6 +68,8 @@ import org.springframework.util.StringUtils;
  */
 public abstract class AbstractSearchEngine implements SearchEngine {
 
+	/** Where to log to */
+	private static final Logger logger = Logger.getLogger(AbstractSearchEngine.class);
 	/** Directory for search index files */
 	protected static final String SEARCH_DIR = "search";
 	/** Index type "File" */
@@ -76,8 +82,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	protected static final String ITYPE_CONTENT_PLAIN = "content_plain";
 	/** Index type "topic plain" */
 	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
-	/** Where to log to */
-	private static final Logger logger = Logger.getLogger(AbstractSearchEngine.class);
 	/** File separator */
 	protected static String sep = System.getProperty("file.separator");
 	/** Temp directory - where to store the indexes (initialized via getInstance method) */
@@ -86,11 +90,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	private static final int RAM_BASED = 0;
 	/** Index is stored in the file system */
 	private static final int FS_BASED = 1;
-
 	/** where is the index stored */
 	private transient int fsType = FS_BASED;
-	/** Can we parse HTML files? */
-	private transient boolean canParseHTML = false;
 
 	/**
 	 * Index the given text for the search engine database
@@ -242,7 +243,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		}
 		String indexFilename = getSearchIndexPath(virtualWiki);
 		Analyzer analyzer = new StandardAnalyzer();
-		Collection result = new ArrayList();
+		Collection results = new ArrayList();
 		logger.debug("search text: " + text);
 		try {
 			BooleanQuery query = new BooleanQuery();
@@ -252,83 +253,41 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			qp = new QueryParser(ITYPE_CONTENT, analyzer);
 			query.add(qp.parse(text), Occur.SHOULD);
 			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			// rewrite the query to expand it - required for wildcards to work with highlighter
+			Query rewrittenQuery = searcher.rewrite(query);
 			// actually perform the search
-			Hits hits = searcher.search(query);
-			result = processHits(hits, text, query);
+			Hits hits = searcher.search(rewrittenQuery);
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
+			for (int i = 0; i < hits.length(); i++) {
+				String summary = this.retrieveResultSummary(hits.doc(i), highlighter, analyzer);
+				SearchResultEntry result = new SearchResultEntry();
+				result.setRanking(hits.score(i));
+				result.setTopic(hits.doc(i).get(AbstractSearchEngine.ITYPE_TOPIC_PLAIN));
+				result.setSummary(summary);
+				results.add(result);
+			}
 		} catch (IOException e) {
 			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index");
 			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + text, e);
 		}
-		return result;
+		return results;
 	}
 
 	/**
 	 *
 	 */
-	protected Collection processHits(Hits hits, String text, BooleanQuery query) throws Exception {
-		Collection result = new ArrayList();
-		for (int i = 0; i < hits.length(); i++) {
-			SearchResultEntry entry = new SearchResultEntry();
-			entry.setTopic(hits.doc(i).get(ITYPE_TOPIC_PLAIN));
-			entry.setRanking(hits.score(i));
-			boolean found = false;
-			String content = hits.doc(i).get(ITYPE_CONTENT_PLAIN);
-			if (content == null) {
-				logger.error("Null search result returned");
-				continue;
-			}
-			if (content.toLowerCase().indexOf(text.toLowerCase()) != -1) {
-				found = true;
-			}
-			if (!found) {
-				HashSet terms = new HashSet();
-				LuceneTools.getTerms(query, terms, false);
-				Token token;
-				TokenStream stream = new StandardAnalyzer().tokenStream(ITYPE_CONTENT, new java.io.StringReader(content));
-				while ((token = stream.next()) != null) {
-					// does query contain current token?
-					if (terms.contains(token.termText())) {
-						found = true;
-					}
-				}
-			}
-			if (!found) {
-				// we had a keyword hit
-				int firstword = LuceneTools.findAfter(content, 1, 0);
-				if (firstword == -1) {
-					firstword = 0;
-				}
-				entry.setTextBefore("");
-				entry.setFoundWord(content.substring(0, firstword));
-				if ((firstword + 1) < content.length()) {
-					firstword++;
-				}
-				int lastword = LuceneTools.findAfter(content, 1, 19);
-				if (lastword < 0) {
-					lastword = content.length();
-				}
-				if (firstword < 0) {
-					firstword = 0;
-				}
-				entry.setTextAfter(content.substring(Math.min(firstword, lastword), Math.max(firstword, lastword)) + " ...");
-			} else {
-				// we had a regular hit
-				String[] tempresult = LuceneTools.outputHits(hits.doc(i).get(ITYPE_CONTENT_PLAIN),
-					query,
-					new Analyzer[] {
-						new StandardAnalyzer(),
-						new StandardAnalyzer()
-					}
-				);
-				entry.setTextBefore("... " + tempresult[0]);
-				entry.setTextAfter(tempresult[2] + " ...");
-				entry.setFoundWord(tempresult[1]);
-			}
-			result.add(entry);
+	private String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
+		String content = document.get(ITYPE_CONTENT_PLAIN);
+		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
+		// Get 3 best fragments and seperate with a "..."
+		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
+		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
+			summary = Utilities.escapeHTML(content.substring(0, Math.min(200, content.length())));
+			if (Math.min(200, content.length()) == 200) summary += "...";
 		}
-		return result;
+		return summary;
 	}
 
 	/**
@@ -401,13 +360,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	public synchronized void rebuild() throws Exception {
 		logger.info("Building index");
 		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
-		try {
-			// check, if classes are here:
-			Class.forName("org.jamwiki.search.lucene.HTMLParser");
-			canParseHTML = true;
-		} catch (ClassNotFoundException e) {
-			canParseHTML = false;
-		}
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			String currentWiki = virtualWiki.getName();

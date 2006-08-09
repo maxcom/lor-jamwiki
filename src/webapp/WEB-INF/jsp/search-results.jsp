@@ -24,17 +24,12 @@
 
 <br />
 <c:forEach items="${results}" var="result">
-<p><div class="searchresult"><jamwiki:link value="${result.topic}?highlight=${result.foundWord}" text="${result.topic}" /></div>
-<c:if test="${!empty result.textBefore || !empty result.textAfter || !empty result.foundWord}">
-  <br /><c:out value="${result.textBefore}" />
-  <jamwiki:link value="${result.topic}?highlight=${result.foundWord}" style="highlight"><c:out value="${result.foundWord}" /></jamwiki:link>
-  <c:out value="${result.textAfter}" />
-  </c:if>
-</p>
+<div class="searchresult"><jamwiki:link value="${result.topic}" text="${result.topic}" /></div>
+<p><c:out value="${result.summary}" escapeXml="false" /></p>
 </c:forEach>
 <c:if test="${empty results}">
 <p><f:message key="searchresult.notfound"><f:param value="${searchField}" /></f:message></p>
 </c:if>
 <br /><br /><br />
 <font size="-1"><i><f:message key="search.poweredby" /></i></font>
-<a href="http://jakarta.apache.org/lucene"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>
+<a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>

@@ -122,7 +122,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="search-results.jsp" flush="true" />
 <%
-} else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS) || action.equals(JAMWikiServlet.ACTION_TODO_TOPICS) || action.equals(JAMWikiServlet.ACTION_ORPHANED_TOPICS)) {
+} else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS)) {
 %>
 		<jsp:include page="all-topics.jsp" flush="true" />
 <%
