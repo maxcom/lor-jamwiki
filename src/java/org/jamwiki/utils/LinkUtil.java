@@ -105,17 +105,17 @@ public class LinkUtil {
 		String html = "";
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
-			html += "<div ";
+			html += "<div";
 			if (thumb) {
-				html += "class=\"imgthumb\"";
+				html += " class=\"imgthumb\"";
 			} else if (align != null && align.equalsIgnoreCase("right")) {
-				html += "class=\"imgright\"";
+				html += " class=\"imgright\"";
 			} else if (align != null && align.equalsIgnoreCase("left")) {
-				html += "class=\"imgleft\"";
+				html += " class=\"imgleft\"";
 			} else if (frame) {
-				html += "class=\"imgleft\"";
+				html += " class=\"imgleft\"";
 			}
-			html += "\">";
+			html += ">";
 		}
 		html += "<img class=\"wikiimg\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
