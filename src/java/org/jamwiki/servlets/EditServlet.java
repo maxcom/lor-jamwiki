@@ -179,7 +179,9 @@ public class EditServlet extends JAMWikiServlet {
 		WikiUser user = Utilities.currentUser(request);
 		JAMWikiServlet.removeCachedContents();
 		String contents = (String)request.getParameter("contents");
-		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setLocale(request.getLocale());
 		parserInfo.setWikiUser(user);
 		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
@@ -260,7 +262,9 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = Utilities.currentUser(request);
-		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setLocale(request.getLocale());
 		parserInfo.setWikiUser(user);
 		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());

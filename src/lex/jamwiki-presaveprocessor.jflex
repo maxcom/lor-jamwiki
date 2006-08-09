@@ -62,8 +62,17 @@ import org.apache.log4j.Logger;
     /**
      *
      */
-    public void setParserInfo(ParserInfo parserInfo) {
+    public void setParserInfo(ParserInfo parserInfo) throws Exception {
         this.parserInfo = parserInfo;
+        // validate parser settings
+        boolean validated = true;
+        if (this.parserInfo == null) validated = false;
+        if (this.parserInfo.getContext() == null) validated = false;
+        if (this.parserInfo.getVirtualWiki() == null) validated = false;
+        if (this.parserInfo.getUserIpAddress() == null) validated = false;
+        if (!validated) {
+            throw new Exception("Parser info not properly initialized");
+        }
     }
 %}
 

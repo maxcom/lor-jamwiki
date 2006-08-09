@@ -43,9 +43,10 @@ public class ParserInfo {
 	/** Current WikiUser (if any). */
 	private WikiUser wikiUser = null;
 
-	public ParserInfo(String context, Locale locale) {
-		this.context = context;
-		this.locale = locale;
+	/**
+	 *
+	 */
+	public ParserInfo() {
 	}
 
 	/**

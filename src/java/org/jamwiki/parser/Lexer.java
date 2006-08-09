@@ -27,10 +27,12 @@ public interface Lexer {
 	/**
 	 *
 	 */
-	public String yylex() throws java.io.IOException;
+	public String yylex() throws Exception;
 
 	/**
-	 *
+	 * Set the parser settings.  This method should also validate that
+	 * all settings required for the parser have been set, and if not it
+	 * should throw an exception.
 	 */
-	public void setParserInfo(ParserInfo parserInfo);
+	public void setParserInfo(ParserInfo parserInfo) throws Exception;
 }

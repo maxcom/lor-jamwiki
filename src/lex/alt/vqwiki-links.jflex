@@ -47,7 +47,7 @@ import org.jamwiki.utils.Utilities;
 	/**
 	 *
 	 */
-	public void setParserInfo(ParserInfo parserInfo) {
+	public void setParserInfo(ParserInfo parserInfo) throws Exception {
 		this.parserInfo = parserInfo;
 	}
 	

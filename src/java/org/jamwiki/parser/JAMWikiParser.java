@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
@@ -43,7 +42,7 @@ public class JAMWikiParser extends AbstractParser {
 	 * Utility method for executing a lexer parse.
 	 * FIXME - this is copy & pasted here and in VQWikiParser
 	 */
-	 protected StringBuffer lex(Lexer lexer) throws IOException {
+	 protected StringBuffer lex(Lexer lexer) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		while (true) {
 			String line = lexer.yylex();
@@ -56,7 +55,7 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 * Parse text for online display.
 	 */
-	public String parseHTML(String rawtext, String topicName) throws IOException {
+	public String parseHTML(String rawtext, String topicName) throws Exception {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		// some parser expressions require that lines end in a newline, so add a newline
@@ -78,7 +77,7 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private StringBuffer parsePreProcess(Reader raw) throws IOException {
+	private StringBuffer parsePreProcess(Reader raw) throws Exception {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
 		lexer.setParserInfo(parserInfo);
 		return this.lex(lexer);
@@ -91,7 +90,7 @@ public class JAMWikiParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return HTML representation of the text for online.
 	 */
-	public String parsePreSave(String contents) throws IOException {
+	public String parsePreSave(String contents) throws Exception {
 		StringReader raw = new StringReader(contents);
 		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
 		lexer.setParserInfo(parserInfo);
@@ -101,7 +100,7 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private StringBuffer parsePostProcess(Reader raw) throws IOException {
+	private StringBuffer parsePostProcess(Reader raw) throws Exception {
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(raw);
 		lexer.setParserInfo(parserInfo);
 		return this.lex(lexer);
@@ -110,7 +109,7 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	public String parseSlice(String rawtext, String topicName, int targetSection) throws IOException {
+	public String parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());
@@ -125,7 +124,7 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	public String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws IOException {
+	public String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());

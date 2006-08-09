@@ -382,7 +382,9 @@ public class Utilities {
 		if (topic == null || topic.getTopicContent() == null) {
 			return "";
 		}
-		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setLocale(request.getLocale());
 		parserInfo.setTopicName(topicName);
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_SLICE);
@@ -398,7 +400,9 @@ public class Utilities {
 		if (topic == null || topic.getTopicContent() == null) {
 			return "";
 		}
-		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setLocale(request.getLocale());
 		parserInfo.setTopicName(topicName);
 		parserInfo.setVirtualWiki(virtualWiki);
 		parserInfo.setMode(ParserInfo.MODE_SPLICE);

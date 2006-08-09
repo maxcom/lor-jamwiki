@@ -94,8 +94,15 @@ import org.jamwiki.Environment;
     /**
      *
      */
-    public void setParserInfo(ParserInfo parserInfo) {
+    public void setParserInfo(ParserInfo parserInfo) throws Exception {
         this.parserInfo = parserInfo;
+        // validate parser settings
+        boolean validated = true;
+        if (this.parserInfo == null) validated = false;
+        if (this.parserInfo.getMode() != ParserInfo.MODE_SPLICE && this.parserInfo.getMode() != ParserInfo.MODE_SLICE) validated = false;
+        if (!validated) {
+            throw new Exception("Parser info not properly initialized");
+        }
     }
     
     /**

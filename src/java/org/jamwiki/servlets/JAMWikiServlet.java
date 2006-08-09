@@ -200,7 +200,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 				content = topic.getTopicContent();
 				if (cook) {
-					ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+					ParserInfo parserInfo = new ParserInfo();
+					parserInfo.setContext(request.getContextPath());
+					parserInfo.setLocale(request.getLocale());
 					parserInfo.setVirtualWiki(virtualWiki);
 					content = Utilities.parse(parserInfo, content, topicName);
 				}
@@ -374,7 +376,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String topicName = topic.getName();
 		String displayName = request.getRemoteAddr();
 		WikiUser user = Utilities.currentUser(request);
-		ParserInfo parserInfo = new ParserInfo(request.getContextPath(), request.getLocale());
+		ParserInfo parserInfo = new ParserInfo();
+		parserInfo.setContext(request.getContextPath());
+		parserInfo.setLocale(request.getLocale());
 		parserInfo.setWikiUser(user);
 		parserInfo.setTopicName(topicName);
 		parserInfo.setUserIpAddress(request.getRemoteAddr());
