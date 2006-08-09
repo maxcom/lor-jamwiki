@@ -404,7 +404,7 @@ div.imgthumb {
 /* recent changes, user contributions, history */
 
 li.minorchange {
-	color: #666666;
+	color: #777777;
 }
 
 li.standardchange {
@@ -416,7 +416,7 @@ li.deletechange {
 }
 
 li.movechange {
-	color: #666666;
+	color: #777777;
 }
 
 /* older stuff */
