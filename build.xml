@@ -97,6 +97,15 @@
             </lib>
         </war>
     </target>
+    
+    <target name="source" description="Build a zip file of the application source">
+        <delete file="${dir.build}/${war.name}-${app.version}-src.zip" />
+        <zip destfile="${dir.build}/${war.name}-${app.version}-src.zip">
+            <zipfileset dir="." includes="*" />
+            <zipfileset dir="${dir.lib}" prefix="lib" />
+            <zipfileset dir="${dir.src}" prefix="src" />
+        </zip>
+    </target>
 
     <target name="help" description="Displays a list of possible targets for the project.">
         <echo>
@@ -110,7 +119,15 @@
                         consists of a source code package, binary
                         package and documentation package.
                            
-   clean              - Removes any build artifacts from the tree
+   war-local          - Generates a release and replace/add jar
+                        and property files using any files found
+                        in the local-files directory.  This is
+                        useful for development when a JDBC jar and
+                        a customized property file need to be used.
+                           
+   clean              - Removes any build artifacts from the tree.
+                           
+   source             - Build a zip file of the application source.
      
    help               - Displays this text.
  ##################################################################
