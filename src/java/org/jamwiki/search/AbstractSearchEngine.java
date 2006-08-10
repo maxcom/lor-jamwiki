@@ -320,9 +320,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			logger.debug("indexing virtual wiki " + currentWiki);
 			File indexFile = new File(indexPath, "index" + currentWiki);
 			logger.debug("Index file path = " + indexFile);
-//			if (currentWiki.equals(WikiBase.DEFAULT_VWIKI)) {
-//				currentWiki = "";
-//			}
 			int retrycounter = 0;
 			do {
 				// initially create index in ram

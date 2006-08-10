@@ -405,7 +405,7 @@ onUserGroupType()
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Admin" />">
 <table border="0" class="contents">
 <tr>
-	<td><f:message key="admin.title.refresh" /> <f:message key="admin.message.filemodeonly" /></td>
+	<td><f:message key="admin.title.refresh" /></td>
 	<td><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
 </tr>
 </table>
