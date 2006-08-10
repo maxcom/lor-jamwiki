@@ -233,7 +233,30 @@ public class LuceneSearchEngine {
 	/**
 	 *
 	 */
-	public static Collection findLinkedTo(String virtualWiki, String topic) throws Exception {
+	public static String escapeLucene(String text) {
+		// escape Lucene search syntax values
+		text = StringUtils.replace(text, "+", "\\+");
+		text = StringUtils.replace(text, "-", "\\-");
+		text = StringUtils.replace(text, "!", "\\!");
+		text = StringUtils.replace(text, "(", "\\(");
+		text = StringUtils.replace(text, ")", "\\)");
+		text = StringUtils.replace(text, "{", "\\{");
+		text = StringUtils.replace(text, "}", "\\}");
+		text = StringUtils.replace(text, "[", "\\[");
+		text = StringUtils.replace(text, "]", "\\]");
+		text = StringUtils.replace(text, "^", "\\^");
+		text = StringUtils.replace(text, "\"", "\\\"");
+		text = StringUtils.replace(text, "~", "\\~");
+		text = StringUtils.replace(text, "*", "\\*");
+		text = StringUtils.replace(text, "?", "\\?");
+		text = StringUtils.replace(text, ":", "\\:");
+		return text;
+	}
+
+	/**
+	 *
+	 */
+	public static Collection findLinkedTo(String virtualWiki, String topicName) throws Exception {
 		if (indexPath == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -242,10 +265,14 @@ public class LuceneSearchEngine {
 		Collection results = new ArrayList();
 		IndexSearcher searcher = null;
 		try {
+			// escape Lucene search syntax in topic name
+			topicName = escapeLucene(topicName);
+			// place in quotes for topics like "User comments:Foo"
+			topicName = "\"" + topicName + "\"";
 			BooleanQuery query = new BooleanQuery();
 			QueryParser qp;
 			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
-			query.add(qp.parse(topic), Occur.MUST);
+			query.add(qp.parse(topicName), Occur.MUST);
 			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// actually perform the search
 			Hits hits = searcher.search(query);
@@ -255,10 +282,8 @@ public class LuceneSearchEngine {
 				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
 				results.add(result);
 			}
-		} catch (IOException e) {
-			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
 		} catch (Exception e) {
-			logger.fatal("Exception while searching for " + topic, e);
+			logger.fatal("Exception while searching for " + topicName, e);
 		} finally {
 			if (searcher != null) {
 				try { searcher.close(); } catch (Exception e) {}
