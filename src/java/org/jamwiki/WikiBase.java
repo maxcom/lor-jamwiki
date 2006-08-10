@@ -122,13 +122,6 @@ public class WikiBase {
 	/**
 	 *
 	 */
-	public static void setHandler(PersistencyHandler handler) {
-		WikiBase.handler = handler;
-	}
-
-	/**
-	 *
-	 */
 	public static int getPersistenceType() {
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			return WikiBase.DATABASE;
@@ -163,5 +156,12 @@ public class WikiBase {
 			WikiBase.handler.initialize(locale, user);
 		}
 		JAMWikiServlet.removeCachedContents();
+	}
+
+	/**
+	 *
+	 */
+	public static void setHandler(PersistencyHandler handler) {
+		WikiBase.handler = handler;
 	}
 }

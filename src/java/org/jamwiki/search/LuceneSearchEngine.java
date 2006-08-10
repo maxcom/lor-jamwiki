@@ -90,122 +90,6 @@ public class LuceneSearchEngine {
 	}
 
 	/**
-	 * Find topics that contain any of the space delimited terms.
-	 * Note: Use this method for full text search.
-	 *
-	 * @param virtualWiki The virtual wiki to use
-	 * @param text The text to find
-	 *
-	 * @return A collection of SearchResultEntry, containing the search results
-	 */
-	public static Collection findMultiple(String virtualWiki, String text) {
-		if (indexPath == null) {
-			return Collections.EMPTY_LIST;
-		}
-		String indexFilename = getSearchIndexPath(virtualWiki);
-		Analyzer analyzer = new StandardAnalyzer();
-		Collection results = new ArrayList();
-		logger.debug("search text: " + text);
-		IndexSearcher searcher = null;
-		try {
-			BooleanQuery query = new BooleanQuery();
-			QueryParser qp;
-			qp = new QueryParser(ITYPE_TOPIC, analyzer);
-			query.add(qp.parse(text), Occur.SHOULD);
-			qp = new QueryParser(ITYPE_CONTENT, analyzer);
-			query.add(qp.parse(text), Occur.SHOULD);
-			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
-			// rewrite the query to expand it - required for wildcards to work with highlighter
-			Query rewrittenQuery = searcher.rewrite(query);
-			// actually perform the search
-			Hits hits = searcher.search(rewrittenQuery);
-			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
-			for (int i = 0; i < hits.length(); i++) {
-				String summary = retrieveResultSummary(hits.doc(i), highlighter, analyzer);
-				SearchResultEntry result = new SearchResultEntry();
-				result.setRanking(hits.score(i));
-				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
-				result.setSummary(summary);
-				results.add(result);
-			}
-		} catch (IOException e) {
-			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index", e);
-		} catch (Exception e) {
-			logger.fatal("Exception while searching for " + text, e);
-		} finally {
-			if (searcher != null) {
-				try { searcher.close(); } catch (Exception e) {}
-			}
-		}
-		return results;
-	}
-
-	/**
-	 * @param indexPath
-	 */
-	protected static void initSearchEngine() {
-		try {
-			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + File.separator + SEARCH_DIR;
-			File tmpDir = new File(dir);
-			indexPath = tmpDir.getPath();
-		} catch (Exception e) {
-			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);
-			indexPath = System.getProperty("java.io.tmpdir");
-		}
-	}
-
-	/**
-	 *
-	 */
-	public static Collection findLinkedTo(String virtualWiki, String topic) throws Exception {
-		if (indexPath == null) {
-			return Collections.EMPTY_LIST;
-		}
-		String indexFilename = getSearchIndexPath(virtualWiki);
-		Analyzer analyzer = new StandardAnalyzer();
-		Collection results = new ArrayList();
-		IndexSearcher searcher = null;
-		try {
-			BooleanQuery query = new BooleanQuery();
-			QueryParser qp;
-			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
-			query.add(qp.parse(topic), Occur.MUST);
-			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
-			// actually perform the search
-			Hits hits = searcher.search(query);
-			for (int i = 0; i < hits.length(); i++) {
-				SearchResultEntry result = new SearchResultEntry();
-				result.setRanking(hits.score(i));
-				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
-				results.add(result);
-			}
-		} catch (IOException e) {
-			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
-		} catch (Exception e) {
-			logger.fatal("Exception while searching for " + topic, e);
-		} finally {
-			if (searcher != null) {
-				try { searcher.close(); } catch (Exception e) {}
-			}
-		}
-		return results;
-	}
-
-	/**
-	 *
-	 */
-	private static String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
-		String content = document.get(ITYPE_CONTENT_PLAIN);
-		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
-		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
-		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
-			summary = Utilities.escapeHTML(content.substring(0, Math.min(200, content.length())));
-			if (Math.min(200, content.length()) == 200) summary += "...";
-		}
-		return summary;
-	}
-
-	/**
 	 * Adds to the in-memory table. Does not remove indexed items that are
 	 * no longer valid due to deletions, edits etc.
 	 */
@@ -266,53 +150,6 @@ public class LuceneSearchEngine {
 	}
 
 	/**
-	 * Trawls all the files in the wiki directory and indexes them
-	 */
-	public static synchronized void refreshIndex() throws Exception {
-		logger.info("Rebuilding search index");
-		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
-		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-			String currentWiki = virtualWiki.getName();
-			logger.debug("indexing virtual wiki " + currentWiki);
-			File indexFile = new File(indexPath, "index" + currentWiki);
-			logger.debug("Index file path = " + indexFile);
-			// initially create index in ram
-			RAMDirectory ram = new RAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
-			IndexWriter writer = new IndexWriter(ram, analyzer, true);
-			try {
-				Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
-				for (Iterator iter = topics.iterator(); iter.hasNext();) {
-					String topic = (String) iter.next();
-					Document doc = createDocument(currentWiki, topic);
-					if (doc != null) writer.addDocument(doc);
-				}
-			} catch (IOException ex) {
-				logger.error(ex);
-			} finally {
-				try {
-					if (writer != null) {
-						writer.optimize();
-					}
-				} catch (IOException ioe) {
-					logger.fatal("IOException during optimize", ioe);
-				}
-				try {
-					if (writer != null) {
-						writer.close();
-					}
-				} catch (IOException ioe) {
-					logger.fatal("IOException during close", ioe);
-				}
-				writer = null;
-			}
-			// write back to disc
-			copyRamIndexToFileIndex(ram, indexFile);
-		}
-	}
-
-	/**
 	 * Copy an index from RAM to file
 	 * @param ram The index in RAM
 	 * @param indexFile The index on disc
@@ -369,6 +206,119 @@ public class LuceneSearchEngine {
 	}
 
 	/**
+	 * Create a document to add to the search index
+	 * @param currentWiki Name of this wiki
+	 * @param topic Name of the topic to add
+	 * @return The document to add
+	 */
+	protected static Document createDocument(String virtualWiki, String topicName) throws Exception {
+		// get content
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) return null;
+		String topicContent = topic.getTopicContent();
+		if (topicContent == null) topicContent = "";
+		Document doc = new Document();
+		doc.add(new Field(ITYPE_TOPIC, new StringReader(topicName)));
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topicName, Store.YES, Index.UN_TOKENIZED));
+		doc.add(new Field(ITYPE_CONTENT, new StringReader(topicContent)));
+		doc.add(new Field(ITYPE_CONTENT_PLAIN, topicContent, Store.YES, Index.NO));
+		Collection links = Utilities.parseForSearch(topicContent, topicName);
+		for (Iterator iter = links.iterator(); iter.hasNext();) {
+			String linkTopic = (String)iter.next();
+			doc.add(new Field(ITYPE_TOPIC_LINK, new StringReader(linkTopic)));
+		}
+		return doc;
+	}
+
+	/**
+	 *
+	 */
+	public static Collection findLinkedTo(String virtualWiki, String topic) throws Exception {
+		if (indexPath == null) {
+			return Collections.EMPTY_LIST;
+		}
+		String indexFilename = getSearchIndexPath(virtualWiki);
+		Analyzer analyzer = new StandardAnalyzer();
+		Collection results = new ArrayList();
+		IndexSearcher searcher = null;
+		try {
+			BooleanQuery query = new BooleanQuery();
+			QueryParser qp;
+			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
+			query.add(qp.parse(topic), Occur.MUST);
+			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			// actually perform the search
+			Hits hits = searcher.search(query);
+			for (int i = 0; i < hits.length(); i++) {
+				SearchResultEntry result = new SearchResultEntry();
+				result.setRanking(hits.score(i));
+				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
+				results.add(result);
+			}
+		} catch (IOException e) {
+			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
+		} catch (Exception e) {
+			logger.fatal("Exception while searching for " + topic, e);
+		} finally {
+			if (searcher != null) {
+				try { searcher.close(); } catch (Exception e) {}
+			}
+		}
+		return results;
+	}
+
+	/**
+	 * Find topics that contain any of the space delimited terms.
+	 * Note: Use this method for full text search.
+	 *
+	 * @param virtualWiki The virtual wiki to use
+	 * @param text The text to find
+	 *
+	 * @return A collection of SearchResultEntry, containing the search results
+	 */
+	public static Collection findMultiple(String virtualWiki, String text) {
+		if (indexPath == null) {
+			return Collections.EMPTY_LIST;
+		}
+		String indexFilename = getSearchIndexPath(virtualWiki);
+		Analyzer analyzer = new StandardAnalyzer();
+		Collection results = new ArrayList();
+		logger.debug("search text: " + text);
+		IndexSearcher searcher = null;
+		try {
+			BooleanQuery query = new BooleanQuery();
+			QueryParser qp;
+			qp = new QueryParser(ITYPE_TOPIC, analyzer);
+			query.add(qp.parse(text), Occur.SHOULD);
+			qp = new QueryParser(ITYPE_CONTENT, analyzer);
+			query.add(qp.parse(text), Occur.SHOULD);
+			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			// rewrite the query to expand it - required for wildcards to work with highlighter
+			Query rewrittenQuery = searcher.rewrite(query);
+			// actually perform the search
+			Hits hits = searcher.search(rewrittenQuery);
+			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
+			for (int i = 0; i < hits.length(); i++) {
+				String summary = retrieveResultSummary(hits.doc(i), highlighter, analyzer);
+				SearchResultEntry result = new SearchResultEntry();
+				result.setRanking(hits.score(i));
+				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
+				result.setSummary(summary);
+				results.add(result);
+			}
+		} catch (IOException e) {
+			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index", e);
+		} catch (Exception e) {
+			logger.fatal("Exception while searching for " + text, e);
+		} finally {
+			if (searcher != null) {
+				try { searcher.close(); } catch (Exception e) {}
+			}
+		}
+		return results;
+	}
+
+	/**
 	 * @param indexFile
 	 */
 	protected static Directory getIndexDirectory(File indexFile, boolean create) throws IOException {
@@ -391,35 +341,84 @@ public class LuceneSearchEngine {
 	}
 
 	/**
-	 * Create a document to add to the search index
-	 * @param currentWiki Name of this wiki
-	 * @param topic Name of the topic to add
-	 * @return The document to add
-	 */
-	protected static Document createDocument(String virtualWiki, String topicName) throws Exception {
-		// get content
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null) return null;
-		String topicContent = topic.getTopicContent();
-		if (topicContent == null) topicContent = "";
-		StringBuffer contents = new StringBuffer(topicContent);
-		Document doc = new Document();
-		doc.add(new Field(ITYPE_TOPIC, new StringReader(topicName)));
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topicName, Store.YES, Index.UN_TOKENIZED));
-		doc.add(new Field(ITYPE_CONTENT, new StringReader(contents.toString())));
-		doc.add(new Field(ITYPE_CONTENT_PLAIN, contents.toString(), Store.YES, Index.NO));
-		Collection links = Utilities.parseForSearch(topicContent, topicName);
-		for (Iterator iter = links.iterator(); iter.hasNext();) {
-			String linkTopic = (String)iter.next();
-			doc.add(new Field(ITYPE_TOPIC_LINK, new StringReader(linkTopic)));
-		}
-		return doc;
-	}
-
-	/**
 	 * Get the path, which holds all index files
 	 */
 	public static String getSearchIndexPath(String virtualWiki) {
 		return indexPath + File.separator + "index" + virtualWiki;
+	}
+
+	/**
+	 * @param indexPath
+	 */
+	protected static void initSearchEngine() {
+		try {
+			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + File.separator + SEARCH_DIR;
+			File tmpDir = new File(dir);
+			indexPath = tmpDir.getPath();
+		} catch (Exception e) {
+			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);
+			indexPath = System.getProperty("java.io.tmpdir");
+		}
+	}
+
+	/**
+	 * Trawls all the files in the wiki directory and indexes them
+	 */
+	public static synchronized void refreshIndex() throws Exception {
+		logger.info("Rebuilding search index");
+		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
+		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
+			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+			String currentWiki = virtualWiki.getName();
+			logger.debug("indexing virtual wiki " + currentWiki);
+			File indexFile = new File(indexPath, "index" + currentWiki);
+			logger.debug("Index file path = " + indexFile);
+			// initially create index in ram
+			RAMDirectory ram = new RAMDirectory();
+			Analyzer analyzer = new StandardAnalyzer();
+			IndexWriter writer = new IndexWriter(ram, analyzer, true);
+			try {
+				Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
+				for (Iterator iter = topics.iterator(); iter.hasNext();) {
+					String topic = (String) iter.next();
+					Document doc = createDocument(currentWiki, topic);
+					if (doc != null) writer.addDocument(doc);
+				}
+			} catch (IOException ex) {
+				logger.error(ex);
+			} finally {
+				try {
+					if (writer != null) {
+						writer.optimize();
+					}
+				} catch (IOException ioe) {
+					logger.fatal("IOException during optimize", ioe);
+				}
+				try {
+					if (writer != null) {
+						writer.close();
+					}
+				} catch (IOException ioe) {
+					logger.fatal("IOException during close", ioe);
+				}
+				writer = null;
+			}
+			// write back to disc
+			copyRamIndexToFileIndex(ram, indexFile);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private static String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
+		String content = document.get(ITYPE_CONTENT_PLAIN);
+		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
+		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
+		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
+			summary = Utilities.escapeHTML(content.substring(0, Math.min(200, content.length())));
+			if (Math.min(200, content.length()) == 200) summary += "...";
+		}
+		return summary;
 	}
 }

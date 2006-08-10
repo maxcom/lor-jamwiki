@@ -113,166 +113,21 @@ public class Environment {
 	}
 
 	/**
-	 * Returns the value of a property.
+	 * Load a property file.  First check for the file in the path from which
+	 * the application was started, then check other classpath locations.
 	 *
-	 * @param name The name of the property whose value is to be retrieved.
-	 * @return The value of the property.
+	 * @param filename The name of the property file to be loaded.  This name can be
+	 *  either absolute or relative; if relative then the file will be loaded from
+	 *  the class path or from the directory from which the JVM was loaded.
 	 */
-	public static String getValue(String name) {
-		return props.getProperty(name);
-	}
-
-	/**
-	 * Get the value of an integer property.
-	 *
-	 * @param name The name of the property whose value is to be retrieved.
-	 * @return The value of the property.
-	 */
-	public static int getIntValue(String name) {
-		String value = getValue(name);
-		try {
-			 return Integer.parseInt(value);
-		} catch (Exception e) {
-			logger.info("Invalid integer property " + name + " with value " + value);
+	private static File findProperties(String filename) throws FileNotFoundException {
+		// read in properties file
+		File file = new File(filename);
+		if (file.exists()) {
+			return file;
 		}
-		// FIXME - should this otherwise indicate an invalid property?
-		return -1;
-	}
-
-	/**
-	 * Get the value of a long property.
-	 *
-	 * @param name The name of the property whose value is to be retrieved.
-	 * @return The value of the property.
-	 */
-	public static long getLongValue(String name) {
-		String value = getValue(name);
-		try {
-			 return Long.parseLong(value);
-		} catch (Exception e) {
-			logger.info("Invalid long property " + name + " with value " + value);
-		}
-		// FIXME - should this otherwise indicate an invalid property?
-		return -1;
-	}
-
-	/**
-	 * Get the value of a boolean property.
-	 *
-	 * @param name The name of the property whose value is to be retrieved.
-	 * @return The value of the property.
-	 */
-	public static boolean getBooleanValue(String name) {
-		String value = getValue(name);
-		try {
-			return Boolean.valueOf(value).booleanValue();
-		} catch (Exception e) {
-			logger.error("Invalid boolean property " + name + " with value " + value);
-		}
-		// FIXME - should this otherwise indicate an invalid property?
-		return false;
-	}
-
-	/**
-	 * Sets a new value for the given property name.
-	 *
-	 * @param name
-	 * @param value
-	 */
-	public static void setValue(String name, String value) {
-		// it is invalid to set a property value null, so convert to empty string
-		if (value == null) value = "";
-		props.setProperty(name, value);
-	}
-
-	/**
-	 * Sets a new boolean value for the given property name.
-	 *
-	 * @param name
-	 * @param value
-	 */
-	public static void setBooleanValue(String name, boolean value) {
-		props.setProperty(name, new Boolean(value).toString());
-	}
-
-	/**
-	 * Sets a new integer value for the given property name.
-	 *
-	 * @param name
-	 * @param value
-	 */
-	public static void setIntValue(String name, int value) {
-		props.setProperty(name, new Integer(value).toString());
-	}
-
-	/**
-	 * Used to persist the current properties to disk.
-	 */
-	public static void saveProperties() throws IOException {
-		Environment.saveProperties(PROPERTY_FILE_NAME, props, null);
-	}
-
-	/**
-	 * Used to persist a property file to disk.
-	 *
-	 * @param propertyFile The name of the property file to save.
-	 * @param properties The properties object that is to be saved.
-	 * @param comments A comment to save in the properties file.
-	 */
-	public static void saveProperties(String propertyFile, Properties properties, String comments) throws IOException {
-		File file = findProperties(propertyFile);
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(file);
-			properties.store(out, comments);
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (Exception e) {
-					// ignore, unimportant if a close fails
-				}
-			}
-		}
-	}
-
-	/**
-	 * Load a property file and return the property file object.
-	 *
-	 * @param propertyFile The name of the property file to load.
-	 * @return The loaded property file.
-	 */
-	public static Properties loadProperties(String propertyFile) {
-		return loadProperties(propertyFile, null);
-	}
-
-	/**
-	 * Load a property file and return the property file object.
-	 *
-	 * @param propertyFile The name of the property file to load.
-	 * @param defaults Default property values.
-	 * @return The loaded property file.
-	 */
-	public static Properties loadProperties(String propertyFile, Properties def) {
-		Properties properties = new Properties();
-		if (def != null) {
-			properties = new Properties(def);
-		}
-		File file = null;
-		try {
-			file = findProperties(propertyFile);
-			if (file == null) {
-				logger.warn("Property file " + propertyFile + " does not exist");
-			} else if (!file.exists()) {
-				logger.warn("Property file " + file.toString() + " does not exist");
-			} else {
-				logger.warn("Loading properties from " + file.toString());
-				properties.load(new FileInputStream(file));
-			}
-		} catch (Exception e) {
-			logger.error("Failure while trying to load properties file " + file.toString(), e);
-		}
-		return properties;
+		// search for file in class loader path
+		return Environment.retrievePropertyFile(filename);
 	}
 
 	/**
@@ -336,21 +191,103 @@ public class Environment {
 	}
 
 	/**
-	 * Load a property file.  First check for the file in the path from which
-	 * the application was started, then check other classpath locations.
+	 * Get the value of a boolean property.
 	 *
-	 * @param filename The name of the property file to be loaded.  This name can be
-	 *  either absolute or relative; if relative then the file will be loaded from
-	 *  the class path or from the directory from which the JVM was loaded.
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @return The value of the property.
 	 */
-	private static File findProperties(String filename) throws FileNotFoundException {
-		// read in properties file
-		File file = new File(filename);
-		if (file.exists()) {
-			return file;
+	public static boolean getBooleanValue(String name) {
+		String value = getValue(name);
+		try {
+			return Boolean.valueOf(value).booleanValue();
+		} catch (Exception e) {
+			logger.error("Invalid boolean property " + name + " with value " + value);
 		}
-		// search for file in class loader path
-		return Environment.getPropertyFile(filename);
+		// FIXME - should this otherwise indicate an invalid property?
+		return false;
+	}
+
+	/**
+	 * Get the value of an integer property.
+	 *
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @return The value of the property.
+	 */
+	public static int getIntValue(String name) {
+		String value = getValue(name);
+		try {
+			 return Integer.parseInt(value);
+		} catch (Exception e) {
+			logger.info("Invalid integer property " + name + " with value " + value);
+		}
+		// FIXME - should this otherwise indicate an invalid property?
+		return -1;
+	}
+
+	/**
+	 * Get the value of a long property.
+	 *
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @return The value of the property.
+	 */
+	public static long getLongValue(String name) {
+		String value = getValue(name);
+		try {
+			 return Long.parseLong(value);
+		} catch (Exception e) {
+			logger.info("Invalid long property " + name + " with value " + value);
+		}
+		// FIXME - should this otherwise indicate an invalid property?
+		return -1;
+	}
+
+	/**
+	 * Returns the value of a property.
+	 *
+	 * @param name The name of the property whose value is to be retrieved.
+	 * @return The value of the property.
+	 */
+	public static String getValue(String name) {
+		return props.getProperty(name);
+	}
+
+	/**
+	 * Load a property file and return the property file object.
+	 *
+	 * @param propertyFile The name of the property file to load.
+	 * @return The loaded property file.
+	 */
+	public static Properties loadProperties(String propertyFile) {
+		return loadProperties(propertyFile, null);
+	}
+
+	/**
+	 * Load a property file and return the property file object.
+	 *
+	 * @param propertyFile The name of the property file to load.
+	 * @param defaults Default property values.
+	 * @return The loaded property file.
+	 */
+	public static Properties loadProperties(String propertyFile, Properties def) {
+		Properties properties = new Properties();
+		if (def != null) {
+			properties = new Properties(def);
+		}
+		File file = null;
+		try {
+			file = findProperties(propertyFile);
+			if (file == null) {
+				logger.warn("Property file " + propertyFile + " does not exist");
+			} else if (!file.exists()) {
+				logger.warn("Property file " + file.toString() + " does not exist");
+			} else {
+				logger.warn("Loading properties from " + file.toString());
+				properties.load(new FileInputStream(file));
+			}
+		} catch (Exception e) {
+			logger.error("Failure while trying to load properties file " + file.toString(), e);
+		}
+		return properties;
 	}
 
 	/**
@@ -361,7 +298,7 @@ public class Environment {
 	 *  may be relative to the class path or the directory from which the JVM was
 	 *  initialized.
 	 */
-	private static File getPropertyFile(String filename) {
+	private static File retrievePropertyFile(String filename) {
 		File file = null;
 		try {
 			file = Utilities.getClassLoaderFile(filename);
@@ -376,5 +313,68 @@ public class Environment {
 			logger.error("Error while searching for resource " + filename, e);
 		}
 		return null;
+	}
+
+	/**
+	 * Used to persist the current properties to disk.
+	 */
+	public static void saveProperties() throws IOException {
+		Environment.saveProperties(PROPERTY_FILE_NAME, props, null);
+	}
+
+	/**
+	 * Used to persist a property file to disk.
+	 *
+	 * @param propertyFile The name of the property file to save.
+	 * @param properties The properties object that is to be saved.
+	 * @param comments A comment to save in the properties file.
+	 */
+	public static void saveProperties(String propertyFile, Properties properties, String comments) throws IOException {
+		File file = findProperties(propertyFile);
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(file);
+			properties.store(out, comments);
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (Exception e) {
+					// ignore, unimportant if a close fails
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets a new boolean value for the given property name.
+	 *
+	 * @param name
+	 * @param value
+	 */
+	public static void setBooleanValue(String name, boolean value) {
+		props.setProperty(name, new Boolean(value).toString());
+	}
+
+	/**
+	 * Sets a new integer value for the given property name.
+	 *
+	 * @param name
+	 * @param value
+	 */
+	public static void setIntValue(String name, int value) {
+		props.setProperty(name, new Integer(value).toString());
+	}
+
+	/**
+	 * Sets a new value for the given property name.
+	 *
+	 * @param name
+	 * @param value
+	 */
+	public static void setValue(String name, String value) {
+		// it is invalid to set a property value null, so convert to empty string
+		if (value == null) value = "";
+		props.setProperty(name, value);
 	}
 }
