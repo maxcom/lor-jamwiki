@@ -55,13 +55,4 @@ public class FileSearchEngine extends AbstractSearchEngine {
 		}
 		return instance;
 	}
-
-	/**
-	 * Get the filename of a topic file.
-	 * @see jamwiki.AbstractSearchEngine#getFilename(java.lang.String, java.lang.String)
-	 */
-	protected String getFilename(String currentWiki, String topic) {
-		String filename = FileHandler.topicFilename(topic);
-		return FileHandler.getPathFor(currentWiki, null, filename).getName();
-	}
 }

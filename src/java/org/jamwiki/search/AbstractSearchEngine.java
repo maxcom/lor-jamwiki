@@ -177,7 +177,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			}
 		} catch (IOException e) {
 			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
-			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + topic, e);
 		}
@@ -223,7 +222,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			}
 		} catch (IOException e) {
 			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index", e);
-			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + text, e);
 		}
@@ -302,7 +300,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			}
 		} catch (IOException e) {
 			logger.fatal("Excpetion while adding topic " + topic + "; Refreshing search index", e);
-			SearchRefreshThread.refreshNow();
 		} catch (Exception e) {
 			logger.error("Excpetion while adding topic " + topic, e);
 		}
@@ -320,43 +317,38 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			logger.debug("indexing virtual wiki " + currentWiki);
 			File indexFile = new File(indexPath, "index" + currentWiki);
 			logger.debug("Index file path = " + indexFile);
-			int retrycounter = 0;
-			do {
-				// initially create index in ram
-				RAMDirectory ram = new RAMDirectory();
-				Analyzer analyzer = new StandardAnalyzer();
-				IndexWriter writer = new IndexWriter(ram, analyzer, true);
-				try {
-					Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
-					for (Iterator iter = topics.iterator(); iter.hasNext();) {
-						String topic = (String) iter.next();
-						Document doc = createDocument(currentWiki, topic);
-						if (doc != null) writer.addDocument(doc);
-					}
-				} catch (IOException ex) {
-					logger.error(ex);
-				} finally {
-					try {
-						if (writer != null) {
-							writer.optimize();
-						}
-					} catch (IOException ioe) {
-						logger.fatal("IOException during optimize", ioe);
-					}
-					try {
-						if (writer != null) {
-							writer.close();
-							retrycounter = 999;
-						}
-					} catch (IOException ioe) {
-						logger.fatal("IOException during close", ioe);
-					}
-					writer = null;
+			// initially create index in ram
+			RAMDirectory ram = new RAMDirectory();
+			Analyzer analyzer = new StandardAnalyzer();
+			IndexWriter writer = new IndexWriter(ram, analyzer, true);
+			try {
+				Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
+				for (Iterator iter = topics.iterator(); iter.hasNext();) {
+					String topic = (String) iter.next();
+					Document doc = createDocument(currentWiki, topic);
+					if (doc != null) writer.addDocument(doc);
 				}
-				// write back to disc
-				copyRamIndexToFileIndex(ram, indexFile);
-				retrycounter++;
-			} while (retrycounter < 1);
+			} catch (IOException ex) {
+				logger.error(ex);
+			} finally {
+				try {
+					if (writer != null) {
+						writer.optimize();
+					}
+				} catch (IOException ioe) {
+					logger.fatal("IOException during optimize", ioe);
+				}
+				try {
+					if (writer != null) {
+						writer.close();
+					}
+				} catch (IOException ioe) {
+					logger.fatal("IOException during close", ioe);
+				}
+				writer = null;
+			}
+			// write back to disc
+			copyRamIndexToFileIndex(ram, indexFile);
 		}
 	}
 
@@ -366,8 +358,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 * @param indexFile The index on disc
 	 * @throws IOException
 	 */
-	private void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile)
-		throws IOException {
+	private void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile) throws IOException {
 		Directory index = getIndexDirectory(indexFile, true);
 		try {
 			if (IndexReader.isLocked(index)) {
@@ -454,19 +445,9 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) topicContent = "";
 		StringBuffer contents = new StringBuffer(topicContent);
-		// add document information to search index
-		String fileName = getFilename(virtualWiki, topicName);
-		if (fileName != null) {
-			logger.debug("Indexing topic " + topicName + " in file " + fileName);
-		} else {
-			logger.debug("Indexing topic " + topicName);
-		}
 		Document doc = new Document();
 		doc.add(new Field(ITYPE_TOPIC, new StringReader(topicName)));
 		doc.add(new Field(ITYPE_TOPIC_PLAIN, topicName, Store.YES, Index.UN_TOKENIZED));
-		if (fileName != null) {
-			doc.add(new Field(ITYPE_FILE, fileName, Store.YES, Index.NO));
-		}
 		doc.add(new Field(ITYPE_CONTENT, new StringReader(contents.toString())));
 		doc.add(new Field(ITYPE_CONTENT_PLAIN, contents.toString(), Store.YES, Index.NO));
 		Collection links = Utilities.parseForSearch(topicContent, topicName);
@@ -476,13 +457,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		}
 		return doc;
 	}
-
-	/**
-	 * @param currentWiki
-	 * @param topic
-	 * @return
-	 */
-	protected abstract String getFilename(String currentWiki, String topic);
 
 	/**
 	 * Get the path, which holds all index files

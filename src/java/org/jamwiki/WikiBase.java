@@ -26,7 +26,6 @@ import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileSearchEngine;
 import org.jamwiki.search.SearchEngine;
-import org.jamwiki.search.SearchRefreshThread;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
@@ -89,7 +88,6 @@ public class WikiBase {
 		} else {
 			WikiBase.handler = new FileHandler();
 		}
-		new SearchRefreshThread(Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL));
 	}
 
 	/**
