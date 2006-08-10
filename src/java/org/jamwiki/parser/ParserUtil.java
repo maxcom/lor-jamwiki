@@ -147,6 +147,7 @@ public class ParserUtil {
 				topic = topic.substring(1);
 			}
 			String text = ParserUtil.extractLinkText(content);
+			if (text == null) text = topic;
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw);
@@ -222,12 +223,11 @@ public class ParserUtil {
 			return null;
 		}
 		// search for topic text ("|" followed by text)
-		String text = raw;
-		int pos = text.indexOf('|');
-		if (pos > 0) {
-			text = text.substring(pos+1);
+		int pos = raw.indexOf('|');
+		if (pos <= 0 || raw.length() <= (pos + 1)) {
+			return null;
 		}
-		return text.trim();
+		return raw.substring(pos+1).trim();
 	}
 
 	/**
@@ -304,30 +304,31 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String parseImageLink(String context, String virtualWiki, String topic) throws Exception {
-		StringTokenizer tokens = new StringTokenizer(topic, "|");
-		if (tokens.countTokens() >= 1) topic = tokens.nextToken();
-		// convert any underscores in the topic name to spaces
-		topic = StringUtils.replace(topic, "_", " ");
+	protected static String parseImageLink(String context, String virtualWiki, String content) throws Exception {
+		String topic = ParserUtil.extractLinkTopic(content);
+		String text = ParserUtil.extractLinkText(content);
 		boolean thumb = false;
 		boolean frame = false;
 		String caption = null;
 		String align = null;
-		while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken();
-			if (!StringUtils.hasText(token)) continue;
-			if (token.equalsIgnoreCase("noframe")) {
-				frame = false;
-			} else if (token.equalsIgnoreCase("frame")) {
-				frame = true;
-			} else if (token.equalsIgnoreCase("thumb")) {
-				thumb = true;
-			} else if (token.equalsIgnoreCase("right")) {
-				align = "right";
-			} else if (token.equalsIgnoreCase("left")) {
-				align = "left";
-			} else {
-				caption = token;
+		if (text != null) {
+			StringTokenizer tokens = new StringTokenizer(text, "|");
+			while (tokens.hasMoreTokens()) {
+				String token = tokens.nextToken();
+				if (!StringUtils.hasText(token)) continue;
+				if (token.equalsIgnoreCase("noframe")) {
+					frame = false;
+				} else if (token.equalsIgnoreCase("frame")) {
+					frame = true;
+				} else if (token.equalsIgnoreCase("thumb")) {
+					thumb = true;
+				} else if (token.equalsIgnoreCase("right")) {
+					align = "right";
+				} else if (token.equalsIgnoreCase("left")) {
+					align = "left";
+				} else {
+					caption = token;
+				}
 			}
 		}
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, false);
