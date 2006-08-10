@@ -22,6 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${!empty results}">
 <p><f:message key="linkto.overview"><f:param value="${link}" /></f:message></p>
 
 <ul>
@@ -29,3 +30,8 @@
 <li><jamwiki:link value="${result.topic}" text="${result.topic}" /></li>
 </c:forEach>
 </ul>
+</c:if>
+
+<c:if test="${empty results}">
+<p><f:message key="linkto.none"><f:param value="${link}" /></f:message></p>
+</c:if>
