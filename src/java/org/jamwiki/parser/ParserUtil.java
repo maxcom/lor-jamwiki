@@ -326,6 +326,8 @@ public class ParserUtil {
 					align = "right";
 				} else if (token.equalsIgnoreCase("left")) {
 					align = "left";
+				} else if (token.equalsIgnoreCase("center")) {
+					align = "center";
 				} else {
 					caption = token;
 				}

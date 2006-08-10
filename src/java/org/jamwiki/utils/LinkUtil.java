@@ -104,18 +104,20 @@ public class LinkUtil {
 		}
 		String html = "";
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
-		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
-			html += "<div";
-			if (thumb) {
-				html += " class=\"imgthumb\"";
-			} else if (align != null && align.equalsIgnoreCase("right")) {
-				html += " class=\"imgright\"";
-			} else if (align != null && align.equalsIgnoreCase("left")) {
-				html += " class=\"imgleft\"";
-			} else if (frame) {
-				html += " class=\"imgleft\"";
+		if (frame || thumb || StringUtils.hasText(align)) {
+			html += "<div class=\"";
+			if (thumb || frame) {
+				html += "imgthumb ";
 			}
-			html += ">";
+			if (align != null && align.equalsIgnoreCase("left")) {
+				html += "imgleft ";
+			} else if (align != null && align.equalsIgnoreCase("center")) {
+				html += "imgcenter ";
+			} else {
+				// default right alignment
+				html += "imgright ";
+			}
+			html = html.trim() + "\">";
 		}
 		html += "<img class=\"wikiimg\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
@@ -128,10 +130,10 @@ public class LinkUtil {
 		}
 		html += url;
 		html += "\" />";
-		if (frame || thumb || StringUtils.hasText(align) || StringUtils.hasText(caption)) {
-			if (StringUtils.hasText(caption)) {
-				html += "<div class=\"imgcaption\">" + caption + "</div>";
-			}
+		if (StringUtils.hasText(caption)) {
+			html += "<div class=\"imgcaption\">" + caption + "</div>";
+		}
+		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "</div>";
 		}
 		if (!suppressLink) html += "</a>";

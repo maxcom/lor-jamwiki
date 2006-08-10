@@ -367,28 +367,26 @@ a.wikiimg {
 
 div.imgcaption {
 	padding: 0.3em 0em 0.2em 0em;
-	text-align: left;
 }
 
 div.imgleft {
-	border: 1px solid #bbbbbb;
 	float: left;
-	padding: 0.3em;
 	margin: 0.3em 0.3em 0.3em 0em;
 }
 
 div.imgright {
 	float: right;
-	border: 1px solid #bbbbbb;
-	padding: 0.3em;
 	margin: 0.3em 0em 0.3em 0.3em;
 }
 
+div.imgcenter {
+	text-align: center;
+	margin: 0.3em 0em 0.3em 0em;
+}
+
 div.imgthumb {
-	float: right;
 	border: 1px solid #bbbbbb;
 	padding: 0.3em;
-	margin: 0.3em 0em 0.3em 0.3em;
 }
 
 /* search results */
