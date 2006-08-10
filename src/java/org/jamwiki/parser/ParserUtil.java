@@ -247,6 +247,8 @@ public class ParserUtil {
 		if (pos != -1) {
 			topic = topic.substring(0, raw.indexOf('|'));
 		}
+		// convert any underscores in the topic name to spaces
+		topic = StringUtils.replace(topic, "_", " ");
 		return topic.trim();
 	}
 
@@ -305,6 +307,8 @@ public class ParserUtil {
 	protected static String parseImageLink(String context, String virtualWiki, String topic) throws Exception {
 		StringTokenizer tokens = new StringTokenizer(topic, "|");
 		if (tokens.countTokens() >= 1) topic = tokens.nextToken();
+		// convert any underscores in the topic name to spaces
+		topic = StringUtils.replace(topic, "_", " ");
 		boolean thumb = false;
 		boolean frame = false;
 		String caption = null;
