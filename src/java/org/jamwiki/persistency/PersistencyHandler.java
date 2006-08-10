@@ -316,6 +316,8 @@ public abstract class PersistencyHandler {
 		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
 			return false;
 		}
+		// convert any underscores in the topic name to spaces
+		topicName = StringUtils.replace(topicName, "_", " ");
 		// first check a cache of recently looked-up topics for performance reasons
 		String key = virtualWiki + "/" + topicName;
 		if (cachedTopicsList.contains(key)) {
