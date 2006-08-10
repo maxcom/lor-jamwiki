@@ -7,7 +7,7 @@ import java.io.*;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -17,7 +17,7 @@ import org.jamwiki.utils.Utilities;
 %public
 %type String
 %unicode
-%implements Lexer
+%extends AbstractLexer
 %class VQWikiLinkLex
 
 %init{
@@ -30,7 +30,6 @@ import org.jamwiki.utils.Utilities;
 
 %{
 	protected static Logger logger = Logger.getLogger( VQWikiLinkLex.class );
-	protected ParserInfo parserInfo;
 	
 	/**
 	 *

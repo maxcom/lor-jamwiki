@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractParser;
-import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInfo;
 import org.jamwiki.parser.TableOfContents;
 
@@ -212,7 +212,7 @@ public class VQWikiParser extends AbstractParser {
 	 * Utility method for executing a lexer parse.
 	 * FIXME - this is copy & pasted here and in JAMWikiParser
 	 */
-	protected StringBuffer lex(Lexer lexer) throws Exception {
+	protected StringBuffer lex(AbstractLexer lexer) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		while (true) {
 			String line = lexer.yylex();

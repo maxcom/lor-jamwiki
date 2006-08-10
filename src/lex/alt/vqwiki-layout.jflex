@@ -7,7 +7,7 @@ import java.io.*;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.parser.Lexer;
+import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInfo;
 
 %%
@@ -15,7 +15,7 @@ import org.jamwiki.parser.ParserInfo;
 %public
 %type String
 %unicode
-%implements Lexer
+%extends AbstractLexer
 %class VQWikiLayoutLex
 
 %init{
@@ -50,7 +50,6 @@ import org.jamwiki.parser.ParserInfo;
 	protected int listLevel;
 	protected boolean ordered;
 	protected static Logger cat = Logger.getLogger( VQWikiLayoutLex.class );
-	protected ParserInfo parserInfo;
 	
 	/**
 	 *

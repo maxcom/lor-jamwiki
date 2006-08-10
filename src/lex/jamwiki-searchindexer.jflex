@@ -3,7 +3,6 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Stack;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -14,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 %public
 %class JAMWikiSearchIndexer
-%implements org.jamwiki.parser.Lexer
+%extends AbstractLexer
 %type String
 %unicode
 %ignorecase
@@ -36,34 +35,7 @@ import org.springframework.util.StringUtils;
 %{
     protected static Logger logger = Logger.getLogger(JAMWikiPreProcessor.class.getName());
     protected boolean allowHtml = false;
-    protected ParserInfo parserInfo = null;;
-    /** Member variable used to keep track of the state history for the lexer. */
-    protected Stack states = new Stack();
     protected Vector topicLinks = new Vector();
-
-    /**
-     * Begin a new state and store the old state onto the stack.
-     */
-    protected void beginState(int state) {
-        // store current state
-        Integer current = new Integer(yystate());
-        states.push(current);
-        // switch to new state
-        yybegin(state);
-    }
-
-    /**
-     * End processing of a state and switch to the previous state.
-     */
-    protected void endState() {
-        // revert to previous state
-        if (states.empty()) {
-            logger.warn("Attempt to call endState for an empty stack with text: " + yytext());
-            return;
-        }
-        int next = ((Integer)states.pop()).intValue();
-        yybegin(next);
-    }
     
     /**
      *

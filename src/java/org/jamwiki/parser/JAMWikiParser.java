@@ -43,7 +43,7 @@ public class JAMWikiParser extends AbstractParser {
 	 * Utility method for executing a lexer parse.
 	 * FIXME - this is copy & pasted here and in VQWikiParser
 	 */
-	 protected StringBuffer lex(Lexer lexer) throws Exception {
+	 protected StringBuffer lex(AbstractLexer lexer) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		while (true) {
 			String line = lexer.yylex();

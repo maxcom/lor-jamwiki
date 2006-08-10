@@ -6,7 +6,6 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 
@@ -14,7 +13,7 @@ import org.jamwiki.Environment;
 
 %public
 %class JAMWikiSpliceProcessor
-%implements org.jamwiki.parser.Lexer
+%extends AbstractLexer
 %type String
 %unicode
 %ignorecase
@@ -35,39 +34,12 @@ import org.jamwiki.Environment;
 /* code copied verbatim into the generated .java file */
 %{
     protected static Logger logger = Logger.getLogger(JAMWikiSpliceProcessor.class.getName());
-    /** Member variable used to keep track of the state history for the lexer. */
-    protected Stack states = new Stack();
-    protected ParserInfo parserInfo = null;;
     protected boolean allowHtml = false;
     protected int section = 0;
     protected int sectionDepth = 0;
     protected int targetSection = 0;
     protected String replacementText = null;
     protected boolean inTargetSection = false;
-
-    /**
-     * Begin a new state and store the old state onto the stack.
-     */
-    protected void beginState(int state) {
-        // store current state
-        Integer current = new Integer(yystate());
-        states.push(current);
-        // switch to new state
-        yybegin(state);
-    }
-
-    /**
-     * End processing of a state and switch to the previous state.
-     */
-    protected void endState() {
-        // revert to previous state
-        if (states.empty()) {
-            logger.warn("Attempt to call endState for an empty stack with text: " + yytext());
-            return;
-        }
-        int next = ((Integer)states.pop()).intValue();
-        yybegin(next);
-    }
     
     /**
      *
