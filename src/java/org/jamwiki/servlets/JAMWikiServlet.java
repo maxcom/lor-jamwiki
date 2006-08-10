@@ -355,6 +355,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			// topic does not exist, display empty page
+			topic = new Topic();
+			topic.setName(topicName);
+			topic.setVirtualWiki(virtualWiki);
+		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
 		viewTopic(request, next, pageTitle, topic, true);
 	}

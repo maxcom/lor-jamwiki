@@ -21,22 +21,27 @@
     "
 %>
 
-<c:if test="${!empty topicObject}">
+<c:if test="${topicObject.topicId > 0}">
+	<c:if test="${!empty topicObject}">
 <div id="content-article">
 <%-- FIXME - ugly, clean this up --%>
 <jamwiki:image value="${topicObject.name}" />
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
-<c:if test="${!empty fileVersions}">
-<h2>File History</h2>
+		<c:if test="${!empty fileVersions}">
+<h2><f:message key="topic.filehistory" /></h2>
 <ul>
-<c:forEach items="${fileVersions}" var="fileVersion">
+			<c:forEach items="${fileVersions}" var="fileVersion">
 <li>
 <%-- FIXME - clean this up, verify path build correctly --%>
 <a href="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %><c:out value="${fileVersion.url}" />"><f:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 &#160;(<c:out value="${fileVersion.fileSize}" /> bytes)
-<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
+				<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
 </li>
-</c:forEach>
+			</c:forEach>
 </ul>
+		</c:if>
+	</c:if>
 </c:if>
+<c:if test="${topicObject.topicId < 1 && empty topicObject.topicContent}">
+<p><f:message key="topic.notcreated"><f:param value="${topic}" /></f:message></p>
 </c:if>
