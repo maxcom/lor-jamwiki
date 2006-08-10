@@ -21,7 +21,7 @@
     "
 %>
 
-<c:if test="${topicObject.topicId > 0}">
+<c:if test="${topicObject.topicId > 0 || !empty topicObject.topicContent}">
 	<c:if test="${!empty topicObject}">
 <div id="content-article">
 <%-- FIXME - ugly, clean this up --%>
