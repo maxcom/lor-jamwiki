@@ -22,10 +22,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.db.DatabaseSearchEngine;
 import org.jamwiki.persistency.file.FileHandler;
-import org.jamwiki.persistency.file.FileSearchEngine;
-import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
@@ -141,27 +138,7 @@ public class WikiBase {
 	}
 
 	/**
-	 * Get an instance to the search enginge.
-	 *
-	 * @return Reference to the SearchEngine
-	 * @throws Exception the current search engine
-	 */
-	public static SearchEngine getSearchEngineInstance() throws Exception {
-		switch (WikiBase.getPersistenceType()) {
-			case FILE:
-				return FileSearchEngine.getInstance();
-			case DATABASE:
-				return DatabaseSearchEngine.getInstance();
-			default:
-				return FileSearchEngine.getInstance();
-		}
-	}
-
-	/**
 	 * Get an instance of the user group
-	 *
-	 * @return Reference to the SearchEngine
-	 * @throws Exception the current search engine
 	 */
 	public static Usergroup getUsergroupInstance() throws Exception {
 		switch (Usergroup.getUsergroupType()) {

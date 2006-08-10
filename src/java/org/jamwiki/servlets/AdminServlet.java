@@ -34,6 +34,7 @@ import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -483,7 +484,7 @@ public class AdminServlet extends JAMWikiServlet {
 		this.pageInfo.setAdmin(true);
 		this.pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		try {
-			WikiBase.getSearchEngineInstance().refreshIndex();
+			LuceneSearchEngine.refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
 			// FIXME - hard coding

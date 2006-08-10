@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
-import org.jamwiki.search.SearchEngine;
+import org.jamwiki.search.LuceneSearchEngine;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -59,8 +59,7 @@ public class LinkToServlet extends JAMWikiServlet {
 			WikiMessage pageTitle = new WikiMessage("linkto.title", topicName);
 			this.pageInfo.setPageTitle(pageTitle);
 			// grab search engine instance and find
-			SearchEngine sedb = WikiBase.getSearchEngineInstance();
-			Collection results = sedb.findLinkedTo(virtualWiki, topicName);
+			Collection results = LuceneSearchEngine.findLinkedTo(virtualWiki, topicName);
 			next.addObject("results", results);
 			next.addObject("link", topicName);
 			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LINK_TO);

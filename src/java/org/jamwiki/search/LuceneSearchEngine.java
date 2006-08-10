@@ -22,11 +22,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
@@ -66,10 +62,10 @@ import org.springframework.util.StringUtils;
 /*
  *
  */
-public abstract class AbstractSearchEngine implements SearchEngine {
+public class LuceneSearchEngine {
 
 	/** Where to log to */
-	private static final Logger logger = Logger.getLogger(AbstractSearchEngine.class);
+	private static final Logger logger = Logger.getLogger(LuceneSearchEngine.class);
 	/** Directory for search index files */
 	protected static final String SEARCH_DIR = "search";
 	/** Index type "File" */
@@ -84,8 +80,6 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
 	/** Index type "topic plain" */
 	protected static final String ITYPE_TOPIC_LINK = "topic_link";
-	/** File separator */
-	protected static String sep = System.getProperty("file.separator");
 	/** Temp directory - where to store the indexes (initialized via getInstance method) */
 	protected static String indexPath = null;
 	/** Index is stored in RAM */
@@ -93,24 +87,10 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/** Index is stored in the file system */
 	private static final int FS_BASED = 1;
 	/** where is the index stored */
-	private transient int fsType = FS_BASED;
+	private static int fsType = FS_BASED;
 
-	/**
-	 * Index the given text for the search engine database
-	 */
-	public void indexText(String virtualWiki, String topic, String text) throws IOException {
-		// put keywords into index db - ignore particles etc
-		add(virtualWiki, topic, text);
-	}
-
-	/**
-	 * Should be called by a monitor thread at regular intervals, rebuilds the
-	 * entire seach index to account for removed items. Due to the additive rather
-	 * than subtractive nature of a Wiki, it probably only needs to be called once
-	 * or twice a day
-	 */
-	public void refreshIndex() throws Exception {
-		rebuild();
+	static {
+		initSearchEngine();
 	}
 
 	/**
@@ -122,76 +102,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 *
 	 * @return A collection of SearchResultEntry, containing the search results
 	 */
-	public Collection findMultiple(String virtualWiki, String text) {
-		return doSearch(virtualWiki, text);
-	}
-
-	/**
-	 * @param indexPath
-	 */
-	protected void initSearchEngine() throws Exception {
-		// FIXME - need a unique temp directory even if multiple wiki installations
-		// running on the same system.
-		try {
-			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + File.separator + SEARCH_DIR;
-			File tmpDir = new File(dir);
-			indexPath = tmpDir.getPath();
-		} catch (Exception e) {
-			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);
-			indexPath = System.getProperty("java.io.tmpdir");
-		}
-		refreshIndex();
-	}
-
-	/**
-	 * @param indexPath
-	 */
-	protected void initSearchEngine(String iP) throws Exception {
-		indexPath = iP;
-		refreshIndex();
-	}
-
-	/**
-	 *
-	 */
-	public Collection findLinkedTo(String virtualWiki, String topic) throws Exception {
-		if (indexPath == null) {
-			return Collections.EMPTY_LIST;
-		}
-		String indexFilename = getSearchIndexPath(virtualWiki);
-		Analyzer analyzer = new StandardAnalyzer();
-		Collection results = new ArrayList();
-		try {
-			BooleanQuery query = new BooleanQuery();
-			QueryParser qp;
-			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
-			query.add(qp.parse(topic), Occur.MUST);
-			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
-			// actually perform the search
-			Hits hits = searcher.search(query);
-			for (int i = 0; i < hits.length(); i++) {
-				SearchResultEntry result = new SearchResultEntry();
-				result.setRanking(hits.score(i));
-				result.setTopic(hits.doc(i).get(AbstractSearchEngine.ITYPE_TOPIC_PLAIN));
-				results.add(result);
-			}
-		} catch (IOException e) {
-			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
-		} catch (Exception e) {
-			logger.fatal("Exception while searching for " + topic, e);
-		}
-		return results;
-	}
-
-	/**
-	 * Actually perform the search.
-	 *
-	 * @param virtualWiki The virtual wiki to use
-	 * @param text The text to find
-	 *
-	 * @return A collection of SearchResultEntry, containing the search results
-	 */
-	protected Collection doSearch(String virtualWiki, String text) {
+	public static Collection findMultiple(String virtualWiki, String text) {
 		if (indexPath == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -213,10 +124,10 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 			Hits hits = searcher.search(rewrittenQuery);
 			Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>"), new SimpleHTMLEncoder(), new QueryScorer(rewrittenQuery));
 			for (int i = 0; i < hits.length(); i++) {
-				String summary = this.retrieveResultSummary(hits.doc(i), highlighter, analyzer);
+				String summary = retrieveResultSummary(hits.doc(i), highlighter, analyzer);
 				SearchResultEntry result = new SearchResultEntry();
 				result.setRanking(hits.score(i));
-				result.setTopic(hits.doc(i).get(AbstractSearchEngine.ITYPE_TOPIC_PLAIN));
+				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
 				result.setSummary(summary);
 				results.add(result);
 			}
@@ -229,9 +140,55 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	}
 
 	/**
+	 * @param indexPath
+	 */
+	protected static void initSearchEngine() {
+		try {
+			String dir = Environment.getValue(Environment.PROP_BASE_FILE_DIR) + File.separator + SEARCH_DIR;
+			File tmpDir = new File(dir);
+			indexPath = tmpDir.getPath();
+		} catch (Exception e) {
+			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);
+			indexPath = System.getProperty("java.io.tmpdir");
+		}
+	}
+
+	/**
 	 *
 	 */
-	private String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
+	public static Collection findLinkedTo(String virtualWiki, String topic) throws Exception {
+		if (indexPath == null) {
+			return Collections.EMPTY_LIST;
+		}
+		String indexFilename = getSearchIndexPath(virtualWiki);
+		Analyzer analyzer = new StandardAnalyzer();
+		Collection results = new ArrayList();
+		try {
+			BooleanQuery query = new BooleanQuery();
+			QueryParser qp;
+			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
+			query.add(qp.parse(topic), Occur.MUST);
+			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			// actually perform the search
+			Hits hits = searcher.search(query);
+			for (int i = 0; i < hits.length(); i++) {
+				SearchResultEntry result = new SearchResultEntry();
+				result.setRanking(hits.score(i));
+				result.setTopic(hits.doc(i).get(LuceneSearchEngine.ITYPE_TOPIC_PLAIN));
+				results.add(result);
+			}
+		} catch (IOException e) {
+			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
+		} catch (Exception e) {
+			logger.fatal("Exception while searching for " + topic, e);
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
+	private static String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
@@ -246,7 +203,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 * Adds to the in-memory table. Does not remove indexed items that are
 	 * no longer valid due to deletions, edits etc.
 	 */
-	public synchronized void add(String virtualWiki, String topic, String contents)
+	public static synchronized void add(String virtualWiki, String topic, String contents)
 		throws IOException {
 		String indexFilename = getSearchIndexPath(virtualWiki);
 		try {
@@ -308,7 +265,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/**
 	 * Trawls all the files in the wiki directory and indexes them
 	 */
-	public synchronized void rebuild() throws Exception {
+	public static synchronized void refreshIndex() throws Exception {
 		logger.info("Building index");
 		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
@@ -358,7 +315,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 * @param indexFile The index on disc
 	 * @throws IOException
 	 */
-	private void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile) throws IOException {
+	private static void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile) throws IOException {
 		Directory index = getIndexDirectory(indexFile, true);
 		try {
 			if (IndexReader.isLocked(index)) {
@@ -411,8 +368,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/**
 	 * @param indexFile
 	 */
-	protected Directory getIndexDirectory(File indexFile, boolean create)
-		throws IOException {
+	protected static Directory getIndexDirectory(File indexFile, boolean create) throws IOException {
 		if (fsType == FS_BASED) {
 			return FSDirectory.getDirectory(indexFile, create);
 		} else {
@@ -423,8 +379,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/**
 	 * @param indexFilename
 	 */
-	protected Directory getIndexDirectory(String indexFilename, boolean create)
-		throws IOException {
+	protected static Directory getIndexDirectory(String indexFilename, boolean create) throws IOException {
 		if (fsType == FS_BASED) {
 			return FSDirectory.getDirectory(indexFilename, create);
 		} else {
@@ -438,7 +393,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 * @param topic Name of the topic to add
 	 * @return The document to add
 	 */
-	protected Document createDocument(String virtualWiki, String topicName) throws Exception {
+	protected static Document createDocument(String virtualWiki, String topicName) throws Exception {
 		// get content
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
@@ -461,7 +416,7 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	/**
 	 * Get the path, which holds all index files
 	 */
-	public String getSearchIndexPath(String virtualWiki) {
-		return indexPath + sep + "index" + virtualWiki;
+	public static String getSearchIndexPath(String virtualWiki) {
+		return indexPath + File.separator + "index" + virtualWiki;
 	}
 }
