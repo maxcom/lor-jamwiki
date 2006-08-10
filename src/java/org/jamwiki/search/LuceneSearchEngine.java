@@ -37,7 +37,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -67,17 +66,15 @@ public class LuceneSearchEngine {
 	private static final Logger logger = Logger.getLogger(LuceneSearchEngine.class);
 	/** Directory for search index files */
 	protected static final String SEARCH_DIR = "search";
-	/** Index type "File" */
-	protected static final String ITYPE_FILE = "file";
-	/** Index type "topic" */
+	/** Id stored with documents to indicate the searchable topic name */
 	protected static final String ITYPE_TOPIC = "topic";
-	/** Index type "content" */
+	/** Id stored with documents to indicate the searchable content. */
 	protected static final String ITYPE_CONTENT = "content";
-	/** Index type "content plain" */
+	/** Id stored with documents to indicate the raw Wiki markup */
 	protected static final String ITYPE_CONTENT_PLAIN = "content_plain";
-	/** Index type "topic plain" */
+	/** Id stored with documents to indicate the topic name. */
 	protected static final String ITYPE_TOPIC_PLAIN = "topic_plain";
-	/** Index type "topic plain" */
+	/** Id stored with the document to indicate the search names of topics linked from the page.  */
 	protected static final String ITYPE_TOPIC_LINK = "topic_link";
 	/** Temp directory - where to store the indexes (initialized via getInstance method) */
 	protected static String indexPath = null;
@@ -212,8 +209,7 @@ public class LuceneSearchEngine {
 	 * Adds to the in-memory table. Does not remove indexed items that are
 	 * no longer valid due to deletions, edits etc.
 	 */
-	public static synchronized void add(String virtualWiki, String topic, String contents)
-		throws IOException {
+	public static synchronized void add(String virtualWiki, String topic, String contents) {
 		String indexFilename = getSearchIndexPath(virtualWiki);
 		IndexWriter writer = null;
 		IndexReader reader = null;
@@ -256,16 +252,16 @@ public class LuceneSearchEngine {
 				try {
 					if (writer != null) {
 						writer.optimize();
+					}
+				} catch (Exception e) {}
+				try {
+					if (writer != null) {
 						writer.close();
 					}
-				} catch (Exception e) {
-					logger.fatal(e);
-				}
+				} catch (Exception e) { logger.fatal(e); }
 			}
-		} catch (IOException e) {
-			logger.fatal("Excpetion while adding topic " + topic + "; Refreshing search index", e);
 		} catch (Exception e) {
-			logger.error("Excpetion while adding topic " + topic, e);
+			logger.error("Exception while adding topic " + topic, e);
 		}
 	}
 
@@ -273,7 +269,7 @@ public class LuceneSearchEngine {
 	 * Trawls all the files in the wiki directory and indexes them
 	 */
 	public static synchronized void refreshIndex() throws Exception {
-		logger.info("Building index");
+		logger.info("Rebuilding search index");
 		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
