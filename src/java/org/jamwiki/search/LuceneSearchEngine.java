@@ -41,7 +41,6 @@ import org.apache.lucene.search.Hit;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -110,6 +109,7 @@ public class LuceneSearchEngine {
 		Analyzer analyzer = new StandardAnalyzer();
 		Collection results = new ArrayList();
 		logger.debug("search text: " + text);
+		IndexSearcher searcher = null;
 		try {
 			BooleanQuery query = new BooleanQuery();
 			QueryParser qp;
@@ -117,7 +117,7 @@ public class LuceneSearchEngine {
 			query.add(qp.parse(text), Occur.SHOULD);
 			qp = new QueryParser(ITYPE_CONTENT, analyzer);
 			query.add(qp.parse(text), Occur.SHOULD);
-			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// rewrite the query to expand it - required for wildcards to work with highlighter
 			Query rewrittenQuery = searcher.rewrite(query);
 			// actually perform the search
@@ -135,6 +135,10 @@ public class LuceneSearchEngine {
 			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index", e);
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + text, e);
+		} finally {
+			if (searcher != null) {
+				try { searcher.close(); } catch (Exception e) {}
+			}
 		}
 		return results;
 	}
@@ -163,12 +167,13 @@ public class LuceneSearchEngine {
 		String indexFilename = getSearchIndexPath(virtualWiki);
 		Analyzer analyzer = new StandardAnalyzer();
 		Collection results = new ArrayList();
+		IndexSearcher searcher = null;
 		try {
 			BooleanQuery query = new BooleanQuery();
 			QueryParser qp;
 			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
 			query.add(qp.parse(topic), Occur.MUST);
-			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// actually perform the search
 			Hits hits = searcher.search(query);
 			for (int i = 0; i < hits.length(); i++) {
@@ -181,6 +186,10 @@ public class LuceneSearchEngine {
 			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + topic, e);
+		} finally {
+			if (searcher != null) {
+				try { searcher.close(); } catch (Exception e) {}
+			}
 		}
 		return results;
 	}
@@ -206,6 +215,8 @@ public class LuceneSearchEngine {
 	public static synchronized void add(String virtualWiki, String topic, String contents)
 		throws IOException {
 		String indexFilename = getSearchIndexPath(virtualWiki);
+		IndexWriter writer = null;
+		IndexReader reader = null;
 		try {
 			Directory directory = getIndexDirectory(indexFilename, false);
 			if (IndexReader.isLocked(directory)) {
@@ -226,34 +237,30 @@ public class LuceneSearchEngine {
 				}
 			}
 			// delete the current document
-			IndexReader reader = IndexReader.open(directory);
-			reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic));
-			reader.close();
+			try {
+				reader = IndexReader.open(directory);
+				reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic));
+			} finally {
+				if (reader != null) {
+					try { reader.close(); } catch (Exception e) {}
+				}
+			}
 			directory.close();
 			// add new document
-			IndexWriter writer = new IndexWriter(directory, new StandardAnalyzer(), false);
-			writer.optimize();
-			Document doc = createDocument(virtualWiki, topic);
 			try {
+				writer = new IndexWriter(directory, new StandardAnalyzer(), false);
+				writer.optimize();
+				Document doc = createDocument(virtualWiki, topic);
 				writer.addDocument(doc);
-			} catch (IOException ex) {
-				logger.error(ex);
 			} finally {
 				try {
 					if (writer != null) {
 						writer.optimize();
-					}
-				} catch (IOException ioe) {
-					logger.fatal("IOException during optimize", ioe);
-				}
-				try {
-					if (writer != null) {
 						writer.close();
 					}
-				} catch (IOException ioe) {
-					logger.fatal("IOException during closing", ioe);
+				} catch (Exception e) {
+					logger.fatal(e);
 				}
-				writer = null;
 			}
 		} catch (IOException e) {
 			logger.fatal("Excpetion while adding topic " + topic + "; Refreshing search index", e);
