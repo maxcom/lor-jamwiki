@@ -74,6 +74,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="admin-translation.jsp" flush="true" />
 <%
+} else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS)) {
+%>
+		<jsp:include page="all-topics.jsp" flush="true" />
+<%
 } else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
 %>
 		<jsp:include page="contributions.jsp" flush="true" />
@@ -102,6 +106,10 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 %>
 		<jsp:include page="import.jsp" flush="true" />
 <%
+} else if (action.equals(JAMWikiServlet.ACTION_LINK_TO)) {
+%>
+		<jsp:include page="linkto.jsp" flush="true" />
+<%
 } else if (action.equals(JAMWikiServlet.ACTION_LOGIN)) {
 %>
 		<jsp:include page="login.jsp" flush="true" />
@@ -121,10 +129,6 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 } else if (action.equals(JAMWikiServlet.ACTION_SEARCH_RESULTS)) {
 %>
 		<jsp:include page="search-results.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS)) {
-%>
-		<jsp:include page="all-topics.jsp" flush="true" />
 <%
 } else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
 %>

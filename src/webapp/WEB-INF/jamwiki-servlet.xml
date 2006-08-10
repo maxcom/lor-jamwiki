@@ -5,6 +5,7 @@
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
+				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:Admin">Admin</prop>
 				<prop key="/**/Special:AllTopics">Topic</prop>
 				<prop key="/**/Special:Contributions">Contributions</prop>
@@ -15,11 +16,11 @@
 				<prop key="/**/Special:Export">Export</prop>
 				<prop key="/**/Special:History">History</prop>
 				<prop key="/**/Special:Import">Import</prop>
+				<prop key="/**/Special:LinkTo">LinkTo</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
-				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:Translation">Translation</prop>
@@ -40,6 +41,7 @@
 	<bean id="Export" class="org.jamwiki.servlets.ExportServlet" />
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
 	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
+	<bean id="LinkTo" class="org.jamwiki.servlets.LinkToServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />

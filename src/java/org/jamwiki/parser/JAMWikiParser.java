@@ -65,7 +65,7 @@ public class JAMWikiParser extends AbstractParser {
 		JAMWikiSearchIndexer lexer = new JAMWikiSearchIndexer(raw);
 		lexer.setParserInfo(this.parserInfo);
 		this.lex(lexer);
-		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.info("Parse time (parseForSearch) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return lexer.getTopicLinks();
 	}
 
@@ -87,7 +87,7 @@ public class JAMWikiParser extends AbstractParser {
 		}
 		raw = new StringReader(contents.toString());
 		contents = this.parsePostProcess(raw);
-		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.info("Parse time (parseHTML) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return contents.toString();
 	}
 
@@ -134,7 +134,7 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setParserInfo(this.parserInfo);
 		lexer.setTargetSection(targetSection);
 		contents = this.lex(lexer);
-		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.info("Parse time (parseSlice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return contents.toString();
 	}
 
@@ -150,7 +150,7 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		contents = this.lex(lexer);
-		logger.info("Parse time for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.info("Parse time (parseSplice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return contents.toString();
 	}
 }

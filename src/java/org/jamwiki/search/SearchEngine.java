@@ -38,9 +38,14 @@ public interface SearchEngine {
 	public void refreshIndex() throws Exception;
 
 	/**
+	 *
+	 */
+	public Collection findLinkedTo(String virtualWiki, String topic) throws Exception;
+
+	/**
 	 * Find topics that contain any of the space delimited terms
 	 */
-	public Collection findMultiple(String virtualWiki, String text, boolean fuzzy) throws Exception;
+	public Collection findMultiple(String virtualWiki, String text) throws Exception;
 
 	/**
 	 * Get the path, which holds all index files

@@ -28,6 +28,8 @@
 	<td class="menu-tab-nonselected"><jamwiki:link value="${edit}"><f:message key="menu.editpage" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.history" /></a></td>
+	<td class="menu-tab-space">&#160;</td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:LinkTo" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.links" /></a></td>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>

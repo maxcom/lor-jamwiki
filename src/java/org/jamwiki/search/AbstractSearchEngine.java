@@ -119,11 +119,10 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	 *
 	 * @param virtualWiki The virtual wiki to use
 	 * @param text The text to find
-	 * @param fuzzy true, if fuzzy search should be used, false otherwise
 	 *
 	 * @return A collection of SearchResultEntry, containing the search results
 	 */
-	public Collection findMultiple(String virtualWiki, String text, boolean fuzzy) {
+	public Collection findMultiple(String virtualWiki, String text) {
 		return doSearch(virtualWiki, text);
 	}
 
@@ -150,6 +149,39 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 	protected void initSearchEngine(String iP) throws Exception {
 		indexPath = iP;
 		refreshIndex();
+	}
+
+	/**
+	 *
+	 */
+	public Collection findLinkedTo(String virtualWiki, String topic) throws Exception {
+		if (indexPath == null) {
+			return Collections.EMPTY_LIST;
+		}
+		String indexFilename = getSearchIndexPath(virtualWiki);
+		Analyzer analyzer = new StandardAnalyzer();
+		Collection results = new ArrayList();
+		try {
+			BooleanQuery query = new BooleanQuery();
+			QueryParser qp;
+			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
+			query.add(qp.parse(topic), Occur.MUST);
+			Searcher searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
+			// actually perform the search
+			Hits hits = searcher.search(query);
+			for (int i = 0; i < hits.length(); i++) {
+				SearchResultEntry result = new SearchResultEntry();
+				result.setRanking(hits.score(i));
+				result.setTopic(hits.doc(i).get(AbstractSearchEngine.ITYPE_TOPIC_PLAIN));
+				results.add(result);
+			}
+		} catch (IOException e) {
+			logger.warn("Error (IOExcpetion) while searching for " + topic + "; Refreshing search index", e);
+			SearchRefreshThread.refreshNow();
+		} catch (Exception e) {
+			logger.fatal("Exception while searching for " + topic, e);
+		}
+		return results;
 	}
 
 	/**
@@ -442,7 +474,8 @@ public abstract class AbstractSearchEngine implements SearchEngine {
 		doc.add(new Field(ITYPE_CONTENT_PLAIN, contents.toString(), Store.YES, Index.NO));
 		Collection links = Utilities.parseForSearch(topicContent, topicName);
 		for (Iterator iter = links.iterator(); iter.hasNext();) {
-			doc.add(new Field(ITYPE_TOPIC_LINK, (String)iter.next(), Store.YES, Index.UN_TOKENIZED));
+			String linkTopic = (String)iter.next();
+			doc.add(new Field(ITYPE_TOPIC_LINK, new StringReader(linkTopic)));
 		}
 		return doc;
 	}
