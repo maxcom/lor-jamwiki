@@ -21,7 +21,7 @@
     "
 %>
 
-<c:if test="${topicObject.topicId > 0 || !empty topicObject.topicContent}">
+<c:if test="${empty notopic}">
 	<c:if test="${!empty topicObject}">
 <div id="content-article">
 <%-- FIXME - ugly, clean this up --%>
@@ -42,6 +42,6 @@
 		</c:if>
 	</c:if>
 </c:if>
-<c:if test="${topicObject.topicId < 1 && empty topicObject.topicContent}">
-<p><f:message key="topic.notcreated"><f:param value="${topic}" /></f:message></p>
+<c:if test="${!empty notopic}">
+<p><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /></f:message></p>
 </c:if>
