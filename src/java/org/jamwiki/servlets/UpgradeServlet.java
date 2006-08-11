@@ -30,6 +30,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseUpgrades;
 import org.jamwiki.persistency.file.FileUpgrades;
+import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -78,10 +79,13 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Vector messages = new Vector();
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 0, 8)) {
-			messages = upgrade008(messages);
+			messages = upgrade008(request, messages);
 		}
 		if (oldVersion.before(0, 1, 0)) {
-			messages = upgrade010(messages);
+			messages = upgrade010(request, messages);
+		}
+		if (oldVersion.before(0, 2, 0)) {
+			messages = upgrade020(request, messages);
 		}
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 		Environment.saveProperties();
@@ -100,7 +104,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector upgrade008(Vector messages) {
+	private Vector upgrade008(HttpServletRequest request, Vector messages) {
 		Collection userNames = null;
 		try {
 			userNames = WikiBase.getHandler().getAllWikiUserLogins();
@@ -137,13 +141,38 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector upgrade010(Vector messages) {
+	private Vector upgrade010(HttpServletRequest request, Vector messages) {
 		// update virtual wiki
 		try {
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
 				messages = DatabaseUpgrades.upgrade010(messages);
 			} else {
 				messages = FileUpgrades.upgrade010(messages);
+			}
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to update virtual wiki table";
+			logger.error(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	private Vector upgrade020(HttpServletRequest request, Vector messages) {
+		try {
+			// rebuild search index
+			LuceneSearchEngine.refreshIndex();
+			messages.add("Refreshed search index");
+			// update stylesheet
+			WikiUser user = Utilities.currentUser(request);
+			Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
+			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
+				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
 		} catch (Exception e) {
 			// FIXME - hard coding

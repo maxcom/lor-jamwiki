@@ -748,6 +748,32 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user) throws Exception {
+		logger.info("Updating special page " + virtualWiki + " / " + topicName);
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			String contents = PersistencyHandler.readSpecialPage(locale, topicName);
+			Topic topic = this.lookupTopic(virtualWiki, topicName);
+			topic.setTopicContent(contents);
+			TopicVersion topicVersion = new TopicVersion();
+			topicVersion.setVersionContent(contents);
+			topicVersion.setAuthorIpAddress(user.getLastLoginIpAddress());
+			topicVersion.setAuthorId(new Integer(user.getUserId()));
+			// FIXME - hard coding
+			topicVersion.setEditComment("Automatically updated by system upgrade");
+			writeTopic(topic, topicVersion, params);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected abstract void updateTopic(Topic topic, Object[] params) throws Exception;
 
 	/**
