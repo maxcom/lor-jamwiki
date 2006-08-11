@@ -35,12 +35,16 @@ public class ParserUtil {
 
 	private static Logger logger = Logger.getLogger(ParserUtil.class.getName());
 	private static Pattern TAG_PATTERN = null;
-	private static Pattern JAVASCRIPT_PATTERN = null;
+	private static Pattern JAVASCRIPT_PATTERN1 = null;
+	private static Pattern JAVASCRIPT_PATTERN2 = null;
 
 	static {
 		try {
 			TAG_PATTERN = Pattern.compile("<[ ]*([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
-			JAVASCRIPT_PATTERN = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
+			// catch script insertions of the form "onsubmit="
+			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
+			// catch script insertions that use a javascript url
+			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.error("Unable to compile pattern", e);
 		}
@@ -350,7 +354,13 @@ public class ParserUtil {
 		String attributes = m.group(2);
 		String tagClose = m.group(4);
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			m = JAVASCRIPT_PATTERN.matcher(attributes);
+			// FIXME - can these two patterns be combined into one?
+			m = JAVASCRIPT_PATTERN1.matcher(attributes);
+			if (m.find()) {
+				logger.warn("Attempt to include Javascript in Wiki syntax " + tag);
+				attributes = "";
+			}
+			m = JAVASCRIPT_PATTERN2.matcher(attributes);
 			if (m.find()) {
 				logger.warn("Attempt to include Javascript in Wiki syntax " + tag);
 				attributes = "";
