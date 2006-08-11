@@ -77,7 +77,7 @@ public class WikiPreparedStatement {
 			rs = this.statement.executeQuery();
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql);
+				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
 			logger.debug("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
@@ -112,7 +112,7 @@ public class WikiPreparedStatement {
 			int result = this.statement.executeUpdate();
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql);
+				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
 			logger.debug("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return result;

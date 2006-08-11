@@ -281,7 +281,7 @@ public class Environment {
 			} else if (!file.exists()) {
 				logger.warn("Property file " + file.toString() + " does not exist");
 			} else {
-				logger.warn("Loading properties from " + file.toString());
+				logger.info("Loading properties from " + file.toString());
 				properties.load(new FileInputStream(file));
 			}
 		} catch (Exception e) {

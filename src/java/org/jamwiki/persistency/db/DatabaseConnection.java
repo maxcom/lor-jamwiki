@@ -125,7 +125,7 @@ public class DatabaseConnection {
 			rs = stmt.executeQuery(sql);
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql);
+				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
 			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
@@ -172,7 +172,7 @@ public class DatabaseConnection {
 			int result = stmt.executeUpdate(sql);
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql);
+				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
 			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return result;

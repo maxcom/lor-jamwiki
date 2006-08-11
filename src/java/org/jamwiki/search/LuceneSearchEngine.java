@@ -371,15 +371,14 @@ public class LuceneSearchEngine {
 	 * Trawls all the files in the wiki directory and indexes them
 	 */
 	public static synchronized void refreshIndex() throws Exception {
-		logger.info("Rebuilding search index");
 		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
 		Topic topic;
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
+			long start = System.currentTimeMillis();
+			int count = 0;
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			String currentWiki = virtualWiki.getName();
-			logger.debug("indexing virtual wiki " + currentWiki);
 			File indexFile = new File(indexPath, "index" + currentWiki);
-			logger.debug("Index file path = " + indexFile);
 			// initially create index in ram
 			RAMDirectory ram = new RAMDirectory();
 			StandardAnalyzer analyzer = new StandardAnalyzer();
@@ -394,6 +393,7 @@ public class LuceneSearchEngine {
 					if (standardDocument != null) writer.addDocument(standardDocument);
 					Document keywordDocument = createKeywordDocument(topic);
 					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
+					count++;
 				}
 			} catch (IOException ex) {
 				logger.error(ex);
@@ -416,6 +416,7 @@ public class LuceneSearchEngine {
 			}
 			// write back to disc
 			copyRamIndexToFileIndex(ram, indexFile);
+			logger.info("Rebuilt search index for " + virtualWiki.getName() + " (" + count + " documents) in " + ((System.currentTimeMillis() - start) / 1000.000) + " seconds");
 		}
 	}
 
