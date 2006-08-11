@@ -28,7 +28,6 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInfo;
-import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -284,7 +283,6 @@ public class EditServlet extends JAMWikiServlet {
 		WikiBase.getHandler().writeTopic(topic, topicVersion);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
-		LuceneSearchEngine.add(virtualWiki, topicName, request.getParameter("contents"));
 		viewTopic(request, next, topicName);
 	}
 }

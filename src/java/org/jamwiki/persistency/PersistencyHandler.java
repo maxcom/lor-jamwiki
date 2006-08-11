@@ -37,6 +37,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -826,6 +827,8 @@ public abstract class PersistencyHandler {
 				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			}
 			this.writeTopic(topic, topicVersion, params);
+			LuceneSearchEngine.deleteFromIndex(topic);
+			LuceneSearchEngine.addToIndex(topic);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;

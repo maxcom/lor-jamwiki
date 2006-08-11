@@ -24,14 +24,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -39,6 +37,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -93,45 +92,36 @@ public class LuceneSearchEngine {
 	 * Adds to the in-memory table. Does not remove indexed items that are
 	 * no longer valid due to deletions, edits etc.
 	 */
-	public static synchronized void add(String virtualWiki, String topic, String contents) {
+	public static synchronized void addToIndex(Topic topic) {
+		String virtualWiki = topic.getVirtualWiki();
+		String topicName = topic.getName();
+		String contents = topic.getTopicContent();
 		String indexFilename = getSearchIndexPath(virtualWiki);
 		IndexWriter writer = null;
 		IndexReader reader = null;
 		try {
 			Directory directory = getIndexDirectory(indexFilename, false);
-			if (IndexReader.isLocked(directory)) {
-				// wait up to ten seconds until unlocked
-				int count = 0;
-				while (IndexReader.isLocked(directory) && count < 20) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ie) {
-						; // do nothing
-					}
-					count++;
-				}
-				// if still locked, force to unlock it
-				if (IndexReader.isLocked(directory)) {
-					IndexReader.unlock(directory);
-					logger.fatal("Unlocking search index by force");
-				}
-			}
 			// delete the current document
 			try {
 				reader = IndexReader.open(directory);
-				reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topic));
+				reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
 			} finally {
 				if (reader != null) {
-					try { reader.close(); } catch (Exception e) {}
+					try {
+						reader.close();
+					} catch (Exception e) {}
 				}
 			}
 			directory.close();
 			// add new document
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(), false);
+				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 				writer.optimize();
-				Document doc = createDocument(virtualWiki, topic);
-				writer.addDocument(doc);
+				Document standardDocument = createStandardDocument(topic);
+				if (standardDocument != null) writer.addDocument(standardDocument);
+				Document keywordDocument = createKeywordDocument(topic);
+				if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 			} finally {
 				try {
 					if (writer != null) {
@@ -145,7 +135,7 @@ public class LuceneSearchEngine {
 				} catch (Exception e) { logger.fatal(e); }
 			}
 		} catch (Exception e) {
-			logger.error("Exception while adding topic " + topic, e);
+			logger.error("Exception while adding topic " + topicName, e);
 		}
 	}
 
@@ -206,51 +196,45 @@ public class LuceneSearchEngine {
 	}
 
 	/**
-	 * Create a document to add to the search index
-	 * @param currentWiki Name of this wiki
-	 * @param topic Name of the topic to add
-	 * @return The document to add
+	 * Create a basic Lucene document to add to the index that does treats
+	 * the topic content as a single keyword and does not tokenize it.
 	 */
-	protected static Document createDocument(String virtualWiki, String topicName) throws Exception {
-		// get content
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null) return null;
+	private static Document createKeywordDocument(Topic topic) throws Exception {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) topicContent = "";
 		Document doc = new Document();
-		doc.add(new Field(ITYPE_TOPIC, new StringReader(topicName)));
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topicName, Store.YES, Index.UN_TOKENIZED));
-		doc.add(new Field(ITYPE_CONTENT, new StringReader(topicContent)));
-		doc.add(new Field(ITYPE_CONTENT_PLAIN, topicContent, Store.YES, Index.NO));
-		Collection links = Utilities.parseForSearch(topicContent, topicName);
+		// store topic name for later retrieval
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NO));
+		// index topic links for search purposes
+		Collection links = Utilities.parseForSearch(topicContent, topic.getName());
 		for (Iterator iter = links.iterator(); iter.hasNext();) {
 			String linkTopic = (String)iter.next();
-			doc.add(new Field(ITYPE_TOPIC_LINK, new StringReader(linkTopic)));
+			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.UN_TOKENIZED));
 		}
+		return doc;
+	}
+
+	/**
+	 * Create a basic Lucene document to add to the index.  This document
+	 * is suitable to be parsed with the StandardAnalyzer.
+	 */
+	private static Document createStandardDocument(Topic topic) throws Exception {
+		String topicContent = topic.getTopicContent();
+		if (topicContent == null) topicContent = "";
+		Document doc = new Document();
+		// store topic name and content for later retrieval
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NO));
+		doc.add(new Field(ITYPE_CONTENT_PLAIN, topicContent, Field.Store.YES, Field.Index.NO));
+		// index topic name and content for search purposes
+		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic.getName())));
+		doc.add(new Field(ITYPE_CONTENT, new StringReader(topicContent)));
 		return doc;
 	}
 
 	/**
 	 *
 	 */
-	public static String escapeLucene(String text) {
-		// escape Lucene search syntax values
-		text = StringUtils.replace(text, "+", "\\+");
-		text = StringUtils.replace(text, "-", "\\-");
-		text = StringUtils.replace(text, "!", "\\!");
-		text = StringUtils.replace(text, "(", "\\(");
-		text = StringUtils.replace(text, ")", "\\)");
-		text = StringUtils.replace(text, "{", "\\{");
-		text = StringUtils.replace(text, "}", "\\}");
-		text = StringUtils.replace(text, "[", "\\[");
-		text = StringUtils.replace(text, "]", "\\]");
-		text = StringUtils.replace(text, "^", "\\^");
-		text = StringUtils.replace(text, "\"", "\\\"");
-		text = StringUtils.replace(text, "~", "\\~");
-		text = StringUtils.replace(text, "*", "\\*");
-		text = StringUtils.replace(text, "?", "\\?");
-		text = StringUtils.replace(text, ":", "\\:");
-		return text;
+	public static synchronized void deleteFromIndex(Topic topic) {
 	}
 
 	/**
@@ -261,18 +245,13 @@ public class LuceneSearchEngine {
 			return Collections.EMPTY_LIST;
 		}
 		String indexFilename = getSearchIndexPath(virtualWiki);
-		Analyzer analyzer = new StandardAnalyzer();
+		KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 		Collection results = new ArrayList();
 		IndexSearcher searcher = null;
 		try {
-			// escape Lucene search syntax in topic name
-			topicName = escapeLucene(topicName);
-			// place in quotes for topics like "User comments:Foo"
-			topicName = "\"" + topicName + "\"";
-			BooleanQuery query = new BooleanQuery();
-			QueryParser qp;
-			qp = new QueryParser(ITYPE_TOPIC_LINK, analyzer);
-			query.add(qp.parse(topicName), Occur.MUST);
+			PhraseQuery query = new PhraseQuery();
+			Term term = new Term(ITYPE_TOPIC_LINK, topicName);
+			query.add(term);
 			searcher = new IndexSearcher(getIndexDirectory(indexFilename, false));
 			// actually perform the search
 			Hits hits = searcher.search(query);
@@ -286,7 +265,9 @@ public class LuceneSearchEngine {
 			logger.fatal("Exception while searching for " + topicName, e);
 		} finally {
 			if (searcher != null) {
-				try { searcher.close(); } catch (Exception e) {}
+				try {
+					searcher.close();
+				} catch (Exception e) {}
 			}
 		}
 		return results;
@@ -306,7 +287,7 @@ public class LuceneSearchEngine {
 			return Collections.EMPTY_LIST;
 		}
 		String indexFilename = getSearchIndexPath(virtualWiki);
-		Analyzer analyzer = new StandardAnalyzer();
+		StandardAnalyzer analyzer = new StandardAnalyzer();
 		Collection results = new ArrayList();
 		logger.debug("search text: " + text);
 		IndexSearcher searcher = null;
@@ -331,13 +312,13 @@ public class LuceneSearchEngine {
 				result.setSummary(summary);
 				results.add(result);
 			}
-		} catch (IOException e) {
-			logger.warn("Error (IOExcpetion) while searching for " + text + "; Refreshing search index", e);
 		} catch (Exception e) {
 			logger.fatal("Exception while searching for " + text, e);
 		} finally {
 			if (searcher != null) {
-				try { searcher.close(); } catch (Exception e) {}
+				try {
+					searcher.close();
+				} catch (Exception e) {}
 			}
 		}
 		return results;
@@ -392,6 +373,7 @@ public class LuceneSearchEngine {
 	public static synchronized void refreshIndex() throws Exception {
 		logger.info("Rebuilding search index");
 		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
+		Topic topic;
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			String currentWiki = virtualWiki.getName();
@@ -400,14 +382,18 @@ public class LuceneSearchEngine {
 			logger.debug("Index file path = " + indexFile);
 			// initially create index in ram
 			RAMDirectory ram = new RAMDirectory();
-			Analyzer analyzer = new StandardAnalyzer();
+			StandardAnalyzer analyzer = new StandardAnalyzer();
+			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = new IndexWriter(ram, analyzer, true);
 			try {
-				Collection topics = WikiBase.getHandler().getAllTopicNames(currentWiki);
-				for (Iterator iter = topics.iterator(); iter.hasNext();) {
-					String topic = (String) iter.next();
-					Document doc = createDocument(currentWiki, topic);
-					if (doc != null) writer.addDocument(doc);
+				Collection topicNames = WikiBase.getHandler().getAllTopicNames(currentWiki);
+				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
+					String topicName = (String)iter.next();
+					topic = WikiBase.getHandler().lookupTopic(currentWiki, topicName);
+					Document standardDocument = createStandardDocument(topic);
+					if (standardDocument != null) writer.addDocument(standardDocument);
+					Document keywordDocument = createKeywordDocument(topic);
+					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 				}
 			} catch (IOException ex) {
 				logger.error(ex);
@@ -436,7 +422,7 @@ public class LuceneSearchEngine {
 	/**
 	 *
 	 */
-	private static String retrieveResultSummary(Document document, Highlighter highlighter, Analyzer analyzer) throws Exception {
+	private static String retrieveResultSummary(Document document, Highlighter highlighter, StandardAnalyzer analyzer) throws Exception {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
