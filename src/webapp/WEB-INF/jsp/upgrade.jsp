@@ -29,26 +29,29 @@
 <script type="text/javascript" language="JavaScript">
 <!--
 function confirmSubmit() {
-	return confirm("Are you sure?");
+	return confirm("<f:message key="common.confirm" />");
 }
 // -->
 </script>
 
+<c:if test="${!empty message}"><p align="center" style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p></c:if>
+
+<c:if test="${empty message}">
 <form name="adminUpgrade" method="get">
 <input type="hidden" name="function" value="upgrade" />
 <table style="border:2px solid #333333;padding=1em;">
-<c:if test="${!empty message}"><tr><td align="center"><div style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div></td></tr></c:if>
 <tr><td><f:message key="upgrade.caption.detected" /></td></tr>
 <tr><td align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
 </table>
 </form>
+</c:if>
 
 <c:if test="${!empty messages}">
 <br />
 <table>
-<c:forEach items="${messages}" var="message">
+	<c:forEach items="${messages}" var="message">
 <tr><td><c:out value="${message}" /></td></tr>
-</c:forEach>
+	</c:forEach>
 </table>
 </c:if>
 
