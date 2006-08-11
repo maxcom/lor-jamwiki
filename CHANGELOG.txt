@@ -2,6 +2,33 @@
 0.2.0
 =====
 
+* FEATURE: Drop commons-httpclient.jar - no longer used.
+* FEATURE: Upgrade to log4j 1.2.13.
+* FEATURE: Use <label> tag with form elements.
+* FEATURE: Updated Chinese translations from ewen0930.
+* BUG: Resolve setup bug in initialization code.
+* FEATURE: Upgrade javadiff from 1.0.3 to 1.0.4.
+* FEATURE: Upgrade Spring from 1.1.5 to 1.2.8.  Include only those
+  components that are used by JAMWiki (saves over 500 kb).
+* FEATURE: Update commons-dbcp from 1.0 to 1.2.1.
+* FEATURE: Display file deletion information in recent changes.
+* FEATURE: Use syntax highlighting to denote change type on recent changes
+  page, history page, and user contributions page.
+* FEATURE: Remove Special:OrphanedTopics - broken.
+* FEATURE: Remove Special:ToDoTopics - broken.
+* FEATURE: Overhaul the search engine, make better use of Lucene for
+  highlighting, delete numerous unneeded classes.
+* FEATURE: Add Special:LinkTo to display what links to the current page.
+* FEATURE: Better support for image alignment options.
+* BUG: Fix image HTML display bug.
+* FEATURE: Add build target for building source releases.
+* BUG: Correctly parse mailto: links.
+* FEATURE: Search engine refresh no longer file-only.
+* FEATURE: Remove automatic search engine index rebuilding thread.
+* BUG: "My Topic" and "My_Topic" should be treated as the same topic.
+* BUG: Remove several hard-coded message strings, replace with messages that
+  can be translated into local languages.
+* FEATURE: Code cleanups including removal of unused files.
 
 0.1.3
 =====
