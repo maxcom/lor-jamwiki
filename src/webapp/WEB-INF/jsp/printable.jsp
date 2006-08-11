@@ -45,6 +45,8 @@ if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environ
 </head>
 <body style="background:none">
 
+<div id="contents-header"><f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></div>
+
 <%@ include file="view-topic-include.jsp" %>
 
 </body>
