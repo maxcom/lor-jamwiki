@@ -38,6 +38,8 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.search.LuceneSearchEngine;
+import org.jamwiki.servlets.WikiException;
+import org.jamwiki.servlets.WikiMessage;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -858,6 +860,9 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, Object[] params) throws Exception {
+		if (!Utilities.validateName(topic.getName())) {
+			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
+		}
 		if (topic.getTopicId() <= 0) {
 			addTopic(topic, params);
 		} else {
@@ -898,6 +903,9 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception {
+		if (!Utilities.validateName(virtualWiki.getName())) {
+			throw new WikiException(new WikiMessage("common.exception.name", virtualWiki.getName()));
+		}
 		Object params[] = null;
 		try {
 			params = this.initParams();
@@ -920,6 +928,9 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public void writeWikiUser(WikiUser user) throws Exception {
+		if (!Utilities.validateName(user.getLogin())) {
+			throw new WikiException(new WikiMessage("common.exception.name", user.getLogin()));
+		}
 		Object params[] = null;
 		try {
 			params = this.initParams();

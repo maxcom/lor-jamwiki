@@ -350,6 +350,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, String topicName) throws Exception {
+		if (!Utilities.validateName(topicName)) {
+			throw new WikiException(new WikiMessage("common.exception.name", topicName));
+		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
@@ -379,6 +382,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String contents = "";
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		if (!Utilities.validateName(topic.getName())) {
+			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();

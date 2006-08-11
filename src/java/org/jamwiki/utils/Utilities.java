@@ -481,4 +481,14 @@ public class Utilities {
 		if (cookie == null) return null;
 		return cookie.getValue();
 	}
+
+	/**
+	 *
+	 */
+	public static boolean validateName(String name) {
+		if (!StringUtils.hasText(name)) return false;
+		// try to remove invalid characters
+		String cleaned = StringUtils.deleteAny(name, "\n\r\"\'><{}#/\\=[]");
+		return name.equals(cleaned);
+	}
 }
