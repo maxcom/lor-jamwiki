@@ -204,7 +204,7 @@ public class LuceneSearchEngine {
 		if (topicContent == null) topicContent = "";
 		Document doc = new Document();
 		// store topic name for later retrieval
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NO));
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		// index topic links for search purposes
 		Collection links = Utilities.parseForSearch(topicContent, topic.getName());
 		for (Iterator iter = links.iterator(); iter.hasNext();) {
@@ -223,7 +223,7 @@ public class LuceneSearchEngine {
 		if (topicContent == null) topicContent = "";
 		Document doc = new Document();
 		// store topic name and content for later retrieval
-		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.NO));
+		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		doc.add(new Field(ITYPE_CONTENT_PLAIN, topicContent, Field.Store.YES, Field.Index.NO));
 		// index topic name and content for search purposes
 		doc.add(new Field(ITYPE_TOPIC, new StringReader(topic.getName())));
