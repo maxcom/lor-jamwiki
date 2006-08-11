@@ -41,6 +41,7 @@ import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiCacheMap;
 import org.springframework.util.StringUtils;
 
 /**
@@ -49,14 +50,14 @@ import org.springframework.util.StringUtils;
 public abstract class PersistencyHandler {
 
 	private static Logger logger = Logger.getLogger(PersistencyHandler.class);
-	/** For performance reasons, keep a (small) list of recently looked-up topics around in memory. */
-	private static Vector cachedTopicsList = new Vector();
-	/** For performance reasons, keep a (small) list of recently looked-up non-topics around in memory. */
-	private static Vector cachedNonTopicsList = new Vector();
-	/** For performance reasons, keep a (small) list of recently looked-up user logins and ids around in memory. */
-	private static Hashtable cachedUserLoginHash = new Hashtable();
 	// FIXME - possibly make this a property, or configurable based on number of topics in the system
 	private static int MAX_CACHED_LIST_SIZE = 2000;
+	/** For performance reasons, keep a (small) list of recently looked-up topics around in memory. */
+	private static WikiCacheMap cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+	/** For performance reasons, keep a (small) list of recently looked-up non-topics around in memory. */
+	private static WikiCacheMap cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+	/** For performance reasons, keep a (small) list of recently looked-up user logins and ids around in memory. */
+	private static WikiCacheMap cachedUserLoginHash = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	protected static Hashtable virtualWikiIdHash = null;
 	protected static Hashtable virtualWikiNameHash = null;
 
@@ -274,7 +275,7 @@ public abstract class PersistencyHandler {
 			// update topic to indicate deleted, add delete topic version
 			writeTopic(topic, topicVersion, params);
 			// reset topic existence vector
-			cachedTopicsList = new Vector();
+			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -319,24 +320,18 @@ public abstract class PersistencyHandler {
 		}
 		// first check a cache of recently looked-up topics for performance reasons
 		String key = virtualWiki + "/" + topicName;
-		if (cachedTopicsList.contains(key)) {
+		if (cachedTopicsList.containsKey(key)) {
 			return true;
 		}
-		if (cachedNonTopicsList.contains(key)) {
+		if (cachedNonTopicsList.containsKey(key)) {
 			return false;
 		}
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getDeleted()) {
-			cachedNonTopicsList.add(key);
-			while (cachedNonTopicsList.size() > MAX_CACHED_LIST_SIZE) {
-				cachedNonTopicsList.removeElementAt(0);
-			}
+			cachedNonTopicsList.put(key, null);
 			return false;
 		}
-		cachedTopicsList.add(key);
-		while (cachedTopicsList.size() > MAX_CACHED_LIST_SIZE) {
-			cachedTopicsList.removeElementAt(0);
-		}
+		cachedTopicsList.put(key, null);
 		return true;
 	}
 
@@ -564,10 +559,6 @@ public abstract class PersistencyHandler {
 		if (login != null) {
 			cachedUserLoginHash.put(authorId, login);
 		}
-		if (cachedUserLoginHash.size() > MAX_CACHED_LIST_SIZE) {
-			// FIXME - need a has that can drop oldest elements, this is inefficient
-			cachedUserLoginHash = new Hashtable();
-		}
 		return login;
 	}
 
@@ -652,9 +643,9 @@ public abstract class PersistencyHandler {
 	protected void resetCache() {
 		PersistencyHandler.virtualWikiIdHash = null;
 		PersistencyHandler.virtualWikiNameHash = null;
-		PersistencyHandler.cachedTopicsList = new Vector();
-		PersistencyHandler.cachedNonTopicsList = new Vector();
-		PersistencyHandler.cachedUserLoginHash = new Hashtable();
+		PersistencyHandler.cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+		PersistencyHandler.cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+		PersistencyHandler.cachedUserLoginHash = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
 
 	/**
@@ -877,7 +868,7 @@ public abstract class PersistencyHandler {
 			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
 		}
 		// reset topic non-existence vector
-		cachedNonTopicsList = new Vector();
+		cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		topicVersion.setTopicId(topic.getTopicId());
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 			// write version

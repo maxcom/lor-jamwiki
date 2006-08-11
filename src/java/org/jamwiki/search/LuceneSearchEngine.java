@@ -149,6 +149,7 @@ public class LuceneSearchEngine {
 		Directory index = getIndexDirectory(indexFile, true);
 		try {
 			if (IndexReader.isLocked(index)) {
+				// FIXME - huh?
 				// wait up to ten seconds until unlocked
 				int count = 0;
 				while (IndexReader.isLocked(index) && count < 20) {
