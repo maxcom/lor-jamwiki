@@ -2,6 +2,9 @@
 0.2.0
 =====
 
+* FEATURE: Overhaul the search engine, make better use of Lucene for
+  highlighting, delete numerous unneeded classes.
+* FEATURE: Add Special:LinkTo to display what links to the current page.
 * FEATURE: Drop commons-httpclient.jar - no longer used.
 * FEATURE: Upgrade to log4j 1.2.13.
 * FEATURE: Use <label> tag with form elements.
@@ -16,9 +19,6 @@
   page, history page, and user contributions page.
 * FEATURE: Remove Special:OrphanedTopics - broken.
 * FEATURE: Remove Special:ToDoTopics - broken.
-* FEATURE: Overhaul the search engine, make better use of Lucene for
-  highlighting, delete numerous unneeded classes.
-* FEATURE: Add Special:LinkTo to display what links to the current page.
 * FEATURE: Better support for image alignment options.
 * BUG: Fix image HTML display bug.
 * FEATURE: Add build target for building source releases.
@@ -26,6 +26,13 @@
 * FEATURE: Search engine refresh no longer file-only.
 * FEATURE: Remove automatic search engine index rebuilding thread.
 * BUG: "My Topic" and "My_Topic" should be treated as the same topic.
+* FEATURE: Automatically upgrade stylesheet and search index.
+* BUG: Do not display upgrade option after upgrade is complete.
+* BUG: Resolve additional cross-site scripting vulnerabilities reported by
+  NickJ.
+* BUG: Title should be displayed on printable pages.
+* BUG: Do not allow \n, \r, ", ', >, <, {, }, #, /, \, [, ], or = in
+  topic/user names.
 * BUG: Remove several hard-coded message strings, replace with messages that
   can be translated into local languages.
 * FEATURE: Code cleanups including removal of unused files.
