@@ -198,10 +198,6 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_RECENT_CHANGES_DAYS,
 				request.getParameter(Environment.PROP_RECENT_CHANGES_DAYS)
 			);
-			Environment.setIntValue(
-				Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL,
-				Integer.parseInt(request.getParameter(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL))
-			);
 			Environment.setValue(
 				Environment.PROP_EMAIL_SMTP_HOST,
 				request.getParameter(Environment.PROP_EMAIL_SMTP_HOST)

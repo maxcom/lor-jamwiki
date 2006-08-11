@@ -135,12 +135,6 @@ function onUserGroupType() {
 	<td class="normal"><input type="text" name="<%= Environment.PROP_RECENT_CHANGES_DAYS %>" size="3" maxlength="3" value="<%= Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS) %>" id="<%= Environment.PROP_RECENT_CHANGES_DAYS %>" /></td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.indexsettingsheader" /></td></tr>
-<tr>
-	<td class="normal"><label for="<%= Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL %>"><f:message key="admin.caption.indexinterval" /></label></td>
-	<td class="normal"><input type="text" name="<%= Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL %>" size="5" maxlength="10" value="<%= Environment.getIntValue(Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL) %>" id="<%= Environment.PROP_SEARCH_INDEX_REFRESH_INTERVAL %>" /></td>
-</tr>
-<tr><td colspan="2">&nbsp;</td></tr>
 <tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.editorheader" /></td></tr>
 <tr>
 	<td class="normal"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>

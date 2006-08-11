@@ -71,7 +71,6 @@ public class Environment {
 	public static final String PROP_PARSER_CLASS = "parser";
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
-	public static final String PROP_SEARCH_INDEX_REFRESH_INTERVAL = "indexRefreshInterval";
 	public static final String PROP_TOPIC_BASE_CONTEXT = "base-context";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
@@ -173,7 +172,6 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.JAMWikiParser");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
 		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
-		defaults.setProperty(PROP_SEARCH_INDEX_REFRESH_INTERVAL, "1440");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
 		defaults.setProperty(PROP_TOPIC_VERSIONING_ON, "true");
