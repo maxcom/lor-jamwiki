@@ -341,42 +341,6 @@ public class ParserUtil {
 	}
 
 	/**
-	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
-	 * a bad thing, so clean up HTML tags to remove any such attributes.
-	 */
-	protected static String sanitizeHtmlTagAttributes(String tag) {
-		Matcher m = TAG_PATTERN.matcher(tag);
-		if (!m.find()) {
-			logger.error("Failure while attempting to match html tag for pattern " + tag);
-			return tag;
-		}
-		String tagOpen = m.group(1);
-		String attributes = m.group(2);
-		String tagClose = m.group(4);
-		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
-			// FIXME - can these two patterns be combined into one?
-			m = JAVASCRIPT_PATTERN1.matcher(attributes);
-			if (m.find()) {
-				logger.warn("Attempt to include Javascript in Wiki syntax " + tag);
-				attributes = "";
-			}
-			m = JAVASCRIPT_PATTERN2.matcher(attributes);
-			if (m.find()) {
-				logger.warn("Attempt to include Javascript in Wiki syntax " + tag);
-				attributes = "";
-			}
-		}
-		tag = "<" + tagOpen.toLowerCase().trim();
-		tag += attributes;
-		if (!attributes.endsWith(" ")) tag += " ";
-		if (tagClose.indexOf("/") != -1) {
-			tagClose = "/>";
-		}
-		tag += tagClose.trim();
-		return tag;
-	}
-
-	/**
 	 * Clean up HTML tags to make them XHTML compliant (lowercase, no
 	 * unnecessary spaces).
 	 */
@@ -399,5 +363,52 @@ public class ParserUtil {
 		text = StringUtils.delete(text, "[[");
 		text = StringUtils.delete(text, "]]");
 		return text;
+	}
+
+	/**
+	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
+	 * a bad thing, so clean up HTML tags to remove any such attributes.
+	 */
+	protected static String validateHtmlTag(String tag) {
+		Matcher m = TAG_PATTERN.matcher(tag);
+		if (!m.find()) {
+			logger.error("Failure while attempting to match html tag for pattern " + tag);
+			return tag;
+		}
+		String tagOpen = m.group(1);
+		String attributes = m.group(2);
+		String tagClose = m.group(4);
+		attributes = ParserUtil.validateHtmlTagAttributes(attributes);
+		tag = "<" + tagOpen.toLowerCase().trim();
+		tag += attributes;
+		if (!attributes.endsWith(" ")) tag += " ";
+		if (tagClose.indexOf("/") != -1) {
+			tagClose = "/>";
+		}
+		tag += tagClose.trim();
+		return tag;
+	}
+
+	/**
+	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
+	 * a bad thing, so clean up HTML tags to remove any such attributes.
+	 */
+	protected static String validateHtmlTagAttributes(String attributes) {
+		if (!StringUtils.hasText(attributes)) return attributes;
+		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
+			// FIXME - can these two patterns be combined into one?
+			// pattern requires a space prior to the "onFoo", so make sure one exists
+			Matcher m = JAVASCRIPT_PATTERN1.matcher(" " + attributes);
+			if (m.find()) {
+				logger.warn("Attempt to include Javascript in Wiki syntax " + attributes);
+				return "";
+			}
+			m = JAVASCRIPT_PATTERN2.matcher(attributes);
+			if (m.find()) {
+				logger.warn("Attempt to include Javascript in Wiki syntax " + attributes);
+				return "";
+			}
+		}
+		return attributes;
 	}
 }

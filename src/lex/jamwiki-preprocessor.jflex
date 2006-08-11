@@ -33,6 +33,7 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 %%
 
@@ -285,7 +286,11 @@ import org.jamwiki.utils.Utilities;
         text = text.substring(pos);
         pos = text.indexOf(markup);
         if (pos != -1) text = text.substring(0, pos);
-        return "<" + tag + " " + text.trim() + ">";
+        String attributes = ParserUtil.validateHtmlTagAttributes(text.trim());
+        if (StringUtils.hasText(attributes)) {
+            return "<" + tag + " " + attributes + ">";
+        }
+        return "<" + tag + ">";
     }
     
     /**
@@ -485,7 +490,9 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 <NORMAL, TABLE, TD, TH, TC>^{tablestart} {
     logger.debug("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
-    return "<table " + yytext().substring(2).trim() + ">";
+    String attributes = yytext().substring(2).trim();
+    attributes = ParserUtil.validateHtmlTagAttributes(attributes);
+    return ((StringUtils.hasText(attributes)) ? "<table " + attributes + ">" : "<table>");
 }
 
 <TABLE, TD, TH, TC>^{tablecaption} {
@@ -506,7 +513,13 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
     if (yytext().trim().length() > 1) {
         int start = 1;
         int end = yytext().indexOf("|", start+1);
-        output.append("<th ").append(yytext().substring(start, end).trim()).append(">");
+        String attributes = yytext().substring(start, end).trim();
+        attributes = ParserUtil.validateHtmlTagAttributes(attributes);
+        String tag = "<th>";
+        if (StringUtils.hasText(attributes)) {
+            tag = "<th " + attributes + ">";
+        }
+        output.append(tag);
         // extra character matched by regular expression so push it back
         yypushback(1);
     } else {
@@ -552,7 +565,13 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
     output.append(closeTable(TABLE));
     if (oldState != TABLE) output.append("</tr>");
     if (yytext().trim().length() > 2) {
-        output.append("<tr ").append(yytext().substring(2).trim()).append(">");
+        String attributes = yytext().substring(2).trim();
+        attributes = ParserUtil.validateHtmlTagAttributes(attributes);
+        String tag = "<tr>";
+        if (StringUtils.hasText(attributes)) {
+            tag = "<tr " + attributes + ">";
+        }
+        output.append(tag);
     } else {
         output.append("<tr>");
     }
@@ -750,7 +769,7 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagattributes} {
     logger.debug("htmltagattributes: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? ParserUtil.sanitizeHtmlTagAttributes(yytext()) : Utilities.escapeHTML(yytext());
+    return (allowHtml()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 /* ----- javascript ----- */
