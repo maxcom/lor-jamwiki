@@ -23,6 +23,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
+import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
@@ -156,6 +157,7 @@ public class WikiBase {
 			WikiBase.handler.initialize(locale, user);
 		}
 		JAMWikiServlet.removeCachedContents();
+		LuceneSearchEngine.refreshIndex();
 	}
 
 	/**
