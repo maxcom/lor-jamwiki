@@ -9,6 +9,7 @@
 * FEATURE: Upgrade to log4j 1.2.13.
 * FEATURE: Use <label> tag with form elements.
 * FEATURE: Updated Chinese translations from ewen0930.
+* FEATURE: Updated Hungarian translations from bDaneE.
 * BUG: Resolve setup bug in initialization code.
 * FEATURE: Upgrade javadiff from 1.0.3 to 1.0.4.
 * FEATURE: Upgrade Spring from 1.1.5 to 1.2.8.  Include only those
