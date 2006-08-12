@@ -54,6 +54,13 @@ import org.springframework.util.StringUtils;
             return;
         }
         String topic = ParserUtil.extractLinkTopic(content);
+        if (!StringUtils.hasText(topic)) {
+            return;
+        }
+        if (topic.startsWith(":") && topic.length() > 1) {
+            // strip opening colon
+            topic = topic.substring(1).trim();
+        }
         if (StringUtils.hasText(topic)) {
             this.topicLinks.add(topic);
         }
