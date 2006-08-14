@@ -23,7 +23,7 @@
 
 <c:if test="${empty notopic}">
 	<c:if test="${!empty topicObject}">
-<div id="content-article">
+<div id="content-article" class="clearblock">
 <%-- FIXME - ugly, clean this up --%>
 <jamwiki:image value="${topicObject.name}" />
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
