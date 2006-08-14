@@ -501,12 +501,12 @@ public class DatabaseHandler extends PersistencyHandler {
 		if (this.initialized) {
 			return true;
 		}
-		String sql = "select 1 from jam_virtual_wiki ";
 		try {
-			WikiResultSet rs = DatabaseConnection.executeQuery(sql);
+			WikiResultSet rs = DatabaseHandler.queryHandler.getVirtualWikis();
 			return rs.next();
 		} catch (Exception e) {
 			// tables don't exist, or some other problem
+			logger.warn("Database handler not initialized: " + e.getMessage());
 			return false;
 		}
 	}
