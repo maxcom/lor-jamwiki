@@ -19,6 +19,8 @@ package org.jamwiki.servlets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -48,11 +50,20 @@ public class PrintableServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
-		String topic = JAMWikiServlet.getTopicFromRequest(request);
-		if (!StringUtils.hasText(topic)) {
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		// FIXME - full URLs should be printed, need some sort of switch
-		viewTopic(request, next, topic);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		if (!StringUtils.hasText(virtualWiki)) {
+			virtualWiki = WikiBase.DEFAULT_VWIKI;
+		}
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
+		viewTopic(request, next, pageTitle, topic, false);
 	}
 }
