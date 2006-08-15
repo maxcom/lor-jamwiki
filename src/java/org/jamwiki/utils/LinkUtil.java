@@ -117,6 +117,9 @@ public class LinkUtil {
 			}
 			html = html.trim() + "\">";
 		}
+		if (wikiImage.getWidth() > 0) {
+			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px\">";
+		}
 		html += "<img class=\"wikiimg\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
 		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
@@ -134,6 +137,9 @@ public class LinkUtil {
 		html += " />";
 		if (StringUtils.hasText(caption)) {
 			html += "<div class=\"imgcaption\">" + Utilities.escapeHTML(caption) + "</div>";
+		}
+		if (wikiImage.getWidth() > 0) {
+			html += "</div>";
 		}
 		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "</div>";
