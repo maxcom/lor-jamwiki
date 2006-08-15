@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 /**
  *
  */
-public class Image {
+public class WikiImage extends WikiFile {
 
-	private static Logger logger = Logger.getLogger(Image.class);
+	private static Logger logger = Logger.getLogger(WikiImage.class);
 	private int fileVersionId = -1;
 	private int height = -1;
 	private int width = -1;
@@ -31,7 +31,14 @@ public class Image {
 	/**
 	 *
 	 */
-	public Image() {
+	public WikiImage() {
+	}
+
+	/**
+	 *
+	 */
+	public WikiImage(WikiFile wikiFile) {
+		super(wikiFile);
 	}
 
 	/**

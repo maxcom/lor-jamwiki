@@ -45,6 +45,22 @@ public class WikiFile {
 	/**
 	 *
 	 */
+	public WikiFile(WikiFile wikiFile) {
+		this.adminOnly = wikiFile.getAdminOnly();
+		this.deleted = wikiFile.getDeleted();
+		this.fileId = wikiFile.getFileId();
+		this.fileName = wikiFile.getFileName();
+		this.fileSize = wikiFile.getFileSize();
+		this.mimeType = wikiFile.getMimeType();
+		this.readOnly = wikiFile.getReadOnly();
+		this.url = wikiFile.getUrl();
+		this.topicId = wikiFile.getTopicId();
+		this.virtualWiki = wikiFile.getVirtualWiki();
+	}
+
+	/**
+	 *
+	 */
 	public boolean getAdminOnly() {
 		return this.adminOnly;
 	}

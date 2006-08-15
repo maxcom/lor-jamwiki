@@ -25,7 +25,7 @@
 	<c:if test="${!empty topicObject}">
 <div id="content-article" class="clearblock">
 <%-- FIXME - ugly, clean this up --%>
-<jamwiki:image value="${topicObject.name}" />
+<c:if test="${!empty fileVersions}"><jamwiki:image value="${topicObject.name}" /></c:if>
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
 		<c:if test="${!empty fileVersions}">
 <h2><f:message key="topic.filehistory" /></h2>

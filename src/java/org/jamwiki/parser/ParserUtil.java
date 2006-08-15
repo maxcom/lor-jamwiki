@@ -37,6 +37,9 @@ public class ParserUtil {
 	private static Pattern TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
+	private static Pattern IMAGE_SIZE_PATTERN = null;
+	// FIXME - make configurable
+	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
 	static {
 		try {
@@ -45,6 +48,8 @@ public class ParserUtil {
 			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
 			// catch script insertions that use a javascript url
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
+			// look for image size info in image tags
+			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.error("Unable to compile pattern", e);
 		}
@@ -154,7 +159,7 @@ public class ParserUtil {
 			if (text == null) text = topic;
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
 		} catch (Exception e) {
-			logger.error("Failure while parsing link " + raw);
+			logger.error("Failure while parsing link " + raw, e);
 			return "";
 		}
 	}
@@ -315,6 +320,7 @@ public class ParserUtil {
 		boolean frame = false;
 		String caption = null;
 		String align = null;
+		int maxDimension = -1;
 		if (text != null) {
 			StringTokenizer tokens = new StringTokenizer(text, "|");
 			while (tokens.hasMoreTokens()) {
@@ -333,11 +339,19 @@ public class ParserUtil {
 				} else if (token.equalsIgnoreCase("center")) {
 					align = "center";
 				} else {
-					caption = token;
+					Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
+					if (m.find()) {
+						maxDimension = new Integer(m.group(1)).intValue();
+					} else {
+						caption = token;
+					}
 				}
 			}
+			if (thumb && maxDimension <= 0) {
+				maxDimension = DEFAULT_THUMBNAIL_SIZE;
+			}
 		}
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, false);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false);
 	}
 
 	/**

@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiFile;
+import org.jamwiki.model.WikiImage;
 import org.springframework.util.StringUtils;
 
 /**
@@ -90,18 +91,15 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName) throws Exception {
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, false, false, null, null, true);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, false, false, null, null, -1, true);
 	}
 
 	/**
 	 *
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, boolean suppressLink) throws Exception {
-		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
-		if (wikiFile == null) {
-			// doesn't exist, return topic name as text IF it's an image
-			return (topicName.startsWith(WikiBase.NAMESPACE_IMAGE)) ? topicName : "";
-		}
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink) throws Exception {
+		WikiImage wikiImage = ImageUtil.initializeImage(virtualWiki, topicName, maxDimension);
+		if (caption == null) caption = "";
 		String html = "";
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		if (frame || thumb || StringUtils.hasText(align)) {
@@ -122,16 +120,20 @@ public class LinkUtil {
 		html += "<img class=\"wikiimg\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
 		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
-		String url = wikiFile.getUrl();
+		String url = wikiImage.getUrl();
 		if (!html.endsWith("/") && !url.startsWith("/")) {
 			url = "/" + url;
 		} else if (html.endsWith("/") && url.startsWith("/")) {
 			url = url.substring(1);
 		}
 		html += url;
-		html += "\" />";
+		html += "\"";
+		html += " width=\"" + wikiImage.getWidth() + "\"";
+		html += " height=\"" + wikiImage.getHeight() + "\"";
+		html += " alt=\"" + Utilities.escapeHTML(caption) + "\"";
+		html += " />";
 		if (StringUtils.hasText(caption)) {
-			html += "<div class=\"imgcaption\">" + caption + "</div>";
+			html += "<div class=\"imgcaption\">" + Utilities.escapeHTML(caption) + "</div>";
 		}
 		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "</div>";
