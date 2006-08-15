@@ -385,7 +385,7 @@ htmlcomment        = "<!--" ~"-->"
 /* tables */
 tablestart         = "{|" {inputcharacter}* {newline}
 tableend           = "|}"
-tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n]+ "|" [^\|]
+tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n(\[\[)]+ "|" [^\|]
 tablecells         = "||"
 tablecellsstyle    = "||" ([^\|\n]+) "|" ([^|])
 tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
