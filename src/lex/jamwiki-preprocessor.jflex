@@ -395,10 +395,10 @@ tablecaption       = "|+"
 
 /* wiki links */
 wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\(\]\])]* {wikilink}+ [^\n\r\(\]\])]*)+ ~"]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllink           = "[" ({protocol}) ([^\]\n\r]+) ~"]"
 htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
+imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}) [^\n\r\]\[]*)+ "]]"
 
 %state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE
 
