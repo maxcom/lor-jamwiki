@@ -76,6 +76,7 @@ nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|span|p
 nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
 nonparagraphend    = ((<[ ]*\/[ ]*) {nonparagraphtag} ([ ]*>)) | ((<[ ]*) td ([^/>]*>))
 anchorname         = (<[ ]*a[ ]*name[ ]*=[^/]+\/[ ]*[a]?[ ]*>)
+break              = (<[ ]*) br ([ ]*[\/]?[ ]*>)
 paragraphend       = ({newline} {newline})
 paragraphstart     = ({inputcharacter})
 
@@ -147,6 +148,12 @@ paragraphstart     = ({inputcharacter})
     // for layout purposes and <a name="foo"></a> link should be returned without
     // changes, but should not affect paragraph layout in any way.
     logger.debug("anchorname: " + yytext() + " (" + yystate() + ")");
+    return yytext();
+}
+
+<NORMAL, P, NONPARAGRAPH>{break} {
+    // for layout purposes <br> tags should not affect paragraph layout in any way.
+    logger.debug("break: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
