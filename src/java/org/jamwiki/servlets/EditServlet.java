@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -211,8 +212,8 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("lastTopicVersionId", new Integer(version.getTopicVersionId()));
 		next.addObject("contents", contents1);
 		next.addObject("contentsResolve", contents2);
-		String diff = DiffUtil.diff(contents1, contents2, true, request.getLocale());
-		next.addObject("diff", diff);
+		Vector diffs = DiffUtil.diff(contents1, contents2);
+		next.addObject("diffs", diffs);
 		loadEdit(request, next, topicName);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT_RESOLVE);
 	}

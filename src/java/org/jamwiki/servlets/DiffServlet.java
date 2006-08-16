@@ -17,6 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -72,8 +73,8 @@ public class DiffServlet extends JAMWikiServlet {
 				if (firstVersion == -1 || secondVersion == -1) {
 					next.addObject("badinput", "true");
 				} else {
-					String diff = WikiBase.getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion), true, request.getLocale());
-					next.addObject("diff", diff);
+					Vector diffs = WikiBase.getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
+					next.addObject("diffs", diffs);
 				}
 			} else {
 				int topicVersionId1 = 0;
@@ -84,8 +85,8 @@ public class DiffServlet extends JAMWikiServlet {
 				if (StringUtils.hasText(request.getParameter("version2"))) {
 					topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
 				}
-				String diff = WikiBase.getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2, true, request.getLocale());
-				next.addObject("diff", diff);
+				Vector diffs = WikiBase.getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2);
+				next.addObject("diffs", diffs);
 			}
 		} catch (Exception e) {
 			logger.error(e);

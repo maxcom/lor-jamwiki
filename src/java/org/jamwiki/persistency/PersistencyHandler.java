@@ -289,7 +289,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public String diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2, boolean useHtml, Locale locale) throws Exception {
+	public Vector diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
 		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
 		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
 		if (version1 == null && version2 == null) {
@@ -310,7 +310,7 @@ public abstract class PersistencyHandler {
 			logger.error(msg);
 			throw new Exception(msg);
 		}
-		return DiffUtil.diff(contents1, contents2, useHtml, locale);
+		return DiffUtil.diff(contents1, contents2);
 	}
 
 	/**

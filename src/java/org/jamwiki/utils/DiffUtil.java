@@ -17,13 +17,12 @@
 package org.jamwiki.utils;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
-import org.jamwiki.utils.Utilities;
-import org.springframework.util.StringUtils;
+import org.jamwiki.model.WikiDiff;
 
 /**
  * Utility class for creating either a text of HTML representation of the difference
@@ -44,25 +43,150 @@ public class DiffUtil {
 	 * @param newVersion The String that is to be compared to, ie the later version of a topic.
 	 * @param oldVersion The String that is to be considered as having changed, ie the earlier
 	 *  version of a topic.
-	 * @param htmlFormat Set to true if the diff should be returned in HTML format.  Returns
-	 *  text otherwise.
-	 * @return Returns an HTML-formatted table that displays the diff of the Strings.
+	 * @return Returns a Vector of WikiDiff objects that correspond to the changed text.
 	 */
-	public static String diff(String newVersion, String oldVersion, boolean htmlFormat, Locale locale) {
+	public static Vector diff(String newVersion, String oldVersion) {
 		if (oldVersion == null) oldVersion = "";
 		if (newVersion == null) newVersion = "";
-		if (newVersion.equals(oldVersion)) return "";
-		DiffUtil diffUtil = new DiffUtil();
-		return diffUtil.process(newVersion, oldVersion, htmlFormat, locale);
+		if (newVersion.equals(oldVersion)) return new Vector();
+		return DiffUtil.process(newVersion, oldVersion);
 	}
 
 	/**
 	 *
 	 */
-	private String process(String newVersion, String oldVersion, boolean htmlFormat, Locale locale) {
+	private static Vector process(String newVersion, String oldVersion) {
 		logger.debug("Diffing: " + oldVersion + " against: " + newVersion);
-		DiffHelper diffHelper = new DiffHelper(oldVersion, newVersion, htmlFormat);
-		return diffHelper.diff(locale);
+		String[] oldArray = buildArray(oldVersion);
+		String[] newArray = buildArray(newVersion);
+		Diff diffObject = new Diff(oldArray, newArray);
+		List diffs = diffObject.diff();
+		Vector wikiDiffs = new Vector();
+		Difference currentDiff = null;
+		Difference previousDiff = null;
+		Difference nextDiff = null;
+		for (int i=0; i < diffs.size(); i++) {
+			currentDiff = (Difference)diffs.get(i);
+			preBufferDifference(currentDiff, previousDiff, wikiDiffs, oldArray, newArray);
+			processDifference(currentDiff, wikiDiffs, oldArray, newArray);
+			nextDiff = null;
+			if ((i+1) < diffs.size() ) {
+				nextDiff = (Difference)diffs.get(i+1);
+			}
+			postBufferDifference(currentDiff, nextDiff, wikiDiffs, oldArray, newArray);
+			previousDiff = currentDiff;
+		}
+		return wikiDiffs;
+	}
+
+	/**
+	 *
+	 */
+	private static void postBufferDifference(Difference currentDiff, Difference nextDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
+		int deletedCurrent = (currentDiff.getDeletedEnd() + 1);
+		int addedCurrent = (currentDiff.getAddedEnd() + 1);
+		if (currentDiff.getDeletedEnd() == -1) {
+			deletedCurrent = (currentDiff.getDeletedStart());
+		}
+		if (currentDiff.getAddedEnd() == -1) {
+			addedCurrent = (currentDiff.getAddedStart());
+		}
+		for (int i=0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
+			int lineNumber = ((deletedCurrent < 0) ? 0 : deletedCurrent);
+			String oldLine = null;
+			String newLine = null;
+			boolean buffered = false;
+			if (deletedCurrent >= 0 && deletedCurrent < oldArray.length && ((nextDiff != null && nextDiff.getDeletedStart() > deletedCurrent) || nextDiff == null)) {
+				oldLine = oldArray[deletedCurrent];
+				deletedCurrent++;
+				buffered = true;
+			}
+			if (addedCurrent >= 0 && addedCurrent < newArray.length && ((nextDiff != null && nextDiff.getAddedStart() > addedCurrent) || nextDiff == null)) {
+				newLine = newArray[addedCurrent];
+				addedCurrent++;
+				buffered = true;
+			}
+			if (!buffered) continue;
+			WikiDiff wikiDiff = new WikiDiff(oldLine, newLine, lineNumber + 1, false);
+			wikiDiffs.add(wikiDiff);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private static void preBufferDifference(Difference currentDiff, Difference previousDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
+		int deletedCurrent = (currentDiff.getDeletedStart() - DIFF_UNCHANGED_LINE_DISPLAY);
+		int addedCurrent = (currentDiff.getAddedStart() - DIFF_UNCHANGED_LINE_DISPLAY);
+		if (previousDiff != null) {
+			Math.max(previousDiff.getDeletedEnd() + 1, deletedCurrent);
+			Math.max(previousDiff.getAddedEnd() + 1, addedCurrent);
+			// if diffs are close together, do not allow buffers to overlap
+			if (deletedCurrent <= (previousDiff.getDeletedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) {
+				deletedCurrent = previousDiff.getDeletedEnd() + DIFF_UNCHANGED_LINE_DISPLAY + 1;
+			}
+			if (addedCurrent <= (previousDiff.getAddedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) {
+				addedCurrent = previousDiff.getAddedEnd() + DIFF_UNCHANGED_LINE_DISPLAY + 1;
+			}
+		}
+		for (int i=0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
+			int lineNumber = ((deletedCurrent < 0) ? 0 : deletedCurrent);
+			String oldLine = null;
+			String newLine = null;
+			boolean buffered = false;
+			if (deletedCurrent >= 0 && currentDiff.getDeletedStart() > deletedCurrent) {
+				oldLine = oldArray[deletedCurrent];
+				deletedCurrent++;
+				buffered = true;
+			}
+			if (addedCurrent >= 0 && currentDiff.getAddedStart() > addedCurrent) {
+				newLine = newArray[addedCurrent];
+				addedCurrent++;
+				buffered = true;
+			}
+			if (!buffered) continue;
+			WikiDiff wikiDiff = new WikiDiff(oldLine, newLine, lineNumber + 1, false);
+			wikiDiffs.add(wikiDiff);
+		}
+	}
+
+	/**
+	 *
+	 */
+	private static void processDifference(Difference currentDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
+		int deletedCurrent = currentDiff.getDeletedStart();
+		int addedCurrent = currentDiff.getAddedStart();
+		int count = 0;
+		logger.warn("Diff: " + currentDiff);
+		while (hasMoreDiffLines(addedCurrent, deletedCurrent, currentDiff)) {
+			int lineNumber = ((deletedCurrent < 0) ? 0 : deletedCurrent);
+			String oldLine = null;
+			String newLine = null;
+			if (currentDiff.getDeletedEnd() >= 0 && currentDiff.getDeletedEnd() >= deletedCurrent) {
+				oldLine = oldArray[deletedCurrent];
+				deletedCurrent++;
+			}
+			if (currentDiff.getAddedEnd() >= 0 && currentDiff.getAddedEnd() >= addedCurrent) {
+				newLine = newArray[addedCurrent];
+				addedCurrent++;
+			}
+			WikiDiff wikiDiff = new WikiDiff(oldLine, newLine, lineNumber + 1, true);
+			wikiDiffs.add(wikiDiff);
+			count++;
+			if (count > 500) {
+				logger.warn("Infinite loop in DiffUtils.processDifference");
+				break;
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
+	private static boolean hasMoreDiffLines(int addedCurrent, int deletedCurrent, Difference currentDiff) {
+		if (addedCurrent == -1) addedCurrent = 0;
+		if (deletedCurrent == -1) deletedCurrent = 0;
+		return (addedCurrent <= currentDiff.getAddedEnd() || deletedCurrent <= currentDiff.getDeletedEnd());
 	}
 
 	/**
@@ -80,194 +204,5 @@ public class DiffUtil {
 			count++;
 		}
 		return array;
-	}
-
-	/**
-	 *
-	 */
-	class DiffHelper {
-
-		String[] oldArray = null;
-		String[] newArray = null;
-		StringBuffer output = new StringBuffer();
-		int oldCurrentLine = 0;
-		int newCurrentLine = 0;
-		int delStart, delEnd, addStart, addEnd, replacements;
-		boolean lineNumberDisplayed = false;
-		boolean htmlFormat = true;
-
-		/**
-		 *
-		 */
-		DiffHelper(String oldVersion, String newVersion, boolean htmlFormat) {
-			this.oldArray = buildArray(oldVersion);
-			this.newArray = buildArray(newVersion);
-			this.htmlFormat = htmlFormat;
-		}
-
-		/**
-		 * Generate an HTML row indicating the diff of two lines of the versioned
-		 * files.
-		 *
-		 * @param oldChange A boolean flag indicating whether the old line has been deleted
-		 *  or changed.
-		 * @param oldLine A line from the file that has changed.
-		 * @param newChange A boolean flag indicating whether the new line has been added.
-		 * @param newLine A line from the later version of the file.
-		 */
-		private String buildRow(boolean oldChange, String oldLine, boolean newChange, String newLine) {
-			StringBuffer output = new StringBuffer();
-			// escape HTML if needed
-			if (this.htmlFormat) {
-				if (!StringUtils.hasText(oldLine)) {
-					oldLine += "&#160;";
-				} else {
-					oldLine = Utilities.escapeHTML(oldLine);
-				}
-				if (!StringUtils.hasText(newLine)) {
-					newLine += "&#160;";
-				} else {
-					newLine = Utilities.escapeHTML(newLine);
-				}
-			}
-			// build table row
-			if (this.htmlFormat) output.append("<tr>");
-			if (this.htmlFormat) {
-				if (oldChange) {
-					output.append("<td class=\"diff-indicator\">-</td>");
-					output.append("<td class=\"diff-delete\">" + oldLine + "</td>");
-				} else {
-					output.append("<td class=\"diff-no-indicator\">&#160;</td>");
-					output.append("<td class=\"diff-unchanged\">" + oldLine + "</td>");
-				}
-				if (newChange) {
-					output.append("<td class=\"diff-indicator\">+</td>");
-					output.append("<td class=\"diff-add\">" + newLine + "</td>");
-				} else {
-					output.append("<td class=\"diff-no-indicator\">&#160;</td>");
-					output.append("<td class=\"diff-unchanged\">" + newLine + "</td>");
-				}
-			} else {
-				if (oldChange) {
-					output.append("- >").append(oldLine).append("\n");
-				} else {
-					output.append("  >").append(oldLine).append("\n");
-				}
-				if (newChange) {
-					output.append("+ <").append(newLine).append("\n");
-				} else {
-					output.append("  <").append(newLine).append("\n");
-				}
-			}
-			if (this.htmlFormat) output.append("</tr>");
-			return output.toString();
-		}
-
-		/**
-		 *
-		 */
-		private boolean canDisplay(int changeStart, int changeEnd, int currentLine) {
-			// only display if current line is plus or minus a specified number of lines
-			// from the change area
-			int earliest = (this.htmlFormat) ? (changeStart - DIFF_UNCHANGED_LINE_DISPLAY) : changeStart;
-			int latest = (this.htmlFormat) ? (changeEnd + DIFF_UNCHANGED_LINE_DISPLAY) : changeEnd;
-			if (currentLine >= earliest && currentLine <= latest) return true;
-			return false;
-		}
-
-		/**
-		 *
-		 */
-		String diff(Locale locale) {
-			Diff diffObject = new Diff(this.oldArray, this.newArray);
-			List diffs = diffObject.diff();
-			Difference diff;
-			if (this.htmlFormat) this.output.append("<table class=\"diff\">");
-			for (int i=0; i < diffs.size(); i++) {
-				diff = (Difference)diffs.get(i);
-				this.lineNumberDisplayed = false;
-				this.delStart = diff.getDeletedStart();
-				this.delEnd = diff.getDeletedEnd();
-				this.addStart = diff.getAddedStart();
-				this.addEnd = diff.getAddedEnd();
-				// add lines up to first change point
-				displayUnchanged(this.delStart, this.addStart, locale);
-				// add changed lines
-				displayChanged(locale);
-			}
-			// if lines at the end of the original Strings haven't changed display them
-			displayUnchanged(oldArray.length, newArray.length, locale);
-			if (this.htmlFormat) output.append("</table>");
-			return output.toString();
-		}
-
-		/**
-		 *
-		 */
-		private void displayUnchanged(int delMax, int addMax, Locale locale) {
-			replacements = ((delMax - this.oldCurrentLine) > (addMax - this.newCurrentLine)) ? (delMax - this.oldCurrentLine) : (addMax - this.newCurrentLine);
-			String oldLine, newLine;
-			for (int j=0; j < replacements; j++) {
-				oldLine = "";
-				if (this.oldCurrentLine < this.oldArray.length && this.oldCurrentLine < delMax) {
-					oldLine = this.oldArray[this.oldCurrentLine];
-					this.oldCurrentLine++;
-				}
-				newLine = "";
-				if (this.newCurrentLine < this.newArray.length && this.newCurrentLine < addMax) {
-					newLine = this.newArray[this.newCurrentLine];
-					this.newCurrentLine++;
-				}
-				// only display if within specified number of lines of a change.  subtract
-				// one from current line since that value was incremented above
-				if (canDisplay(delMax, this.delEnd, (this.oldCurrentLine - 1)) || canDisplay(addMax, this.addEnd, (this.newCurrentLine - 1))) {
-					displayLineNumber(locale);
-					this.output.append(buildRow(false, oldLine, false, newLine));
-				}
-			}
-		}
-
-		/**
-		 *
-		 */
-		private void displayChanged(Locale locale) {
-			replacements = ((this.delEnd - this.delStart) > (this.addEnd - this.addStart)) ? (this.delEnd - this.delStart) : (this.addEnd - this.addStart);
-			String oldLine, newLine;
-			boolean oldChange, newChange;
-			for (int j=0; j <= replacements; j++) {
-				oldLine = "";
-				oldChange = false;
-				if (this.oldCurrentLine < this.oldArray.length && this.delStart <= this.delEnd) {
-					oldLine = this.oldArray[this.oldCurrentLine];
-					oldChange = true;
-					this.oldCurrentLine++;
-					this.delStart++;
-				}
-				newLine = "";
-				newChange = false;
-				if (this.newCurrentLine < this.newArray.length && this.addStart <= this.addEnd) {
-					newLine = this.newArray[this.newCurrentLine];
-					newChange = true;
-					this.newCurrentLine++;
-					this.addStart++;
-				}
-				displayLineNumber(locale);
-				output.append(buildRow(oldChange, oldLine, newChange, newLine));
-			}
-		}
-
-		/**
-		 *
-		 */
-		private void displayLineNumber(Locale locale) {
-			if (this.lineNumberDisplayed) return;
-			int lineNumber = oldCurrentLine;
-			this.lineNumberDisplayed = true;
-			if (this.htmlFormat) {
-				output.append("<tr><td colspan=\"4\" class=\"diff-line\">" + Utilities.getMessage("diff.line", locale) + " " + lineNumber + ":</td></tr>");
-			} else {
-				output.append(Utilities.getMessage("diff.line", locale) + " " + lineNumber + ":\n");
-			}
-		}
 	}
 }
