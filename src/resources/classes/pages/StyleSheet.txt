@@ -39,6 +39,10 @@ a.edit {
 	border-color: #aa1111;
 }
 
+a.edit:hover {
+	border-bottom: 1px solid #aa1111;
+}
+
 table {
 	font-size: 100%;
 	color: black;
