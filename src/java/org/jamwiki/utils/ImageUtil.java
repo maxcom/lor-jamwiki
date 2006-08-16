@@ -111,7 +111,7 @@ public class ImageUtil {
 		BufferedImage original = ImageUtil.loadImage(imageFile);
 		maxDimension = calculateImageIncrement(maxDimension);
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
-		if (increment < 0 || (maxDimension > original.getWidth() && maxDimension > original.getHeight())) {
+		if (increment <= 0 || (maxDimension > original.getWidth() && maxDimension > original.getHeight())) {
 			// let the browser scale the image
 			return original;
 		}
