@@ -237,6 +237,10 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_BASE_FILE_DIR,
 				request.getParameter(Environment.PROP_BASE_FILE_DIR)
 			);
+			Environment.setIntValue(
+				Environment.PROP_IMAGE_RESIZE_INCREMENT,
+				Integer.parseInt(request.getParameter(Environment.PROP_IMAGE_RESIZE_INCREMENT))
+			);
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 			if (persistenceType == WikiBase.FILE) {
 				Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");

@@ -128,6 +128,10 @@ function onUserGroupType() {
 	<td class="normal"><label for="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>"><f:message key="admin.caption.forceusername" /></label></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" /></td>
 </tr>
+<tr>
+	<td class="normal"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
+	<td class="normal"><input type="text" name="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>" size="5" maxlength="5" value="<%= Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT) %>" id="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>" /></td>
+</tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.recentchangesheader" /></td></tr>
 <tr>
