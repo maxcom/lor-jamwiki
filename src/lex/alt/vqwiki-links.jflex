@@ -53,13 +53,6 @@ import org.jamwiki.utils.Utilities;
 	/**
 	 *
 	 */
-	protected boolean ignoreWikiname(String name) {
-		return VQWikiParser.doIgnoreWikiname(name);
-	}
-	
-	/**
-	 *
-	 */
 	protected String getTopicLink(String link, String description) {
 		link = link.trim();
 		description = description.trim();
@@ -234,8 +227,6 @@ externalend = (\[<\/[A-Za-z]+>\])
 <NORMAL>{topic} {
   logger.debug( "{topic} '" + yytext() + "'" );
   String link = yytext();
-  if( ignoreWikiname( link ) )
-    return yytext();
   return getTopicLink(link, link);
 }
 

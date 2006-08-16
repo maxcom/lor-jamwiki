@@ -412,7 +412,6 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 			next.addObject("message", new WikiMessage("admin.message.changessaved"));
 		} catch (Exception e) {
-			// FIXME - hard coding
 			logger.error("Failure while processing property values", e);
 			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
@@ -487,9 +486,7 @@ public class AdminServlet extends JAMWikiServlet {
 			LuceneSearchEngine.refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
-			// FIXME - hard coding
 			logger.error("Failure while refreshing search index", e);
-			String message = "Failure while refreshing search index: " + e.getMessage();
 			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
 	}

@@ -51,7 +51,6 @@ if (exception != null) {
 }
 %>
 
-<%-- FIXME - hard coding --%>
 <p><f:message key="error.heading" /></p>
 <p><font style="color: red;font-weight:bold"><%= errorMessage %></font></p>
 <%

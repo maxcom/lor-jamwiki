@@ -51,51 +51,6 @@ public class VQWikiParser extends AbstractParser {
 	}
 
 	/**
-	 * This method looks for a properties file named wikinames.ignore and
-	 * then checks a name passed to this method against the list of names (if
-	 * any) in that file.  If the name is found return true, otherwise return
-	 * false;
-	 *
-	 * @param name The name of the topic to check for in the ignore file.
-	 * @return Returns <code>true</code> if the name is found in the ignore file,
-	 *  otherwise returns <code>false</code>.
-	 */
-	public static boolean doIgnoreWikiname(String name) {
-		if (wikinameIgnore == null) {
-			wikinameIgnore = new ArrayList();
-			// FIXME - "VQWikiParser.class" may not work in a static method
-			InputStream in = VQWikiParser.class.getResourceAsStream("/wikiname.ignore");
-			if (in == null) {
-				logger.debug("No wikinames to ignore, wikiname.ignore does not exist");
-				return false;
-			}
-			try {
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				while (true) {
-					String line = reader.readLine();
-					if (line == null) {
-						break;
-					}
-					logger.debug("Adding " + line.toLowerCase() + " to ignore list");
-					wikinameIgnore.add(line.toLowerCase());
-				}
-				reader.close();
-				in.close();
-			} catch (Exception e) {
-				logger.warn("Error reading wikiname.ignore", e);
-			}
-		}
-		if (wikinameIgnore.isEmpty()) {
-			return false;
-		}
-		boolean ignore = wikinameIgnore.contains(name.toLowerCase());
-		if (ignore) {
-			logger.debug("Do ignore " + name);
-		}
-		return ignore;
-	}
-
-	/**
 	 * Parse text for online display.
 	 */
 	public String parseHTML(String rawtext, String topicName) throws Exception {

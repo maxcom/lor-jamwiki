@@ -435,7 +435,7 @@ public class Utilities {
 	 * Read a file and return its contents as a String.
 	 */
 	public static String readFile(String filename) throws Exception {
-		// FIXME - this method is no longer needed and can be removed or simplified
+		// FIXME - this method should be removed and replaced with a FileUtils method
 		File file = new File(filename);
 		if (file.exists()) {
 			// file passed in as full path
