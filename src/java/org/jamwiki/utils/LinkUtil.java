@@ -101,7 +101,6 @@ public class LinkUtil {
 		WikiImage wikiImage = ImageUtil.initializeImage(virtualWiki, topicName, maxDimension);
 		if (caption == null) caption = "";
 		String html = "";
-		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "<div class=\"";
 			if (thumb || frame) {
@@ -120,6 +119,7 @@ public class LinkUtil {
 		if (wikiImage.getWidth() > 0) {
 			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px\">";
 		}
+		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		html += "<img class=\"wikiimg\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
 		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
@@ -135,6 +135,7 @@ public class LinkUtil {
 		html += " height=\"" + wikiImage.getHeight() + "\"";
 		html += " alt=\"" + Utilities.escapeHTML(caption) + "\"";
 		html += " />";
+		if (!suppressLink) html += "</a>";
 		if (StringUtils.hasText(caption)) {
 			html += "<div class=\"imgcaption\">" + Utilities.escapeHTML(caption) + "</div>";
 		}
@@ -144,7 +145,6 @@ public class LinkUtil {
 		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "</div>";
 		}
-		if (!suppressLink) html += "</a>";
 		return html;
 	}
 
