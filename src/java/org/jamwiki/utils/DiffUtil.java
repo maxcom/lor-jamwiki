@@ -53,6 +53,71 @@ public class DiffUtil {
 	}
 
 	/**
+	 * Utility method for determining whether or not a difference can be post-buffered.
+	 */
+	private static boolean canPostBuffer(Difference nextDiff, int current, String[] replacementArray, boolean adding) {
+		if (current < 0 || current >= replacementArray.length) {
+			// if out of a valid range, don't buffer
+			return false;
+		}
+		if (nextDiff == null) {
+			// if in a valid range and no next diff, buffer away
+			return true;
+		}
+		int nextStart = nextDiff.getDeletedStart();
+		if (adding) {
+			nextStart = nextDiff.getAddedStart();
+		}
+		if (nextStart > current) {
+			// if in a valid range and no next diff starts several lines away, buffer away
+			return true;
+		}
+		// default is don't buffer
+		return false;
+	}
+
+	/**
+	 * Utility method for determining whether or not a difference can be pre-buffered.
+	 */
+	private static boolean canPreBuffer(Difference previousDiff, int current, int currentStart, String[] replacementArray, boolean adding) {
+		if (current < 0 || current >= replacementArray.length) {
+			// current position is out of range for buffering
+			return false;
+		}
+		if (previousDiff == null) {
+			// if no previous diff, buffer away
+			return true;
+		}
+		int previousEnd = previousDiff.getDeletedEnd();
+		int previousStart = previousDiff.getDeletedStart();
+		if (adding) {
+			previousEnd = previousDiff.getAddedEnd();
+			previousStart = previousDiff.getAddedStart();
+		}
+		if (previousEnd != -1) {
+			if (current > (previousEnd + DIFF_UNCHANGED_LINE_DISPLAY)) {
+				// if there was a previous diff but it was several lines previous, buffer away
+				return true;
+			} else {
+				// there was a previous diff, and it overlaps with the current diff, don't buffer
+				return false;
+			}
+		}
+		if (current <= (previousStart + DIFF_UNCHANGED_LINE_DISPLAY)) {
+			// the previous diff did not specify an end, and the current diff would overlap with
+			// buffering from its start, don't buffer
+			return false;
+		}
+		if (current >= 0 && currentStart > current) {
+			// the previous diff did not specify an end, and the current diff will not overlap
+			// with buffering from its start, buffer away
+			return true;
+		}
+		// default is don't buffer
+		return false;
+	}
+
+	/**
 	 * Return a Vector of WikiDiff objects that can be used to create a display of the
 	 * diff content.
 	 *
@@ -78,33 +143,6 @@ public class DiffUtil {
 	}
 
 	/**
-	 *
-	 */
-	private static Vector process(String newVersion, String oldVersion) {
-		logger.debug("Diffing: " + oldVersion + " against: " + newVersion);
-		String[] oldArray = buildArray(oldVersion);
-		String[] newArray = buildArray(newVersion);
-		Diff diffObject = new Diff(oldArray, newArray);
-		List diffs = diffObject.diff();
-		Vector wikiDiffs = new Vector();
-		Difference currentDiff = null;
-		Difference previousDiff = null;
-		Difference nextDiff = null;
-		for (int i=0; i < diffs.size(); i++) {
-			currentDiff = (Difference)diffs.get(i);
-			preBufferDifference(currentDiff, previousDiff, wikiDiffs, oldArray, newArray);
-			processDifference(currentDiff, wikiDiffs, oldArray, newArray);
-			nextDiff = null;
-			if ((i+1) < diffs.size() ) {
-				nextDiff = (Difference)diffs.get(i+1);
-			}
-			postBufferDifference(currentDiff, nextDiff, wikiDiffs, oldArray, newArray);
-			previousDiff = currentDiff;
-		}
-		return wikiDiffs;
-	}
-
-	/**
 	 * If possible, try to append a few lines of unchanged text to the diff output to
 	 * be used for context.
 	 */
@@ -123,12 +161,12 @@ public class DiffUtil {
 			String oldLine = null;
 			String newLine = null;
 			boolean buffered = false;
-			if (deletedCurrent >= 0 && deletedCurrent < oldArray.length && ((nextDiff != null && nextDiff.getDeletedStart() > deletedCurrent) || nextDiff == null)) {
+			if (canPostBuffer(nextDiff, deletedCurrent, oldArray, false)) {
 				oldLine = oldArray[deletedCurrent];
 				deletedCurrent++;
 				buffered = true;
 			}
-			if (addedCurrent >= 0 && addedCurrent < newArray.length && ((nextDiff != null && nextDiff.getAddedStart() > addedCurrent) || nextDiff == null)) {
+			if (canPostBuffer(nextDiff, addedCurrent, newArray, true)) {
 				newLine = newArray[addedCurrent];
 				addedCurrent++;
 				buffered = true;
@@ -157,14 +195,12 @@ public class DiffUtil {
 			String newLine = null;
 			boolean buffered = false;
 			// if diffs are close together, do not allow buffers to overlap
-			// FIXME - this is a huge mess, simplify it
-			if ((previousDiff == null || (previousDiff.getDeletedEnd() != -1 && deletedCurrent > (previousDiff.getDeletedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) || (previousDiff.getDeletedEnd() == -1 && deletedCurrent > (previousDiff.getDeletedStart() + DIFF_UNCHANGED_LINE_DISPLAY))) && deletedCurrent >= 0 && currentDiff.getDeletedStart() > deletedCurrent) {
+			if (canPreBuffer(previousDiff, deletedCurrent, currentDiff.getDeletedStart(), oldArray, false)) {
 				oldLine = oldArray[deletedCurrent];
 				deletedCurrent++;
 				buffered = true;
 			}
-			// FIXME - this is a huge mess, simplify it
-			if ((previousDiff == null || (previousDiff.getAddedEnd() != -1 && addedCurrent > (previousDiff.getAddedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) || (previousDiff.getAddedEnd() == -1 && addedCurrent > (previousDiff.getAddedStart() + DIFF_UNCHANGED_LINE_DISPLAY))) && addedCurrent >= 0 && currentDiff.getAddedStart() > addedCurrent) {
+			if (canPreBuffer(previousDiff, addedCurrent, currentDiff.getAddedStart(), newArray, true)) {
 				newLine = newArray[addedCurrent];
 				addedCurrent++;
 				buffered = true;
@@ -173,6 +209,33 @@ public class DiffUtil {
 			WikiDiff wikiDiff = new WikiDiff(oldLine, newLine, lineNumber + 1, false);
 			wikiDiffs.add(wikiDiff);
 		}
+	}
+
+	/**
+	 *
+	 */
+	private static Vector process(String newVersion, String oldVersion) {
+		logger.debug("Diffing: " + oldVersion + " against: " + newVersion);
+		String[] oldArray = buildArray(oldVersion);
+		String[] newArray = buildArray(newVersion);
+		Diff diffObject = new Diff(oldArray, newArray);
+		List diffs = diffObject.diff();
+		Vector wikiDiffs = new Vector();
+		Difference currentDiff = null;
+		Difference previousDiff = null;
+		Difference nextDiff = null;
+		for (int i=0; i < diffs.size(); i++) {
+			currentDiff = (Difference)diffs.get(i);
+			preBufferDifference(currentDiff, previousDiff, wikiDiffs, oldArray, newArray);
+			processDifference(currentDiff, wikiDiffs, oldArray, newArray);
+			nextDiff = null;
+			if ((i+1) < diffs.size() ) {
+				nextDiff = (Difference)diffs.get(i+1);
+			}
+			postBufferDifference(currentDiff, nextDiff, wikiDiffs, oldArray, newArray);
+			previousDiff = currentDiff;
+		}
+		return wikiDiffs;
 	}
 
 	/**
