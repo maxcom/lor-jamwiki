@@ -38,6 +38,15 @@ public class ImageUtil {
 	private static final Logger logger = Logger.getLogger(ImageUtil.class);
 
 	/**
+	 *
+	 */
+	public static int calculateImageIncrement(int maxDimension) {
+		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
+		double result = Math.ceil((double)maxDimension / (double)increment) * increment;
+		return (int)result;
+	}
+
+	/**
 	 * Convert a Java Image object to a Java BufferedImage object.
 	 */
 	public static BufferedImage imageToBufferedImage(Image image) throws Exception {
@@ -64,12 +73,13 @@ public class ImageUtil {
 		BufferedImage imageObject = null;
 		if (maxDimension > 0) {
 			imageObject = ImageUtil.resizeImage(wikiImage, maxDimension);
+			setScaledDimensions(imageObject, wikiImage, maxDimension);
 		} else {
 			File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 			imageObject = ImageUtil.loadImage(imageFile);
+			wikiImage.setWidth(imageObject.getWidth());
+			wikiImage.setHeight(imageObject.getHeight());
 		}
-		wikiImage.setWidth(imageObject.getWidth());
-		wikiImage.setHeight(imageObject.getHeight());
 		return wikiImage;
 	}
 
@@ -99,6 +109,12 @@ public class ImageUtil {
 	public static BufferedImage resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
+		if (maxDimension > original.getWidth() && maxDimension > original.getHeight()) {
+			// let the browser scale the image
+			return original;
+		}
+		maxDimension = calculateImageIncrement(maxDimension);
+		logger.warn("Max Dimension: " + maxDimension);
 		String newUrl = wikiImage.getUrl();
 		int pos = newUrl.lastIndexOf(".");
 		if (pos > -1) {
@@ -151,5 +167,22 @@ public class ImageUtil {
 				} catch (Exception e) {}
 			}
 		}
+	}
+
+	/**
+	 *
+	 */
+	private static void setScaledDimensions(BufferedImage bufferedImage, WikiImage wikiImage, int maxDimension) {
+		int width = bufferedImage.getWidth();
+		int height = bufferedImage.getHeight();
+		if (width >= height) {
+			height = (int)Math.floor(((double)maxDimension / (double)width) * (double)height);
+			width = maxDimension;
+		} else {
+			width = (int)Math.floor(((double)maxDimension / (double)height) * (double)width);
+			height = maxDimension;
+		}
+		wikiImage.setWidth(width);
+		wikiImage.setHeight(height);
 	}
 }
