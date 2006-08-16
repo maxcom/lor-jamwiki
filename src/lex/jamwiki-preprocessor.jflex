@@ -395,6 +395,7 @@ tablecaption       = "|+"
 
 /* wiki links */
 wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
+imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\(\]\])]* {wikilink}+ [^\n\r\(\]\])]*)+ ~"]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllink           = "[" ({protocol}) ([^\]\n\r]+) ~"]"
 htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
@@ -470,9 +471,14 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 
 /* ----- wiki links ----- */
 
+<NORMAL, TABLE, TD, TH, TC, LIST>{imagelinkcaption} {
+    logger.debug("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
+    return ParserUtil.buildInternalLinkUrl(this.parserInfo, yytext());
+}
+
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildInternalLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), yytext());
+    return ParserUtil.buildInternalLinkUrl(this.parserInfo, yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {

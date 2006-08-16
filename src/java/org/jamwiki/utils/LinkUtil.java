@@ -91,13 +91,20 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName) throws Exception {
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, false, false, null, null, -1, true);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, false, false, null, null, -1, true, true);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink) throws Exception {
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, frame, thumb, align, caption, maxDimension, suppressLink, true);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, boolean escapeHtml) throws Exception {
 		WikiImage wikiImage = ImageUtil.initializeImage(virtualWiki, topicName, maxDimension);
 		if (caption == null) caption = "";
 		String html = "";
@@ -137,7 +144,13 @@ public class LinkUtil {
 		html += " />";
 		if (!suppressLink) html += "</a>";
 		if (StringUtils.hasText(caption)) {
-			html += "<div class=\"imgcaption\">" + Utilities.escapeHTML(caption) + "</div>";
+			html += "<div class=\"imgcaption\">";
+			if (escapeHtml) {
+				html += Utilities.escapeHTML(caption);
+			} else {
+				html += caption;
+			}
+			html += "</div>";
 		}
 		if (wikiImage.getWidth() > 0) {
 			html += "</div>";
@@ -151,8 +164,8 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text, String style) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text, style);
+	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text, String style, boolean escapeHtml) throws Exception {
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text, style, escapeHtml);
 	}
 
 	/**
@@ -166,6 +179,13 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style) throws Exception {
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, style, true);
+	}
+
+	/**
+	 *
+	 */
+	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
 		if (!StringUtils.hasText(text)) text = topic;
 		if (!WikiBase.exists(virtualWiki, topic) && !StringUtils.hasText(style)) {
@@ -176,7 +196,14 @@ public class LinkUtil {
 		} else {
 			style = "";
 		}
-		return "<a title=\"" + Utilities.escapeHTML(text) + "\" href=\"" + url + "\"" + style + ">" + Utilities.escapeHTML(text) + "</a>";
+		String html = "<a title=\"" + Utilities.escapeHTML(text) + "\" href=\"" + url + "\"" + style + ">";
+		if (escapeHtml) {
+			html += Utilities.escapeHTML(text);
+		} else {
+			html += text;
+		}
+		html += "</a>";
+		return html;
 	}
 
 	/**

@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser;
 
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -126,7 +127,9 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String buildInternalLinkUrl(String context, String virtualWiki, String raw) {
+	protected static String buildInternalLinkUrl(ParserInfo parserInfo, String raw) {
+		String context = parserInfo.getContext();
+		String virtualWiki = parserInfo.getVirtualWiki();
 		try {
 			String content = ParserUtil.extractLinkContent(raw);
 			if (!StringUtils.hasText(content)) {
@@ -140,7 +143,7 @@ public class ParserUtil {
 			}
 			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
-				return ParserUtil.parseImageLink(context, virtualWiki, content);
+				return ParserUtil.parseImageLink(parserInfo, content);
 			}
 			if (topic.startsWith(":") && StringUtils.countOccurrencesOf(topic, ":") >= 2) {
 				// see if this is a virtual wiki
@@ -156,8 +159,13 @@ public class ParserUtil {
 				topic = topic.substring(1);
 			}
 			String text = ParserUtil.extractLinkText(content);
-			if (text == null) text = topic;
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
+			if (text == null) {
+				text = topic;
+			} else {
+				text = ParserUtil.parseFragment(parserInfo, text);
+			}
+			// do not escape text html - already done by parser
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null, false);
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw, e);
 			return "";
@@ -186,7 +194,7 @@ public class ParserUtil {
 					// FIXME - mediawiki specific.
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
-					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null);
+					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null, true);
 				}
 				signature += link;
 			}
@@ -313,7 +321,9 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String parseImageLink(String context, String virtualWiki, String content) throws Exception {
+	protected static String parseImageLink(ParserInfo parserInfo, String content) throws Exception {
+		String context = parserInfo.getContext();
+		String virtualWiki = parserInfo.getVirtualWiki();
 		String topic = ParserUtil.extractLinkTopic(content);
 		String text = ParserUtil.extractLinkText(content);
 		boolean thumb = false;
@@ -343,15 +353,36 @@ public class ParserUtil {
 					if (m.find()) {
 						maxDimension = new Integer(m.group(1)).intValue();
 					} else {
-						caption = token;
+						// FIXME - this is a hack.  images may contain piped links, so if
+						// there was previous caption info append the new info.
+						if (!StringUtils.hasText(caption)) {
+							caption = token;
+						} else {
+							caption += "|" + token;
+						}
 					}
 				}
 			}
 			if (thumb && maxDimension <= 0) {
 				maxDimension = DEFAULT_THUMBNAIL_SIZE;
 			}
+			caption = ParserUtil.parseFragment(parserInfo, caption);
 		}
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false);
+		// do not escape html for caption since parser does it above
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false, false);
+	}
+
+	/**
+	 * Provide a way to run the pre-processor against a fragment of text, such
+	 * as an image caption.  This method should be used sparingly since it is
+	 * not very efficient.
+	 */
+	protected static String parseFragment(ParserInfo parserInfo, String fragment) throws Exception {
+		if (!StringUtils.hasText(fragment)) return fragment;
+		JAMWikiParser parser = new JAMWikiParser(parserInfo);
+		StringReader raw = new StringReader(fragment);
+		StringBuffer contents = parser.parsePreProcess(raw);
+		return contents.toString();
 	}
 
 	/**
