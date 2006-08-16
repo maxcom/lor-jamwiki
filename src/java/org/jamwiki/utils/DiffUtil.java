@@ -119,27 +119,21 @@ public class DiffUtil {
 		int deletedCurrent = (currentDiff.getDeletedStart() - DIFF_UNCHANGED_LINE_DISPLAY);
 		int addedCurrent = (currentDiff.getAddedStart() - DIFF_UNCHANGED_LINE_DISPLAY);
 		if (previousDiff != null) {
-			Math.max(previousDiff.getDeletedEnd() + 1, deletedCurrent);
-			Math.max(previousDiff.getAddedEnd() + 1, addedCurrent);
-			// if diffs are close together, do not allow buffers to overlap
-			if (deletedCurrent <= (previousDiff.getDeletedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) {
-				deletedCurrent = previousDiff.getDeletedEnd() + DIFF_UNCHANGED_LINE_DISPLAY + 1;
-			}
-			if (addedCurrent <= (previousDiff.getAddedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) {
-				addedCurrent = previousDiff.getAddedEnd() + DIFF_UNCHANGED_LINE_DISPLAY + 1;
-			}
+			deletedCurrent = Math.max(previousDiff.getDeletedEnd() + 1, deletedCurrent);
+			addedCurrent = Math.max(previousDiff.getAddedEnd() + 1, addedCurrent);
 		}
 		for (int i=0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
 			int lineNumber = ((deletedCurrent < 0) ? 0 : deletedCurrent);
 			String oldLine = null;
 			String newLine = null;
 			boolean buffered = false;
-			if (deletedCurrent >= 0 && currentDiff.getDeletedStart() > deletedCurrent) {
+			// if diffs are close together, do not allow buffers to overlap
+			if ((previousDiff == null || (previousDiff.getDeletedEnd() != -1 && deletedCurrent > (previousDiff.getDeletedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) || (previousDiff.getDeletedEnd() == -1 && deletedCurrent > (previousDiff.getDeletedStart() + DIFF_UNCHANGED_LINE_DISPLAY))) && deletedCurrent >= 0 && currentDiff.getDeletedStart() > deletedCurrent) {
 				oldLine = oldArray[deletedCurrent];
 				deletedCurrent++;
 				buffered = true;
 			}
-			if (addedCurrent >= 0 && currentDiff.getAddedStart() > addedCurrent) {
+			if ((previousDiff == null || (previousDiff.getAddedEnd() != -1 && addedCurrent > (previousDiff.getAddedEnd() + DIFF_UNCHANGED_LINE_DISPLAY)) || (previousDiff.getAddedEnd() == -1 && addedCurrent > (previousDiff.getAddedStart() + DIFF_UNCHANGED_LINE_DISPLAY))) && addedCurrent >= 0 && currentDiff.getAddedStart() > addedCurrent) {
 				newLine = newArray[addedCurrent];
 				addedCurrent++;
 				buffered = true;
