@@ -2,6 +2,15 @@
 0.2.1
 =====
 
+* FEATURE: Support image resizing from [[Image]] tags.
+* FEATURE: Update of the diff code to simplify the code and address some
+  issues with diffs.
+* BUG: Piped link within Wiki table syntax was displaying incorrectly.
+* BUG: Remove section edit links from printable page.
+* FEATURE: CSS fixes from Scott Croco (scroco).
+* BUG: Fix XHTML issue related to extra <p> tag for images.
+* FEATURE: Updated Chinese translations from ewen0930.
+* FEATURE: Updated Hungarian translations from bDaneE.
 
 0.2.0
 =====
