@@ -3,6 +3,7 @@
 =====
 
 * FEATURE: Support image resizing from [[Image]] tags.
+* FEATURE: Allow Wiki syntax in image and anchor link captions.
 * FEATURE: Update of the diff code to simplify the code and address some
   issues with diffs.
 * BUG: Piped link within Wiki table syntax was displaying incorrectly.
