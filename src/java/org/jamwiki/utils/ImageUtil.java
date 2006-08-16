@@ -109,12 +109,11 @@ public class ImageUtil {
 	public static BufferedImage resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
+		maxDimension = calculateImageIncrement(maxDimension);
 		if (maxDimension > original.getWidth() && maxDimension > original.getHeight()) {
 			// let the browser scale the image
 			return original;
 		}
-		maxDimension = calculateImageIncrement(maxDimension);
-		logger.warn("Max Dimension: " + maxDimension);
 		String newUrl = wikiImage.getUrl();
 		int pos = newUrl.lastIndexOf(".");
 		if (pos > -1) {
