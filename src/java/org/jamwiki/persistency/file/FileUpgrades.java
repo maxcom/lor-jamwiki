@@ -58,6 +58,7 @@ public class FileUpgrades {
 	 *
 	 */
 	public static Vector upgrade030(Vector messages) throws Exception {
+		// FIXME - add category folders & files
 		return messages;
 	}
 }

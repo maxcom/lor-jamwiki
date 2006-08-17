@@ -67,10 +67,24 @@ public class DatabaseUpgrades {
 			conn = DatabaseConnection.getConnection();
 			String sql = "drop table jam_image";
 			DatabaseConnection.executeUpdate(sql, conn);
-			conn.commit();
 			// FIXME - hard coding
 			messages.add("Dropped jam_image table");
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_TABLE, conn);
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_TOPIC_TABLE, conn);
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_CATEGORY_TABLE, conn);
+			// FIXME - hard coding
+			messages.add("Added category tables");
+			conn.commit();
 		} catch (Exception e) {
+			try {
+				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_CATEGORY_TABLE, conn);
+			} catch (Exception ex) {}
+			try {
+				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_TOPIC_TABLE, conn);
+			} catch (Exception ex) {}
+			try {
+				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_TABLE, conn);
+			} catch (Exception ex) {}
 			conn.rollback();
 			throw e;
 		} finally {
