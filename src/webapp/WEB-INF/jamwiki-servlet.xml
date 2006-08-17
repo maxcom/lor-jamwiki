@@ -8,6 +8,7 @@
 				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:Admin">Admin</prop>
 				<prop key="/**/Special:AllTopics">Topic</prop>
+				<prop key="/**/Special:Categories">Category</prop>
 				<prop key="/**/Special:Contributions">Contributions</prop>
 				<prop key="/**/Special:Convert">Admin</prop>
 				<prop key="/**/Special:Delete">Delete</prop>
@@ -34,6 +35,7 @@
 	</bean>
 
 	<bean id="Admin" class="org.jamwiki.servlets.AdminServlet" />
+	<bean id="Category" class="org.jamwiki.servlets.CategoryServlet" />
 	<bean id="Contributions" class="org.jamwiki.servlets.ContributionsServlet" />
 	<bean id="Delete" class="org.jamwiki.servlets.DeleteServlet" />
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
