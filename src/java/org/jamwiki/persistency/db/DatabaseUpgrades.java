@@ -57,4 +57,25 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade030(Vector messages) throws Exception {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			String sql = "drop table jam_image";
+			DatabaseConnection.executeUpdate(sql, conn);
+			conn.commit();
+			// FIXME - hard coding
+			messages.add("Dropped jam_image table");
+		} catch (Exception e) {
+			conn.rollback();
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return messages;
+	}
 }

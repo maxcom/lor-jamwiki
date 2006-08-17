@@ -87,6 +87,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (oldVersion.before(0, 2, 0)) {
 			messages = upgrade020(request, messages);
 		}
+		if (oldVersion.before(0, 3, 0)) {
+			messages = upgrade030(request, messages);
+		}
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
 		Environment.saveProperties();
 		next.addObject("messages", messages);
@@ -177,6 +180,26 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update virtual wiki table";
+			logger.error(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	private Vector upgrade030(HttpServletRequest request, Vector messages) {
+		// drop jam_image table
+		try {
+			if (WikiBase.getHandler() instanceof DatabaseHandler) {
+				messages = DatabaseUpgrades.upgrade030(messages);
+			} else {
+				messages = FileUpgrades.upgrade030(messages);
+			}
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to update for version 0.3.0";
 			logger.error(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 		}

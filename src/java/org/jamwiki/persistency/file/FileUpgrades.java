@@ -53,4 +53,11 @@ public class FileUpgrades {
 		messages.add("Updated virtual wiki files");
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade030(Vector messages) throws Exception {
+		return messages;
+	}
 }
