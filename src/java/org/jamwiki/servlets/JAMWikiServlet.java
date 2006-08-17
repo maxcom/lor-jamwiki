@@ -26,7 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -200,12 +200,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 				content = topic.getTopicContent();
 				if (cook) {
-					ParserInfo parserInfo = new ParserInfo();
-					parserInfo.setContext(request.getContextPath());
-					parserInfo.setLocale(request.getLocale());
-					parserInfo.setVirtualWiki(virtualWiki);
-					parserInfo.setTopicName(topicName);
-					content = Utilities.parse(parserInfo, content, topicName);
+					ParserInput parserInput = new ParserInput();
+					parserInput.setContext(request.getContextPath());
+					parserInput.setLocale(request.getLocale());
+					parserInput.setVirtualWiki(virtualWiki);
+					parserInput.setTopicName(topicName);
+					content = Utilities.parse(parserInput, content, topicName);
 				}
 				cachedContents.put(virtualWiki + "-" + topicName, content);
 			} catch (Exception e) {
@@ -390,15 +390,15 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String topicName = topic.getName();
 		String displayName = request.getRemoteAddr();
 		WikiUser user = Utilities.currentUser(request);
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(request.getContextPath());
-		parserInfo.setLocale(request.getLocale());
-		parserInfo.setWikiUser(user);
-		parserInfo.setTopicName(topicName);
-		parserInfo.setUserIpAddress(request.getRemoteAddr());
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setAllowSectionEdit(sectionEdit);
-		contents = Utilities.parse(parserInfo, topic.getTopicContent(), topicName);
+		ParserInput parserInput = new ParserInput();
+		parserInput.setContext(request.getContextPath());
+		parserInput.setLocale(request.getLocale());
+		parserInput.setWikiUser(user);
+		parserInput.setTopicName(topicName);
+		parserInput.setUserIpAddress(request.getRemoteAddr());
+		parserInput.setVirtualWiki(virtualWiki);
+		parserInput.setAllowSectionEdit(sectionEdit);
+		contents = Utilities.parse(parserInput, topic.getTopicContent(), topicName);
 		topic.setTopicContent(contents);
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 			List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);

@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInput;
 
 /**
  * Abstract class to be used when implementing new lexers.  New lexers
@@ -31,15 +31,15 @@ import org.jamwiki.parser.ParserInfo;
 public abstract class AbstractParser {
 
 	private static final Logger logger = Logger.getLogger(AbstractParser.class);
-	protected ParserInfo parserInfo;
+	protected ParserInput parserInput;
 
 	/**
 	 * Sets the basics for this parser.
 	 *
-	 * @param parserInfo General information about this parser.
+	 * @param parserInput General information about this parser.
 	 */
-	public AbstractParser(ParserInfo parserInfo) {
-		this.parserInfo = parserInfo;
+	public AbstractParser(ParserInput parserInput) {
+		this.parserInput = parserInput;
 	}
 
 	/**
@@ -47,8 +47,8 @@ public abstract class AbstractParser {
 	 *
 	 * @return General information about this parser.
 	 */
-	public ParserInfo getParserInfo() {
-		return parserInfo;
+	public ParserInput getParserInput() {
+		return parserInput;
 	}
 
 	/**
@@ -107,9 +107,9 @@ public abstract class AbstractParser {
 	/**
 	 * For setting general information about this parser.
 	 *
-	 * @param parserInfo General information about this parser.
+	 * @param parserInput General information about this parser.
 	 */
-	public void setParserInfo(ParserInfo parserInfo) {
-		this.parserInfo = parserInfo;
+	public void setParserInput(ParserInput parserInput) {
+		this.parserInput = parserInput;
 	}
 }

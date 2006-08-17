@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractLexer;
-import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 
@@ -36,7 +36,7 @@ import org.jamwiki.utils.Utilities;
 	 */
 	protected boolean exists(String topic) {
 		try {
-			return WikiBase.exists(this.parserInfo.getVirtualWiki(), topic);
+			return WikiBase.exists(this.parserInput.getVirtualWiki(), topic);
 		} catch (Exception err) {
 			logger.error(err);
 		}
@@ -46,8 +46,8 @@ import org.jamwiki.utils.Utilities;
 	/**
 	 *
 	 */
-	public void setParserInfo(ParserInfo parserInfo) throws Exception {
-		this.parserInfo = parserInfo;
+	public void setParserInput(ParserInput parserInput) throws Exception {
+		this.parserInput = parserInput;
 	}
 	
 	/**
@@ -58,7 +58,7 @@ import org.jamwiki.utils.Utilities;
 		description = description.trim();
 		if (exists(link)) {
 			try {
-				return "<a class=\"topic\" href=\"" + LinkUtil.buildInternalLinkUrl(this.parserInfo.getContext(), this.parserInfo.getVirtualWiki(), link)
+				return "<a class=\"topic\" href=\"" + LinkUtil.buildInternalLinkUrl(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), link)
 				+ "\">" + description + "</a>";
 			} catch (Exception e) {
 				return link;

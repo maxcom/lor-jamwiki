@@ -32,7 +32,7 @@ public abstract class AbstractLexer {
 	/** Member variable used to keep track of the state history for the lexer. */
 	protected Stack states = new Stack();
 	/** Parser configuration information. */
-	protected ParserInfo parserInfo = null;
+	protected ParserInput parserInput = null;
 
 	/**
 	 * Begin a new state and store the old state onto the stack.
@@ -63,7 +63,7 @@ public abstract class AbstractLexer {
 	 * all settings required for the parser have been set, and if not it
 	 * should throw an exception.
 	 */
-	public abstract void setParserInfo(ParserInfo parserInfo) throws Exception;
+	public abstract void setParserInput(ParserInput parserInput) throws Exception;
 
 	/**
 	 *

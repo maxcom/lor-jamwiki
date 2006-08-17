@@ -298,25 +298,25 @@ import org.springframework.util.StringUtils;
      */
     protected String updateToc(String name, String text, int level) {
         String output = "";
-        if (this.parserInfo.getTableOfContents().getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
+        if (this.parserInput.getTableOfContents().getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
             output = "__TOC__";
         }
-        this.parserInfo.getTableOfContents().addEntry(name, text, level);
+        this.parserInput.getTableOfContents().addEntry(name, text, level);
         return output;
     }
     
     /**
      *
      */
-    public void setParserInfo(ParserInfo parserInfo) throws Exception {
-        this.parserInfo = parserInfo;
+    public void setParserInput(ParserInput parserInput) throws Exception {
+        this.parserInput = parserInput;
         // validate parser settings
         boolean validated = true;
-        if (this.parserInfo == null) validated = false;
-        if (this.parserInfo.getTableOfContents() == null) validated = false;
-        if (this.parserInfo.getContext() == null) validated = false;
-        if (this.parserInfo.getVirtualWiki() == null) validated = false;
-        if (this.parserInfo.getTopicName() == null) validated = false;
+        if (this.parserInput == null) validated = false;
+        if (this.parserInput.getTableOfContents() == null) validated = false;
+        if (this.parserInput.getContext() == null) validated = false;
+        if (this.parserInput.getVirtualWiki() == null) validated = false;
+        if (this.parserInput.getTopicName() == null) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
@@ -460,13 +460,13 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{notoc} {
     logger.debug("notoc: " + yytext() + " (" + yystate() + ")");
-    this.parserInfo.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
+    this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{toc} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    this.parserInfo.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
+    this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     return yytext();
 }
 
@@ -474,12 +474,12 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{imagelinkcaption} {
     logger.debug("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildInternalLinkUrl(this.parserInfo, yytext());
+    return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildInternalLinkUrl(this.parserInfo, yytext());
+    return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
@@ -616,7 +616,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
     String tagText = ParserUtil.stripMarkup(yytext().substring(1, yytext().length() - 1).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 1);
-    output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
     output += "<a name=\"" + tagName + "\"></a><h1>";
     // pushback to process heading text
     yypushback(yytext().length() - 1);
@@ -638,7 +638,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
     String tagText = ParserUtil.stripMarkup(yytext().substring(2, yytext().length() - 2).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 2);
-    output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
     output += "<a name=\"" + tagName + "\"></a><h2>";
     // pushback to process heading text
     yypushback(yytext().length() - 2);
@@ -660,7 +660,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
     String tagText = ParserUtil.stripMarkup(yytext().substring(3, yytext().length() - 3).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 3);
-    output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
     output += "<a name=\"" + tagName + "\"></a><h3>";
     // pushback to process heading text
     yypushback(yytext().length() - 3);
@@ -682,7 +682,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
     String tagText = ParserUtil.stripMarkup(yytext().substring(4, yytext().length() - 4).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 4);
-    output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
     output += "<a name=\"" + tagName + "\"></a><h4>";
     // pushback to process heading text
     yypushback(yytext().length() - 4);
@@ -704,7 +704,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
     String tagText = ParserUtil.stripMarkup(yytext().substring(5, yytext().length() - 5).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 5);
-    output += ParserUtil.buildEditLinkUrl(this.parserInfo, nextSection());
+    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
     output += "<a name=\"" + tagName + "\"></a><h5>";
     // pushback to process heading text
     yypushback(yytext().length() - 5);

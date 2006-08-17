@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.AbstractLexer;
-import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.TableOfContents;
 
 /**
@@ -44,10 +44,10 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 * Sets the basics for this parser.
 	 *
-	 * @param parserInfo General information about this parser.
+	 * @param parserInput General information about this parser.
 	 */
-	public VQWikiParser(ParserInfo parserInfo) {
-		super(parserInfo);
+	public VQWikiParser(ParserInput parserInput) {
+		super(parserInput);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class VQWikiParser extends AbstractParser {
 	private StringBuffer parseFormat(Reader raw) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		VQWikiFormatLex lexer = new VQWikiFormatLex(raw);
-		lexer.setParserInfo(this.parserInfo);
+		lexer.setParserInput(this.parserInput);
 		boolean external = false;
 		String tag = null;
 		StringBuffer externalContents = null;
@@ -124,7 +124,7 @@ public class VQWikiParser extends AbstractParser {
 	 */
 	private StringBuffer parseLayout(Reader raw) throws Exception {
 		VQWikiLayoutLex lexer = new VQWikiLayoutLex(raw);
-		lexer.setParserInfo(this.parserInfo);
+		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
 	}
 
@@ -133,7 +133,7 @@ public class VQWikiParser extends AbstractParser {
 	 */
 	private StringBuffer parseLinks(Reader raw) throws Exception {
 		VQWikiLinkLex lexer = new VQWikiLinkLex(raw);
-		lexer.setParserInfo(this.parserInfo);
+		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
 	}
 

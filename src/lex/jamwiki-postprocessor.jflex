@@ -37,12 +37,12 @@ import org.apache.log4j.Logger;
     /**
      *
      */
-    public void setParserInfo(ParserInfo parserInfo) throws Exception {
-        this.parserInfo = parserInfo;
+    public void setParserInput(ParserInput parserInput) throws Exception {
+        this.parserInput = parserInput;
         // validate parser settings
         boolean validated = true;
-        if (this.parserInfo == null) validated = false;
-        if (this.parserInfo.getTableOfContents() == null) validated = false;
+        if (this.parserInput == null) validated = false;
+        if (this.parserInput.getTableOfContents() == null) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
@@ -116,7 +116,7 @@ paragraphstart     = ({inputcharacter})
 
 <NORMAL, P, NONPARAGRAPH>{toc} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    return this.parserInfo.getTableOfContents().attemptTOCInsertion();
+    return this.parserInput.getTableOfContents().attemptTOCInsertion();
 }
 
 /* ----- javascript ----- */

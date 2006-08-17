@@ -59,17 +59,17 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String buildEditLinkUrl(ParserInfo parserInfo, int section) {
-		if (!parserInfo.getAllowSectionEdit()) return "";
+	protected static String buildEditLinkUrl(ParserInput parserInput, int section) {
+		if (!parserInput.getAllowSectionEdit()) return "";
 		String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
 		String url = "";
 		try {
-			url = LinkUtil.buildEditLinkUrl(parserInfo.getContext(), parserInfo.getVirtualWiki(), parserInfo.getTopicName(), null, section);
+			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
 		} catch (Exception e) {
-			logger.error("Failure while building link for topic " + parserInfo.getVirtualWiki() + " / " + parserInfo.getTopicName(), e);
+			logger.error("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
 		output += "<a href=\"" + url + "\">";
-		output += Utilities.getMessage("common.sectionedit", parserInfo.getLocale());
+		output += Utilities.getMessage("common.sectionedit", parserInput.getLocale());
 		output += "</a>]</div>";
 		return output;
 	}
@@ -127,9 +127,9 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String buildInternalLinkUrl(ParserInfo parserInfo, String raw) {
-		String context = parserInfo.getContext();
-		String virtualWiki = parserInfo.getVirtualWiki();
+	protected static String buildInternalLinkUrl(ParserInput parserInput, String raw) {
+		String context = parserInput.getContext();
+		String virtualWiki = parserInput.getVirtualWiki();
 		try {
 			String content = ParserUtil.extractLinkContent(raw);
 			if (!StringUtils.hasText(content)) {
@@ -143,7 +143,7 @@ public class ParserUtil {
 			}
 			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
-				return ParserUtil.parseImageLink(parserInfo, content);
+				return ParserUtil.parseImageLink(parserInput, content);
 			}
 			if (topic.startsWith(":") && StringUtils.countOccurrencesOf(topic, ":") >= 2) {
 				// see if this is a virtual wiki
@@ -162,7 +162,7 @@ public class ParserUtil {
 			if (text == null) {
 				text = topic;
 			} else {
-				text = ParserUtil.parseFragment(parserInfo, text);
+				text = ParserUtil.parseFragment(parserInput, text);
 			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null, false);
@@ -175,22 +175,22 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	public static String buildWikiSignature(ParserInfo parserInfo, boolean includeUser, boolean includeDate) {
+	public static String buildWikiSignature(ParserInput parserInput, boolean includeUser, boolean includeDate) {
 		try {
 			String signature = "";
 			if (includeUser) {
-				String context = parserInfo.getContext();
-				String virtualWiki = parserInfo.getVirtualWiki();
+				String context = parserInput.getContext();
+				String virtualWiki = parserInput.getVirtualWiki();
 				// FIXME - need a utility method for user links
-				String topic = WikiBase.NAMESPACE_USER + parserInfo.getUserIpAddress();
-				String text = parserInfo.getUserIpAddress();
-				if (parserInfo.getWikiUser() != null) {
-					WikiUser user = parserInfo.getWikiUser();
+				String topic = WikiBase.NAMESPACE_USER + parserInput.getUserIpAddress();
+				String text = parserInput.getUserIpAddress();
+				if (parserInput.getWikiUser() != null) {
+					WikiUser user = parserInput.getWikiUser();
 					topic = WikiBase.NAMESPACE_USER + user.getLogin();
 					text = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
 				}
 				String link = "";
-				if (parserInfo.getMode() == ParserInfo.MODE_SAVE) {
+				if (parserInput.getMode() == ParserInput.MODE_SAVE) {
 					// FIXME - mediawiki specific.
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
@@ -321,9 +321,9 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String parseImageLink(ParserInfo parserInfo, String content) throws Exception {
-		String context = parserInfo.getContext();
-		String virtualWiki = parserInfo.getVirtualWiki();
+	protected static String parseImageLink(ParserInput parserInput, String content) throws Exception {
+		String context = parserInput.getContext();
+		String virtualWiki = parserInput.getVirtualWiki();
 		String topic = ParserUtil.extractLinkTopic(content);
 		String text = ParserUtil.extractLinkText(content);
 		boolean thumb = false;
@@ -366,7 +366,7 @@ public class ParserUtil {
 			if (thumb && maxDimension <= 0) {
 				maxDimension = DEFAULT_THUMBNAIL_SIZE;
 			}
-			caption = ParserUtil.parseFragment(parserInfo, caption);
+			caption = ParserUtil.parseFragment(parserInput, caption);
 		}
 		// do not escape html for caption since parser does it above
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false, false);
@@ -377,9 +377,9 @@ public class ParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	protected static String parseFragment(ParserInfo parserInfo, String fragment) throws Exception {
+	protected static String parseFragment(ParserInput parserInput, String fragment) throws Exception {
 		if (!StringUtils.hasText(fragment)) return fragment;
-		JAMWikiParser parser = new JAMWikiParser(parserInfo);
+		JAMWikiParser parser = new JAMWikiParser(parserInput);
 		StringReader raw = new StringReader(fragment);
 		StringBuffer contents = parser.parsePreProcess(raw);
 		return contents.toString();

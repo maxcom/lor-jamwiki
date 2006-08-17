@@ -22,7 +22,7 @@ import org.jamwiki.model.WikiUser;
 /**
  *
  */
-public class ParserInfo {
+public class ParserInput {
 
 	public static final int MODE_NORMAL = 1;
 	/** Preview mode indicates that the topic is being edited but not saved yet. */
@@ -46,7 +46,7 @@ public class ParserInfo {
 	/**
 	 *
 	 */
-	public ParserInfo() {
+	public ParserInput() {
 	}
 
 	/**

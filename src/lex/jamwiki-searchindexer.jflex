@@ -69,11 +69,11 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    public void setParserInfo(ParserInfo parserInfo) throws Exception {
-        this.parserInfo = parserInfo;
+    public void setParserInput(ParserInput parserInput) throws Exception {
+        this.parserInput = parserInput;
         // validate parser settings
         boolean validated = true;
-        if (this.parserInfo == null) validated = false;
+        if (this.parserInput == null) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }

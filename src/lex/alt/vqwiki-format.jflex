@@ -6,7 +6,7 @@ package org.jamwiki.parser.alt;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractLexer;
-import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInput;
 
 %%
 
@@ -43,7 +43,7 @@ import org.jamwiki.parser.ParserInfo;
 	 */
 	protected boolean exists(String topic) {
 		try {
-			return WikiBase.exists(this.parserInfo.getVirtualWiki(), topic);
+			return WikiBase.exists(this.parserInput.getVirtualWiki(), topic);
 		} catch (Exception err) {
 			cat.error(err);
 		}
@@ -53,8 +53,8 @@ import org.jamwiki.parser.ParserInfo;
 	/**
 	 *
 	 */
-	public void setParserInfo(ParserInfo parserInfo) throws Exception {
-		this.parserInfo = parserInfo;
+	public void setParserInput(ParserInput parserInput) throws Exception {
+		this.parserInput = parserInput;
 	}
 
 %}

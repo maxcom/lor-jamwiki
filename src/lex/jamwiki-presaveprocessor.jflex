@@ -34,14 +34,14 @@ import org.apache.log4j.Logger;
     /**
      *
      */
-    public void setParserInfo(ParserInfo parserInfo) throws Exception {
-        this.parserInfo = parserInfo;
+    public void setParserInput(ParserInput parserInput) throws Exception {
+        this.parserInput = parserInput;
         // validate parser settings
         boolean validated = true;
-        if (this.parserInfo == null) validated = false;
-        if (this.parserInfo.getContext() == null) validated = false;
-        if (this.parserInfo.getVirtualWiki() == null) validated = false;
-        if (this.parserInfo.getUserIpAddress() == null) validated = false;
+        if (this.parserInput == null) validated = false;
+        if (this.parserInput.getContext() == null) validated = false;
+        if (this.parserInput.getVirtualWiki() == null) validated = false;
+        if (this.parserInput.getUserIpAddress() == null) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
@@ -104,17 +104,17 @@ wikisig5           = "~~~~~"
 
 <NORMAL>{wikisig3} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildWikiSignature(this.parserInfo, true, false);
+    return ParserUtil.buildWikiSignature(this.parserInput, true, false);
 }
 
 <NORMAL>{wikisig4} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildWikiSignature(this.parserInfo, true, true);
+    return ParserUtil.buildWikiSignature(this.parserInput, true, true);
 }
 
 <NORMAL>{wikisig5} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildWikiSignature(this.parserInfo, false, true);
+    return ParserUtil.buildWikiSignature(this.parserInput, false, true);
 }
 
 /* ----- javascript ----- */

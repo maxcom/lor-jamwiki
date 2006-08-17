@@ -46,7 +46,7 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
-import org.jamwiki.parser.ParserInfo;
+import org.jamwiki.parser.ParserInput;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
 
@@ -336,50 +336,50 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String parse(ParserInfo parserInfo, String content, String topicName) throws Exception {
-		return Utilities.parse(parserInfo, content, topicName, false);
+	public static String parse(ParserInput parserInput, String content, String topicName) throws Exception {
+		return Utilities.parse(parserInput, content, topicName, false);
 	}
 
 	/**
 	 *
 	 */
-	private static String parse(ParserInfo parserInfo, String content, String topicName, boolean preSave) throws Exception {
+	private static String parse(ParserInput parserInput, String content, String topicName, boolean preSave) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
 			return "";
 		}
-		AbstractParser parser = parserInstance(parserInfo);
+		AbstractParser parser = parserInstance(parserInput);
 		return (preSave) ? parser.parsePreSave(content) : parser.parseHTML(content, topicName);
 	}
 
 	/**
 	 *
 	 */
-	public static String parsePreSave(ParserInfo parserInfo, String content) throws Exception {
-		return Utilities.parse(parserInfo, content, null, true);
+	public static String parsePreSave(ParserInput parserInput, String content) throws Exception {
+		return Utilities.parse(parserInput, content, null, true);
 	}
 
 	/**
 	 *
 	 */
 	public static Collection parseForSearch(String topicContent, String topicName) throws Exception {
-		ParserInfo parserInfo = new ParserInfo();
-		AbstractParser parser = parserInstance(parserInfo);
+		ParserInput parserInput = new ParserInput();
+		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseForSearch(topicContent, topicName);
 	}
 
 	/**
 	 *
 	 */
-	private static AbstractParser parserInstance(ParserInfo parserInfo) throws Exception {
+	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.debug("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
 		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInfo");
+		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput");
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[1];
-		initArgs[0] = parserInfo;
+		initArgs[0] = parserInput;
 		return (AbstractParser)constructor.newInstance(initArgs);
 	}
 
@@ -391,13 +391,13 @@ public class Utilities {
 		if (topic == null || topic.getTopicContent() == null) {
 			return "";
 		}
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(request.getContextPath());
-		parserInfo.setLocale(request.getLocale());
-		parserInfo.setTopicName(topicName);
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_SLICE);
-		AbstractParser parser = parserInstance(parserInfo);
+		ParserInput parserInput = new ParserInput();
+		parserInput.setContext(request.getContextPath());
+		parserInput.setLocale(request.getLocale());
+		parserInput.setTopicName(topicName);
+		parserInput.setVirtualWiki(virtualWiki);
+		parserInput.setMode(ParserInput.MODE_SLICE);
+		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
 	}
 
@@ -409,13 +409,13 @@ public class Utilities {
 		if (topic == null || topic.getTopicContent() == null) {
 			return "";
 		}
-		ParserInfo parserInfo = new ParserInfo();
-		parserInfo.setContext(request.getContextPath());
-		parserInfo.setLocale(request.getLocale());
-		parserInfo.setTopicName(topicName);
-		parserInfo.setVirtualWiki(virtualWiki);
-		parserInfo.setMode(ParserInfo.MODE_SPLICE);
-		AbstractParser parser = parserInstance(parserInfo);
+		ParserInput parserInput = new ParserInput();
+		parserInput.setContext(request.getContextPath());
+		parserInput.setLocale(request.getLocale());
+		parserInput.setTopicName(topicName);
+		parserInput.setVirtualWiki(virtualWiki);
+		parserInput.setMode(ParserInput.MODE_SPLICE);
+		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
 	}
 
