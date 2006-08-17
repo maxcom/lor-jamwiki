@@ -87,7 +87,11 @@
     </target>
 
     <target name="war-local" depends="war" description="Construct the war file using local property files.">
-        <unwar src="${dir.build}/${war.name}-${app.version}.war" dest="${dir.build}/war" />
+        <unwar src="${dir.build}/${war.name}-${app.version}.war" dest="${dir.build}/war">
+            <patternset>
+                <exclude name="**/web.xml" />
+            </patternset>
+        </unwar>
         <delete file="${dir.build}/${war.name}-${app.version}.war" />
         <copy todir="${dir.build}/war/WEB-INF/classes" overwrite="yes">
             <fileset dir="${dir.local}">
@@ -99,7 +103,7 @@
                 <include name="*.jar" />
 	    </fileset>
 	</copy>
-        <war destfile="${dir.build}/${war.name}-${app.version}.war" basedir="${dir.build}/war" webxml="${dir.build}/war/WEB-INF/web.xml" />
+        <war destfile="${dir.build}/${war.name}-${app.version}.war" basedir="${dir.build}/war" webxml="${dir.src.webapp}/WEB-INF/web.xml" />
     </target>
     
     <target name="source" description="Build a zip file of the application source">
