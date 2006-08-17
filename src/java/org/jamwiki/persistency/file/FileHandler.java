@@ -166,6 +166,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected void addCategory(int childTopicId, String categoryName, String sortKey, Object[] params) throws Exception {
+		// FIXME - implement this
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	protected void addRecentChange(RecentChange change, Object[] params) throws Exception {
 		this.saveRecentChange(change);
 	}
@@ -264,6 +272,14 @@ public class FileHandler extends PersistencyHandler {
 		if (!oldFile.renameTo(newFile)) {
 			throw new Exception("Unable to move file to delete directory for topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected void deleteTopicCategories(Topic topic, Object params[]) throws Exception {
+		// FIXME - implement this
+		throw new UnsupportedOperationException();
 	}
 
 	/**

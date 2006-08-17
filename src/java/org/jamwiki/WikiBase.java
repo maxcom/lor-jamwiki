@@ -52,6 +52,7 @@ public class WikiBase {
 	private static final Logger logger = Logger.getLogger(WikiBase.class);
 	/** The handler that looks after read/write operations for a persitence type */
 	private static PersistencyHandler handler;
+	public static final String NAMESPACE_CATEGORY = "Category:";
 	public static final String NAMESPACE_COMMENTS = "Comments:";
 	public static final String NAMESPACE_IMAGE = "Image:";
 	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments:";

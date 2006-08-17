@@ -69,6 +69,14 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected void addCategory(int childTopicId, String categoryName, String sortKey, Object[] params) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.insertCategory(childTopicId, categoryName, sortKey, conn);
+	}
+
+	/**
+	 *
+	 */
 	protected void addRecentChange(RecentChange change, Object[] params) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(change.getVirtualWiki());
 		Connection conn = (Connection)params[0];
@@ -165,6 +173,14 @@ public class DatabaseHandler extends PersistencyHandler {
 	protected void deleteRecentChanges(Topic topic, Object params[]) throws Exception {
 		Connection conn = (Connection)params[0];
 		DatabaseHandler.queryHandler.deleteRecentChanges(topic.getTopicId(), conn);
+	}
+
+	/**
+	 *
+	 */
+	protected void deleteTopicCategories(Topic topic, Object params[]) throws Exception {
+		Connection conn = (Connection)params[0];
+		DatabaseHandler.queryHandler.deleteTopicCategories(topic.getTopicId(), conn);
 	}
 
 	/**

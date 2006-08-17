@@ -48,11 +48,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WIKI_FILE_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = null;
 	protected static String STATEMENT_CREATE_CATEGORY_TABLE = null;
-	protected static String STATEMENT_CREATE_CATEGORY_TOPIC_TABLE = null;
-	protected static String STATEMENT_CREATE_CATEGORY_CATEGORY_TABLE = null;
 	protected static String STATEMENT_CREATE_RECENT_CHANGE_TABLE = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
+	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
@@ -61,9 +60,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_WIKI_FILE_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_FILE_VERSION_TABLE = null;
 	protected static String STATEMENT_DROP_CATEGORY_TABLE = null;
-	protected static String STATEMENT_DROP_CATEGORY_TOPIC_TABLE = null;
-	protected static String STATEMENT_DROP_CATEGORY_CATEGORY_TABLE = null;
 	protected static String STATEMENT_DROP_RECENT_CHANGE_TABLE = null;
+	protected static String STATEMENT_INSERT_CATEGORY = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
@@ -124,8 +122,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CATEGORY_TABLE, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CATEGORY_TOPIC_TABLE, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_CATEGORY_CATEGORY_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE, conn);
 	}
 
@@ -148,12 +144,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		// actual work of the method more obvious.
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
-		try {
-			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_CATEGORY_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
-		try {
-			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_TOPIC_TABLE, conn);
 		} catch (Exception e) { logger.error(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_TABLE, conn);
@@ -283,11 +273,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WIKI_FILE_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_FILE_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = props.getProperty("STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE");
 		STATEMENT_CREATE_CATEGORY_TABLE          = props.getProperty("STATEMENT_CREATE_CATEGORY_TABLE");
-		STATEMENT_CREATE_CATEGORY_TOPIC_TABLE    = props.getProperty("STATEMENT_CREATE_CATEGORY_TOPIC_TABLE");
-		STATEMENT_CREATE_CATEGORY_CATEGORY_TABLE = props.getProperty("STATEMENT_CREATE_CATEGORY_CATEGORY_TABLE");
 		STATEMENT_CREATE_RECENT_CHANGE_TABLE     = props.getProperty("STATEMENT_CREATE_RECENT_CHANGE_TABLE");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
+		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
 		STATEMENT_DROP_WIKI_USER_INFO_TABLE      = props.getProperty("STATEMENT_DROP_WIKI_USER_INFO_TABLE");
@@ -296,9 +285,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_DROP_WIKI_FILE_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_FILE_TABLE");
 		STATEMENT_DROP_WIKI_FILE_VERSION_TABLE   = props.getProperty("STATEMENT_DROP_WIKI_FILE_VERSION_TABLE");
 		STATEMENT_DROP_CATEGORY_TABLE            = props.getProperty("STATEMENT_DROP_CATEGORY_TABLE");
-		STATEMENT_DROP_CATEGORY_TOPIC_TABLE      = props.getProperty("STATEMENT_DROP_CATEGORY_TOPIC_TABLE");
-		STATEMENT_DROP_CATEGORY_CATEGORY_TABLE   = props.getProperty("STATEMENT_DROP_CATEGORY_CATEGORY_TABLE");
 		STATEMENT_DROP_RECENT_CHANGE_TABLE       = props.getProperty("STATEMENT_DROP_RECENT_CHANGE_TABLE");
+		STATEMENT_INSERT_CATEGORY                = props.getProperty("STATEMENT_INSERT_CATEGORY");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
@@ -336,6 +324,26 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
 		STATEMENT_UPDATE_WIKI_USER_INFO          = props.getProperty("STATEMENT_UPDATE_WIKI_USER_INFO");
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
+		stmt.setInt(1, childTopicId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void insertCategory(int childTopicId, String categoryName, String sortKey, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_CATEGORY);
+		stmt.setInt(1, childTopicId);
+		stmt.setString(2, categoryName);
+		stmt.setString(3, sortKey);
+		stmt.executeUpdate(conn);
 	}
 
 	/**

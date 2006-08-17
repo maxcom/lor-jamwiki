@@ -70,18 +70,10 @@ public class DatabaseUpgrades {
 			// FIXME - hard coding
 			messages.add("Dropped jam_image table");
 			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_TABLE, conn);
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_TOPIC_TABLE, conn);
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_CATEGORY_TABLE, conn);
 			// FIXME - hard coding
-			messages.add("Added category tables");
+			messages.add("Added jam_category table");
 			conn.commit();
 		} catch (Exception e) {
-			try {
-				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_CATEGORY_TABLE, conn);
-			} catch (Exception ex) {}
-			try {
-				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_TOPIC_TABLE, conn);
-			} catch (Exception ex) {}
 			try {
 				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_TABLE, conn);
 			} catch (Exception ex) {}

@@ -28,6 +28,7 @@ public class Topic {
 	public static final int TYPE_REDIRECT = 2;
 	public static final int TYPE_TALK_PAGE = 3;
 	public static final int TYPE_IMAGE = 4;
+	public static final int TYPE_CATEGORY = 5;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private boolean deleted = false;

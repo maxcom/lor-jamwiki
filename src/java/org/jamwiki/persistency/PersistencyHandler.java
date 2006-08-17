@@ -66,6 +66,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	protected abstract void addCategory(int childTopicId, String categoryName, String sortKey, Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
 	protected abstract void addRecentChange(RecentChange change, Object[] params) throws Exception;
 
 	/**
@@ -285,6 +290,11 @@ public abstract class PersistencyHandler {
 			this.releaseParams(params);
 		}
 	}
+
+	/**
+	 *
+	 */
+	protected abstract void deleteTopicCategories(Topic topic, Object params[]) throws Exception;
 
 	/**
 	 *

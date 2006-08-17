@@ -43,6 +43,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception;
+
+	/**
+	 *
+	 */
 	public void dropTables(Connection conn);
 
 	/**
@@ -89,6 +94,11 @@ public interface QueryHandler {
 	 *
 	 */
 	public WikiResultSet getVirtualWikis() throws Exception;
+
+	/**
+	 *
+	 */
+	public void insertCategory(int childTopicId, String categoryName, String sortKey, Connection conn) throws Exception;
 
 	/**
 	 *

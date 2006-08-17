@@ -149,6 +149,9 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setName(topicName);
 			topic.setVirtualWiki(virtualWiki);
 		}
+		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
+			topic.setTopicType(Topic.TYPE_CATEGORY);
+		}
 		if (topic.getReadOnly()) {
 			throw new WikiException(new WikiMessage("error.readonly"));
 		}
