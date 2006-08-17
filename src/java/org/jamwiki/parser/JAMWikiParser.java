@@ -53,22 +53,6 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
-	 *
-	 */
-	public Collection parseForSearch(String rawtext, String topicName) throws Exception {
-		long start = System.currentTimeMillis();
-		// some parser expressions require that lines end in a newline, so add a newline
-		// to the end of the content for good measure
-		rawtext += '\n';
-		StringReader raw = new StringReader(rawtext);
-		JAMWikiSearchIndexer lexer = new JAMWikiSearchIndexer(raw);
-		lexer.setParserInput(this.parserInput);
-		this.lex(lexer);
-		logger.debug("Parse time (parseForSearch) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return lexer.getTopicLinks();
-	}
-
-	/**
 	 * Parse text for online display.
 	 */
 	public String parseHTML(String rawtext, String topicName) throws Exception {
@@ -81,8 +65,8 @@ public class JAMWikiParser extends AbstractParser {
 		contents = this.parsePreProcess(raw);
 		if (this.parserInput.getMode() != ParserInput.MODE_NORMAL) {
 			// save or preview mode, add pre-save processor
-			String result = this.parsePreSave(contents.toString());
-			contents = new StringBuffer(result);
+			ParserOutput parserOutput = this.parsePreSave(contents.toString());
+			contents = new StringBuffer(parserOutput.getContent());
 		}
 		raw = new StringReader(contents.toString());
 		contents = this.parsePostProcess(raw);
@@ -106,11 +90,14 @@ public class JAMWikiParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return HTML representation of the text for online.
 	 */
-	public String parsePreSave(String contents) throws Exception {
+	public ParserOutput parsePreSave(String contents) throws Exception {
 		StringReader raw = new StringReader(contents);
 		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
 		lexer.setParserInput(this.parserInput);
-		return this.lex(lexer).toString();
+		contents = this.lex(lexer).toString();
+		ParserOutput parserOutput = lexer.getParserOutput();
+		parserOutput.setContent(contents);
+		return parserOutput;
 	}
 
 	/**

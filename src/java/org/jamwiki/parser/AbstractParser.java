@@ -52,11 +52,6 @@ public abstract class AbstractParser {
 	}
 
 	/**
-	 *
-	 */
-	public abstract Collection parseForSearch(String rawtext, String topicName) throws Exception;
-
-	/**
 	 * Returns a HTML representation of the given wiki raw text for online representation.
 	 *
 	 * @param rawtext The raw Wiki syntax to be converted into HTML.
@@ -69,9 +64,9 @@ public abstract class AbstractParser {
 	 * a way of parsing prior to saving.
 	 *
 	 * @param rawtext The raw Wiki syntax to be converted into HTML.
-	 * @return HTML representation of the text for online.
+	 * @return Results from parser execution.
 	 */
-	public abstract String parsePreSave(String rawtext) throws Exception;
+	public abstract ParserOutput parsePreSave(String rawtext) throws Exception;
 
 	/**
 	 * When making a section edit this function provides the capability to retrieve

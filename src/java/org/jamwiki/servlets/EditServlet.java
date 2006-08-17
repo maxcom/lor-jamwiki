@@ -29,6 +29,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -276,7 +277,8 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setMode(ParserInput.MODE_SAVE);
-		contents = Utilities.parsePreSave(parserInput, contents);
+		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, contents);
+		contents = parserOutput.getContent();
 		topic.setTopicContent(contents);
 		topicVersion.setVersionContent(contents);
 		topicVersion.setEditComment(request.getParameter("editComment"));
@@ -287,7 +289,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (user != null) {
 			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}
-		WikiBase.getHandler().writeTopic(topic, topicVersion);
+		WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput.getLinks());
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
 		viewTopic(request, next, topicName);

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
@@ -53,6 +54,8 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
@@ -92,7 +95,7 @@ public class LuceneSearchEngine {
 	 * Adds to the in-memory table. Does not remove indexed items that are
 	 * no longer valid due to deletions, edits etc.
 	 */
-	public static synchronized void addToIndex(Topic topic) {
+	public static synchronized void addToIndex(Topic topic, Collection links) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		String contents = topic.getTopicContent();
@@ -120,7 +123,7 @@ public class LuceneSearchEngine {
 				writer.optimize();
 				Document standardDocument = createStandardDocument(topic);
 				if (standardDocument != null) writer.addDocument(standardDocument);
-				Document keywordDocument = createKeywordDocument(topic);
+				Document keywordDocument = createKeywordDocument(topic, links);
 				if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 			} finally {
 				try {
@@ -200,14 +203,16 @@ public class LuceneSearchEngine {
 	 * Create a basic Lucene document to add to the index that does treats
 	 * the topic content as a single keyword and does not tokenize it.
 	 */
-	private static Document createKeywordDocument(Topic topic) throws Exception {
+	private static Document createKeywordDocument(Topic topic, Collection links) throws Exception {
 		String topicContent = topic.getTopicContent();
 		if (topicContent == null) topicContent = "";
 		Document doc = new Document();
 		// store topic name for later retrieval
 		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+		if (links == null) {
+			links = new Vector();
+		}
 		// index topic links for search purposes
-		Collection links = Utilities.parseForSearch(topicContent, topic.getName());
 		for (Iterator iter = links.iterator(); iter.hasNext();) {
 			String linkTopic = (String)iter.next();
 			doc.add(new Field(ITYPE_TOPIC_LINK, linkTopic, Field.Store.NO, Field.Index.UN_TOKENIZED));
@@ -392,7 +397,12 @@ public class LuceneSearchEngine {
 					topic = WikiBase.getHandler().lookupTopic(currentWiki, topicName);
 					Document standardDocument = createStandardDocument(topic);
 					if (standardDocument != null) writer.addDocument(standardDocument);
-					Document keywordDocument = createKeywordDocument(topic);
+					// FIXME - parsing all documents will be intolerably slow with even a
+					// moderately large Wiki
+					ParserInput parserInput = new ParserInput();
+					parserInput.setMode(ParserInput.MODE_SEARCH);
+					ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
+					Document keywordDocument = createKeywordDocument(topic, parserOutput.getLinks());
 					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;
 				}

@@ -29,6 +29,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
 
 /**
@@ -143,8 +144,8 @@ public class VQWikiParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return HTML representation of the text for online.
 	 */
-	public String parsePreSave(String raw) throws Exception {
-		return raw;
+	public ParserOutput parsePreSave(String raw) throws Exception {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -177,13 +178,6 @@ public class VQWikiParser extends AbstractParser {
 			contents.append(line);
 		}
 		return contents;
-	}
-
-	/**
-	 *
-	 */
-	public Collection parseForSearch(String rawtext, String topicName) throws Exception {
-		throw new UnsupportedOperationException();
 	}
 
 	/**

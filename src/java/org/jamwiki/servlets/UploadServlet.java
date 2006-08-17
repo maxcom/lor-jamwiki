@@ -192,7 +192,8 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
 		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
-			WikiBase.getHandler().writeTopic(topic, topicVersion);
+			// FIXME - this assumes no links in the topic content
+			WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 		} else {
 			topic = WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName());
 		}

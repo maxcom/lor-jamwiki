@@ -5,6 +5,8 @@
 package org.jamwiki.parser;
 
 import org.apache.log4j.Logger;
+import org.jamwiki.Environment;
+import org.springframework.util.StringUtils;
 
 %%
 
@@ -17,6 +19,7 @@ import org.apache.log4j.Logger;
 
 /* code included in the constructor */
 %init{
+    allowHtml = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -30,6 +33,37 @@ import org.apache.log4j.Logger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static Logger logger = Logger.getLogger(JAMWikiPreSaveProcessor.class.getName());
+    protected boolean allowHtml = false;
+    protected ParserOutput parserOutput = new ParserOutput();
+    
+    /**
+     *
+     */
+    protected ParserOutput getParserOutput() {
+        return this.parserOutput;
+    }
+    
+    /**
+     *
+     */
+    public void processLink(String raw) {
+        String content = ParserUtil.extractLinkContent(raw);
+        if (!StringUtils.hasText(content)) {
+            // invalid link
+            return;
+        }
+        String topic = ParserUtil.extractLinkTopic(content);
+        if (!StringUtils.hasText(topic)) {
+            return;
+        }
+        if (topic.startsWith(":") && topic.length() > 1) {
+            // strip opening colon
+            topic = topic.substring(1).trim();
+        }
+        if (StringUtils.hasText(topic)) {
+            this.parserOutput.addLink(topic);
+        }
+    }
     
     /**
      *
@@ -39,9 +73,11 @@ import org.apache.log4j.Logger;
         // validate parser settings
         boolean validated = true;
         if (this.parserInput == null) validated = false;
-        if (this.parserInput.getContext() == null) validated = false;
-        if (this.parserInput.getVirtualWiki() == null) validated = false;
-        if (this.parserInput.getUserIpAddress() == null) validated = false;
+        if (this.parserInput.getMode() != ParserInput.MODE_SEARCH) {
+            if (this.parserInput.getContext() == null) validated = false;
+            if (this.parserInput.getVirtualWiki() == null) validated = false;
+            if (this.parserInput.getUserIpAddress() == null) validated = false;
+        }
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
@@ -59,22 +95,27 @@ nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+wikiprestart       = (" ") ([^ \t\r\n])
+wikipreend         = ([^ ]) | ({newline})
 
-/* javascript */
-javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
+/* comments */
+htmlcomment        = "<!--" ~"-->"
 
 /* processing commands */
 wikisig3           = "~~~"
 wikisig4           = "~~~~"
 wikisig5           = "~~~~~"
 
-%state NOWIKI, PRE, NORMAL
+/* wiki links */
+wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
+
+%state NOWIKI, PRE, WIKIPRE, NORMAL
 
 %%
 
 /* ----- nowiki ----- */
 
-<PRE, NORMAL>{nowikistart} {
+<WIKIPRE, PRE, NORMAL>{nowikistart} {
     logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
@@ -90,13 +131,42 @@ wikisig5           = "~~~~~"
 
 <NORMAL>{htmlprestart} {
     logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    beginState(PRE);
+    if (allowHtml) {
+        beginState(PRE);
+    }
     return yytext();
 }
 
 <PRE>{htmlpreend} {
     logger.debug("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    // state only changes to pre if allowHTML is true, so no need to check here
     endState();
+    return yytext();
+}
+
+<NORMAL, WIKIPRE>^{wikiprestart} {
+    logger.debug("wikiprestart: " + yytext() + " (" + yystate() + ")");
+    // rollback the one non-pre character so it can be processed
+    yypushback(1);
+    if (yystate() != WIKIPRE) {
+        beginState(WIKIPRE);
+    }
+    return yytext();
+}
+
+<WIKIPRE>^{wikipreend} {
+    logger.debug("wikipreend: " + yytext() + " (" + yystate() + ")");
+    endState();
+    // rollback the one non-pre character so it can be processed
+    yypushback(1);
+    return yytext();
+}
+
+/* ----- wiki links ----- */
+
+<NORMAL>{wikilink} {
+    logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
+    this.processLink(yytext());
     return yytext();
 }
 
@@ -104,34 +174,46 @@ wikisig5           = "~~~~~"
 
 <NORMAL>{wikisig3} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+        // called from search indexer, no need to parse signatures
+        return yytext();
+    }
     return ParserUtil.buildWikiSignature(this.parserInput, true, false);
 }
 
 <NORMAL>{wikisig4} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+        // called from search indexer, no need to parse signatures
+        return yytext();
+    }
     return ParserUtil.buildWikiSignature(this.parserInput, true, true);
 }
 
 <NORMAL>{wikisig5} {
     logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+        // called from search indexer, no need to parse signatures
+        return yytext();
+    }
     return ParserUtil.buildWikiSignature(this.parserInput, false, true);
 }
 
-/* ----- javascript ----- */
+/* ----- comments ----- */
 
-<NORMAL>{javascript} {
-    logger.debug("javascript: " + yytext() + " (" + yystate() + ")");
+<NORMAL>{htmlcomment} {
+    logger.debug("htmlcomment: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- other ----- */
 
-<PRE, NOWIKI, NORMAL>{whitespace} {
+<WIKIPRE, PRE, NOWIKI, NORMAL>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NOWIKI, NORMAL>. {
+<WIKIPRE, PRE, NOWIKI, NORMAL>. {
     // no need to log this
     return yytext();
 }

@@ -847,7 +847,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion, Collection links) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
@@ -857,7 +857,7 @@ public abstract class PersistencyHandler {
 			}
 			this.writeTopic(topic, topicVersion, params);
 			LuceneSearchEngine.deleteFromIndex(topic);
-			LuceneSearchEngine.addToIndex(topic);
+			LuceneSearchEngine.addToIndex(topic, links);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;

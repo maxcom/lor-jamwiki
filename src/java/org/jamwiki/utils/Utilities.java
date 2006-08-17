@@ -47,6 +47,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
 
@@ -337,35 +338,20 @@ public class Utilities {
 	 *
 	 */
 	public static String parse(ParserInput parserInput, String content, String topicName) throws Exception {
-		return Utilities.parse(parserInput, content, topicName, false);
-	}
-
-	/**
-	 *
-	 */
-	private static String parse(ParserInput parserInput, String content, String topicName, boolean preSave) throws Exception {
 		if (content == null) {
 			// FIXME - return empty or something else?
 			return "";
 		}
 		AbstractParser parser = parserInstance(parserInput);
-		return (preSave) ? parser.parsePreSave(content) : parser.parseHTML(content, topicName);
+		return parser.parseHTML(content, topicName);
 	}
 
 	/**
 	 *
 	 */
-	public static String parsePreSave(ParserInput parserInput, String content) throws Exception {
-		return Utilities.parse(parserInput, content, null, true);
-	}
-
-	/**
-	 *
-	 */
-	public static Collection parseForSearch(String topicContent, String topicName) throws Exception {
-		ParserInput parserInput = new ParserInput();
+	public static ParserOutput parsePreSave(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseForSearch(topicContent, topicName);
+		return parser.parsePreSave(content);
 	}
 
 	/**

@@ -378,6 +378,8 @@ public class ParserUtil {
 	 * not very efficient.
 	 */
 	protected static String parseFragment(ParserInput parserInput, String fragment) throws Exception {
+		// FIXME - consider yypushstream() and yypopstream() as potentially more efficient
+		// ways to handle this functionality
 		if (!StringUtils.hasText(fragment)) return fragment;
 		JAMWikiParser parser = new JAMWikiParser(parserInput);
 		StringReader raw = new StringReader(fragment);

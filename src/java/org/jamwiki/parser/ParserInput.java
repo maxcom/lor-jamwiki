@@ -31,6 +31,7 @@ public class ParserInput {
 	public static final int MODE_SAVE = 3;
 	public static final int MODE_SPLICE = 4;
 	public static final int MODE_SLICE = 5;
+	public static final int MODE_SEARCH = 6;
 	private boolean allowSectionEdit = true;
 	private String context = null;
 	private Locale locale = null;
