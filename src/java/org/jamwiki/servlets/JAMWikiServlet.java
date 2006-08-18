@@ -16,8 +16,8 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -404,9 +404,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (parserOutput.getCategories().size() > 0) {
 			next.addObject("categories", parserOutput.getCategories().keySet());
 		}
+		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
+			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(topic.getName());
+			next.addObject("subtopics", subtopics);
+			next.addObject("categoryName", topic.getName());
+		}
 		topic.setTopicContent(parserOutput.getContent());
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
-			List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+			Collection fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 			next.addObject("fileVersions", fileVersions);
 		}
 		this.pageInfo.setSpecial(false);

@@ -136,6 +136,7 @@ if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
 <%
 } else {
 %>
+		<%@ include file="category-include.jsp" %>
 		<%@ include file="view-topic-include.jsp" %>
 <%
 }

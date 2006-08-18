@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import org.apache.log4j.Logger;
@@ -170,7 +169,7 @@ public abstract class PersistencyHandler {
 				// topic versions
 				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
-					List versions = fromHandler.getAllTopicVersions(virtualWiki.getName(), topicName, false);
+					Collection versions = fromHandler.getAllTopicVersions(virtualWiki.getName(), topicName, false);
 					for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
 						TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
 						try {
@@ -213,7 +212,7 @@ public abstract class PersistencyHandler {
 				// wiki file versions
 				for (Iterator topicIterator = wikiFileNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
-					List versions = fromHandler.getAllWikiFileVersions(virtualWiki.getName(), topicName, false);
+					Collection versions = fromHandler.getAllWikiFileVersions(virtualWiki.getName(), topicName, false);
 					for (Iterator wikiFileVersionIterator = versions.iterator(); wikiFileVersionIterator.hasNext();) {
 						WikiFileVersion wikiFileVersion = (WikiFileVersion)wikiFileVersionIterator.next();
 						try {
@@ -355,27 +354,27 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected abstract List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	protected abstract Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract List getAllTopicNames(String virtualWiki) throws Exception;
+	public abstract Collection getAllTopicNames(String virtualWiki) throws Exception;
 
 	/**
 	 *
 	 */
-	protected abstract List getAllWikiFileTopicNames(String virtualWiki) throws Exception;
+	protected abstract Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	public abstract Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract List getAllWikiUserLogins() throws Exception;
+	public abstract Collection getAllWikiUserLogins() throws Exception;
 
 	/**
 	 *
@@ -475,6 +474,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected abstract void loadVirtualWikiHashes() throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract Collection lookupCategoryTopics(String categoryName) throws Exception;
 
 	/**
 	 *

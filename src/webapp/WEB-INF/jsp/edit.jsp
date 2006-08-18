@@ -37,11 +37,20 @@ if (action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
 %>
 
 <c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
+
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
 %>
-
 <blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
+<%
+}
+%>
+
+<%@ include file="category-include.jsp" %>
+
+<%
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
+%>
 <%@ include file="view-topic-include.jsp" %>
 
 <%

@@ -143,6 +143,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupCategoryTopics(String categoryName) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupLastTopicVersion(Topic topic) throws Exception;
 
 	/**

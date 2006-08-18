@@ -21,19 +21,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
@@ -249,7 +245,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void deleteRecentChanges(Topic topic, Object params[]) throws Exception {
-		List topicVersions = this.getAllTopicVersions(topic.getVirtualWiki(), topic.getName(), false);
+		Collection topicVersions = this.getAllTopicVersions(topic.getVirtualWiki(), topic.getName(), false);
 		for (Iterator topicVersionIterator = topicVersions.iterator(); topicVersionIterator.hasNext();) {
 			TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
 			String filename = recentChangeFilename(topicVersion.getTopicVersionId());
@@ -296,8 +292,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllTopicNames(String virtualWiki) throws Exception {
-		List all = new ArrayList();
+	public Collection getAllTopicNames(String virtualWiki) throws Exception {
+		Vector all = new Vector();
 		File[] files = retrieveTopicFiles(virtualWiki);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -319,8 +315,8 @@ public class FileHandler extends PersistencyHandler {
 	 * @return
 	 * @throws Exception
 	 */
-	protected List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
-		List all = new LinkedList();
+	protected Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+		Vector all = new Vector();
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, descending);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -333,8 +329,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
-		List all = new ArrayList();
+	protected Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+		Vector all = new Vector();
 		File[] files = retrieveWikiFileFiles(virtualWiki);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -352,8 +348,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
-		List all = new LinkedList();
+	public Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+		Vector all = new Vector();
 		File[] files = retrieveWikiFileVersionFiles(virtualWiki, topicName, descending);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -366,8 +362,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiUserLogins() throws Exception {
-		List all = new ArrayList();
+	public Collection getAllWikiUserLogins() throws Exception {
+		Vector all = new Vector();
 		File[] files = retrieveWikiUserFiles();
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -423,7 +419,7 @@ public class FileHandler extends PersistencyHandler {
 	 * Return a list of all read-only topics
 	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
-		List all = new LinkedList();
+		Vector all = new Vector();
 		File[] files = retrieveReadOnlyFiles(virtualWiki);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -442,7 +438,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection getRecentChanges(String virtualWiki, int numChanges, boolean descending) throws Exception {
-		List all = new LinkedList();
+		Vector all = new Vector();
 		File[] files = retrieveRecentChangeFiles(virtualWiki, descending);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -457,7 +453,7 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
-		List all = new LinkedList();
+		Vector all = new Vector();
 		File[] files = retrieveUserContributionsFiles(virtualWiki, userString, descending);
 		if (files == null) return all;
 		for (int i = 0; i < files.length; i++) {
@@ -843,6 +839,14 @@ public class FileHandler extends PersistencyHandler {
 			PersistencyHandler.virtualWikiIdHash = null;
 			throw e;
 		}
+	}
+
+	/**
+	 *
+	 */
+	public Collection lookupCategoryTopics(String categoryName) throws Exception {
+		// FIXME - implement this
+		throw new UnsupportedOperationException();
 	}
 
 	/**

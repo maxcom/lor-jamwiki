@@ -71,6 +71,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
 	protected static String STATEMENT_INSERT_WIKI_USER = null;
 	protected static String STATEMENT_INSERT_WIKI_USER_INFO = null;
+	protected static String STATEMENT_SELECT_CATEGORY_TOPICS = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
@@ -296,6 +297,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
 		STATEMENT_INSERT_WIKI_USER               = props.getProperty("STATEMENT_INSERT_WIKI_USER");
 		STATEMENT_INSERT_WIKI_USER_INFO          = props.getProperty("STATEMENT_INSERT_WIKI_USER_INFO");
+		STATEMENT_SELECT_CATEGORY_TOPICS         = props.getProperty("STATEMENT_SELECT_CATEGORY_TOPICS");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
@@ -492,6 +494,15 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(5, user.getLastName());
 		stmt.setString(6, user.getEncodedPassword());
 		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupCategoryTopics(String categoryName) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORY_TOPICS);
+		stmt.setString(1, categoryName);
+		return stmt.executeQuery();
 	}
 
 	/**

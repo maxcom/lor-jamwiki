@@ -19,12 +19,10 @@ package org.jamwiki.persistency.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.persistency.PersistencyHandler;
@@ -186,8 +184,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllTopicNames(String virtualWiki) throws Exception {
-		List all = new ArrayList();
+	public Collection getAllTopicNames(String virtualWiki) throws Exception {
+		Vector all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.getAllTopicNames(virtualWikiId);
 		while (rs.next()) {
@@ -199,8 +197,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected List getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
-		List all = new ArrayList();
+	protected Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+		Vector all = new Vector();
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
@@ -215,8 +213,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected List getAllWikiFileTopicNames(String virtualWiki) throws Exception {
-		List all = new ArrayList();
+	protected Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+		Vector all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileTopicNames(virtualWikiId);
 		while (rs.next()) {
@@ -228,8 +226,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
-		List all = new ArrayList();
+	public Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+		Vector all = new Vector();
 		WikiFile wikiFile = lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
@@ -244,8 +242,8 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public List getAllWikiUserLogins() throws Exception {
-		List all = new ArrayList();
+	public Collection getAllWikiUserLogins() throws Exception {
+		Vector all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiUserLogins();
 		while (rs.next()) {
 			all.add(rs.getString("login"));
@@ -257,7 +255,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
-		Collection all = new ArrayList();
+		Collection all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.getReadOnlyTopics(virtualWikiId);
 		while (rs.next()) {
@@ -270,7 +268,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
-		ArrayList all = new ArrayList();
+		Vector all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, num, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
@@ -283,7 +281,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
-		Collection all = new ArrayList();
+		Collection all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, num, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
@@ -548,6 +546,18 @@ public class DatabaseHandler extends PersistencyHandler {
 			PersistencyHandler.virtualWikiIdHash = null;
 			throw e;
 		}
+	}
+
+	/**
+	 *
+	 */
+	public Collection lookupCategoryTopics(String categoryName) throws Exception {
+		Vector results = new Vector();
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupCategoryTopics(categoryName);
+		while (rs.next()) {
+			results.add(rs.getString("topic_name"));
+		}
+		return results;
 	}
 
 	/**
