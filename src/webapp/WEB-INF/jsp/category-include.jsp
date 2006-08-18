@@ -19,21 +19,27 @@
 
 <c:if test="${!empty categoryName}">
 	<c:if test="${!empty subcategories}">
-<h2><f:message key="topic.category.subcategories"><f:param value="${categoryName}" /></f:message></h2>
+<h3><f:message key="topic.category.subcategories"><f:param value="${categoryName}" /></f:message></h3>
+
+<table><tr><td>
 <ul>
 		<c:forEach items="${subcategories}" var="subcategory">
 <li><jamwiki:link value="${subcategory}" text="${subcategory}" /></li>
 		</c:forEach>
 </ul>
+
+</td></tr></table>
 	</c:if>
 
-<h2><f:message key="topic.category.topics"><f:param value="${categoryName}" /></f:message></h2>
+<h3><f:message key="topic.category.topics"><f:param value="${categoryName}" /></f:message></h3>
 	<c:if test="${!empty subtopics}">
+<table><tr><td>
 <ul>
 		<c:forEach items="${subtopics}" var="subtopic">
 <li><jamwiki:link value="${subtopic}" text="${subtopic}" /></li>
 		</c:forEach>
 </ul>
+</td></tr></table>
 	</c:if>
 	<c:if test="${empty subtopics}">
 <p><f:message key="topic.category.notopics"><f:param value="${categoryName}" /></f:message></p>

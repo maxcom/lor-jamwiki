@@ -551,9 +551,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection lookupCategoryTopics(String categoryName) throws Exception {
+	public Collection lookupCategoryTopics(String categoryName, int topicType) throws Exception {
 		Vector results = new Vector();
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupCategoryTopics(categoryName);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupCategoryTopics(categoryName, topicType);
 		while (rs.next()) {
 			results.add(rs.getString("topic_name"));
 		}

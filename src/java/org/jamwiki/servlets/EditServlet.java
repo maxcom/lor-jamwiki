@@ -127,9 +127,11 @@ public class EditServlet extends JAMWikiServlet {
 		this.pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		this.pageInfo.setTopicName(topicName);
 		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
-			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(topicName);
-			next.addObject("subtopics", subtopics);
 			next.addObject("categoryName", topicName);
+			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(topicName, Topic.TYPE_ARTICLE);
+			next.addObject("subtopics", subtopics);
+			Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(topicName, Topic.TYPE_CATEGORY);
+			next.addObject("subcategories", subcategories);
 		}
 		if (request.getParameter("editComment") != null) {
 			next.addObject("editComment", request.getParameter("editComment"));

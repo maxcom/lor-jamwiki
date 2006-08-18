@@ -844,7 +844,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection lookupCategoryTopics(String categoryName) throws Exception {
+	public Collection lookupCategoryTopics(String categoryName, int topicType) throws Exception {
 		// FIXME - implement this
 		throw new UnsupportedOperationException();
 	}
