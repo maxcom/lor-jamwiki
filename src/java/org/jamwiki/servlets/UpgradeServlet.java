@@ -98,7 +98,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		// do not escape the HTML link
 		wm.setParamsWithoutEscaping(new String[]{htmlLink});
 		next.addObject("message", wm);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
+		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}
@@ -217,7 +217,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
+		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}

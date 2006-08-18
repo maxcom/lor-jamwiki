@@ -40,34 +40,6 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public abstract class JAMWikiServlet extends AbstractController {
 
 	private static final Logger logger = Logger.getLogger(JAMWikiServlet.class);
-	// constants used as the action parameter in calls to this servlet
-	public static final String ACTION_ADMIN = "action_admin";
-	public static final String ACTION_ADMIN_CONVERT = "action_admin_convert";
-	public static final String ACTION_ADMIN_DELETE = "action_admin_delete";
-	public static final String ACTION_ADMIN_TRANSLATION = "action_admin_translation";
-	public static final String ACTION_ALL_TOPICS = "all_topics";
-	public static final String ACTION_CANCEL = "Cancel";
-	public static final String ACTION_CONTRIBUTIONS = "action_contributions";
-	public static final String ACTION_DIFF = "action_diff";
-	public static final String ACTION_EDIT = "action_edit";
-	public static final String ACTION_EDIT_RESOLVE = "action_edit_resolve";
-	public static final String ACTION_EDIT_USER = "edit_user";
-	public static final String ACTION_ERROR = "action_error";
-	public static final String ACTION_EXPORT = "action_export";
-	public static final String ACTION_HISTORY = "action_history";
-	public static final String ACTION_IMPORT = "action_import";
-	public static final String ACTION_LINK_TO = "action_link_to";
-	public static final String ACTION_LOGIN = "action_login";
-	public static final String ACTION_PREVIEW = "preview";
-	public static final String ACTION_RECENT_CHANGES = "recent_changes";
-	public static final String ACTION_REGISTER = "action_member";
-	public static final String ACTION_SAVE = "save";
-	public static final String ACTION_SAVE_USER = "action_save_user";
-	public static final String ACTION_SEARCH = "action_search";
-	public static final String ACTION_SEARCH_RESULTS = "search_results";
-	public static final String ACTION_SETUP = "action_setup";
-	public static final String ACTION_UPGRADE = "action_upgrade";
-	public static final String ACTION_UPLOAD = "action_upload";
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
@@ -297,7 +269,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		pageInfo.setPageTitle(new WikiMessage("error.title"));
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ERROR);
+		pageInfo.setAction(WikiPageInfo.ACTION_ERROR);
 		pageInfo.setSpecial(true);
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
@@ -331,7 +303,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		next.addObject("redirect", redirect);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
 		pageInfo.setSpecial(true);
 		if (errorMessage != null) {
 			next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));

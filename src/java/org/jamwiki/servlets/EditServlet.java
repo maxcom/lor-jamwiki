@@ -83,7 +83,7 @@ public class EditServlet extends JAMWikiServlet {
 			preview(request, next, pageInfo);
 			return;
 		}
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT);
+		pageInfo.setAction(WikiPageInfo.ACTION_EDIT);
 		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
@@ -216,7 +216,7 @@ public class EditServlet extends JAMWikiServlet {
 		previewTopic.setName(topicName);
 		previewTopic.setTopicContent(parserOutput.getContent());
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, previewTopic);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
+		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_PREVIEW);
 		next.addObject("contents", contents);
 	}
 
@@ -235,7 +235,7 @@ public class EditServlet extends JAMWikiServlet {
 		Vector diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
 		loadEdit(request, next, pageInfo, topicName);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_EDIT_RESOLVE);
+		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_RESOLVE);
 	}
 
 	/**

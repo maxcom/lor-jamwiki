@@ -65,7 +65,7 @@ public class DeleteServlet extends JAMWikiServlet {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		pageInfo.setSpecial(true);
 		pageInfo.setTopicName(topicName);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_DELETE);
 		pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
 		try {
 			if (topicName == null) {
@@ -102,7 +102,7 @@ public class DeleteServlet extends JAMWikiServlet {
 			next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
 		}
 		pageInfo.setTopicName(topicName);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_DELETE);
 		pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
 		pageInfo.setSpecial(true);
 	}

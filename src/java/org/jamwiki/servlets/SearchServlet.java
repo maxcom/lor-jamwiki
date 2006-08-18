@@ -79,7 +79,7 @@ public class SearchServlet extends JAMWikiServlet {
 		}
 		// forward back to the search page if the request is blank or null
 		if (!StringUtils.hasText(searchField)) {
-			pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH);
+			pageInfo.setAction(WikiPageInfo.ACTION_SEARCH);
 			pageInfo.setSpecial(true);
 			return;
 		}
@@ -87,7 +87,7 @@ public class SearchServlet extends JAMWikiServlet {
 		Collection results = LuceneSearchEngine.findMultiple(virtualWiki, searchField);
 		next.addObject("searchField", searchField);
 		next.addObject("results", results);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH_RESULTS);
+		pageInfo.setAction(WikiPageInfo.ACTION_SEARCH_RESULTS);
 		pageInfo.setSpecial(true);
 	}
 }

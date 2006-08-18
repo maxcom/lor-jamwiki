@@ -113,7 +113,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		WikiUser user = Utilities.currentUser(request);
@@ -148,7 +148,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", new WikiMessage("convert.database.failure", e.getMessage()));
 		}
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
@@ -167,7 +167,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.error("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", new WikiMessage("convert.file.failure", e.getMessage()));
 		}
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
@@ -176,7 +176,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void convertView(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_CONVERT);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
@@ -185,7 +185,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		try {
@@ -420,7 +420,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void readOnly(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
@@ -469,7 +469,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.error("Failure while loading recent changes", e);
 			next.addObject("errorMessage", new WikiMessage("admin.caption.recentchangesdb", e.getMessage()));
 		}
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 	}
@@ -478,7 +478,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void refreshIndex(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		try {
@@ -494,7 +494,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN);
+		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 	}

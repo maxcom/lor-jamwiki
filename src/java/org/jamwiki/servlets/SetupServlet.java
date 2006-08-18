@@ -81,7 +81,7 @@ public class SetupServlet extends JAMWikiServlet {
 		if (!(e instanceof WikiException)) {
 			logger.error("Setup error", e);
 		}
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("setup.title"));
 		if (e instanceof WikiException) {
@@ -101,7 +101,7 @@ public class SetupServlet extends JAMWikiServlet {
 		setAdminUser(request, user);
 		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
-			pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+			pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
 			pageInfo.setSpecial(true);
 			pageInfo.setPageTitle(new WikiMessage("setup.title"));
 			next.addObject("errors", errors);
@@ -159,7 +159,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void setup(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("setup.title"));
 	}

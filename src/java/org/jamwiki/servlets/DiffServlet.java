@@ -95,6 +95,6 @@ public class DiffServlet extends JAMWikiServlet {
 		}
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_DIFF);
+		pageInfo.setAction(WikiPageInfo.ACTION_DIFF);
 	}
 }

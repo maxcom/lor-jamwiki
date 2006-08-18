@@ -64,7 +64,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setSpecial(true);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
+		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
 	}
 
@@ -74,7 +74,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	// FIXME - shouldn't need to pass in response
 	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setSpecial(true);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
+		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();

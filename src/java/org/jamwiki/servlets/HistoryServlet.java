@@ -59,7 +59,7 @@ public class HistoryServlet extends JAMWikiServlet {
 	private void history(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_HISTORY);
+		pageInfo.setAction(WikiPageInfo.ACTION_HISTORY);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
 		Vector changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, true);

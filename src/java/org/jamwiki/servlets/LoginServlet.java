@@ -101,7 +101,7 @@ public class LoginServlet extends JAMWikiServlet {
 			next.addObject("redirect", redirect);
 			pageInfo.setPageTitle(new WikiMessage("login.title"));
 			pageInfo.setSpecial(true);
-			pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+			pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
 			return false;
 		}
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);

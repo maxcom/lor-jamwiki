@@ -26,16 +26,208 @@ import org.apache.log4j.Logger;
 public class WikiPageInfo {
 
 	private static final Logger logger = Logger.getLogger(WikiPageInfo.class);
-	protected boolean admin = false;
-	protected String pageAction = "";
-	protected WikiMessage pageTitle = null;
-	protected String topicName = "";
-	protected boolean special = false;
+	private boolean admin = false;
+	private int action = -1;
+	private WikiMessage pageTitle = null;
+	private String topicName = "";
+	private boolean special = false;
+	// constants used as the action parameter in calls to this servlet
+	public static final int ACTION_ADMIN = 1;
+	public static final int ACTION_ADMIN_CONVERT = 2;
+	public static final int ACTION_ADMIN_DELETE = 3;
+	public static final int ACTION_ADMIN_TRANSLATION = 4;
+	public static final int ACTION_ALL_TOPICS = 5;
+	public static final int ACTION_CONTRIBUTIONS = 6;
+	public static final int ACTION_DIFF = 7;
+	public static final int ACTION_EDIT = 8;
+	public static final int ACTION_EDIT_PREVIEW = 9;
+	public static final int ACTION_EDIT_RESOLVE = 10;
+	public static final int ACTION_ERROR = 11;
+	public static final int ACTION_EXPORT = 12;
+	public static final int ACTION_HISTORY = 13;
+	public static final int ACTION_IMPORT = 14;
+	public static final int ACTION_LINK_TO = 15;
+	public static final int ACTION_LOGIN = 16;
+	public static final int ACTION_RECENT_CHANGES = 17;
+	public static final int ACTION_REGISTER = 18;
+	public static final int ACTION_SEARCH = 19;
+	public static final int ACTION_SEARCH_RESULTS = 20;
+	public static final int ACTION_SETUP = 21;
+	public static final int ACTION_UPGRADE = 22;
+	public static final int ACTION_UPLOAD = 23;
 
 	/**
 	 *
 	 */
 	protected WikiPageInfo() {
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionAdmin() {
+		return (this.action == ACTION_ADMIN);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionAdminConvert() {
+		return (this.action == ACTION_ADMIN_CONVERT);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionAdminDelete() {
+		return (this.action == ACTION_ADMIN_DELETE);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionAdminTranslation() {
+		return (this.action == ACTION_ADMIN_TRANSLATION);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionAllTopics() {
+		return (this.action == ACTION_ALL_TOPICS);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionContributions() {
+		return (this.action == ACTION_CONTRIBUTIONS);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionDiff() {
+		return (this.action == ACTION_DIFF);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionEdit() {
+		return (this.action == ACTION_EDIT);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionEditPreview() {
+		return (this.action == ACTION_EDIT_PREVIEW);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionEditResolve() {
+		return (this.action == ACTION_EDIT_RESOLVE);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionError() {
+		return (this.action == ACTION_ERROR);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionExport() {
+		return (this.action == ACTION_EXPORT);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionHistory() {
+		return (this.action == ACTION_HISTORY);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionImport() {
+		return (this.action == ACTION_IMPORT);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionLinkTo() {
+		return (this.action == ACTION_LINK_TO);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionLogin() {
+		return (this.action == ACTION_LOGIN);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionRecentChanges() {
+		return (this.action == ACTION_RECENT_CHANGES);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionRegister() {
+		return (this.action == ACTION_REGISTER);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionSearch() {
+		return (this.action == ACTION_SEARCH);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionSearchResults() {
+		return (this.action == ACTION_SEARCH_RESULTS);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionSetup() {
+		return (this.action == ACTION_SETUP);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionUpgrade() {
+		return (this.action == ACTION_UPGRADE);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionUpload() {
+		return (this.action == ACTION_UPLOAD);
+	}
+
+	/**
+	 *
+	 */
+	public void setAction(int action) {
+		this.action = action;
 	}
 
 	/**
@@ -50,20 +242,6 @@ public class WikiPageInfo {
 	 */
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
-	}
-
-	/**
-	 *
-	 */
-	public String getPageAction() {
-		return this.pageAction;
-	}
-
-	/**
-	 *
-	 */
-	public void setPageAction(String pageAction) {
-		this.pageAction = pageAction;
 	}
 
 	/**

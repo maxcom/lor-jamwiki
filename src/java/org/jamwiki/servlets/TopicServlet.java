@@ -67,7 +67,7 @@ public class TopicServlet extends JAMWikiServlet {
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_ALL_TOPICS);
+		pageInfo.setAction(WikiPageInfo.ACTION_ALL_TOPICS);
 		pageInfo.setSpecial(true);
 	}
 

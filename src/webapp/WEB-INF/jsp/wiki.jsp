@@ -57,63 +57,59 @@
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >
 		<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
-<%-- FIXME - hard coding of actions is bad --%>
 <c:choose>
-	<c:when test="${pageInfo.pageAction == 'action_admin'}">
+	<c:when test="${pageInfo.actionAdmin}">
 		<jsp:include page="admin.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_admin_convert'}">
+	<c:when test="${pageInfo.actionAdminConvert}">
 		<jsp:include page="admin-convert.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_admin_delete'}">
+	<c:when test="${pageInfo.actionAdminDelete}">
 		<jsp:include page="admin-delete.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_admin_translation'}">
+	<c:when test="${pageInfo.actionAdminTranslation}">
 		<jsp:include page="admin-translation.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'all_topics'}">
+	<c:when test="${pageInfo.actionAllTopics}">
 		<jsp:include page="all-topics.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_contributions'}">
+	<c:when test="${pageInfo.actionContributions}">
 		<jsp:include page="contributions.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_diff'}">
+	<c:when test="${pageInfo.actionDiff}">
 		<jsp:include page="diff.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_edit' || pageInfo.pageAction == 'preview' || pageInfo.pageAction == 'action_edit_resolve'}">
+	<c:when test="${pageInfo.actionEdit || pageInfo.actionEditPreview || pageInfo.actionEditResolve}">
 		<jsp:include page="edit.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'edit_user'}">
-		<jsp:include page="register.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_error'}">
+	<c:when test="${pageInfo.actionError}">
 		<jsp:include page="error-display.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_history'}">
+	<c:when test="${pageInfo.actionHistory}">
 		<jsp:include page="history.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_import'}">
+	<c:when test="${pageInfo.actionImport}">
 		<jsp:include page="import.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_link_to'}">
+	<c:when test="${pageInfo.actionLinkTo}">
 		<jsp:include page="linkto.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_login'}">
+	<c:when test="${pageInfo.actionLogin}">
 		<jsp:include page="login.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'recent_changes'}">
+	<c:when test="${pageInfo.actionRecentChanges}">
 		<jsp:include page="recent-changes.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_member'}">
+	<c:when test="${pageInfo.actionRegister}">
 		<jsp:include page="register.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_search'}">
+	<c:when test="${pageInfo.actionSearch}">
 		<jsp:include page="search.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'search_results'}">
+	<c:when test="${pageInfo.actionSearchResults}">
 		<jsp:include page="search-results.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.pageAction == 'action_upload'}">
+	<c:when test="${pageInfo.actionUpload}">
 		<jsp:include page="upload.jsp" flush="true" />
 	</c:when>
 	<c:otherwise>

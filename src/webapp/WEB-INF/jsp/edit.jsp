@@ -26,7 +26,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${pageInfo.pageAction == 'action_edit_resolve'}">
+<c:if test="${pageInfo.actionEditResolve}">
 <p><f:message key="edit.exception.conflict" /></p>
 </c:if>
 
@@ -35,7 +35,7 @@
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
-<c:if test="${pageInfo.pageAction == 'preview'}">
+<c:if test="${pageInfo.actionEditPreview}">
 <blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
 </c:if>
 <%
@@ -47,7 +47,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
-<c:if test="${pageInfo.pageAction == 'preview'}">
+<c:if test="${pageInfo.actionEditPreview}">
 <%@ include file="view-topic-include.jsp" %>
 </c:if>
 <%
@@ -84,7 +84,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <label for="minorEdit"><f:message key="edit.isMinorEdit"/></label>
 </p>
 
-<c:if test="${pageInfo.pageAction == 'action_edit_resolve'}">
+<c:if test="${pageInfo.actionEditResolve}">
 <%@ include file="diff-include.jsp" %>
 <p>
 <textarea name="contentsResolve" rows="25" cols="80" style="width:100%"><c:out value="${contentsResolve}" escapeXml="true" /></textarea>

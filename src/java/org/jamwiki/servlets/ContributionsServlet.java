@@ -69,7 +69,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("num", new Integer(num));
 		next.addObject("contributor", userString);
 		pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_CONTRIBUTIONS);
+		pageInfo.setAction(WikiPageInfo.ACTION_CONTRIBUTIONS);
 		pageInfo.setSpecial(true);
 	}
 }

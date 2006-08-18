@@ -63,7 +63,7 @@ public class LinkToServlet extends JAMWikiServlet {
 			Collection results = LuceneSearchEngine.findLinkedTo(virtualWiki, topicName);
 			next.addObject("results", results);
 			next.addObject("link", topicName);
-			pageInfo.setPageAction(JAMWikiServlet.ACTION_LINK_TO);
+			pageInfo.setAction(WikiPageInfo.ACTION_LINK_TO);
 			pageInfo.setTopicName(topicName);
 			return;
 		} catch (Exception e) {

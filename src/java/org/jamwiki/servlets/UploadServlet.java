@@ -212,7 +212,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("upload.title"));
-		pageInfo.setPageAction(JAMWikiServlet.ACTION_UPLOAD);
+		pageInfo.setAction(WikiPageInfo.ACTION_UPLOAD);
 		pageInfo.setSpecial(true);
 	}
 }
