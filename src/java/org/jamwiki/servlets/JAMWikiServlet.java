@@ -27,6 +27,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -205,7 +206,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 					parserInput.setLocale(request.getLocale());
 					parserInput.setVirtualWiki(virtualWiki);
 					parserInput.setTopicName(topicName);
-					content = Utilities.parse(parserInput, content, topicName);
+					ParserOutput parserOutput = Utilities.parse(parserInput, content, topicName);
+					content = parserOutput.getContent();
 				}
 				cachedContents.put(virtualWiki + "-" + topicName, content);
 			} catch (Exception e) {
@@ -398,8 +400,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
-		contents = Utilities.parse(parserInput, topic.getTopicContent(), topicName);
-		topic.setTopicContent(contents);
+		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName);
+		topic.setTopicContent(parserOutput.getContent());
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 			List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 			next.addObject("fileVersions", fileVersions);

@@ -96,7 +96,8 @@ public class EditServlet extends JAMWikiServlet {
 		} else if (StringUtils.hasText(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = Utilities.parseSlice(request, virtualWiki, topicName, section);
+			ParserOutput parserOutput = Utilities.parseSlice(request, virtualWiki, topicName, section);
+			contents = parserOutput.getContent();
 		} else {
 			// editing a full new or existing topic
 			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
@@ -195,10 +196,10 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setMode(ParserInput.MODE_PREVIEW);
 		parserInput.setAllowSectionEdit(false);
-		String preview = Utilities.parse(parserInput, contents, topicName);
+		ParserOutput parserOutput = Utilities.parse(parserInput, contents, topicName);
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
-		previewTopic.setTopicContent(preview);
+		previewTopic.setTopicContent(parserOutput.getContent());
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, previewTopic);
 		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_PREVIEW);
 		next.addObject("contents", contents);
@@ -257,7 +258,8 @@ public class EditServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
+			ParserOutput parserOutput = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
+			contents = parserOutput.getContent();
 		}
 		if (contents == null) {
 			logger.warn("The topic " + topicName + " has no content");

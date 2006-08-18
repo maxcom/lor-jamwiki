@@ -39,45 +39,30 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
-	 * Utility method for executing a lexer parse.
-	 * FIXME - this is copy & pasted here and in VQWikiParser
-	 */
-	 protected StringBuffer lex(AbstractLexer lexer) throws Exception {
-		StringBuffer contents = new StringBuffer();
-		while (true) {
-			String line = lexer.yylex();
-			if (line == null) break;
-			contents.append(line);
-		}
-		return contents;
-	}
-
-	/**
 	 * Parse text for online display.
 	 */
-	public String parseHTML(String rawtext, String topicName) throws Exception {
+	public ParserOutput parseHTML(String rawtext, String topicName) throws Exception {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		rawtext += '\n';
 		StringReader raw = new StringReader(rawtext);
-		contents = this.parsePreProcess(raw);
+		ParserOutput parserOutput = this.parsePreProcess(raw);
 		if (this.parserInput.getMode() != ParserInput.MODE_NORMAL) {
 			// save or preview mode, add pre-save processor
-			ParserOutput parserOutput = this.parsePreSave(contents.toString());
-			contents = new StringBuffer(parserOutput.getContent());
+			parserOutput = this.parsePreSave(parserOutput.getContent());
 		}
-		raw = new StringReader(contents.toString());
-		contents = this.parsePostProcess(raw);
+		raw = new StringReader(parserOutput.getContent());
+		parserOutput = this.parsePostProcess(raw);
 		logger.info("Parse time (parseHTML) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return contents.toString();
+		return parserOutput;
 	}
 
 	/**
 	 *
 	 */
-	protected StringBuffer parsePreProcess(StringReader raw) throws Exception {
+	protected ParserOutput parsePreProcess(StringReader raw) throws Exception {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
 		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
@@ -94,16 +79,13 @@ public class JAMWikiParser extends AbstractParser {
 		StringReader raw = new StringReader(contents);
 		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
 		lexer.setParserInput(this.parserInput);
-		contents = this.lex(lexer).toString();
-		ParserOutput parserOutput = lexer.getParserOutput();
-		parserOutput.setContent(contents);
-		return parserOutput;
+		return this.lex(lexer);
 	}
 
 	/**
 	 *
 	 */
-	private StringBuffer parsePostProcess(StringReader raw) throws Exception {
+	private ParserOutput parsePostProcess(StringReader raw) throws Exception {
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(raw);
 		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
@@ -112,22 +94,22 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	public String parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
+	public ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		StringReader raw = new StringReader(rawtext);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
 		lexer.setParserInput(this.parserInput);
 		lexer.setTargetSection(targetSection);
-		contents = this.lex(lexer);
+		ParserOutput parserOutput = this.lex(lexer);
 		logger.debug("Parse time (parseSlice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return contents.toString();
+		return parserOutput;
 	}
 
 	/**
 	 *
 	 */
-	public String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
+	public ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
 		StringBuffer contents = new StringBuffer();
 		StringReader raw = new StringReader(rawtext);
@@ -135,8 +117,8 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setParserInput(this.parserInput);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
-		contents = this.lex(lexer);
+		ParserOutput parserOutput = this.lex(lexer);
 		logger.debug("Parse time (parseSplice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return contents.toString();
+		return parserOutput;
 	}
 }

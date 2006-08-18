@@ -35,14 +35,6 @@ import org.springframework.util.StringUtils;
 %{
     protected static Logger logger = Logger.getLogger(JAMWikiPreSaveProcessor.class.getName());
     protected boolean allowHtml = false;
-    protected ParserOutput parserOutput = new ParserOutput();
-    
-    /**
-     *
-     */
-    protected ParserOutput getParserOutput() {
-        return this.parserOutput;
-    }
     
     /**
      *

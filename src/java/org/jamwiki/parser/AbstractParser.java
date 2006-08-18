@@ -31,7 +31,7 @@ import org.jamwiki.parser.ParserInput;
 public abstract class AbstractParser {
 
 	private static final Logger logger = Logger.getLogger(AbstractParser.class);
-	protected ParserInput parserInput;
+	protected ParserInput parserInput = null;
 
 	/**
 	 * Sets the basics for this parser.
@@ -43,21 +43,27 @@ public abstract class AbstractParser {
 	}
 
 	/**
-	 * For getting general information about this parser.
-	 *
-	 * @return General information about this parser.
+	 * Utility method for executing a lexer parse.
+	 * FIXME - this is copy & pasted here and in VQWikiParser
 	 */
-	public ParserInput getParserInput() {
-		return parserInput;
+	 protected ParserOutput lex(AbstractLexer lexer) throws Exception {
+		StringBuffer content = new StringBuffer();
+		while (true) {
+			String line = lexer.yylex();
+			if (line == null) break;
+			content.append(line);
+		}
+		ParserOutput parserOutput = lexer.getParserOutput();
+		parserOutput.setContent(content.toString());
+		return parserOutput;
 	}
 
 	/**
 	 * Returns a HTML representation of the given wiki raw text for online representation.
 	 *
 	 * @param rawtext The raw Wiki syntax to be converted into HTML.
-	 * @return HTML representation of the text for online.
 	 */
-	public abstract String parseHTML(String rawtext, String topicName) throws Exception;
+	public abstract ParserOutput parseHTML(String rawtext, String topicName) throws Exception;
 
 	/**
 	 * For syntax that is not saved with the topic source, this method provides
@@ -78,11 +84,8 @@ public abstract class AbstractParser {
 	 * @param rawtext The raw Wiki text that is to be parsed.
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
-	 * @return All content within the target section, including the heading, up to
-	 *  either the next target section heading of the same or greater level, or the
-	 *  end of the document, whichever comes first.
 	 */
-	public abstract String parseSlice(String rawtext, String topicName, int targetSection) throws Exception;
+	public abstract ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception;
 
 	/**
 	 * This method provides the capability for re-integrating a section edit back
@@ -94,17 +97,6 @@ public abstract class AbstractParser {
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 * @param replacementText The text to replace the target section text with.
-	 * @return New Wiki markup created by splicing the replacement text into the
-	 *  old Wiki markup text.
 	 */
-	public abstract String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception;
-
-	/**
-	 * For setting general information about this parser.
-	 *
-	 * @param parserInput General information about this parser.
-	 */
-	public void setParserInput(ParserInput parserInput) {
-		this.parserInput = parserInput;
-	}
+	public abstract ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception;
 }

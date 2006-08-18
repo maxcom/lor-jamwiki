@@ -383,8 +383,8 @@ public class ParserUtil {
 		if (!StringUtils.hasText(fragment)) return fragment;
 		JAMWikiParser parser = new JAMWikiParser(parserInput);
 		StringReader raw = new StringReader(fragment);
-		StringBuffer contents = parser.parsePreProcess(raw);
-		return contents.toString();
+		ParserOutput parserOutput = parser.parsePreProcess(raw);
+		return parserOutput.getContent();
 	}
 
 	/**

@@ -54,16 +54,18 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 * Parse text for online display.
 	 */
-	public String parseHTML(String rawtext, String topicName) throws Exception {
+	public ParserOutput parseHTML(String rawtext, String topicName) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		Reader raw = new StringReader(rawtext.toString());
 		contents = this.parseFormat(raw);
 		raw = new StringReader(contents.toString());
-		contents = this.parseLayout(raw);
-		raw = new StringReader(contents.toString());
-		contents = this.parseLinks(raw);
+		ParserOutput parserOutput = this.parseLayout(raw);
+		raw = new StringReader(parserOutput.getContent());
+		parserOutput = this.parseLinks(raw);
 		// remove trailing returns at the end of the site.
-		return this.removeTrailingNewlines(contents.toString());
+		String content = this.removeTrailingNewlines(parserOutput.getContent());
+		parserOutput.setContent(content);
+		return parserOutput;
 	}
 
 	/**
@@ -123,7 +125,7 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private StringBuffer parseLayout(Reader raw) throws Exception {
+	private ParserOutput parseLayout(Reader raw) throws Exception {
 		VQWikiLayoutLex lexer = new VQWikiLayoutLex(raw);
 		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
@@ -132,7 +134,7 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private StringBuffer parseLinks(Reader raw) throws Exception {
+	private ParserOutput parseLinks(Reader raw) throws Exception {
 		VQWikiLinkLex lexer = new VQWikiLinkLex(raw);
 		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
@@ -165,32 +167,16 @@ public class VQWikiParser extends AbstractParser {
 	}
 
 	/**
-	 * Utility method for executing a lexer parse.
-	 * FIXME - this is copy & pasted here and in JAMWikiParser
-	 */
-	protected StringBuffer lex(AbstractLexer lexer) throws Exception {
-		StringBuffer contents = new StringBuffer();
-		while (true) {
-			String line = lexer.yylex();
-			if (line == null) {
-				break;
-			}
-			contents.append(line);
-		}
-		return contents;
-	}
-
-	/**
 	 *
 	 */
-	public String parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
+	public ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public String parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
+	public ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

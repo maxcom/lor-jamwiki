@@ -337,10 +337,9 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String parse(ParserInput parserInput, String content, String topicName) throws Exception {
+	public static ParserOutput parse(ParserInput parserInput, String content, String topicName) throws Exception {
 		if (content == null) {
-			// FIXME - return empty or something else?
-			return "";
+			return null;
 		}
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseHTML(content, topicName);
@@ -372,10 +371,10 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
+	public static ParserOutput parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getTopicContent() == null) {
-			return "";
+			return null;
 		}
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
@@ -390,10 +389,10 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+	public static ParserOutput parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getTopicContent() == null) {
-			return "";
+			return null;
 		}
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
