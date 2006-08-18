@@ -102,6 +102,7 @@
 	    </fileset>
 	</copy>
         <war destfile="${dir.build}/${war.name}-${app.version}.war" basedir="${dir.build}/war" webxml="${dir.src.webapp}/WEB-INF/web.xml" />
+        <delete dir="${dir.build}/war" />
     </target>
     
     <target name="source" description="Build a zip file of the application source">
