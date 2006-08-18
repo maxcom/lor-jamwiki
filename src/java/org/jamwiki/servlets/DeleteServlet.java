@@ -39,35 +39,34 @@ public class DeleteServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (!Utilities.isAdmin(request)) {
-				next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));
-				viewLogin(request, next, "Special:Delete");
-				loadDefaults(request, next, this.pageInfo);
-				return next;
+				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+				return viewLogin(request, "Special:Delete", errorMessage);
 			}
 			if (StringUtils.hasText(request.getParameter("delete"))) {
-				delete(request, next);
+				delete(request, next, pageInfo);
 			} else {
-				deleteView(request, next);
+				deleteView(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void delete(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void delete(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setTopicName(topicName);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
+		pageInfo.setSpecial(true);
+		pageInfo.setTopicName(topicName);
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
+		pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
 		try {
 			if (topicName == null) {
 				next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
@@ -97,14 +96,14 @@ public class DeleteServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void deleteView(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void deleteView(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		if (topicName == null) {
 			next.addObject("errorMessage", new WikiMessage("delete.error.notopic"));
 		}
-		this.pageInfo.setTopicName(topicName);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
-		this.pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
-		this.pageInfo.setSpecial(true);
+		pageInfo.setTopicName(topicName);
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_DELETE);
+		pageInfo.setPageTitle(new WikiMessage("delete.title", topicName));
+		pageInfo.setSpecial(true);
 	}
 }

@@ -54,20 +54,19 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("upgrade");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (!Utilities.isUpgrade()) {
 				throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
 			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
-				view(request, next);
+				view(request, next, pageInfo);
 			} else if (function.equals("upgrade")) {
-				upgrade(request, next);
+				upgrade(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			next = new ModelAndView("wiki");
-			viewError(request, next, e);
-			loadDefaults(request, next, this.pageInfo);
+			return viewError(request, e);
 		}
 		return next;
 	}
@@ -75,7 +74,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void upgrade(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Vector messages = new Vector();
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		if (oldVersion.before(0, 0, 8)) {
@@ -99,9 +98,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 		// do not escape the HTML link
 		wm.setParamsWithoutEscaping(new String[]{htmlLink});
 		next.addObject("message", wm);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
+		pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}
 
 	/**
@@ -217,9 +216,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_UPGRADE);
+		pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}
 }

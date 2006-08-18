@@ -26,7 +26,6 @@
 <label for="searchTerm"><f:message key="search.for"/></label><input type="text" name="text" value="<c:out value="${text}" />" id="searchTerm" />  <input type="submit" name="Submit" value="<f:message key="search.search"/>" />
 <p>&nbsp;</p>
 <f:message key="search.hints"/>
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_SEARCH %>" />
 </form>
 <p>&nbsp;</p>
 <font size="-1"><i><f:message key="search.poweredby" /></i></font> <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a>

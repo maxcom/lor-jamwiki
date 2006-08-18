@@ -41,70 +41,70 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	protected boolean getAdmin() {
+	public boolean getAdmin() {
 		return this.admin;
 	}
 
 	/**
 	 *
 	 */
-	protected void setAdmin(boolean admin) {
+	public void setAdmin(boolean admin) {
 		this.admin = admin;
 	}
 
 	/**
 	 *
 	 */
-	protected String getPageAction() {
+	public String getPageAction() {
 		return this.pageAction;
 	}
 
 	/**
 	 *
 	 */
-	protected void setPageAction(String pageAction) {
+	public void setPageAction(String pageAction) {
 		this.pageAction = pageAction;
 	}
 
 	/**
 	 *
 	 */
-	protected WikiMessage getPageTitle() {
+	public WikiMessage getPageTitle() {
 		return this.pageTitle;
 	}
 
 	/**
 	 *
 	 */
-	protected void setPageTitle(WikiMessage pageTitle) {
+	public void setPageTitle(WikiMessage pageTitle) {
 		this.pageTitle = pageTitle;
 	}
 
 	/**
 	 *
 	 */
-	protected boolean getSpecial() {
+	public boolean getSpecial() {
 		return this.special;
 	}
 
 	/**
 	 *
 	 */
-	protected void setSpecial(boolean special) {
+	public void setSpecial(boolean special) {
 		this.special = special;
 	}
 
 	/**
 	 *
 	 */
-	protected String getTopicName() {
+	public String getTopicName() {
 		return this.topicName;
 	}
 
 	/**
 	 *
 	 */
-	protected void setTopicName(String topicName) {
+	public void setTopicName(String topicName) {
 		this.topicName = topicName;
 	}
 }

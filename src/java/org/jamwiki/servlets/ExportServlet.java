@@ -41,8 +41,7 @@ public class ExportServlet extends JAMWikiServlet {
 			out.print(content);
 			out.close();
 		} catch (Exception e) {
-			ModelAndView next = new ModelAndView("wiki");
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
 		// do not load defaults or redirect - return as raw XML
 		return null;

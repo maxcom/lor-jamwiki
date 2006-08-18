@@ -41,33 +41,34 @@ public class LoginServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (isTopic(request, "Special:Logout")) {
 				// FIXME - response is non-standard here
-				logout(request, response, next);
+				logout(request, response, next, pageInfo);
 				return null;
 			}
 			if (request.getParameter("function") != null) {
 				// FIXME - response is non-standard here
-				if (login(request, response, next)) {
+				if (login(request, response, next, pageInfo)) {
 					// FIXME - use Spring
 					// login successful, non-Spring redirect
 					return null;
 				}
 			} else {
-				viewLogin(request, next, null);
+				return viewLogin(request, null, null);
 			}
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		request.getSession().invalidate();
 		Utilities.removeCookie(response, JAMWikiServlet.USER_COOKIE);
@@ -84,7 +85,7 @@ public class LoginServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
@@ -98,9 +99,9 @@ public class LoginServlet extends JAMWikiServlet {
 		if (user == null) {
 			next.addObject("errorMessage", new WikiMessage("error.login"));
 			next.addObject("redirect", redirect);
-			this.pageInfo.setPageTitle(new WikiMessage("login.title"));
-			this.pageInfo.setSpecial(true);
-			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
+			pageInfo.setPageTitle(new WikiMessage("login.title"));
+			pageInfo.setSpecial(true);
+			pageInfo.setPageAction(JAMWikiServlet.ACTION_LOGIN);
 			return false;
 		}
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);

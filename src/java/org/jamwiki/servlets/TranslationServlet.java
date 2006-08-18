@@ -47,27 +47,26 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (!Utilities.isAdmin(request)) {
 				String redirect = "Special:Translation";
-				next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));
-				viewLogin(request, next, redirect);
-				loadDefaults(request, next, this.pageInfo);
-				return next;
+				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+				return viewLogin(request, redirect, errorMessage);
 			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
-				view(request, next);
+				view(request, next, pageInfo);
 			} else {
-				translate(request, next);
+				translate(request, next, pageInfo);
 			}
 			next.addObject("translations", new TreeMap(this.translations));
 			next.addObject("codes", this.retrieveTranslationCodes());
 			if (request.getParameter("language") != null) next.addObject("language", request.getParameter("language"));
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -108,10 +107,10 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void translate(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
-		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle(new WikiMessage("translation.title"));
+	private void translate(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
+		pageInfo.setAdmin(true);
+		pageInfo.setPageTitle(new WikiMessage("translation.title"));
 		Enumeration names = request.getParameterNames();
 		String name;
 		while (names.hasMoreElements()) {
@@ -129,7 +128,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String language = request.getParameter("language");
 		String filename = filename(request);
 		this.translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
@@ -137,8 +136,8 @@ public class TranslationServlet extends JAMWikiServlet {
 			filename = filename(request);
 			this.translations.putAll(Environment.loadProperties(filename));
 		}
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
-		this.pageInfo.setAdmin(true);
-		this.pageInfo.setPageTitle(new WikiMessage("translation.title"));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_ADMIN_TRANSLATION);
+		pageInfo.setAdmin(true);
+		pageInfo.setPageTitle(new WikiMessage("translation.title"));
 	}
 }

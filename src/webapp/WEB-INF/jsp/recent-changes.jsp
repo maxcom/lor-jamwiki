@@ -28,7 +28,6 @@
 <div id="change">
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_ACTION %>" value="<%= JAMWikiServlet.ACTION_RECENT_CHANGES %>" />
 
 <br />
 

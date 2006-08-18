@@ -48,6 +48,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("setup");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (!Utilities.isFirstUse()) {
 				throw new WikiException(new WikiMessage("setup.error.notrequired"));
@@ -56,21 +57,17 @@ public class SetupServlet extends JAMWikiServlet {
 			if (function == null) function = "";
 			try {
 				if (!StringUtils.hasText(function)) {
-					setup(request, next);
-				} else {
-					if (initialize(request, next)) {
-						next = new ModelAndView("wiki");
-						viewTopic(request, next, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-						loadDefaults(request, next, this.pageInfo);
-					}
+					setup(request, next, pageInfo);
+				} else if (initialize(request, next, pageInfo)) {
+					next = new ModelAndView("wiki");
+					viewTopic(request, next, pageInfo, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+					loadDefaults(request, next, pageInfo);
 				}
 			} catch (Exception e) {
-				handleSetupError(request, next, e);
+				handleSetupError(request, next, pageInfo, e);
 			}
 		} catch (WikiException e) {
-			next = new ModelAndView("wiki");
-			viewError(request, next, e);
-			loadDefaults(request, next, this.pageInfo);
+			return viewError(request, e);
 		}
 		return next;
 	}
@@ -78,15 +75,15 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void handleSetupError(HttpServletRequest request, ModelAndView next, Exception e) {
+	private void handleSetupError(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Exception e) {
 		// reset properties
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, false);
 		if (!(e instanceof WikiException)) {
 			logger.error("Setup error", e);
 		}
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+		pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("setup.title"));
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
 			next.addObject("errorMessage", we.getWikiMessage());
@@ -98,15 +95,15 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean initialize(HttpServletRequest request, ModelAndView next) throws Exception {
+	private boolean initialize(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		setProperties(request, next);
 		WikiUser user = new WikiUser();
-		setAdminUser(request, next, user);
-		Vector errors = validate(request, next, user);
+		setAdminUser(request, user);
+		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
-			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
-			this.pageInfo.setSpecial(true);
-			this.pageInfo.setPageTitle(new WikiMessage("setup.title"));
+			pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+			pageInfo.setSpecial(true);
+			pageInfo.setPageTitle(new WikiMessage("setup.title"));
 			next.addObject("errors", errors);
 			next.addObject("login", user.getLogin());
 			return false;
@@ -123,7 +120,7 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void setAdminUser(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
+	private void setAdminUser(HttpServletRequest request, WikiUser user) throws Exception {
 		user.setLogin(request.getParameter("login"));
 		user.setEncodedPassword(Encryption.encrypt(request.getParameter("newPassword")));
 		user.setCreateIpAddress(request.getRemoteAddr());
@@ -161,16 +158,16 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void setup(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageTitle(new WikiMessage("setup.title"));
+	private void setup(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_SETUP);
+		pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("setup.title"));
 	}
 
 	/**
 	 *
 	 */
-	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
+	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		File baseDir = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
 		if (!baseDir.exists()) {

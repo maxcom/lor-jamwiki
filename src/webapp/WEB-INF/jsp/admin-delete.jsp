@@ -32,7 +32,7 @@
 <c:if test="${empty message}">
 
 <form name="adminDelete" method="get" action="<jamwiki:link value="Special:Delete" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${topic}" />" />
+<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 	<c:if test="${!empty errorMessage}">
 <div align="center" style="margin:10px 0px 10px 0px;color:red;size=110%;"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /><f:param value="${errorMessage.params[1]}" /></f:message></div>
 	</c:if>

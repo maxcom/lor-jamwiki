@@ -56,91 +56,71 @@
 		<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
 		<%@ include file="top-menu.jsp"%>
 		<div id="contents" >
-		<div id="contents-header"><f:message key="${pageTitle.key}"><f:param value="${pageTitle.params[0]}" /></f:message></div>
-<%
-if (action.equals(JAMWikiServlet.ACTION_ADMIN)) {
-%>
+		<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
+<%-- FIXME - hard coding of actions is bad --%>
+<c:choose>
+	<c:when test="${pageInfo.pageAction == 'action_admin'}">
 		<jsp:include page="admin.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_CONVERT)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_admin_convert'}">
 		<jsp:include page="admin-convert.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_DELETE)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_admin_delete'}">
 		<jsp:include page="admin-delete.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_ADMIN_TRANSLATION)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_admin_translation'}">
 		<jsp:include page="admin-translation.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_ALL_TOPICS)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'all_topics'}">
 		<jsp:include page="all-topics.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_CONTRIBUTIONS)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_contributions'}">
 		<jsp:include page="contributions.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_DIFF)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_diff'}">
 		<jsp:include page="diff.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_EDIT) || action.equals(JAMWikiServlet.ACTION_PREVIEW) || action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_edit' || pageInfo.pageAction == 'preview' || pageInfo.pageAction == 'action_edit_resolve'}">
 		<jsp:include page="edit.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_EDIT_USER)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'edit_user'}">
 		<jsp:include page="register.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_ERROR)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_error'}">
 		<jsp:include page="error-display.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_HISTORY)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_history'}">
 		<jsp:include page="history.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_IMPORT)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_import'}">
 		<jsp:include page="import.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_LINK_TO)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_link_to'}">
 		<jsp:include page="linkto.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_LOGIN)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_login'}">
 		<jsp:include page="login.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_RECENT_CHANGES)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'recent_changes'}">
 		<jsp:include page="recent-changes.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_REGISTER)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_member'}">
 		<jsp:include page="register.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_SEARCH)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_search'}">
 		<jsp:include page="search.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_SEARCH_RESULTS)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'search_results'}">
 		<jsp:include page="search-results.jsp" flush="true" />
-<%
-} else if (action.equals(JAMWikiServlet.ACTION_UPLOAD)) {
-%>
+	</c:when>
+	<c:when test="${pageInfo.pageAction == 'action_upload'}">
 		<jsp:include page="upload.jsp" flush="true" />
-<%
-} else {
-%>
+	</c:when>
+	<c:otherwise>
 		<%@ include file="category-include.jsp" %>
 		<%@ include file="view-topic-include.jsp" %>
-<%
-}
-%>
+	</c:otherwise>
+</c:choose>
 		</div>
 	</td>
 </tr>

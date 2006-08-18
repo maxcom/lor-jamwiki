@@ -38,19 +38,20 @@ public class DiffServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			diff(request, next);
+			diff(request, next, pageInfo);
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	protected void diff(HttpServletRequest request, ModelAndView next) throws Exception {
+	protected void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		try {
@@ -92,8 +93,8 @@ public class DiffServlet extends JAMWikiServlet {
 			logger.error(e);
 			throw e;
 		}
-		this.pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
-		this.pageInfo.setTopicName(topicName);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_DIFF);
+		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
+		pageInfo.setTopicName(topicName);
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_DIFF);
 	}
 }

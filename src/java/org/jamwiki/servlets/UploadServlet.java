@@ -49,17 +49,18 @@ public class UploadServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
 			if (contentType.indexOf("multipart") != -1) {
-				upload(request, next);
+				upload(request, next, pageInfo);
 			} else {
-				view(request, next);
+				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -123,7 +124,7 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void upload(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void upload(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - this method is a mess and needs to be split up.
 		File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (!file.exists()) {
@@ -203,15 +204,15 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
-		viewTopic(request, next, topicName);
+		viewTopic(request, next, pageInfo, topicName);
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageTitle(new WikiMessage("upload.title"));
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_UPLOAD);
-		this.pageInfo.setSpecial(true);
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setPageTitle(new WikiMessage("upload.title"));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_UPLOAD);
+		pageInfo.setSpecial(true);
 	}
 }

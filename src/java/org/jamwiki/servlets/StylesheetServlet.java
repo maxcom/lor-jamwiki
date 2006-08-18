@@ -35,9 +35,9 @@ public class StylesheetServlet extends JAMWikiServlet {
 	 *
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+		String virtualWiki = null;
 		try {
-			String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-			String topicName = JAMWikiServlet.getTopicFromURI(request);
+			virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 			String stylesheet = JAMWikiServlet.getCachedContent(request, virtualWiki, WikiBase.SPECIAL_PAGE_STYLESHEET, false);
 			response.setContentType("text/css; charset=utf-8");
 			// cache for 30 minutes (60 * 30 = 1800)
@@ -47,8 +47,7 @@ public class StylesheetServlet extends JAMWikiServlet {
 			out.print(stylesheet);
 			out.close();
 		} catch (Exception e) {
-			ModelAndView next = new ModelAndView("wiki");
-			viewError(request, next, e);
+			logger.error("Failure while loading stylesheet for virtualWiki " + virtualWiki, e);
 		}
 		// do not load defaults or redirect - return as raw CSS
 		return null;

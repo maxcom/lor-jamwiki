@@ -71,9 +71,8 @@ function inactive(element) {
 <div id="change">
 
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="historyForm">
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_DIFF %>"/>
 <input type="hidden" name="type" value="arbitrary"/>
-<input type="hidden" name="topic" value='<c:out value="${topic}"/>'/>
+<input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>
 <input type="submit" value='<f:message key="history.diff"/>'/>
 
 <br /><br />
@@ -85,7 +84,7 @@ function inactive(element) {
 	<input type="checkbox" name="<c:out value="diff:${change.topicVersionId}" />" onclick="inactive(this)" id="<c:out value="diff:${change.topicVersionId}" />" />
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<a href="<jamwiki:link value="Special:History" />?topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${topic}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+	<a href="<jamwiki:link value="Special:History" />?topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />

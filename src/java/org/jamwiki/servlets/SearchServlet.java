@@ -38,24 +38,25 @@ public class SearchServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			String jumpto = request.getParameter("jumpto");
 			if (jumpto != null) {
-				jumpTo(request, response, next);
+				jumpTo(request, response);
 				return null;
 			}
-			search(request, response, next);
+			search(request, next, pageInfo);
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void jumpTo(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private void jumpTo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String text = request.getParameter("text");
 		// FIXME - if topic doesn't exist, should probably go to an edit page
@@ -68,31 +69,25 @@ public class SearchServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void search(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		try {
-			String searchField = request.getParameter("text");
-			if (request.getParameter("text") == null) {
-				this.pageInfo.setPageTitle(new WikiMessage("search.title"));
-			} else {
-				this.pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
-			}
-			// forward back to the search page if the request is blank or null
-			if (!StringUtils.hasText(searchField)) {
-				this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH);
-				this.pageInfo.setSpecial(true);
-				return;
-			}
-			// grab search engine instance and find
-			Collection results = LuceneSearchEngine.findMultiple(virtualWiki, searchField);
-			next.addObject("searchField", searchField);
-			next.addObject("results", results);
-			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH_RESULTS);
-			this.pageInfo.setSpecial(true);
-			return;
-		} catch (Exception e) {
-			logger.error(e);
-			throw e;
+		String searchField = request.getParameter("text");
+		if (request.getParameter("text") == null) {
+			pageInfo.setPageTitle(new WikiMessage("search.title"));
+		} else {
+			pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
 		}
+		// forward back to the search page if the request is blank or null
+		if (!StringUtils.hasText(searchField)) {
+			pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH);
+			pageInfo.setSpecial(true);
+			return;
+		}
+		// grab search engine instance and find
+		Collection results = LuceneSearchEngine.findMultiple(virtualWiki, searchField);
+		next.addObject("searchField", searchField);
+		next.addObject("results", results);
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_SEARCH_RESULTS);
+		pageInfo.setSpecial(true);
 	}
 }

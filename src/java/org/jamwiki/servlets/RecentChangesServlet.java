@@ -38,19 +38,20 @@ public class RecentChangesServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			recentChanges(request, next);
+			recentChanges(request, next, pageInfo);
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void recentChanges(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void recentChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
 		if (request.getParameter("num") != null) {
@@ -66,8 +67,8 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		}
 		next.addObject("changes", all);
 		next.addObject("num", new Integer(num));
-		this.pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_RECENT_CHANGES);
-		this.pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_RECENT_CHANGES);
+		pageInfo.setSpecial(true);
 	}
 }

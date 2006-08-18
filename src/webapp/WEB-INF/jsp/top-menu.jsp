@@ -20,27 +20,27 @@
 <table class="menu-tab-table" cellspacing="0">
 <tr>
 	<td class="menu-tab-space">&#160;</td>
-<c:if test="${!special && !admin}">
+<c:if test="${!pageInfo.special && !pageInfo.admin}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${article}"><f:message key="menu.article" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="menu.comments" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${edit}"><f:message key="menu.editpage" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.history" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.history" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:LinkTo" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.links" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:LinkTo" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.links" /></a></td>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${topic}" />"><f:message key="menu.delete" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.delete" /></a></td>
 	</c:if>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${topic}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
 </c:if>
-<c:if test="${special}">
-	<td class="menu-tab-nonselected"><jamwiki:link value="${topic}"><f:message key="menu.special" /></jamwiki:link></td>
+<c:if test="${pageInfo.special}">
+	<td class="menu-tab-nonselected"><jamwiki:link value="${pageInfo.topicName}"><f:message key="menu.special" /></jamwiki:link></td>
 </c:if>
-<c:if test="${admin}">
+<c:if test="${pageInfo.admin}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Admin">Special:Admin</jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Translation">Special:Translation</jamwiki:link></td>

@@ -37,19 +37,20 @@ public class ContributionsServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			contributions(request, next);
+			contributions(request, next, pageInfo);
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void contributions(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String userString = request.getParameter("contributor");
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
@@ -67,8 +68,8 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("contributions", all);
 		next.addObject("num", new Integer(num));
 		next.addObject("contributor", userString);
-		this.pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_CONTRIBUTIONS);
-		this.pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_CONTRIBUTIONS);
+		pageInfo.setSpecial(true);
 	}
 }

@@ -36,9 +36,4 @@ response.setHeader("Pragma", "no-cache");
 <%
 // must re-set the response header because the f:setBundle tag can sometimes override it
 response.setContentType("text/html; charset=utf-8");
-String action = (String)request.getAttribute(JAMWikiServlet.PARAMETER_ACTION);
-if (action == null) {
-	action = request.getParameter(JAMWikiServlet.PARAMETER_ACTION);
-}
-if (action == null) action = "";
 %>

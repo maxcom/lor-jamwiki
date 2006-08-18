@@ -384,7 +384,6 @@ onUserGroupType()
 </table>
 
 <input type="hidden" name="function" value="properties">
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 
 <%--
   Include a hidden (display:none) password field to prevent Firefox from trying to change the
@@ -408,7 +407,6 @@ onUserGroupType()
 </tr>
 </table>
 <input type="hidden" name="function" value="refreshIndex" />
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 </form>
 
 <hr />
@@ -416,7 +414,6 @@ onUserGroupType()
 <!-- Read-only Topics -->
 <p class="subHeader"><f:message key="admin.title.readonly" /></p>
 <form name="readOnlyTopics" method="post" action="<jamwiki:link value="Special:Admin" />">
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 <input type="hidden" name="function" value="readOnly">
 <table border="0" class="contents">
 <tr>
@@ -458,7 +455,6 @@ onUserGroupType()
 <c:forEach items="${wikis}" var="wiki">
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki">
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 <input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
 <tr>
 	<%-- FIXME: need label element --%>
@@ -470,7 +466,6 @@ onUserGroupType()
 </c:forEach>
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki">
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 <tr>
 	<td class="normal"><input type="text" name="name" /></td>
 	<td class="normal"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
@@ -492,5 +487,4 @@ onUserGroupType()
 </tr>
 </table>
 <input type="hidden" name="function" value="recentChanges" />
-<input type="hidden" name="action" value="<%= JAMWikiServlet.ACTION_ADMIN %>" />
 </form>

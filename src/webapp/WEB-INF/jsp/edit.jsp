@@ -26,22 +26,18 @@
 
 <%@ include file="page-init.jsp" %>
 
-<%
-if (action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
-%>
-
+<c:if test="${pageInfo.pageAction == 'action_edit_resolve'}">
 <p><f:message key="edit.exception.conflict" /></p>
-
-<%
-}
-%>
+</c:if>
 
 <c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
 
 <%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
+<c:if test="${pageInfo.pageAction == 'preview'}">
 <blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
+</c:if>
 <%
 }
 %>
@@ -49,17 +45,18 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.eq
 <%@ include file="category-include.jsp" %>
 
 <%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) && action.equals(JAMWikiServlet.ACTION_PREVIEW)) {
+if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
+<c:if test="${pageInfo.pageAction == 'preview'}">
 <%@ include file="view-topic-include.jsp" %>
-
+</c:if>
 <%
 }
 %>
 
 <form name="form" method="post" action="<jamwiki:link value="Special:Edit" />">
 <p>
-<input type="hidden" name="topic" value="<c:out value="${topic}"/>" />
+<input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}"/>" />
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
 <input type="hidden" name="section" value="<c:out value="${section}"/>" />
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
@@ -77,9 +74,7 @@ FIXME - restore the Javascript edit buttons
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
-
 <input type="submit" name="preview" value="<f:message key="edit.action.preview"/>"/>
-
 <%
 }
 %>
@@ -89,18 +84,11 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <label for="minorEdit"><f:message key="edit.isMinorEdit"/></label>
 </p>
 
-<%
-if (action.equals(JAMWikiServlet.ACTION_EDIT_RESOLVE)) {
-%>
-
+<c:if test="${pageInfo.pageAction == 'action_edit_resolve'}">
 <%@ include file="diff-include.jsp" %>
-
 <p>
 <textarea name="contentsResolve" rows="25" cols="80" style="width:100%"><c:out value="${contentsResolve}" escapeXml="true" /></textarea>
 </p>
-
-<%
-}
-%>
+</c:if>
 
 </form>

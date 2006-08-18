@@ -36,20 +36,20 @@ public class PrintableServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("printable");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			print(request, next);
+			print(request, next, pageInfo);
 		} catch (Exception e) {
-			next = new ModelAndView("wiki");
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void print(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void print(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
@@ -64,6 +64,6 @@ public class PrintableServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		viewTopic(request, next, pageTitle, topic, false);
+		viewTopic(request, next, pageInfo, pageTitle, topic, false);
 	}
 }

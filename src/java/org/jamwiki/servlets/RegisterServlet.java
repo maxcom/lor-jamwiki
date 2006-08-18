@@ -41,40 +41,41 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (request.getParameter("function") != null) {
-				if (register(request, response, next)) {
+				if (register(request, response, next, pageInfo)) {
 					// FIXME - use Spring
 					// register successful, non-Spring redirect
 					return null;
 				}
 			} else {
-				view(request, next);
+				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
-		this.pageInfo.setPageTitle(new WikiMessage("register.title"));
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setSpecial(true);
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
+		pageInfo.setPageTitle(new WikiMessage("register.title"));
 	}
 
 	/**
 	 *
 	 */
 	// FIXME - shouldn't need to pass in response
-	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
-		this.pageInfo.setSpecial(true);
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
-		this.pageInfo.setPageTitle(new WikiMessage("register.title"));
+	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setSpecial(true);
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_REGISTER);
+		pageInfo.setPageTitle(new WikiMessage("register.title"));
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
 		String userIdString = request.getParameter("userId");
@@ -93,7 +94,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
 		next.addObject("user", user);
-		Vector errors = validate(request, next, user);
+		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
 			next.addObject("errors", errors);
 			String oldPassword = request.getParameter("oldPassword");
@@ -117,7 +118,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector validate(HttpServletRequest request, ModelAndView next, WikiUser user) throws Exception {
+	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		if (!StringUtils.hasText(user.getLogin())) {
 			errors.add(new WikiMessage("error.loginempty"));

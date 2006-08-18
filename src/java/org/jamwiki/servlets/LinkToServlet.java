@@ -37,19 +37,20 @@ public class LinkToServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			linksTo(request, response, next);
+			linksTo(request, next, pageInfo);
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void linksTo(HttpServletRequest request, HttpServletResponse response, ModelAndView next) throws Exception {
+	private void linksTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		try {
 			String topicName = JAMWikiServlet.getTopicFromRequest(request);
@@ -57,13 +58,13 @@ public class LinkToServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
 			WikiMessage pageTitle = new WikiMessage("linkto.title", topicName);
-			this.pageInfo.setPageTitle(pageTitle);
+			pageInfo.setPageTitle(pageTitle);
 			// grab search engine instance and find
 			Collection results = LuceneSearchEngine.findLinkedTo(virtualWiki, topicName);
 			next.addObject("results", results);
 			next.addObject("link", topicName);
-			this.pageInfo.setPageAction(JAMWikiServlet.ACTION_LINK_TO);
-			this.pageInfo.setTopicName(topicName);
+			pageInfo.setPageAction(JAMWikiServlet.ACTION_LINK_TO);
+			pageInfo.setTopicName(topicName);
 			return;
 		} catch (Exception e) {
 			logger.error(e);

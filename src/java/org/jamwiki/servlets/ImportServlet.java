@@ -41,24 +41,25 @@ public class ImportServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
 			if (contentType.indexOf("multipart") != -1) {
-				importFile(request, next);
+				importFile(request, next, pageInfo);
 			} else {
-				importView(request, next);
+				importView(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void importFile(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Iterator iterator = Utilities.processMultipartRequest(request);
 		while (iterator.hasNext()) {
@@ -72,15 +73,15 @@ public class ImportServlet extends JAMWikiServlet {
 			}
 		}
 		// FIXME - redirect where?
-		importView(request, next);
+		importView(request, next, pageInfo);
 	}
 
 	/**
 	 *
 	 */
-	private void importView(HttpServletRequest request, ModelAndView next) throws Exception {
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_IMPORT);
-		this.pageInfo.setPageTitle(new WikiMessage("import.title"));
-		this.pageInfo.setSpecial(true);
+	private void importView(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_IMPORT);
+		pageInfo.setPageTitle(new WikiMessage("import.title"));
+		pageInfo.setSpecial(true);
 	}
 }

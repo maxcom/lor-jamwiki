@@ -44,42 +44,43 @@ public class TopicServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView next = new ModelAndView("wiki");
+		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (isTopic(request, "Special:AllTopics")) {
-				allTopics(request, next);
+				allTopics(request, next, pageInfo);
 			} else {
-				viewTopic(request, next);
+				viewTopic(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			viewError(request, next, e);
+			return viewError(request, e);
 		}
-		loadDefaults(request, next, this.pageInfo);
+		loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void allTopics(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
 		next.addObject("all", all);
 		next.addObject("topicCount", new Integer(all.size()));
-		this.pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
-		this.pageInfo.setPageAction(JAMWikiServlet.ACTION_ALL_TOPICS);
-		this.pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
+		pageInfo.setPageAction(JAMWikiServlet.ACTION_ALL_TOPICS);
+		pageInfo.setSpecial(true);
 	}
 
 	/**
 	 *
 	 */
-	private void viewTopic(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topic = JAMWikiServlet.getTopicFromURI(request);
 		if (!StringUtils.hasText(topic)) {
 			String virtualWikiName = getVirtualWikiFromURI(request);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			topic = virtualWiki.getDefaultTopicName();
 		}
-		super.viewTopic(request, next, topic);
+		super.viewTopic(request, next, pageInfo, topic);
 	}
 }
