@@ -31,6 +31,8 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -192,8 +194,10 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
 		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
-			// FIXME - this assumes no links in the topic content
-			WikiBase.getHandler().writeTopic(topic, topicVersion, null);
+			ParserInput parserInput = new ParserInput();
+			parserInput.setMode(ParserInput.MODE_SEARCH);
+			ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
+			WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput);
 		} else {
 			topic = WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName());
 		}

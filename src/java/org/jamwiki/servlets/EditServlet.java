@@ -289,7 +289,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (user != null) {
 			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}
-		WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput.getLinks());
+		WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
 		viewTopic(request, next, topicName);

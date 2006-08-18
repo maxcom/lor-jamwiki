@@ -6,6 +6,7 @@ package org.jamwiki.parser;
 
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.springframework.util.StringUtils;
 
 %%
@@ -55,6 +56,10 @@ import org.springframework.util.StringUtils;
         String topic = ParserUtil.extractLinkTopic(content);
         if (!StringUtils.hasText(topic)) {
             return;
+        }
+        if (topic.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
+            String sortKey = ParserUtil.extractLinkText(raw);
+            this.parserOutput.addCategory(topic, sortKey);
         }
         if (topic.startsWith(":") && topic.length() > 1) {
             // strip opening colon

@@ -20,6 +20,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,8 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.search.LuceneSearchEngine;
@@ -279,8 +282,10 @@ public abstract class PersistencyHandler {
 			params = this.initParams();
 			// delete old recent changes
 			deleteRecentChanges(topic, params);
-			// update topic to indicate deleted, add delete topic version
-			writeTopic(topic, topicVersion, params);
+			// update topic to indicate deleted, add delete topic version.  parser output
+			// should be empty since nothing to add to search engine.
+			ParserOutput parserOutput = new ParserOutput();
+			writeTopic(topic, topicVersion, parserOutput, params);
 			// reset topic existence vector
 			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		} catch (Exception e) {
@@ -708,7 +713,10 @@ public abstract class PersistencyHandler {
 		topicVersion.setAuthorId(new Integer(user.getUserId()));
 		// FIXME - hard coding
 		topicVersion.setEditComment("Automatically created by system setup");
-		writeTopic(topic, topicVersion, params);
+		ParserInput parserInput = new ParserInput();
+		parserInput.setMode(ParserInput.MODE_SEARCH);
+		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
+		writeTopic(topic, topicVersion, parserOutput, params);
 	}
 
 	/**
@@ -765,7 +773,10 @@ public abstract class PersistencyHandler {
 			topicVersion.setAuthorId(new Integer(user.getUserId()));
 			// FIXME - hard coding
 			topicVersion.setEditComment("Automatically updated by system upgrade");
-			writeTopic(topic, topicVersion, params);
+			ParserInput parserInput = new ParserInput();
+			parserInput.setMode(ParserInput.MODE_SEARCH);
+			ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
+			writeTopic(topic, topicVersion, parserOutput, params);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -847,7 +858,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion, Collection links) throws Exception {
+	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
@@ -855,9 +866,9 @@ public abstract class PersistencyHandler {
 			if (topicVersion.getAuthorId() != null) {
 				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			}
-			this.writeTopic(topic, topicVersion, params);
+			this.writeTopic(topic, topicVersion, parserOutput, params);
 			LuceneSearchEngine.deleteFromIndex(topic);
-			LuceneSearchEngine.addToIndex(topic, links);
+			LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -869,7 +880,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, Object[] params) throws Exception {
+	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Object[] params) throws Exception {
 		if (!Utilities.validateName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
@@ -894,6 +905,14 @@ public abstract class PersistencyHandler {
 			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			authorName = user.getLogin();
 			if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
+		}
+		// add / remove categories associated with the topic
+		this.deleteTopicCategories(topic, params);
+		HashMap categories = parserOutput.getCategories();
+		for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
+			String categoryName = (String)iterator.next();
+			String sortKey = (String)categories.get(categoryName);
+			this.addCategory(topic.getTopicId(), categoryName, sortKey, params);
 		}
 		RecentChange change = new RecentChange();
 		change.setTopicId(topic.getTopicId());
