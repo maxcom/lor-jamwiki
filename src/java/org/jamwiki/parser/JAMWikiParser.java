@@ -43,20 +43,22 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	public ParserOutput parseHTML(String rawtext, String topicName) throws Exception {
 		long start = System.currentTimeMillis();
-		StringBuffer contents = new StringBuffer();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		rawtext += '\n';
 		StringReader raw = new StringReader(rawtext);
-		ParserOutput parserOutput = this.parsePreProcess(raw);
+		// maintain the original output, which has all of the category and link info
+		ParserOutput original = this.parsePreProcess(raw);
 		if (this.parserInput.getMode() != ParserInput.MODE_NORMAL) {
 			// save or preview mode, add pre-save processor
-			parserOutput = this.parsePreSave(parserOutput.getContent());
+			ParserOutput parserOutput = this.parsePreSave(original.getContent());
+			original.setContent(parserOutput.getContent());
 		}
-		raw = new StringReader(parserOutput.getContent());
-		parserOutput = this.parsePostProcess(raw);
+		raw = new StringReader(original.getContent());
+		ParserOutput parserOutput = this.parsePostProcess(raw);
+		original.setContent(parserOutput.getContent());
 		logger.info("Parse time (parseHTML) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserOutput;
+		return original;
 	}
 
 	/**
@@ -96,7 +98,6 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	public ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
-		StringBuffer contents = new StringBuffer();
 		StringReader raw = new StringReader(rawtext);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
 		lexer.setParserInput(this.parserInput);
@@ -111,7 +112,6 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	public ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
-		StringBuffer contents = new StringBuffer();
 		StringReader raw = new StringReader(rawtext);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
 		lexer.setParserInput(this.parserInput);

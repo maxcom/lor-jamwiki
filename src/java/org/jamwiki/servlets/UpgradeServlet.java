@@ -197,6 +197,14 @@ public class UpgradeServlet extends JAMWikiServlet {
 			} else {
 				messages = FileUpgrades.upgrade030(messages);
 			}
+			// update stylesheet
+			WikiUser user = Utilities.currentUser(request);
+			Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
+			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
+				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
+			}
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update for version 0.3.0";

@@ -197,6 +197,9 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setMode(ParserInput.MODE_PREVIEW);
 		parserInput.setAllowSectionEdit(false);
 		ParserOutput parserOutput = Utilities.parse(parserInput, contents, topicName);
+		if (parserOutput.getCategories().size() > 0) {
+			next.addObject("categories", parserOutput.getCategories().keySet());
+		}
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
 		previewTopic.setTopicContent(parserOutput.getContent());

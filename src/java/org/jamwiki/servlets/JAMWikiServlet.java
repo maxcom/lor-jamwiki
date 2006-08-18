@@ -401,6 +401,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName);
+		if (parserOutput.getCategories().size() > 0) {
+			next.addObject("categories", parserOutput.getCategories().keySet());
+		}
 		topic.setTopicContent(parserOutput.getContent());
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 			List fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);

@@ -280,7 +280,7 @@ td.diff-line {
 	font-weight: bold;
 }
 
-/* table of contents */
+/* topic elements */
 
 table.toc {
 	border: 1px solid #D8D8E7;
@@ -289,6 +289,14 @@ table.toc {
 
 table.toc td {
 	padding: 0.5em 0.8em 0.5em 0.8em;
+}
+
+#category-index {
+	border: 1px solid #aaa;
+	background-color: #f9f9f9;
+	padding: 10px 5px 10px 5px;
+	margin-top: 1em;
+	clear: both;
 }
 
 /* tab menu */

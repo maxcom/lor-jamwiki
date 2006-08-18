@@ -32,6 +32,7 @@ import java.util.Hashtable;
 import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
@@ -296,6 +297,34 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
+    protected String processLink(String raw) {
+        String content = ParserUtil.extractLinkContent(raw);
+        if (!StringUtils.hasText(content)) {
+            // invalid link
+            return "";
+        }
+        String topic = ParserUtil.extractLinkTopic(content);
+        if (!StringUtils.hasText(topic)) {
+            return "";
+        }
+        if (topic.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
+            String sortKey = ParserUtil.extractLinkText(raw);
+            this.parserOutput.addCategory(topic, sortKey);
+            return "";
+        }
+        if (topic.startsWith(":") && topic.length() > 1) {
+            // strip opening colon
+            topic = topic.substring(1).trim();
+        }
+        if (StringUtils.hasText(topic)) {
+            this.parserOutput.addLink(topic);
+        }
+        return ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
+    }
+    
+    /**
+     *
+     */
     protected String updateToc(String name, String text, int level) {
         String output = "";
         if (this.parserInput.getTableOfContents().getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
@@ -479,7 +508,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
     logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
+    return processLink(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
