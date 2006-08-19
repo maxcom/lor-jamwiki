@@ -2,6 +2,14 @@
 0.3.0
 =====
 
+* FEATURE: Add support for Mediawiki categories.
+* FEATURE: Add Special:Categories.
+* FEATURE: Drop jam_image table - unused.
+* BUG: Fix possible PageInfo corruption.  Pointed out by Scott Crocco.
+* FEATURE: Major parser architecture updates.  Parser should be slightly
+  faster when parsing edits.
+* FEATURE: Delete activation.jar - unused.
+* FEATURE: Code cleanups including removal of unused files.
 
 0.2.1
 =====
