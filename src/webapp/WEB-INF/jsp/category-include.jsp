@@ -25,15 +25,13 @@
 <table width="100%"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
-		<c:set var="currentCount" value="1" />
-		<c:forEach items="${subcategories}" var="subcategory">
-<li><jamwiki:link value="${subcategory}" text="${subcategory}" /></li>
+		<c:forEach items="${subcategories}" var="subcategory" varStatus="status">
+<li><jamwiki:link value="${subcategory.key}" text="${subcategory.value}" /></li>
 			<%-- FIXME - do not hard code min num topics and num columns --%>
-			<c:if test="${(numsubcategories > 9) && (columnCount < 3) && ((currentCount * 3) >= (numsubcategories * columnCount))}">
+			<c:if test="${(numsubcategories > 9) && (columnCount < 3) && ((status.count * 3) >= (numsubcategories * columnCount))}">
 				<c:set var="columnCount" value="${columnCount + 1}" />
 </ul></td><td><ul>
 			</c:if>
-			<c:set var="currentCount" value="${currentCount + 1}" />
 		</c:forEach>
 </ul>
 
@@ -46,15 +44,13 @@
 <table width="100%"><tr><td>
 <ul>
 		<c:set var="columnCount" value="1" />
-		<c:set var="currentCount" value="1" />
-		<c:forEach items="${subtopics}" var="subtopic">
+		<c:forEach items="${subtopics}" var="subtopic" varStatus="status">
 <li><jamwiki:link value="${subtopic}" text="${subtopic}" /></li>
 			<%-- FIXME - do not hard code min num topics and num columns --%>
-			<c:if test="${(numsubtopics > 9) && (columnCount < 3) && ((currentCount * 3) >= (numsubtopics * columnCount))}">
+			<c:if test="${(numsubtopics > 9) && (columnCount < 3) && ((status.count * 3) >= (numsubtopics * columnCount))}">
 				<c:set var="columnCount" value="${columnCount + 1}" />
 </ul></td><td><ul>
 			</c:if>
-			<c:set var="currentCount" value="${currentCount + 1}" />
 		</c:forEach>
 </ul>
 </td></tr></table>

@@ -192,28 +192,15 @@ public class EditServlet extends JAMWikiServlet {
 	private void preview(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		WikiUser user = Utilities.currentUser(request);
 		JAMWikiServlet.removeCachedContents();
 		String contents = (String)request.getParameter("contents");
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
-		parserInput.setWikiUser(user);
-		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress(request.getRemoteAddr());
-		parserInput.setVirtualWiki(virtualWiki);
-		parserInput.setMode(ParserInput.MODE_PREVIEW);
-		parserInput.setAllowSectionEdit(false);
-		ParserOutput parserOutput = Utilities.parse(parserInput, contents, topicName);
-		if (parserOutput.getCategories().size() > 0) {
-			next.addObject("categories", parserOutput.getCategories().keySet());
-		}
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
-		previewTopic.setTopicContent(parserOutput.getContent());
-		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, previewTopic);
+		previewTopic.setTopicContent(contents);
+		previewTopic.setVirtualWiki(virtualWiki);
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_PREVIEW);
 		next.addObject("contents", contents);
+		viewTopic(request, next, pageInfo, null, previewTopic, false, true);
 	}
 
 	/**

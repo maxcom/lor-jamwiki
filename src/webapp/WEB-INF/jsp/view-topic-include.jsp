@@ -43,9 +43,8 @@
 	</c:if>
 	<c:if test="${!empty categories}">
 <div id="category-index"><jamwiki:link value="Special:Categories"><f:message key="topic.categories" /></jamwiki:link>:
-		<c:forEach items="${categories}" var="category">
-<c:if test="${!empty categoryDisplayed}">&#160;|&#160;</c:if><jamwiki:link value="${category}" text="${category}" />
-			<c:set var="categoryDisplayed" value="true" />
+		<c:forEach items="${categories}" var="category" varStatus="status">
+<c:if test="${!status.first}">&#160;|&#160;</c:if><jamwiki:link value="${category.key}" text="${category.value}" />
 		</c:forEach>
 </div>
 	</c:if>

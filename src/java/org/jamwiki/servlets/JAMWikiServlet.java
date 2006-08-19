@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -193,7 +194,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 		Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
 		next.addObject("subtopics", subtopics);
 		next.addObject("numsubtopics", new Integer(subtopics.size()));
-		Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
+		Collection subcategoryNames = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
+		HashMap subcategories = new HashMap();
+		for (Iterator iterator = subcategoryNames.iterator(); iterator.hasNext();) {
+			String key = (String)iterator.next();
+			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
+			subcategories.put(key, value);
+		}
 		next.addObject("subcategories", subcategories);
 		next.addObject("numsubcategories", new Integer(subcategories.size()));
 	}
@@ -351,7 +358,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			next.addObject("notopic", new WikiMessage("topic.notcreated", topicName));
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		viewTopic(request, next, pageInfo, pageTitle, topic, true);
+		viewTopic(request, next, pageInfo, pageTitle, topic, true, false);
 	}
 
 	/**
@@ -362,7 +369,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param topicName The topic being viewed.  This value must be a valid topic that
 	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
-	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit) throws Exception {
+	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit, boolean preview) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
 		String contents = "";
 		if (topic == null) {
@@ -383,10 +390,19 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
+		if (preview) {
+			parserInput.setMode(ParserInput.MODE_PREVIEW);
+		}
 		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName);
 		if (parserOutput != null) {
 			if (parserOutput.getCategories().size() > 0) {
-				next.addObject("categories", parserOutput.getCategories().keySet());
+				HashMap categories = new HashMap();
+				for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
+					String key = (String)iterator.next();
+					String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
+					categories.put(key, value);
+				}
+				next.addObject("categories", categories);
 			}
 			topic.setTopicContent(parserOutput.getContent());
 		}
@@ -400,6 +416,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 		pageInfo.setSpecial(false);
 		pageInfo.setTopicName(topicName);
 		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);
-		pageInfo.setPageTitle(pageTitle);
+		if (pageTitle != null) {
+			pageInfo.setPageTitle(pageTitle);
+		}
 	}
 }
