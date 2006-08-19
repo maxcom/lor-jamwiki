@@ -478,7 +478,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection lookupCategoryTopics(String categoryName, int topicType) throws Exception;
+	public abstract Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception;
 
 	/**
 	 *

@@ -378,9 +378,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
 			next.addObject("categoryName", topic.getName());
-			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(topic.getName(), Topic.TYPE_ARTICLE);
+			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topic.getName(), Topic.TYPE_ARTICLE);
 			next.addObject("subtopics", subtopics);
-			Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(topic.getName(), Topic.TYPE_CATEGORY);
+			Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topic.getName(), Topic.TYPE_CATEGORY);
 			next.addObject("subcategories", subcategories);
 		}
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {

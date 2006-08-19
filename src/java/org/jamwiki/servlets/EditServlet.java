@@ -77,7 +77,7 @@ public class EditServlet extends JAMWikiServlet {
 		loadTopic(request, virtualWiki, topicName);
 		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
 		next.addObject("lastTopicVersionId", new Integer(lastTopicVersionId));
-		loadEdit(request, next, pageInfo, topicName);
+		loadEdit(request, next, pageInfo, virtualWiki, topicName);
 		String contents = null;
 		if (isPreview(request)) {
 			preview(request, next, pageInfo);
@@ -125,14 +125,14 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
+	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String virtualWiki, String topicName) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
 		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
 			next.addObject("categoryName", topicName);
-			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(topicName, Topic.TYPE_ARTICLE);
+			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
 			next.addObject("subtopics", subtopics);
-			Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(topicName, Topic.TYPE_CATEGORY);
+			Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
 			next.addObject("subcategories", subcategories);
 		}
 		if (request.getParameter("editComment") != null) {
@@ -234,7 +234,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("contentsResolve", contents2);
 		Vector diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
-		loadEdit(request, next, pageInfo, topicName);
+		loadEdit(request, next, pageInfo, virtualWiki, topicName);
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_RESOLVE);
 	}
 

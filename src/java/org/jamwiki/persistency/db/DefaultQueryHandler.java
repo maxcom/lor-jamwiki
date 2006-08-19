@@ -499,10 +499,11 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupCategoryTopics(String categoryName, int topicType) throws Exception {
+	public WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName, int topicType) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORY_TOPICS);
-		stmt.setString(1, categoryName);
-		stmt.setInt(2, topicType);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setString(2, categoryName);
+		stmt.setInt(3, topicType);
 		return stmt.executeQuery();
 	}
 

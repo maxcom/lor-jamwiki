@@ -844,7 +844,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection lookupCategoryTopics(String categoryName, int topicType) throws Exception {
+	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
 		// FIXME - implement this
 		throw new UnsupportedOperationException();
 	}
