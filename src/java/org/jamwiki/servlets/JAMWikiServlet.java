@@ -185,6 +185,20 @@ public abstract class JAMWikiServlet extends AbstractController {
 	}
 
 	/**
+	 * Utility method for adding category content to the ModelAndView object.
+	 */
+	protected void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
+		String categoryName = topicName.substring(WikiBase.NAMESPACE_CATEGORY.length());
+		next.addObject("categoryName", categoryName);
+		Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
+		next.addObject("subtopics", subtopics);
+		next.addObject("numsubtopics", new Integer(subtopics.size()));
+		Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
+		next.addObject("subcategories", subcategories);
+		next.addObject("numsubcategories", new Integer(subcategories.size()));
+	}
+
+	/**
 	 *
 	 */
 	protected void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
@@ -377,11 +391,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			topic.setTopicContent(parserOutput.getContent());
 		}
 		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
-			next.addObject("categoryName", topic.getName());
-			Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topic.getName(), Topic.TYPE_ARTICLE);
-			next.addObject("subtopics", subtopics);
-			Collection subcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topic.getName(), Topic.TYPE_CATEGORY);
-			next.addObject("subcategories", subcategories);
+			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
 		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 			Collection fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);

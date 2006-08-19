@@ -20,11 +20,20 @@
 <c:if test="${!empty categoryName}">
 	<c:if test="${!empty subcategories}">
 <h3><f:message key="topic.category.subcategories"><f:param value="${categoryName}" /></f:message></h3>
+<p><f:message key="topic.category.numsubcategories"><f:param value="${numsubcategories}" /><f:param value="${categoryName}" /></f:message></p>
 
-<table><tr><td>
+<table width="100%"><tr><td>
 <ul>
+		<c:set var="columnCount" value="1" />
+		<c:set var="currentCount" value="1" />
 		<c:forEach items="${subcategories}" var="subcategory">
 <li><jamwiki:link value="${subcategory}" text="${subcategory}" /></li>
+			<%-- FIXME - do not hard code min num topics and num columns --%>
+			<c:if test="${(numsubcategories > 9) && (columnCount < 3) && ((currentCount * 3) >= (numsubcategories * columnCount))}">
+				<c:set var="columnCount" value="${columnCount + 1}" />
+</ul></td><td><ul>
+			</c:if>
+			<c:set var="currentCount" value="${currentCount + 1}" />
 		</c:forEach>
 </ul>
 
@@ -32,16 +41,22 @@
 	</c:if>
 
 <h3><f:message key="topic.category.topics"><f:param value="${categoryName}" /></f:message></h3>
+<p><f:message key="topic.category.numtopics"><f:param value="${numsubtopics}" /><f:param value="${categoryName}" /></f:message></p>
 	<c:if test="${!empty subtopics}">
-<table><tr><td>
+<table width="100%"><tr><td>
 <ul>
+		<c:set var="columnCount" value="1" />
+		<c:set var="currentCount" value="1" />
 		<c:forEach items="${subtopics}" var="subtopic">
 <li><jamwiki:link value="${subtopic}" text="${subtopic}" /></li>
+			<%-- FIXME - do not hard code min num topics and num columns --%>
+			<c:if test="${(numsubtopics > 9) && (columnCount < 3) && ((currentCount * 3) >= (numsubtopics * columnCount))}">
+				<c:set var="columnCount" value="${columnCount + 1}" />
+</ul></td><td><ul>
+			</c:if>
+			<c:set var="currentCount" value="${currentCount + 1}" />
 		</c:forEach>
 </ul>
 </td></tr></table>
-	</c:if>
-	<c:if test="${empty subtopics}">
-<p><f:message key="topic.category.notopics"><f:param value="${categoryName}" /></f:message></p>
 	</c:if>
 </c:if>
