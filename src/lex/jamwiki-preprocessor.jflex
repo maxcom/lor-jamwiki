@@ -304,7 +304,8 @@ import org.springframework.util.StringUtils;
             return "";
         }
         String topic = ParserUtil.extractLinkTopic(content);
-        if (!StringUtils.hasText(topic)) {
+        String section = ParserUtil.extractLinkSection(content);
+        if (!StringUtils.hasText(topic) && !StringUtils.hasText(section)) {
             return "";
         }
         if (topic.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
@@ -363,15 +364,15 @@ htmltag            = br|b|big|blockquote|caption|center|cite|code|del|div|em|fon
 
 /* non-container expressions */
 hr                 = "----"
-h1                 = "=" [^=\n]+ ~"="
+h1                 = "=" [^=\n]+ "="
 h1close            = "="
-h2                 = "==" [^=\n]+ ~"=="
+h2                 = "==" [^=\n]+ "=="
 h2close            = "=="
-h3                 = "===" [^=\n]+ ~"==="
+h3                 = "===" [^=\n]+ "==="
 h3close            = "==="
-h4                 = "====" [^=\n]+ ~"===="
+h4                 = "====" [^=\n]+ "===="
 h4close            = "===="
-h5                 = "=====" [^=\n]+ ~"====="
+h5                 = "=====" [^=\n]+ "====="
 h5close            = "====="
 bold               = "'''"
 italic             = "''"
@@ -423,9 +424,9 @@ tablerow           = "|-" {inputcharacter}* {newline}
 tablecaption       = "|+"
 
 /* wiki links */
-wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
+wikilink           = "[[" [^(\]\])\n\r]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
-htmllink           = "[" ({protocol}) ([^\]\n\r]+) ~"]"
+htmllink           = "[" ({protocol}) ([^\]\n\r]+) "]"
 htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 /* FIXME - hard-coding of image namespace */
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}) [^\n\r\]\[]*)+ "]]"

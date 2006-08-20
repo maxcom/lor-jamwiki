@@ -188,7 +188,7 @@ public class LinkUtil {
 	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
 		if (!StringUtils.hasText(text)) text = topic;
-		if (!WikiBase.exists(virtualWiki, topic) && !StringUtils.hasText(style)) {
+		if (StringUtils.hasText(topic) && !WikiBase.exists(virtualWiki, topic) && !StringUtils.hasText(style)) {
 			style = "edit";
 		}
 		if (StringUtils.hasText(style)) {
@@ -220,6 +220,11 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic, String section, String query) throws Exception {
+		if (!StringUtils.hasText(topic) && StringUtils.hasText(section)) {
+			String url = "";
+			if (section.startsWith("#")) section = section.substring(1);
+			return "#" + Utilities.encodeURL(section);
+		}
 		if (!WikiBase.exists(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
 		}
