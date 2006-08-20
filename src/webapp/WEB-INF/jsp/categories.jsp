@@ -23,7 +23,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="allcategories.overview" /></p>
+<p><f:message key="allcategories.overview"><f:param value="${categoryCount}" /></f:message></p>
 
 <ol>
 <c:forEach items="${categories}" var="category">

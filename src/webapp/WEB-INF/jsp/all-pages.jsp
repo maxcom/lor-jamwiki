@@ -22,7 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="alltopics.topics"><f:param value="${topicCount}" /></f:message></p>
+<p><f:message key="alltopics.overview"><f:param value="${topicCount}" /></f:message></p>
 
 <ol>
 <c:forEach items="${topics}" var="topicName">
