@@ -17,8 +17,8 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -50,7 +50,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String USER_COOKIE_DELIMITER = "|";
 	// FIXME - make configurable
 	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
-	private static HashMap cachedContents = new HashMap();
+	private static LinkedHashMap cachedContents = new LinkedHashMap();
 
 	/**
 	 *
@@ -195,7 +195,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject("subtopics", subtopics);
 		next.addObject("numsubtopics", new Integer(subtopics.size()));
 		Collection subcategoryNames = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
-		HashMap subcategories = new HashMap();
+		LinkedHashMap subcategories = new LinkedHashMap();
 		for (Iterator iterator = subcategoryNames.iterator(); iterator.hasNext();) {
 			String key = (String)iterator.next();
 			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
@@ -396,7 +396,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName);
 		if (parserOutput != null) {
 			if (parserOutput.getCategories().size() > 0) {
-				HashMap categories = new HashMap();
+				LinkedHashMap categories = new LinkedHashMap();
 				for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
 					String key = (String)iterator.next();
 					String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());

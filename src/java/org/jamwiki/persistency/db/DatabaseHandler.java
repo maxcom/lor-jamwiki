@@ -610,6 +610,19 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception {
+		Vector results = new Vector();
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicByType(virtualWikiId, topicType);
+		while (rs.next()) {
+			results.add(rs.getString("topic_name"));
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId);
 		if (rs.size() == 0) return null;

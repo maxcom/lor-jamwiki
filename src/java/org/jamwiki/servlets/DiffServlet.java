@@ -54,44 +54,39 @@ public class DiffServlet extends JAMWikiServlet {
 	protected void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		try {
-			String diffType = request.getParameter("type");
-			if (diffType != null && diffType.equals("arbitrary")) {
-				int firstVersion = -1;
-				int secondVersion = -1;
-				Enumeration e = request.getParameterNames();
-				while (e.hasMoreElements()) {
-					String name = (String) e.nextElement();
-					if (name.startsWith("diff:")) {
-						int version = Integer.parseInt(name.substring(name.indexOf(":") + 1));
-						if (firstVersion >= 0) {
-							secondVersion = version;
-						} else {
-							firstVersion = version;
-						}
+		String diffType = request.getParameter("type");
+		if (diffType != null && diffType.equals("arbitrary")) {
+			int firstVersion = -1;
+			int secondVersion = -1;
+			Enumeration e = request.getParameterNames();
+			while (e.hasMoreElements()) {
+				String name = (String) e.nextElement();
+				if (name.startsWith("diff:")) {
+					int version = Integer.parseInt(name.substring(name.indexOf(":") + 1));
+					if (firstVersion >= 0) {
+						secondVersion = version;
+					} else {
+						firstVersion = version;
 					}
 				}
-				if (firstVersion == -1 || secondVersion == -1) {
-					next.addObject("badinput", "true");
-				} else {
-					Vector diffs = WikiBase.getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
-					next.addObject("diffs", diffs);
-				}
+			}
+			if (firstVersion == -1 || secondVersion == -1) {
+				next.addObject("badinput", "true");
 			} else {
-				int topicVersionId1 = 0;
-				if (StringUtils.hasText(request.getParameter("version1"))) {
-					topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
-				}
-				int topicVersionId2 = 0;
-				if (StringUtils.hasText(request.getParameter("version2"))) {
-					topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
-				}
-				Vector diffs = WikiBase.getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2);
+				Vector diffs = WikiBase.getHandler().diff(virtualWiki, topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
 				next.addObject("diffs", diffs);
 			}
-		} catch (Exception e) {
-			logger.error(e);
-			throw e;
+		} else {
+			int topicVersionId1 = 0;
+			if (StringUtils.hasText(request.getParameter("version1"))) {
+				topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
+			}
+			int topicVersionId2 = 0;
+			if (StringUtils.hasText(request.getParameter("version2"))) {
+				topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+			}
+			Vector diffs = WikiBase.getHandler().diff(virtualWiki, topicName, topicVersionId1, topicVersionId2);
+			next.addObject("diffs", diffs);
 		}
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);

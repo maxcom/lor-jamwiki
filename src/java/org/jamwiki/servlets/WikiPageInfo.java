@@ -37,24 +37,25 @@ public class WikiPageInfo {
 	public static final int ACTION_ADMIN_DELETE = 3;
 	public static final int ACTION_ADMIN_TRANSLATION = 4;
 	public static final int ACTION_ALL_TOPICS = 5;
-	public static final int ACTION_CONTRIBUTIONS = 6;
-	public static final int ACTION_DIFF = 7;
-	public static final int ACTION_EDIT = 8;
-	public static final int ACTION_EDIT_PREVIEW = 9;
-	public static final int ACTION_EDIT_RESOLVE = 10;
-	public static final int ACTION_ERROR = 11;
-	public static final int ACTION_EXPORT = 12;
-	public static final int ACTION_HISTORY = 13;
-	public static final int ACTION_IMPORT = 14;
-	public static final int ACTION_LINK_TO = 15;
-	public static final int ACTION_LOGIN = 16;
-	public static final int ACTION_RECENT_CHANGES = 17;
-	public static final int ACTION_REGISTER = 18;
-	public static final int ACTION_SEARCH = 19;
-	public static final int ACTION_SEARCH_RESULTS = 20;
-	public static final int ACTION_SETUP = 21;
-	public static final int ACTION_UPGRADE = 22;
-	public static final int ACTION_UPLOAD = 23;
+	public static final int ACTION_CATEGORIES = 6;
+	public static final int ACTION_CONTRIBUTIONS = 7;
+	public static final int ACTION_DIFF = 8;
+	public static final int ACTION_EDIT = 9;
+	public static final int ACTION_EDIT_PREVIEW = 10;
+	public static final int ACTION_EDIT_RESOLVE = 11;
+	public static final int ACTION_ERROR = 12;
+	public static final int ACTION_EXPORT = 13;
+	public static final int ACTION_HISTORY = 14;
+	public static final int ACTION_IMPORT = 15;
+	public static final int ACTION_LINK_TO = 16;
+	public static final int ACTION_LOGIN = 17;
+	public static final int ACTION_RECENT_CHANGES = 18;
+	public static final int ACTION_REGISTER = 19;
+	public static final int ACTION_SEARCH = 20;
+	public static final int ACTION_SEARCH_RESULTS = 21;
+	public static final int ACTION_SETUP = 22;
+	public static final int ACTION_UPGRADE = 23;
+	public static final int ACTION_UPLOAD = 24;
 
 	/**
 	 *
@@ -95,6 +96,13 @@ public class WikiPageInfo {
 	 */
 	public boolean getActionAllTopics() {
 		return (this.action == ACTION_ALL_TOPICS);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionCategories() {
+		return (this.action == ACTION_CATEGORIES);
 	}
 
 	/**

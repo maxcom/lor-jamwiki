@@ -73,6 +73,9 @@
 	<c:when test="${pageInfo.actionAllTopics}">
 		<jsp:include page="all-topics.jsp" flush="true" />
 	</c:when>
+	<c:when test="${pageInfo.actionCategories}">
+		<jsp:include page="categories.jsp" flush="true" />
+	</c:when>
 	<c:when test="${pageInfo.actionContributions}">
 		<jsp:include page="contributions.jsp" flush="true" />
 	</c:when>

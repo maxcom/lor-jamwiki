@@ -74,6 +74,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_CATEGORY_TOPICS = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
+	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
 	protected static String STATEMENT_SELECT_TOPIC_READ_ONLY = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
@@ -300,6 +301,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_CATEGORY_TOPICS         = props.getProperty("STATEMENT_SELECT_CATEGORY_TOPICS");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
+		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
 		STATEMENT_SELECT_TOPIC_READ_ONLY         = props.getProperty("STATEMENT_SELECT_TOPIC_READ_ONLY");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
@@ -543,6 +545,16 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
 		return stmt.executeQuery(conn);
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, topicType);
+		return stmt.executeQuery();
 	}
 
 	/**

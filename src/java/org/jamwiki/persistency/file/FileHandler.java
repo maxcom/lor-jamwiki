@@ -886,6 +886,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception {
+		// FIXME - implement this
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
 		String filename = topicVersionFilename(topicVersionId);
 		File file = getPathFor(virtualWiki, TOPIC_VERSION_DIR, topicName, filename);

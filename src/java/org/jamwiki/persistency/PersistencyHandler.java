@@ -20,7 +20,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
@@ -503,6 +503,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public abstract Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception;
+
+	/**
+	 *
+	 */
 	public abstract TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception;
 
 	/**
@@ -912,7 +917,7 @@ public abstract class PersistencyHandler {
 		}
 		// add / remove categories associated with the topic
 		this.deleteTopicCategories(topic, params);
-		HashMap categories = parserOutput.getCategories();
+		LinkedHashMap categories = parserOutput.getCategories();
 		for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
 			String categoryName = (String)iterator.next();
 			String sortKey = (String)categories.get(categoryName);

@@ -168,6 +168,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupTopicVersion(int topicVersionId) throws Exception;
 
 	/**

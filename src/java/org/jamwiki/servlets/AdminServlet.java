@@ -18,9 +18,6 @@ package org.jamwiki.servlets;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

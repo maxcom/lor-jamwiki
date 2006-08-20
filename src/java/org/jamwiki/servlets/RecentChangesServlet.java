@@ -58,14 +58,8 @@ public class RecentChangesServlet extends JAMWikiServlet {
 			// FIXME - verify it's a number
 			num = new Integer(request.getParameter("num")).intValue();
 		}
-		Collection all = null;
-		try {
-			all = WikiBase.getHandler().getRecentChanges(virtualWiki, num, true);
-		} catch (Exception e) {
-			logger.error(e);
-			throw e;
-		}
-		next.addObject("changes", all);
+		Collection changes = WikiBase.getHandler().getRecentChanges(virtualWiki, num, true);
+		next.addObject("changes", changes);
 		next.addObject("num", new Integer(num));
 		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_RECENT_CHANGES);

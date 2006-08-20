@@ -17,14 +17,14 @@
 package org.jamwiki.parser;
 
 import java.util.Vector;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  *
  */
 public class ParserOutput {
 
-	private HashMap categories = new HashMap();
+	private LinkedHashMap categories = new LinkedHashMap();
 	private Vector links = new Vector();
 	private String content = null;
 
@@ -51,7 +51,7 @@ public class ParserOutput {
 	/**
 	 *
 	 */
-	public HashMap getCategories() {
+	public LinkedHashMap getCategories() {
 		return this.categories;
 	}
 

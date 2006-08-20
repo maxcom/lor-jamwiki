@@ -23,7 +23,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Vector;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.apache.log4j.Logger;
 
 /**
@@ -40,7 +40,7 @@ public class WikiResultSet {
 	private Vector rows = new Vector();
 	private int rowPointer = -1;
 	private int totalRows = -1;
-	private HashMap currentRow = null;
+	private LinkedHashMap currentRow = null;
 
 	/**
 	 * Constructor used primarily for building new result sets.  Use this
@@ -61,7 +61,7 @@ public class WikiResultSet {
 		int size = rsmd.getColumnCount();
 		int type;
 		while (rs.next()) {
-			HashMap column = new HashMap();
+			LinkedHashMap column = new LinkedHashMap();
 			for (int i=1; i <= size; i++) {
 				String columnName = rsmd.getColumnName(i);
 				type = rsmd.getColumnType(i);
@@ -391,7 +391,7 @@ public class WikiResultSet {
 		if (this.rowPointer >= this.totalRows) {
 			throw new SQLException("Attempt to access beyond last row of result set");
 		}
-		this.currentRow = (HashMap)this.rows.elementAt(this.rowPointer);
+		this.currentRow = (LinkedHashMap)this.rows.elementAt(this.rowPointer);
 		if (columnName == null || !this.currentRow.containsKey(columnName)) {
 			throw new SQLException("Invalid column name " + columnName);
 		}

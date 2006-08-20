@@ -58,14 +58,8 @@ public class ContributionsServlet extends JAMWikiServlet {
 			// FIXME - verify it's a number
 			num = new Integer(request.getParameter("num")).intValue();
 		}
-		Collection all = null;
-		try {
-			all = WikiBase.getHandler().getUserContributions(virtualWiki, userString, num, true);
-		} catch (Exception e) {
-			logger.error(e);
-			throw e;
-		}
-		next.addObject("contributions", all);
+		Collection contributions = WikiBase.getHandler().getUserContributions(virtualWiki, userString, num, true);
+		next.addObject("contributions", contributions);
 		next.addObject("num", new Integer(num));
 		next.addObject("contributor", userString);
 		pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));

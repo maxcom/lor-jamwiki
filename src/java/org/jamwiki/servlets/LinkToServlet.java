@@ -52,23 +52,17 @@ public class LinkToServlet extends JAMWikiServlet {
 	 */
 	private void linksTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		try {
-			String topicName = JAMWikiServlet.getTopicFromRequest(request);
-			if (!StringUtils.hasText(topicName)) {
-				throw new WikiException(new WikiMessage("common.exception.notopic"));
-			}
-			WikiMessage pageTitle = new WikiMessage("linkto.title", topicName);
-			pageInfo.setPageTitle(pageTitle);
-			// grab search engine instance and find
-			Collection results = LuceneSearchEngine.findLinkedTo(virtualWiki, topicName);
-			next.addObject("results", results);
-			next.addObject("link", topicName);
-			pageInfo.setAction(WikiPageInfo.ACTION_LINK_TO);
-			pageInfo.setTopicName(topicName);
-			return;
-		} catch (Exception e) {
-			logger.error(e);
-			throw e;
+		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		if (!StringUtils.hasText(topicName)) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
+		WikiMessage pageTitle = new WikiMessage("linkto.title", topicName);
+		pageInfo.setPageTitle(pageTitle);
+		// grab search engine instance and find
+		Collection results = LuceneSearchEngine.findLinkedTo(virtualWiki, topicName);
+		next.addObject("results", results);
+		next.addObject("link", topicName);
+		pageInfo.setAction(WikiPageInfo.ACTION_LINK_TO);
+		pageInfo.setTopicName(topicName);
 	}
 }
