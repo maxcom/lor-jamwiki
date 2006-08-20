@@ -2,7 +2,7 @@
 * [[Special:RecentChanges|Recent Changes]]
 * [[Special:Search|Search]]
 ----
-* [[Special:AllTopics|All Topics]]
+* [[Special:Allpages|All Pages]]
 * [[Special:Upload|Upload File]]
 * [[AdminOnlyTopics]]
 ----

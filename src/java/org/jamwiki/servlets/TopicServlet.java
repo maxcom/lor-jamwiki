@@ -46,7 +46,8 @@ public class TopicServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			if (isTopic(request, "Special:AllTopics")) {
+			// FIXME - remove Special:AllTopics
+			if (isTopic(request, "Special:Allpages") || isTopic(request, "Special:AllTopics")) {
 				allTopics(request, next, pageInfo);
 			} else {
 				viewTopic(request, next, pageInfo);
@@ -63,11 +64,11 @@ public class TopicServlet extends JAMWikiServlet {
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection all = WikiBase.getHandler().getAllTopicNames(virtualWiki);
-		next.addObject("all", all);
-		next.addObject("topicCount", new Integer(all.size()));
+		Collection topics = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE);
+		next.addObject("topics", topics);
+		next.addObject("topicCount", new Integer(topics.size()));
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_ALL_TOPICS);
+		pageInfo.setAction(WikiPageInfo.ACTION_ALL_PAGES);
 		pageInfo.setSpecial(true);
 	}
 

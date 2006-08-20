@@ -36,7 +36,7 @@ public class WikiPageInfo {
 	public static final int ACTION_ADMIN_CONVERT = 2;
 	public static final int ACTION_ADMIN_DELETE = 3;
 	public static final int ACTION_ADMIN_TRANSLATION = 4;
-	public static final int ACTION_ALL_TOPICS = 5;
+	public static final int ACTION_ALL_PAGES = 5;
 	public static final int ACTION_CATEGORIES = 6;
 	public static final int ACTION_CONTRIBUTIONS = 7;
 	public static final int ACTION_DIFF = 8;
@@ -94,8 +94,8 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	public boolean getActionAllTopics() {
-		return (this.action == ACTION_ALL_TOPICS);
+	public boolean getActionAllPages() {
+		return (this.action == ACTION_ALL_PAGES);
 	}
 
 	/**

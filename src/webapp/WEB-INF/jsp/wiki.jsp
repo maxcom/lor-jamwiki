@@ -70,8 +70,8 @@
 	<c:when test="${pageInfo.actionAdminTranslation}">
 		<jsp:include page="admin-translation.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.actionAllTopics}">
-		<jsp:include page="all-topics.jsp" flush="true" />
+	<c:when test="${pageInfo.actionAllPages}">
+		<jsp:include page="all-pages.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionCategories}">
 		<jsp:include page="categories.jsp" flush="true" />

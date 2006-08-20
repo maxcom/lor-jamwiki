@@ -7,6 +7,8 @@
 			<props>
 				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:Admin">Admin</prop>
+				<prop key="/**/Special:Allpages">Topic</prop>
+				<!-- remove this after a few more versions -->
 				<prop key="/**/Special:AllTopics">Topic</prop>
 				<prop key="/**/Special:Categories">Category</prop>
 				<prop key="/**/Special:Contributions">Contributions</prop>
