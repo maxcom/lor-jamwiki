@@ -25,10 +25,13 @@ import org.springframework.util.StringUtils;
  */
 public class WikiVersion {
 
+	private static Logger logger = Logger.getLogger(WikiVersion.class);
 	private int major = 0;
 	private int minor = 0;
 	private int patch = 0;
-	private static Logger logger = Logger.getLogger(WikiVersion.class);
+
+	/** Current software version.  If this differs from the version in the properties an upgrade is performed. */
+	public final static String CURRENT_WIKI_VERSION = "0.3.0";
 
 	/**
 	 *

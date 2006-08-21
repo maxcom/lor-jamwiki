@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -213,13 +212,6 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String formatDateTime(Date date) {
-		return DateFormat.getDateTimeInstance().format(date);
-	}
-
-	/**
-	 *
-	 */
 	public static File getClassLoaderFile(String filename) throws Exception {
 		Method method = null;
 		ClassLoader loader = null;
@@ -299,7 +291,7 @@ public class Utilities {
 	public static boolean isUpgrade() {
 		if (Utilities.isFirstUse()) return false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		WikiVersion currentVersion = new WikiVersion(WikiBase.WIKI_VERSION);
+		WikiVersion currentVersion = new WikiVersion(WikiVersion.CURRENT_WIKI_VERSION);
 		return (oldVersion.before(currentVersion));
 	}
 

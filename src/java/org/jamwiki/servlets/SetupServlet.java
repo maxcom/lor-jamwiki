@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
@@ -109,7 +110,7 @@ public class SetupServlet extends JAMWikiServlet {
 			return false;
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
-			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
+			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			WikiBase.reset(request.getLocale(), user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			Environment.saveProperties();

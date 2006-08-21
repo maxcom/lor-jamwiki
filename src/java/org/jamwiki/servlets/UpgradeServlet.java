@@ -89,7 +89,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (oldVersion.before(0, 3, 0)) {
 			messages = upgrade030(request, messages);
 		}
-		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiBase.WIKI_VERSION);
+		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 		Environment.saveProperties();
 		next.addObject("messages", messages);
 		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);

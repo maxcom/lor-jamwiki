@@ -31,15 +31,19 @@ import org.jamwiki.users.Usergroup;
 import org.springframework.util.StringUtils;
 
 /**
- * This class represents the core of JAMWiki. It has some central methods, like parsing the URI, and keeps an
- * instance of the <code>Environment</code> class.
+ * This class should be used as a singleton instance for retrieving core JAMWiki
+ * elements, such as the current persitency handler (database, file, etc), current
+ * software version, etc.
  */
 public class WikiBase {
 
-	// FIXME - remove this
-	public final static String WIKI_VERSION = "0.3.0";
-	/** An instance to myself. Singleton pattern. */
-	private static WikiBase instance;
+	/** Standard logger. */
+	private static Logger logger = Logger.getLogger(WikiBase.class);
+	/** The singleton instance of this class. */
+	private static WikiBase instance = null;
+	/** The handler that looks after read/write operations for a persistence type. */
+	private static PersistencyHandler handler = null;
+
 	/** The topics are stored in a flat file */
 	public static final int FILE = 0;
 	/** The topics are stored in a database */
@@ -48,10 +52,6 @@ public class WikiBase {
 	public static final int LDAP = 2;
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
-	/** Log output */
-	private static final Logger logger = Logger.getLogger(WikiBase.class);
-	/** The handler that looks after read/write operations for a persitence type */
-	private static PersistencyHandler handler;
 	public static final String NAMESPACE_CATEGORY = "Category:";
 	public static final String NAMESPACE_COMMENTS = "Comments:";
 	public static final String NAMESPACE_IMAGE = "Image:";
@@ -77,8 +77,7 @@ public class WikiBase {
 	/**
 	 * Creates an instance of <code>WikiBase</code> with a specified persistency sub-system.
 	 *
-	 * @param persistencyType
-	 * @throws Exception If the handler cannot be instanciated.
+	 * @throws Exception If the handler cannot be instantiated.
 	 */
 	private WikiBase() throws Exception {
 		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -90,12 +89,14 @@ public class WikiBase {
 	}
 
 	/**
-	 * TODO: DOCUMENT ME!
+	 * Utility method for determining if a topic exists.  This method will
+	 * return true if a method is a special topic (such as the recent changes
+	 * page) or if it is an existing topic.
 	 *
-	 * @param virtualWiki TODO: DOCUMENT ME!
-	 * @param topicName   TODO: DOCUMENT ME!
-	 * @return TODO: DOCUMENT ME!
-	 * @throws Exception TODO: DOCUMENT ME!
+	 * @param virtualWiki The virtual wiki for the topic being checked.
+	 * @param topicName The name of the topic that is being checked.
+	 * @return Returns true if the topic exists or is a special system topic.
+	 * @throws Exception Thrown if any error occurs during lookup.
 	 */
 	public static boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
@@ -109,9 +110,9 @@ public class WikiBase {
 	}
 
 	/**
-	 * return the current handler instance
+	 * Get an instance of the current persistency handler.
 	 *
-	 * @return the current handler instance
+	 * @return The current handler instance.
 	 */
 	public static PersistencyHandler getHandler() {
 		if (!WikiBase.handler.isInitialized()) {
@@ -122,7 +123,9 @@ public class WikiBase {
 	}
 
 	/**
+	 * Return an instance of the current persistency type (usually file or database).
 	 *
+	 * @return The current persistency type.
 	 */
 	public static int getPersistenceType() {
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
@@ -133,7 +136,9 @@ public class WikiBase {
 	}
 
 	/**
-	 * Get an instance of the user group
+	 * Return an instance of the current user group type (usually LDAP or database).
+	 *
+	 * @return The current user group type.
 	 */
 	public static Usergroup getUsergroupInstance() throws Exception {
 		switch (Usergroup.getUsergroupType()) {
@@ -147,9 +152,14 @@ public class WikiBase {
 	}
 
 	/**
-	 * TODO: DOCUMENT ME!
+	 * Reset the WikiBase object, re-initializing persistency type and
+	 * other values.
 	 *
-	 * @throws Exception TODO: DOCUMENT ME!
+	 * @param locale The locale to be used if any system pages need to be set up
+	 *  as a part of the initialization process.
+	 * @param user A sysadmin user to be used in case any system pages need to
+	 *  be created as a part of the initialization process.
+	 * @throws Exception Thrown if an error occurs during re-initialization.
 	 */
 	public static void reset(Locale locale, WikiUser user) throws Exception {
 		WikiMail.init();
@@ -162,7 +172,9 @@ public class WikiBase {
 	}
 
 	/**
-	 *
+	 * Set the current persistency type.  This method is not meant for general
+	 * use - WikiBase.reset() should be used in most cases when changing persistency
+	 * type.
 	 */
 	public static void setHandler(PersistencyHandler handler) {
 		WikiBase.handler = handler;

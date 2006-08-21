@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.text.DateFormat;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,7 +81,8 @@ public class HistoryServlet extends JAMWikiServlet {
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		topic.setTopicContent(topicVersion.getVersionContent());
-		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + Utilities.formatDateTime(topicVersion.getEditDate()));
+		String versionDate = DateFormat.getDateTimeInstance().format(topicVersion.getEditDate());
+		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + versionDate);
 		viewTopic(request, next, pageInfo, pageTitle, topic, false, false);
 	}
 }
