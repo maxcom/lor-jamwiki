@@ -98,13 +98,6 @@ public class VQWikiParser extends AbstractParser {
 					contents.append(line);
 				} else {
 					external = false;
-					String converted = LexExtender.getInstance().lexify(
-					tag,
-					externalContents.toString()
-					);
-					if (converted != null) {
-						contents.append(converted);
-					}
 					contents.append(line);
 					logger.debug("External ends");
 				}
