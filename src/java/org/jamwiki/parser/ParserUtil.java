@@ -200,7 +200,7 @@ public class ParserUtil {
 					// FIXME - mediawiki specific.
 					link = "[[" + topic + "|" + text + "]]";
 				} else {
-					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null, true);
+					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, null, null, text, null, true);
 				}
 				signature += link;
 			}

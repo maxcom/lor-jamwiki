@@ -93,7 +93,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Environment.saveProperties();
 		next.addObject("messages", messages);
 		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
-		String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName(), null, true);
+		String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), null, null, virtualWiki.getDefaultTopicName(), null, true);
 		WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
 		// do not escape the HTML link
 		wm.setParamsWithoutEscaping(new String[]{htmlLink});

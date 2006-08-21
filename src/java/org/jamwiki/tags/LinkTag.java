@@ -54,7 +54,7 @@ public class LinkTag extends BodyTagSupport {
 		try {
 			if (StringUtils.hasText(tagText)) {
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, tagValue, tagText, this.style, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, tagValue, null, null, tagText, this.style, true);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
 				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, tagValue);

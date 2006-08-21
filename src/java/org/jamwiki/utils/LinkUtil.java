@@ -164,27 +164,6 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text, String style, boolean escapeHtml) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text, style, escapeHtml);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, null);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, style, true);
-	}
-
-	/**
-	 *
-	 */
 	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
 		if (!StringUtils.hasText(text)) text = topic;
