@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -941,21 +942,26 @@ public class FileHandler extends PersistencyHandler {
 				if (fis != null) fis.close();
 			}
 		}
-		Collection results = new Vector();
+		TreeMap sortedResults = new TreeMap();
 		for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
 			String topicName = (String)categoryIterator.next();
 			Topic topic = lookupTopic(virtualWiki, topicName);
 			if (topic.getTopicType() != topicType) {
 				continue;
 			}
+			String sortKey = (String)categoryHash.get(topicName);
 			Category category = new Category();
 			category.setVirtualWiki(virtualWiki);
 			category.setName(categoryName);
-			category.setSortKey((String)categoryHash.get(topicName));
+			category.setSortKey(sortKey);
 			category.setChildTopicName(topicName);
-			results.add(category);
+			String key = topicName;
+			if (StringUtils.hasText(sortKey)) {
+				key = sortKey;
+			}
+			sortedResults.put(key, category);
 		}
-		return results;
+		return sortedResults.values();
 	}
 
 	/**

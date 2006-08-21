@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -196,10 +197,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 		next.addObject("numsubtopics", new Integer(subtopics.size()));
 		Collection subcategoryNames = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
 		LinkedHashMap subcategories = new LinkedHashMap();
+		Category category = null;
 		for (Iterator iterator = subcategoryNames.iterator(); iterator.hasNext();) {
-			String key = (String)iterator.next();
-			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
-			subcategories.put(key, value);
+			category = (Category)iterator.next();
+			String value = category.getName().substring(WikiBase.NAMESPACE_CATEGORY.length());
+			subcategories.put(category.getName(), value);
 		}
 		next.addObject("subcategories", subcategories);
 		next.addObject("numsubcategories", new Integer(subcategories.size()));
