@@ -28,6 +28,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -68,7 +69,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	protected abstract void addCategory(int childTopicId, String categoryName, String sortKey, Object[] params) throws Exception;
+	protected abstract void addCategory(Category category, Object[] params) throws Exception;
 
 	/**
 	 *
@@ -238,7 +239,22 @@ public abstract class PersistencyHandler {
 						messages.add(msg + ": " + e.getMessage());
 					}
 				}
+				// categories
+				Collection categories = fromHandler.getCategories(virtualWiki.getName());
+				for (Iterator categoryIterator = categories.iterator(); categoryIterator.hasNext();) {
+					Category category = (Category)categoryIterator.next();
+					try {
+						toHandler.addCategory(category, params);
+						messages.add("Added category " + virtualWiki.getName() + " / " + category.getName());
+					} catch (Exception e) {
+						String msg = "Unable to convert category: " + virtualWiki.getName() + " / " + category.getName();
+						logger.error(msg, e);
+						messages.add(msg + ": " + e.getMessage());
+					}
+				}
 			}
+			// FIXME - since search index info is in the same directory it gets deleted
+			LuceneSearchEngine.refreshIndex();
 			return messages;
 		} catch (Exception e) {
 			toHandler.handleErrors(params);
@@ -375,6 +391,11 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract Collection getAllWikiUserLogins() throws Exception;
+
+	/**
+	 *
+	 */
+	protected abstract Collection getCategories(String virtualWiki) throws Exception;
 
 	/**
 	 *
@@ -920,8 +941,12 @@ public abstract class PersistencyHandler {
 		LinkedHashMap categories = parserOutput.getCategories();
 		for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
 			String categoryName = (String)iterator.next();
-			String sortKey = (String)categories.get(categoryName);
-			this.addCategory(topic.getTopicId(), categoryName, sortKey, params);
+			Category category = new Category();
+			category.setName(categoryName);
+			category.setSortKey((String)categories.get(categoryName));
+			category.setVirtualWiki(topic.getVirtualWiki());
+			category.setChildTopicName(topic.getName());
+			this.addCategory(category, params);
 		}
 		RecentChange change = new RecentChange();
 		change.setTopicId(topic.getTopicId());

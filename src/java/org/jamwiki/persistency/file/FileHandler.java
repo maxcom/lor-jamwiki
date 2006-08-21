@@ -33,6 +33,7 @@ import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -56,6 +57,8 @@ public class FileHandler extends PersistencyHandler {
 
 	private static final Logger logger = Logger.getLogger(FileHandler.class);
 
+	private static final String CATEGORIES_DIR = "categories";
+	private static final String CATEGORY_TOPICS_DIR = "topics";
 	private static final String CONTRIBUTIONS_DIR = "contributions";
 	private static final String DELETE_DIR = "deletes";
 	private final static String EXT = ".xml";
@@ -162,9 +165,8 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addCategory(int childTopicId, String categoryName, String sortKey, Object[] params) throws Exception {
-		// FIXME - implement this
-		throw new UnsupportedOperationException();
+	protected void addCategory(Category category, Object[] params) throws Exception {
+		this.saveCategory(category);
 	}
 
 	/**
@@ -231,6 +233,20 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected static String categoryFilename(String categoryName) {
+		return categoryName;
+	}
+
+	/**
+	 *
+	 */
+	protected static String categoryTopicFilename(String categoryTopicName) {
+		return categoryTopicName;
+	}
+
+	/**
+	 *
+	 */
 	public void deleteReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
 		super.deleteReadOnlyTopic(virtualWiki, topicName);
 		String filename = readOnlyFilename(topicName);
@@ -274,8 +290,47 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	protected void deleteTopicCategories(Topic topic, Object params[]) throws Exception {
-		// FIXME - implement this
-		throw new UnsupportedOperationException();
+		// get categories for topic
+		String filename = categoryTopicFilename(topic.getName());
+		File categoryTopicFile = getPathFor(topic.getVirtualWiki(), CATEGORIES_DIR, CATEGORY_TOPICS_DIR, filename);
+		Properties categoryTopicHash = new Properties();
+		if (categoryTopicFile.exists()) {
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(categoryTopicFile);
+				categoryTopicHash.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
+		}
+		// remove topic from each category
+		for (Iterator categoryTopicIterator = categoryTopicHash.keySet().iterator(); categoryTopicIterator.hasNext();) {
+			String categoryName = (String)categoryTopicIterator.next();
+			String categoryFilename = categoryFilename(categoryName);
+			File categoryFile = getPathFor(topic.getVirtualWiki(), CATEGORIES_DIR, categoryFilename);
+			Properties categoryHash = new Properties();
+			if (categoryFile.exists()) {
+				FileInputStream fis = null;
+				try {
+					fis = new FileInputStream(categoryFile);
+					categoryHash.load(fis);
+				} finally {
+					if (fis != null) fis.close();
+				}
+			}
+			categoryHash.remove(topic.getName());
+			FileOutputStream fos = null;
+			try {
+				fos = new FileOutputStream(categoryFile);
+				categoryHash.store(fos, null);
+			} finally {
+				if (fos != null) fos.close();
+			}
+		}
+		// delete the topic category file
+		if (categoryTopicFile.exists()) {
+			FileUtils.forceDelete(categoryTopicFile);
+		}
 	}
 
 	/**
@@ -376,6 +431,35 @@ public class FileHandler extends PersistencyHandler {
 			all.add(login);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	protected Collection getCategories(String virtualWiki) throws Exception {
+		Collection results = new Vector();
+		File[] files = retrieveCategoryFiles(virtualWiki);
+		if (files == null) return results;
+		for (int i = 0; i < files.length; i++) {
+			Properties categoryHash = new Properties();
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(files[i]);
+				categoryHash.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
+			for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
+				String childTopicName = (String)categoryIterator.next();
+				Category category = new Category();
+				category.setName(Utilities.decodeURL(files[i].getName()));
+				category.setChildTopicName(childTopicName);
+				category.setSortKey((String)categoryHash.get(childTopicName));
+				category.setVirtualWiki(virtualWiki);
+				results.add(category);
+			}
+		}
+		return results;
 	}
 
 	/**
@@ -845,8 +929,27 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
-		// FIXME - implement this
-		throw new UnsupportedOperationException();
+		String filename = categoryFilename(categoryName);
+		File categoryFile = getPathFor(virtualWiki, CATEGORIES_DIR, filename);
+		Properties categoryHash = new Properties();
+		if (categoryFile.exists()) {
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(categoryFile);
+				categoryHash.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
+		}
+		Collection results = new Vector();
+		for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
+			String topicName = (String)categoryIterator.next();
+			Topic topic = lookupTopic(virtualWiki, topicName);
+			if (topic.getTopicType() == topicType) {
+				results.add(topicName);
+			}
+		}
+		return results;
 	}
 
 	/**
@@ -887,8 +990,17 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception {
-		// FIXME - implement this
-		throw new UnsupportedOperationException();
+		// FIXME - this parses every single topic.  hugely inefficient
+		Collection topicNames = this.getAllTopicNames(virtualWiki);
+		Collection results = new Vector();
+		for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
+			String topicName = (String)topicIterator.next();
+			Topic topic = lookupTopic(virtualWiki, topicName);
+			if (topic.getTopicType() == topicType) {
+				results.add(topicName);
+			}
+		}
+		return results;
 	}
 
 	/**
@@ -1102,6 +1214,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	private File[] retrieveCategoryFiles(String virtualWiki) throws Exception {
+		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.CATEGORIES_DIR);
+		File[] files = file.listFiles();
+		return files;
+	}
+
+	/**
+	 *
+	 */
 	private File[] retrieveReadOnlyFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.READ_ONLY_DIR);
 		File[] files = file.listFiles();
@@ -1204,10 +1325,64 @@ public class FileHandler extends PersistencyHandler {
 			WIKI_USER_ID_HASH = new Properties();
 			File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
 			if (userIdHashFile.exists()) {
-				WIKI_USER_ID_HASH.load(new FileInputStream(userIdHashFile));
+				FileInputStream fis = null;
+				try {
+					fis = new FileInputStream(userIdHashFile);
+					WIKI_USER_ID_HASH.load(fis);
+				} finally {
+					if (fis != null) fis.close();
+				}
 			}
 		}
 		return WIKI_USER_ID_HASH.getProperty(new Integer(userId).toString());
+	}
+
+	/**
+	 *
+	 */
+	protected void saveCategory(Category category) throws Exception {
+		// store one copy in the categories directory
+		String filename = categoryFilename(category.getName());
+		File categoryFile = getPathFor(category.getVirtualWiki(), CATEGORIES_DIR, filename);
+		Properties categoryHash = new Properties();
+		if (categoryFile.exists()) {
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(categoryFile);
+				categoryHash.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
+		}
+		String sortKey = (category.getSortKey() == null) ? "" : category.getSortKey();
+		categoryHash.setProperty(category.getChildTopicName(), sortKey);
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(categoryFile);
+			categoryHash.store(fos, null);
+		} finally {
+			if (fos != null) fos.close();
+		}
+		// store a second copy in the categories/topics directory
+		filename = categoryTopicFilename(category.getChildTopicName());
+		File categoryTopicFile = getPathFor(category.getVirtualWiki(), CATEGORIES_DIR, CATEGORY_TOPICS_DIR, filename);
+		Properties categoryTopicHash = new Properties();
+		if (categoryTopicFile.exists()) {
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(categoryTopicFile);
+				categoryTopicHash.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
+		}
+		categoryTopicHash.setProperty(category.getName(), "");
+		try {
+			fos = new FileOutputStream(categoryTopicFile);
+			categoryTopicHash.store(fos, null);
+		} finally {
+			if (fos != null) fos.close();
+		}
 	}
 
 	/**
@@ -1499,12 +1674,24 @@ public class FileHandler extends PersistencyHandler {
 		FileUtils.writeStringToFile(userFile, content.toString(), "UTF-8");
 		File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
 		if (WIKI_USER_ID_HASH == null && userIdHashFile.exists()) {
-			WIKI_USER_ID_HASH.load(new FileInputStream(userIdHashFile));
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(userIdHashFile);
+				WIKI_USER_ID_HASH.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
 		} else if (WIKI_USER_ID_HASH == null) {
 			WIKI_USER_ID_HASH = new Properties();
 		}
 		WIKI_USER_ID_HASH.setProperty(new Integer(user.getUserId()).toString(), user.getLogin());
-		WIKI_USER_ID_HASH.store(new FileOutputStream(userIdHashFile), null);
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(userIdHashFile);
+			WIKI_USER_ID_HASH.store(fos, null);
+		} finally {
+			if (fos != null) fos.close();
+		}
 	}
 
 	/**

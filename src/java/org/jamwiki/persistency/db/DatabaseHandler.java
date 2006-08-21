@@ -26,6 +26,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.persistency.PersistencyHandler;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -67,9 +68,11 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addCategory(int childTopicId, String categoryName, String sortKey, Object[] params) throws Exception {
+	protected void addCategory(Category category, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
-		DatabaseHandler.queryHandler.insertCategory(childTopicId, categoryName, sortKey, conn);
+		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName());
+		int childTopicId = childTopic.getTopicId();
+		DatabaseHandler.queryHandler.insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
 	}
 
 	/**
@@ -249,6 +252,24 @@ public class DatabaseHandler extends PersistencyHandler {
 			all.add(rs.getString("login"));
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	protected Collection getCategories(String virtualWiki) throws Exception {
+		Collection results = new Vector();
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getCategories(virtualWikiId);
+		while (rs.next()) {
+			Category category = new Category();
+			category.setName(rs.getString("category_name"));
+			category.setChildTopicName(rs.getString("topic_name"));
+			category.setVirtualWiki(virtualWiki);
+			category.setSortKey(rs.getString("sort_key"));
+			results.add(category);
+		}
+		return results;
 	}
 
 	/**

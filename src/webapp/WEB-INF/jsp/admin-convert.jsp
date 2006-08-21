@@ -34,9 +34,10 @@ function confirmSubmit() {
 
 <form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Convert" />">
 
+<c:if test="${!empty errorMessage}"><p align="center" style="color:red;size=110%;"><f:message key="${errorMessage.key}" /></p></c:if>
+<c:if test="${!empty message}"><p align="center" style="color:green;size=110%;"><f:message key="${message.key}" /></p></c:if>
+
 <table border="0" class="contents">
-<c:if test="${!empty errorMessage}"><tr><td colspan="2" align="center"><div style="color:red;size=110%;"><c:out value="${errorMessage}" /></div></td></tr></c:if>
-<c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><c:out value="${message}" /></div></td></tr></c:if>
 <tr>
 	<td class="normal"><f:message key="convert.tofile" /></td>
 	<td class="normal"><input type="submit" name="tofile" onclick="return confirmSubmit()" /></td>
@@ -50,10 +51,9 @@ function confirmSubmit() {
 </form>
 
 <c:if test="${!empty messages}">
-<br />
-<table>
+<ul>
 <c:forEach items="${messages}" var="message">
-<tr><td><c:out value="${message}" /></td></tr>
+<li><c:out value="${message}" /></li>
 </c:forEach>
-</table>
+</ul>
 </c:if>

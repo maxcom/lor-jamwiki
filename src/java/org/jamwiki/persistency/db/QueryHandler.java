@@ -78,6 +78,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getCategories(int virtualWikiId) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet getReadOnlyTopics(int virtualWikiId) throws Exception;
 
 	/**
