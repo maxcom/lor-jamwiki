@@ -577,7 +577,12 @@ public class DatabaseHandler extends PersistencyHandler {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupCategoryTopics(virtualWikiId, categoryName, topicType);
 		while (rs.next()) {
-			results.add(rs.getString("topic_name"));
+			Category category = new Category();
+			category.setName(categoryName);
+			category.setVirtualWiki(virtualWiki);
+			category.setChildTopicName(rs.getString("topic_name"));
+			category.setSortKey(rs.getString("sort_key"));
+			results.add(category);
 		}
 		return results;
 	}

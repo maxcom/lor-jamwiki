@@ -309,7 +309,7 @@ import org.springframework.util.StringUtils;
             return "";
         }
         if (topic.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
-            String sortKey = ParserUtil.extractLinkText(raw);
+            String sortKey = ParserUtil.extractLinkText(content);
             this.parserOutput.addCategory(topic, sortKey);
             return "";
         }

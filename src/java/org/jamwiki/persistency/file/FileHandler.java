@@ -945,9 +945,15 @@ public class FileHandler extends PersistencyHandler {
 		for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
 			String topicName = (String)categoryIterator.next();
 			Topic topic = lookupTopic(virtualWiki, topicName);
-			if (topic.getTopicType() == topicType) {
-				results.add(topicName);
+			if (topic.getTopicType() != topicType) {
+				continue;
 			}
+			Category category = new Category();
+			category.setVirtualWiki(virtualWiki);
+			category.setName(categoryName);
+			category.setSortKey((String)categoryHash.get(topicName));
+			category.setChildTopicName(topicName);
+			results.add(category);
 		}
 		return results;
 	}
