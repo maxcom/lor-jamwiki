@@ -66,39 +66,39 @@ public class WikiResultSet {
 				String columnName = rsmd.getColumnName(i);
 				type = rsmd.getColumnType(i);
 				switch (type) {
-					case java.sql.Types.VARCHAR:
-					case java.sql.Types.CLOB:
-						String varchar = rs.getString(columnName);
-						column.put(columnName.toLowerCase(), varchar);
-						break;
-					case java.sql.Types.INTEGER:
-					case java.sql.Types.NUMERIC:
-					case java.sql.Types.SMALLINT:
-					case java.sql.Types.TINYINT:
-						int integer = rs.getInt(columnName);
-						column.put(columnName.toLowerCase(), new Integer(integer));
-						break;
-					case java.sql.Types.BIGINT:
-						long longint = rs.getLong(columnName);
-						column.put(columnName.toLowerCase(), new Long(longint));
-						break;
-					case java.sql.Types.DATE:
-						Date date = rs.getDate(columnName);
-						column.put(columnName.toLowerCase(), date);
-						break;
-					case java.sql.Types.TIMESTAMP:
-						Timestamp timestamp = rs.getTimestamp(columnName);
-						column.put(columnName.toLowerCase(), timestamp);
-						break;
-					case java.sql.Types.CHAR:
-						String value = rs.getString(columnName);
-						char character = '0';
-						if (value != null && value.length() > 0) character = value.charAt(0);
-						column.put(columnName.toLowerCase(), new Character(character));
-						break;
-					default:
-						Object object = rs.getObject(columnName);
-						column.put(columnName.toLowerCase(), object);
+				case java.sql.Types.VARCHAR:
+				case java.sql.Types.CLOB:
+					String varchar = rs.getString(columnName);
+					column.put(columnName.toLowerCase(), varchar);
+					break;
+				case java.sql.Types.INTEGER:
+				case java.sql.Types.NUMERIC:
+				case java.sql.Types.SMALLINT:
+				case java.sql.Types.TINYINT:
+					int integer = rs.getInt(columnName);
+					column.put(columnName.toLowerCase(), new Integer(integer));
+					break;
+				case java.sql.Types.BIGINT:
+					long longint = rs.getLong(columnName);
+					column.put(columnName.toLowerCase(), new Long(longint));
+					break;
+				case java.sql.Types.DATE:
+					Date date = rs.getDate(columnName);
+					column.put(columnName.toLowerCase(), date);
+					break;
+				case java.sql.Types.TIMESTAMP:
+					Timestamp timestamp = rs.getTimestamp(columnName);
+					column.put(columnName.toLowerCase(), timestamp);
+					break;
+				case java.sql.Types.CHAR:
+					String value = rs.getString(columnName);
+					char character = '0';
+					if (value != null && value.length() > 0) character = value.charAt(0);
+					column.put(columnName.toLowerCase(), new Character(character));
+					break;
+				default:
+					Object object = rs.getObject(columnName);
+					column.put(columnName.toLowerCase(), object);
 				}
 			}
 			this.rows.add(column);

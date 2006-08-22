@@ -142,12 +142,12 @@ public class WikiBase {
 	 */
 	public static Usergroup getUsergroupInstance() throws Exception {
 		switch (Usergroup.getUsergroupType()) {
-			case LDAP:
-				return LdapUsergroup.getInstance();
+		case LDAP:
+			return LdapUsergroup.getInstance();
 			//TODO case DATABASE:
 			//  return DatabaseUsergroup.getInstance();
-			default:
-				return NoUsergroup.getInstance();
+		default:
+			return NoUsergroup.getInstance();
 		}
 	}
 
