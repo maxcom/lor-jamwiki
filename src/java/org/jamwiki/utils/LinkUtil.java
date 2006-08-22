@@ -35,13 +35,6 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildEditLinkHtml(String context, String virtualWiki, String topic) throws Exception {
-		return buildEditLinkHtml(context, virtualWiki, topic, null, -1, null);
-	}
-
-	/**
-	 *
-	 */
 	public static String buildEditLinkHtml(String context, String virtualWiki, String topic, String query, int section, String text) throws Exception {
 		String url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, section);
 		if (!StringUtils.hasText(text)) {
@@ -67,13 +60,6 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildEditLinkUrl(String context, String virtualWiki, String topic) throws Exception {
-		return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, null, -1);
-	}
-
-	/**
-	 *
-	 */
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
 		if (StringUtils.hasText(query)) {
 			if (!query.startsWith("?")) query = "?" + query;
@@ -85,13 +71,6 @@ public class LinkUtil {
 			query += "&amp;section=" + section;
 		}
 		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, "Special:Edit", null, query);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink) throws Exception {
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, frame, thumb, align, caption, maxDimension, suppressLink, null, true);
 	}
 
 	/**

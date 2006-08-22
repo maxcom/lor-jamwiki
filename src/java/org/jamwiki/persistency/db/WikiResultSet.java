@@ -16,7 +16,6 @@
  */
 package org.jamwiki.persistency.db;
 
-import java.io.Reader;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Date;
