@@ -1636,16 +1636,17 @@ public class FileHandler extends PersistencyHandler {
 		File userFile = FileHandler.getPathFor(null, FileHandler.WIKI_USER_DIR, filename);
 		FileUtils.writeStringToFile(userFile, content.toString(), "UTF-8");
 		File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
-		if (WIKI_USER_ID_HASH == null && userIdHashFile.exists()) {
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(userIdHashFile);
-				WIKI_USER_ID_HASH.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		} else if (WIKI_USER_ID_HASH == null) {
+		if (WIKI_USER_ID_HASH == null) {
 			WIKI_USER_ID_HASH = new Properties();
+			if (userIdHashFile.exists()) {
+				FileInputStream fis = null;
+				try {
+					fis = new FileInputStream(userIdHashFile);
+					WIKI_USER_ID_HASH.load(fis);
+				} finally {
+					if (fis != null) fis.close();
+				}
+			}
 		}
 		WIKI_USER_ID_HASH.setProperty(new Integer(user.getUserId()).toString(), user.getLogin());
 		FileOutputStream fos = null;
