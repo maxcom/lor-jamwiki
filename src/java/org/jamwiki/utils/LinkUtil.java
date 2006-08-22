@@ -90,21 +90,14 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName) throws Exception {
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, false, false, null, null, -1, true, true);
-	}
-
-	/**
-	 *
-	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink) throws Exception {
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, frame, thumb, align, caption, maxDimension, suppressLink, true);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topicName, frame, thumb, align, caption, maxDimension, suppressLink, null, true);
 	}
 
 	/**
 	 *
 	 */
-	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, boolean escapeHtml) throws Exception {
+	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
 		WikiImage wikiImage = ImageUtil.initializeImage(virtualWiki, topicName, maxDimension);
 		if (caption == null) caption = "";
 		String html = "";
@@ -127,7 +120,8 @@ public class LinkUtil {
 			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px\">";
 		}
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
-		html += "<img class=\"wikiimg\" src=\"";
+		if (!StringUtils.hasText(style)) style = "wikiimg";
+		html += "<img class=\"" + style + "\" src=\"";
 		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
 		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
 		String url = wikiImage.getUrl();

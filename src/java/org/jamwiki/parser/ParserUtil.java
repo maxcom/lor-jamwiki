@@ -407,7 +407,7 @@ public class ParserUtil {
 			caption = ParserUtil.parseFragment(parserInput, caption);
 		}
 		// do not escape html for caption since parser does it above
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false, false);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false, null, false);
 	}
 
 	/**

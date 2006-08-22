@@ -192,19 +192,21 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		String categoryName = topicName.substring(WikiBase.NAMESPACE_CATEGORY.length());
 		next.addObject("categoryName", categoryName);
-		Collection subtopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
-		next.addObject("subtopics", subtopics);
-		next.addObject("numsubtopics", new Integer(subtopics.size()));
-		Collection subcategoryNames = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
-		LinkedHashMap subcategories = new LinkedHashMap();
-		Category category = null;
-		for (Iterator iterator = subcategoryNames.iterator(); iterator.hasNext();) {
-			category = (Category)iterator.next();
-			String value = category.getName().substring(WikiBase.NAMESPACE_CATEGORY.length());
-			subcategories.put(category.getName(), value);
+		Collection categoryTopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
+		next.addObject("categoryTopics", categoryTopics);
+		next.addObject("numCategoryTopics", new Integer(categoryTopics.size()));
+		Collection categoryImages = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_IMAGE);
+		next.addObject("categoryImages", categoryImages);
+		next.addObject("numCategoryImages", new Integer(categoryImages.size()));
+		Collection tempSubcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
+		LinkedHashMap subCategories = new LinkedHashMap();
+		for (Iterator iterator = tempSubcategories.iterator(); iterator.hasNext();) {
+			Category category = (Category)iterator.next();
+			String value = category.getChildTopicName().substring(WikiBase.NAMESPACE_CATEGORY.length());
+			subCategories.put(category.getChildTopicName(), value);
 		}
-		next.addObject("subcategories", subcategories);
-		next.addObject("numsubcategories", new Integer(subcategories.size()));
+		next.addObject("subCategories", subCategories);
+		next.addObject("numSubCategories", new Integer(subCategories.size()));
 	}
 
 	/**

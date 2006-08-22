@@ -49,6 +49,14 @@
     <tag-class>org.jamwiki.tags.ImageLinkTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
+      <name>maxDimension</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
+      <name>style</name>
+      <required>false</required>
+    </attribute>
+    <attribute>
       <name>value</name>
       <required>true</required>
     </attribute>

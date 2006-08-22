@@ -32,6 +32,8 @@ import org.springframework.util.StringUtils;
 public class ImageLinkTag extends TagSupport {
 
 	private static Logger logger = Logger.getLogger(ImageLinkTag.class);
+	private String maxDimension = null;
+	private String style = null;
 	private String value = null;
 
 	/**
@@ -45,11 +47,20 @@ public class ImageLinkTag extends TagSupport {
 			logger.error("Image link tag evaluated empty for value " + this.value, e);
 			throw e;
 		}
+		int linkDimension = -1;
+		if (this.maxDimension != null) {
+			try {
+				linkDimension = new Integer((String)ExpressionUtil.evalNotNull("link", "maxDimension", this.maxDimension, Object.class, this, pageContext)).intValue();
+			} catch (JspException e) {
+				logger.error("Image link tag evaluated empty for maxDimension " + this.maxDimension, e);
+				throw e;
+			}
+		}
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String virtualWiki = retrieveVirtualWiki(request);
 		String html = null;
 		try {
-			html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, linkValue);
+			html = LinkUtil.buildImageLinkHtml(request.getContextPath(), virtualWiki, linkValue, false, false, null, null, linkDimension, true, this.style, true);
 			if (html != null) {
 				this.pageContext.getOut().print(html);
 			}
@@ -73,6 +84,34 @@ public class ImageLinkTag extends TagSupport {
 			throw new JspException("No virtual wiki value found");
 		}
 		return virtualWiki;
+	}
+
+	/**
+	 *
+	 */
+	public String getMaxDimension() {
+		return this.maxDimension;
+	}
+
+	/**
+	 *
+	 */
+	public void setMaxDimension(String maxDimension) {
+		this.maxDimension = maxDimension;
+	}
+
+	/**
+	 *
+	 */
+	public String getStyle() {
+		return this.style;
+	}
+
+	/**
+	 *
+	 */
+	public void setStyle(String style) {
+		this.style = style;
 	}
 
 	/**

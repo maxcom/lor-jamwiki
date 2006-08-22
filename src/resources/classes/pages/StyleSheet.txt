@@ -364,10 +364,26 @@ td.footer hr, td.footer br {
 	display: none;
 }
 
-/* change lists (recent changes, history) */
+/* recent changes, user contributions, history */
 
 #change a {
 	font-weight: normal;
+}
+
+li.minorchange {
+	color: #777777;
+}
+
+li.standardchange {
+	color: black;
+}
+
+li.deletechange {
+	color: #770000;
+}
+
+li.movechange {
+	color: #777777;
 }
 
 /* topic pages */
@@ -412,6 +428,30 @@ div.imgthumb {
 	padding: 0.3em;
 }
 
+table.gallery {
+	border: 1px solid #ccc;
+	margin: 2px;
+	padding: 2px;
+	background-color: white;
+}
+
+table.gallery tr {
+	vertical-align: middle;
+}
+
+table.gallery td {
+	background-color: #f9f9f9;
+	border: solid 2px white;
+	text-align: center;
+	vertical-align: middle;
+	width:  150px;
+}
+
+img.gallery {
+	border: 1px solid #bbbbbb;
+	padding: 0.3em;
+}
+
 /* search results */
 
 .highlight {
@@ -420,24 +460,6 @@ div.imgthumb {
 
 .searchresult{
 	background-color: gainsboro
-}
-
-/* recent changes, user contributions, history */
-
-li.minorchange {
-	color: #777777;
-}
-
-li.standardchange {
-	color: black;
-}
-
-li.deletechange {
-	color: #770000;
-}
-
-li.movechange {
-	color: #777777;
 }
 
 /* older stuff */
