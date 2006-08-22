@@ -30,19 +30,31 @@
 </c:if>
 
 <table border="0" class="contents">
-<form name="adminDelete" method="get" action="<jamwiki:link value="Special:Manage" />">
+<c:if test="${!deleted}">
+<form name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><p class="subHeader"><f:message key="manage.caption.delete"><f:param value="${pageInfo.topicName}" /></f:message></p></td></tr>
 <tr><td colspan="2"><p><f:message key="manage.delete.warning" /></p></td></tr>
-
 <tr>
 	<td class="normal" nowrap><label for="deleteComment"><f:message key="manage.delete.reason" /></label>: </td>
 	<td class="normal" width="90%"><input type="text" name="deleteComment" value="" id="deleteComment" size="60" /></td>
 </tr>
 <tr><td>&#160;</td><td align="left"><input type="submit" name="delete" value="<f:message key="common.delete" />" /></td></tr>
 </form>
+</c:if>
+<c:if test="${deleted}">
+<form name="undelete" method="get" action="<jamwiki:link value="Special:Manage" />">
+<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<tr><td colspan="2"><p class="subHeader"><f:message key="manage.caption.undelete"><f:param value="${pageInfo.topicName}" /></f:message></p></td></tr>
+<tr>
+	<td class="normal" nowrap><label for="undeleteComment"><f:message key="manage.undelete.reason" /></label>: </td>
+	<td class="normal" width="90%"><input type="text" name="undeleteComment" value="" id="undeleteComment" size="60" /></td>
+</tr>
+<tr><td>&#160;</td><td align="left"><input type="submit" name="undelete" value="<f:message key="common.undelete" />" /></td></tr>
+</form>
+</c:if>
 <tr><td colspan="2"><p class="subHeader"><f:message key="manage.caption.permissions" /></p></td></tr>
-<form name="adminPermissions" method="get" action="<jamwiki:link value="Special:Manage" />">
+<form name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr>
 	<td class="normal" nowrap><label for="readOnly"><f:message key="manage.caption.readonly" /></label>: </td>

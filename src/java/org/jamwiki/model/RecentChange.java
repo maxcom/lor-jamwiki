@@ -199,6 +199,13 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public boolean getUndelete() {
+		return this.editType == TopicVersion.EDIT_UNDELETE;
+	}
+
+	/**
+	 *
+	 */
 	public String getVirtualWiki() {
 		return this.virtualWiki;
 	}

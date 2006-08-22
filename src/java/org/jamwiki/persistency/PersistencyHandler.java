@@ -701,12 +701,8 @@ public abstract class PersistencyHandler {
 		topic.setVirtualWiki(virtualWiki);
 		topic.setTopicContent(contents);
 		topic.setAdminOnly(adminOnly);
-		TopicVersion topicVersion = new TopicVersion();
-		topicVersion.setVersionContent(contents);
-		topicVersion.setAuthorIpAddress(user.getLastLoginIpAddress());
-		topicVersion.setAuthorId(new Integer(user.getUserId()));
 		// FIXME - hard coding
-		topicVersion.setEditComment("Automatically created by system setup");
+		TopicVersion topicVersion = new TopicVersion(new Integer(user.getUserId()), user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
 		ParserInput parserInput = new ParserInput();
 		parserInput.setMode(ParserInput.MODE_SEARCH);
 		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
@@ -761,12 +757,8 @@ public abstract class PersistencyHandler {
 			String contents = PersistencyHandler.readSpecialPage(locale, topicName);
 			Topic topic = this.lookupTopic(virtualWiki, topicName);
 			topic.setTopicContent(contents);
-			TopicVersion topicVersion = new TopicVersion();
-			topicVersion.setVersionContent(contents);
-			topicVersion.setAuthorIpAddress(user.getLastLoginIpAddress());
-			topicVersion.setAuthorId(new Integer(user.getUserId()));
 			// FIXME - hard coding
-			topicVersion.setEditComment("Automatically updated by system upgrade");
+			TopicVersion topicVersion = new TopicVersion(new Integer(user.getUserId()), user.getLastLoginIpAddress(), "Automatically updated by system upgrade", contents);
 			ParserInput parserInput = new ParserInput();
 			parserInput.setMode(ParserInput.MODE_SEARCH);
 			ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());

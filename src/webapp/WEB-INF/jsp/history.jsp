@@ -79,7 +79,7 @@ function inactive(element) {
 
 <ul>
 <c:forEach items="${changes}" var="change">
-<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	&#160;
 	<input type="checkbox" name="<c:out value="diff:${change.topicVersionId}" />" onclick="inactive(this)" id="<c:out value="diff:${change.topicVersionId}" />" />
 	&#160;
@@ -91,6 +91,7 @@ function inactive(element) {
 	<%-- FIXME: need a better way to denote minor edits & deletions --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
 	<c:if test="${change.delete}">&#160;<b>d</b></c:if>
+	<c:if test="${change.undelete}">&#160;<b>u</b></c:if>
 	<c:if test="${!empty change.editComment}">
 	<label for="<c:out value="diff:${change.topicVersionId}" />">&#160;(<i><c:out value="${change.editComment}" /></i>)</label>
 	</c:if>

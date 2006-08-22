@@ -386,6 +386,10 @@ li.movechange {
 	color: #777777;
 }
 
+li.undeletechange {
+	color: #007777;
+}
+
 /* topic pages */
 
 #content-article {

@@ -248,7 +248,6 @@ public class EditServlet extends JAMWikiServlet {
 			resolve(request, next, pageInfo);
 			return;
 		}
-		TopicVersion topicVersion = new TopicVersion();
 		String contents = request.getParameter("contents");
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
@@ -277,14 +276,13 @@ public class EditServlet extends JAMWikiServlet {
 		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, contents);
 		contents = parserOutput.getContent();
 		topic.setTopicContent(contents);
-		topicVersion.setVersionContent(contents);
-		topicVersion.setEditComment(request.getParameter("editComment"));
-		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
+		Integer authorId = null;
+		if (user != null) {
+			authorId = new Integer(user.getUserId());
+		}
+		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("editComment"), contents);
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
-		}
-		if (user != null) {
-			topicVersion.setAuthorId(new Integer(user.getUserId()));
 		}
 		WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput);
 		// a save request has been made

@@ -30,6 +30,7 @@ public class TopicVersion {
 	public static final int EDIT_MOVE = 4;
 	public static final int EDIT_DELETE = 5;
 	public static final int EDIT_PERMISSION = 6;
+	public static final int EDIT_UNDELETE = 7;
 	private Integer authorId = null;
 	private String authorIpAddress = null;
 	private String editComment = null;
@@ -45,6 +46,16 @@ public class TopicVersion {
 	 *
 	 */
 	public TopicVersion() {
+	}
+
+	/**
+	 *
+	 */
+	public TopicVersion(Integer authorId, String authorIpAddress, String editComment, String versionContent) {
+		this.authorId = authorId;
+		this.authorIpAddress = authorIpAddress;
+		this.editComment = editComment;
+		this.versionContent = versionContent;
 	}
 
 	/**

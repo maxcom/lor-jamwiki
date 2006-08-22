@@ -56,7 +56,7 @@ if (request.getParameter("num") != null) {
 <ul>
 
 <c:forEach items="${contributions}" var="change">
-<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+<li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&amp;version2=<c:out value="${change.previousTopicVersionId}" />&amp;version1=<c:out value="${change.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
 	&#160;
 	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />"><f:message key="common.caption.history" /></a>)
@@ -69,6 +69,7 @@ if (request.getParameter("num") != null) {
 	<%-- FIXME: need a better way to denote minor edits & deletions --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
 	<c:if test="${change.delete}">&#160;<b>d</b></c:if>
+	<c:if test="${change.undelete}">&#160;<b>u</b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </li>
 </c:forEach>

@@ -138,26 +138,25 @@ public class UploadServlet extends JAMWikiServlet {
 		topic.setTopicType(Topic.TYPE_IMAGE);
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
-		TopicVersion topicVersion = new TopicVersion();
-		topicVersion.setAuthorIpAddress(request.getRemoteAddr());
+		Integer authorId = null;
 		if (user != null) {
-			topicVersion.setAuthorId(new Integer(user.getUserId()));
-			wikiFileVersion.setAuthorId(new Integer(user.getUserId()));
+			authorId = new Integer(user.getUserId());
 		}
+		wikiFileVersion.setAuthorId(authorId);
 		String fileName = null;
 		String url = null;
 		String contentType = null;
 		long fileSize = 0;
+		String contents = null;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();
 			String fieldName = item.getFieldName();
 			if (item.isFormField()) {
 				if (fieldName.equals("description")) {
 					wikiFileVersion.setUploadComment(item.getString());
-					topicVersion.setEditComment(item.getString());
 					// FIXME - these should be parsed
-					topicVersion.setVersionContent(item.getString());
-					topic.setTopicContent(item.getString());
+					contents = item.getString();
+					topic.setTopicContent(contents);
 				}
 			} else {
 				fileName = sanitizeFilename(item.getName());
@@ -177,6 +176,7 @@ public class UploadServlet extends JAMWikiServlet {
 				item.write(uploadedFile);
 			}
 		}
+		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), contents, contents);
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
