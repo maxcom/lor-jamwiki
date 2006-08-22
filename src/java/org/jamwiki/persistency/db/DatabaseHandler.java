@@ -70,7 +70,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected void addCategory(Category category, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
-		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName());
+		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), params);
 		int childTopicId = childTopic.getTopicId();
 		DatabaseHandler.queryHandler.insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
 	}
