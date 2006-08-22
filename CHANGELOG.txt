@@ -4,12 +4,27 @@
 
 * FEATURE: Add support for Mediawiki categories.
 * FEATURE: Add Special:Categories.
+* FEATURE: Add Special:Manage, remove Special:Delete.
+* FEATURE: Add support for undeleting a topic.
 * FEATURE: Drop jam_image table - unused.
+* BUG: Possible null pointer exception in file persistency mode, pointed
+  out by User:garem.
 * BUG: Fix possible PageInfo corruption.  Pointed out by Scott Crocco.
+* BUG: Upgrade to javadiff 1.0.5 to fix several diff issues.
+* BUG: Parser was not parsing links of the form [[#Section]] properly.
+* BUG: Parser was not parsing links with parentheses (such as
+  [[Ajax (programming)]]) properly.
+* BUG: Some file input/output streams not properly closed when in file
+  persistency mode.
 * FEATURE: Major parser architecture updates.  Parser should be slightly
   faster when parsing edits.
+* FEATURE: Fix reloading of recent changes in ANSI database mode.
+* FEATURE: Special:AllTopics renamed to Special:Allpages for Mediawiki
+  compatibility.
+* BUG: Categories and images no longer displayed on Special:Allpages.
 * FEATURE: Delete activation.jar - unused.
 * FEATURE: Code cleanups including removal of unused files.
+* FEATURE: Updated Hungarian translations from bDaneE.
 
 0.2.1
 =====
