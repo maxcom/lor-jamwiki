@@ -64,8 +64,8 @@
 	<c:when test="${pageInfo.actionAdminConvert}">
 		<jsp:include page="admin-convert.jsp" flush="true" />
 	</c:when>
-	<c:when test="${pageInfo.actionAdminDelete}">
-		<jsp:include page="admin-delete.jsp" flush="true" />
+	<c:when test="${pageInfo.actionAdminManage}">
+		<jsp:include page="admin-manage.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionAdminTranslation}">
 		<jsp:include page="admin-translation.jsp" flush="true" />

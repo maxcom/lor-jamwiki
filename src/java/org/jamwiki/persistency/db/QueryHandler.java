@@ -83,11 +83,6 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getReadOnlyTopics(int virtualWikiId) throws Exception;
-
-	/**
-	 *
-	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception;
 
 	/**

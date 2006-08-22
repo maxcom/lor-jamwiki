@@ -275,19 +275,6 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
-		Collection all = new Vector();
-		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = DatabaseHandler.queryHandler.getReadOnlyTopics(virtualWikiId);
-		while (rs.next()) {
-			all.add(rs.getString("topic_name"));
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
 	public Collection getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
 		Vector all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, num, descending);

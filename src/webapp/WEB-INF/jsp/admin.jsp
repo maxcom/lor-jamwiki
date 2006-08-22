@@ -411,40 +411,6 @@ onUserGroupType()
 
 <hr />
 
-<!-- Read-only Topics -->
-<p class="subHeader"><f:message key="admin.title.readonly" /></p>
-<form name="readOnlyTopics" method="post" action="<jamwiki:link value="Special:Admin" />">
-<input type="hidden" name="function" value="readOnly">
-<table border="0" class="contents">
-<tr>
-	<td><input type="text" name="readOnlyTopic"></td>
-	<td><input type="submit" name="addReadOnly" value="<f:message key="admin.action.add" />" /></td>
-</tr>
-<c:if test="${not empty readOnlyTopics}">
-<tr>
-	<td>
-		<table border="0">
-		<tr>
-			<td><f:message key="common.topic" /></td>
-			<td><f:message key="admin.caption.mark" /></td>
-		</tr>
-		<c:forEach items="${readOnlyTopics}" var="topic">
-		<tr>
-			<%-- FIXME: need label element --%>
-			<td><c:out value="${topic}" /></td>
-			<td><input type="checkbox" name="markRemove" value="<c:out value="${topic}" />" /></td>
-		</tr>
-		</c:forEach>
-		</table>
-	</td>
-	<td valign="middle"><input type="submit" name="removeReadOnly" value="<f:message key="admin.action.remove" />"></td>
-</tr>
-</c:if>
-</table>
-</form>
-
-<hr />
-
 <!-- Virtual Wikis -->
 <p class="subHeader"><f:message key="admin.title.virtualwiki" /></p>
 <table border="0" class="contents">

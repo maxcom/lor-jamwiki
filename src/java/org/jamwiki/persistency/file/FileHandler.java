@@ -75,7 +75,6 @@ public class FileHandler extends PersistencyHandler {
 	private static int NEXT_WIKI_FILE_VERSION_ID = 0;
 	private static final String NEXT_WIKI_FILE_VERSION_ID_FILE = "wiki_file_version.id";
 	private static final String NEXT_WIKI_USER_ID_FILE = "wiki_user.id";
-	private static final String READ_ONLY_DIR = "readonly";
 	private static final String RECENT_CHANGE_DIR = "changes";
 	private static final String TOPIC_DIR = "topics";
 	private static final String TOPIC_VERSION_DIR = "versions";
@@ -243,19 +242,6 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected static String categoryTopicFilename(String categoryTopicName) {
 		return categoryTopicName;
-	}
-
-	/**
-	 *
-	 */
-	public void deleteReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		super.deleteReadOnlyTopic(virtualWiki, topicName);
-		String filename = readOnlyFilename(topicName);
-		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
-		if (!readOnlyFile.exists()) {
-			logger.warn("No read only file for topic " + virtualWiki + " / " + topicName);
-		}
-		readOnlyFile.delete();
 	}
 
 	/**
@@ -498,25 +484,6 @@ public class FileHandler extends PersistencyHandler {
 			buffer.append(Utilities.encodeSafeFileName(fileName));
 		}
 		return new File(buffer.toString());
-	}
-
-	/**
-	 * Return a list of all read-only topics
-	 */
-	public Collection getReadOnlyTopics(String virtualWiki) throws Exception {
-		Vector all = new Vector();
-		File[] files = retrieveReadOnlyFiles(virtualWiki);
-		if (files == null) return all;
-		for (int i = 0; i < files.length; i++) {
-			String topicName = Utilities.decodeURL(files[i].getName());
-			Topic topic = lookupTopic(virtualWiki, topicName);
-			if (topic == null) {
-				logger.error("Unable to find topic for read only file " + virtualWiki + " / " + topicName);
-				continue;
-			}
-			all.add(topic.getName());
-		}
-		return all;
 	}
 
 	/**
@@ -1198,13 +1165,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected static String readOnlyFilename(String topicName) {
-		return topicName;
-	}
-
-	/**
-	 *
-	 */
 	protected static String recentChangeFilename(int topicVersionId) {
 		return topicVersionId + EXT;
 	}
@@ -1228,15 +1188,6 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	private File[] retrieveCategoryFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.CATEGORIES_DIR);
-		File[] files = file.listFiles();
-		return files;
-	}
-
-	/**
-	 *
-	 */
-	private File[] retrieveReadOnlyFiles(String virtualWiki) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.READ_ONLY_DIR);
 		File[] files = file.listFiles();
 		return files;
 	}
@@ -1767,16 +1718,6 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected static String wikiUserFilename(String login) {
 		return login + EXT;
-	}
-
-	/**
-	 *
-	 */
-	public void writeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		super.writeReadOnlyTopic(virtualWiki, topicName);
-		String filename = readOnlyFilename(topicName);
-		File readOnlyFile = getPathFor(virtualWiki, READ_ONLY_DIR, filename);
-		FileUtils.writeStringToFile(readOnlyFile, topicName, "UTF-8");
 	}
 
 	/**

@@ -92,11 +92,6 @@ public class AdminServlet extends JAMWikiServlet {
 			if (function.equals("recentChanges")) {
 				recentChanges(request, next, pageInfo);
 			}
-			if (function.equals("readOnly")) {
-				readOnly(request, next, pageInfo);
-			}
-			// FIXME - remove this
-			readOnlyList(request, next);
 			Collection virtualWikiList = WikiBase.getHandler().getVirtualWikiList();
 			next.addObject("wikis", virtualWikiList);
 		} catch (Exception e) {
@@ -410,43 +405,6 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.error("Failure while processing property values", e);
 			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void readOnly(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("admin.title"));
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		if (request.getParameter("addReadOnly") != null) {
-			String topicName = request.getParameter("readOnlyTopic");
-			WikiBase.getHandler().writeReadOnlyTopic(virtualWiki, topicName);
-		}
-		if (request.getParameter("removeReadOnly") != null) {
-			String[] topics = request.getParameterValues("markRemove");
-			for (int i = 0; i < topics.length; i++) {
-				String topicName = topics[i];
-				WikiBase.getHandler().deleteReadOnlyTopic(virtualWiki, topicName);
-			}
-		}
-		next.addObject("message", new WikiMessage("admin.message.readonly"));
-	}
-
-	/**
-	 *
-	 */
-	private void readOnlyList(HttpServletRequest request, ModelAndView next) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection readOnlyTopics = new ArrayList();
-		try {
-			readOnlyTopics = WikiBase.getHandler().getReadOnlyTopics(virtualWiki);
-			next.addObject("readOnlyTopics", readOnlyTopics);
-		} catch (Exception e) {
-			// Ignore database error - probably just an invalid setting, the
-			// user may not have config'd yet
 		}
 	}
 

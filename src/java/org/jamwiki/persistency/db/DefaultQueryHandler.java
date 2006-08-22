@@ -77,7 +77,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
-	protected static String STATEMENT_SELECT_TOPIC_READ_ONLY = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSIONS = null;
@@ -231,16 +230,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getReadOnlyTopics(int virtualWikiId) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_READ_ONLY);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, 1);
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
@@ -314,7 +303,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
-		STATEMENT_SELECT_TOPIC_READ_ONLY         = props.getProperty("STATEMENT_SELECT_TOPIC_READ_ONLY");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
 		STATEMENT_SELECT_TOPIC_VERSIONS          = props.getProperty("STATEMENT_SELECT_TOPIC_VERSIONS");
@@ -750,7 +738,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
 		stmt.setString(5, topic.getTopicContent());
 		stmt.setInt(6, (topic.getDeleted() ? 1 : 0));
-		stmt.setInt(7, topic.getTopicId());
+		stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
+		stmt.setInt(8, topic.getTopicId());
 		stmt.executeUpdate(conn);
 	}
 

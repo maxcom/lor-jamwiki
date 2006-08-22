@@ -34,7 +34,7 @@ public class WikiPageInfo {
 	// constants used as the action parameter in calls to this servlet
 	public static final int ACTION_ADMIN = 1;
 	public static final int ACTION_ADMIN_CONVERT = 2;
-	public static final int ACTION_ADMIN_DELETE = 3;
+	public static final int ACTION_ADMIN_MANAGE = 3;
 	public static final int ACTION_ADMIN_TRANSLATION = 4;
 	public static final int ACTION_ALL_PAGES = 5;
 	public static final int ACTION_CATEGORIES = 6;
@@ -80,8 +80,8 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	public boolean getActionAdminDelete() {
-		return (this.action == ACTION_ADMIN_DELETE);
+	public boolean getActionAdminManage() {
+		return (this.action == ACTION_ADMIN_MANAGE);
 	}
 
 	/**

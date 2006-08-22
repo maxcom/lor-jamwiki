@@ -183,19 +183,6 @@ public abstract class PersistencyHandler {
 						}
 					}
 				}
-				// read-only topics
-				Collection readOnlys = fromHandler.getReadOnlyTopics(virtualWiki.getName());
-				for (Iterator readOnlyIterator = readOnlys.iterator(); readOnlyIterator.hasNext();) {
-					String topicName = (String)readOnlyIterator.next();
-					try {
-						toHandler.writeReadOnlyTopic(virtualWiki.getName(), topicName, params);
-						messages.add("Added read-only topic " + virtualWiki.getName() + " / " + topicName);
-					} catch (Exception e) {
-						String msg = "Unable to convert read-only topic: " + virtualWiki.getName() + " / " + topicName;
-						logger.error(msg, e);
-						messages.add(msg + ": " + e.getMessage());
-					}
-				}
 				// wiki files
 				Collection wikiFileNames = fromHandler.getAllWikiFileTopicNames(virtualWiki.getName());
 				for (Iterator wikiFileIterator = wikiFileNames.iterator(); wikiFileIterator.hasNext();) {
@@ -262,24 +249,6 @@ public abstract class PersistencyHandler {
 		} finally {
 			toHandler.releaseParams(params);
 			WikiBase.reset(locale, user);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void deleteReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Object params[] = null;
-		try {
-			params = this.initParams();
-			Topic topic = lookupTopic(virtualWiki, topicName);
-			topic.setReadOnly(false);
-			updateTopic(topic, params);
-		} catch (Exception e) {
-			this.handleErrors(params);
-			throw e;
-		} finally {
-			this.releaseParams(params);
 		}
 	}
 
@@ -396,11 +365,6 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected abstract Collection getCategories(String virtualWiki) throws Exception;
-
-	/**
-	 *
-	 */
-	public abstract Collection getReadOnlyTopics(String virtualWiki) throws Exception;
 
 	/**
 	 *
@@ -863,31 +827,6 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void writeReadOnlyTopic(String virtualWiki, String topicName) throws Exception {
-		Object params[] = null;
-		try {
-			params = this.initParams();
-			this.writeReadOnlyTopic(virtualWiki, topicName, params);
-		} catch (Exception e) {
-			this.handleErrors(params);
-			throw e;
-		} finally {
-			this.releaseParams(params);
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void writeReadOnlyTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName, params);
-		topic.setReadOnly(true);
-		updateTopic(topic, params);
-	}
-
-	/**
-	 *
-	 */
 	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput) throws Exception {
 		Object params[] = null;
 		try {
@@ -897,8 +836,10 @@ public abstract class PersistencyHandler {
 				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			}
 			this.writeTopic(topic, topicVersion, parserOutput, params);
-			LuceneSearchEngine.deleteFromIndex(topic);
-			LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());
+			if (parserOutput != null) {
+				LuceneSearchEngine.deleteFromIndex(topic);
+				LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());
+			}
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -938,15 +879,17 @@ public abstract class PersistencyHandler {
 		}
 		// add / remove categories associated with the topic
 		this.deleteTopicCategories(topic, params);
-		LinkedHashMap categories = parserOutput.getCategories();
-		for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
-			String categoryName = (String)iterator.next();
-			Category category = new Category();
-			category.setName(categoryName);
-			category.setSortKey((String)categories.get(categoryName));
-			category.setVirtualWiki(topic.getVirtualWiki());
-			category.setChildTopicName(topic.getName());
-			this.addCategory(category, params);
+		if (parserOutput != null) {
+			LinkedHashMap categories = parserOutput.getCategories();
+			for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
+				String categoryName = (String)iterator.next();
+				Category category = new Category();
+				category.setName(categoryName);
+				category.setSortKey((String)categories.get(categoryName));
+				category.setVirtualWiki(topic.getVirtualWiki());
+				category.setChildTopicName(topic.getName());
+				this.addCategory(category, params);
+			}
 		}
 		RecentChange change = new RecentChange();
 		change.setTopicId(topic.getTopicId());

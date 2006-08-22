@@ -32,7 +32,7 @@
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:LinkTo" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.links" /></a></td>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Delete" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.delete" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Manage" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.manage" /></a></td>
 	</c:if>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
