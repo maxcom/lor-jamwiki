@@ -104,7 +104,7 @@ wikisig4           = "~~~~"
 wikisig5           = "~~~~~"
 
 /* wiki links */
-wikilink           = "[[" [^(\]\])\n\r]+ ~"]]"
+wikilink           = "[[" [^\]\n\r]+ ~"]]"
 
 %state NOWIKI, PRE, WIKIPRE, NORMAL
 

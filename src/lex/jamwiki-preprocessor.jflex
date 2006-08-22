@@ -424,7 +424,7 @@ tablerow           = "|-" {inputcharacter}* {newline}
 tablecaption       = "|+"
 
 /* wiki links */
-wikilink           = "[[" [^(\]\])\n\r]+ "]]"
+wikilink           = "[[" [^\]\n\r]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllink           = "[" ({protocol}) ([^\]\n\r]+) "]"
 htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
