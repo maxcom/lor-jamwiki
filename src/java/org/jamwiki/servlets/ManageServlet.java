@@ -82,6 +82,7 @@ public class ManageServlet extends JAMWikiServlet {
 		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getHandler().deleteTopic(topic, topicVersion);
+		JAMWikiServlet.removeCachedContents();
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
@@ -137,6 +138,7 @@ public class ManageServlet extends JAMWikiServlet {
 		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
+		JAMWikiServlet.removeCachedContents();
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
