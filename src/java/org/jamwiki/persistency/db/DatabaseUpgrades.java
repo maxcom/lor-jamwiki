@@ -38,6 +38,7 @@ public class DatabaseUpgrades {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
 			String sql = "alter table jam_virtual_wiki add column default_topic_name VARCHAR(200)";
 			DatabaseConnection.executeUpdate(sql, conn);
 			sql = "update jam_virtual_wiki set default_topic_name = ?";
@@ -65,6 +66,7 @@ public class DatabaseUpgrades {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
 			String sql = "drop table jam_image";
 			DatabaseConnection.executeUpdate(sql, conn);
 			// FIXME - hard coding
