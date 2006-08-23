@@ -7,13 +7,12 @@ JAMWiki Contributors
 --------------------
 
   Developers:               Ryan Holliday (wrh2)
-  Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
-  Documentation:
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
      Chinese (traditional): Jiading (ewen0930)
      German:                Axel Kramer (axelclk)
      Hungarian:             Daniel Tar (bDaneE)
+  Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
   Other contributors:       Scott Croco (scroco)
 
 
