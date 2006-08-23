@@ -176,12 +176,12 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.login");
-			return viewLogin(request, topicName, errorMessage);
+			return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.loginadmin", topicName);
-			return viewLogin(request, topicName, errorMessage);
+			return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
 		}
 		return null;
 	}
