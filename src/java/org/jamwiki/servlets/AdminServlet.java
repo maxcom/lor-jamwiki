@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;

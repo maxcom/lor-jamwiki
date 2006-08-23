@@ -16,8 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

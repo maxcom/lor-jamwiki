@@ -16,7 +16,6 @@
  */
 package org.jamwiki.model;
 
-import java.sql.Timestamp;
 import org.apache.log4j.Logger;
 
 /**

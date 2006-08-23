@@ -16,14 +16,7 @@
  */
 package org.jamwiki.parser.alt;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractParser;
@@ -40,7 +33,6 @@ import org.jamwiki.parser.TableOfContents;
 public class VQWikiParser extends AbstractParser {
 
 	private static final Logger logger = Logger.getLogger(VQWikiParser.class);
-	private static List wikinameIgnore;
 
 	/**
 	 * Sets the basics for this parser.
@@ -56,7 +48,7 @@ public class VQWikiParser extends AbstractParser {
 	 */
 	public ParserOutput parseHTML(String rawtext, String topicName) throws Exception {
 		StringBuffer contents = new StringBuffer();
-		Reader raw = new StringReader(rawtext.toString());
+		StringReader raw = new StringReader(rawtext.toString());
 		contents = this.parseFormat(raw);
 		raw = new StringReader(contents.toString());
 		ParserOutput parserOutput = this.parseLayout(raw);
@@ -71,7 +63,7 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private StringBuffer parseFormat(Reader raw) throws Exception {
+	private StringBuffer parseFormat(StringReader raw) throws Exception {
 		StringBuffer contents = new StringBuffer();
 		VQWikiFormatLex lexer = new VQWikiFormatLex(raw);
 		lexer.setParserInput(this.parserInput);
@@ -118,7 +110,7 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private ParserOutput parseLayout(Reader raw) throws Exception {
+	private ParserOutput parseLayout(StringReader raw) throws Exception {
 		VQWikiLayoutLex lexer = new VQWikiLayoutLex(raw);
 		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);
@@ -127,7 +119,7 @@ public class VQWikiParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private ParserOutput parseLinks(Reader raw) throws Exception {
+	private ParserOutput parseLinks(StringReader raw) throws Exception {
 		VQWikiLinkLex lexer = new VQWikiLinkLex(raw);
 		lexer.setParserInput(this.parserInput);
 		return this.lex(lexer);

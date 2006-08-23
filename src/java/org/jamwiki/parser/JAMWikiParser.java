@@ -17,8 +17,6 @@
 package org.jamwiki.parser;
 
 import java.io.StringReader;
-import java.util.Collection;
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 
@@ -62,7 +60,11 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
+	 * First stage of the parser, this method parses most Wiki syntax, validates
+	 * HTML, and performs the majority of the parser conversion.
 	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return A ParserOutput object containing results of the parsing process.
 	 */
 	protected ParserOutput parsePreProcess(StringReader raw) throws Exception {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
@@ -72,10 +74,11 @@ public class JAMWikiParser extends AbstractParser {
 
 	/**
 	 * Parse MediaWiki signatures and other tags that should not be
-	 * saved as part of the topic source.
+	 * saved as part of the topic source.  This method is usually only called
+	 * during edits.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return HTML representation of the text for online.
+	 * @return A ParserOutput object containing results of the parsing process.
 	 */
 	public ParserOutput parsePreSave(String contents) throws Exception {
 		StringReader raw = new StringReader(contents);
@@ -85,7 +88,12 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
+	 * In most cases this method is the second and final stage of the parser,
+	 * adding paragraph tags and other layout elements that for various reasons
+	 * cannot be added during the first parsing stage.
 	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return A ParserOutput object containing results of the parsing process.
 	 */
 	private ParserOutput parsePostProcess(StringReader raw) throws Exception {
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(raw);
@@ -94,7 +102,19 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
+	 * This method provides the capability for retrieving a section of Wiki markup
+	 * from an existing document.  It is used primarily when editing a section of
+	 * a topic.  This method will return all content from the specified section, up
+	 * to the either the next section of the same or greater level or the end of the
+	 * document.  For example, if the specified section is an &lt;h3&gt;, all content
+	 * up to the next &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt; or the end of the document
+	 * will be returned.
 	 *
+	 * @param rawtext The raw Wiki syntax from which a section is to be retrieved.
+	 * @param topicName The name of the topic that is being parsed.
+	 * @param targetSection The section of the document to be replaced (first section is 1).
+	 * @return All markup from the target section, contained within a ParserOutput
+	 *  object.
 	 */
 	public ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
@@ -108,7 +128,19 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
+	 * This method provides the capability for splicing a section of new content back
+	 * into a document.  It is used primarily when editing a section of a topic.  This
+	 * method will replace all content in a specified section, up to the either the next
+	 * section of the same or greater level or the end of the document.  For example, if
+	 * the specified section is an &lt;h3&gt;, all content up to the next &lt;h1&gt;,
+	 * &lt;h2&gt;, &lt;h3&gt; or the end of the document will be replaced with the
+	 * specified text.
 	 *
+	 * @param rawtext The raw Wiki syntax from which a section is to be replaced.
+	 * @param topicName The name of the topic that is being parsed.
+	 * @param targetSection The section of the document to be replaced (first section is 1).
+	 * @param replacementText The text to replace the specified section text with.
+	 * @return The new topic markup, contained within a ParserOutput object.
 	 */
 	public ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();

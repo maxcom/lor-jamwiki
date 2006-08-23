@@ -53,11 +53,12 @@ The process for upgrading JAMWiki is:
      be found in the /WEB-INF/classes directory.
   4. If you have created any virtual wikis, back up the web.xml file that can be
      found in the /WEB-INF directory.
-  5. Install the new JAMWiki WAR file.  See your web application server's
+  5. Remove the old JAMWiki installation.
+  6. Install the new JAMWiki WAR file.  See your web application server's
      documentation for instructions.
-  6. Copy the files backed up in steps three and four back into their old
+  7. Copy the files backed up in steps three and four back into their old
      locations, overwriting any new files.
-  7. View any page on the Wiki.  You will be redirected to the upgrade page
+  8. View any page on the Wiki.  You will be redirected to the upgrade page
      and any required upgrade steps will be automatically performed.
 
 

@@ -104,16 +104,14 @@ pre {
 	padding: 1em;
 }
 
-dl {
-	list-style-type: square;
-	margin-top: .2em;
-	margin-bottom: .5em;
-	padding: 0em 0em 0em 2em;
-}
-
 dt {
 	font-weight: bold;
 	margin-bottom: .1em;
+}
+
+dl {
+	margin-top: .2em;
+	margin-bottom: .5em;
 }
 
 dd {
