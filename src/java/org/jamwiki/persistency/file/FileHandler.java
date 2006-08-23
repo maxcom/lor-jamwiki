@@ -334,6 +334,35 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection getAllCategories(String virtualWiki) throws Exception {
+		Collection results = new Vector();
+		File[] files = retrieveCategoryFiles(virtualWiki);
+		if (files == null) return results;
+		for (int i = 0; i < files.length; i++) {
+			Properties categoryHash = new Properties();
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(files[i]);
+				categoryHash.load(fis);
+			} finally {
+				if (fis != null) fis.close();
+			}
+			for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
+				String childTopicName = (String)categoryIterator.next();
+				Category category = new Category();
+				category.setName(Utilities.decodeURL(files[i].getName()));
+				category.setChildTopicName(childTopicName);
+				category.setSortKey((String)categoryHash.get(childTopicName));
+				category.setVirtualWiki(virtualWiki);
+				results.add(category);
+			}
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getAllTopicNames(String virtualWiki) throws Exception {
 		Vector all = new Vector();
 		File[] files = retrieveTopicFiles(virtualWiki);
@@ -418,35 +447,6 @@ public class FileHandler extends PersistencyHandler {
 			all.add(login);
 		}
 		return all;
-	}
-
-	/**
-	 *
-	 */
-	protected Collection getCategories(String virtualWiki) throws Exception {
-		Collection results = new Vector();
-		File[] files = retrieveCategoryFiles(virtualWiki);
-		if (files == null) return results;
-		for (int i = 0; i < files.length; i++) {
-			Properties categoryHash = new Properties();
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(files[i]);
-				categoryHash.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-			for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
-				String childTopicName = (String)categoryIterator.next();
-				Category category = new Category();
-				category.setName(Utilities.decodeURL(files[i].getName()));
-				category.setChildTopicName(childTopicName);
-				category.setSortKey((String)categoryHash.get(childTopicName));
-				category.setVirtualWiki(virtualWiki);
-				results.add(category);
-			}
-		}
-		return results;
 	}
 
 	/**

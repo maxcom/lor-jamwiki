@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
-import org.jamwiki.model.Topic;
+import org.jamwiki.model.Category;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -54,10 +54,11 @@ public class CategoryServlet extends JAMWikiServlet {
 	 */
 	private void viewCategories(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection categoryNames = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_CATEGORY);
+		Collection categoryObjects = WikiBase.getHandler().getAllCategories(virtualWiki);
 		LinkedHashMap categories = new LinkedHashMap();
-		for (Iterator iterator = categoryNames.iterator(); iterator.hasNext();) {
-			String key = (String)iterator.next();
+		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
+			Category category = (Category)iterator.next();
+			String key = category.getName();
 			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
 			categories.put(key, value);
 		}

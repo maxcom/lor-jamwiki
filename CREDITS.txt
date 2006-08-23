@@ -12,6 +12,7 @@ JAMWiki Contributors
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
      Chinese (traditional): Jiading (ewen0930)
+     German:                Axel Kramer (axelclk)
      Hungarian:             Daniel Tar (bDaneE)
   Other contributors:       Scott Croco (scroco)
 

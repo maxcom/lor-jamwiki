@@ -77,20 +77,23 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Vector messages = new Vector();
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		boolean success = true;
 		if (oldVersion.before(0, 0, 8)) {
-			messages = upgrade008(request, messages);
+			if (!upgrade008(request, messages)) success = false;
 		}
 		if (oldVersion.before(0, 1, 0)) {
-			messages = upgrade010(request, messages);
+			if (!upgrade010(request, messages)) success = false;
 		}
 		if (oldVersion.before(0, 2, 0)) {
-			messages = upgrade020(request, messages);
+			if (!upgrade020(request, messages)) success = false;
 		}
 		if (oldVersion.before(0, 3, 0)) {
-			messages = upgrade030(request, messages);
+			if (!upgrade030(request, messages)) success = false;
 		}
-		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
-		Environment.saveProperties();
+		if (success) {
+			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
+			Environment.saveProperties();
+		}
 		next.addObject("messages", messages);
 		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
 		String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName(), null, true);
@@ -106,7 +109,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private Vector upgrade008(HttpServletRequest request, Vector messages) {
+	private boolean upgrade008(HttpServletRequest request, Vector messages) {
 		Collection userNames = null;
 		try {
 			userNames = WikiBase.getHandler().getAllWikiUserLogins();
@@ -115,7 +118,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			String msg = "Unable to retrieve user logins";
 			logger.error(msg, e);
 			messages.add(msg + ": " + e.getMessage());
-			return messages;
+			return false;
 		}
 		for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
 			String userName = (String)userIterator.next();
@@ -135,15 +138,16 @@ public class UpgradeServlet extends JAMWikiServlet {
 				String msg = "Unable to convert user password to SHA-512 for user " + userName;
 				logger.error(msg, e);
 				messages.add(msg + ": " + e.getMessage());
+				return false;
 			}
 		}
-		return messages;
+		return true;
 	}
 
 	/**
 	 *
 	 */
-	private Vector upgrade010(HttpServletRequest request, Vector messages) {
+	private boolean upgrade010(HttpServletRequest request, Vector messages) {
 		// update virtual wiki
 		try {
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
@@ -151,19 +155,20 @@ public class UpgradeServlet extends JAMWikiServlet {
 			} else {
 				messages = FileUpgrades.upgrade010(messages);
 			}
+			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update virtual wiki table";
 			logger.error(msg, e);
 			messages.add(msg + ": " + e.getMessage());
+			return false;
 		}
-		return messages;
 	}
 
 	/**
 	 *
 	 */
-	private Vector upgrade020(HttpServletRequest request, Vector messages) {
+	private boolean upgrade020(HttpServletRequest request, Vector messages) {
 		try {
 			// rebuild search index
 			LuceneSearchEngine.refreshIndex();
@@ -176,19 +181,20 @@ public class UpgradeServlet extends JAMWikiServlet {
 				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
+			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update virtual wiki table";
 			logger.error(msg, e);
 			messages.add(msg + ": " + e.getMessage());
+			return false;
 		}
-		return messages;
 	}
 
 	/**
 	 *
 	 */
-	private Vector upgrade030(HttpServletRequest request, Vector messages) {
+	private boolean upgrade030(HttpServletRequest request, Vector messages) {
 		// drop jam_image table
 		try {
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
@@ -204,13 +210,14 @@ public class UpgradeServlet extends JAMWikiServlet {
 				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
+			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update for version 0.3.0";
 			logger.error(msg, e);
 			messages.add(msg + ": " + e.getMessage());
+			return false;
 		}
-		return messages;
 	}
 
 	/**

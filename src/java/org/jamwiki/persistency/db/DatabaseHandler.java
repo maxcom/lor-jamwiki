@@ -187,6 +187,24 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection getAllCategories(String virtualWiki) throws Exception {
+		Collection results = new Vector();
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getCategories(virtualWikiId);
+		while (rs.next()) {
+			Category category = new Category();
+			category.setName(rs.getString("category_name"));
+			category.setChildTopicName(rs.getString("topic_name"));
+			category.setVirtualWiki(virtualWiki);
+			category.setSortKey(rs.getString("sort_key"));
+			results.add(category);
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getAllTopicNames(String virtualWiki) throws Exception {
 		Vector all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
@@ -252,24 +270,6 @@ public class DatabaseHandler extends PersistencyHandler {
 			all.add(rs.getString("login"));
 		}
 		return all;
-	}
-
-	/**
-	 *
-	 */
-	protected Collection getCategories(String virtualWiki) throws Exception {
-		Collection results = new Vector();
-		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = DatabaseHandler.queryHandler.getCategories(virtualWikiId);
-		while (rs.next()) {
-			Category category = new Category();
-			category.setName(rs.getString("category_name"));
-			category.setChildTopicName(rs.getString("topic_name"));
-			category.setVirtualWiki(virtualWiki);
-			category.setSortKey(rs.getString("sort_key"));
-			results.add(category);
-		}
-		return results;
 	}
 
 	/**

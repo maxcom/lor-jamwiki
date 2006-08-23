@@ -227,7 +227,7 @@ public abstract class PersistencyHandler {
 					}
 				}
 				// categories
-				Collection categories = fromHandler.getCategories(virtualWiki.getName());
+				Collection categories = fromHandler.getAllCategories(virtualWiki.getName());
 				for (Iterator categoryIterator = categories.iterator(); categoryIterator.hasNext();) {
 					Category category = (Category)categoryIterator.next();
 					try {
@@ -339,6 +339,11 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
+	public abstract Collection getAllCategories(String virtualWiki) throws Exception;
+
+	/**
+	 *
+	 */
 	protected abstract Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
@@ -360,11 +365,6 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public abstract Collection getAllWikiUserLogins() throws Exception;
-
-	/**
-	 *
-	 */
-	protected abstract Collection getCategories(String virtualWiki) throws Exception;
 
 	/**
 	 *

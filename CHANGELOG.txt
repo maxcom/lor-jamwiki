@@ -17,6 +17,8 @@
   [[Ajax (programming)]]) properly.
 * BUG: Some file input/output streams not properly closed when in file
   persistency mode.
+* BUG: Database upgrade rollback could fail.
+* BUG: Software version could be updated even if upgrade unsuccessful.
 * BUG: Topic names beginning with "Special:" should not be allowed, but
   topic names containing apostrophes should be allowed.
 * FEATURE: Major parser architecture updates.  Parser should be slightly
@@ -27,6 +29,7 @@
 * BUG: Categories and images no longer displayed on Special:Allpages.
 * FEATURE: Delete activation.jar - unused.
 * FEATURE: Code cleanups including removal of unused files.
+* FEATURE: Updated German translations from Axel Kramer (axelclk).
 * FEATURE: Updated Hungarian translations from bDaneE.
 
 0.2.1
