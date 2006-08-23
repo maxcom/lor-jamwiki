@@ -2,6 +2,7 @@
 0.3.1
 =====
 
+* FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.0
 =====
