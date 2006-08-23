@@ -466,7 +466,7 @@ public class Utilities {
 		if (!StringUtils.hasText(name)) return false;
 		if (name.toLowerCase().trim().startsWith(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
 		// try to remove invalid characters
-		String cleaned = StringUtils.deleteAny(name, "\n\r\"\'><{}#/\\=[]");
+		String cleaned = StringUtils.deleteAny(name, "\n\r\"><{}#/\\=[]");
 		return name.equals(cleaned);
 	}
 }
