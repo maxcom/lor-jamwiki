@@ -806,7 +806,7 @@ public abstract class PersistencyHandler {
 			wikiFileVersion.setFileId(wikiFile.getFileId());
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 				// write version
-				addWikiFileVersion(wikiFile.getVirtualWiki(), wikiFile.getFileName(), wikiFileVersion, params);
+				addWikiFileVersion(wikiFile.getVirtualWiki(), topicName, wikiFileVersion, params);
 			}
 		} catch (Exception e) {
 			this.handleErrors(params);

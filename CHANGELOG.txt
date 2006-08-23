@@ -9,6 +9,7 @@
 * FEATURE: Drop jam_image table - unused.
 * BUG: Possible null pointer exception in file persistency mode, pointed
   out by User:garem.
+* BUG: Image uploads in file persistency mode set wrong path.
 * BUG: Fix possible PageInfo corruption.  Pointed out by Scott Crocco.
 * BUG: Upgrade to javadiff 1.0.5 to fix several diff issues.
 * BUG: Parser was not parsing links of the form [[#Section]] properly.
@@ -16,7 +17,8 @@
   [[Ajax (programming)]]) properly.
 * BUG: Some file input/output streams not properly closed when in file
   persistency mode.
-* BUG: Topic names beginning with "Special:" should not be allowed.
+* BUG: Topic names beginning with "Special:" should not be allowed, but
+  topic names containing apostrophes should be allowed.
 * FEATURE: Major parser architecture updates.  Parser should be slightly
   faster when parsing edits.
 * FEATURE: Fix reloading of recent changes in ANSI database mode.

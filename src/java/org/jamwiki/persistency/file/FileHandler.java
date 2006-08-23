@@ -917,16 +917,15 @@ public class FileHandler extends PersistencyHandler {
 				continue;
 			}
 			String sortKey = (String)categoryHash.get(topicName);
+			if (!StringUtils.hasText(sortKey)) {
+				sortKey = topicName;
+			}
 			Category category = new Category();
 			category.setVirtualWiki(virtualWiki);
 			category.setName(categoryName);
 			category.setSortKey(sortKey);
 			category.setChildTopicName(topicName);
-			String key = topicName;
-			if (StringUtils.hasText(sortKey)) {
-				key = sortKey;
-			}
-			sortedResults.put(key, category);
+			sortedResults.put(sortKey, category);
 		}
 		return sortedResults.values();
 	}

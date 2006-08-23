@@ -141,7 +141,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFileVersion(String virtualWiki, String wikiFileName, WikiFileVersion wikiFileVersion, Object[] params) throws Exception {
+	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
 		if (wikiFileVersion.getFileVersionId() < 1) {
 			int fileVersionId = DatabaseHandler.queryHandler.nextWikiFileVersionId(conn);
