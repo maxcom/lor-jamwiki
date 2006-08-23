@@ -869,9 +869,9 @@ public abstract class PersistencyHandler {
 			authorName = user.getLogin();
 			if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
 		}
-		// add / remove categories associated with the topic
-		this.deleteTopicCategories(topic, params);
 		if (parserOutput != null) {
+			// add / remove categories associated with the topic
+			this.deleteTopicCategories(topic, params);
 			LinkedHashMap categories = parserOutput.getCategories();
 			for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
 				String categoryName = (String)iterator.next();

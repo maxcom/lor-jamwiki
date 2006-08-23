@@ -56,6 +56,7 @@ public class DiffServlet extends JAMWikiServlet {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String diffType = request.getParameter("type");
 		if (diffType != null && diffType.equals("arbitrary")) {
+			// FIXME - used with history.jsp, this is ugly
 			int firstVersion = -1;
 			int secondVersion = -1;
 			Enumeration e = request.getParameterNames();
