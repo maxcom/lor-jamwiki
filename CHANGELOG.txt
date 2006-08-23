@@ -16,6 +16,7 @@
   [[Ajax (programming)]]) properly.
 * BUG: Some file input/output streams not properly closed when in file
   persistency mode.
+* BUG: Topic names beginning with "Special:" should not be allowed.
 * FEATURE: Major parser architecture updates.  Parser should be slightly
   faster when parsing edits.
 * FEATURE: Fix reloading of recent changes in ANSI database mode.

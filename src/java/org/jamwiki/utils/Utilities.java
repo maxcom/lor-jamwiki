@@ -464,6 +464,7 @@ public class Utilities {
 	 */
 	public static boolean validateName(String name) {
 		if (!StringUtils.hasText(name)) return false;
+		if (name.toLowerCase().startsWith(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
 		// try to remove invalid characters
 		String cleaned = StringUtils.deleteAny(name, "\n\r\"\'><{}#/\\=[]");
 		return name.equals(cleaned);
