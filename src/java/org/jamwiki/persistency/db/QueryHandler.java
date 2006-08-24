@@ -48,11 +48,6 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public void deleteTopicRedirect(int fromTopicId, Connection conn) throws Exception;
-
-	/**
-	 *
-	 */
 	public void dropTables(Connection conn);
 
 	/**
@@ -114,11 +109,6 @@ public interface QueryHandler {
 	 *
 	 */
 	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
-
-	/**
-	 *
-	 */
-	public void insertTopicRedirect(int fromTopicId, String toTopicName, Connection conn) throws Exception;
 
 	/**
 	 *

@@ -103,6 +103,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_ADMIN_ONLY = "admin";
 	protected static final String XML_TOPIC_READ_ONLY = "readonly";
 	protected static final String XML_TOPIC_DELETED = "deleted";
+	protected static final String XML_TOPIC_REDIRECT_TO = "redirectto";
 	protected static final String XML_TOPIC_TYPE = "type";
 	protected static final String XML_TOPIC_VERSION_ROOT = "revision";
 	protected static final String XML_TOPIC_VERSION_ID = "id";
@@ -618,6 +619,8 @@ public class FileHandler extends PersistencyHandler {
 					topic.setReadOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_TOPIC_DELETED)) {
 					topic.setDeleted(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
+				} else if (childName.equals(XML_TOPIC_REDIRECT_TO)) {
+					topic.setRedirectTo(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_TYPE)) {
 					topic.setTopicType(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
 				}
@@ -1417,6 +1420,8 @@ public class FileHandler extends PersistencyHandler {
 		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_DELETED, topic.getDeleted()));
+		content.append("\n");
+		content.append(XMLUtil.buildTag(XML_TOPIC_REDIRECT_TO, topic.getRedirectTo(), true));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_TYPE, topic.getTopicType()));
 		content.append("\n");

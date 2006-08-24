@@ -390,6 +390,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			topic.setReadOnly(rs.getInt("topic_read_only") != 0);
 			topic.setDeleted(rs.getInt("topic_deleted") != 0);
 			topic.setTopicType(rs.getInt("topic_type"));
+			topic.setRedirectTo(rs.getString("redirect_to"));
 			return topic;
 		} catch (Exception e) {
 			logger.error("Failure while initializing topic", e);

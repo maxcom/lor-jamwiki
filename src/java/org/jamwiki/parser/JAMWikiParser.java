@@ -17,8 +17,11 @@
 package org.jamwiki.parser;
 
 import java.io.StringReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.springframework.util.StringUtils;
 
 /**
  * Parser used to implement MediaWiki syntax.
@@ -26,6 +29,16 @@ import org.jamwiki.Environment;
 public class JAMWikiParser extends AbstractParser {
 
 	private static final Logger logger = Logger.getLogger(JAMWikiParser.class);
+	private static Pattern REDIRECT_PATTERN = null;
+
+	static {
+		try {
+			// is the topic a redirect?
+			REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
+		} catch (Exception e) {
+			logger.error("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 * Sets the basics for this parser.
@@ -34,6 +47,22 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	public JAMWikiParser(ParserInput parserInput) {
 		super(parserInput);
+	}
+
+	/**
+	 *
+	 */
+	public String buildRedirectContent(String topicName) {
+		return "#REDIRECT [[" + topicName + "]]";
+	}
+
+	/**
+	 *
+	 */
+	public String isRedirect(String content) {
+		if (!StringUtils.hasText(content)) return null;
+		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
+		return (m.find()) ? m.group(1).trim() : null;
 	}
 
 	/**
@@ -84,7 +113,13 @@ public class JAMWikiParser extends AbstractParser {
 		StringReader raw = new StringReader(contents);
 		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
 		lexer.setParserInput(this.parserInput);
-		return this.lex(lexer);
+		ParserOutput parserOutput = this.lex(lexer);
+		// verify whether or not this is a redirect
+		String redirect = this.isRedirect(contents);
+		if (StringUtils.hasText(redirect)) {
+			parserOutput.setRedirect(redirect);
+		}
+		return parserOutput;
 	}
 
 	/**

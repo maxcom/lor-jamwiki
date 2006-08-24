@@ -29,6 +29,7 @@ public class WikiPageInfo {
 	private boolean admin = false;
 	private int action = -1;
 	private WikiMessage pageTitle = null;
+	private String redirectName = null;
 	private String topicName = "";
 	private boolean special = false;
 	// constants used as the action parameter in calls to this servlet
@@ -264,6 +265,20 @@ public class WikiPageInfo {
 	 */
 	public void setPageTitle(WikiMessage pageTitle) {
 		this.pageTitle = pageTitle;
+	}
+
+	/**
+	 *
+	 */
+	public String getRedirectName() {
+		return this.redirectName;
+	}
+
+	/**
+	 *
+	 */
+	public void setRedirectName(String redirectName) {
+		this.redirectName = redirectName;
 	}
 
 	/**

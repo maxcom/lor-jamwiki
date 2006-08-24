@@ -176,6 +176,14 @@ td.main-content {
 	border-bottom: 1px solid #D8D8E7;
 }
 
+#contents-subheader {
+	font-size: 100%;
+	line-height: 1.2em;
+	margin: 0 0 1.4em 1em;
+	color: #7d7d7d;
+	width: auto;
+}
+
 /* navbar elements */
 
 td.navigation {

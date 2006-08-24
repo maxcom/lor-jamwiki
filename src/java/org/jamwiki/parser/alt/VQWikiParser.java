@@ -44,6 +44,14 @@ public class VQWikiParser extends AbstractParser {
 	}
 
 	/**
+	 *
+	 */
+	public String buildRedirectContent(String topicName) {
+		// not implemented
+		return "";
+	}
+
+	/**
 	 * Parse text for online display.
 	 */
 	public ParserOutput parseHTML(String rawtext, String topicName) throws Exception {

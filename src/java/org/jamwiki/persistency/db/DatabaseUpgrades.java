@@ -95,14 +95,12 @@ public class DatabaseUpgrades {
 		try {
 			conn = DatabaseConnection.getConnection();
 			conn.setAutoCommit(false);
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_REDIRECT_TABLE, conn);
+			String sql = "alter table jam_topic add column redirect_to VARCHAR(200) ";
+			DatabaseConnection.executeUpdate(sql, conn);
 			// FIXME - hard coding
-			messages.add("Added jam_topic_redirect table");
+			messages.add("Added redirect column to table jam_topic");
 			conn.commit();
 		} catch (Exception e) {
-			try {
-				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_TOPIC_REDIRECT_TABLE, conn);
-			} catch (Exception ex) {}
 			conn.rollback();
 			throw e;
 		} finally {

@@ -382,6 +382,21 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (!Utilities.validateName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
+		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
+			pageInfo.setRedirectName(topic.getName());
+			// FIXME - move to a utility method
+			// get the topic that is being redirected to
+			int count = 0;
+			while (topic.getTopicType() == Topic.TYPE_REDIRECT) {
+				count++;
+				if (count > 10) {
+					throw new WikiException(new WikiMessage("topic.redirect.infinite", topic.getName()));
+				}
+				if (!StringUtils.hasText(topic.getRedirectTo())) break;
+				topic = WikiBase.getHandler().lookupTopic(topic.getVirtualWiki(), topic.getRedirectTo());
+				pageTitle = new WikiMessage("topic.title", topic.getName());
+			}
+		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		String displayName = request.getRemoteAddr();

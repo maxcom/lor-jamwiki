@@ -276,6 +276,15 @@ public class EditServlet extends JAMWikiServlet {
 		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, contents);
 		contents = parserOutput.getContent();
 		topic.setTopicContent(contents);
+		if (StringUtils.hasText(parserOutput.getRedirect())) {
+			// set up a redirect
+			topic.setRedirectTo(parserOutput.getRedirect());
+			topic.setTopicType(Topic.TYPE_REDIRECT);
+		} else if (topic.getTopicType() == Topic.TYPE_REDIRECT) {
+			// no longer a redirect
+			topic.setRedirectTo(null);
+			topic.setTopicType(Topic.TYPE_ARTICLE);
+		}
 		Integer authorId = null;
 		if (user != null) {
 			authorId = new Integer(user.getUserId());

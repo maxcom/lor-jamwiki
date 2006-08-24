@@ -43,6 +43,11 @@ public abstract class AbstractParser {
 	}
 
 	/**
+	 *
+	 */
+	public abstract String buildRedirectContent(String topicName);
+
+	/**
 	 * Utility method for executing a lexer parse.
 	 * FIXME - this is copy & pasted here and in VQWikiParser
 	 */

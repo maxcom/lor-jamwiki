@@ -32,6 +32,7 @@ public class Topic {
 	private boolean deleted = false;
 	private String name = null;
 	private boolean readOnly = false;
+	private String redirectTo = null;
 	private String topicContent = null;
 	private int topicId = -1;
 	private int topicType = TYPE_ARTICLE;
@@ -91,6 +92,20 @@ public class Topic {
 	 */
 	public boolean getReadOnly() {
 		return this.readOnly;
+	}
+
+	/**
+	 *
+	 */
+	public String getRedirectTo() {
+		return this.redirectTo;
+	}
+
+	/**
+	 *
+	 */
+	public void setRedirectTo(String redirectTo) {
+		this.redirectTo = redirectTo;
 	}
 
 	/**

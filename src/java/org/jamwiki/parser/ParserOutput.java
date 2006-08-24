@@ -27,6 +27,7 @@ public class ParserOutput {
 	private LinkedHashMap categories = new LinkedHashMap();
 	private Vector links = new Vector();
 	private String content = null;
+	private String redirect = null;
 
 	/**
 	 *
@@ -74,5 +75,19 @@ public class ParserOutput {
 	 */
 	public Vector getLinks() {
 		return this.links;
+	}
+
+	/**
+	 *
+	 */
+	public String getRedirect() {
+		return this.redirect;
+	}
+
+	/**
+	 *
+	 */
+	public void setRedirect(String redirect) {
+		this.redirect = redirect;
 	}
 }
