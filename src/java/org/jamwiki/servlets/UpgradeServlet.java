@@ -176,14 +176,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// rebuild search index
 			LuceneSearchEngine.refreshIndex();
 			messages.add("Refreshed search index");
-			// update stylesheet
-			WikiUser user = Utilities.currentUser(request);
-			Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
-			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
-				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
-			}
+			// upgrade stylesheet
+			upgradeStyleSheet(request, messages);
 			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding
@@ -205,14 +199,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 			} else {
 				messages = FileUpgrades.upgrade030(messages);
 			}
-			// update stylesheet
-			WikiUser user = Utilities.currentUser(request);
-			Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
-			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
-				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
-			}
+			// upgrade stylesheet
+			upgradeStyleSheet(request, messages);
 			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding
@@ -233,6 +221,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 			} else {
 				messages = FileUpgrades.upgrade031(messages);
 			}
+			// upgrade stylesheet
+			upgradeStyleSheet(request, messages);
 			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding
@@ -240,6 +230,19 @@ public class UpgradeServlet extends JAMWikiServlet {
 			logger.error(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
+		WikiUser user = Utilities.currentUser(request);
+		Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
+		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+			WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user);
+			messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 		}
 	}
 
