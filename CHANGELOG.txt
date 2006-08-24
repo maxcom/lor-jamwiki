@@ -3,6 +3,7 @@
 =====
 
 * FEATURE: Add support for Mediawiki redirects (#REDIRECT [[Topic]]).
+* FEATURE: Add Special:Move.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.0

@@ -50,13 +50,14 @@ public class WikiPageInfo {
 	public static final int ACTION_IMPORT = 15;
 	public static final int ACTION_LINK_TO = 16;
 	public static final int ACTION_LOGIN = 17;
-	public static final int ACTION_RECENT_CHANGES = 18;
-	public static final int ACTION_REGISTER = 19;
-	public static final int ACTION_SEARCH = 20;
-	public static final int ACTION_SEARCH_RESULTS = 21;
-	public static final int ACTION_SETUP = 22;
-	public static final int ACTION_UPGRADE = 23;
-	public static final int ACTION_UPLOAD = 24;
+	public static final int ACTION_MOVE = 18;
+	public static final int ACTION_RECENT_CHANGES = 19;
+	public static final int ACTION_REGISTER = 20;
+	public static final int ACTION_SEARCH = 21;
+	public static final int ACTION_SEARCH_RESULTS = 22;
+	public static final int ACTION_SETUP = 23;
+	public static final int ACTION_UPGRADE = 24;
+	public static final int ACTION_UPLOAD = 25;
 
 	/**
 	 *
@@ -181,6 +182,13 @@ public class WikiPageInfo {
 	 */
 	public boolean getActionLogin() {
 		return (this.action == ACTION_LOGIN);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionMove() {
+		return (this.action == ACTION_MOVE);
 	}
 
 	/**

@@ -363,6 +363,23 @@ public class Utilities {
 	/**
 	 *
 	 */
+	public static String parserRedirectContent(String topicName) throws Exception {
+		AbstractParser parser = parserInstance(null);
+		return parser.buildRedirectContent(topicName);
+	}
+
+	/**
+	 *
+	 */
+	public static ParserOutput parserOutput(String content) throws Exception {
+		ParserInput parserInput = new ParserInput();
+		parserInput.setMode(ParserInput.MODE_SEARCH);
+		return Utilities.parsePreSave(parserInput, content);
+	}
+
+	/**
+	 *
+	 */
 	public static ParserOutput parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getTopicContent() == null) {

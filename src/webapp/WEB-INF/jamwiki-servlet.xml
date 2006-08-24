@@ -22,6 +22,7 @@
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
 				<prop key="/**/Special:Manage">Manage</prop>
+				<prop key="/**/Special:Move">Move</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:Search">Search</prop>
@@ -47,6 +48,7 @@
 	<bean id="LinkTo" class="org.jamwiki.servlets.LinkToServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="Manage" class="org.jamwiki.servlets.ManageServlet" />
+	<bean id="Move" class="org.jamwiki.servlets.MoveServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
 	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />

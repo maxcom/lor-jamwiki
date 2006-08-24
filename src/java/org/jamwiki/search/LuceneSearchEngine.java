@@ -399,9 +399,7 @@ public class LuceneSearchEngine {
 					if (standardDocument != null) writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a
 					// moderately large Wiki
-					ParserInput parserInput = new ParserInput();
-					parserInput.setMode(ParserInput.MODE_SEARCH);
-					ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
+					ParserOutput parserOutput = Utilities.parserOutput(topic.getTopicContent());
 					Document keywordDocument = createKeywordDocument(topic, parserOutput.getLinks());
 					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;

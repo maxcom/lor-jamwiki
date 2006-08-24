@@ -574,6 +574,39 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
+	 *
+	 */
+	public void moveTopic(Topic topic, TopicVersion topicVersion, String destination) throws Exception {
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			Topic oldTopic = WikiBase.getHandler().lookupTopic(topic.getVirtualWiki(), destination);
+			// FIXME - allow overwriting a deleted topic
+			if (oldTopic != null) {
+				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
+			}
+			String oldTopicName = topic.getName();
+			topic.setName(destination);
+			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
+			// create a new topic that redirects here
+			String content = Utilities.parserRedirectContent(destination);
+			topic.setName(oldTopicName);
+			topic.setTopicId(-1);
+			topic.setRedirectTo(destination);
+			topic.setTopicType(Topic.TYPE_REDIRECT);
+			topic.setTopicContent(content);
+			topicVersion.setTopicVersionId(-1);
+			topicVersion.setVersionContent(content);
+			writeTopic(topic, topicVersion, Utilities.parserOutput(content), params);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
+		}
+	}
+
+	/**
 	 * This method causes all existing data to be deleted from the Wiki.  Use only
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
@@ -703,10 +736,7 @@ public abstract class PersistencyHandler {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(new Integer(user.getUserId()), user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		ParserInput parserInput = new ParserInput();
-		parserInput.setMode(ParserInput.MODE_SEARCH);
-		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
-		writeTopic(topic, topicVersion, parserOutput, params);
+		writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
 	}
 
 	/**
@@ -759,10 +789,7 @@ public abstract class PersistencyHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(new Integer(user.getUserId()), user.getLastLoginIpAddress(), "Automatically updated by system upgrade", contents);
-			ParserInput parserInput = new ParserInput();
-			parserInput.setMode(ParserInput.MODE_SEARCH);
-			ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
-			writeTopic(topic, topicVersion, parserOutput, params);
+			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;

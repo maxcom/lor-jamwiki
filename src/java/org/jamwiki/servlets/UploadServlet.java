@@ -195,10 +195,7 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
 		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
-			ParserInput parserInput = new ParserInput();
-			parserInput.setMode(ParserInput.MODE_SEARCH);
-			ParserOutput parserOutput = Utilities.parsePreSave(parserInput, topic.getTopicContent());
-			WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput);
+			WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()));
 		} else {
 			topic = WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName());
 		}

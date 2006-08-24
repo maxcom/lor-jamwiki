@@ -29,13 +29,15 @@
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.history" /></a></td>
 	<td class="menu-tab-space">&#160;</td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Move" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.move" /></a></td>
+	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:LinkTo" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.links" /></a></td>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Manage" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:message key="menu.manage" /></a></td>
 	</c:if>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />" target="_blank"><f:message key="menu.printablepage" /></a></td>
+	<td class="menu-tab-nonselected"><a href="<jamwiki:link value="Special:Print" />?topic=<jamwiki:encode value="${pageInfo.topicName}" />" target="_blank"><f:message key="menu.print" /></a></td>
 </c:if>
 <c:if test="${pageInfo.special}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${pageInfo.topicName}"><f:message key="menu.special" /></jamwiki:link></td>

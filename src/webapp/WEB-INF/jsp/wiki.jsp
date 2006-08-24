@@ -101,6 +101,9 @@
 	<c:when test="${pageInfo.actionLogin}">
 		<jsp:include page="login.jsp" flush="true" />
 	</c:when>
+	<c:when test="${pageInfo.actionMove}">
+		<jsp:include page="move.jsp" flush="true" />
+	</c:when>
 	<c:when test="${pageInfo.actionRecentChanges}">
 		<jsp:include page="recent-changes.jsp" flush="true" />
 	</c:when>
