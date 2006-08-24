@@ -53,6 +53,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
+	protected static String STATEMENT_DELETE_TOPIC_REDIRECT = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
@@ -64,10 +65,11 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_TOPIC_REDIRECT_TABLE = null;
 	protected static String STATEMENT_DROP_RECENT_CHANGE_TABLE = null;
 	protected static String STATEMENT_INSERT_CATEGORY = null;
-	protected static String STATEMENT_INSERT_TOPIC = null;
-	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
+	protected static String STATEMENT_INSERT_TOPIC = null;
+	protected static String STATEMENT_INSERT_TOPIC_REDIRECT = null;
+	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
@@ -285,6 +287,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
+		STATEMENT_DELETE_TOPIC_REDIRECT          = props.getProperty("STATEMENT_DELETE_TOPIC_REDIRECT");
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
 		STATEMENT_DROP_WIKI_USER_INFO_TABLE      = props.getProperty("STATEMENT_DROP_WIKI_USER_INFO_TABLE");
@@ -296,10 +299,11 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_DROP_TOPIC_REDIRECT_TABLE      = props.getProperty("STATEMENT_DROP_TOPIC_REDIRECT_TABLE");
 		STATEMENT_DROP_RECENT_CHANGE_TABLE       = props.getProperty("STATEMENT_DROP_RECENT_CHANGE_TABLE");
 		STATEMENT_INSERT_CATEGORY                = props.getProperty("STATEMENT_INSERT_CATEGORY");
-		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
-		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
+		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
+		STATEMENT_INSERT_TOPIC_REDIRECT          = props.getProperty("STATEMENT_INSERT_TOPIC_REDIRECT");
+		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
 		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
 		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
@@ -343,6 +347,15 @@ public class DefaultQueryHandler implements QueryHandler {
 	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
 		stmt.setInt(1, childTopicId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteTopicRedirect(int fromTopicId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_REDIRECT);
+		stmt.setInt(1, fromTopicId);
 		stmt.executeUpdate(conn);
 	}
 
@@ -397,6 +410,16 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(6, topic.getTopicContent());
 		stmt.setInt(7, (topic.getDeleted() ? 1 : 0));
 		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void insertTopicRedirect(int fromTopicId, String toTopicName, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_REDIRECT);
+		stmt.setInt(1, fromTopicId);
+		stmt.setString(2, toTopicName);
 		stmt.executeUpdate(conn);
 	}
 

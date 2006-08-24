@@ -39,6 +39,7 @@ public class ParserUtil {
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
 	private static Pattern IMAGE_SIZE_PATTERN = null;
+	private static Pattern REDIRECT_PATTERN = null;
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
@@ -51,6 +52,8 @@ public class ParserUtil {
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
+			// is the topic a redirect?
+			REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\([^\n\r\\])\\]\\]", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.error("Unable to compile pattern", e);
 		}
@@ -305,6 +308,15 @@ public class ParserUtil {
 		// convert any underscores in the topic name to spaces
 		topic = StringUtils.replace(topic, "_", " ");
 		return topic.trim();
+	}
+
+	/**
+	 *
+	 */
+	public static boolean isRedirect(String content) {
+		if (!StringUtils.hasText(content)) return false;
+		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
+		return m.find();
 	}
 
 	/**
