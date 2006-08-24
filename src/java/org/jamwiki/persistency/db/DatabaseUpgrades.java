@@ -86,4 +86,28 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade031(Vector messages) throws Exception {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_REDIRECT_TABLE, conn);
+			// FIXME - hard coding
+			messages.add("Added jam_topic_redirect table");
+			conn.commit();
+		} catch (Exception e) {
+			try {
+				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_TOPIC_REDIRECT_TABLE, conn);
+			} catch (Exception ex) {}
+			conn.rollback();
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return messages;
+	}
 }
