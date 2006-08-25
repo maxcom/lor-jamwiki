@@ -69,7 +69,6 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		WikiMessage pageTitle = new WikiMessage("move.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
-		pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 		pageInfo.setTopicName(topicName);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -77,12 +76,14 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		String moveDestination = request.getParameter("moveDestination");
 		if (!StringUtils.hasText(moveDestination)) {
+			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.nodestination"));
 			return;
 		}
 		Topic oldTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
 		// FIXME - allow overwriting a deleted topic
 		if (oldTopic != null) {
+			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
 			return;
 		}
