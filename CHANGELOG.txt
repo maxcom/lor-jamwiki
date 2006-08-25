@@ -4,6 +4,8 @@
 
 * FEATURE: Add support for Mediawiki redirects (#REDIRECT [[Topic]]).
 * FEATURE: Add Special:Move.
+* FEATURE: Add jamwiki:linkParam tag, remove jamwiki:encode and
+  jamwiki:decode tags.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.0
