@@ -16,45 +16,61 @@
  */
 package org.jamwiki.tags;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-import org.jamwiki.utils.Utilities;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
+import org.jamwiki.WikiBase;
+import org.jamwiki.servlets.JAMWikiServlet;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Utilities;
+import org.springframework.util.StringUtils;
 
 /**
  *
  */
-public class EncodeTag extends TagSupport {
+public class LinkParamTag extends BodyTagSupport {
 
-	private static final Logger logger = Logger.getLogger(EncodeTag.class);
-
-	private String var = null;
+	private static Logger logger = Logger.getLogger(LinkParamTag.class);
 	private String value = null;
+	private String key = null;
 
 	/**
 	 *
 	 */
 	public int doEndTag() throws JspException {
-		String encodedValue = null;
+		String tagValue = null;
+		LinkTag parent = (LinkTag)this.getParent();
+		if (parent == null) {
+			throw new JspException("linkParam tag not nested within a link tag");
+		}
 		try {
-			encodedValue = ExpressionUtil.evalNotNull("encode", "value", this.value, Object.class, this, pageContext).toString();
+			if (!StringUtils.hasText(this.value)) {
+				tagValue = this.getBodyContent().getString();
+			} else {
+				tagValue = ExpressionUtil.evalNotNull("linkParam", "value", this.value, Object.class, this, pageContext).toString();
+			}
+			parent.addQueryParam(this.key, tagValue);
 		} catch (JspException e) {
-			logger.error("Failure in link tag for " + this.value + " / " + this.var, e);
+			logger.error("Failure in link tag for " + this.value, e);
 			throw e;
 		}
-		try {
-			encodedValue = Utilities.encodeURL(encodedValue);
-			if (this.var == null) {
-				this.pageContext.getOut().print(encodedValue);
-			} else {
-				this.pageContext.setAttribute(this.var, encodedValue);
-			}
-		} catch (Exception e) {
-			logger.error("Failure while encoding value " + encodedValue);
-			throw new JspException(e);
-		}
-		return EVAL_PAGE;
+		return SKIP_BODY;
+	}
+
+	/**
+	 *
+	 */
+	public String getKey() {
+		return this.key;
+	}
+
+	/**
+	 *
+	 */
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	/**
@@ -69,19 +85,5 @@ public class EncodeTag extends TagSupport {
 	 */
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	/**
-	 *
-	 */
-	public String getVar() {
-		return this.var;
-	}
-
-	/**
-	 *
-	 */
-	public void setVar(String var) {
-		this.var = var;
 	}
 }

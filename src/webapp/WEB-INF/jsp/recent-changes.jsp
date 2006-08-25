@@ -56,9 +56,9 @@ if (request.getParameter("num") != null) {
 
 <c:forEach items="${changes}" var="change">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
-	(<a href="<jamwiki:link value="Special:Diff" />?topic=<jamwiki:encode value="${change.topicName}" />&amp;version2=<c:out value="${change.previousTopicVersionId}" />&amp;version1=<c:out value="${change.topicVersionId}" />"><f:message key="common.caption.diff" /></a>)
+	(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><f:message key="common.caption.diff" /></jamwiki:link>)
 	&#160;
-	(<a href="<jamwiki:link value="Special:History" />?topic=<jamwiki:encode value="${change.topicName}" />"><f:message key="common.caption.history" /></a>)
+	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><f:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
@@ -68,7 +68,7 @@ if (request.getParameter("num") != null) {
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
-	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<a href="<jamwiki:link value="Special:Contributions" />?contributor=<jamwiki:encode value="${change.authorName}" />"><f:message key="recentchanges.caption.contributions" /></a>)
+	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)
 	<%-- FIXME: need a better way to denote minor edits & deletions --%>
 	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
 	<c:if test="${change.delete}">&#160;<b>d</b></c:if>

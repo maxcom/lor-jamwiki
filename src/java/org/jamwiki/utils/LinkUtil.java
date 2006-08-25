@@ -208,7 +208,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	private static String parseQuery(String text) {
+	public static String parseQuery(String text) {
 		String query = null;
 		int pos = text.indexOf('?');
 		if (pos > 0) {
@@ -222,7 +222,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	private static String parseSection(String text) {
+	public static String parseSection(String text) {
 		int pos = text.indexOf('#');
 		if (pos == -1 || text.length() <= pos) return null;
 		String section = text.substring(pos+1).trim();
@@ -232,7 +232,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	private static String parseTopic(String text) {
+	public static String parseTopic(String text) {
 		String topic = text;
 		int pos = text.indexOf('#');
 		if (pos > 0) {

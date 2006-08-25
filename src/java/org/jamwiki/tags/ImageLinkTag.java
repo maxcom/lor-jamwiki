@@ -42,7 +42,7 @@ public class ImageLinkTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		String linkValue = null;
 		try {
-			linkValue = (String)ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext);
+			linkValue = ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext).toString();
 		} catch (JspException e) {
 			logger.error("Image link tag evaluated empty for value " + this.value, e);
 			throw e;
@@ -50,7 +50,7 @@ public class ImageLinkTag extends TagSupport {
 		int linkDimension = -1;
 		if (this.maxDimension != null) {
 			try {
-				linkDimension = new Integer((String)ExpressionUtil.evalNotNull("link", "maxDimension", this.maxDimension, Object.class, this, pageContext)).intValue();
+				linkDimension = new Integer(ExpressionUtil.evalNotNull("link", "maxDimension", this.maxDimension, Object.class, this, pageContext).toString()).intValue();
 			} catch (JspException e) {
 				logger.error("Image link tag evaluated empty for maxDimension " + this.maxDimension, e);
 				throw e;

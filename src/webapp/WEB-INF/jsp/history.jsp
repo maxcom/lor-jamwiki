@@ -84,7 +84,7 @@ function inactive(element) {
 	<input type="checkbox" name="<c:out value="diff:${change.topicVersionId}" />" onclick="inactive(this)" id="<c:out value="diff:${change.topicVersionId}" />" />
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
-	<a href="<jamwiki:link value="Special:History" />?topicVersionId=<c:out value="${change.topicVersionId}" />&topic=<jamwiki:encode value="${pageInfo.topicName}" />"><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
 	&#160;.&#160;.&#160;
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />

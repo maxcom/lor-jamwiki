@@ -38,7 +38,7 @@ public class DecodeTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		String decodedValue = null;
 		try {
-			decodedValue = (String)ExpressionUtil.evalNotNull("decode", "value", this.value, Object.class, this, pageContext);
+			decodedValue = ExpressionUtil.evalNotNull("decode", "value", this.value, Object.class, this, pageContext).toString();
 		} catch (JspException e) {
 			logger.error("Failure in link tag for " + this.value + " / " + this.var, e);
 			throw e;
