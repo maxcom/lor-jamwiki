@@ -7,6 +7,7 @@ package org.jamwiki.parser;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
 
 %%
@@ -45,7 +46,8 @@ import org.springframework.util.StringUtils;
             // invalid link
             return;
         }
-        String topic = ParserUtil.extractLinkTopic(content);
+        String url = ParserUtil.extractLinkUrl(content);
+        String topic = LinkUtil.extractLinkTopic(url);
         if (!StringUtils.hasText(topic)) {
             return;
         }

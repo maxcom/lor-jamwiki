@@ -35,31 +35,6 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildEditLinkHtml(String context, String virtualWiki, String topic, String query, int section, String text) throws Exception {
-		String url = LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, section);
-		if (!StringUtils.hasText(text)) {
-			text = topic;
-			int pos = topic.indexOf('?');
-			if (pos > 0) {
-				text = topic.substring(0, pos).trim();
-			}
-			pos = text.indexOf('#');
-			if (pos > 0) {
-				text = text.substring(0, pos).trim();
-			}
-		}
-		String css = "";
-		if (!WikiBase.exists(virtualWiki, topic)) {
-			// FIXME - hard coding
-			css = " class=\"edit\"";
-		}
-		url = "<a href=\"" + url + "\"" + css + ">" + Utilities.escapeHTML(text) + "</a>";
-		return url;
-	}
-
-	/**
-	 *
-	 */
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
 		if (StringUtils.hasText(query)) {
 			if (!query.startsWith("?")) query = "?" + query;
@@ -138,7 +113,7 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text, String style, boolean escapeHtml) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic), text, style, escapeHtml);
+		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, extractLinkTopic(topic), extractLinkSection(topic), extractLinkQuery(topic), text, style, escapeHtml);
 	}
 
 	/**
@@ -172,7 +147,7 @@ public class LinkUtil {
 		if (!StringUtils.hasText(topic)) {
 			return null;
 		}
-		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, parseTopic(topic), parseSection(topic), parseQuery(topic));
+		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, extractLinkTopic(topic), extractLinkSection(topic), extractLinkQuery(topic));
 	}
 
 	/**
@@ -208,7 +183,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String parseQuery(String text) {
+	public static String extractLinkQuery(String text) {
 		String query = null;
 		int pos = text.indexOf('?');
 		if (pos > 0) {
@@ -222,7 +197,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String parseSection(String text) {
+	public static String extractLinkSection(String text) {
 		int pos = text.indexOf('#');
 		if (pos == -1 || text.length() <= pos) return null;
 		String section = text.substring(pos+1).trim();
@@ -232,16 +207,22 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String parseTopic(String text) {
+	public static String extractLinkTopic(String text) {
 		String topic = text;
-		int pos = text.indexOf('#');
-		if (pos > 0) {
-			topic = text.substring(0, pos).trim();
+		int pos = topic.indexOf("#");
+		if (pos == 0) {
+			// no topic, just a section
+			return "";
+		}
+		if (pos != -1) {
+			topic = topic.substring(0, pos);
 		}
 		pos = text.indexOf('?');
 		if (pos > 0) {
 			topic = text.substring(0, pos).trim();
 		}
-		return topic;
+		// convert any underscores in the topic name to spaces
+		topic = StringUtils.replace(topic, "_", " ");
+		return topic.trim();
 	}
 }

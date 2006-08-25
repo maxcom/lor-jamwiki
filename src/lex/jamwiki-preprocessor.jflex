@@ -33,6 +33,7 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
@@ -303,8 +304,9 @@ import org.springframework.util.StringUtils;
             // invalid link
             return "";
         }
-        String topic = ParserUtil.extractLinkTopic(content);
-        String section = ParserUtil.extractLinkSection(content);
+        String url = ParserUtil.extractLinkUrl(content);
+        String topic = LinkUtil.extractLinkTopic(url);
+        String section = LinkUtil.extractLinkSection(url);
         if (!StringUtils.hasText(topic) && !StringUtils.hasText(section)) {
             return "";
         }

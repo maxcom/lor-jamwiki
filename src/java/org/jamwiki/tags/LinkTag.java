@@ -54,15 +54,15 @@ public class LinkTag extends BodyTagSupport {
 		String url = null;
 		String virtualWiki = retrieveVirtualWiki(request);
 		if (!StringUtils.hasText(this.queryParams)) {
-			this.queryParams = LinkUtil.parseQuery(tagValue);
+			this.queryParams = LinkUtil.extractLinkQuery(tagValue);
 		}
 		try {
 			if (StringUtils.hasText(tagText)) {
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, LinkUtil.parseTopic(tagValue), LinkUtil.parseSection(tagValue), this.queryParams, tagText, this.style, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, LinkUtil.extractLinkTopic(tagValue), LinkUtil.extractLinkSection(tagValue), this.queryParams, tagText, this.style, true);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
-				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, LinkUtil.parseTopic(tagValue), LinkUtil.parseSection(tagValue), this.queryParams);
+				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, LinkUtil.extractLinkTopic(tagValue), LinkUtil.extractLinkSection(tagValue), this.queryParams);
 			}
 			this.pageContext.getOut().print(url);
 		} catch (Exception e) {

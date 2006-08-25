@@ -136,8 +136,10 @@ public class ParserUtil {
 				// invalid link
 				return raw;
 			}
-			String topic = ParserUtil.extractLinkTopic(content);
-			String section = ParserUtil.extractLinkSection(content);
+			String url = ParserUtil.extractLinkUrl(content);
+			String topic = LinkUtil.extractLinkTopic(url);
+			String section = LinkUtil.extractLinkSection(url);
+			String query = LinkUtil.extractLinkQuery(url);
 			if (!StringUtils.hasText(topic) && !StringUtils.hasText(section)) {
 				// invalid topic
 				return raw;
@@ -171,7 +173,7 @@ public class ParserUtil {
 				text = ParserUtil.parseFragment(parserInput, text);
 			}
 			// do not escape text html - already done by parser
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, null, text, null, false);
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, null, false);
 		} catch (Exception e) {
 			logger.error("Failure while parsing link " + raw, e);
 			return "";
@@ -240,30 +242,6 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String extractLinkSection(String raw) {
-		if (raw == null) {
-			logger.warn("ParserUtil.extractLinkSection called with invalid raw text: " + raw);
-			return null;
-		}
-		String section = raw;
-		int pos = section.indexOf("|");
-		if (pos == 0) {
-			// topic cannot start with "|"
-			return null;
-		}
-		if (pos != -1) {
-			section = section.substring(0, pos);
-		}
-		pos = section.indexOf("#");
-		if (pos == -1 || section.length() <= (pos+1)) {
-			return null;
-		}
-		return section.substring(pos+1).trim();
-	}
-
-	/**
-	 *
-	 */
 	protected static String extractLinkText(String raw) {
 		if (raw == null) {
 			logger.warn("ParserUtil.extractLinkText called with invalid raw text: " + raw);
@@ -280,31 +258,21 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String extractLinkTopic(String raw) {
+	protected static String extractLinkUrl(String raw) {
 		if (raw == null) {
 			logger.warn("ParserUtil.extractLinkTopic called with invalid raw text: " + raw);
 			return null;
 		}
-		String topic = raw;
-		int pos = topic.indexOf("|");
+		String url = raw;
+		int pos = url.indexOf("|");
 		if (pos == 0) {
 			// topic cannot start with "|"
 			return null;
 		}
 		if (pos != -1) {
-			topic = topic.substring(0, pos);
+			url = url.substring(0, pos);
 		}
-		pos = topic.indexOf("#");
-		if (pos == 0) {
-			// no topic, just a section
-			return "";
-		}
-		if (pos != -1) {
-			topic = topic.substring(0, pos);
-		}
-		// convert any underscores in the topic name to spaces
-		topic = StringUtils.replace(topic, "_", " ");
-		return topic.trim();
+		return url;
 	}
 
 	/**
@@ -362,7 +330,8 @@ public class ParserUtil {
 	protected static String parseImageLink(ParserInput parserInput, String content) throws Exception {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
-		String topic = ParserUtil.extractLinkTopic(content);
+		String url = ParserUtil.extractLinkUrl(content);
+		String topic = LinkUtil.extractLinkTopic(url);
 		String text = ParserUtil.extractLinkText(content);
 		boolean thumb = false;
 		boolean frame = false;
