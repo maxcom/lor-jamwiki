@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;

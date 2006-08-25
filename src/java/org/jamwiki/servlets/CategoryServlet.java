@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.springframework.web.servlet.ModelAndView;
 
