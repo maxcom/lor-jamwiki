@@ -8,6 +8,8 @@
   jamwiki:decode tags.
 * BUG: Apostrophes were not being escaped by the parser.
 * BUG: <pre> tags might not be closed by the parser.
+* BUG: Use of the edit resolve functionality with a section edit could cause
+  the resulting edit to splice together too much text.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.0

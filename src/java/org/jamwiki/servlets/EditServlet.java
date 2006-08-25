@@ -77,7 +77,7 @@ public class EditServlet extends JAMWikiServlet {
 		loadTopic(request, virtualWiki, topicName);
 		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
 		next.addObject("lastTopicVersionId", new Integer(lastTopicVersionId));
-		loadEdit(request, next, pageInfo, virtualWiki, topicName);
+		loadEdit(request, next, pageInfo, virtualWiki, topicName, true);
 		String contents = null;
 		if (isPreview(request)) {
 			preview(request, next, pageInfo);
@@ -125,7 +125,7 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String virtualWiki, String topicName) throws Exception {
+	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String virtualWiki, String topicName, boolean useSection) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
 		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
@@ -134,7 +134,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (request.getParameter("editComment") != null) {
 			next.addObject("editComment", request.getParameter("editComment"));
 		}
-		if (request.getParameter("section") != null) {
+		if (useSection && request.getParameter("section") != null) {
 			next.addObject("section", request.getParameter("section"));
 		}
 		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
@@ -217,7 +217,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("contentsResolve", contents2);
 		Vector diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
-		loadEdit(request, next, pageInfo, virtualWiki, topicName);
+		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_RESOLVE);
 	}
 
