@@ -69,7 +69,7 @@ FIXME - restore the Javascript edit buttons
 </p>
 <p><label for="editComment"><f:message key="edit.caption.comment" /></label>: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" id="editComment" /></p>
 <p>
-<input type="submit" name="save" value="<f:message key="edit.action.save"/>"/>
+<input type="submit" name="save" value="<f:message key="common.save"/>"/>
 
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
