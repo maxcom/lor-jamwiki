@@ -12,6 +12,7 @@
   the resulting edit to splice together too much text.
 * BUG: Upgrade could fail if no user logged in.  Reported by colinbes.
 * BUG: Login page displayed the wrong login message.
+* BUG: Do not allow user names that vary only by case ("user" vs. "uSer").
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 * FEATURE: Updated Hungarian translations from bDaneE.
 
