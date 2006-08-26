@@ -223,6 +223,6 @@ public class LinkUtil {
 		}
 		// convert any underscores in the topic name to spaces
 		topic = StringUtils.replace(topic, "_", " ");
-		return topic.trim();
+		return Utilities.decodeURL(topic.trim());
 	}
 }

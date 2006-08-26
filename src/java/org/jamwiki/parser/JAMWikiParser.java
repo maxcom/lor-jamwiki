@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
 /**
@@ -62,7 +63,7 @@ public class JAMWikiParser extends AbstractParser {
 	public String isRedirect(String content) {
 		if (!StringUtils.hasText(content)) return null;
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
-		return (m.matches()) ? m.group(1).trim() : null;
+		return (m.matches()) ? Utilities.decodeURL(m.group(1).trim()) : null;
 	}
 
 	/**
