@@ -365,7 +365,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
 		pageInfo.setSpecial(true);
 		if (errorMessage != null) {
-			next.addObject("errorMessage", new WikiMessage("admin.message.loginrequired"));
+			next.addObject("errorMessage", errorMessage);
 		}
 		loadDefaults(request, next, pageInfo);
 		return next;
