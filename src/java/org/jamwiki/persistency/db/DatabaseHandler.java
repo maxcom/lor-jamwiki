@@ -388,7 +388,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			topic.setTopicContent(rs.getString("topic_content"));
 			topic.setTopicId(rs.getInt("topic_id"));
 			topic.setReadOnly(rs.getInt("topic_read_only") != 0);
-			topic.setDeleted(rs.getInt("topic_deleted") != 0);
+			topic.setDeleteDate(rs.getTimestamp("delete_date"));
 			topic.setTopicType(rs.getInt("topic_type"));
 			topic.setRedirectTo(rs.getString("redirect_to"));
 			return topic;
@@ -453,7 +453,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			wikiFile.setUrl(rs.getString("file_url"));
 			wikiFile.setTopicId(rs.getInt("topic_id"));
 			wikiFile.setReadOnly(rs.getInt("file_read_only") != 0);
-			wikiFile.setDeleted(rs.getInt("file_deleted") != 0);
+			wikiFile.setDeleteDate(rs.getTimestamp("delete_date"));
 			wikiFile.setMimeType(rs.getString("mime_type"));
 			wikiFile.setFileSize(rs.getInt("file_size"));
 			return wikiFile;

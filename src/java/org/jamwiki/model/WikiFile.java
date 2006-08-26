@@ -16,6 +16,7 @@
  */
 package org.jamwiki.model;
 
+import java.sql.Timestamp;
 import org.apache.log4j.Logger;
 
 /**
@@ -25,7 +26,7 @@ public class WikiFile {
 
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
-	private boolean deleted = false;
+	private Timestamp deleteDate = null;
 	private int fileId = -1;
 	private String fileName = null;
 	private long fileSize = -1;
@@ -47,7 +48,7 @@ public class WikiFile {
 	 */
 	public WikiFile(WikiFile wikiFile) {
 		this.adminOnly = wikiFile.getAdminOnly();
-		this.deleted = wikiFile.getDeleted();
+		this.deleteDate = wikiFile.getDeleteDate();
 		this.fileId = wikiFile.getFileId();
 		this.fileName = wikiFile.getFileName();
 		this.fileSize = wikiFile.getFileSize();
@@ -75,15 +76,15 @@ public class WikiFile {
 	/**
 	 *
 	 */
-	public boolean getDeleted() {
-		return this.deleted;
+	public Timestamp getDeleteDate() {
+		return this.deleteDate;
 	}
 
 	/**
 	 *
 	 */
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void setDeleteDate(Timestamp deleteDate) {
+		this.deleteDate = deleteDate;
 	}
 
 	/**

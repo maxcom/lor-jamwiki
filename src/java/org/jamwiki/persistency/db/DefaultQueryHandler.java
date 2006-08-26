@@ -387,7 +387,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(4, topic.getTopicType());
 		stmt.setInt(5, (topic.getReadOnly() ? 1 : 0));
 		stmt.setString(6, topic.getTopicContent());
-		stmt.setInt(7, (topic.getDeleted() ? 1 : 0));
+		stmt.setTimestamp(7, topic.getDeleteDate());
 		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
 		stmt.setString(9, topic.getRedirectTo());
 		stmt.executeUpdate(conn);
@@ -440,7 +440,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(4, wikiFile.getUrl());
 		stmt.setString(5, wikiFile.getMimeType());
 		stmt.setInt(6, wikiFile.getTopicId());
-		stmt.setInt(7, (wikiFile.getDeleted() ? 1 : 0));
+		stmt.setTimestamp(7, wikiFile.getDeleteDate());
 		stmt.setInt(8, (wikiFile.getReadOnly() ? 1 : 0));
 		stmt.setInt(9, (wikiFile.getAdminOnly() ? 1 : 0));
 		stmt.setInt(10, wikiFile.getFileSize());
@@ -738,7 +738,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(3, topic.getTopicType());
 		stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
 		stmt.setString(5, topic.getTopicContent());
-		stmt.setInt(6, (topic.getDeleted() ? 1 : 0));
+		stmt.setTimestamp(6, topic.getDeleteDate());
 		stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
 		stmt.setString(8, topic.getRedirectTo());
 		stmt.setInt(9, topic.getTopicId());
@@ -765,7 +765,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(3, wikiFile.getUrl());
 		stmt.setString(4, wikiFile.getMimeType());
 		stmt.setInt(5, wikiFile.getTopicId());
-		stmt.setInt(6, (wikiFile.getDeleted() ? 1 : 0));
+		stmt.setTimestamp(6, wikiFile.getDeleteDate());
 		stmt.setInt(7, (wikiFile.getReadOnly() ? 1 : 0));
 		stmt.setInt(8, (wikiFile.getAdminOnly() ? 1 : 0));
 		stmt.setInt(9, wikiFile.getFileSize());

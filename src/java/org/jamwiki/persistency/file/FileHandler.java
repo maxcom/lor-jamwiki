@@ -102,7 +102,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_TOPIC_TEXT = "text";
 	protected static final String XML_TOPIC_ADMIN_ONLY = "admin";
 	protected static final String XML_TOPIC_READ_ONLY = "readonly";
-	protected static final String XML_TOPIC_DELETED = "deleted";
+	protected static final String XML_TOPIC_DELETE_DATE = "deleted";
 	protected static final String XML_TOPIC_REDIRECT_TO = "redirectto";
 	protected static final String XML_TOPIC_TYPE = "type";
 	protected static final String XML_TOPIC_VERSION_ROOT = "revision";
@@ -128,7 +128,7 @@ public class FileHandler extends PersistencyHandler {
 	protected static final String XML_WIKI_FILE_URL = "url";
 	protected static final String XML_WIKI_FILE_ADMIN_ONLY = "admin";
 	protected static final String XML_WIKI_FILE_READ_ONLY = "readonly";
-	protected static final String XML_WIKI_FILE_DELETED = "deleted";
+	protected static final String XML_WIKI_FILE_DELETE_DATE = "deleted";
 	protected static final String XML_WIKI_FILE_MIME_TYPE = "mimetype";
 	protected static final String XML_WIKI_FILE_SIZE = "filesize";
 	protected static final String XML_WIKI_FILE_VERSION_ROOT = "revision";
@@ -617,8 +617,8 @@ public class FileHandler extends PersistencyHandler {
 					topic.setAdminOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_TOPIC_READ_ONLY)) {
 					topic.setReadOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
-				} else if (childName.equals(XML_TOPIC_DELETED)) {
-					topic.setDeleted(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
+				} else if (childName.equals(XML_TOPIC_DELETE_DATE)) {
+					topic.setDeleteDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_TOPIC_REDIRECT_TO)) {
 					topic.setRedirectTo(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_TOPIC_TYPE)) {
@@ -742,8 +742,8 @@ public class FileHandler extends PersistencyHandler {
 					wikiFile.setAdminOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_WIKI_FILE_READ_ONLY)) {
 					wikiFile.setReadOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
-				} else if (childName.equals(XML_WIKI_FILE_DELETED)) {
-					wikiFile.setDeleted(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
+				} else if (childName.equals(XML_WIKI_FILE_DELETE_DATE)) {
+					wikiFile.setDeleteDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_WIKI_FILE_MIME_TYPE)) {
 					wikiFile.setMimeType(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_SIZE)) {
@@ -1419,7 +1419,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_READ_ONLY, topic.getReadOnly()));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_TOPIC_DELETED, topic.getDeleted()));
+		content.append(XMLUtil.buildTag(XML_TOPIC_DELETE_DATE, topic.getDeleteDate()));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_TOPIC_REDIRECT_TO, topic.getRedirectTo(), true));
 		content.append("\n");
@@ -1535,7 +1535,7 @@ public class FileHandler extends PersistencyHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_FILE_READ_ONLY, wikiFile.getReadOnly()));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_FILE_DELETED, wikiFile.getDeleted()));
+		content.append(XMLUtil.buildTag(XML_WIKI_FILE_DELETE_DATE, wikiFile.getDeleteDate()));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_FILE_MIME_TYPE, wikiFile.getMimeType(), true));
 		content.append("\n");

@@ -16,6 +16,7 @@
  */
 package org.jamwiki.model;
 
+import java.sql.Timestamp;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,7 +30,7 @@ public class Topic {
 	public static final int TYPE_CATEGORY = 5;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
-	private boolean deleted = false;
+	private Timestamp deleteDate = null;
 	private String name = null;
 	private boolean readOnly = false;
 	private String redirectTo = null;
@@ -62,15 +63,15 @@ public class Topic {
 	/**
 	 *
 	 */
-	public boolean getDeleted() {
-		return this.deleted;
+	public Timestamp getDeleteDate() {
+		return this.deleteDate;
 	}
 
 	/**
 	 *
 	 */
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
+	public void setDeleteDate(Timestamp deleteDate) {
+		this.deleteDate = deleteDate;
 	}
 
 	/**

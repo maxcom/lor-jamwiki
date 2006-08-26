@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.sql.Timestamp;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
@@ -80,7 +81,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = "";
 		topic.setTopicContent(contents);
-		topic.setDeleted(true);
+		topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getHandler().deleteTopic(topic, topicVersion);
@@ -136,7 +137,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
-		topic.setDeleted(false);
+		topic.setDeleteDate(null);
 		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
@@ -157,7 +158,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		next.addObject("readOnly", new Boolean(topic.getReadOnly()));
 		next.addObject("adminOnly", new Boolean(topic.getAdminOnly()));
-		next.addObject("deleted", new Boolean(topic.getDeleted()));
+		next.addObject("deleted", new Boolean(topic.getDeleteDate() != null));
 		pageInfo.setTopicName(topicName);
 		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_MANAGE);
 		pageInfo.setPageTitle(new WikiMessage("manage.title", topicName));

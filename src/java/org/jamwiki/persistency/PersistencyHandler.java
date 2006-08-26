@@ -328,7 +328,7 @@ public abstract class PersistencyHandler {
 			return false;
 		}
 		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null || topic.getDeleted()) {
+		if (topic == null || topic.getDeleteDate() != null) {
 			cachedNonTopicsList.put(key, null);
 			return false;
 		}
