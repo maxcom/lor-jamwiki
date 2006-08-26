@@ -12,6 +12,7 @@
   the resulting edit to splice together too much text.
 * BUG: Upgrade could fail if no user logged in.  Reported by colinbes.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
+* FEATURE: Updated Hungarian translations from bDaneE.
 
 0.3.0
 =====
