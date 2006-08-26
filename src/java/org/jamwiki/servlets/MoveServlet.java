@@ -44,8 +44,7 @@ public class MoveServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			// FIXME - temporarily make admin only
-			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
+			if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
 				return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
 			}
