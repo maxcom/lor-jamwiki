@@ -95,6 +95,35 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
+	protected Topic getRedirectTarget(Topic parent, int attempts) throws Exception {
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
+			logger.error("getRedirectTarget() called for non-redirect topic " + parent.getName());
+			return parent;
+		}
+		// avoid infinite redirection
+		attempts++;
+		if (attempts > 10) {
+			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
+		}
+		// get the topic that is being redirected to
+		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo());
+		if (child == null) {
+			// child being redirected to doesn't exist, return parent
+			return parent;
+		}
+		if (!StringUtils.hasText(child.getRedirectTo())) {
+			// found a topic that is not a redirect, return
+			return child;
+		}
+		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo()) == null) {
+		}
+		// topic is a redirect, keep looking
+		return this.getRedirectTarget(child, attempts);
+	}
+
+	/**
+	 *
+	 */
 	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
 		String uri = request.getRequestURI().trim();
 		// FIXME - needs testing on other platforms
@@ -385,18 +414,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
-			pageInfo.setRedirectName(topic.getName());
-			// FIXME - move to a utility method
-			// get the topic that is being redirected to
-			int count = 0;
-			while (topic.getTopicType() == Topic.TYPE_REDIRECT) {
-				count++;
-				if (count > 10) {
-					throw new WikiException(new WikiMessage("topic.redirect.infinite", topic.getName()));
-				}
-				if (!StringUtils.hasText(topic.getRedirectTo())) break;
-				topic = WikiBase.getHandler().lookupTopic(topic.getVirtualWiki(), topic.getRedirectTo());
-				pageTitle = new WikiMessage("topic.title", topic.getName());
+			Topic child = this.getRedirectTarget(topic, 0);
+			if (!child.getName().equals(topic.getName())) {
+				pageInfo.setRedirectName(topic.getName());
+				pageTitle = new WikiMessage("topic.title", child.getName());
+				topic = child;
 			}
 		}
 		String virtualWiki = topic.getVirtualWiki();

@@ -581,8 +581,7 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			Topic oldTopic = WikiBase.getHandler().lookupTopic(topic.getVirtualWiki(), destination);
-			// FIXME - allow overwriting a deleted topic
-			if (oldTopic != null) {
+			if (oldTopic != null && oldTopic.getDeleteDate() == null) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
 			String oldTopicName = topic.getName();

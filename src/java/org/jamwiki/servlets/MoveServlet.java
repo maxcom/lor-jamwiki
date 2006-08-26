@@ -84,7 +84,7 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		Topic oldTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
 		// FIXME - allow overwriting a deleted topic
-		if (oldTopic != null) {
+		if (oldTopic != null && oldTopic.getDeleteDate() == null) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
 			return;
