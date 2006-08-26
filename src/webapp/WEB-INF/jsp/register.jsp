@@ -28,7 +28,7 @@
 <table>
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center">
-	<div style="color:red;size=110%;"><c:forEach items="${errors}" var="message"><f:message key="${message.key}" /><br /></c:forEach></div>
+	<p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}" /><br /></c:forEach></p>
 </td></tr>
 </c:if>
 <%-- FIXME - handle LDAP --%>

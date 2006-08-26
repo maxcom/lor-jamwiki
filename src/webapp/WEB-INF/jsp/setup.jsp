@@ -48,11 +48,10 @@ function onPersistenceType() {
 }
 </script>
 
+<c:if test="${!empty errorMessage}"><p class="color"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></p></c:if>
+
 <form name="setup" method="post">
 <table style="border:2px solid #333333;padding=1em;">
-<c:if test="${!empty errorMessage}">
-<tr><td colspan="2" align="center"><div style="color:red;size=110%;"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></div></td></tr>
-</c:if>
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center"><div style="color:red;size=110%;">
 <c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach>

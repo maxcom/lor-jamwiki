@@ -29,6 +29,7 @@ public class WikiPageInfo {
 	private static final Logger logger = Logger.getLogger(WikiPageInfo.class);
 	private boolean admin = false;
 	private int action = -1;
+	private boolean canMove = false;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
 	private String topicName = "";
@@ -260,6 +261,20 @@ public class WikiPageInfo {
 	 */
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
+	}
+
+	/**
+	 *
+	 */
+	public boolean getCanMove() {
+		return this.canMove;
+	}
+
+	/**
+	 *
+	 */
+	public void setCanMove(boolean canMove) {
+		this.canMove = canMove;
 	}
 
 	/**

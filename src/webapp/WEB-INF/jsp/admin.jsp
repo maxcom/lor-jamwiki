@@ -125,6 +125,10 @@ function onUserGroupType() {
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_VERSIONING_ON %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON) ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_VERSIONING_ON %>" /></td>
 </tr>
 <tr>
+	<td class="normal"><label for="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>"><f:message key="admin.caption.nonadminmove" /></label></td>
+	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" /></td>
+</tr>
+<tr>
 	<td class="normal"><label for="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>"><f:message key="admin.caption.forceusername" /></label></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" /></td>
 </tr>

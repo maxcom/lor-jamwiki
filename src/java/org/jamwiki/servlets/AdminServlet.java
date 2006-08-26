@@ -221,6 +221,10 @@ public class AdminServlet extends JAMWikiServlet {
 				request.getParameter(Environment.PROP_PARSER_ALLOW_JAVASCRIPT) != null
 			);
 			Environment.setBooleanValue(
+				Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE,
+				request.getParameter(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) != null
+			);
+			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_FORCE_USERNAME,
 				request.getParameter(Environment.PROP_TOPIC_FORCE_USERNAME) != null
 			);

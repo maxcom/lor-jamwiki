@@ -256,6 +256,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 			next.addObject("userpage", WikiBase.NAMESPACE_USER + user.getLogin());
 			next.addObject("usercomments", WikiBase.NAMESPACE_USER_COMMENTS + user.getLogin());
 			next.addObject("adminUser", new Boolean(user.getAdmin()));
+			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || user.getAdmin()) {
+				pageInfo.setCanMove(true);
+			}
 		}
 		if (!pageInfo.getSpecial()) {
 			// FIXME - this is really ugly

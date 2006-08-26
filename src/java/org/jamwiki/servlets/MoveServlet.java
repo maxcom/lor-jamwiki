@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -43,12 +44,12 @@ public class MoveServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
+			// FIXME - temporarily make admin only
+			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
+				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+				return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
+			}
 			if (request.getParameter("move") != null) {
-				// FIXME - temporarily make admin only
-				if (!Utilities.isAdmin(request)) {
-					WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-					return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
-				}
 				move(request, next, pageInfo);
 			} else {
 				view(request, next, pageInfo);
@@ -101,6 +102,7 @@ public class MoveServlet extends JAMWikiServlet {
 		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), moveComment, topic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
 		WikiBase.getHandler().moveTopic(topic, topicVersion, moveDestination);
+		JAMWikiServlet.removeCachedContents();
 		viewTopic(request, next, pageInfo, moveDestination);
 	}
 
