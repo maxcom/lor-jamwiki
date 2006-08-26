@@ -10,6 +10,7 @@
 * BUG: <pre> tags might not be closed by the parser.
 * BUG: Use of the edit resolve functionality with a section edit could cause
   the resulting edit to splice together too much text.
+* BUG: Upgrade could fail if no user logged in.  Reported by colinbes.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.0
