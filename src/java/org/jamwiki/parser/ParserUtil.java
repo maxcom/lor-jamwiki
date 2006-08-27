@@ -165,10 +165,10 @@ public class ParserUtil {
 			if (!StringUtils.hasText(text) && StringUtils.hasText(topic)) {
 				text = topic;
 				if (StringUtils.hasText(section)) {
-					text += "#" + section;
+					text += "#" + Utilities.decodeURL(section);
 				}
 			} else if (!StringUtils.hasText(text) && StringUtils.hasText(section)) {
-				text = section;
+				text = Utilities.decodeURL(section);
 			} else {
 				text = ParserUtil.parseFragment(parserInput, text);
 			}
