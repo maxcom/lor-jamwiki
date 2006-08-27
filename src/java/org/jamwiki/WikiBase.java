@@ -53,6 +53,7 @@ public class WikiBase {
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
 	public static final String NAMESPACE_CATEGORY = "Category:";
+	public static final String NAMESPACE_CATEGORY_COMMENTS = "Category comments:";
 	public static final String NAMESPACE_COMMENTS = "Comments:";
 	public static final String NAMESPACE_IMAGE = "Image:";
 	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments:";

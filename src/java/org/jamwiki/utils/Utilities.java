@@ -190,6 +190,53 @@ public class Utilities {
 	}
 
 	/**
+	 * Given an article name, return the appropriate comments topic article name.
+	 */
+	public static String extractCommentsLink(String name) {
+		if (name == null || name.startsWith(WikiBase.NAMESPACE_SPECIAL)) {
+			return null;
+		}
+		if (Utilities.isCommentsPage(name)) {
+			return name;
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
+			return WikiBase.NAMESPACE_CATEGORY_COMMENTS + name.substring(WikiBase.NAMESPACE_CATEGORY.length());
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_IMAGE)) {
+			return WikiBase.NAMESPACE_IMAGE_COMMENTS + name.substring(WikiBase.NAMESPACE_IMAGE.length());
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_USER)) {
+			return WikiBase.NAMESPACE_USER_COMMENTS + name.substring(WikiBase.NAMESPACE_USER.length());
+		}
+		return WikiBase.NAMESPACE_COMMENTS + name;
+	}
+
+	/**
+	 * Given an article name, return the appropriate topic article name.
+	 */
+	public static String extractTopicLink(String name) {
+		if (name == null) {
+			return null;
+		}
+		if (!Utilities.isCommentsPage(name)) {
+			return name;
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
+			return name.substring(WikiBase.NAMESPACE_COMMENTS.length());
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
+			return WikiBase.NAMESPACE_CATEGORY + name.substring(WikiBase.NAMESPACE_CATEGORY_COMMENTS.length());
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
+			return WikiBase.NAMESPACE_IMAGE + name.substring(WikiBase.NAMESPACE_IMAGE_COMMENTS.length());
+		}
+		if (name.startsWith(WikiBase.NAMESPACE_USER_COMMENTS)) {
+			return WikiBase.NAMESPACE_USER + name.substring(WikiBase.NAMESPACE_USER_COMMENTS.length());
+		}
+		return name;
+	}
+
+	/**
 	 * Returns any trailing . , ; : characters on the given string
 	 * @param text
 	 * @return empty string if none are found
@@ -273,9 +320,39 @@ public class Utilities {
 	/**
 	 *
 	 */
+	public static String getMessage(String key, Locale locale, Object[] params) {
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(locale);
+		String message = Utilities.getMessage(key, locale);
+		formatter.applyPattern(message);
+		return formatter.format(params);
+	}
+
+	/**
+	 *
+	 */
 	public static boolean isAdmin(HttpServletRequest request) {
 		WikiUser user = currentUser(request);
 		return (user != null && user.getAdmin());
+	}
+
+	/**
+	 *
+	 */
+	public static boolean isCommentsPage(String topicName) {
+		if (topicName.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
+			return true;
+		}
+		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
+			return true;
+		}
+		if (topicName.startsWith(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
+			return true;
+		}
+		if (topicName.startsWith(WikiBase.NAMESPACE_USER_COMMENTS)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -261,32 +261,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			pageInfo.setCanMove(true);
 		}
 		if (!pageInfo.getSpecial()) {
-			// FIXME - this is really ugly
-			String article = pageInfo.getTopicName();
-			String comments = WikiBase.NAMESPACE_COMMENTS + article;
-			if (article != null && article.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
-				int pos = WikiBase.NAMESPACE_COMMENTS.length();
-				article = article.substring(pos);
-				comments = WikiBase.NAMESPACE_COMMENTS + article;
-			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_SPECIAL)) {
-				int pos = WikiBase.NAMESPACE_SPECIAL.length();
-				article = article.substring(pos);
-				comments = WikiBase.NAMESPACE_COMMENTS + article;
-			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_USER_COMMENTS)) {
-				int pos = WikiBase.NAMESPACE_USER_COMMENTS.length();
-				comments = article;
-				article = WikiBase.NAMESPACE_USER + article.substring(pos);
-			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_USER)) {
-				int pos = WikiBase.NAMESPACE_USER.length();
-				comments = WikiBase.NAMESPACE_USER_COMMENTS + article.substring(pos);
-			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
-				int pos = WikiBase.NAMESPACE_IMAGE_COMMENTS.length();
-				comments = article;
-				article = WikiBase.NAMESPACE_IMAGE + article.substring(pos);
-			} else if (article != null && article.startsWith(WikiBase.NAMESPACE_IMAGE)) {
-				int pos = WikiBase.NAMESPACE_IMAGE.length();
-				comments = WikiBase.NAMESPACE_IMAGE_COMMENTS + article.substring(pos);
-			}
+			String article = Utilities.extractTopicLink(pageInfo.getTopicName());
+			String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
 			next.addObject("article", article);
 			next.addObject("comments", comments);
 			String editLink = "Special:Edit?topic=" + Utilities.encodeURL(pageInfo.getTopicName());

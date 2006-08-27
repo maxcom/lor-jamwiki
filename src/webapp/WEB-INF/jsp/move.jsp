@@ -39,6 +39,11 @@
 	<td class="normal" nowrap><label for="moveComment"><f:message key="move.comment" /></label>: </td>
 	<td class="normal" width="90%"><input type="text" name="moveComment" value="" id="moveComment" size="60" /></td>
 </tr>
+<c:if test="${!empty moveCommentsPage}">
+<tr>
+	<td class="normal" colspan="2"><label for="moveCommentsPage"><f:message key="move.commentspage" /></label>:&#160;<input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></td>
+</tr>
+</c:if>
 <tr><td>&#160;</td><td align="left"><input type="submit" name="move" value="<f:message key="common.move" />" /></td></tr>
 </form>
 </table>

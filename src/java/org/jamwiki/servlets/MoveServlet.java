@@ -64,7 +64,6 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void move(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
@@ -72,37 +71,56 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiMessage pageTitle = new WikiMessage("move.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
 		pageInfo.setTopicName(topicName);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
+		String moveDestination = request.getParameter("moveDestination");
+		if (!movePage(request, next, pageInfo, topicName, moveDestination)) {
+			return;
+		}
+		if (StringUtils.hasText(request.getParameter("moveCommentsPage"))) {
+			String moveCommentsPage = Utilities.decodeURL(request.getParameter("moveCommentsPage"));
+			String commentsDestination = Utilities.extractCommentsLink(moveDestination);
+			if (Utilities.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
+				if (!movePage(request, next, pageInfo, moveCommentsPage, commentsDestination)) {
+					return;
+				}
+			}
+		}
+		JAMWikiServlet.removeCachedContents();
+		viewTopic(request, next, pageInfo, topicName);
+	}
+
+	/**
+	 *
+	 */
+	private boolean movePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String moveFrom, String moveDestination) throws Exception {
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		Topic fromTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveFrom);
+		if (fromTopic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String moveDestination = request.getParameter("moveDestination");
 		if (!StringUtils.hasText(moveDestination)) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.nodestination"));
-			return;
+			return false;
 		}
-		Topic oldTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
-		// FIXME - allow overwriting a deleted topic
-		if (oldTopic != null && oldTopic.getDeleteDate() == null) {
+		Topic toTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
+		if (toTopic != null && toTopic.getDeleteDate() == null) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
-			return;
+			return false;
 		}
 		WikiUser user = Utilities.currentUser(request);
 		Integer authorId = null;
 		if (user != null) {
 			authorId = new Integer(user.getUserId());
 		}
-		String moveComment = Utilities.getMessage("move.editcomment", request.getLocale()) + " " + topicName;
+		String moveComment = Utilities.getMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
 		if (StringUtils.hasText(request.getParameter("moveComment"))) {
-			moveComment += ": " + request.getParameter("moveComment");
+			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), moveComment, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), moveComment, fromTopic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
-		WikiBase.getHandler().moveTopic(topic, topicVersion, moveDestination);
-		JAMWikiServlet.removeCachedContents();
-		viewTopic(request, next, pageInfo, moveDestination);
+		WikiBase.getHandler().moveTopic(fromTopic, topicVersion, moveDestination);
+		return true;
 	}
 
 	/**
@@ -110,8 +128,18 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		String commentsPage = Utilities.extractCommentsLink(topicName);
+		if (commentsPage != null && !topicName.equals(commentsPage) && WikiBase.getHandler().exists(virtualWiki, commentsPage)) {
+			// add option to also move comments page
+			next.addObject("moveCommentsPage", commentsPage);
 		}
 		WikiMessage pageTitle = new WikiMessage("move.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
