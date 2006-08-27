@@ -6,6 +6,7 @@
 * FEATURE: Add Special:Move.
 * FEATURE: Add jamwiki:linkParam tag, remove jamwiki:encode and
   jamwiki:decode tags.
+* FEATURE: Provide download links for non-image files.
 * BUG: Apostrophes were not being escaped by the parser.
 * BUG: <pre> tags might not be closed by the parser.
 * BUG: Use of the edit resolve functionality with a section edit could cause

@@ -25,7 +25,8 @@
 	<c:if test="${!empty topicObject}">
 <div id="content-article" class="clearblock">
 <%-- FIXME - ugly, clean this up --%>
-<c:if test="${!empty fileVersions}"><jamwiki:image value="${topicObject.name}" /></c:if>
+<c:if test="${topicImage}"><jamwiki:image value="${topicObject.name}" /></c:if>
+<c:if test="${topicFile}"><div id="topic-file-download"><f:message key="topic.file.download" />:&#160;<a href="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %><c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
 		<c:if test="${!empty fileVersions}">
 <h2><f:message key="topic.filehistory" /></h2>

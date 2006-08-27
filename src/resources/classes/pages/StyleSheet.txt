@@ -305,6 +305,14 @@ table.toc td {
 	clear: both;
 }
 
+#topic-file-download {
+	border: 1px solid #aaa;
+	background-color: #f9f9f9;
+	padding: 10px 5px 10px 5px;
+	margin-top: 1em;
+	clear: both;
+}
+
 /* tab menu */
 
 #menu-tab a {

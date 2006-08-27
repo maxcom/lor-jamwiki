@@ -24,10 +24,16 @@ import org.apache.log4j.Logger;
  */
 public class Topic {
 
+	/* Standard topic type. */
 	public static final int TYPE_ARTICLE = 1;
+	/* Topic redirects to another topic. */
 	public static final int TYPE_REDIRECT = 2;
+	/* Topic is an image. */
 	public static final int TYPE_IMAGE = 4;
+	/* Topic is a category. */
 	public static final int TYPE_CATEGORY = 5;
+	/* Topic is a non-image file. */
+	public static final int TYPE_FILE = 6;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private Timestamp deleteDate = null;

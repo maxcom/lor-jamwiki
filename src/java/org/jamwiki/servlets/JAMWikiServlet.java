@@ -435,9 +435,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
-		if (topic.getTopicType() == Topic.TYPE_IMAGE) {
+		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
 			Collection fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 			next.addObject("fileVersions", fileVersions);
+			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
+				next.addObject("topicImage", new Boolean(true));
+			} else {
+				next.addObject("topicFile", new Boolean(true));
+			}
 		}
 		pageInfo.setSpecial(false);
 		pageInfo.setTopicName(topicName);

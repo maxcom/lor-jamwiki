@@ -35,6 +35,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -175,6 +176,9 @@ public class UploadServlet extends JAMWikiServlet {
 				contentType = item.getContentType();
 				url = subdirectory + "/" + url;
 				File uploadedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), url);
+				if (!ImageUtil.isImage(uploadedFile)) {
+					topic.setTopicType(Topic.TYPE_FILE);
+				}
 				item.write(uploadedFile);
 			}
 		}

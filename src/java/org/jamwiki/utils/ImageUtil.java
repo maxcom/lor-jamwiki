@@ -84,6 +84,13 @@ public class ImageUtil {
 	}
 
 	/**
+	 *
+	 */
+	public static boolean isImage(File file) throws Exception {
+		return (ImageUtil.loadImage(file) == null);
+	}
+
+	/**
 	 * Given a file that corresponds to an existing image, return a
 	 * BufferedImage object.
 	 */
