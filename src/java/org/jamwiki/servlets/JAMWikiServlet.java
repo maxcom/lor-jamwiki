@@ -131,6 +131,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (uri == null || uri.length() <= 0) {
 			throw new Exception("URI string is empty");
 		}
+		if (!Utilities.convertEncoding(uri, "UTF-8", "ISO-8859-1").equals(request.getRequestURI().trim())) {
+			// url wasn't ISO-8859-1, try UTF-8
+			uri = request.getRequestURI().trim();
+		}
 		int slashIndex = uri.lastIndexOf('/');
 		if (slashIndex == -1) {
 			throw new Exception("No topic in URL: " + uri);
