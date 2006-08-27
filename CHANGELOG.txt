@@ -14,6 +14,7 @@
 * BUG: Login page displayed the wrong login message.
 * BUG: Do not allow user names that vary only by case ("user" vs. "uSer").
 * BUG: Fix issue with browsers that encode URL as UTF-8 instead of ISO-8859-1.
+* FEATURE: Danish translations from Anders Monrad (g9adm).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 * FEATURE: Updated Hungarian translations from bDaneE.
 

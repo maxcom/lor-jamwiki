@@ -11,6 +11,7 @@ JAMWiki Contributors
      Chinese (simplified):  Jiading (ewen0930)
      Chinese (traditional): Jiading (ewen0930)
      German:                Axel Kramer (axelclk)
+     Danish:                Anders Monrad (g9adm)
      Hungarian:             Daniel Tar (bDaneE)
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
   Other contributors:       Scott Croco (scroco)
