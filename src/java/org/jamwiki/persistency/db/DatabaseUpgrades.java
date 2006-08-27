@@ -101,7 +101,7 @@ public class DatabaseUpgrades {
 			String sql = "alter table jam_topic add column redirect_to VARCHAR(200) ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added redirect_to column to table jam_topic");
-			// convert topic_deleted (int) to topic_delete_date (timestamp)
+			// convert topic_deleted (int) to delete_date (timestamp)
 			sql = "alter table jam_topic add column delete_date TIMESTAMP ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added delete_date column to table jam_topic");
