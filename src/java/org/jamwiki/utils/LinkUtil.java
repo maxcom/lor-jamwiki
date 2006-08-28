@@ -16,11 +16,14 @@
  */
 package org.jamwiki.utils;
 
+import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
 import org.springframework.util.StringUtils;
@@ -52,9 +55,20 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
-		WikiImage wikiImage = ImageUtil.initializeImage(virtualWiki, topicName, maxDimension);
-		if (caption == null) caption = "";
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
+		if (topic.getTopicType() == Topic.TYPE_FILE) {
+			// file, not an image
+			if (!StringUtils.hasText(caption)) {
+				caption = topicName.substring(WikiBase.NAMESPACE_IMAGE.length());
+			}
+			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
+			url = FilenameUtils.separatorsToUnix(url);
+			return "<a href=\"" + url + "\">" + Utilities.escapeHTML(caption) + "</a>";
+		}
 		String html = "";
+		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
+		if (caption == null) caption = "";
 		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "<div class=\"";
 			if (thumb || frame) {
@@ -76,14 +90,8 @@ public class LinkUtil {
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		if (!StringUtils.hasText(style)) style = "wikiimg";
 		html += "<img class=\"" + style + "\" src=\"";
-		if (!Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH).startsWith("/")) html += "/";
-		html += Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH);
-		String url = wikiImage.getUrl();
-		if (!html.endsWith("/") && !url.startsWith("/")) {
-			url = "/" + url;
-		} else if (html.endsWith("/") && url.startsWith("/")) {
-			url = url.substring(1);
-		}
+		String url = new File(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH), wikiFile.getUrl()).getPath();
+		url = FilenameUtils.separatorsToUnix(url);
 		html += url;
 		html += "\"";
 		html += " width=\"" + wikiImage.getWidth() + "\"";

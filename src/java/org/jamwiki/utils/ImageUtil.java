@@ -63,10 +63,9 @@ public class ImageUtil {
 	 * parameter may be specified, in which case a resized version of the image
 	 * may be created.
 	 */
-	public static WikiImage initializeImage(String virtualWiki, String topicName, int maxDimension) throws Exception {
-		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
+	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws Exception {
 		if (wikiFile == null) {
-			logger.warn("No image found for " + virtualWiki + " / " + topicName);
+			logger.warn("No image found for " + wikiFile.getVirtualWiki() + " / " + wikiFile.getFileName());
 			return null;
 		}
 		WikiImage wikiImage = new WikiImage(wikiFile);

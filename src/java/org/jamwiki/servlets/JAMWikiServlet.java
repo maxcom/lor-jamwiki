@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -29,6 +30,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -437,6 +439,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
 			Collection fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+			for (Iterator iterator = fileVersions.iterator(); iterator.hasNext();) {
+				// update version urls to include web root path
+				WikiFileVersion fileVersion = (WikiFileVersion)iterator.next();
+				String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + fileVersion.getUrl());
+				url = FilenameUtils.separatorsToUnix(url);
+				fileVersion.setUrl(url);
+			}
 			next.addObject("fileVersions", fileVersions);
 			if (topic.getTopicType() == Topic.TYPE_IMAGE) {
 				next.addObject("topicImage", new Boolean(true));

@@ -26,15 +26,14 @@
 <div id="content-article" class="clearblock">
 <%-- FIXME - ugly, clean this up --%>
 <c:if test="${topicImage}"><jamwiki:image value="${topicObject.name}" /></c:if>
-<c:if test="${topicFile}"><div id="topic-file-download"><f:message key="topic.file.download" />:&#160;<a href="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %><c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
+<c:if test="${topicFile}"><div id="topic-file-download"><f:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 <c:out value="${topicObject.topicContent}" escapeXml="false" /></div>
 		<c:if test="${!empty fileVersions}">
 <h2><f:message key="topic.filehistory" /></h2>
 <ul>
 			<c:forEach items="${fileVersions}" var="fileVersion">
 <li>
-<%-- FIXME - clean this up, verify path build correctly --%>
-<a href="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %><c:out value="${fileVersion.url}" />"><f:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
+<a href="<c:out value="${fileVersion.url}" />"><f:formatDate value="${fileVersion.uploadDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></a>
 &#160;(<c:out value="${fileVersion.fileSize}" /> bytes)
 				<c:if test="${!empty fileVersion.uploadComment}">&#160;(<i><c:out value="${fileVersion.uploadComment}" /></i>)</c:if>
 </li>
