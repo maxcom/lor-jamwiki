@@ -854,10 +854,6 @@ public abstract class PersistencyHandler {
 				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			}
 			this.writeTopic(topic, topicVersion, parserOutput, params);
-			if (parserOutput != null) {
-				LuceneSearchEngine.deleteFromIndex(topic);
-				LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());
-			}
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -921,6 +917,10 @@ public abstract class PersistencyHandler {
 		change.setEditType(topicVersion.getEditType());
 		change.setVirtualWiki(topic.getVirtualWiki());
 		addRecentChange(change, params);
+		if (parserOutput != null) {
+			LuceneSearchEngine.deleteFromIndex(topic);
+			LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());
+		}
 	}
 
 	/**

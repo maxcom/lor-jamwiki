@@ -124,6 +124,7 @@
 		<%@ include file="view-topic-include.jsp" %>
 	</c:otherwise>
 </c:choose>
+		<br />
 		</div>
 	</td>
 </tr>

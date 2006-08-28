@@ -255,36 +255,35 @@ public abstract class JAMWikiServlet extends AbstractController {
 		// load cached top area, nav bar, etc.
 		try {
 			this.buildLayout(request, next);
+			// add link to user page and comments page
+			WikiUser user = Utilities.currentUser(request);
+			if (user != null) {
+				next.addObject("userpage", WikiBase.NAMESPACE_USER + user.getLogin());
+				next.addObject("usercomments", WikiBase.NAMESPACE_USER_COMMENTS + user.getLogin());
+				next.addObject("adminUser", new Boolean(user.getAdmin()));
+			}
+			if (!pageInfo.getSpecial()) {
+				String article = Utilities.extractTopicLink(pageInfo.getTopicName());
+				String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
+				next.addObject("article", article);
+				next.addObject("comments", comments);
+				String editLink = "Special:Edit?topic=" + Utilities.encodeURL(pageInfo.getTopicName());
+				if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+					editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
+				}
+				next.addObject("edit", editLink);
+				if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
+					String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+					if (WikiBase.exists(virtualWiki, article)) {
+						pageInfo.setCanMove(true);
+					}
+				}
+			}
+			if (!StringUtils.hasText(pageInfo.getTopicName())) {
+				pageInfo.setTopicName(JAMWikiServlet.getTopicFromURI(request));
+			}
 		} catch (Exception e) {
 			logger.error("Unable to build default page layout", e);
-		}
-		// add link to user page and comments page
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
-			next.addObject("userpage", WikiBase.NAMESPACE_USER + user.getLogin());
-			next.addObject("usercomments", WikiBase.NAMESPACE_USER_COMMENTS + user.getLogin());
-			next.addObject("adminUser", new Boolean(user.getAdmin()));
-		}
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
-			pageInfo.setCanMove(true);
-		}
-		if (!pageInfo.getSpecial()) {
-			String article = Utilities.extractTopicLink(pageInfo.getTopicName());
-			String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
-			next.addObject("article", article);
-			next.addObject("comments", comments);
-			String editLink = "Special:Edit?topic=" + Utilities.encodeURL(pageInfo.getTopicName());
-			if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
-				editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
-			}
-			next.addObject("edit", editLink);
-		}
-		if (!StringUtils.hasText(pageInfo.getTopicName())) {
-			try {
-				pageInfo.setTopicName(JAMWikiServlet.getTopicFromURI(request));
-			} catch (Exception e) {
-				logger.error("Unable to load topic value in JAMWikiServlet", e);
-			}
 		}
 		next.addObject(PARAMETER_PAGE_INFO, pageInfo);
 	}
