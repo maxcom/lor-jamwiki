@@ -86,7 +86,7 @@ public class ImageUtil {
 	 *
 	 */
 	public static boolean isImage(File file) throws Exception {
-		return (ImageUtil.loadImage(file) == null);
+		return (ImageUtil.loadImage(file) != null);
 	}
 
 	/**

@@ -133,33 +133,21 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		WikiUser user = Utilities.currentUser(request);
 		Iterator iterator = Utilities.processMultipartRequest(request);
-		Topic topic = new Topic();
-		topic.setVirtualWiki(virtualWiki);
-		topic.setTopicType(Topic.TYPE_IMAGE);
-		WikiFileVersion wikiFileVersion = new WikiFileVersion();
-		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
-		Integer authorId = null;
-		if (user != null) {
-			authorId = new Integer(user.getUserId());
-		}
-		wikiFileVersion.setAuthorId(authorId);
 		String fileName = null;
 		String url = null;
 		String contentType = null;
 		long fileSize = 0;
 		String contents = null;
+		boolean isImage = true;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();
 			String fieldName = item.getFieldName();
 			if (item.isFormField()) {
 				if (fieldName.equals("description")) {
-					wikiFileVersion.setUploadComment(item.getString());
 					// FIXME - these should be parsed
 					contents = item.getString();
-					topic.setTopicContent(contents);
 				}
 			} else {
 				fileName = sanitizeFilename(item.getName());
@@ -176,18 +164,36 @@ public class UploadServlet extends JAMWikiServlet {
 				contentType = item.getContentType();
 				url = subdirectory + "/" + url;
 				File uploadedFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), url);
-				if (!ImageUtil.isImage(uploadedFile)) {
-					topic.setTopicType(Topic.TYPE_FILE);
-				}
 				item.write(uploadedFile);
+				isImage = ImageUtil.isImage(uploadedFile);
 			}
 		}
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), contents, contents);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic = new Topic();
+			topic.setVirtualWiki(virtualWiki);
+			topic.setName(topicName);
+			topic.setTopicContent(contents);
+		}
+		if (isImage) {
+			topic.setTopicType(Topic.TYPE_IMAGE);
+		} else {
+			topic.setTopicType(Topic.TYPE_FILE);
+		}
+		WikiFileVersion wikiFileVersion = new WikiFileVersion();
+		wikiFileVersion.setUploadComment(contents);
+		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
+		Integer authorId = null;
+		if (user != null) {
+			authorId = new Integer(user.getUserId());
+		}
+		wikiFileVersion.setAuthorId(authorId);
+		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), contents, topic.getTopicContent());
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
-		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
-		topic.setName(topicName);
 		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			wikiFile = new WikiFile();
@@ -200,11 +206,7 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setMimeType(contentType);
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
-		if (WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName()) == null) {
-			WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()));
-		} else {
-			topic = WikiBase.getHandler().lookupTopic(virtualWiki, topic.getName());
-		}
+		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()));
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
 		viewTopic(request, next, pageInfo, topicName);
