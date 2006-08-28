@@ -40,7 +40,7 @@ public class ImageUtil {
 	/**
 	 *
 	 */
-	public static int calculateImageIncrement(int maxDimension) {
+	private static int calculateImageIncrement(int maxDimension) {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
 		double result = Math.ceil((double)maxDimension / (double)increment) * increment;
 		return (int)result;
@@ -49,7 +49,7 @@ public class ImageUtil {
 	/**
 	 * Convert a Java Image object to a Java BufferedImage object.
 	 */
-	public static BufferedImage imageToBufferedImage(Image image) throws Exception {
+	private static BufferedImage imageToBufferedImage(Image image) throws Exception {
 		BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB );
 		Graphics2D graphics = bufferedImage.createGraphics();
 		graphics.drawImage(image, 0, 0, null);
@@ -93,7 +93,7 @@ public class ImageUtil {
 	 * Given a file that corresponds to an existing image, return a
 	 * BufferedImage object.
 	 */
-	public static BufferedImage loadImage(File file) throws Exception {
+	private static BufferedImage loadImage(File file) throws Exception {
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -112,7 +112,7 @@ public class ImageUtil {
 	 * be constrained so that the proportions are the same, but neither the width
 	 * or height exceeds the value specified.
 	 */
-	public static BufferedImage resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
+	private static BufferedImage resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
 		maxDimension = calculateImageIncrement(maxDimension);
@@ -154,7 +154,7 @@ public class ImageUtil {
 	/**
 	 * Save an image to a specified file.
 	 */
-	public static void saveImage(BufferedImage image, File file) throws Exception {
+	private static void saveImage(BufferedImage image, File file) throws Exception {
 		String filename = file.getName();
 		int pos = filename.lastIndexOf(".");
 		if (pos == -1 || (pos + 1) >= filename.length()) {

@@ -118,6 +118,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			return child;
 		}
 		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo()) == null) {
+			// child is a redirect, but its target does not exist
+			return child;
 		}
 		// topic is a redirect, keep looking
 		return this.getRedirectTarget(child, attempts);
@@ -391,7 +393,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit, boolean preview) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
-		String contents = "";
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
