@@ -34,6 +34,8 @@ public class Topic {
 	public static final int TYPE_CATEGORY = 5;
 	/* Topic is a non-image file. */
 	public static final int TYPE_FILE = 6;
+	/* Internal files, do not display on Special:Allpages */
+	public static final int TYPE_SYSTEM_FILE = 7;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private Timestamp deleteDate = null;

@@ -133,7 +133,6 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
-		WikiUser user = Utilities.currentUser(request);
 		Iterator iterator = Utilities.processMultipartRequest(request);
 		String fileName = null;
 		String url = null;
@@ -185,6 +184,7 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(contents);
 		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
+		WikiUser user = Utilities.currentUser(request);
 		Integer authorId = null;
 		if (user != null) {
 			authorId = new Integer(user.getUserId());

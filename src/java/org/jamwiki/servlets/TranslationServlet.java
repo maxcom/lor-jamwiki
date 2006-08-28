@@ -25,7 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -124,6 +128,7 @@ public class TranslationServlet extends JAMWikiServlet {
 			this.translations.setProperty(key, value);
 		}
 		Environment.saveProperties(filename(request), this.translations, null);
+		this.writeTopic(request, null);
 	}
 
 	/**
@@ -140,5 +145,30 @@ public class TranslationServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_TRANSLATION);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("translation.title"));
+	}
+
+	/**
+	 *
+	 */
+	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = filename(request);
+		String contents = Utilities.readFile(topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic = new Topic();
+			topic.setVirtualWiki(virtualWiki);
+			topic.setName(topicName);
+		}
+		topic.setTopicContent(contents);
+		topic.setReadOnly(true);
+		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
+		Integer authorId = null;
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) {
+			authorId = new Integer(user.getUserId());
+		}
+		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), editComment, contents);
+		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 	}
 }

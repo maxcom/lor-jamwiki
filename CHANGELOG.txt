@@ -19,6 +19,8 @@
 * BUG: Remove extra "/" that could sometimes appear in image URLs.
 * FEATURE: Uploading a second version of an image should add a record to the
   recent changes.
+* FEATURE: Updates made using Special:Translation will now add a record to
+  the recent changes page.
 * FEATURE: Danish translations from Anders Monrad (g9adm).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 * FEATURE: Updated Hungarian translations from bDaneE.
