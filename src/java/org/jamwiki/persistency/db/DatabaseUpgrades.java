@@ -131,7 +131,11 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped column file_deleted from table jam_file");
 			// make user login constraint "lower(login)"
-			sql = "alter table jam_wiki_user drop constraint jam_unique_wiki_user_login ";
+			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql")) {
+				sql = "alter table jam_wiki_user drop constraint jam_unique_wiki_user_login ";
+			} else {
+				sql = "alter table jam_wiki_user drop index jam_unique_wiki_user_login ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
 			messages.add("Updated unique wiki user login constraint");
