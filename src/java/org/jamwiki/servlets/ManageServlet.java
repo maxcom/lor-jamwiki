@@ -25,7 +25,6 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -74,15 +73,10 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		Integer authorId = null;
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
-			authorId = new Integer(user.getUserId());
-		}
 		String contents = "";
 		topic.setTopicContent(contents);
 		topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getHandler().deleteTopic(topic, topicVersion);
 		JAMWikiServlet.removeCachedContents();
@@ -104,12 +98,7 @@ public class ManageServlet extends JAMWikiServlet {
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		String contents = previousVersion.getVersionContent();
-		Integer authorId = null;
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
-			authorId = new Integer(user.getUserId());
-		}
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), Utilities.getMessage("manage.message.permissions", request.getLocale()), contents);
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), Utilities.getMessage("manage.message.permissions", request.getLocale()), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
@@ -126,11 +115,6 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		Integer authorId = null;
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
-			authorId = new Integer(user.getUserId());
-		}
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			previousVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, previousVersion.getPreviousTopicVersionId().intValue());
@@ -138,7 +122,7 @@ public class ManageServlet extends JAMWikiServlet {
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
 		topic.setDeleteDate(null);
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 		JAMWikiServlet.removeCachedContents();

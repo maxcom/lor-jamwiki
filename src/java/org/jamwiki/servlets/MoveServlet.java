@@ -25,7 +25,6 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -108,16 +107,11 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
 			return false;
 		}
-		WikiUser user = Utilities.currentUser(request);
-		Integer authorId = null;
-		if (user != null) {
-			authorId = new Integer(user.getUserId());
-		}
 		String moveComment = Utilities.getMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
 		if (StringUtils.hasText(request.getParameter("moveComment"))) {
 			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), moveComment, fromTopic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), moveComment, fromTopic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
 		WikiBase.getHandler().moveTopic(fromTopic, topicVersion, moveDestination);
 		return true;

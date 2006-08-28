@@ -51,8 +51,10 @@ public class TopicVersion {
 	/**
 	 *
 	 */
-	public TopicVersion(Integer authorId, String authorIpAddress, String editComment, String versionContent) {
-		this.authorId = authorId;
+	public TopicVersion(WikiUser user, String authorIpAddress, String editComment, String versionContent) {
+		if (user != null) {
+			this.authorId = authorId;
+		}
 		this.authorIpAddress = authorIpAddress;
 		this.editComment = editComment;
 		this.versionContent = versionContent;

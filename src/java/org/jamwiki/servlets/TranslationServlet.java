@@ -29,7 +29,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -163,12 +162,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
-		Integer authorId = null;
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
-			authorId = new Integer(user.getUserId());
-		}
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), editComment, contents);
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), editComment, contents);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 	}
 }

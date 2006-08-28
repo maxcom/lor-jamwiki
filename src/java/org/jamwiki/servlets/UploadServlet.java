@@ -190,7 +190,7 @@ public class UploadServlet extends JAMWikiServlet {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);
-		TopicVersion topicVersion = new TopicVersion(authorId, request.getRemoteAddr(), contents, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), contents, topic.getTopicContent());
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}

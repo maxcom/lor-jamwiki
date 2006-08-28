@@ -734,7 +734,7 @@ public abstract class PersistencyHandler {
 		topic.setTopicContent(contents);
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
-		TopicVersion topicVersion = new TopicVersion(new Integer(user.getUserId()), user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
+		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
 		writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
 	}
 
@@ -778,7 +778,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, Integer authorId, String ipAddress) throws Exception {
+	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress) throws Exception {
 		logger.info("Updating special page " + virtualWiki + " / " + topicName);
 		Object params[] = null;
 		try {
@@ -787,7 +787,7 @@ public abstract class PersistencyHandler {
 			Topic topic = this.lookupTopic(virtualWiki, topicName);
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
-			TopicVersion topicVersion = new TopicVersion(authorId, ipAddress, "Automatically updated by system upgrade", contents);
+			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
 			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
 		} catch (Exception e) {
 			this.handleErrors(params);
