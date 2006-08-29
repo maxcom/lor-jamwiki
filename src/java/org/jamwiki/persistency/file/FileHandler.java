@@ -264,7 +264,6 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
-		super.deleteTopic(topic, topicVersion);
 		String filename = topicFilename(topic.getName());
 		// move file from topic directory to delete directory
 		File oldFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
@@ -272,6 +271,7 @@ public class FileHandler extends PersistencyHandler {
 		if (!oldFile.renameTo(newFile)) {
 			throw new Exception("Unable to move file to delete directory for topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
+		super.deleteTopic(topic, topicVersion);
 	}
 
 	/**
@@ -955,16 +955,28 @@ public class FileHandler extends PersistencyHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
-		String filename = topicFilename(topicName);
-		File file = getPathFor(virtualWiki, FileHandler.TOPIC_DIR, filename);
-		return initTopic(file);
+		return lookupTopic(virtualWiki, topicName, false);
 	}
 
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
-		return this.lookupTopic(virtualWiki, topicName);
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK) throws Exception {
+		String filename = topicFilename(topicName);
+		File file = getPathFor(virtualWiki, FileHandler.TOPIC_DIR, filename);
+		Topic topic = initTopic(file);
+		if (topic == null && deleteOK) {
+			file = getPathFor(virtualWiki, FileHandler.DELETE_DIR, filename);
+			topic = initTopic(file);
+		}
+		return topic;
+	}
+
+	/**
+	 *
+	 */
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object[] params) throws Exception {
+		return this.lookupTopic(virtualWiki, topicName, deleteOK);
 	}
 
 	/**
@@ -1430,6 +1442,9 @@ public class FileHandler extends PersistencyHandler {
 		content.append("</mediawiki>");
 		String filename = topicFilename(topic.getName());
 		File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_DIR, filename);
+		if (topic.getDeleteDate() != null) {
+			file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.DELETE_DIR, filename);
+		}
 		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
 	}
 
@@ -1674,6 +1689,20 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected static String topicVersionFilename(int topicVersionId) {
 		return topicVersionId + EXT;
+	}
+
+	/**
+	 *
+	 */
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+		String filename = topicFilename(topic.getName());
+		// move file from topic directory to delete directory
+		File oldFile = getPathFor(topic.getVirtualWiki(), DELETE_DIR, filename);
+		File newFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
+		if (!oldFile.renameTo(newFile)) {
+			throw new Exception("Unable to undelete topic " + topic.getVirtualWiki() + " / " + topic.getName());
+		}
+		super.undeleteTopic(topic, topicVersion);
 	}
 
 	/**

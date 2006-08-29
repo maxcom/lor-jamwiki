@@ -483,7 +483,12 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception;
+	public abstract Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK) throws Exception;
+
+	/**
+	 *
+	 */
+	public abstract Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object[] params) throws Exception;
 
 	/**
 	 *
@@ -772,6 +777,27 @@ public abstract class PersistencyHandler {
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, params);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, params);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_ADMIN_ONLY_TOPICS, user, true, params);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+		Object params[] = null;
+		try {
+			params = this.initParams();
+			// update topic to indicate deleted, add delete topic version.  parser output
+			// should be empty since nothing to add to search engine.
+			ParserOutput parserOutput = new ParserOutput();
+			writeTopic(topic, topicVersion, parserOutput, params);
+			// reset topic existence vector
+			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+		} catch (Exception e) {
+			this.handleErrors(params);
+			throw e;
+		} finally {
+			this.releaseParams(params);
 		}
 	}
 

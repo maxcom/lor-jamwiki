@@ -70,7 +70,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	protected void addCategory(Category category, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
-		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), params);
+		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), false, params);
 		int childTopicId = childTopic.getTopicId();
 		DatabaseHandler.queryHandler.insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
 	}
@@ -579,7 +579,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
+		Topic topic = lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic);
 		if (rs.size() == 0) return null;
@@ -592,7 +592,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
-		Topic topic = lookupTopic(virtualWiki, topicName, params);
+		Topic topic = lookupTopic(virtualWiki, topicName, true, params);
 		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic, conn);
 		if (rs.size() == 0) return null;
@@ -604,8 +604,15 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
+		return lookupTopic(virtualWiki, topicName, false);
+	}
+
+	/**
+	 *
+	 */
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName, deleteOK);
 		if (rs.size() == 0) return null;
 		return initTopic(rs);
 	}
@@ -613,10 +620,10 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, Object[] params) throws Exception {
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object[] params) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		Connection conn = (Connection)params[0];
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName, conn);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName, deleteOK, conn);
 		if (rs.size() == 0) return null;
 		return initTopic(rs);
 	}

@@ -158,12 +158,12 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean deleteOK) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, Connection conn) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean deleteOK, Connection conn) throws Exception;
 
 	/**
 	 *

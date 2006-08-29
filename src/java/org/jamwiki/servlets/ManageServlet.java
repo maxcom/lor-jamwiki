@@ -72,7 +72,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		String contents = "";
 		topic.setTopicContent(contents);
 		topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
@@ -93,7 +93,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
@@ -114,7 +114,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			previousVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, previousVersion.getPreviousTopicVersionId().intValue());
@@ -124,7 +124,7 @@ public class ManageServlet extends JAMWikiServlet {
 		topic.setDeleteDate(null);
 		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
+		WikiBase.getHandler().undeleteTopic(topic, topicVersion);
 		JAMWikiServlet.removeCachedContents();
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
@@ -136,7 +136,7 @@ public class ManageServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
