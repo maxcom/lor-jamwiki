@@ -621,7 +621,7 @@ public class FileHandler extends PersistencyHandler {
 					try {
 						topic.setDeleteDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 					} catch (Exception e) {
-						if (XMLUtil.getTextContent(rootChild) == "1") {
+						if (XMLUtil.getTextContent(rootChild) != null && XMLUtil.getTextContent(rootChild).equals("1")) {
 							// FIXME - this can be removed once the ability to upgrade from 0.3.0 is removed
 							topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 						}
