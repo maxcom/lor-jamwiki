@@ -2,6 +2,7 @@
 0.3.2
 =====
 
+* BUG: Upgrades in file persistency mode fail due to delete date change.
 
 0.3.1
 =====
