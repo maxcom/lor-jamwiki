@@ -245,7 +245,7 @@ public class Utilities {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = text.length() - 1; i >= 0; i--) {
 			char c = text.charAt(i);
-			if (c == '.' || c == ';' || c == ',' || c == ':') {
+			if (c == '.' || c == ';' || c == ',' || c == ':' || c == ')' || c == '(' || c == ']' || c == '[') {
 				buffer.append(c);
 			} else {
 				break;

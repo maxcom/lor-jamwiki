@@ -3,6 +3,7 @@
 =====
 
 * BUG: Upgrades in file persistency mode fail due to delete date change.
+* BUG: Do not include parentheses in raw links when parsing.
 
 0.3.1
 =====
