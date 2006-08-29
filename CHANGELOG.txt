@@ -18,6 +18,7 @@
 * BUG: Fix issue with browsers that encode URL as UTF-8 instead of ISO-8859-1.
 * BUG: Remove extra "/" that could sometimes appear in image URLs.
 * BUG: Fix topic undeletion when in file persistency mode.
+* BUG: Do not display option to change permissions if topic is deleted.
 * FEATURE: Uploading a second version of an image should add a record to the
   recent changes.
 * FEATURE: Updates made using Special:Translation will now add a record to
