@@ -185,7 +185,7 @@ public class Utilities {
 		input = StringUtils.replace(input, ">", "&gt;");
 		input = StringUtils.replace(input, "<", "&lt;");
 		input = StringUtils.replace(input, "\"", "&quot;");
-		input = StringUtils.replace(input, "'", "&apos;");
+		input = StringUtils.replace(input, "'", "&#39;");
 		return input;
 	}
 

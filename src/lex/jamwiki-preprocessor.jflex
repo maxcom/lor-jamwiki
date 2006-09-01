@@ -868,7 +868,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
     logger.debug("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return "&apos;";
+    return "&#39;";
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {

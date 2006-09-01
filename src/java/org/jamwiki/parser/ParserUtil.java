@@ -285,7 +285,7 @@ public class ParserUtil {
 		link = StringUtils.replace(link, "<", "&lt;");
 		link = StringUtils.replace(link, ">", "&gt;");
 		link = StringUtils.replace(link, "\"", "&quot;");
-		link = StringUtils.replace(link, "'", "&apos;");
+		link = StringUtils.replace(link, "'", "&#39;");
 		text = Utilities.escapeHTML(text);
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("mailto://")) {
