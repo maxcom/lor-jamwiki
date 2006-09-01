@@ -3,6 +3,8 @@
 =====
 
 * BUG: Internet Explorer displays &apos; instead of apostrophe (').
+* BUG: Resin taglib handling throws an error on wiki.jsp.
+* BUG: Second attempted fix for reported URL decoding issue.
 
 0.3.2
 =====

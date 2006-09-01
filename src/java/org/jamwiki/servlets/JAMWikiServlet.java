@@ -136,8 +136,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 			throw new Exception("URI string is empty");
 		}
 		if (!Utilities.convertEncoding(uri, "UTF-8", "ISO-8859-1").equals(request.getRequestURI().trim())) {
-			// url wasn't ISO-8859-1, try UTF-8
+			// url wasn't ISO-8859-1, default to UTF-8
 			uri = request.getRequestURI().trim();
+			logger.warn("Unable to convert URI from ISO-8859-1 " + uri);
+			if (StringUtils.hasText(request.getCharacterEncoding())) {
+				// FIXME - needs testing on other platforms
+				logger.warn("Attempting to convert URI from " + request.getCharacterEncoding() + " " + uri);
+				uri = Utilities.convertEncoding(uri, request.getCharacterEncoding(), "UTF-8");
+			}
 		}
 		int slashIndex = uri.lastIndexOf('/');
 		if (slashIndex == -1) {
