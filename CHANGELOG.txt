@@ -4,6 +4,7 @@
 
 * FEATURE: Updated Hungarian translations from bDaneE.
 * FEATURE: Updated Chinese translations from ewen0930.
+* FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.3
 =====
