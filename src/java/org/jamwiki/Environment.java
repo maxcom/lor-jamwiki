@@ -46,7 +46,6 @@ public class Environment {
 	public static final String PROP_DB_TYPE = "database-type";
 	public static final String PROP_DB_URL = "url";
 	public static final String PROP_DB_USERNAME = "db-user";
-	public static final String PROP_DBCP_LOG_ABANDONED = "dbcp-log-abandoned";
 	public static final String PROP_DBCP_MAX_ACTIVE = "dbcp-max-active";
 	public static final String PROP_DBCP_MAX_IDLE = "dbcp-max-idle";
 	public static final String PROP_DBCP_MIN_EVICTABLE_IDLE_TIME = "dbcp-min-evictable-idle-time";
@@ -147,7 +146,6 @@ public class Environment {
 		defaults.setProperty(PROP_DB_TYPE, "postgres");
 		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/database");
 		defaults.setProperty(PROP_DB_USERNAME, "");
-		defaults.setProperty(PROP_DBCP_LOG_ABANDONED, "true");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");
 		defaults.setProperty(PROP_DBCP_MAX_IDLE, "3");
 		defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");

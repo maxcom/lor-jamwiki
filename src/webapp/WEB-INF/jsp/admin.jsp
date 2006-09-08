@@ -52,7 +52,6 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_VALIDATION_QUERY %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_LOG_ABANDONED %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=true
 	} else {
 		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false
@@ -71,7 +70,6 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_VALIDATION_QUERY %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_LOG_ABANDONED %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=false
 	}
 }
@@ -285,10 +283,6 @@ FIXME - Email not supported right now, comment this out
 <tr>
 	<td class="normal"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>"><f:message key="admin.caption.dbcp.removeabandoned" /></label></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_REMOVE_ABANDONED) ? " checked" : "" %> /></td>
-</tr>
-<tr>
-	<td class="normal"><label for="<%= Environment.PROP_DBCP_LOG_ABANDONED %>"><f:message key="admin.caption.dbcp.logabandoned" /></label></td>
-	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_DBCP_LOG_ABANDONED %>" id="<%= Environment.PROP_DBCP_LOG_ABANDONED %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_DBCP_LOG_ABANDONED) ? " checked" : "" %> /></td>
 </tr>
 <tr>
 	<td class="normal"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>"><f:message key="admin.caption.dbcp.removeabandonedtimeout" /></label></td>

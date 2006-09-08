@@ -310,10 +310,6 @@ public class AdminServlet extends JAMWikiServlet {
 					Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT,
 					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT))
 				);
-				Environment.setBooleanValue(
-					Environment.PROP_DBCP_LOG_ABANDONED,
-					request.getParameter(Environment.PROP_DBCP_LOG_ABANDONED) != null
-				);
 			}
 			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_USE_PREVIEW,
