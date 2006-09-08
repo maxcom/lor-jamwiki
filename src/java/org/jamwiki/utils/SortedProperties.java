@@ -23,7 +23,9 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * This class acts as a utility class for providing the capability of a property file
+ * that is sorted alphabetically by key value.  It is useful for things like translation
+ * files where having the file in a logical order is useful for maintainers.
  */
 public class SortedProperties extends Properties {
 
@@ -31,14 +33,14 @@ public class SortedProperties extends Properties {
 	public static final Logger logger = Logger.getLogger(SortedProperties.class);
 
 	/**
-	 *
+	 * Standard constructor for creating a sorted properties file.
 	 */
 	public SortedProperties() {
 		super();
 	}
 
 	/**
-	 *
+	 * Copy constructor used to create a sorted properties file.
 	 */
 	public SortedProperties(Properties properties) {
 		super();
