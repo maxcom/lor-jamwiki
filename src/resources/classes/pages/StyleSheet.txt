@@ -43,6 +43,16 @@ a.edit:hover {
 	border-bottom: 1px solid #aa1111;
 }
 
+a.redirect {
+	font-size: 150%;
+	text-decoration: none;
+	margin-left: 20px;
+}
+
+a.redirect:before {
+	content:url("../images/redirect-arrow.png");
+}
+
 table {
 	font-size: 100%;
 	color: black;

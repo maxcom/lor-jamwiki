@@ -2,6 +2,7 @@
 0.3.4
 =====
 
+* FEATURE: Do not display redirect syntax as an ordered list.
 * FEATURE: Updated Hungarian translations from bDaneE.
 * FEATURE: Updated Chinese translations from ewen0930.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).

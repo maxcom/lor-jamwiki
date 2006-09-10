@@ -21,6 +21,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
@@ -69,12 +71,12 @@ public class JAMWikiParser extends AbstractParser {
 	/**
 	 * Parse text for online display.
 	 */
-	public ParserOutput parseHTML(String rawtext, String topicName) throws Exception {
+	public ParserOutput parseHTML(String rawText, String topicName) throws Exception {
 		long start = System.currentTimeMillis();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
-		rawtext += '\n';
-		StringReader raw = new StringReader(rawtext);
+		rawText += '\n';
+		StringReader raw = new StringReader(rawText);
 		// maintain the original output, which has all of the category and link info
 		ParserOutput original = this.parsePreProcess(raw);
 		if (this.parserInput.getMode() != ParserInput.MODE_NORMAL) {
@@ -85,6 +87,11 @@ public class JAMWikiParser extends AbstractParser {
 		raw = new StringReader(original.getContent());
 		ParserOutput parserOutput = this.parsePostProcess(raw);
 		original.setContent(parserOutput.getContent());
+		if (StringUtils.hasText(this.isRedirect(rawText))) {
+			// redirects are parsed differently
+			parserOutput = this.parseRedirect(rawText);
+			original.setContent(parserOutput.getContent());
+		}
 		logger.info("Parse time (parseHTML) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return original;
 	}
@@ -138,6 +145,26 @@ public class JAMWikiParser extends AbstractParser {
 	}
 
 	/**
+	 * Parse a topic that is a redirect.  Ordinarily the contents of the redirected
+	 * topic would be displayed, but in some cases (such as when explicitly viewing
+	 * a redirect) the redirect page contents need to be displayed.
+	 *
+	 * @param rawText The raw Wiki syntax to be converted into HTML.
+	 * @return A ParserOutput object containing results of the parsing process.
+	 */
+	public ParserOutput parseRedirect(String rawText) throws Exception {
+		String redirect = this.isRedirect(rawText);
+		ParserOutput parserOutput = new ParserOutput();
+		String style = "redirect";
+		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim())) {
+			style = "edit redirect";
+		}
+		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), redirect, null, null, null, style, false);
+		parserOutput.setContent(content);
+		return parserOutput;
+	}
+
+	/**
 	 * This method provides the capability for retrieving a section of Wiki markup
 	 * from an existing document.  It is used primarily when editing a section of
 	 * a topic.  This method will return all content from the specified section, up
@@ -146,15 +173,15 @@ public class JAMWikiParser extends AbstractParser {
 	 * up to the next &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt; or the end of the document
 	 * will be returned.
 	 *
-	 * @param rawtext The raw Wiki syntax from which a section is to be retrieved.
+	 * @param rawText The raw Wiki syntax from which a section is to be retrieved.
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section of the document to be replaced (first section is 1).
 	 * @return All markup from the target section, contained within a ParserOutput
 	 *  object.
 	 */
-	public ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception {
+	public ParserOutput parseSlice(String rawText, String topicName, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
-		StringReader raw = new StringReader(rawtext);
+		StringReader raw = new StringReader(rawText);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
 		lexer.setParserInput(this.parserInput);
 		lexer.setTargetSection(targetSection);
@@ -172,15 +199,15 @@ public class JAMWikiParser extends AbstractParser {
 	 * &lt;h2&gt;, &lt;h3&gt; or the end of the document will be replaced with the
 	 * specified text.
 	 *
-	 * @param rawtext The raw Wiki syntax from which a section is to be replaced.
+	 * @param rawText The raw Wiki syntax from which a section is to be replaced.
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section of the document to be replaced (first section is 1).
 	 * @param replacementText The text to replace the specified section text with.
 	 * @return The new topic markup, contained within a ParserOutput object.
 	 */
-	public ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception {
+	public ParserOutput parseSplice(String rawText, String topicName, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
-		StringReader raw = new StringReader(rawtext);
+		StringReader raw = new StringReader(rawText);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
 		lexer.setParserInput(this.parserInput);
 		lexer.setReplacementText(replacementText);
