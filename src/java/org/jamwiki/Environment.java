@@ -25,6 +25,7 @@ import java.util.Properties;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
+import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -90,7 +91,7 @@ public class Environment {
 
 	private static Properties defaults = null;
 	private static Environment instance = null;
-	private static Properties props = null;
+	private static SortedProperties props = null;
 
 	// initialize the singleton instance
 	static {
@@ -256,7 +257,7 @@ public class Environment {
 	 * @param propertyFile The name of the property file to load.
 	 * @return The loaded property file.
 	 */
-	public static Properties loadProperties(String propertyFile) {
+	public static SortedProperties loadProperties(String propertyFile) {
 		return loadProperties(propertyFile, null);
 	}
 
@@ -267,10 +268,10 @@ public class Environment {
 	 * @param defaults Default property values.
 	 * @return The loaded property file.
 	 */
-	public static Properties loadProperties(String propertyFile, Properties def) {
-		Properties properties = new Properties();
+	public static SortedProperties loadProperties(String propertyFile, Properties def) {
+		SortedProperties properties = new SortedProperties();
 		if (def != null) {
-			properties = new Properties(def);
+			properties = new SortedProperties(def);
 		}
 		File file = null;
 		try {
@@ -328,7 +329,7 @@ public class Environment {
 	 * @param properties The properties object that is to be saved.
 	 * @param comments A comment to save in the properties file.
 	 */
-	public static void saveProperties(String propertyFile, Properties properties, String comments) throws IOException {
+	public static void saveProperties(String propertyFile, SortedProperties properties, String comments) throws IOException {
 		File file = findProperties(propertyFile);
 		FileOutputStream out = null;
 		try {
