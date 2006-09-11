@@ -263,7 +263,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception {
 		String filename = topicFilename(topic.getName());
 		// move file from topic directory to delete directory
 		File oldFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
@@ -271,7 +271,7 @@ public class FileHandler extends PersistencyHandler {
 		if (!oldFile.renameTo(newFile)) {
 			throw new Exception("Unable to move file to delete directory for topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
-		super.deleteTopic(topic, topicVersion);
+		super.deleteTopic(topic, topicVersion, userVisible);
 	}
 
 	/**
@@ -1701,7 +1701,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception {
 		String filename = topicFilename(topic.getName());
 		// move file from topic directory to delete directory
 		File oldFile = getPathFor(topic.getVirtualWiki(), DELETE_DIR, filename);
@@ -1709,7 +1709,7 @@ public class FileHandler extends PersistencyHandler {
 		if (!oldFile.renameTo(newFile)) {
 			throw new Exception("Unable to undelete topic " + topic.getVirtualWiki() + " / " + topic.getName());
 		}
-		super.undeleteTopic(topic, topicVersion);
+		super.undeleteTopic(topic, topicVersion, userVisible);
 	}
 
 	/**

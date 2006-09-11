@@ -258,7 +258,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
@@ -267,7 +267,7 @@ public abstract class PersistencyHandler {
 			// update topic to indicate deleted, add delete topic version.  parser output
 			// should be empty since nothing to add to search engine.
 			ParserOutput parserOutput = new ParserOutput();
-			writeTopic(topic, topicVersion, parserOutput, params);
+			writeTopic(topic, topicVersion, parserOutput, params, userVisible);
 			// reset topic existence vector
 			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		} catch (Exception e) {
@@ -584,12 +584,22 @@ public abstract class PersistencyHandler {
 		try {
 			params = this.initParams();
 			Topic oldTopic = WikiBase.getHandler().lookupTopic(topic.getVirtualWiki(), destination);
+			if (oldTopic != null && oldTopic.getRedirectTo() != null && oldTopic.getRedirectTo().equals(topic.getName())) {
+				// if the target topic is a redirect to the source topic special
+				// handling is required
+
+				// delete old topic
+
+				// rename new topic
+
+				// undelete old topic, rename, update content
+			}
 			if (oldTopic != null && oldTopic.getDeleteDate() == null) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
 			String oldTopicName = topic.getName();
 			topic.setName(destination);
-			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
+			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params, true);
 			// create a new topic that redirects here
 			String content = Utilities.parserRedirectContent(destination);
 			topic.setName(oldTopicName);
@@ -599,7 +609,7 @@ public abstract class PersistencyHandler {
 			topic.setTopicContent(content);
 			topicVersion.setTopicVersionId(-1);
 			topicVersion.setVersionContent(content);
-			writeTopic(topic, topicVersion, Utilities.parserOutput(content), params);
+			writeTopic(topic, topicVersion, Utilities.parserOutput(content), params, true);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -738,7 +748,7 @@ public abstract class PersistencyHandler {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
+		writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params, true);
 	}
 
 	/**
@@ -781,14 +791,14 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion) throws Exception {
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
 			// update topic to indicate deleted, add delete topic version.  parser output
 			// should be empty since nothing to add to search engine.
 			ParserOutput parserOutput = new ParserOutput();
-			writeTopic(topic, topicVersion, parserOutput, params);
+			writeTopic(topic, topicVersion, parserOutput, params, userVisible);
 			// reset topic existence vector
 			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		} catch (Exception e) {
@@ -812,7 +822,7 @@ public abstract class PersistencyHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params);
+			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params, true);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -877,7 +887,7 @@ public abstract class PersistencyHandler {
 			if (topicVersion.getAuthorId() != null) {
 				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 			}
-			this.writeTopic(topic, topicVersion, parserOutput, params);
+			this.writeTopic(topic, topicVersion, parserOutput, params, true);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -887,9 +897,22 @@ public abstract class PersistencyHandler {
 	}
 
 	/**
+	 * Commit changes to a topic (and its version) to the database or filesystem.
 	 *
+	 * @param topic The topic object that is to be committed.  If the topic id is
+	 *  empty or less than zero then the topic is added, otherwise an update is performed.
+	 * @param topicVersion The version associated with the topic that is being added.
+	 *  This parameter should never be null UNLESS the change is not user visible, such as
+	 *  when deleting a topic temporarily during page moves.
+	 * @param parserOutput The parserOutput object that contains a list of links in the
+	 *  topic content, categories, etc.  This parameter may be set with the
+	 *  Utilities.getParserOutput() method.
+	 * @param params Database connection or other parameters required for updates.
+	 * @param userVisible A flag indicating whether or not this change should be visible
+	 *  to Wiki users.  This flag should be true except in rare cases, such as when
+	 *  temporarily deleting a topic during page moves.
 	 */
-	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Object[] params) throws Exception {
+	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Object[] params, boolean userVisible) throws Exception {
 		if (!Utilities.validateName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
@@ -898,22 +921,34 @@ public abstract class PersistencyHandler {
 		} else {
 			updateTopic(topic, params);
 		}
-		if (topicVersion.getPreviousTopicVersionId() == null) {
-			TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName(), params);
-			if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
-		}
-		// reset topic non-existence vector
-		cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-		topicVersion.setTopicId(topic.getTopicId());
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-			// write version
-			addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion, params);
-		}
-		String authorName = topicVersion.getAuthorIpAddress();
-		if (topicVersion.getAuthorId() != null) {
-			WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
-			authorName = user.getLogin();
-			if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
+		if (userVisible) {
+			if (topicVersion.getPreviousTopicVersionId() == null) {
+				TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName(), params);
+				if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
+			}
+			topicVersion.setTopicId(topic.getTopicId());
+			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
+				// write version
+				addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion, params);
+			}
+			String authorName = topicVersion.getAuthorIpAddress();
+			if (topicVersion.getAuthorId() != null) {
+				WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
+				authorName = user.getLogin();
+				if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
+			}
+			RecentChange change = new RecentChange();
+			change.setTopicId(topic.getTopicId());
+			change.setTopicName(topic.getName());
+			change.setTopicVersionId(topicVersion.getTopicVersionId());
+			change.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
+			change.setAuthorId(topicVersion.getAuthorId());
+			change.setAuthorName(authorName);
+			change.setEditComment(topicVersion.getEditComment());
+			change.setEditDate(topicVersion.getEditDate());
+			change.setEditType(topicVersion.getEditType());
+			change.setVirtualWiki(topic.getVirtualWiki());
+			addRecentChange(change, params);
 		}
 		if (parserOutput != null) {
 			// add / remove categories associated with the topic
@@ -929,18 +964,8 @@ public abstract class PersistencyHandler {
 				this.addCategory(category, params);
 			}
 		}
-		RecentChange change = new RecentChange();
-		change.setTopicId(topic.getTopicId());
-		change.setTopicName(topic.getName());
-		change.setTopicVersionId(topicVersion.getTopicVersionId());
-		change.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
-		change.setAuthorId(topicVersion.getAuthorId());
-		change.setAuthorName(authorName);
-		change.setEditComment(topicVersion.getEditComment());
-		change.setEditDate(topicVersion.getEditDate());
-		change.setEditType(topicVersion.getEditType());
-		change.setVirtualWiki(topic.getVirtualWiki());
-		addRecentChange(change, params);
+		// reset topic non-existence vector
+		cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		if (parserOutput != null) {
 			LuceneSearchEngine.deleteFromIndex(topic);
 			LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());

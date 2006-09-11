@@ -2,6 +2,7 @@
 0.3.4
 =====
 
+* FEATURE: Add the capability to move a page over an existing redirect.
 * FEATURE: Sort property values alphabetically.
 * FEATURE: Do not display redirect syntax as an ordered list.
 * FEATURE: Updated Hungarian translations from bDaneE.
