@@ -419,6 +419,7 @@ public abstract class PersistencyHandler {
 			// NOTE! topic name not set!
 			change.setTopicVersionId(version.getTopicVersionId());
 			change.setVirtualWiki(virtualWiki);
+			change.setPreviousTopicVersionId(version.getPreviousTopicVersionId());
 			results.add(change);
 		}
 		return results;

@@ -69,10 +69,7 @@ if (request.getParameter("num") != null) {
 	<%-- FIXME: ugly --%>
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)
-	<%-- FIXME: need a better way to denote minor edits & deletions --%>
-	<c:if test="${change.minor}">&#160;<b>m</b></c:if>
-	<c:if test="${change.delete}">&#160;<b>d</b></c:if>
-	<c:if test="${change.undelete}">&#160;<b>u</b></c:if>
+	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </li>
 </c:forEach>

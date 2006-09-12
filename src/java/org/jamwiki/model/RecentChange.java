@@ -73,6 +73,18 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public String getChangeTypeNotification() {
+		String changeTypeNotification = "";
+		if (this.previousTopicVersionId == null) changeTypeNotification += "n";
+		if (this.editType == TopicVersion.EDIT_MINOR) changeTypeNotification += "m";
+		if (this.editType == TopicVersion.EDIT_DELETE) changeTypeNotification += "d";
+		if (this.editType == TopicVersion.EDIT_UNDELETE) changeTypeNotification += "u";
+		return changeTypeNotification;
+	}
+
+	/**
+	 *
+	 */
 	public boolean getDelete() {
 		return this.editType == TopicVersion.EDIT_DELETE;
 	}
