@@ -33,11 +33,11 @@
 <tr><td colspan="2"><p><f:message key="move.overview" /></p></td></tr>
 <tr>
 	<td class="normal" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </td>
-	<td class="normal" width="90%"><input type="text" name="moveDestination" value="" id="moveDestination" size="60" /></td>
+	<td class="normal" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></td>
 </tr>
 <tr>
 	<td class="normal" nowrap><label for="moveComment"><f:message key="move.comment" /></label>: </td>
-	<td class="normal" width="90%"><input type="text" name="moveComment" value="" id="moveComment" size="60" /></td>
+	<td class="normal" width="90%"><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></td>
 </tr>
 <c:if test="${!empty moveCommentsPage}">
 <tr>

@@ -105,6 +105,22 @@ public abstract class PersistencyHandler {
 	protected abstract void addWikiUser(WikiUser user, Object[] params) throws Exception;
 
 	/**
+	 *
+	 */
+	public boolean canMoveTopic(Topic fromTopic, String destination) throws Exception {
+		Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination);
+		if (toTopic == null || toTopic.getDeleteDate() != null) {
+			// destination doesn't exist or is deleted, so move is OK
+			return true;
+		}
+		if (toTopic.getRedirectTo() != null && toTopic.getRedirectTo().equals(fromTopic.getName())) {
+			// source redirects to destination, so move is OK
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Convert all data from one handler to another.  Note: this method will
 	 * delete all data in the destination handler.  Thus, when converting from
 	 * file to database, the database is completely re-initialized and all data
@@ -262,20 +278,29 @@ public abstract class PersistencyHandler {
 		Object params[] = null;
 		try {
 			params = this.initParams();
-			// delete old recent changes
-			deleteRecentChanges(topic, params);
-			// update topic to indicate deleted, add delete topic version.  parser output
-			// should be empty since nothing to add to search engine.
-			ParserOutput parserOutput = new ParserOutput();
-			writeTopic(topic, topicVersion, parserOutput, params, userVisible);
-			// reset topic existence vector
-			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+			this.deleteTopic(topic, topicVersion, userVisible, params);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
 		} finally {
 			this.releaseParams(params);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object[] params) throws Exception {
+		if (userVisible) {
+			// delete old recent changes
+			deleteRecentChanges(topic, params);
+		}
+		// update topic to indicate deleted, add delete topic version.  parser output
+		// should be empty since nothing to add to search engine.
+		ParserOutput parserOutput = new ParserOutput();
+		writeTopic(topic, topicVersion, parserOutput, params, userVisible);
+		// reset topic existence vector
+		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
 
 	/**
@@ -579,37 +604,42 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public void moveTopic(Topic topic, TopicVersion topicVersion, String destination) throws Exception {
+	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws Exception {
 		Object params[] = null;
 		try {
 			params = this.initParams();
-			Topic oldTopic = WikiBase.getHandler().lookupTopic(topic.getVirtualWiki(), destination);
-			if (oldTopic != null && oldTopic.getRedirectTo() != null && oldTopic.getRedirectTo().equals(topic.getName())) {
-				// if the target topic is a redirect to the source topic special
-				// handling is required
-
-				// delete old topic
-
-				// rename new topic
-
-				// undelete old topic, rename, update content
-			}
-			if (oldTopic != null && oldTopic.getDeleteDate() == null) {
+			if (!this.canMoveTopic(fromTopic, destination)) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
-			String oldTopicName = topic.getName();
-			topic.setName(destination);
-			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), params, true);
-			// create a new topic that redirects here
+			Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination);
+			boolean detinationExistsFlag = (toTopic != null && toTopic.getDeleteDate() == null);
+			if (detinationExistsFlag) {
+				// if the target topic is a redirect to the source topic then the
+				// target must first be deleted.
+				this.deleteTopic(toTopic, null, false, params);
+			}
+			String fromTopicName = fromTopic.getName();
+			fromTopic.setName(destination);
+			writeTopic(fromTopic, fromVersion, Utilities.parserOutput(fromTopic.getTopicContent()), params, true);
+			if (detinationExistsFlag) {
+				// target topic was deleted, so undelete and rename
+				toTopic.setName(fromTopicName);
+				writeTopic(toTopic, null, null, params, false);
+				this.undeleteTopic(toTopic, null, false, params);
+			} else {
+				// create a new topic that redirects to the destination
+				toTopic = fromTopic;
+				toTopic.setTopicId(-1);
+				toTopic.setName(fromTopicName);
+			}
 			String content = Utilities.parserRedirectContent(destination);
-			topic.setName(oldTopicName);
-			topic.setTopicId(-1);
-			topic.setRedirectTo(destination);
-			topic.setTopicType(Topic.TYPE_REDIRECT);
-			topic.setTopicContent(content);
-			topicVersion.setTopicVersionId(-1);
-			topicVersion.setVersionContent(content);
-			writeTopic(topic, topicVersion, Utilities.parserOutput(content), params, true);
+			toTopic.setRedirectTo(destination);
+			toTopic.setTopicType(Topic.TYPE_REDIRECT);
+			toTopic.setTopicContent(content);
+			TopicVersion toVersion = fromVersion;
+			toVersion.setTopicVersionId(-1);
+			toVersion.setVersionContent(content);
+			writeTopic(toTopic, toVersion, Utilities.parserOutput(content), params, true);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
@@ -795,18 +825,25 @@ public abstract class PersistencyHandler {
 		Object params[] = null;
 		try {
 			params = this.initParams();
-			// update topic to indicate deleted, add delete topic version.  parser output
-			// should be empty since nothing to add to search engine.
-			ParserOutput parserOutput = new ParserOutput();
-			writeTopic(topic, topicVersion, parserOutput, params, userVisible);
-			// reset topic existence vector
-			cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
+			this.undeleteTopic(topic, topicVersion, userVisible, params);
 		} catch (Exception e) {
 			this.handleErrors(params);
 			throw e;
 		} finally {
 			this.releaseParams(params);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object[] params) throws Exception {
+		// update topic to indicate deleted, add delete topic version.  parser output
+		// should be empty since nothing to add to search engine.
+		ParserOutput parserOutput = new ParserOutput();
+		writeTopic(topic, topicVersion, parserOutput, params, userVisible);
+		// reset topic existence vector
+		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
 
 	/**

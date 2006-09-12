@@ -102,9 +102,11 @@ public class MoveServlet extends JAMWikiServlet {
 			return false;
 		}
 		Topic toTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
-		if (toTopic != null && toTopic.getDeleteDate() == null) {
+		if (!WikiBase.getHandler().canMoveTopic(fromTopic, moveDestination)) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
+			next.addObject("moveDestination", moveDestination);
+			next.addObject("moveComment", request.getParameter("moveComment"));
 			return false;
 		}
 		String moveComment = Utilities.getMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
