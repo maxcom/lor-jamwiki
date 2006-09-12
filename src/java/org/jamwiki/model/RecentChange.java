@@ -45,6 +45,22 @@ public class RecentChange {
 	/**
 	 *
 	 */
+	public RecentChange(Topic topic, TopicVersion topicVersion, String authorName) {
+		this.topicId = topic.getTopicId();
+		this.topicName = topic.getName();
+		this.topicVersionId = topicVersion.getTopicVersionId();
+		this.previousTopicVersionId = topicVersion.getPreviousTopicVersionId();
+		this.authorId = topicVersion.getAuthorId();
+		this.authorName = authorName;
+		this.editComment = topicVersion.getEditComment();
+		this.editDate = topicVersion.getEditDate();
+		this.editType = topicVersion.getEditType();
+		this.virtualWiki = topic.getVirtualWiki();
+	}
+
+	/**
+	 *
+	 */
 	public Integer getAuthorId() {
 		return this.authorId;
 	}

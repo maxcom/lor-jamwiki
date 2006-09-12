@@ -399,27 +399,16 @@ public abstract class PersistencyHandler {
 	 */
 	public Vector getRecentChanges(String virtualWiki, String topicName, boolean descending) throws Exception {
 		Vector results = new Vector();
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
 		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
 			TopicVersion version = (TopicVersion)iterator.next();
-			RecentChange change = new RecentChange();
+			String authorName = version.getAuthorIpAddress();
 			Integer authorId = version.getAuthorId();
-			change.setAuthorId(authorId);
 			if (authorId != null) {
-				String login = lookupWikiUserLogin(authorId);
-				change.setAuthorName(login);
-			} else {
-				change.setAuthorName(version.getAuthorIpAddress());
+				authorName = lookupWikiUserLogin(authorId);
 			}
-			change.setEditComment(version.getEditComment());
-			change.setEditDate(version.getEditDate());
-			change.setEditType(version.getEditType());
-			// NOTE! previous topic version not set!
-			change.setTopicId(version.getTopicId());
-			// NOTE! topic name not set!
-			change.setTopicVersionId(version.getTopicVersionId());
-			change.setVirtualWiki(virtualWiki);
-			change.setPreviousTopicVersionId(version.getPreviousTopicVersionId());
+			RecentChange change = new RecentChange(topic, version, authorName);
 			results.add(change);
 		}
 		return results;
@@ -970,22 +959,12 @@ public abstract class PersistencyHandler {
 				addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion, params);
 			}
 			String authorName = topicVersion.getAuthorIpAddress();
-			if (topicVersion.getAuthorId() != null) {
+			Integer authorId = topicVersion.getAuthorId();
+			if (authorId != null) {
 				WikiUser user = lookupWikiUser(topicVersion.getAuthorId().intValue(), params);
 				authorName = user.getLogin();
-				if (!StringUtils.hasText(authorName)) authorName = user.getLogin();
 			}
-			RecentChange change = new RecentChange();
-			change.setTopicId(topic.getTopicId());
-			change.setTopicName(topic.getName());
-			change.setTopicVersionId(topicVersion.getTopicVersionId());
-			change.setPreviousTopicVersionId(topicVersion.getPreviousTopicVersionId());
-			change.setAuthorId(topicVersion.getAuthorId());
-			change.setAuthorName(authorName);
-			change.setEditComment(topicVersion.getEditComment());
-			change.setEditDate(topicVersion.getEditDate());
-			change.setEditType(topicVersion.getEditType());
-			change.setVirtualWiki(topic.getVirtualWiki());
+			RecentChange change = new RecentChange(topic, topicVersion, authorName);
 			addRecentChange(change, params);
 		}
 		if (parserOutput != null) {
