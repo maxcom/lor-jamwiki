@@ -2,6 +2,7 @@
 0.3.4
 =====
 
+* FEATURE: Display comments and contributions links on history page.
 * FEATURE: Split up recent changes page by date.
 * FEATURE: Use java.util.logging for logging, remove log4j.
 * FEATURE: Display "n" on changes pages for new topics.
