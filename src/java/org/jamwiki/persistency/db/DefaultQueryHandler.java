@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Properties;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;

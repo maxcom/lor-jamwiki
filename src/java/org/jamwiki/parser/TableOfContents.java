@@ -21,7 +21,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
 
 /**

@@ -32,7 +32,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Encryption;
 
 /**

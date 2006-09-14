@@ -18,7 +18,7 @@ package org.jamwiki.persistency.db;
 
 import java.util.Properties;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  *

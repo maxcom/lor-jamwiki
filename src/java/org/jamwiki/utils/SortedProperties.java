@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
-import org.jamwiki.WikiLogger;
 
 /**
  * This class acts as a utility class for providing the capability of a property file

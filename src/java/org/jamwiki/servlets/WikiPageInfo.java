@@ -18,7 +18,7 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 
 /**

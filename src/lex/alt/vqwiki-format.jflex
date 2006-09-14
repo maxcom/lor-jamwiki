@@ -4,7 +4,7 @@
 package org.jamwiki.parser.alt;
 
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
 

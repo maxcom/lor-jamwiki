@@ -7,7 +7,7 @@
 package org.jamwiki.parser;
 
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 %%
 

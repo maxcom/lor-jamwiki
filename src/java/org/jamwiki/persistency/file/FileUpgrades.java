@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.VirtualWiki;
 
 /**

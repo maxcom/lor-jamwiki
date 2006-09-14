@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import javax.imageio.ImageIO;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiLogger;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
 import org.springframework.util.StringUtils;

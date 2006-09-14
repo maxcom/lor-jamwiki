@@ -21,7 +21,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;

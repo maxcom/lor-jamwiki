@@ -26,6 +26,7 @@ import java.util.Properties;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Provides environmental information to the JAMWiki system.

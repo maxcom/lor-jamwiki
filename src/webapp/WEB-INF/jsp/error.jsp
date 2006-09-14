@@ -24,7 +24,7 @@ called it means that a catastrophic error has occurred.
 --%>
 
 <%@ page import="
-        org.jamwiki.WikiLogger
+        org.jamwiki.utils.WikiLogger
     "
     isErrorPage="true"
     contentType="text/html; charset=utf-8"

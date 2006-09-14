@@ -3,7 +3,7 @@
  */
 package org.jamwiki.parser;
 
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 %%
 

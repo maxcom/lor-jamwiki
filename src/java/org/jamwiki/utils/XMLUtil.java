@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.jamwiki.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

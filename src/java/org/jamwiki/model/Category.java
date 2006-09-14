@@ -16,7 +16,7 @@
  */
 package org.jamwiki.model;
 
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  *

@@ -19,6 +19,7 @@ package org.jamwiki;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  *

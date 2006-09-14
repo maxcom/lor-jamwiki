@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.StringTokenizer;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**

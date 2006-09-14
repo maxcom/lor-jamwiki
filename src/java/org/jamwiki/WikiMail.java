@@ -24,6 +24,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Sends mail via SMTP to the specified host. <b>REDISTRIBUTION:</b> you

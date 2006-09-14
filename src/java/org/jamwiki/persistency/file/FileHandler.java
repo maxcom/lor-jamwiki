@@ -33,7 +33,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;

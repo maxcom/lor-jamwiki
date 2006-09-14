@@ -18,7 +18,6 @@ package org.jamwiki.utils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.jamwiki.WikiLogger;
 
 /**
  * This class provides a utility class useful for storing a cache of objects.

@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * This class is a utility class useful for storing messages key and object

@@ -18,7 +18,7 @@ package org.jamwiki.parser.alt;
 
 import java.io.StringReader;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;

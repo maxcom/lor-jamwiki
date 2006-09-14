@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Vector;
 import java.util.LinkedHashMap;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * This class is a wrapper around the java.sql.ResultSet class, allowing the data

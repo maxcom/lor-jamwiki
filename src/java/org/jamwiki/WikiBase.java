@@ -27,6 +27,7 @@ import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**

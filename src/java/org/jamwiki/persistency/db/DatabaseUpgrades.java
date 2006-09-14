@@ -20,7 +20,7 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Vector;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * This class simply contains utility methods for upgrading database schemas

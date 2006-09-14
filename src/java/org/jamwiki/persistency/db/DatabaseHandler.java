@@ -24,7 +24,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Vector;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;

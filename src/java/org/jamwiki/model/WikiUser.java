@@ -17,7 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  *

@@ -19,7 +19,7 @@ package org.jamwiki.parser.alt;
 import java.io.IOException;
 import java.util.Properties;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Controls generation of external links based on the linking.properties file at the bottom

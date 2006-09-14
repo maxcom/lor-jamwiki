@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -92,7 +92,7 @@ public class JAMWikiParser extends AbstractParser {
 			parserOutput = this.parseRedirect(rawText);
 			original.setContent(parserOutput.getContent());
 		}
-		logger.info("Parse time (parseHTML) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return original;
 	}
 
@@ -186,7 +186,7 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setParserInput(this.parserInput);
 		lexer.setTargetSection(targetSection);
 		ParserOutput parserOutput = this.lex(lexer);
-		logger.fine("Parse time (parseSlice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserOutput;
 	}
 
@@ -213,7 +213,7 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		ParserOutput parserOutput = this.lex(lexer);
-		logger.fine("Parse time (parseSplice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserOutput;
 	}
 }

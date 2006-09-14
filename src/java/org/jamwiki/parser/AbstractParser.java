@@ -19,7 +19,7 @@ package org.jamwiki.parser;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 import org.jamwiki.parser.ParserInput;
 

@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Properties;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to

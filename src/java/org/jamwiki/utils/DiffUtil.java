@@ -22,7 +22,6 @@ import java.util.Vector;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
 import org.jamwiki.model.WikiDiff;
-import org.jamwiki.WikiLogger;
 
 /**
  * Utility class for processing the difference between two topics and returing a Vector

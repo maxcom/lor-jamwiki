@@ -17,7 +17,7 @@
 package org.jamwiki.parser;
 
 import java.util.Stack;
-import org.jamwiki.WikiLogger;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * This interface can be implemented in any way you like, it doesn't have to be for
