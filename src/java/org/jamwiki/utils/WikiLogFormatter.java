@@ -24,7 +24,7 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- *
+ * This class extends the java.util.logging.Formatter class to format log messages.
  */
 public class WikiLogFormatter extends Formatter {
 

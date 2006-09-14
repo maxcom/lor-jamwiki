@@ -43,7 +43,7 @@ public class WikiLogger {
 	public final static String LOG_PROPERTIES_FILENAME = "logging.properties";
 
 	static {
-		initializeLogManager();
+		initializeLogParams();
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class WikiLogger {
 	/**
 	 *
 	 */
-	private static void initializeLogManager() {
+	private static void initializeLogParams() {
 		FileInputStream stream = null;
 		try {
 			File propertyFile = Utilities.getClassLoaderFile(LOG_PROPERTIES_FILENAME);
