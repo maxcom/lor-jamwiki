@@ -164,6 +164,14 @@ function onUserGroupType() {
 	<td class="normal"><label for="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>"><f:message key="admin.caption.allowjavascript" /></label></td>
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT) ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" /></td>
 </tr>
+<tr>
+	<td class="normal"><label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><f:message key="admin.caption.signatureuser" /></label></td>
+	<td class="normal"><input type="text" name="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>" value="<%= Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN) %>" size="50" id="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>" /></td>
+</tr>
+<tr>
+	<td class="normal"><label for="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>"><f:message key="admin.caption.signaturedate" /></label></td>
+	<td class="normal"><input type="text" name="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>" value="<%= Environment.getValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN) %>" size="50" id="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>" /></td>
+</tr>
 
 <%--
 FIXME - Email not supported right now, comment this out

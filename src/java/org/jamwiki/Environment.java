@@ -70,6 +70,8 @@ public class Environment {
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_CLASS = "parser";
+	public static final String PROP_PARSER_SIGNATURE_DATE_PATTERN = "signature-date";
+	public static final String PROP_PARSER_SIGNATURE_USER_PATTERN = "signature-user";
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
@@ -171,6 +173,8 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, "false");
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.JAMWikiParser");
+		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
+		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{3}]]");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
 		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
 		defaults.setProperty(PROP_TOPIC_NON_ADMIN_TOPIC_MOVE, "true");

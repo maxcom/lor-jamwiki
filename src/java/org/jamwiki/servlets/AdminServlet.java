@@ -220,6 +220,14 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_PARSER_ALLOW_JAVASCRIPT,
 				request.getParameter(Environment.PROP_PARSER_ALLOW_JAVASCRIPT) != null
 			);
+			Environment.setValue(
+				Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN,
+				request.getParameter(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN)
+			);
+			Environment.setValue(
+				Environment.PROP_PARSER_SIGNATURE_USER_PATTERN,
+				request.getParameter(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN)
+			);
 			Environment.setBooleanValue(
 				Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE,
 				request.getParameter(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) != null

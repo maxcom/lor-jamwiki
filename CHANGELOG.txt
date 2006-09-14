@@ -2,6 +2,7 @@
 0.3.4
 =====
 
+* FEATURE: Make signature patterns configurable.
 * FEATURE: Display comments and contributions links on history page.
 * FEATURE: Split up recent changes page by date.
 * FEATURE: Use java.util.logging for logging, remove log4j.

@@ -17,6 +17,7 @@
 package org.jamwiki.parser;
 
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -189,29 +190,37 @@ public class ParserUtil {
 			if (includeUser) {
 				String context = parserInput.getContext();
 				String virtualWiki = parserInput.getVirtualWiki();
-				// FIXME - need a utility method for user links
-				String topic = WikiBase.NAMESPACE_USER + parserInput.getUserIpAddress();
-				String text = parserInput.getUserIpAddress();
+				String login = parserInput.getUserIpAddress();
+				String email = parserInput.getUserIpAddress();
+				String displayName = parserInput.getUserIpAddress();
 				if (parserInput.getWikiUser() != null) {
 					WikiUser user = parserInput.getWikiUser();
-					topic = WikiBase.NAMESPACE_USER + user.getLogin();
-					text = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
+					login = user.getLogin();
+					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
+					email = user.getEmail();
 				}
-				String link = "";
-				if (parserInput.getMode() == ParserInput.MODE_SAVE) {
-					// FIXME - mediawiki specific.
-					link = "[[" + topic + "|" + text + "]]";
-				} else {
-					link += LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, text, null, true);
+				// FIXME - need a utility method for user links
+				String userPage = WikiBase.NAMESPACE_USER + login;
+				String text = parserInput.getUserIpAddress();
+				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
+				Object params[] = new Object[5];
+				params[0] = userPage;
+				// FIXME - hard coding
+				params[1] = "Special:Contributions?contributor=" + login;
+				params[2] = login;
+				params[3] = displayName;
+				params[4] = email;
+				signature = formatter.format(params);
+				if (parserInput.getMode() != ParserInput.MODE_SAVE) {
+					signature = ParserUtil.parseFragment(parserInput, signature);
 				}
-				signature += link;
 			}
 			if (includeUser && includeDate) {
 				signature += " ";
 			}
 			if (includeDate) {
 				SimpleDateFormat format = new SimpleDateFormat();
-				format.applyPattern("dd-MMM-yyyy HH:mm zzz");
+				format.applyPattern(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN));
 				signature += format.format(new java.util.Date());
 			}
 			return signature;
