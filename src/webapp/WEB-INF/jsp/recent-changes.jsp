@@ -52,16 +52,23 @@ if (request.getParameter("num") != null) {
 
 <br /><br />
 
+<%-- FIXME: do not hardcode date pattern --%>
+<c:set var="previousDate"><f:formatDate value="${changes[0].editDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
+<h4><c:out value="${previousDate}" /></h4>
 <ul>
-
 <c:forEach items="${changes}" var="change">
+<c:set var="currentDate"><f:formatDate value="${change.editDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
+<c:if test="${currentDate != previousDate}">
+</ul>
+<h4><c:out value="${currentDate}" /></h4>
+<ul>
+</c:if>
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2"><c:out value="${change.previousTopicVersionId}" /></jamwiki:linkParam><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><f:message key="common.caption.diff" /></jamwiki:link>)
 	&#160;
 	(<jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${change.topicName}" /><f:message key="common.caption.history" /></jamwiki:link>)
 	&#160;
-	<%-- FIXME: do not hardcode date pattern --%>
-	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
+	<f:formatDate value="${change.editDate}" type="both" pattern="HH:mm" />
 	&#160;
 	<c:if test="${!change.delete}"><jamwiki:link value="${change.topicName}" text="${change.topicName}" /></c:if>
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
@@ -72,6 +79,7 @@ if (request.getParameter("num") != null) {
 	<c:if test="${!empty change.changeTypeNotification}">&#160;<b><c:out value="${change.changeTypeNotification}" /></b></c:if>
 	<c:if test="${!empty change.editComment}">&#160;(<i><c:out value="${change.editComment}" /></i>)</c:if>
 </li>
+<c:set var="previousDate" value="${currentDate}" />
 </c:forEach>
 </ul>
 </form>
