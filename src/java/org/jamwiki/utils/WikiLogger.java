@@ -26,7 +26,12 @@ import java.util.logging.LogRecord;
 import org.jamwiki.utils.Utilities;
 
 /**
- *
+ * This class provides a wrapper around the java.util.logging.Logger class,
+ * allowing additional utility methods to be included such as allowing a log
+ * message to include a Throwable object.  From an implementation standpoint
+ * it would have been much easier to simply sub-class the Logger class, but
+ * that class is implemented in such a way to make sub-classes exceedingly
+ * difficult to create.
  */
 public class WikiLogger {
 
