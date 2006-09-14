@@ -422,9 +422,14 @@ htmlcomment        = "<!--" ~"-->"
 /* tables */
 tablestart         = "{|" {inputcharacter}* {newline}
 tableend           = "|}"
-tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n(\[\[)]+ "|" [^\|]
+/*
+FIXME - the tablecell and tablecellsstyle patterns must include "[" to account
+for links of the form "[[Topic|Text]]", but in the process this breaks any
+style that might (for some reason) include a "["
+*/
+tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n\[]+ "|" [^\|]
 tablecells         = "||"
-tablecellsstyle    = "||" ([^\|\n]+) "|" ([^|])
+tablecellsstyle    = "||" ([^\|\r\n\[]+) "|" ([^|])
 tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
 tableheadings      = "||" | "!!"
 tablerow           = "|-" {inputcharacter}* {newline}

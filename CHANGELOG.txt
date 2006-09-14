@@ -8,6 +8,8 @@
 * FEATURE: Use java.util.logging for logging, remove log4j.
 * FEATURE: Display "n" on changes pages for new topics.
 * FEATURE: Add the capability to move a page over an existing redirect.
+* BUG: Correctly parse table cells that contain links of the form
+  [[Topic|Text]].
 * FEATURE: Sort property values alphabetically.
 * FEATURE: Do not display redirect syntax as an ordered list.
 * FEATURE: Updated Hungarian translations from bDaneE.
