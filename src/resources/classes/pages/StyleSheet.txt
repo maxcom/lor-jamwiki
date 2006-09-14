@@ -486,23 +486,24 @@ img.gallery {
 	background:yellow;
 }
 
-.searchresult{
+.searchresult {
 	background-color: gainsboro
 }
 
+/* form styles */
+
+td.formcaption {
+}
+
+td.formelement {
+}
+
+td.formhelp {
+	font-size: 85%;
+	color: #5f5f5f;
+}
+
 /* older stuff */
-
-.pageHeader {
-	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	font-size: 200%;
-}
-
-.subHeader {
-	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	font-size: larger;
-}
 
 .red {
 	font-family: Verdana, Helvetica, sans-serif;

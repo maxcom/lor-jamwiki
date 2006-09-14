@@ -39,13 +39,13 @@ function confirmSubmit() {
 
 <table border="0" class="contents">
 <tr>
-	<td class="normal"><f:message key="convert.tofile" /></td>
-	<td class="normal"><input type="submit" name="tofile" onclick="return confirmSubmit()" /></td>
+	<td class="formcaption"><f:message key="convert.tofile" /></td>
+	<td class="formelement"><input type="submit" name="tofile" onclick="return confirmSubmit()" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td class="normal"><f:message key="convert.todatabase" /></td>
-	<td class="normal"><input type="submit" name="todatabase" onclick="return confirmSubmit()" /></td>
+	<td class="formcaption"><f:message key="convert.todatabase" /></td>
+	<td class="formelement"><input type="submit" name="todatabase" onclick="return confirmSubmit()" /></td>
 </tr>
 </table>
 </form>

@@ -32,16 +32,16 @@
 <input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><p><f:message key="move.overview" /></p></td></tr>
 <tr>
-	<td class="normal" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </td>
-	<td class="normal" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></td>
+	<td class="formcaption" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </td>
+	<td class="formelement" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></td>
 </tr>
 <tr>
-	<td class="normal" nowrap><label for="moveComment"><f:message key="move.comment" /></label>: </td>
-	<td class="normal" width="90%"><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></td>
+	<td class="formcaption" nowrap><label for="moveComment"><f:message key="move.comment" /></label>: </td>
+	<td class="formelement" width="90%"><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></td>
 </tr>
 <c:if test="${!empty moveCommentsPage}">
 <tr>
-	<td class="normal" colspan="2"><label for="moveCommentsPage"><f:message key="move.commentspage" /></label>:&#160;<input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></td>
+	<td class="formcaption" colspan="2"><label for="moveCommentsPage"><f:message key="move.commentspage" /></label>:&#160;<input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></td>
 </tr>
 </c:if>
 <tr><td>&#160;</td><td align="left"><input type="submit" name="move" value="<f:message key="common.move" />" /></td></tr>
