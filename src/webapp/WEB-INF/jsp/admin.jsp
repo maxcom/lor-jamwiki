@@ -147,7 +147,7 @@ function onUserGroupType() {
 	<td class="normal"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW) ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" /></td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.lexerheader" /></td></tr>
+<tr><td class="subHeader" colspan="2" align="left"><f:message key="admin.caption.parserheader" /></td></tr>
 <tr>
 	<td class="normal"><label for="<%= Environment.PROP_PARSER_CLASS %>"><f:message key="admin.caption.parser" /></label></td>
 	<td class="normal"><input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= Environment.getValue(Environment.PROP_PARSER_CLASS) %>" size="50" id="<%= Environment.PROP_PARSER_CLASS %>" /></td>
