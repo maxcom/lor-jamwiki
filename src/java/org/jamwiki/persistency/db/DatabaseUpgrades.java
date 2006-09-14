@@ -19,8 +19,8 @@ package org.jamwiki.persistency.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 
 /**
  * This class simply contains utility methods for upgrading database schemas
@@ -30,7 +30,7 @@ import org.jamwiki.Environment;
  */
 public class DatabaseUpgrades {
 
-	private static Logger logger = Logger.getLogger(DatabaseUpgrades.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(DatabaseUpgrades.class.getName());
 
 	/**
 	 *

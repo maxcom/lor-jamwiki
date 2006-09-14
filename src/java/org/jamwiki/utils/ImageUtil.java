@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
 import org.springframework.util.StringUtils;
@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  */
 public class ImageUtil {
 
-	private static final Logger logger = Logger.getLogger(ImageUtil.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(ImageUtil.class.getName());
 
 	/**
 	 *
@@ -65,7 +65,7 @@ public class ImageUtil {
 	 */
 	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws Exception {
 		if (wikiFile == null) {
-			logger.warn("No image found for " + wikiFile.getVirtualWiki() + " / " + wikiFile.getFileName());
+			logger.warning("No image found for " + wikiFile.getVirtualWiki() + " / " + wikiFile.getFileName());
 			return null;
 		}
 		WikiImage wikiImage = new WikiImage(wikiFile);

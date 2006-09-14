@@ -17,14 +17,14 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class RecentChange {
 
-	private static Logger logger = Logger.getLogger(RecentChange.class);
+	private static WikiLogger logger = WikiLogger.getLogger(RecentChange.class.getName());
 	private Integer authorId = null;
 	private String authorName = null;
 	private String editComment = null;

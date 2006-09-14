@@ -24,7 +24,7 @@ called it means that a catastrophic error has occurred.
 --%>
 
 <%@ page import="
-        org.apache.log4j.Logger
+        org.jamwiki.WikiLogger
     "
     isErrorPage="true"
     contentType="text/html; charset=utf-8"
@@ -43,10 +43,10 @@ function cancel() {
 </head>
 <body>
 <%
-Logger logger = Logger.getLogger("org.jamwiki.jsp");
+WikiLogger logger = WikiLogger.getLogger("org.jamwiki.jsp");
 String errorMessage = "";
 if (exception != null) {
-	logger.error("Error in JSP page", exception);
+	logger.severe("Error in JSP page", exception);
 	errorMessage = exception.toString();
 }
 %>

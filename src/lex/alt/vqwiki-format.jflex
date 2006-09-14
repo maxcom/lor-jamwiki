@@ -3,8 +3,8 @@
  */
 package org.jamwiki.parser.alt;
 
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
 
@@ -36,7 +36,7 @@ import org.jamwiki.parser.ParserInput;
 	protected boolean em, strong, underline, center, table, row, cell, allowHtml, code, h1, h2, h3, color;
 	protected int listLevel;
 	protected boolean ordered;
-	protected static Logger cat = Logger.getLogger( VQWikiFormatLex.class );
+	protected static WikiLogger logger = WikiLogger.getLogger( VQWikiFormatLex.class.getName() );
 	
 	/**
 	 *
@@ -45,7 +45,7 @@ import org.jamwiki.parser.ParserInput;
 		try {
 			return WikiBase.exists(this.parserInput.getVirtualWiki(), topic);
 		} catch (Exception err) {
-			cat.error(err);
+			logger.severe("Error while looking up topic " + topic, err);
 		}
 		return false;
 	}
@@ -74,24 +74,24 @@ nbsp=_&
 %%
 
 <NORMAL, PRE>\\{noformat}	{
-  cat.debug( "escaped double backslash" );
+  logger.fine( "escaped double backslash" );
   return "\\__";
 }
 
 <NORMAL, PRE>{noformat}	{
-  cat.debug( "Format off" );
+  logger.fine( "Format off" );
   yybegin( OFF );
   return "__";
 }
 
 <OFF>{noformat} {
-  cat.debug( "Format on" );
+  logger.fine( "Format on" );
   yybegin( NORMAL );
   return "__";
 }
 
 <NORMAL, PRE>{externalstart} {
-  cat.debug( "external" );
+  logger.fine( "external" );
   yybegin( EXTERNAL );
   return yytext();
 }
@@ -101,28 +101,28 @@ nbsp=_&
 }
 
 <EXTERNAL>{externalend} {
-  cat.debug( "external end");
+  logger.fine( "external end");
   yybegin( NORMAL );
   return yytext();
 }
 
 <NORMAL>^\!\!\![^\n]+\!\!\!{newline} {
-  cat.debug("!!!...!!!");
+  logger.fine("!!!...!!!");
   return "<h1>" + yytext().substring(3, yytext().substring(3).indexOf('!')+3) + "</h1>";
 }
 
 <NORMAL>^\!\![^\n]+\!\!{newline} {
-  cat.debug("!!...!!");
+  logger.fine("!!...!!");
   return "<h2>" + yytext().substring(2, yytext().substring(2).indexOf('!')+2) + "</h2>";
 }
 
 <NORMAL>^\![^\n]+\!{newline} {
-  cat.debug("!...!");
+  logger.fine("!...!");
   return "<h3>" + yytext().substring(1,yytext().substring(1).indexOf('!')+1) + "</h3>";
 }
 
 <NORMAL>"'''" {
-  cat.debug( "'''" );
+  logger.fine( "'''" );
   if( strong ){
     strong = false;
     return( "</strong>" );
@@ -135,7 +135,7 @@ nbsp=_&
 
 
 <NORMAL>"''"	{
-  cat.debug( "''" );
+  logger.fine( "''" );
   if( em ){
     em = false;
     return( "</em>" );
@@ -147,7 +147,7 @@ nbsp=_&
 }
 
 <NORMAL>"::"	{
-  cat.debug( "::" );
+  logger.fine( "::" );
   if( center ){
     center = false;
     return( "</div>" );
@@ -159,7 +159,7 @@ nbsp=_&
 }
 
 <NORMAL>"==="	{
-  cat.debug( "===" );
+  logger.fine( "===" );
   if( underline ){
     underline = false;
     return( "</u>" );
@@ -205,13 +205,13 @@ nbsp=_&
 }
 
 <PRE>{newline}{newline} {
-  cat.debug( "{newline}x2 leaving pre" );
+  logger.fine( "{newline}x2 leaving pre" );
 	yybegin( NORMAL );
   return yytext();
 }
 
 <NORMAL, OFF>{newline} {
-  cat.debug( "{newline}" );
+  logger.fine( "{newline}" );
   if( h1 ){
     h1 = false;
     return( "</h1>" );
@@ -228,28 +228,28 @@ nbsp=_&
 }
 
 <NORMAL>(@@@@{newline}) {
-  cat.debug( "@@@@{newline} entering PRE" );
+  logger.fine( "@@@@{newline} entering PRE" );
   yybegin( PRE );
   return yytext();
 }
 
 <NORMAL, OFF, EXTERNAL>{whitespace} {
-  cat.debug( "{whitespace}" );
+  logger.fine( "{whitespace}" );
   return yytext();
 }
 
 <PRE>{whitespace} {
-  cat.debug( "PRE {whitespace}" );
+  logger.fine( "PRE {whitespace}" );
   return yytext();
 }
 
 <NORMAL, PRE, OFF, EXTERNAL>. {
-  cat.debug( ". (" + yytext() + ")" );
+  logger.fine( ". (" + yytext() + ")" );
   return yytext();
 }
 
 <NORMAL>{colorstart} {
-  cat.debug( "color start" );
+  logger.fine( "color start" );
   
   StringBuffer sb = new StringBuffer() ;
   if( color ){
@@ -265,7 +265,7 @@ nbsp=_&
 
 <NORMAL>{colorend} {
   if( color ){
-    cat.debug( "color end" );
+    logger.fine( "color end" );
   
     color = false ;
     return( "</font>" );

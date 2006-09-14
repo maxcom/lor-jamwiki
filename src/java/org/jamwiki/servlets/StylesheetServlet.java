@@ -19,8 +19,8 @@ package org.jamwiki.servlets;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class StylesheetServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(StylesheetServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(StylesheetServlet.class.getName());
 
 	/**
 	 *
@@ -47,7 +47,7 @@ public class StylesheetServlet extends JAMWikiServlet {
 			out.print(stylesheet);
 			out.close();
 		} catch (Exception e) {
-			logger.error("Failure while loading stylesheet for virtualWiki " + virtualWiki, e);
+			logger.severe("Failure while loading stylesheet for virtualWiki " + virtualWiki, e);
 		}
 		// do not load defaults or redirect - return as raw CSS
 		return null;

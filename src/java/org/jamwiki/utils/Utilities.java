@@ -38,9 +38,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
@@ -55,7 +55,7 @@ import org.springframework.util.StringUtils;
  */
 public class Utilities {
 
-	private static final Logger logger = Logger.getLogger(Utilities.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
 
 	/**
 	 *
@@ -91,18 +91,18 @@ public class Utilities {
 	public static String convertEncoding(String text, String fromEncoding, String toEncoding) {
 		if (!StringUtils.hasText(text)) return text;
 		if (!StringUtils.hasText(fromEncoding)) {
-			logger.warn("No character encoding specified to convert from, using UTF-8");
+			logger.warning("No character encoding specified to convert from, using UTF-8");
 			fromEncoding = "UTF-8";
 		}
 		if (!StringUtils.hasText(toEncoding)) {
-			logger.warn("No character encoding specified to convert to, using UTF-8");
+			logger.warning("No character encoding specified to convert to, using UTF-8");
 			toEncoding = "UTF-8";
 		}
 		try {
 			text = new String(text.getBytes(fromEncoding), toEncoding);
 		} catch (Exception e) {
 			// bad encoding
-			logger.info("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
+			logger.warning("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
 		}
 		return text;
 	}
@@ -137,7 +137,7 @@ public class Utilities {
 		try {
 			url = URLDecoder.decode(url, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while decoding url " + url + " with charset UTF-8", e);
+			logger.severe("Failure while decoding url " + url + " with charset UTF-8", e);
 		}
 		// convert underscores to spaces
 		url = StringUtils.replace(url, "_", " ");
@@ -154,7 +154,7 @@ public class Utilities {
 		try {
 			name = URLEncoder.encode(name, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while encoding " + name + " with charset UTF-8", e);
+			logger.severe("Failure while encoding " + name + " with charset UTF-8", e);
 		}
 		return name;
 	}
@@ -168,7 +168,7 @@ public class Utilities {
 		try {
 			url = URLEncoder.encode(url, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Failure while encoding url " + url + " with charset UTF-8", e);
+			logger.severe("Failure while encoding url " + url + " with charset UTF-8", e);
 		}
 		// FIXME - un-encode colons.  handle this better.
 		url = StringUtils.replace(url, "%3A", ":");
@@ -260,6 +260,8 @@ public class Utilities {
 	 *
 	 */
 	public static File getClassLoaderFile(String filename) throws Exception {
+		// note that this method is used when initializing logging, so it must
+		// not attempt to log anything.
 		Method method = null;
 		ClassLoader loader = null;
 		URL url = null;
@@ -427,7 +429,7 @@ public class Utilities {
 	 */
 	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
-		logger.debug("Using parser: " + parserClass);
+		logger.fine("Using parser: " + parserClass);
 		Class clazz = Class.forName(parserClass);
 		Class[] parameterTypes = new Class[1];
 		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput");

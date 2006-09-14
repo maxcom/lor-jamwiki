@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.VirtualWiki;
 
 /**
@@ -30,7 +30,7 @@ import org.jamwiki.model.VirtualWiki;
  */
 public class FileUpgrades {
 
-	private static final Logger logger = Logger.getLogger(FileUpgrades.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(FileUpgrades.class.getName());
 
 	/**
 	 *

@@ -16,14 +16,14 @@
  */
 package org.jamwiki.model;
 
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class WikiImage extends WikiFile {
 
-	private static Logger logger = Logger.getLogger(WikiImage.class);
+	private static WikiLogger logger = WikiLogger.getLogger(WikiImage.class.getName());
 	private int fileVersionId = -1;
 	private int height = -1;
 	private int width = -1;

@@ -16,14 +16,14 @@
  */
 package org.jamwiki.model;
 
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class VirtualWiki {
 
-	private static Logger logger = Logger.getLogger(VirtualWiki.class);
+	private static WikiLogger logger = WikiLogger.getLogger(VirtualWiki.class.getName());
 	private String name = null;
 	private String defaultTopicName = null;
 	private int virtualWikiId = -1;

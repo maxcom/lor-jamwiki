@@ -19,7 +19,7 @@ package org.jamwiki.servlets;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ExportServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(ExportServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(ExportServlet.class.getName());
 
 	/**
 	 *

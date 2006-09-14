@@ -16,14 +16,14 @@
  */
 package org.jamwiki.search;
 
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class SearchResultEntry {
 
-	private static final Logger logger = Logger.getLogger(SearchResultEntry.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(SearchResultEntry.class.getName());
 
 	/** The topic of this entry */
 	private String topic = null;

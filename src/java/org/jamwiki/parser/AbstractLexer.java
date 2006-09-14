@@ -17,7 +17,7 @@
 package org.jamwiki.parser;
 
 import java.util.Stack;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  * This interface can be implemented in any way you like, it doesn't have to be for
@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractLexer {
 
-	private static final Logger logger = Logger.getLogger(AbstractLexer.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(AbstractLexer.class.getName());
 
 	/** Member variable used to keep track of the state history for the lexer. */
 	protected Stack states = new Stack();
@@ -53,7 +53,7 @@ public abstract class AbstractLexer {
 	protected void endState() {
 		// revert to previous state
 		if (states.empty()) {
-			logger.warn("Attempt to call endState for an empty stack with text: " + yytext());
+			logger.warning("Attempt to call endState for an empty stack with text: " + yytext());
 			return;
 		}
 		int next = ((Integer)states.pop()).intValue();

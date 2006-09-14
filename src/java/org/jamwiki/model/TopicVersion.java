@@ -17,7 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
@@ -40,7 +40,7 @@ public class TopicVersion {
 	private int topicId = -1;
 	private int topicVersionId = -1;
 	private String versionContent = null;
-	private static Logger logger = Logger.getLogger(TopicVersion.class);
+	private static WikiLogger logger = WikiLogger.getLogger(TopicVersion.class.getName());
 
 	/**
 	 *

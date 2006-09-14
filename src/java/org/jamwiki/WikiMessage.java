@@ -16,7 +16,6 @@
  */
 package org.jamwiki;
 
-import org.apache.log4j.Logger;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -25,7 +24,7 @@ import org.jamwiki.utils.Utilities;
  */
 public class WikiMessage {
 
-	private static final Logger logger = Logger.getLogger(WikiMessage.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiMessage.class.getName());
 	private String key = null;
 	private String[] params = null;
 

@@ -30,9 +30,9 @@ package org.jamwiki.parser;
 
 import java.util.Hashtable;
 import java.util.Stack;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -93,7 +93,7 @@ import org.springframework.util.StringUtils;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger logger = Logger.getLogger(JAMWikiPreProcessor.class.getName());
+    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
     protected boolean allowHtml = false;
     protected boolean allowJavascript = false;
     protected boolean wikibold = false;
@@ -203,7 +203,7 @@ import org.springframework.util.StringUtils;
             String listOpenTag = (String)listOpenHash.get(tag);
             String listItemOpenTag = (String)listItemOpenHash.get(tag);
             if (listOpenTag == null || listItemOpenTag == null) {
-                logger.error("Unknown list tag " + tag);
+                logger.severe("Unknown list tag " + tag);
                 continue;
             }
             currentOpenStack.push(listOpenTag);
@@ -445,13 +445,13 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- nowiki ----- */
 
 <WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, LIST>{nowikistart} {
-    logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
 }
 
 <NOWIKI>{nowikiend} {
-    logger.debug("nowikiend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("nowikiend: " + yytext() + " (" + yystate() + ")");
     endState();
     return yytext();
 }
@@ -459,7 +459,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- pre ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmlprestart} {
-    logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHtml) {
         beginState(PRE);
         return yytext();
@@ -468,14 +468,14 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <PRE>{htmlpreend} {
-    logger.debug("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
     return yytext();
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, WIKIPRE>^{wikiprestart} {
-    logger.debug("wikiprestart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(1);
     if (yystate() != WIKIPRE) {
@@ -486,7 +486,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <WIKIPRE>^{wikipreend} {
-    logger.debug("wikipreend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -496,13 +496,13 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- processing commands ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{notoc} {
-    logger.debug("notoc: " + yytext() + " (" + yystate() + ")");
+    logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{toc} {
-    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     return yytext();
 }
@@ -510,29 +510,29 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- wiki links ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{imagelinkcaption} {
-    logger.debug("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
+    logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
-    logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
+    logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     return processLink(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
-    logger.debug("htmllink: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     return ParserUtil.buildHtmlLink(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllinkraw} {
-    logger.debug("htmllinkraw: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
     return ParserUtil.buildHtmlLinkRaw(yytext());
 }
 
 /* ----- tables ----- */
 
 <NORMAL, TABLE, TD, TH, TC>^{tablestart} {
-    logger.debug("tablestart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
     String attributes = yytext().substring(2).trim();
     attributes = ParserUtil.validateHtmlTagAttributes(attributes);
@@ -540,7 +540,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <TABLE, TD, TH, TC>^{tablecaption} {
-    logger.debug("tablecaption: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tablecaption: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     output.append(closeTable(TC));
     beginState(TC);
@@ -549,7 +549,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <TABLE, TD, TH, TC>^{tableheading} {
-    logger.debug("tableheading: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tableheading: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     // if a column was already open, close it
     output.append(closeTable(TH));
@@ -573,12 +573,12 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <TH>{tableheadings} {
-    logger.debug("tableheadings: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tableheadings: " + yytext() + " (" + yystate() + ")");
     return "</th><th>";
 }
 
 <TABLE, TD, TH, TC>^{tablecell} {
-    logger.debug("tablecell: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tablecell: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     // if a column was already open, close it
     output.append(closeTable(TD));
@@ -590,19 +590,19 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <TD>{tablecells} {
-    logger.debug("tablecells: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tablecells: " + yytext() + " (" + yystate() + ")");
     return "</td><td>";
 }
 
 <TD>{tablecellsstyle} {
-    logger.debug("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
     // one extra character matched by the pattern, so roll it back
     yypushback(1);
     return "</td>" + openTableCell(yytext(), "td", '|');
 }
 
 <TABLE, TD, TH, TC>^{tablerow} {
-    logger.debug("tablerow: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tablerow: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     // if a column was already open, close it
     int oldState = yystate();
@@ -623,7 +623,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <TABLE, TD, TH, TC>^{tableend} {
-    logger.debug("tableend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("tableend: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     // if a column was already open, close it
     output.append(closeTable(TABLE));
@@ -636,7 +636,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- comments ----- */
 
 <NORMAL, TABLE, TD, TH, TC>{htmlcomment} {
-    logger.debug("htmlcomment: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
     // remove comment
     return "";
 }
@@ -644,12 +644,12 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- headings ----- */
 
 <NORMAL>^{hr} {
-    logger.debug("hr: " + yytext() + " (" + yystate() + ")");
+    logger.finer("hr: " + yytext() + " (" + yystate() + ")");
     return "<hr />\n";
 }
 
 <NORMAL>^{h1} {
-    logger.debug("h1: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h1: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(1, yytext().length() - 1).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 1);
@@ -662,7 +662,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>{h1close} {
-    logger.debug("h1close: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h1close: " + yytext() + " (" + yystate() + ")");
     if (this.wikih1) {
         this.wikih1 = false;
         return "</h1>";
@@ -671,7 +671,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>^{h2} {
-    logger.debug("h2: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h2: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(2, yytext().length() - 2).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 2);
@@ -684,7 +684,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>{h2close} {
-    logger.debug("h2close: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h2close: " + yytext() + " (" + yystate() + ")");
     if (this.wikih2) {
         this.wikih2 = false;
         return "</h2>";
@@ -693,7 +693,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>^{h3} {
-    logger.debug("h3: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h3: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(3, yytext().length() - 3).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 3);
@@ -706,7 +706,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>{h3close} {
-    logger.debug("h3close: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h3close: " + yytext() + " (" + yystate() + ")");
     if (this.wikih3) {
         this.wikih3 = false;
         return "</h3>";
@@ -715,7 +715,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>^{h4} {
-    logger.debug("h4: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h4: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(4, yytext().length() - 4).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 4);
@@ -728,7 +728,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>{h4close} {
-    logger.debug("h4close: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h4close: " + yytext() + " (" + yystate() + ")");
     if (this.wikih4) {
         this.wikih4 = false;
         return "</h4>";
@@ -737,7 +737,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>^{h5} {
-    logger.debug("h5: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h5: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(5, yytext().length() - 5).trim());
     String tagName = Utilities.encodeURL(tagText);
     String output = updateToc(tagName, tagText, 5);
@@ -750,7 +750,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL>{h5close} {
-    logger.debug("h5close: " + yytext() + " (" + yystate() + ")");
+    logger.finer("h5close: " + yytext() + " (" + yystate() + ")");
     if (this.wikih5) {
         this.wikih5 = false;
         return "</h5>";
@@ -761,7 +761,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- lists ----- */
 
 <NORMAL, TABLE, TD, TH, TC>^{listitem} {
-    logger.debug("start of list: " + yytext() + " (" + yystate() + ")");
+    logger.finer("start of list: " + yytext() + " (" + yystate() + ")");
     // switch to list processing mode
     beginState(LIST);
     // now that state is list, push back and re-process this line
@@ -770,7 +770,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <LIST>^{listitem} {
-    logger.debug("list item: " + yytext() + " (" + yystate() + ")");
+    logger.finer("list item: " + yytext() + " (" + yystate() + ")");
     // process list item content (without the list markup)
     String output = listItem(yytext());
     yypushback(yylength() - listTagCount(yytext()));
@@ -778,7 +778,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <LIST>^{listend} {
-    logger.debug("end of list: " + yytext() + " (" + yystate() + ")");
+    logger.finer("end of list: " + yytext() + " (" + yystate() + ")");
     // end of list, switch back to normal processing mode
     endState();
     yypushback(yylength());
@@ -788,13 +788,13 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- bold / italic ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{bold} {
-    logger.debug("bold: " + yytext() + " (" + yystate() + ")");
+    logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     wikibold = !wikibold;
     return (wikibold) ? "<b>" : "</b>";
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{italic} {
-    logger.debug("italic: " + yytext() + " (" + yystate() + ")");
+    logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     wikiitalic = !wikiitalic;
     return (wikiitalic) ? "<i>" : "</i>";
 }
@@ -802,24 +802,24 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- html ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
-    logger.debug("htmltagopen: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     return (allowHtml()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagclose} {
-    logger.debug("htmltagclose: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     return (allowHtml()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagattributes} {
-    logger.debug("htmltagattributes: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmltagattributes: " + yytext() + " (" + yystate() + ")");
     return (allowHtml()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 /* ----- javascript ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{jsopen} {
-    logger.debug("jsopen: " + yytext() + " (" + yystate() + ")");
+    logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
         return ParserUtil.sanitizeHtmlTag(yytext());
@@ -828,7 +828,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{jsattributes} {
-    logger.debug("jsattributes: " + yytext() + " (" + yystate() + ")");
+    logger.finer("jsattributes: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
         return ParserUtil.sanitizeHtmlTag(yytext());
@@ -837,7 +837,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 }
 
 <JAVASCRIPT>{jsclose} {
-    logger.debug("jsclose: " + yytext() + " (" + yystate() + ")");
+    logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         endState();
         return ParserUtil.sanitizeHtmlTag(yytext());
@@ -848,25 +848,25 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 /* ----- other ----- */
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
-    logger.debug("lessthan: " + yytext() + " (" + yystate() + ")");
+    logger.finer("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&lt;";
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
-    logger.debug("greaterthan: " + yytext() + " (" + yystate() + ")");
+    logger.finer("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&gt;";
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
-    logger.debug("quotation: " + yytext() + " (" + yystate() + ")");
+    logger.finer("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&quot;";
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
-    logger.debug("apostrophe: " + yytext() + " (" + yystate() + ")");
+    logger.finer("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return "&#39;";
 }

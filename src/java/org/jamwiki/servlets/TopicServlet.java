@@ -19,8 +19,8 @@ package org.jamwiki.servlets;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TopicServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
-	private static Logger logger = Logger.getLogger(TopicServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(TopicServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control. It gets the topic's name and the

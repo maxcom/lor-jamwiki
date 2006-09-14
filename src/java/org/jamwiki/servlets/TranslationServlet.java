@@ -23,9 +23,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -39,7 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class TranslationServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(TranslationServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
 	private SortedProperties translations = new SortedProperties();
 
 	/**

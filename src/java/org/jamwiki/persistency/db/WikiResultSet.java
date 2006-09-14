@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Vector;
 import java.util.LinkedHashMap;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  * This class is a wrapper around the java.sql.ResultSet class, allowing the data
@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class WikiResultSet {
 
-	private static Logger logger = Logger.getLogger(WikiResultSet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
 	private Vector rows = new Vector();
 	private int rowPointer = -1;
 	private int totalRows = -1;

@@ -17,15 +17,15 @@
 package org.jamwiki.persistency.db;
 
 import java.util.Properties;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class MySqlQueryHandler extends DefaultQueryHandler {
 
-	private static Logger logger = Logger.getLogger(MySqlQueryHandler.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(MySqlQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.mysql.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;

@@ -20,9 +20,9 @@ import java.util.Collection;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
@@ -43,7 +43,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class AdminServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(AdminServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(AdminServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -120,7 +120,7 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiBase.getHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
 			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
 		} catch (Exception e) {
-			logger.error("Failure while adding virtual wiki", e);
+			logger.severe("Failure while adding virtual wiki", e);
 			String message = "Failure while adding virtual wiki: " + e.getMessage();
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
@@ -137,7 +137,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("convert.database.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {
-			logger.error("Failure while executing database-to-file conversion", e);
+			logger.severe("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", new WikiMessage("convert.database.failure", e.getMessage()));
 		}
 		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
@@ -156,7 +156,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("convert.file.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {
-			logger.error("Failure while executing database-to-file conversion", e);
+			logger.severe("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", new WikiMessage("convert.file.failure", e.getMessage()));
 		}
 		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
@@ -403,7 +403,7 @@ public class AdminServlet extends JAMWikiServlet {
 			WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 			next.addObject("message", new WikiMessage("admin.message.changessaved"));
 		} catch (Exception e) {
-			logger.error("Failure while processing property values", e);
+			logger.severe("Failure while processing property values", e);
 			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
 	}
@@ -421,7 +421,7 @@ public class AdminServlet extends JAMWikiServlet {
 				next.addObject("message", new WikiMessage("admin.caption.recentchangesdb"));
 			}
 		} catch (Exception e) {
-			logger.error("Failure while loading recent changes", e);
+			logger.severe("Failure while loading recent changes", e);
 			next.addObject("errorMessage", new WikiMessage("admin.caption.recentchangesdb", e.getMessage()));
 		}
 		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
@@ -440,7 +440,7 @@ public class AdminServlet extends JAMWikiServlet {
 			LuceneSearchEngine.refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
-			logger.error("Failure while refreshing search index", e);
+			logger.severe("Failure while refreshing search index", e);
 			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
 	}

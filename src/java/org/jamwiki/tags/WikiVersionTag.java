@@ -19,7 +19,7 @@ package org.jamwiki.tags;
 import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiVersion;
 
 /**
@@ -27,7 +27,7 @@ import org.jamwiki.WikiVersion;
  */
 public class WikiVersionTag extends TagSupport {
 
-	private static final Logger logger = Logger.getLogger(WikiVersionTag.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiVersionTag.class.getName());
 
 	private String var = null;
 
@@ -42,7 +42,7 @@ public class WikiVersionTag extends TagSupport {
 				this.pageContext.setAttribute(this.var, WikiVersion.CURRENT_WIKI_VERSION);
 			}
 		} catch (Exception e) {
-			logger.error("Failure while retrieving Wiki version for var " + this.var, e);
+			logger.severe("Failure while retrieving Wiki version for var " + this.var, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

@@ -17,7 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
@@ -37,7 +37,7 @@ public class WikiUser {
 	private String lastName = null;
 	private String login = null;
 	private int userId = -1;
-	private static Logger logger = Logger.getLogger(WikiUser.class);
+	private static WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
 
 	/**
 	 *

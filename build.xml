@@ -54,7 +54,6 @@
 				<pathelement path="${dir.lib}/commons-pool-1.3.jar" />
 				<pathelement path="${dir.lib}/javadiff-1.0.5.jar" />
 				<pathelement path="${dir.lib}/jstl-1.0.6.jar" />
-				<pathelement path="${dir.lib}/log4j-1.2.13.jar" />
 				<pathelement path="${dir.lib}/lucene-core-2.0.0.jar" />
 				<pathelement path="${dir.lib}/lucene-highlighter-2.0.0.jar" />
 				<pathelement path="${dir.lib}/mail.jar" />

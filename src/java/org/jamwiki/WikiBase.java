@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.util.Locale;
-import org.apache.log4j.Logger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
@@ -38,7 +37,7 @@ import org.springframework.util.StringUtils;
 public class WikiBase {
 
 	/** Standard logger. */
-	private static Logger logger = Logger.getLogger(WikiBase.class);
+	private static WikiLogger logger = WikiLogger.getLogger(WikiBase.class.getName());
 	/** The singleton instance of this class. */
 	private static WikiBase instance = null;
 	/** The handler that looks after read/write operations for a persistence type. */
@@ -72,7 +71,7 @@ public class WikiBase {
 		try {
 			WikiBase.instance = new WikiBase();
 		} catch (Exception e) {
-			logger.error("Failure while initializing WikiBase", e);
+			logger.severe("Failure while initializing WikiBase", e);
 		}
 	}
 

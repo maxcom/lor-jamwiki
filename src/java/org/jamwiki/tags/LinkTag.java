@@ -19,9 +19,9 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
  */
 public class LinkTag extends BodyTagSupport {
 
-	private static Logger logger = Logger.getLogger(LinkTag.class);
+	private static WikiLogger logger = WikiLogger.getLogger(LinkTag.class.getName());
 	private String style = null;
 	private String text = null;
 	private String value = null;
@@ -46,7 +46,7 @@ public class LinkTag extends BodyTagSupport {
 		try {
 			tagValue = ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext).toString();
 		} catch (JspException e) {
-			logger.error("Failure in link tag for " + this.value + " / " + this.text, e);
+			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
 			throw e;
 		}
 		String tagText = buildLinkText();
@@ -66,7 +66,7 @@ public class LinkTag extends BodyTagSupport {
 			}
 			this.pageContext.getOut().print(url);
 		} catch (Exception e) {
-			logger.error("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
+			logger.severe("Failure while building url " + url + " with value " + this.value + " and text " + this.text, e);
 			throw new JspException(e);
 		} finally {
 			this.queryParams = "";
@@ -122,7 +122,7 @@ public class LinkTag extends BodyTagSupport {
 			virtualWiki = (String)request.getAttribute(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
 		}
 		if (virtualWiki == null) {
-			logger.error("No virtual wiki found for context path: " + request.getContextPath());
+			logger.severe("No virtual wiki found for context path: " + request.getContextPath());
 			throw new JspException("No virtual wiki value found");
 		}
 		return virtualWiki;

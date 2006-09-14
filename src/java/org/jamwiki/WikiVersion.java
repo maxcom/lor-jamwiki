@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
 /**
@@ -25,7 +24,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiVersion {
 
-	private static Logger logger = Logger.getLogger(WikiVersion.class);
+	private static WikiLogger logger = WikiLogger.getLogger(WikiVersion.class.getName());
 	private int major = 0;
 	private int minor = 0;
 	private int patch = 0;
@@ -39,13 +38,13 @@ public class WikiVersion {
 	public WikiVersion(String version) {
 		if (!StringUtils.hasText(version)) {
 			// FIXME - should throw an exception
-			logger.error("Invalid Wiki version: " + version);
+			logger.severe("Invalid Wiki version: " + version);
 			return;
 		}
 		StringTokenizer tokens = new StringTokenizer(version, ".");
 		if (tokens.countTokens() != 3) {
 			// FIXME - should throw an exception
-			logger.error("Invalid Wiki version: " + version);
+			logger.severe("Invalid Wiki version: " + version);
 			return;
 		}
 		this.major = new Integer(tokens.nextToken()).intValue();

@@ -20,8 +20,8 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Properties;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -37,7 +37,7 @@ import org.jamwiki.utils.Utilities;
  */
 public class DefaultQueryHandler implements QueryHandler {
 
-	private static Logger logger = Logger.getLogger(DefaultQueryHandler.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(DefaultQueryHandler.class.getName());
 	protected static final String SQL_PROPERTY_FILE_NAME = "sql.ansi.properties";
 
 	protected static String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE = null;
@@ -150,34 +150,34 @@ public class DefaultQueryHandler implements QueryHandler {
 		// actual work of the method more obvious.
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_CATEGORY_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_VERSION_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_FILE_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_VERSION_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_TOPIC_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_LOGIN_INDEX, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_INFO_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE, conn);
-		} catch (Exception e) { logger.error(e.getMessage()); }
+		} catch (Exception e) { logger.severe(e.getMessage()); }
 	}
 
 	/**

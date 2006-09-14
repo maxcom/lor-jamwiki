@@ -17,7 +17,7 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
@@ -33,7 +33,7 @@ public class WikiFileVersion {
 	private String uploadComment = null;
 	private Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
 	private String url = null;
-	private static Logger logger = Logger.getLogger(WikiFileVersion.class);
+	private static WikiLogger logger = WikiLogger.getLogger(WikiFileVersion.class.getName());
 
 	/**
 	 *

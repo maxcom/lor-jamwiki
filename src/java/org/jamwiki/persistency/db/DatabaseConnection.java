@@ -28,8 +28,8 @@ import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDriver;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 
@@ -38,7 +38,7 @@ import org.jamwiki.utils.Encryption;
  */
 public class DatabaseConnection {
 
-	private static final Logger logger = Logger.getLogger(DatabaseConnection.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseConnection.class.getName());
 	/** Any queries that take longer than this value (specified in milliseconds) will print a warning to the log. */
 	protected static final int SLOW_QUERY_LIMIT = 250;
 	private static boolean poolInitialized = false;
@@ -92,7 +92,7 @@ public class DatabaseConnection {
 		try {
 			connectionPool.close();
 		} catch (Exception e) {
-			logger.error("Unable to close connection pool", e);
+			logger.severe("Unable to close connection pool", e);
 			throw e;
 		}
 		poolInitialized = false;
@@ -125,9 +125,9 @@ public class DatabaseConnection {
 			rs = stmt.executeQuery(sql);
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
+				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
+			logger.fine("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + sql, e);
@@ -172,9 +172,9 @@ public class DatabaseConnection {
 			int result = stmt.executeUpdate(sql);
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
+				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.debug("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
+			logger.fine("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + sql, e);
@@ -284,7 +284,7 @@ public class DatabaseConnection {
 		try {
 			conn.close();
 		} catch (Exception e) {
-			logger.error("Failure while closing connection", e);
+			logger.severe("Failure while closing connection", e);
 		}
 	}
 
@@ -297,7 +297,7 @@ public class DatabaseConnection {
 			conn = DatabaseConnection.getConnection();
 		} catch (Exception e) {
 			// database settings incorrect
-			logger.error("Invalid database settings", e);
+			logger.severe("Invalid database settings", e);
 			return false;
 		} finally {
 			if (conn != null) DatabaseConnection.closeConnection(conn);

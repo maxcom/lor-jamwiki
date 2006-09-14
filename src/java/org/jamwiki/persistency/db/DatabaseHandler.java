@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
@@ -46,7 +46,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	public static final String DB_TYPE_POSTGRES = "postgres";
 	private static final String INIT_SCRIPT_ANSI = "create_ansi.sql";
 	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
-	private static final Logger logger = Logger.getLogger(DatabaseHandler.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 	private static QueryHandler queryHandler = null;
 	private boolean initialized = false;
 
@@ -304,11 +304,11 @@ public class DatabaseHandler extends PersistencyHandler {
 	protected void handleErrors(Object[] params) {
 		if (params == null) return;
 		try {
-			logger.warn("Rolling back database transactions");
+			logger.warning("Rolling back database transactions");
 			Connection conn = (Connection)params[0];
 			conn.rollback();
 		} catch (Exception e) {
-			logger.error("Unable to rollback connection", e);
+			logger.severe("Unable to rollback connection", e);
 		}
 	}
 
@@ -318,7 +318,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
 		if (this.isInitialized()) {
-			logger.warn("Attempt to initialize when initialization already complete");
+			logger.warning("Attempt to initialize when initialization already complete");
 			return;
 		}
 		Connection conn = null;
@@ -327,7 +327,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			// set up tables
 			DatabaseHandler.queryHandler.createTables(conn);
 		} catch (Exception e) {
-			logger.error("Unable to set up database tables", e);
+			logger.severe("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			DatabaseHandler.queryHandler.dropTables(conn);
 		} finally {
@@ -369,7 +369,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			change.setVirtualWiki(rs.getString("virtual_wiki_name"));
 			return change;
 		} catch (Exception e) {
-			logger.error("Failure while initializing recent change", e);
+			logger.severe("Failure while initializing recent change", e);
 			return null;
 		}
 	}
@@ -393,7 +393,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			topic.setRedirectTo(rs.getString("redirect_to"));
 			return topic;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic", e);
+			logger.severe("Failure while initializing topic", e);
 			return null;
 		}
 	}
@@ -417,7 +417,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			topicVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));
 			return topicVersion;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic version", e);
+			logger.severe("Failure while initializing topic version", e);
 			return null;
 		}
 	}
@@ -433,7 +433,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			virtualWiki.setDefaultTopicName(rs.getString("default_topic_name"));
 			return virtualWiki;
 		} catch (Exception e) {
-			logger.error("Failure while initializing virtual wiki", e);
+			logger.severe("Failure while initializing virtual wiki", e);
 			return null;
 		}
 	}
@@ -458,7 +458,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			wikiFile.setFileSize(rs.getInt("file_size"));
 			return wikiFile;
 		} catch (Exception e) {
-			logger.error("Failure while initializing file", e);
+			logger.severe("Failure while initializing file", e);
 			return null;
 		}
 	}
@@ -481,7 +481,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			wikiFileVersion.setFileSize(rs.getInt("file_size"));
 			return wikiFileVersion;
 		} catch (Exception e) {
-			logger.error("Failure while initializing wiki file version", e);
+			logger.severe("Failure while initializing wiki file version", e);
 			return null;
 		}
 	}
@@ -507,7 +507,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			user.setEncodedPassword(rs.getString("encoded_password"));
 			return user;
 		} catch (Exception e) {
-			logger.error("Failure while initializing user", e);
+			logger.severe("Failure while initializing user", e);
 			return null;
 		}
 	}
@@ -529,7 +529,7 @@ public class DatabaseHandler extends PersistencyHandler {
 			return rs.next();
 		} catch (Exception e) {
 			// tables don't exist, or some other problem
-			logger.warn("Database handler not initialized: " + e.getMessage());
+			logger.warning("Database handler not initialized: " + e.getMessage());
 			return false;
 		}
 	}
@@ -548,7 +548,7 @@ public class DatabaseHandler extends PersistencyHandler {
 				PersistencyHandler.virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
 			}
 		} catch (Exception e) {
-			logger.error("Failure while loading virtual wiki hashtable ", e);
+			logger.severe("Failure while loading virtual wiki hashtable ", e);
 			// if there is an error make sure the hashtable is reset since it wasn't
 			// properly initialized
 			PersistencyHandler.virtualWikiNameHash = null;

@@ -21,8 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.springframework.web.servlet.ModelAndView;
@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class CategoryServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
-	private static Logger logger = Logger.getLogger(CategoryServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(CategoryServlet.class.getName());
 
 	/**
 	 *

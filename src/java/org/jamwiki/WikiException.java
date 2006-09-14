@@ -18,14 +18,13 @@ package org.jamwiki;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 
 /**
  * Custom exception for JAMWiki servlet errors.
  */
 public class WikiException extends Exception {
 
-	private static final Logger logger = Logger.getLogger(WikiException.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiException.class.getName());
 	private WikiMessage wikiMessage = null;
 
 	/**

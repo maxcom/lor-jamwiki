@@ -4,9 +4,9 @@
 package org.jamwiki.parser.alt;
 
 import java.io.*;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
 
@@ -23,7 +23,7 @@ import org.jamwiki.parser.ParserInput;
 %init}
 
 %eofval{
-    cat.debug( "Ending at list level: " + listLevel );
+    logger.fine( "Ending at list level: " + listLevel );
     if (yystate() == LIST ){
       yybegin( NORMAL );
       StringBuffer buffer = new StringBuffer();
@@ -49,7 +49,7 @@ import org.jamwiki.parser.ParserInput;
 	protected boolean allowHtml;
 	protected int listLevel;
 	protected boolean ordered;
-	protected static Logger cat = Logger.getLogger( VQWikiLayoutLex.class );
+	protected static WikiLogger logger = WikiLogger.getLogger( VQWikiLayoutLex.class.getName() );
 	
 	/**
 	 *
@@ -58,7 +58,7 @@ import org.jamwiki.parser.ParserInput;
 		try {
 			return WikiBase.exists(this.parserInput.getVirtualWiki(), topic);
 		} catch (Exception err) {
-			cat.error(err);
+			logger.severe("Error while looking up topic " + topic, err);
 		}
 		return false;
 	}
@@ -74,10 +74,10 @@ import org.jamwiki.parser.ParserInput;
 	 *
 	 */
 	protected String getListEntry(String text) {
-		cat.debug( "first list item: " + text );
+		logger.fine( "first list item: " + text );
 		int count = 0;
 		ordered = false;
-		cat.debug( "First char='" + text.charAt(0) + "'" );
+		logger.fine( "First char='" + text.charAt(0) + "'" );
 		if (text.charAt( 0 ) == '#') ordered = true;
 		listLevel = 1;
 		StringBuffer buffer = new StringBuffer();
@@ -95,7 +95,7 @@ import org.jamwiki.parser.ParserInput;
 	 *
 	 */
 	protected String getListSingleEntry(String text) {
-		cat.debug( "another list item: " + text );
+		logger.fine( "another list item: " + text );
 		boolean tabs = false;
 		int count = 0;
 		if (text.charAt(0) == '\t') {
@@ -171,36 +171,36 @@ externalend = (\[<\/[:letter:]+>\])
 
 <NORMAL, PRE>\\{noformat}	{
 
-  cat.debug( "escaped double backslash" );
+  logger.fine( "escaped double backslash" );
   return "\\__";
 }
 
 <NORMAL, PRE>{noformat}	{
-  cat.debug( "Format off" );
+  logger.fine( "Format off" );
   yybegin( OFF );
   return "__";
 }
 
 <OFF>{noformat} {
-  cat.debug( "Format on" );
+  logger.fine( "Format on" );
   yybegin( NORMAL );
   return "__";
 }
 
 <NORMAL, PRE>{externalstart} {
-  cat.debug( "external" );
+  logger.fine( "external" );
   yybegin( EXTERNAL );
   return yytext();
 }
 
 <EXTERNAL>{externalend} {
-  cat.debug( "external end");
+  logger.fine( "external end");
   yybegin( NORMAL );
   return yytext();
 }
 
 <NORMAL>({hr}{newline}) {
-  cat.debug( "{hr}" );
+  logger.fine( "{hr}" );
   return "\n<hr>\n";
 }
 
@@ -225,7 +225,7 @@ externalend = (\[<\/[:letter:]+>\])
 }
 
 <LIST>{newline} {
-  cat.debug( "end of list" );
+  logger.fine( "end of list" );
   yybegin( NORMAL );
   StringBuffer buffer = new StringBuffer();
   for( int i = listLevel; i > 0; i-- ){
@@ -240,13 +240,13 @@ externalend = (\[<\/[:letter:]+>\])
 }
 
 <NORMAL>{tableboundary} {
-  cat.debug( "table start" );
+  logger.fine( "table start" );
   yybegin( TABLE );
   return "<table class=\"wikitable\" border=\"1\"><tr>";
 }
 
 <TABLE>{tablecell}{newline}{tableboundary} {
-  cat.debug( "table end" );
+  logger.fine( "table end" );
   yybegin( NORMAL );
   String text = yytext().trim();
   StringBuffer buffer = new StringBuffer();
@@ -258,12 +258,12 @@ externalend = (\[<\/[:letter:]+>\])
 }
 
 <TABLE>{newline} {
-  cat.debug( "tablerowend" );
+  logger.fine( "tablerowend" );
   return "</tr><tr>";
 }
 
 <TABLE>{tablecell} {
-  cat.debug( "tablecell" );
+  logger.fine( "tablecell" );
   String text = yytext();
   StringBuffer buffer = new StringBuffer();
   buffer.append( "<td>" );
@@ -273,13 +273,13 @@ externalend = (\[<\/[:letter:]+>\])
 }
 
 <PRE>{newline}{newline} {
-  cat.debug( "{newline}x2 leaving pre" );
+  logger.fine( "{newline}x2 leaving pre" );
 	yybegin( NORMAL );
   return "</pre>\n";
 }
 
 <NORMAL, OFF>{newline} {
-  cat.debug( "{newline}" );
+  logger.fine( "{newline}" );
   StringBuffer buffer = new StringBuffer();
   buffer.append( "<br/>" );
   buffer.append( "\n" );
@@ -287,7 +287,7 @@ externalend = (\[<\/[:letter:]+>\])
 }
 
 <NORMAL>(@@@@{newline}) {
-  cat.debug( "@@@@{newline} entering PRE" );
+  logger.fine( "@@@@{newline} entering PRE" );
   yybegin( PRE );
   return "<pre>";
 }
@@ -298,16 +298,16 @@ externalend = (\[<\/[:letter:]+>\])
   for( int i = 0; i < text.length(); i++ ){
     buffer.append( (int)text.charAt(i) );
   }
-  cat.debug( "{whitespace} " + buffer.toString() );
+  logger.fine( "{whitespace} " + buffer.toString() );
   return " ";
 }
 
 <PRE, EXTERNAL>{whitespace} {
-  cat.debug( "PRE, EXTERNAL {whitespace}" );
+  logger.fine( "PRE, EXTERNAL {whitespace}" );
   return yytext();
 }
 
 <NORMAL, PRE, OFF, LIST, TABLE, EXTERNAL>. {
-  cat.debug( ". (" + yytext() + ")" );
+  logger.fine( ". (" + yytext() + ")" );
   return yytext();
 }

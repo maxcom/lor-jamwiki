@@ -6,8 +6,8 @@
  */
 package org.jamwiki.parser;
 
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 
 %%
 
@@ -33,7 +33,7 @@ import org.jamwiki.Environment;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger logger = Logger.getLogger(JAMWikiSpliceProcessor.class.getName());
+    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
     protected boolean allowHtml = false;
     protected int section = 0;
     protected int sectionDepth = 0;

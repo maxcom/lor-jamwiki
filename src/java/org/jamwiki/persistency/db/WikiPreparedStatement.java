@@ -22,7 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiPreparedStatement {
 
-	private static Logger logger = Logger.getLogger(WikiPreparedStatement.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(WikiPreparedStatement.class.getName());
 	private Object[] params = null;
 	private int[] paramTypes = null;
 	private String sql = null;
@@ -77,9 +77,9 @@ public class WikiPreparedStatement {
 			rs = this.statement.executeQuery();
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
+				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.debug("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
+			logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + this.sql, e);
@@ -112,9 +112,9 @@ public class WikiPreparedStatement {
 			int result = this.statement.executeUpdate();
 			long execution = System.currentTimeMillis() - start;
 			if (execution > DatabaseConnection.SLOW_QUERY_LIMIT) {
-				logger.warn("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
+				logger.warning("Slow query: " + sql + " (" + (execution / 1000.000) + " s.)");
 			}
-			logger.debug("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
+			logger.fine("Executed " + this.sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
 		} catch (Exception e) {
 			throw new Exception("Failure while executing " + this.sql, e);

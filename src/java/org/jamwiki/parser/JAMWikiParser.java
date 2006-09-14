@@ -19,9 +19,9 @@ package org.jamwiki.parser;
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  */
 public class JAMWikiParser extends AbstractParser {
 
-	private static final Logger logger = Logger.getLogger(JAMWikiParser.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiParser.class.getName());
 	private static Pattern REDIRECT_PATTERN = null;
 
 	static {
@@ -39,7 +39,7 @@ public class JAMWikiParser extends AbstractParser {
 			// is the topic a redirect?
 			REDIRECT_PATTERN = Pattern.compile("#REDIRECT[ ]+\\[\\[([^\\n\\r\\]]+)\\]\\]", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
-			logger.error("Unable to compile pattern", e);
+			logger.severe("Unable to compile pattern", e);
 		}
 	}
 
@@ -186,7 +186,7 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setParserInput(this.parserInput);
 		lexer.setTargetSection(targetSection);
 		ParserOutput parserOutput = this.lex(lexer);
-		logger.debug("Parse time (parseSlice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.fine("Parse time (parseSlice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserOutput;
 	}
 
@@ -213,7 +213,7 @@ public class JAMWikiParser extends AbstractParser {
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		ParserOutput parserOutput = this.lex(lexer);
-		logger.debug("Parse time (parseSplice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		logger.fine("Parse time (parseSplice) for " + topicName + "(" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserOutput;
 	}
 }

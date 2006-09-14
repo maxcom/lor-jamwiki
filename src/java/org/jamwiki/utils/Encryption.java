@@ -23,9 +23,9 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-import org.apache.log4j.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
  */
 public class Encryption {
 
-	private static Logger logger = Logger.getLogger(Encryption.class);
+	private static WikiLogger logger = WikiLogger.getLogger(Encryption.class.getName());
 	public static final String DES_ALGORITHM = "DES";
 	public static final String ENCRYPTION_KEY = "JAMWiki Key 12345";
 	private static final char[] hexDigits = {
@@ -75,7 +75,7 @@ public class Encryption {
 			byte[] encryptedBytes = Base64.encodeBase64(cipher.doFinal(unencryptedBytes));
 			return bytes2String(encryptedBytes);
 		} catch (Exception e) {
-			logger.error("Encryption error while processing value '" + bytes2String(unencryptedBytes) + "'", e);
+			logger.severe("Encryption error while processing value '" + bytes2String(unencryptedBytes) + "'", e);
 			throw e;
 		}
 	}
@@ -88,14 +88,14 @@ public class Encryption {
 		try {
 			md = MessageDigest.getInstance("SHA-512");
 		} catch (NoSuchAlgorithmException e) {
-			logger.error("JDK does not support the SHA-512 encryption algorithm");
+			logger.severe("JDK does not support the SHA-512 encryption algorithm");
 			throw e;
 		}
 		try {
 			md.update(unencryptedString.getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			// this should never happen
-			logger.error("Unsupporting encoding UTF-8");
+			logger.severe("Unsupporting encoding UTF-8");
 			throw e;
 		}
 		byte raw[] = md.digest();
@@ -120,7 +120,7 @@ public class Encryption {
 			byte[] unencryptedBytes = cipher.doFinal(Base64.decodeBase64(encryptedBytes));
 			return bytes2String(unencryptedBytes);
 		} catch (Exception e) {
-			logger.error("Decryption error while processing value '" + encryptedString + "'", e);
+			logger.severe("Decryption error while processing value '" + encryptedString + "'", e);
 			// FIXME - should this throw the exception - caues issues upstream.
 			return null;
 		}

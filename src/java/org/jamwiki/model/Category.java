@@ -16,14 +16,14 @@
  */
 package org.jamwiki.model;
 
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class Category {
 
-	private static Logger logger = Logger.getLogger(Category.class);
+	private static WikiLogger logger = WikiLogger.getLogger(Category.class.getName());
 	private String childTopicName = null;
 	private String name = null;
 	private String sortKey = null;

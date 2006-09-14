@@ -16,14 +16,14 @@
  */
 package org.jamwiki.model;
 
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  *
  */
 public class WikiDiff {
 
-	private static Logger logger = Logger.getLogger(WikiDiff.class);
+	private static WikiLogger logger = WikiLogger.getLogger(WikiDiff.class.getName());
 	private boolean change = false;
 	private String newLine = null;
 	private String oldLine = null;

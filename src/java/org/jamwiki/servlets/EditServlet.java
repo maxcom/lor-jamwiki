@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.PseudoTopicHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -42,7 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class EditServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(EditServlet.class);
+	private static WikiLogger logger = WikiLogger.getLogger(EditServlet.class.getName());
 
 	/**
 	 *
@@ -257,7 +257,7 @@ public class EditServlet extends JAMWikiServlet {
 			contents = parserOutput.getContent();
 		}
 		if (contents == null) {
-			logger.warn("The topic " + topicName + " has no content");
+			logger.warning("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
 		if (lastTopicVersion != null && lastTopicVersion.getVersionContent().equals(contents)) {

@@ -18,7 +18,7 @@ package org.jamwiki.utils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 /**
  * This class provides a utility class useful for storing a cache of objects.
@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 public class WikiCacheMap extends LinkedHashMap {
 
 	/** Logger */
-	public static final Logger logger = Logger.getLogger(WikiCacheMap.class);
+	public static final WikiLogger logger = WikiLogger.getLogger(WikiCacheMap.class.getName());
 	/** The maximum number of elements that can be stored in this map. */
 	private int maxSize = 0;
 

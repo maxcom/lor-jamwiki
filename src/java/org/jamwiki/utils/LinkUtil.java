@@ -20,9 +20,9 @@ import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
  */
 public class LinkUtil {
 
-	private static final Logger logger = Logger.getLogger(LinkUtil.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(LinkUtil.class.getName());
 
 	/**
 	 *

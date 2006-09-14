@@ -4,9 +4,9 @@
 package org.jamwiki.parser.alt;
 
 import java.io.*;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
@@ -29,7 +29,7 @@ import org.jamwiki.utils.Utilities;
 %eofval}
 
 %{
-	protected static Logger logger = Logger.getLogger( VQWikiLinkLex.class );
+	protected static WikiLogger logger = WikiLogger.getLogger( VQWikiLinkLex.class.getName() );
 	
 	/**
 	 *
@@ -38,7 +38,7 @@ import org.jamwiki.utils.Utilities;
 		try {
 			return WikiBase.exists(this.parserInput.getVirtualWiki(), topic);
 		} catch (Exception err) {
-			logger.error(err);
+			logger.severe("Error looking up topic " + topic, err);
 		}
 		return false;
 	}
@@ -102,50 +102,50 @@ externalend = (\[<\/[A-Za-z]+>\])
 
 %%
 <NORMAL>\\{noformat}	{
-  logger.debug( "escaped double backslash" );
+  logger.fine( "escaped double backslash" );
   return "__";
 }
 
 <NORMAL>{noformat}	{
-  logger.debug( "off" );
+  logger.fine( "off" );
   yybegin( OFF );
 }
 
 <OFF>{noformat}	{
-  logger.debug( "on" );
+  logger.fine( "on" );
   yybegin( NORMAL );
 }
 
 <NORMAL, PRE>{externalstart} {
-  logger.debug( "external" );
+  logger.fine( "external" );
   yybegin( EXTERNAL );
 }
 
 <EXTERNAL>{externalend} {
-  logger.debug( "external end");
+  logger.fine( "external end");
   yybegin( NORMAL );
 }
 
 <NORMAL>(<pre>) {
-  logger.debug( "@@@@{newline} entering PRE" );
+  logger.fine( "@@@@{newline} entering PRE" );
   yybegin( PRE );
   return yytext();
 }
 
 <PRE>(<\/pre>) {
-  logger.debug( "{newline}x2 leaving pre" );
+  logger.fine( "{newline}x2 leaving pre" );
   yybegin( NORMAL );
   return yytext();
 }
 
 <NORMAL>{image}	{
-  logger.debug( "{image}" );
+  logger.fine( "{image}" );
   String link = yytext();
   return "<img src=\"" + link.trim() + "\"/>";
 }
 
 <NORMAL>{hyperlink}	{
-  logger.debug( "{hyperlink}" );
+  logger.fine( "{hyperlink}" );
   String link = yytext();
   String punctuation = Utilities.extractTrailingPunctuation(link);
 
@@ -158,7 +158,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 }
 
 <NORMAL>{framedhyperlink}	{
-  logger.debug( "{framedhyperlink}" );
+  logger.fine( "{framedhyperlink}" );
   String link = yytext();
 
   link = link.substring(1, link.length()-1).trim();
@@ -169,7 +169,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 
 <NORMAL>{prettyhyperlink}
 {
-  logger.debug( "{prettyhyperlink}" + yytext() );
+  logger.fine( "{prettyhyperlink}" + yytext() );
   String input = yytext();
   int position = input.indexOf('|');
   
@@ -188,7 +188,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 
 <NORMAL>{prettytopicsquarebracket}
 {
-  logger.debug( "{prettytopicsquarebracket} '" + yytext() + "'" );
+  logger.fine( "{prettytopicsquarebracket} '" + yytext() + "'" );
   String input = yytext();
   int position = input.indexOf('|');
   
@@ -207,7 +207,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 
 <NORMAL>{prettytopicsquarebrackettail}
 {
-  logger.debug( "{prettytopicsquarebrackettail} '" + yytext() + "'" );
+  logger.fine( "{prettytopicsquarebrackettail} '" + yytext() + "'" );
   String input = yytext();
   int position = input.indexOf('|');
   
@@ -225,13 +225,13 @@ externalend = (\[<\/[A-Za-z]+>\])
 }
 
 <NORMAL>{topic} {
-  logger.debug( "{topic} '" + yytext() + "'" );
+  logger.fine( "{topic} '" + yytext() + "'" );
   String link = yytext();
   return getTopicLink(link, link);
 }
 
 <NORMAL>{topicbacktick} {
-  logger.debug( "{topicbacktick} '" + yytext() + "'" );
+  logger.fine( "{topicbacktick} '" + yytext() + "'" );
   String link = yytext();
   link = link.substring(1);
   link = link.substring( 0, link.length() - 1).trim();
@@ -239,7 +239,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 }
 
 <NORMAL>{topicbackticktail} {
-  logger.debug( "{topicbackticktail} '" + yytext() + "'" );
+  logger.fine( "{topicbackticktail} '" + yytext() + "'" );
   String link = yytext();
   link = link.substring(1);
   String desc = link.substring(link.indexOf('`') + 1).trim();
@@ -249,14 +249,14 @@ externalend = (\[<\/[A-Za-z]+>\])
 }
 
 <NORMAL>{topicsquarebracket} {
-  logger.debug( "{topicsquarebracket} '" + yytext() + "'");
+  logger.fine( "{topicsquarebracket} '" + yytext() + "'");
   String link = yytext();
   link = link.substring( 2, link.length() - 2).trim();
   return getTopicLink(link, link);
 }
 
 <NORMAL>{topicsquarebrackettail} {
-  logger.debug( "{topicsquarebrackettail} '" + yytext() + "'");
+  logger.fine( "{topicsquarebrackettail} '" + yytext() + "'");
   String link = yytext();
   link = link.substring(2);
   String desc = link.substring(link.indexOf("]]") + 2);
@@ -266,7 +266,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 }
 
 <NORMAL>{extlink} {
-  logger.debug("{extlink}");
+  logger.fine("{extlink}");
   String text = yytext();
   try{
     return LinkExtender.generateLink(
@@ -275,13 +275,13 @@ externalend = (\[<\/[A-Za-z]+>\])
       text
     );
   }catch( Exception err ){
-    logger.error( "error generating link from extender", err );
+    logger.severe( "error generating link from extender", err );
     return text;
   }
 }
 
 <NORMAL>{framedextlink} {
-  logger.debug("{framedextlink}");
+  logger.fine("{framedextlink}");
   String text = yytext();
   // trim off the square brackets
   text = text.substring(1, text.length()-1);
@@ -292,7 +292,7 @@ externalend = (\[<\/[A-Za-z]+>\])
       text
     );
   }catch( Exception err ){
-    logger.error( "error generating link from extender", err );
+    logger.severe( "error generating link from extender", err );
     return text;
   }
 }
@@ -302,6 +302,6 @@ externalend = (\[<\/[A-Za-z]+>\])
 }
 
 <NORMAL, OFF, PRE, EXTERNAL>.  {
-// logger.debug( ". (" + yytext() + ")" );
+// logger.fine( ". (" + yytext() + ")" );
  return yytext();
 }

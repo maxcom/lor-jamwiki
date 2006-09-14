@@ -26,8 +26,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -36,7 +36,7 @@ import org.jamwiki.utils.Utilities;
  */
 public class JAMWikiFilter implements Filter {
 
-	private static Logger logger = Logger.getLogger(JAMWikiFilter.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(JAMWikiFilter.class.getName());
 	private String encoding = "UTF-8";
 	private FilterConfig config = null;
 

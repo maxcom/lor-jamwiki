@@ -18,8 +18,8 @@ package org.jamwiki.parser.alt;
 
 import java.io.IOException;
 import java.util.Properties;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 
 /**
  * Controls generation of external links based on the linking.properties file at the bottom
@@ -36,7 +36,7 @@ import org.jamwiki.Environment;
  */
 public class LinkExtender {
 
-	private static final Logger logger = Logger.getLogger(LinkExtender.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(LinkExtender.class.getName());
 	private static final String LINKING_PROPERTIES_FILE = "/linking.properties";
 	public static final String URL_KEYWORD = "${url}";
 	private static Properties linkingProperties;
@@ -69,7 +69,7 @@ public class LinkExtender {
 	 * @throws Exception
 	 */
 	public static String generateLink(String prefix, String url, String text, boolean onlyExternalLinks) throws Exception {
-		logger.debug("generating link for prefix=" + prefix + ",url=" + url);
+		logger.fine("generating link for prefix=" + prefix + ",url=" + url);
 		String displayName = null;
 		int displayNameDelimLocation = url.indexOf('|');
 		if (displayNameDelimLocation >= 0) {
@@ -78,7 +78,7 @@ public class LinkExtender {
 		}
 		String expansion = linkingProperties.getProperty(prefix);
 		if (expansion == null) {
-			logger.info("no expansion found for link extension: " + prefix);
+			logger.warning("no expansion found for link extension: " + prefix);
 			return "<span class=\"extendlinkproblem\">"+ text + "</span>" ;
 		}
 		while (true) {

@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.KeywordAnalyzer;
@@ -52,6 +51,7 @@ import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.RAMDirectory;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserInput;
@@ -65,7 +65,7 @@ import org.springframework.util.StringUtils;
 public class LuceneSearchEngine {
 
 	/** Where to log to */
-	private static final Logger logger = Logger.getLogger(LuceneSearchEngine.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(LuceneSearchEngine.class.getName());
 	/** Directory for search index files */
 	protected static final String SEARCH_DIR = "search";
 	/** Id stored with documents to indicate the searchable topic name */
@@ -135,10 +135,10 @@ public class LuceneSearchEngine {
 					if (writer != null) {
 						writer.close();
 					}
-				} catch (Exception e) { logger.fatal(e); }
+				} catch (Exception e) {}
 			}
 		} catch (Exception e) {
-			logger.error("Exception while adding topic " + topicName, e);
+			logger.severe("Exception while adding topic " + topicName, e);
 		}
 	}
 
@@ -166,13 +166,13 @@ public class LuceneSearchEngine {
 				// if still locked, force to unlock it
 				if (IndexReader.isLocked(index)) {
 					IndexReader.unlock(index);
-					logger.fatal("Unlocking search index by force");
+					logger.severe("Unlocking search index by force");
 				}
 			}
 			IndexWriter indexWriter = new IndexWriter(index, null, true);
 			indexWriter.close();
 		} catch (Exception e) {
-			logger.fatal("Cannot create empty directory: ", e);
+			logger.severe("Cannot create empty directory: ", e);
 			// delete all files in the temp directory
 			if (fsType == FS_BASED) {
 				File[] files = indexFile.listFiles();
@@ -268,7 +268,7 @@ public class LuceneSearchEngine {
 				results.add(result);
 			}
 		} catch (Exception e) {
-			logger.fatal("Exception while searching for " + topicName, e);
+			logger.severe("Exception while searching for " + topicName, e);
 		} finally {
 			if (searcher != null) {
 				try {
@@ -295,7 +295,7 @@ public class LuceneSearchEngine {
 		String indexFilename = getSearchIndexPath(virtualWiki);
 		StandardAnalyzer analyzer = new StandardAnalyzer();
 		Collection results = new ArrayList();
-		logger.debug("search text: " + text);
+		logger.fine("search text: " + text);
 		IndexSearcher searcher = null;
 		try {
 			BooleanQuery query = new BooleanQuery();
@@ -319,7 +319,7 @@ public class LuceneSearchEngine {
 				results.add(result);
 			}
 		} catch (Exception e) {
-			logger.fatal("Exception while searching for " + text, e);
+			logger.severe("Exception while searching for " + text, e);
 		} finally {
 			if (searcher != null) {
 				try {
@@ -368,7 +368,7 @@ public class LuceneSearchEngine {
 			File tmpDir = new File(dir);
 			indexPath = tmpDir.getPath();
 		} catch (Exception e) {
-			logger.warn("Undefined or invalid temp directory, using java.io.tmpdir", e);
+			logger.warning("Undefined or invalid temp directory, using java.io.tmpdir", e);
 			indexPath = System.getProperty("java.io.tmpdir");
 		}
 	}
@@ -405,21 +405,21 @@ public class LuceneSearchEngine {
 					count++;
 				}
 			} catch (IOException ex) {
-				logger.error(ex);
+				logger.severe("Failure while refreshing search index", ex);
 			} finally {
 				try {
 					if (writer != null) {
 						writer.optimize();
 					}
 				} catch (IOException ioe) {
-					logger.fatal("IOException during optimize", ioe);
+					logger.severe("IOException during optimize", ioe);
 				}
 				try {
 					if (writer != null) {
 						writer.close();
 					}
 				} catch (IOException ioe) {
-					logger.fatal("IOException during close", ioe);
+					logger.severe("IOException during close", ioe);
 				}
 				writer = null;
 			}

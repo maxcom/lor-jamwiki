@@ -31,8 +31,8 @@ import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.Encryption;
 
 /**
@@ -40,7 +40,7 @@ import org.jamwiki.utils.Encryption;
  */
 public class LdapUsergroup extends Usergroup {
 
-	private static final Logger logger = Logger.getLogger(LdapUsergroup.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(LdapUsergroup.class.getName());
 
 	/**
 	 * Get the email address of an user by its user-ID
@@ -108,13 +108,13 @@ public class LdapUsergroup extends Usergroup {
 					bean.setLabel(sr.get(fullnameField).get().toString());
 					list.add(bean);
 				} catch (Exception e) {
-					logger.error("Cannot add a member", e);
+					logger.severe("Cannot add a member", e);
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Cannot create member list", e);
+			logger.severe("Cannot create member list", e);
 		}
-		logger.debug("List created with " + list.size()+ " entries");
+		logger.fine("List created with " + list.size()+ " entries");
 		Collections.sort(list,new Comparator() {
 			public int compare(Object o1, Object o2) {
 				SelectorBean bean1 = (SelectorBean) o1;

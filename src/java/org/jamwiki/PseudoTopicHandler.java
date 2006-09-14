@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.util.Properties;
-import org.apache.log4j.Logger;
 
 /**
  * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to
@@ -29,7 +28,7 @@ import org.apache.log4j.Logger;
 public class PseudoTopicHandler {
 
 	/** Logger */
-	private static final Logger logger = Logger.getLogger(PseudoTopicHandler.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(PseudoTopicHandler.class.getName());
 	/** Singleton instance */
 	private static PseudoTopicHandler instance;
 	/** Properties bundle to store mappings */

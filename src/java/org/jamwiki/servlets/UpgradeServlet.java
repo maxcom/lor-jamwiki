@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -45,7 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class UpgradeServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(UpgradeServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -121,7 +121,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to retrieve user logins";
-			logger.error(msg, e);
+			logger.severe(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 			return false;
 		}
@@ -141,7 +141,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			} catch (Exception e) {
 				// FIXME - hard coding
 				String msg = "Unable to convert user password to SHA-512 for user " + userName;
-				logger.error(msg, e);
+				logger.severe(msg, e);
 				messages.add(msg + ": " + e.getMessage());
 				return false;
 			}
@@ -164,7 +164,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update virtual wiki table";
-			logger.error(msg, e);
+			logger.severe(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 			return false;
 		}
@@ -184,7 +184,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to update virtual wiki table";
-			logger.error(msg, e);
+			logger.severe(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 			return false;
 		}
@@ -207,7 +207,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.error(msg, e);
+			logger.severe(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 			return false;
 		}
@@ -229,7 +229,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			// FIXME - hard coding
 			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.error(msg, e);
+			logger.severe(msg, e);
 			messages.add(msg + ": " + e.getMessage());
 			return false;
 		}

@@ -4,9 +4,9 @@
  */
 package org.jamwiki.parser;
 
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
 
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static Logger logger = Logger.getLogger(JAMWikiPreSaveProcessor.class.getName());
+    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreSaveProcessor.class.getName());
     protected boolean allowHtml = false;
     
     /**
@@ -115,13 +115,13 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 /* ----- nowiki ----- */
 
 <WIKIPRE, PRE, NORMAL>{nowikistart} {
-    logger.debug("nowikistart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
 }
 
 <NOWIKI>{nowikiend} {
-    logger.debug("nowikiend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("nowikiend: " + yytext() + " (" + yystate() + ")");
     endState();
     return yytext();
 }
@@ -129,7 +129,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 /* ----- pre ----- */
 
 <NORMAL>{htmlprestart} {
-    logger.debug("htmlprestart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHtml) {
         beginState(PRE);
     }
@@ -137,14 +137,14 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 }
 
 <PRE>{htmlpreend} {
-    logger.debug("htmlpreend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
     return yytext();
 }
 
 <NORMAL, WIKIPRE>^{wikiprestart} {
-    logger.debug("wikiprestart: " + yytext() + " (" + yystate() + ")");
+    logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(1);
     if (yystate() != WIKIPRE) {
@@ -154,7 +154,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 }
 
 <WIKIPRE>^{wikipreend} {
-    logger.debug("wikipreend: " + yytext() + " (" + yystate() + ")");
+    logger.finer("wikipreend: " + yytext() + " (" + yystate() + ")");
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -164,7 +164,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 /* ----- wiki links ----- */
 
 <NORMAL>{wikilink} {
-    logger.debug("wikilink: " + yytext() + " (" + yystate() + ")");
+    logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     this.processLink(yytext());
     return yytext();
 }
@@ -172,7 +172,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 /* ----- processing commands ----- */
 
 <NORMAL>{wikisig3} {
-    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
         // called from search indexer, no need to parse signatures
         return yytext();
@@ -181,7 +181,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 }
 
 <NORMAL>{wikisig4} {
-    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
         // called from search indexer, no need to parse signatures
         return yytext();
@@ -190,7 +190,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 }
 
 <NORMAL>{wikisig5} {
-    logger.debug("toc: " + yytext() + " (" + yystate() + ")");
+    logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
         // called from search indexer, no need to parse signatures
         return yytext();
@@ -201,7 +201,7 @@ wikilink           = "[[" [^\]\n\r]+ ~"]]"
 /* ----- comments ----- */
 
 <NORMAL>{htmlcomment} {
-    logger.debug("htmlcomment: " + yytext() + " (" + yystate() + ")");
+    logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 

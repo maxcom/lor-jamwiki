@@ -22,10 +22,10 @@ import java.util.LinkedHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Topic;
@@ -45,7 +45,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public abstract class JAMWikiServlet extends AbstractController {
 
-	private static final Logger logger = Logger.getLogger(JAMWikiServlet.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiServlet.class.getName());
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
@@ -65,7 +65,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		try {
 			response.sendRedirect(url);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.severe("Unable to redirect", e);
 		}
 	}
 
@@ -75,12 +75,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private static void buildLayout(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (virtualWikiName == null) {
-			logger.error("No virtual wiki available for page request " + request.getRequestURI());
+			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 		}
 		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 		if (virtualWiki == null) {
-			logger.error("No virtual wiki found for " + virtualWikiName);
+			logger.severe("No virtual wiki found for " + virtualWikiName);
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 			virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 		}
@@ -99,7 +99,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	protected Topic getRedirectTarget(Topic parent, int attempts) throws Exception {
 		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
-			logger.error("getRedirectTarget() called for non-redirect topic " + parent.getName());
+			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
 		// avoid infinite redirection
@@ -138,10 +138,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (!Utilities.convertEncoding(uri, "UTF-8", "ISO-8859-1").equals(request.getRequestURI().trim())) {
 			// url wasn't ISO-8859-1, default to UTF-8
 			uri = request.getRequestURI().trim();
-			logger.warn("Unable to convert URI from ISO-8859-1 " + uri);
+			logger.warning("Unable to convert URI from ISO-8859-1 " + uri);
 			if (StringUtils.hasText(request.getCharacterEncoding())) {
 				// FIXME - needs testing on other platforms
-				logger.warn("Attempting to convert URI from " + request.getCharacterEncoding() + " " + uri);
+				logger.warning("Attempting to convert URI from " + request.getCharacterEncoding() + " " + uri);
 				uri = Utilities.convertEncoding(uri, request.getCharacterEncoding(), "UTF-8");
 			}
 		}
@@ -224,7 +224,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				cachedContents.put(virtualWiki + "-" + topicName, content);
 			} catch (Exception e) {
-				logger.warn("error getting cached page " + virtualWiki + " / " + topicName, e);
+				logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
 				return null;
 			}
 		}
@@ -289,7 +289,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				pageInfo.setTopicName(JAMWikiServlet.getTopicFromURI(request));
 			}
 		} catch (Exception e) {
-			logger.error("Unable to build default page layout", e);
+			logger.severe("Unable to build default page layout", e);
 		}
 		next.addObject(PARAMETER_PAGE_INFO, pageInfo);
 	}
@@ -312,7 +312,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	protected ModelAndView viewError(HttpServletRequest request, Exception e) {
 		if (!(e instanceof WikiException)) {
-			logger.error("Servlet error", e);
+			logger.severe("Servlet error", e);
 		}
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();

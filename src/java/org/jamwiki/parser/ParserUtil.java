@@ -21,9 +21,9 @@ import java.text.SimpleDateFormat;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
  */
 public class ParserUtil {
 
-	private static Logger logger = Logger.getLogger(ParserUtil.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(ParserUtil.class.getName());
 	private static Pattern TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
@@ -52,7 +52,7 @@ public class ParserUtil {
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
-			logger.error("Unable to compile pattern", e);
+			logger.severe("Unable to compile pattern", e);
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ParserUtil {
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
 		} catch (Exception e) {
-			logger.error("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
+			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
 		output += "<a href=\"" + url + "\">";
 		output += Utilities.getMessage("common.sectionedit", parserInput.getLocale());
@@ -175,7 +175,7 @@ public class ParserUtil {
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, null, false);
 		} catch (Exception e) {
-			logger.error("Failure while parsing link " + raw, e);
+			logger.severe("Failure while parsing link " + raw, e);
 			return "";
 		}
 	}
@@ -216,7 +216,7 @@ public class ParserUtil {
 			}
 			return signature;
 		} catch (Exception e) {
-			logger.error("Failure while building wiki signature", e);
+			logger.severe("Failure while building wiki signature", e);
 			// FIXME - return empty or a failure indicator?
 			return "";
 		}
@@ -227,7 +227,7 @@ public class ParserUtil {
 	 */
 	protected static String extractLinkContent(String raw) {
 		if (raw == null || raw.length() <= 4 || !raw.startsWith("[[") || !raw.endsWith("]]")) {
-			logger.warn("ParserUtil.extractLinkContent called with invalid raw text: " + raw);
+			logger.warning("ParserUtil.extractLinkContent called with invalid raw text: " + raw);
 			return null;
 		}
 		// strip the first and last brackets
@@ -244,7 +244,7 @@ public class ParserUtil {
 	 */
 	protected static String extractLinkText(String raw) {
 		if (raw == null) {
-			logger.warn("ParserUtil.extractLinkText called with invalid raw text: " + raw);
+			logger.warning("ParserUtil.extractLinkText called with invalid raw text: " + raw);
 			return null;
 		}
 		// search for topic text ("|" followed by text)
@@ -260,7 +260,7 @@ public class ParserUtil {
 	 */
 	protected static String extractLinkUrl(String raw) {
 		if (raw == null) {
-			logger.warn("ParserUtil.extractLinkTopic called with invalid raw text: " + raw);
+			logger.warning("ParserUtil.extractLinkTopic called with invalid raw text: " + raw);
 			return null;
 		}
 		String url = raw;
@@ -426,7 +426,7 @@ public class ParserUtil {
 	protected static String validateHtmlTag(String tag) {
 		Matcher m = TAG_PATTERN.matcher(tag);
 		if (!m.find()) {
-			logger.error("Failure while attempting to match html tag for pattern " + tag);
+			logger.severe("Failure while attempting to match html tag for pattern " + tag);
 			return tag;
 		}
 		String tagOpen = m.group(1);
@@ -454,12 +454,12 @@ public class ParserUtil {
 			// pattern requires a space prior to the "onFoo", so make sure one exists
 			Matcher m = JAVASCRIPT_PATTERN1.matcher(" " + attributes);
 			if (m.find()) {
-				logger.warn("Attempt to include Javascript in Wiki syntax " + attributes);
+				logger.warning("Attempt to include Javascript in Wiki syntax " + attributes);
 				return "";
 			}
 			m = JAVASCRIPT_PATTERN2.matcher(attributes);
 			if (m.find()) {
-				logger.warn("Attempt to include Javascript in Wiki syntax " + attributes);
+				logger.warning("Attempt to include Javascript in Wiki syntax " + attributes);
 				return "";
 			}
 		}

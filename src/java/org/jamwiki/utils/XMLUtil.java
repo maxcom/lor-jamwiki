@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 public class XMLUtil {
 
 	/** Logger */
-	public static final Logger logger = Logger.getLogger(XMLUtil.class);
+	public static final WikiLogger logger = WikiLogger.getLogger(XMLUtil.class.getName());
 
 	/**
 	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
@@ -123,7 +123,7 @@ public class XMLUtil {
 				return XMLUtil.parseXML(source, validating);
 			} catch (SAXException e) {
 				// invalid XML
-				logger.error("The file " + file.getAbsolutePath() + " contains invalid XML", e);
+				logger.severe("The file " + file.getAbsolutePath() + " contains invalid XML", e);
 				throw new Exception("The file " + file.getAbsolutePath() + " contains invalid XML: " + e.getMessage());
 			}
 		} finally {

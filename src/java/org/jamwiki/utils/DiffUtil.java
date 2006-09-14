@@ -19,10 +19,10 @@ package org.jamwiki.utils;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
 import org.jamwiki.model.WikiDiff;
+import org.jamwiki.WikiLogger;
 
 /**
  * Utility class for processing the difference between two topics and returing a Vector
@@ -30,7 +30,7 @@ import org.jamwiki.model.WikiDiff;
  */
 public class DiffUtil {
 
-	protected static Logger logger = Logger.getLogger(DiffUtil.class);
+	protected static WikiLogger logger = WikiLogger.getLogger(DiffUtil.class.getName());
 	/** The number of lines of unchanged text to display before and after each diff. */
 	// FIXME - make this a property value
 	private static final int DIFF_UNCHANGED_LINE_DISPLAY = 2;
@@ -215,7 +215,7 @@ public class DiffUtil {
 	 *
 	 */
 	private static Vector process(String newVersion, String oldVersion) {
-		logger.debug("Diffing: " + oldVersion + " against: " + newVersion);
+		logger.fine("Diffing: " + oldVersion + " against: " + newVersion);
 		String[] oldArray = buildArray(oldVersion);
 		String[] newArray = buildArray(newVersion);
 		Diff diffObject = new Diff(oldArray, newArray);
@@ -262,7 +262,7 @@ public class DiffUtil {
 			// FIXME - this shouldn't be necessary
 			count++;
 			if (count > 5000) {
-				logger.warn("Infinite loop in DiffUtils.processDifference");
+				logger.warning("Infinite loop in DiffUtils.processDifference");
 				break;
 			}
 		}

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Properties;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.apache.log4j.Logger;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 
@@ -33,7 +32,7 @@ import org.jamwiki.utils.Utilities;
  */
 public class Environment {
 
-	static Logger logger = Logger.getLogger(Environment.class.getName());
+	static WikiLogger logger = WikiLogger.getLogger(Environment.class.getName());
 
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
@@ -104,11 +103,11 @@ public class Environment {
 	private Environment() {
 		try {
 			initDefaultProperties();
-			logger.debug("Default properties initialized: " + defaults.toString());
+			logger.config("Default properties initialized: " + defaults.toString());
 			props = loadProperties(PROPERTY_FILE_NAME, defaults);
-			logger.debug("Property file loaded: " + props.toString());
+			logger.fine("Property file loaded: " + props.toString());
 		} catch (Exception e) {
-			logger.error("Failure while initializing property values", e);
+			logger.severe("Failure while initializing property values", e);
 		}
 	}
 
@@ -201,7 +200,7 @@ public class Environment {
 		try {
 			return Boolean.valueOf(value).booleanValue();
 		} catch (Exception e) {
-			logger.error("Invalid boolean property " + name + " with value " + value);
+			logger.severe("Invalid boolean property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return false;
@@ -218,7 +217,7 @@ public class Environment {
 		try {
 			 return Integer.parseInt(value);
 		} catch (Exception e) {
-			logger.info("Invalid integer property " + name + " with value " + value);
+			logger.warning("Invalid integer property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return -1;
@@ -235,7 +234,7 @@ public class Environment {
 		try {
 			 return Long.parseLong(value);
 		} catch (Exception e) {
-			logger.info("Invalid long property " + name + " with value " + value);
+			logger.warning("Invalid long property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return -1;
@@ -277,15 +276,15 @@ public class Environment {
 		try {
 			file = findProperties(propertyFile);
 			if (file == null) {
-				logger.warn("Property file " + propertyFile + " does not exist");
+				logger.warning("Property file " + propertyFile + " does not exist");
 			} else if (!file.exists()) {
-				logger.warn("Property file " + file.toString() + " does not exist");
+				logger.warning("Property file " + file.toString() + " does not exist");
 			} else {
-				logger.info("Loading properties from " + file.toString());
+				logger.config("Loading properties from " + file.toString());
 				properties.load(new FileInputStream(file));
 			}
 		} catch (Exception e) {
-			logger.error("Failure while trying to load properties file " + file.toString(), e);
+			logger.severe("Failure while trying to load properties file " + file.toString(), e);
 		}
 		return properties;
 	}
@@ -310,7 +309,7 @@ public class Environment {
 			file = new File(Utilities.getClassLoaderRoot(), filename);
 			return file;
 		} catch (Exception e) {
-			logger.error("Error while searching for resource " + filename, e);
+			logger.severe("Error while searching for resource " + filename, e);
 		}
 		return null;
 	}

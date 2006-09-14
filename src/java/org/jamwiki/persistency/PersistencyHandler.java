@@ -25,10 +25,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Vector;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
@@ -52,7 +52,7 @@ import org.springframework.util.StringUtils;
  */
 public abstract class PersistencyHandler {
 
-	private static Logger logger = Logger.getLogger(PersistencyHandler.class);
+	private static WikiLogger logger = WikiLogger.getLogger(PersistencyHandler.class.getName());
 	// FIXME - possibly make this a property, or configurable based on number of topics in the system
 	private static int MAX_CACHED_LIST_SIZE = 2000;
 	/** For performance reasons, keep a (small) list of recently looked-up topics around in memory. */
@@ -151,7 +151,7 @@ public abstract class PersistencyHandler {
 					messages.add("Added user " + userName);
 				} catch (Exception e) {
 					String msg = "Unable to convert user: " + userName;
-					logger.error(msg, e);
+					logger.severe(msg, e);
 					messages.add(msg + ": " + e.getMessage());
 				}
 			}
@@ -164,7 +164,7 @@ public abstract class PersistencyHandler {
 					messages.add("Added virtual wiki " + virtualWiki.getName());
 				} catch (Exception e) {
 					String msg = "Unable to convert virtual wiki " + virtualWiki.getName();
-					logger.error(msg, e);
+					logger.severe(msg, e);
 					messages.add(msg + ": " + e.getMessage());
 				}
 				// topics
@@ -177,7 +177,7 @@ public abstract class PersistencyHandler {
 						messages.add("Added topic " + virtualWiki.getName() + " / " + topicName);
 					} catch (Exception e) {
 						String msg = "Unable to convert topic: " + virtualWiki.getName() + " / " + topicName;
-						logger.error(msg, e);
+						logger.severe(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
 				}
@@ -192,7 +192,7 @@ public abstract class PersistencyHandler {
 							messages.add("Added topic version " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId());
 						} catch (Exception e) {
 							String msg = "Unable to convert topic version: " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId();
-							logger.error(msg, e);
+							logger.severe(msg, e);
 							messages.add(msg + ": " + e.getMessage());
 						}
 					}
@@ -207,7 +207,7 @@ public abstract class PersistencyHandler {
 						messages.add("Added wiki file " + virtualWiki.getName() + " / " + topicName);
 					} catch (Exception e) {
 						String msg = "Unable to convert wiki file: " + virtualWiki.getName() + " / " + topicName;
-						logger.error(msg, e);
+						logger.severe(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
 				}
@@ -222,7 +222,7 @@ public abstract class PersistencyHandler {
 							messages.add("Added wiki file version " + virtualWiki.getName() + " / " + topicName + " / " + wikiFileVersion.getFileVersionId());
 						} catch (Exception e) {
 							String msg = "Unable to convert wiki file version: " + virtualWiki.getName() + " / " + topicName;
-							logger.error(msg, e);
+							logger.severe(msg, e);
 							messages.add(msg + ": " + e.getMessage());
 						}
 					}
@@ -236,7 +236,7 @@ public abstract class PersistencyHandler {
 						messages.add("Added recent change " + virtualWiki.getName() + " / " + change.getTopicName());
 					} catch (Exception e) {
 						String msg = "Unable to convert recent change: " + virtualWiki.getName() + " / " + change.getTopicName();
-						logger.error(msg, e);
+						logger.severe(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
 				}
@@ -249,7 +249,7 @@ public abstract class PersistencyHandler {
 						messages.add("Added category " + virtualWiki.getName() + " / " + category.getName());
 					} catch (Exception e) {
 						String msg = "Unable to convert category: " + virtualWiki.getName() + " / " + category.getName();
-						logger.error(msg, e);
+						logger.severe(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
 				}
@@ -316,7 +316,7 @@ public abstract class PersistencyHandler {
 		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
 		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
-			logger.error(msg);
+			logger.severe(msg);
 			throw new Exception(msg);
 		}
 		String contents1 = null;
@@ -329,7 +329,7 @@ public abstract class PersistencyHandler {
 		}
 		if (contents1 == null && contents2 == null) {
 			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
-			logger.error(msg);
+			logger.severe(msg);
 			throw new Exception(msg);
 		}
 		return DiffUtil.diff(contents1, contents2);
@@ -664,7 +664,7 @@ public abstract class PersistencyHandler {
 				filename = subdirectory + Utilities.encodeURL(topicName + "_" + language + "_" + country) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
-				logger.info("File " + filename + " does not exist");
+				logger.warning("File " + filename + " does not exist");
 			}
 		}
 		if (contents == null && StringUtils.hasText(language)) {
@@ -672,7 +672,7 @@ public abstract class PersistencyHandler {
 				filename = subdirectory + Utilities.encodeURL(topicName + "_" + language) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
-				logger.info("File " + filename + " does not exist");
+				logger.warning("File " + filename + " does not exist");
 			}
 		}
 		if (contents == null) {
@@ -680,7 +680,7 @@ public abstract class PersistencyHandler {
 				filename = subdirectory + Utilities.encodeURL(topicName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
-				logger.info("File " + filename + " could not be read", e);
+				logger.warning("File " + filename + " could not be read", e);
 				throw e;
 			}
 		}
@@ -732,7 +732,7 @@ public abstract class PersistencyHandler {
 			throw new Exception("Admin user not specified");
 		}
 		if (lookupWikiUser(user.getUserId(), params) != null) {
-			logger.info("Admin user already exists");
+			logger.warning("Admin user already exists");
 		}
 		addWikiUser(user, params);
 	}
@@ -742,7 +742,7 @@ public abstract class PersistencyHandler {
 	 */
 	private void setupDefaultVirtualWiki() throws Exception {
 		if (lookupVirtualWiki(WikiBase.DEFAULT_VWIKI) != null) {
-			logger.info("Default virtual wiki already exists");
+			logger.warning("Default virtual wiki already exists");
 			return;
 		}
 		VirtualWiki virtualWiki = new VirtualWiki();
@@ -756,7 +756,7 @@ public abstract class PersistencyHandler {
 	 */
 	private void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Object[] params) throws Exception {
 		if (exists(virtualWiki, topicName)) {
-			logger.warn("Special page " + virtualWiki + " / " + topicName + " already exists");
+			logger.warning("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
 		}
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);

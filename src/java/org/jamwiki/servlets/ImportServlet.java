@@ -20,7 +20,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ImportServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(ImportServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(ImportServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control.

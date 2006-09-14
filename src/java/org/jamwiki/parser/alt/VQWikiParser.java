@@ -17,8 +17,8 @@
 package org.jamwiki.parser.alt;
 
 import java.io.StringReader;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
@@ -32,7 +32,7 @@ import org.jamwiki.parser.TableOfContents;
  */
 public class VQWikiParser extends AbstractParser {
 
-	private static final Logger logger = Logger.getLogger(VQWikiParser.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(VQWikiParser.class.getName());
 
 	/**
 	 * Sets the basics for this parser.
@@ -83,9 +83,9 @@ public class VQWikiParser extends AbstractParser {
 			try {
 				line = lexer.yylex();
 			} catch (ArrayIndexOutOfBoundsException e) {
-				logger.debug(e);
+				logger.severe("Array out of bounds", e);
 			}
-			logger.debug(line);
+			logger.fine(line);
 			if (line == null) {
 				break;
 			}
@@ -93,13 +93,13 @@ public class VQWikiParser extends AbstractParser {
 				if (!external) {
 					external = true;
 					tag = line.substring(2, line.length() - 2);
-					logger.debug("External lex call (tag=" + tag + ")");
+					logger.fine("External lex call (tag=" + tag + ")");
 					externalContents = new StringBuffer();
 					contents.append(line);
 				} else {
 					external = false;
 					contents.append(line);
-					logger.debug("External ends");
+					logger.fine("External ends");
 				}
 			} else {
 				if (!external) {

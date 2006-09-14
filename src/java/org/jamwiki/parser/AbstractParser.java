@@ -19,7 +19,7 @@ package org.jamwiki.parser;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 
 import org.jamwiki.parser.ParserInput;
 
@@ -30,7 +30,7 @@ import org.jamwiki.parser.ParserInput;
  */
 public abstract class AbstractParser {
 
-	private static final Logger logger = Logger.getLogger(AbstractParser.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(AbstractParser.class.getName());
 	protected ParserInput parserInput = null;
 
 	/**

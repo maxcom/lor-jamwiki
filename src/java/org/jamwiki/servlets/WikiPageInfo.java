@@ -18,7 +18,7 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 
 /**
@@ -26,7 +26,7 @@ import org.jamwiki.WikiMessage;
  */
 public class WikiPageInfo {
 
-	private static final Logger logger = Logger.getLogger(WikiPageInfo.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiPageInfo.class.getName());
 	private boolean admin = false;
 	private int action = -1;
 	private boolean canMove = false;

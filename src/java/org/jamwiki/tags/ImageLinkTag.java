@@ -19,9 +19,9 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  */
 public class ImageLinkTag extends TagSupport {
 
-	private static Logger logger = Logger.getLogger(ImageLinkTag.class);
+	private static WikiLogger logger = WikiLogger.getLogger(ImageLinkTag.class.getName());
 	private String maxDimension = null;
 	private String style = null;
 	private String value = null;
@@ -44,7 +44,7 @@ public class ImageLinkTag extends TagSupport {
 		try {
 			linkValue = ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext).toString();
 		} catch (JspException e) {
-			logger.error("Image link tag evaluated empty for value " + this.value, e);
+			logger.severe("Image link tag evaluated empty for value " + this.value, e);
 			throw e;
 		}
 		int linkDimension = -1;
@@ -52,7 +52,7 @@ public class ImageLinkTag extends TagSupport {
 			try {
 				linkDimension = new Integer(ExpressionUtil.evalNotNull("link", "maxDimension", this.maxDimension, Object.class, this, pageContext).toString()).intValue();
 			} catch (JspException e) {
-				logger.error("Image link tag evaluated empty for maxDimension " + this.maxDimension, e);
+				logger.severe("Image link tag evaluated empty for maxDimension " + this.maxDimension, e);
 				throw e;
 			}
 		}
@@ -65,7 +65,7 @@ public class ImageLinkTag extends TagSupport {
 				this.pageContext.getOut().print(html);
 			}
 		} catch (Exception e) {
-			logger.error("Failure while building url " + html + " with value " + this.value, e);
+			logger.severe("Failure while building url " + html + " with value " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;
@@ -80,7 +80,7 @@ public class ImageLinkTag extends TagSupport {
 			virtualWiki = (String)request.getAttribute(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
 		}
 		if (virtualWiki == null) {
-			logger.error("No virtual wiki found for context path: " + request.getContextPath());
+			logger.severe("No virtual wiki found for context path: " + request.getContextPath());
 			throw new JspException("No virtual wiki value found");
 		}
 		return virtualWiki;

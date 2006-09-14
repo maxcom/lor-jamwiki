@@ -19,9 +19,9 @@ package org.jamwiki.servlets;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,7 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class RecentChangesServlet extends JAMWikiServlet {
 
-	private static final Logger logger = Logger.getLogger(RecentChangesServlet.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(RecentChangesServlet.class.getName());
 
 	/**
 	 *

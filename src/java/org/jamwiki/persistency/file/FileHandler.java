@@ -32,8 +32,8 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
@@ -56,7 +56,7 @@ import org.w3c.dom.NodeList;
  */
 public class FileHandler extends PersistencyHandler {
 
-	private static final Logger logger = Logger.getLogger(FileHandler.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(FileHandler.class.getName());
 
 	private static final String CATEGORIES_DIR = "categories";
 	private static final String CATEGORY_TOPICS_DIR = "topics";
@@ -255,7 +255,7 @@ public class FileHandler extends PersistencyHandler {
 			String filename = recentChangeFilename(topicVersion.getTopicVersionId());
 			File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
 			if (!file.delete()) {
-				logger.error("Unable to delete recent change file " + file.getAbsolutePath());
+				logger.severe("Unable to delete recent change file " + file.getAbsolutePath());
 			}
 		}
 	}
@@ -529,7 +529,7 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	public void initialize(Locale locale, WikiUser user) throws Exception {
 		if (this.isInitialized()) {
-			logger.warn("Attempt to initialize when initialization already complete");
+			logger.warning("Attempt to initialize when initialization already complete");
 			return;
 		}
 		super.initialize(locale, user);
@@ -584,7 +584,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return change;
 		} catch (Exception e) {
-			logger.error("Failure while initializing recent changes for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing recent changes for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -634,7 +634,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return topic;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing topic for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -683,7 +683,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return topicVersion;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -714,7 +714,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return virtualWiki;
 		} catch (Exception e) {
-			logger.error("Failure while initializing virtual wiki for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing virtual wiki for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -759,7 +759,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return wikiFile;
 		} catch (Exception e) {
-			logger.error("Failure while initializing wiki file for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing wiki file for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -808,7 +808,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return wikiFileVersion;
 		} catch (Exception e) {
-			logger.error("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing topic version for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -857,7 +857,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			return user;
 		} catch (Exception e) {
-			logger.error("Failure while initializing user for file " + file.getAbsolutePath(), e);
+			logger.severe("Failure while initializing user for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -894,7 +894,7 @@ public class FileHandler extends PersistencyHandler {
 				PersistencyHandler.virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
 			}
 		} catch (Exception e) {
-			logger.error("Failure while loading virtual wiki hashtable ", e);
+			logger.severe("Failure while loading virtual wiki hashtable ", e);
 			// if there is an error make sure the hashtable is reset since it wasn't
 			// properly initialized
 			PersistencyHandler.virtualWikiNameHash = null;

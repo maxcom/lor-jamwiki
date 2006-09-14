@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.springframework.util.StringUtils;
@@ -32,7 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class DiffServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(DiffServlet.class);
+	private static WikiLogger logger = WikiLogger.getLogger(DiffServlet.class.getName());
 
 	/**
 	 *

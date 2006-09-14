@@ -20,8 +20,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -41,7 +41,7 @@ import org.jamwiki.utils.Utilities;
  */
 public class TableOfContents {
 
-	private static final Logger logger = Logger.getLogger(TableOfContents.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(TableOfContents.class.getName());
 	public static final int STATUS_TOC_UNINITIALIZED = 0;
 	public static final int STATUS_TOC_INITIALIZED = 1;
 	public static final int STATUS_NO_TOC = 2;
@@ -62,7 +62,7 @@ public class TableOfContents {
 	 * @return
 	 */
 	public static String addTableOfContents(String text) {
-		logger.debug("Start TOC generating...");
+		logger.fine("Start TOC generating...");
 		Pattern p = Pattern.compile("<[Hh][123][^>]*>(.*)</[Hh][123][^>]*>");
 		Matcher m = p.matcher(text);
 		StringBuffer result = new StringBuffer();
@@ -85,12 +85,12 @@ public class TableOfContents {
 					+ "</a></li></span>");
 			result.append(text.substring(position, m.end(1)));
 			position = m.end(1);
-			logger.debug("Adding content: " + m.group(1));
+			logger.fine("Adding content: " + m.group(1));
 		}
 		toc.append("</td></tr></table>");
 		result.append(text.substring(position));
 		if (position > 0) {
-			logger.debug("adding TOC at the beginning!");
+			logger.fine("adding TOC at the beginning!");
 			toc.append(result);
 		} else {
 			toc = result;

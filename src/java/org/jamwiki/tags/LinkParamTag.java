@@ -19,9 +19,9 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.apache.log4j.Logger;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
  */
 public class LinkParamTag extends BodyTagSupport {
 
-	private static Logger logger = Logger.getLogger(LinkParamTag.class);
+	private static WikiLogger logger = WikiLogger.getLogger(LinkParamTag.class.getName());
 	private String value = null;
 	private String key = null;
 
@@ -53,7 +53,7 @@ public class LinkParamTag extends BodyTagSupport {
 			}
 			parent.addQueryParam(this.key, tagValue);
 		} catch (JspException e) {
-			logger.error("Failure in link tag for " + this.value, e);
+			logger.severe("Failure in link tag for " + this.value, e);
 			throw e;
 		}
 		return SKIP_BODY;

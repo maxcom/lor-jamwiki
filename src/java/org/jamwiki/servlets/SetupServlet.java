@@ -20,10 +20,10 @@ import java.io.File;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.log4j.Logger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
+import org.jamwiki.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -40,7 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class SetupServlet extends JAMWikiServlet {
 
-	private static Logger logger = Logger.getLogger(SetupServlet.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(SetupServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -82,7 +82,7 @@ public class SetupServlet extends JAMWikiServlet {
 		// reset properties
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, false);
 		if (!(e instanceof WikiException)) {
-			logger.error("Setup error", e);
+			logger.severe("Setup error", e);
 		}
 		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
 		pageInfo.setSpecial(true);

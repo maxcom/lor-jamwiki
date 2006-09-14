@@ -18,7 +18,6 @@ package org.jamwiki;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
-import org.apache.log4j.Logger;
 import org.jamwiki.utils.Encryption;
 
 /**
@@ -26,7 +25,7 @@ import org.jamwiki.utils.Encryption;
  */
 public class WikiMailAuthenticator extends Authenticator {
 
-	private static final Logger logger = Logger.getLogger(WikiMailAuthenticator.class);
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiMailAuthenticator.class.getName());
 
 	/**
 	 *
@@ -36,7 +35,7 @@ public class WikiMailAuthenticator extends Authenticator {
 			Environment.getValue(Environment.PROP_EMAIL_SMTP_USERNAME),
 			Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD)
 		);
-		logger.debug("Authenticating with: " + passwordAuthentication);
+		logger.fine("Authenticating with: " + passwordAuthentication);
 		return passwordAuthentication;
 	}
 }
