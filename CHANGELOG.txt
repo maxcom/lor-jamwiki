@@ -7,12 +7,13 @@
 * FEATURE: Split up recent changes page by date.
 * FEATURE: Use java.util.logging for logging, remove log4j.
 * FEATURE: Display "n" on changes pages for new topics.
+* FEATURE: Do not display redirect syntax as an ordered list.
 * FEATURE: Add the capability to move a page over an existing redirect.
 * BUG: Correctly parse table cells that contain links of the form
   [[Topic|Text]].
 * FEATURE: Clean up the layout of the Special:Admin page.
 * FEATURE: Sort property values alphabetically.
-* FEATURE: Do not display redirect syntax as an ordered list.
+* FEATURE: Remove beta warning from the Special:Translation tool.
 * FEATURE: Updated Hungarian translations from bDaneE.
 * FEATURE: Updated Chinese translations from ewen0930.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).

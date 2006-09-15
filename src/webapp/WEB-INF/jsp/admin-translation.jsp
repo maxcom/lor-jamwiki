@@ -22,7 +22,6 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div align="center" width="90%" style="border:1px dashed red;padding:3px;margin:10px 75px 5px 75px;"><font color="red"><f:message key="translation.warning.beta" /></font></div>
 <p><f:message key="translation.message.instructions" /></p>
 <table>
 <tr>
