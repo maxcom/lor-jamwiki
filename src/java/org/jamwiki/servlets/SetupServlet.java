@@ -29,7 +29,6 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -171,17 +170,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector errors = new Vector();
-		File baseDir = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
-		if (!baseDir.exists()) {
-			// invalid base directory
-			errors.add(new WikiMessage("error.directoryinvalid", Environment.getValue(Environment.PROP_BASE_FILE_DIR)));
-		}
-		File fullDir = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
-		if (!fullDir.exists()) {
-			// invalid base directory
-			errors.add(new WikiMessage("error.directoryinvalid", Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
-		}
+		Vector errors = Utilities.validateSystemSettings();
 		if (!StringUtils.hasText(user.getLogin())) {
 			user.setLogin("");
 			errors.add(new WikiMessage("error.loginempty"));
@@ -196,12 +185,6 @@ public class SetupServlet extends JAMWikiServlet {
 				errors.add(new WikiMessage("error.passwordconfirm"));
 			} else if (!newPassword.equals(confirmPassword)) {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
-			}
-		}
-		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
-			// test database
-			if (!DatabaseConnection.testDatabase()) {
-				errors.add(new WikiMessage("error.databaseconnection"));
 			}
 		}
 		return errors;

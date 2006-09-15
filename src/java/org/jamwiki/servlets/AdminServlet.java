@@ -406,10 +406,16 @@ public class AdminServlet extends JAMWikiServlet {
 					next.addObject("message", message);
 				}
 			}
-			Environment.saveProperties();
-			// re-initialize to reset PersistencyHandler settings (if needed)
-			WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
-			next.addObject("message", new WikiMessage("admin.message.changessaved"));
+			Vector errors = Utilities.validateSystemSettings();
+			if (errors.size() > 0) {
+				next.addObject("errors", errors);
+				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
+			} else {
+				// re-initialize to reset PersistencyHandler settings (if needed)
+				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
+				Environment.saveProperties();
+				next.addObject("message", new WikiMessage("admin.message.changessaved"));
+			}
 		} catch (Exception e) {
 			logger.severe("Failure while processing property values", e);
 			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));

@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -31,6 +32,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,12 +42,14 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
 
@@ -554,6 +558,44 @@ public class Utilities {
 	}
 
 	/**
+	 * Verify that a directory exists and is writable.
+	 *
+	 * @param name The full name (including the path) for the directory being tested.
+	 * @return A WikiMessage object containing any error encountered, otherwise
+	 *  <code>null</code>.
+	 */
+	public static WikiMessage validateDirectory(String name) {
+		File directory = new File(name);
+		if (!directory.exists() || !directory.isDirectory()) {
+			return new WikiMessage("error.directoryinvalid", name);
+		}
+		String filename = "jamwiki-test-" + System.currentTimeMillis() + ".txt";
+		File file = new File(name, filename);
+		String text = "Testing";
+		String read = null;
+		try {
+			// attempt to write a temp file to the directory
+			FileUtils.writeStringToFile(file, text, "UTF-8");
+		} catch (Exception e) {
+			return new WikiMessage("error.directorywrite", name, e.getMessage());
+		}
+		try {
+			// verify that the file was correctly written
+			read = FileUtils.readFileToString(file, "UTF-8");
+			if (read == null || !text.equals(read)) throw new IOException();
+		} catch (Exception e) {
+			return new WikiMessage("error.directoryread", name, e.getMessage());
+		}
+		try {
+			// attempt to delete the file
+			FileUtils.forceDelete(file);
+		} catch (Exception e) {
+			return new WikiMessage("error.directorydelete", name, e.getMessage());
+		}
+		return null;
+	}
+
+	/**
 	 *
 	 */
 	public static boolean validateName(String name) {
@@ -562,5 +604,29 @@ public class Utilities {
 		// try to remove invalid characters
 		String cleaned = StringUtils.deleteAny(name, "\n\r\"><{}#/\\=[]");
 		return name.equals(cleaned);
+	}
+
+	/**
+	 * Validate that vital system properties, such as database connection settings,
+	 * have been specified properly.
+	 */
+	public static Vector validateSystemSettings() {
+		Vector errors = new Vector();
+		// test directories
+		WikiMessage baseDirError = Utilities.validateDirectory(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
+		if (baseDirError != null) {
+			errors.add(baseDirError);
+		}
+		WikiMessage fullDirError = Utilities.validateDirectory(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
+		if (fullDirError != null) {
+			errors.add(fullDirError);
+		}
+		// test database
+		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
+			if (!DatabaseConnection.testDatabase()) {
+				errors.add(new WikiMessage("error.databaseconnection"));
+			}
+		}
+		return errors;
 	}
 }
