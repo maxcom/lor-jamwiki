@@ -193,23 +193,25 @@ public class ParserUtil {
 				String login = parserInput.getUserIpAddress();
 				String email = parserInput.getUserIpAddress();
 				String displayName = parserInput.getUserIpAddress();
+				String userId = "-1";
 				if (parserInput.getWikiUser() != null) {
 					WikiUser user = parserInput.getWikiUser();
 					login = user.getLogin();
 					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
 					email = user.getEmail();
+					userId = new Integer(user.getUserId()).toString();
 				}
-				// FIXME - need a utility method for user links
-				String userPage = WikiBase.NAMESPACE_USER + login;
 				String text = parserInput.getUserIpAddress();
 				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
-				Object params[] = new Object[5];
-				params[0] = userPage;
+				Object params[] = new Object[7];
+				params[0] = WikiBase.NAMESPACE_USER + login;
 				// FIXME - hard coding
-				params[1] = "Special:Contributions?contributor=" + login;
-				params[2] = login;
-				params[3] = displayName;
-				params[4] = email;
+				params[1] = WikiBase.NAMESPACE_SPECIAL + "Contributions?contributor=" + login;
+				params[2] = WikiBase.NAMESPACE_USER_COMMENTS + login;
+				params[3] = login;
+				params[4] = displayName;
+				params[5] = email;
+				params[6] = userId;
 				signature = formatter.format(params);
 				if (parserInput.getMode() != ParserInput.MODE_SAVE) {
 					signature = ParserUtil.parseFragment(parserInput, signature);
