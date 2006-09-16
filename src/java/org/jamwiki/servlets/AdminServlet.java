@@ -26,13 +26,10 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -58,26 +55,11 @@ public class AdminServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			String function = request.getParameter("function");
 			if (!Utilities.isAdmin(request)) {
-				String redirect = "Special:Admin";
-				if (isTopic(request, "Special:Convert")) {
-					redirect = "Special:Convert";
-				}
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return viewLogin(request, redirect, errorMessage);
+				return viewLogin(request, "Special:Admin", errorMessage);
 			}
-			if (isTopic(request, "Special:Convert")) {
-				if (StringUtils.hasText(request.getParameter("tofile"))) {
-					convertToFile(request, next, pageInfo);
-				} else if (StringUtils.hasText(request.getParameter("todatabase"))) {
-					convertToDatabase(request, next, pageInfo);
-				} else {
-					convertView(request, next, pageInfo);
-				}
-				loadDefaults(request, next, pageInfo);
-				return next;
-			}
+			String function = request.getParameter("function");
 			if (function == null) function = "";
 			if (!StringUtils.hasText(function)) {
 				view(request, next, pageInfo, null);
@@ -122,53 +104,6 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
 		view(request, next, pageInfo, null);
-	}
-
-	/**
-	 *
-	 */
-	private void convertToDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		try {
-			FileHandler fromHandler = new FileHandler();
-			DatabaseHandler toHandler = new DatabaseHandler();
-			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
-			next.addObject("message", new WikiMessage("convert.database.success"));
-			next.addObject("messages", messages);
-		} catch (Exception e) {
-			logger.severe("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", new WikiMessage("convert.database.failure", e.getMessage()));
-		}
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("convert.title"));
-	}
-
-	/**
-	 *
-	 */
-	private void convertToFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		try {
-			FileHandler toHandler = new FileHandler();
-			DatabaseHandler fromHandler = new DatabaseHandler();
-			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
-			next.addObject("message", new WikiMessage("convert.file.success"));
-			next.addObject("messages", messages);
-		} catch (Exception e) {
-			logger.severe("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", new WikiMessage("convert.file.failure", e.getMessage()));
-		}
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("convert.title"));
-	}
-
-	/**
-	 *
-	 */
-	private void convertView(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}
 
 	/**
