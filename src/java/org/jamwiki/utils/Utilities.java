@@ -434,9 +434,9 @@ public class Utilities {
 	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
-		Class clazz = Class.forName(parserClass);
+		Class clazz = Class.forName(parserClass, true, ClassLoader.getSystemClassLoader());
 		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput");
+		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput", true, ClassLoader.getSystemClassLoader());
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInput;

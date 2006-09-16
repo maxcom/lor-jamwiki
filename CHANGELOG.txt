@@ -11,6 +11,7 @@
 * FEATURE: Add the capability to move a page over an existing redirect.
 * BUG: Correctly parse table cells that contain links of the form
   [[Topic|Text]].
+* BUG: Fix issue with shared library files not being loaded.
 * FEATURE: Clean up the layout of the Special:Admin page.
 * FEATURE: Sort property values alphabetically.
 * FEATURE: Add validation checks to Special:Admin.

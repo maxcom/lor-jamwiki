@@ -49,7 +49,7 @@ public class DatabaseConnection {
 	 */
 	public static void setUpConnectionPool(String url, String userName, String password) throws Exception {
 		closeConnectionPool();
-		Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER));
+		Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, ClassLoader.getSystemClassLoader());
 		connectionPool = new GenericObjectPool();
 		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
 		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
@@ -294,7 +294,7 @@ public class DatabaseConnection {
 	public static boolean testDatabase(String driver, String url, String user, String password) {
 		Connection conn = null;
 		try {
-			Class.forName(driver);
+			Class.forName(driver, true, ClassLoader.getSystemClassLoader());
 			conn = DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
 			// database settings incorrect
