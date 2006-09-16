@@ -434,9 +434,9 @@ public class Utilities {
 	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
-		Class clazz = Class.forName(parserClass, true, ClassLoader.getSystemClassLoader());
+		Class clazz = Class.forName(parserClass, true, Thread.currentThread().getContextClassLoader());
 		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput", true, ClassLoader.getSystemClassLoader());
+		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput", true, Thread.currentThread().getContextClassLoader());
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInput;
@@ -633,6 +633,19 @@ public class Utilities {
 				errors.add(new WikiMessage("error.databaseconnection"));
 			}
 		}
+		// verify valid parser class
+		boolean validParser = true;
+		String parserClass = props.getProperty(Environment.PROP_PARSER_CLASS);
+		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
+		if (parserClass == null || parserClass.equals(abstractParserClass)) validParser = false;
+		try {
+			Class parent = Class.forName(parserClass, true, Thread.currentThread().getContextClassLoader());
+			Class child = Class.forName(abstractParserClass, true, Thread.currentThread().getContextClassLoader());
+			if (!child.isAssignableFrom(parent)) validParser = false;
+		} catch (Exception e) {
+			validParser = false;
+		}
+		if (!validParser) errors.add(new WikiMessage("error.parserclass", parserClass));
 		return errors;
 	}
 }
