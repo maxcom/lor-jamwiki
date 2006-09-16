@@ -34,7 +34,7 @@ public class WikiMailAuthenticator extends Authenticator {
 	protected PasswordAuthentication getPasswordAuthentication() {
 		PasswordAuthentication passwordAuthentication = new PasswordAuthentication(
 			Environment.getValue(Environment.PROP_EMAIL_SMTP_USERNAME),
-			Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD)
+			Encryption.getEncryptedProperty(Environment.PROP_EMAIL_SMTP_PASSWORD, null)
 		);
 		logger.fine("Authenticating with: " + passwordAuthentication);
 		return passwordAuthentication;

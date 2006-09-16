@@ -72,22 +72,27 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	private static void buildLayout(HttpServletRequest request, ModelAndView next) throws Exception {
+	private static void buildLayout(HttpServletRequest request, ModelAndView next) {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 		}
-		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+		VirtualWiki virtualWiki = null;
+		String defaultTopic = null;
+		try {
+			virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			defaultTopic = virtualWiki.getDefaultTopicName();
+		} catch (Exception e) {}
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for " + virtualWikiName);
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
-			virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			defaultTopic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		}
 		// build the layout contents
 		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
 		next.addObject("leftMenu", leftMenu);
-		next.addObject("defaultTopic", virtualWiki.getDefaultTopicName());
+		next.addObject("defaultTopic", defaultTopic);
 		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
 		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);

@@ -19,6 +19,7 @@ package org.jamwiki.utils;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -157,7 +158,10 @@ public class Encryption {
 	 * @param name The name of the encrypted property being retrieved.
 	 * @return The unencrypted value of the property.
 	 */
-	public static String getEncryptedProperty(String name) {
+	public static String getEncryptedProperty(String name, Properties props) {
+		if (props != null) {
+			return Encryption.decrypt64(props.getProperty(name));
+		}
 		return Encryption.decrypt64(Environment.getValue(name));
 	}
 
@@ -167,8 +171,13 @@ public class Encryption {
 	 * @param name The name of the encrypted property being retrieved.
 	 * @value The enencrypted value of the property.
 	 */
-	public static void setEncryptedProperty(String name, String value) throws Exception {
+	public static void setEncryptedProperty(String name, String value, Properties props) throws Exception {
 		value = Encryption.encrypt64(value);
-		Environment.setValue(name, value);
+		if (value == null) value = "";
+		if (props != null) {
+			props.setProperty(name, value);
+		} else {
+			Environment.setValue(name, value);
+		}
 	}
 }

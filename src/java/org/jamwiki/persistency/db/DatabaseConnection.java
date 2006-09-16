@@ -193,7 +193,7 @@ public class DatabaseConnection {
 	protected static Connection getConnection() throws Exception {
 		String url = Environment.getValue(Environment.PROP_DB_URL);
 		String userName = Environment.getValue(Environment.PROP_DB_USERNAME);
-		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD);
+		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, null);
 		Connection conn = null;
 		if (url.startsWith("jdbc:")) {
 			if (!poolInitialized) {
@@ -291,16 +291,21 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	public static boolean testDatabase() {
+	public static boolean testDatabase(String driver, String url, String user, String password) {
 		Connection conn = null;
 		try {
-			conn = DatabaseConnection.getConnection();
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
 			// database settings incorrect
 			logger.severe("Invalid database settings", e);
 			return false;
 		} finally {
-			if (conn != null) DatabaseConnection.closeConnection(conn);
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {}
+			}
 		}
 		return true;
 	}

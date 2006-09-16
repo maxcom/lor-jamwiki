@@ -54,7 +54,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String userString = request.getParameter("contributor");
-		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
+		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
 		if (request.getParameter("num") != null) {
 			// FIXME - verify it's a number
 			num = new Integer(request.getParameter("num")).intValue();

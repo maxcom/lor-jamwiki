@@ -148,7 +148,7 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));
 			Environment.setValue(Environment.PROP_DB_URL, request.getParameter(Environment.PROP_DB_URL));
 			Environment.setValue(Environment.PROP_DB_USERNAME, request.getParameter(Environment.PROP_DB_USERNAME));
-			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD));
+			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD), null);
 			next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
 			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
 				// oracle must use a different validation query
@@ -170,7 +170,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector errors = Utilities.validateSystemSettings();
+		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 		if (!StringUtils.hasText(user.getLogin())) {
 			user.setLogin("");
 			errors.add(new WikiMessage("error.loginempty"));

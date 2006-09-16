@@ -239,7 +239,7 @@ public class LdapUsergroup extends Usergroup {
 		env.put(Context.INITIAL_CONTEXT_FACTORY, Environment.getValue(Environment.PROP_USERGROUP_FACTORY));
 		env.put(Context.PROVIDER_URL, Environment.getValue(Environment.PROP_USERGROUP_URL));
 		String username = Environment.getValue(Environment.PROP_USERGROUP_USERNAME);
-		String password = Encryption.getEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD);
+		String password = Encryption.getEncryptedProperty(Environment.PROP_USERGROUP_PASSWORD, null);
 		if (username != null && !"".equals(username)) {
 			env.put(Context.SECURITY_AUTHENTICATION,"simple");
 			env.put(Context.SECURITY_PRINCIPAL,username); // specify the username

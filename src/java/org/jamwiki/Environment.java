@@ -73,7 +73,7 @@ public class Environment {
 	public static final String PROP_PARSER_SIGNATURE_DATE_PATTERN = "signature-date";
 	public static final String PROP_PARSER_SIGNATURE_USER_PATTERN = "signature-user";
 	public static final String PROP_PARSER_TOC = "allow-toc";
-	public static final String PROP_RECENT_CHANGES_DAYS = "recent-changes-days";
+	public static final String PROP_RECENT_CHANGES_NUM = "recent-changes-days";
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
@@ -176,7 +176,7 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
 		defaults.setProperty(PROP_PARSER_TOC, "false");
-		defaults.setProperty(PROP_RECENT_CHANGES_DAYS, "100");
+		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
 		defaults.setProperty(PROP_TOPIC_NON_ADMIN_TOPIC_MOVE, "true");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
@@ -209,6 +209,15 @@ public class Environment {
 		}
 		// FIXME - should this otherwise indicate an invalid property?
 		return false;
+	}
+
+	/**
+	 * Return an instance of the current properties object.  This method should
+	 * not be used by most classes.
+	 */
+	// FIXME - find a way to get rid of this method
+	public static Properties getInstance() {
+		return props;
 	}
 
 	/**

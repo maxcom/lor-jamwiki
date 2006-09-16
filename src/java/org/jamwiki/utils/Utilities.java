@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -610,20 +611,25 @@ public class Utilities {
 	 * Validate that vital system properties, such as database connection settings,
 	 * have been specified properly.
 	 */
-	public static Vector validateSystemSettings() {
+	public static Vector validateSystemSettings(Properties props) {
 		Vector errors = new Vector();
 		// test directories
-		WikiMessage baseDirError = Utilities.validateDirectory(Environment.getValue(Environment.PROP_BASE_FILE_DIR));
+		WikiMessage baseDirError = Utilities.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
 		if (baseDirError != null) {
 			errors.add(baseDirError);
 		}
-		WikiMessage fullDirError = Utilities.validateDirectory(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH));
+		WikiMessage fullDirError = Utilities.validateDirectory(props.getProperty(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (fullDirError != null) {
 			errors.add(fullDirError);
 		}
 		// test database
-		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
-			if (!DatabaseConnection.testDatabase()) {
+		String databaseType = props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE);
+		if (databaseType != null && databaseType.equals("DATABASE")) {
+			String driver = props.getProperty(Environment.PROP_DB_DRIVER);
+			String url = props.getProperty(Environment.PROP_DB_URL);
+			String userName = props.getProperty(Environment.PROP_DB_USERNAME);
+			String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
+			if (!DatabaseConnection.testDatabase(driver, url, userName, password)) {
 				errors.add(new WikiMessage("error.databaseconnection"));
 			}
 		}

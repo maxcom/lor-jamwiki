@@ -17,6 +17,8 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,7 +80,7 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			if (function == null) function = "";
 			if (!StringUtils.hasText(function)) {
-				view(request, next, pageInfo);
+				view(request, next, pageInfo, null);
 			}
 			if (function.equals("refreshIndex")) {
 				refreshIndex(request, next, pageInfo);
@@ -92,8 +94,6 @@ public class AdminServlet extends JAMWikiServlet {
 			if (function.equals("recentChanges")) {
 				recentChanges(request, next, pageInfo);
 			}
-			Collection virtualWikiList = WikiBase.getHandler().getVirtualWikiList();
-			next.addObject("wikis", virtualWikiList);
 		} catch (Exception e) {
 			return viewError(request, e);
 		}
@@ -105,9 +105,6 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		WikiUser user = Utilities.currentUser(request);
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
@@ -124,6 +121,7 @@ public class AdminServlet extends JAMWikiServlet {
 			String message = "Failure while adding virtual wiki: " + e.getMessage();
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
+		view(request, next, pageInfo, null);
 	}
 
 	/**
@@ -177,183 +175,69 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("admin.title"));
+		Properties props = new Properties();
 		try {
-			Environment.setValue(
-				Environment.PROP_BASE_LOGO_IMAGE,
-				request.getParameter(Environment.PROP_BASE_LOGO_IMAGE)
-			);
-			Environment.setValue(
-				Environment.PROP_RECENT_CHANGES_DAYS,
-				request.getParameter(Environment.PROP_RECENT_CHANGES_DAYS)
-			);
-			Environment.setValue(
-				Environment.PROP_EMAIL_SMTP_HOST,
-				request.getParameter(Environment.PROP_EMAIL_SMTP_HOST)
-			);
-			Environment.setValue(
-				Environment.PROP_EMAIL_SMTP_USERNAME,
-				request.getParameter(Environment.PROP_EMAIL_SMTP_USERNAME)
-			);
-			if (StringUtils.hasText(request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD))) {
-				Encryption.setEncryptedProperty(
-					Environment.PROP_EMAIL_SMTP_PASSWORD,
-					request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD)
-				);
-				next.addObject("smtpPassword", request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD));
-			}
-			Environment.setValue(
-				Environment.PROP_EMAIL_REPLY_ADDRESS,
-				request.getParameter(Environment.PROP_EMAIL_REPLY_ADDRESS)
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_VERSIONING_ON,
-				request.getParameter(Environment.PROP_TOPIC_VERSIONING_ON) != null
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_PARSER_ALLOW_HTML,
-				request.getParameter(Environment.PROP_PARSER_ALLOW_HTML) != null
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_PARSER_ALLOW_JAVASCRIPT,
-				request.getParameter(Environment.PROP_PARSER_ALLOW_JAVASCRIPT) != null
-			);
-			Environment.setValue(
-				Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN,
-				request.getParameter(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN)
-			);
-			Environment.setValue(
-				Environment.PROP_PARSER_SIGNATURE_USER_PATTERN,
-				request.getParameter(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN)
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE,
-				request.getParameter(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) != null
-			);
-			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_FORCE_USERNAME,
-				request.getParameter(Environment.PROP_TOPIC_FORCE_USERNAME) != null
-			);
-			Environment.setValue(
-				Environment.PROP_BASE_FILE_DIR,
-				request.getParameter(Environment.PROP_BASE_FILE_DIR)
-			);
-			Environment.setIntValue(
-				Environment.PROP_IMAGE_RESIZE_INCREMENT,
-				Integer.parseInt(request.getParameter(Environment.PROP_IMAGE_RESIZE_INCREMENT))
-			);
+			setProperty(props, request, Environment.PROP_BASE_DEFAULT_TOPIC);
+			setProperty(props, request, Environment.PROP_BASE_LOGO_IMAGE);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_VERSIONING_ON);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_FORCE_USERNAME);
+			setProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT);
+			setProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
+			setProperty(props, request, Environment.PROP_PARSER_CLASS);
+			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
+			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_HTML);
+			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
+			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_USER_PATTERN);
+			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
+			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 			if (persistenceType == WikiBase.FILE) {
-				Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
+				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
 			} else if (persistenceType == WikiBase.DATABASE) {
-				Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
+				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
 			}
-			if (request.getParameter(Environment.PROP_DB_DRIVER) != null) {
-				Environment.setValue(
-					Environment.PROP_DB_DRIVER,
-					request.getParameter(Environment.PROP_DB_DRIVER)
-				);
-				Environment.setValue(
-					Environment.PROP_DB_URL,
-					request.getParameter(Environment.PROP_DB_URL)
-				);
-				Environment.setValue(
-					Environment.PROP_DB_USERNAME,
-					request.getParameter(Environment.PROP_DB_USERNAME)
-				);
-				if (StringUtils.hasText(request.getParameter(Environment.PROP_DB_PASSWORD))) {
-					Encryption.setEncryptedProperty(
-						Environment.PROP_DB_PASSWORD,
-						request.getParameter(Environment.PROP_DB_PASSWORD)
-					);
-					next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
-				}
-				Environment.setIntValue(
-					Environment.PROP_DBCP_MAX_ACTIVE,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_MAX_ACTIVE))
-				);
-				Environment.setIntValue(
-					Environment.PROP_DBCP_MAX_IDLE,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_MAX_IDLE))
-				);
-				Environment.setBooleanValue(
-					Environment.PROP_DBCP_TEST_ON_BORROW,
-					request.getParameter(Environment.PROP_DBCP_TEST_ON_BORROW) != null
-				);
-				Environment.setBooleanValue(
-					Environment.PROP_DBCP_TEST_ON_RETURN,
-					request.getParameter(Environment.PROP_DBCP_TEST_ON_RETURN) != null
-				);
-				Environment.setBooleanValue(
-					Environment.PROP_DBCP_TEST_WHILE_IDLE,
-					request.getParameter(Environment.PROP_DBCP_TEST_WHILE_IDLE) != null
-				);
-				Environment.setIntValue(
-					Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME))
-				);
-				Environment.setIntValue(
-					Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS))
-				);
-				Environment.setIntValue(
-					Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN))
-				);
-				Environment.setIntValue(
-					Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION))
-				);
-				Environment.setValue(
-					Environment.PROP_DBCP_VALIDATION_QUERY,
-					request.getParameter(Environment.PROP_DBCP_VALIDATION_QUERY)
-				);
-				Environment.setBooleanValue(
-					Environment.PROP_DBCP_REMOVE_ABANDONED,
-					request.getParameter(Environment.PROP_DBCP_REMOVE_ABANDONED) != null
-				);
-				Environment.setIntValue(
-					Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT,
-					Integer.parseInt(request.getParameter(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT))
-				);
+			setProperty(props, request, Environment.PROP_DB_DRIVER);
+			setProperty(props, request, Environment.PROP_DB_TYPE);
+			setProperty(props, request, Environment.PROP_DB_URL);
+			setProperty(props, request, Environment.PROP_DB_USERNAME);
+			if (StringUtils.hasText(request.getParameter(Environment.PROP_DB_PASSWORD))) {
+				setEncryptedProperty(props, request, Environment.PROP_DB_PASSWORD);
+				next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
+			} else {
+				props.setProperty(Environment.PROP_DB_PASSWORD, Environment.getValue(Environment.PROP_DB_PASSWORD));
 			}
-			Environment.setBooleanValue(
-				Environment.PROP_TOPIC_USE_PREVIEW,
-				request.getParameter(Environment.PROP_TOPIC_USE_PREVIEW) != null
-			);
-			Environment.setValue(
-				Environment.PROP_BASE_DEFAULT_TOPIC,
-				request.getParameter(Environment.PROP_BASE_DEFAULT_TOPIC)
-			);
-			Environment.setValue(
-				Environment.PROP_PARSER_CLASS,
-				request.getParameter(Environment.PROP_PARSER_CLASS)
-			);
+			setProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE);
+			setProperty(props, request, Environment.PROP_DBCP_MAX_IDLE);
+			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_BORROW);
+			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_ON_RETURN);
+			setBooleanProperty(props, request, Environment.PROP_DBCP_TEST_WHILE_IDLE);
+			setProperty(props, request, Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME);
+			setProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS);
+			setProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN);
+			setProperty(props, request, Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION);
+			setProperty(props, request, Environment.PROP_DBCP_VALIDATION_QUERY);
+			setBooleanProperty(props, request, Environment.PROP_DBCP_REMOVE_ABANDONED);
+			setProperty(props, request, Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT);
 			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
-			Environment.setIntValue(
+			props.setProperty(
 				Environment.PROP_FILE_MAX_FILE_SIZE,
-				maxFileSizeInKB * 1000
+				new Integer(maxFileSizeInKB * 1000).toString()
 			);
-			Environment.setValue(
-				Environment.PROP_FILE_DIR_FULL_PATH,
-				request.getParameter(Environment.PROP_FILE_DIR_FULL_PATH)
-			);
-			Environment.setValue(
-				Environment.PROP_FILE_DIR_RELATIVE_PATH,
-				request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH)
-			);
-			if (request.getParameter(Environment.PROP_DB_TYPE) != null) {
-				Environment.setValue(
-					Environment.PROP_DB_TYPE,
-					request.getParameter(Environment.PROP_DB_TYPE)
-				);
+			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
+			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
+			/*
+			setProperty(props, request, Environment.PROP_EMAIL_SMTP_HOST);
+			setProperty(props, request, Environment.PROP_EMAIL_SMTP_USERNAME);
+			if (StringUtils.hasText(request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD))) {
+				setEncryptedProperty(props, request, Environment.PROP_EMAIL_SMTP_PASSWORD);
+				next.addObject("smtpPassword", request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD));
+			} else {
+				props.setProperty(Environment.PROP_EMAIL_SMTP_PASSWORD, Environment.getValue(Environment.PROP_EMAIL_SMTP_PASSWORD));
 			}
-			Environment.setBooleanValue(
-				Environment.PROP_PARSER_TOC,
-				request.getParameter(Environment.PROP_PARSER_TOC) != null
-			);
+			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
+			*/
 			/*
 			int membershipType = Integer.parseInt(request.getParameter(Environment.PROP_USERGROUP_TYPE));
 			String usergroupType;
@@ -364,7 +248,7 @@ public class AdminServlet extends JAMWikiServlet {
 			} else {
 				usergroupType = "0";
 			}
-			Environment.setValue(Environment.PROP_USERGROUP_TYPE, usergroupType);
+			props.setProperty(Environment.PROP_USERGROUP_TYPE, usergroupType);
 			String[] autoFill = {
 				Environment.PROP_USERGROUP_FACTORY,
 				Environment.PROP_USERGROUP_URL,
@@ -378,39 +262,36 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.PROP_USERGROUP_DETAILVIEW
 			};
 			for (int i = 0; i < autoFill.length; i++) {
-				if (request.getParameter(autoFill[i]) != null) {
-					if (autoFill[i].equals(Environment.PROP_USERGROUP_PASSWORD) && StringUtils.hasText(request.getParameter(autoFill[i]))) {
-						Encryption.setEncryptedProperty(
-							Environment.PROP_USERGROUP_PASSWORD,
-							request.getParameter(autoFill[i])
-						);
-						next.addObject("userGroupPassword", request.getParameter(autoFill[i]));
-					} else {
-						Environment.setValue(autoFill[i], request.getParameter(autoFill[i]));
-					}
+				if (autoFill[i].equals(Environment.PROP_USERGROUP_PASSWORD) && StringUtils.hasText(request.getParameter(autoFill[i]))) {
+					setEncryptedProperty(props, request, Environment.PROP_USERGROUP_PASSWORD);
+					next.addObject("userGroupPassword", request.getParameter(autoFill[i]));
+				} else {
+					setProperty(props, request, autoFill[i]);
 				}
 			}
 			*/
-			if (Environment.getValue(Environment.PROP_BASE_FILE_DIR) == null) {
-				// if home directory set empty, use system home directory
-				String dir = System.getProperty("user.home") + System.getProperty("file.separator") + "wiki";
-				Environment.setValue(Environment.PROP_BASE_FILE_DIR, dir);
-			}
-			if (WikiBase.getPersistenceType() == WikiBase.DATABASE) {
-				// initialize connection pool in its own try-catch to avoid an error
-				// causing property values not to be saved.
-				try {
-					DatabaseConnection.setPoolInitialized(false);
-				} catch (Exception e) {
-					String message = e.getMessage();
-					next.addObject("message", message);
-				}
-			}
-			Vector errors = Utilities.validateSystemSettings();
+			Vector errors = Utilities.validateSystemSettings(props);
 			if (errors.size() > 0) {
 				next.addObject("errors", errors);
 				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
 			} else {
+				// all is well, save the properties
+				Iterator iterator = props.keySet().iterator();
+				while (iterator.hasNext()) {
+					String key = (String)iterator.next();
+					String value = props.getProperty(key);
+					Environment.setValue(key, value);
+				}
+				if (WikiBase.getPersistenceType() == WikiBase.DATABASE) {
+					// initialize connection pool in its own try-catch to avoid an error
+					// causing property values not to be saved.
+					try {
+						DatabaseConnection.setPoolInitialized(false);
+					} catch (Exception e) {
+						String message = e.getMessage();
+						next.addObject("message", message);
+					}
+				}
 				// re-initialize to reset PersistencyHandler settings (if needed)
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
@@ -420,6 +301,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while processing property values", e);
 			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
+		view(request, next, pageInfo, props);
 	}
 
 	/**
@@ -438,18 +320,13 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while loading recent changes", e);
 			next.addObject("errorMessage", new WikiMessage("admin.caption.recentchangesdb", e.getMessage()));
 		}
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("admin.title"));
+		view(request, next, pageInfo, null);
 	}
 
 	/**
 	 *
 	 */
 	private void refreshIndex(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		try {
 			LuceneSearchEngine.refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
@@ -457,14 +334,46 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while refreshing search index", e);
 			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
+		view(request, next, pageInfo, null);
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private static void setBooleanProperty(Properties props, HttpServletRequest request, String parameter) {
+		boolean value = (request.getParameter(parameter) != null);
+		props.setProperty(parameter, new Boolean(value).toString());
+	}
+
+	/**
+	 *
+	 */
+	private static void setEncryptedProperty(Properties props, HttpServletRequest request, String parameter) throws Exception {
+		String value = request.getParameter(parameter);
+		Encryption.setEncryptedProperty(parameter, value, props);
+	}
+
+	/**
+	 *
+	 */
+	private static void setProperty(Properties props, HttpServletRequest request, String parameter) {
+		String value = request.getParameter(parameter);
+		if (value == null) value = "";
+		props.setProperty(parameter, value);
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
 		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
+		Collection virtualWikiList = WikiBase.getHandler().getVirtualWikiList();
+		next.addObject("wikis", virtualWikiList);
+		if (props == null) {
+			props = Environment.getInstance();
+		}
+		next.addObject("props", props);
 	}
 }

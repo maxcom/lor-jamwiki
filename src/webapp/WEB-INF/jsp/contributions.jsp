@@ -34,7 +34,7 @@
 
 <%-- FIXME: use JSP tag --%>
 <%
-int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_DAYS);
+int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
 if (request.getParameter("num") != null) {
 	// FIXME - breaks if non-integer
 	num = new Integer(request.getParameter("num")).intValue();
