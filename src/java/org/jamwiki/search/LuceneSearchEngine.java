@@ -17,7 +17,6 @@
 package org.jamwiki.search;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +42,6 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
@@ -86,11 +84,10 @@ public class LuceneSearchEngine {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		String contents = topic.getTopicContent();
-		String indexFilename = getSearchIndexPath(virtualWiki);
 		IndexWriter writer = null;
 		IndexReader reader = null;
 		try {
-			Directory directory = FSDirectory.getDirectory(indexFilename, false);
+			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false);
 			// delete the current document
 			try {
 				reader = IndexReader.open(directory);
@@ -133,10 +130,10 @@ public class LuceneSearchEngine {
 	 * Copy an index from RAM to file
 	 * @param ram The index in RAM
 	 * @param indexFile The index on disc
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	private static void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile) throws IOException {
-		Directory index = FSDirectory.getDirectory(indexFile, true);
+	private static void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile) throws Exception {
+		FSDirectory index = FSDirectory.getDirectory(indexFile, true);
 		try {
 			if (IndexReader.isLocked(index)) {
 				// FIXME - huh?
@@ -232,7 +229,6 @@ public class LuceneSearchEngine {
 	 *
 	 */
 	public static Collection findLinkedTo(String virtualWiki, String topicName) throws Exception {
-		String indexFilename = getSearchIndexPath(virtualWiki);
 		KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 		Collection results = new Vector();
 		IndexSearcher searcher = null;
@@ -240,7 +236,7 @@ public class LuceneSearchEngine {
 			PhraseQuery query = new PhraseQuery();
 			Term term = new Term(ITYPE_TOPIC_LINK, topicName);
 			query.add(term);
-			searcher = new IndexSearcher(FSDirectory.getDirectory(indexFilename, false));
+			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false));
 			// actually perform the search
 			Hits hits = searcher.search(query);
 			for (int i = 0; i < hits.length(); i++) {
@@ -271,7 +267,6 @@ public class LuceneSearchEngine {
 	 * @return A collection of SearchResultEntry, containing the search results
 	 */
 	public static Collection findMultiple(String virtualWiki, String text) {
-		String indexFilename = getSearchIndexPath(virtualWiki);
 		StandardAnalyzer analyzer = new StandardAnalyzer();
 		Collection results = new Vector();
 		logger.fine("search text: " + text);
@@ -283,7 +278,7 @@ public class LuceneSearchEngine {
 			query.add(qp.parse(text), Occur.SHOULD);
 			qp = new QueryParser(ITYPE_CONTENT, analyzer);
 			query.add(qp.parse(text), Occur.SHOULD);
-			searcher = new IndexSearcher(FSDirectory.getDirectory(indexFilename, false));
+			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false));
 			// rewrite the query to expand it - required for wildcards to work with highlighter
 			Query rewrittenQuery = searcher.rewrite(query);
 			// actually perform the search
@@ -314,7 +309,28 @@ public class LuceneSearchEngine {
 	 */
 	private static String getSearchIndexPath(String virtualWiki) {
 		File parent = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), SEARCH_DIR);
-		File child = new File(parent.getPath(), "index" + virtualWiki);
+		File child = new File(parent.getPath(), "index" + virtualWiki + File.separator);
+		if (!child.exists()) {
+			child.mkdirs();
+			IndexWriter writer = null;
+			try {
+				// create the search instance
+				FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), true);
+				StandardAnalyzer analyzer = new StandardAnalyzer();
+				writer = new IndexWriter(directory, analyzer, true);
+				directory.close();
+			} catch (Exception e) {
+				logger.severe("Unable to create search instance " + child.getPath(), e);
+			} finally {
+				try {
+					if (writer != null) {
+						writer.close();
+					}
+				} catch (Exception e) {
+					logger.severe("Exception during close", e);
+				}
+			}
+		}
 		return child.getPath();
 	}
 
@@ -333,8 +349,9 @@ public class LuceneSearchEngine {
 			RAMDirectory ram = new RAMDirectory();
 			StandardAnalyzer analyzer = new StandardAnalyzer();
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
-			IndexWriter writer = new IndexWriter(ram, analyzer, true);
+			IndexWriter writer = null;
 			try {
+				writer = new IndexWriter(ram, analyzer, true);
 				Collection topicNames = WikiBase.getHandler().getAllTopicNames(virtualWiki.getName());
 				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
 					String topicName = (String)iter.next();
@@ -348,24 +365,23 @@ public class LuceneSearchEngine {
 					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;
 				}
-			} catch (IOException ex) {
+			} catch (Exception ex) {
 				logger.severe("Failure while refreshing search index", ex);
 			} finally {
 				try {
 					if (writer != null) {
 						writer.optimize();
 					}
-				} catch (IOException ioe) {
-					logger.severe("IOException during optimize", ioe);
+				} catch (Exception e) {
+					logger.severe("Exception during optimize", e);
 				}
 				try {
 					if (writer != null) {
 						writer.close();
 					}
-				} catch (IOException ioe) {
-					logger.severe("IOException during close", ioe);
+				} catch (Exception e) {
+					logger.severe("Exception during close", e);
 				}
-				writer = null;
 			}
 			// write back to disc
 			copyRamIndexToFileIndex(ram, indexFile);

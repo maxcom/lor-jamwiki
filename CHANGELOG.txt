@@ -13,6 +13,8 @@
   [[Topic|Text]].
 * BUG: Fix issue with shared library files not being loaded.
 * BUG: Modify search engine initialization to avoid setup errors.
+* BUG: Correctly maintain file history when redirecting using file
+  persistency.
 * FEATURE: Clean up the layout of the Special:Admin page.
 * FEATURE: Sort property values alphabetically.
 * FEATURE: Add validation checks to Special:Admin.

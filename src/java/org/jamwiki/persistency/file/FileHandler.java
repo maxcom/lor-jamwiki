@@ -1207,6 +1207,52 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	protected void renameTopic(Topic topic, String renameTo) throws Exception {
+		// rename the topic file
+		String directory = TOPIC_DIR;
+		if (topic.getDeleteDate() != null) {
+			directory = DELETE_DIR;
+		}
+		File oldFile = getPathFor(topic.getVirtualWiki(), directory, topicFilename(topic.getName()));
+		File newFile = getPathFor(topic.getVirtualWiki(), directory, topicFilename(renameTo));
+		if (!oldFile.renameTo(newFile)) {
+			throw new Exception("Unable to rename " + topic.getVirtualWiki() + " / " + topic.getName() + " to " + renameTo);
+		}
+		File oldVersionDir = getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_VERSION_DIR, topic.getName());
+		File newVersionDir = getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_VERSION_DIR, renameTo);
+		if (newVersionDir.exists()) {
+			// swap existing version files between the old directory and the new directory
+			File[] oldVersionFiles = retrieveTopicVersionFiles(topic.getVirtualWiki(), topic.getName(), true);
+			File[] newVersionFiles = retrieveTopicVersionFiles(topic.getVirtualWiki(), renameTo, true);
+			if (oldVersionFiles != null) {
+				for (int i = 0; i < oldVersionFiles.length; i++) {
+					File newVersionFile = getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_VERSION_DIR, renameTo, oldVersionFiles[i].getName());
+					logger.info("moving " + oldVersionFiles[i].getPath() + " to " + newVersionFile.getPath());
+					if (!oldVersionFiles[i].renameTo(newVersionFile)) {
+						throw new Exception("Unable to rename version file from " + topic.getVirtualWiki() + " / " + renameTo + " to " + topic.getName());
+					}
+				}
+			}
+			if (newVersionFiles != null) {
+				for (int i = 0; i < newVersionFiles.length; i++) {
+					File newVersionFile = getPathFor(topic.getVirtualWiki(), FileHandler.TOPIC_VERSION_DIR, topic.getName(), newVersionFiles[i].getName());
+					logger.info("moving " + newVersionFiles[i].getPath() + " to " + newVersionFile.getPath());
+					if (!newVersionFiles[i].renameTo(newVersionFile)) {
+						throw new Exception("Unable to rename version file from " + topic.getVirtualWiki() + " / " + topic.getName() + " to " + renameTo);
+					}
+				}
+			}
+		} else {
+			// rename the topic version directory
+			if (!oldVersionDir.renameTo(newVersionDir)) {
+				throw new Exception("Unable to rename version directory from " + topic.getVirtualWiki() + " / " + topic.getName() + " to " + renameTo);
+			}
+		}
+	}
+
+	/**
+	 *
+	 */
 	private File[] retrieveCategoryFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.CATEGORIES_DIR);
 		File[] files = file.listFiles();

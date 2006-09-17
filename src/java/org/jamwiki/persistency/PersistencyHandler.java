@@ -298,6 +298,7 @@ public abstract class PersistencyHandler {
 		// update topic to indicate deleted, add delete topic version.  parser output
 		// should be empty since nothing to add to search engine.
 		ParserOutput parserOutput = new ParserOutput();
+		topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 		writeTopic(topic, topicVersion, parserOutput, params, userVisible);
 		// reset topic existence vector
 		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
@@ -609,10 +610,11 @@ public abstract class PersistencyHandler {
 				this.deleteTopic(toTopic, null, false, params);
 			}
 			String fromTopicName = fromTopic.getName();
+			this.renameTopic(fromTopic, destination);
 			fromTopic.setName(destination);
 			writeTopic(fromTopic, fromVersion, Utilities.parserOutput(fromTopic.getTopicContent()), params, true);
 			if (detinationExistsFlag) {
-				// target topic was deleted, so undelete and rename
+				// target topic was deleted, so rename and undelete
 				toTopic.setName(fromTopicName);
 				writeTopic(toTopic, null, null, params, false);
 				this.undeleteTopic(toTopic, null, false, params);
@@ -712,6 +714,12 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	protected abstract void reloadRecentChanges(Object[] params) throws Exception;
+
+	/**
+	 *
+	 */
+	protected void renameTopic(Topic topic, String renameTo) throws Exception {
+	}
 
 	/**
 	 *
@@ -831,6 +839,7 @@ public abstract class PersistencyHandler {
 		// update topic to indicate deleted, add delete topic version.  parser output
 		// should be empty since nothing to add to search engine.
 		ParserOutput parserOutput = new ParserOutput();
+		topic.setDeleteDate(null);
 		writeTopic(topic, topicVersion, parserOutput, params, userVisible);
 		// reset topic existence vector
 		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
