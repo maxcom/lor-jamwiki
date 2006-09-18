@@ -613,7 +613,7 @@ public class Utilities {
 	 */
 	public static Vector validateSystemSettings(Properties props) {
 		Vector errors = new Vector();
-		// test directories
+		// test directory permissions & existence
 		WikiMessage baseDirError = Utilities.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
 		if (baseDirError != null) {
 			errors.add(baseDirError);
@@ -621,6 +621,16 @@ public class Utilities {
 		WikiMessage fullDirError = Utilities.validateDirectory(props.getProperty(Environment.PROP_FILE_DIR_FULL_PATH));
 		if (fullDirError != null) {
 			errors.add(fullDirError);
+		}
+		String classesDir = null;
+		try {
+			classesDir = Utilities.getClassLoaderRoot().getPath();
+			WikiMessage classesDirError = Utilities.validateDirectory(classesDir);
+			if (classesDirError != null) {
+				errors.add(classesDirError);
+			}
+		} catch (Exception e) {
+			errors.add(new WikiMessage("error.directorywrite", classesDir, e.getMessage()));
 		}
 		// test database
 		String databaseType = props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE);

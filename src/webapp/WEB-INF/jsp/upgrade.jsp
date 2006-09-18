@@ -34,9 +34,15 @@ function confirmSubmit() {
 // -->
 </script>
 
-<c:if test="${!empty message}"><p align="center" style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p></c:if>
+<c:if test="${!empty message}">
+<p align="center" style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p>
+</c:if>
 
-<c:if test="${empty message}">
+<c:if test="${!empty error}">
+<p align="center" style="color:red;size=110%;"><f:message key="${error.key}" /></p>
+</c:if>
+
+<c:if test="${empty message && empty error}">
 <form name="adminUpgrade" method="get">
 <input type="hidden" name="function" value="upgrade" />
 <table style="border:2px solid #333333;padding=1em;">
@@ -44,6 +50,13 @@ function confirmSubmit() {
 <tr><td align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
 </table>
 </form>
+</c:if>
+
+<c:if test="${!empty errors}">
+<br />
+<table>
+<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
+</table>
 </c:if>
 
 <c:if test="${!empty messages}">

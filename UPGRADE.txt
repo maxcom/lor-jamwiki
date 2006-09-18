@@ -1,0 +1,64 @@
+INTRODUCTION
+============
+
+This document provides information for upgrading JAMWiki.  In most cases the
+JAMWiki upgrade process can be completed automatically by following the steps
+below, but in the case of errors manual upgrade steps may need to be followed.
+
+
+AUTOMATIC UPGRADES
+==================
+
+In most cases the JAMWiki process can be handled automatically by following
+these steps:
+
+  1. Download the latest JAMWiki WAR file.
+  2. Back up all database and/or file data prior to upgrading.
+  3. Back up the jamwiki.properties file and the logging.properties file that
+     can be found in the /WEB-INF/classes directory.
+  4. If you have created any virtual wikis, back up the web.xml file that can
+     be found in the /WEB-INF directory.
+  5. Remove the old JAMWiki installation.
+  6. Install the new JAMWiki WAR file.  See your web application server's
+     documentation for instructions.
+  7. Copy the files backed up in steps three and four back into their old
+     locations, overwriting any new files.  Be sure that permissions are set
+     so that JAMWiki has read and write access to all files in the
+     installation.
+  8. View any page on the Wiki.  You will be redirected to the upgrade page
+     and any required upgrade steps will be automatically performed.
+
+
+MANUAL UPGRADES
+===============
+
+Manual upgrades should only be followed if an error occurs while upgrading
+JAMWiki automatically.  When upgrading manually, you must perform all upgrade
+steps sequentially for each version that is being upgraded.  For example, if
+upgrading from version 0.3.0 to version 0.3.3, you must apply the upgrade
+steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
+
+
+  JAMWiki 0.3.4
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.3.4".
+  2. Update the /WEB-INF/classes/logging.properties file with appropriate
+     values for your setup.  See the comments within that file for
+     descriptions of what each value specifies.
+
+
+  JAMWiki 0.3.3
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.3.3".
+
+
+  JAMWiki 0.3.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.3.2".
+

@@ -95,17 +95,24 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (oldVersion.before(0, 3, 1)) {
 			if (!upgrade031(request, messages)) success = false;
 		}
+		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
+		if (errors.size() > 0) {
+			next.addObject("errors", errors);
+			success = false;
+		}
 		if (success) {
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			Environment.saveProperties();
+			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
+			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName(), null, true);
+			WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
+			// do not escape the HTML link
+			wm.setParamsWithoutEscaping(new String[]{htmlLink});
+			next.addObject("message", wm);
+		} else {
+			next.addObject("error", new WikiMessage("upgrade.caption.upgradefailed"));
 		}
 		next.addObject("messages", messages);
-		VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
-		String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName(), null, true);
-		WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
-		// do not escape the HTML link
-		wm.setParamsWithoutEscaping(new String[]{htmlLink});
-		next.addObject("message", wm);
 		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
