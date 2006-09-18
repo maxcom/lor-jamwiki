@@ -10,7 +10,7 @@ body {
 }
 
 body, input, select {
-	font: 95% sans-serif, Tahoma;
+	font: 95% sans-serif, tahoma;
 }
 
 a {

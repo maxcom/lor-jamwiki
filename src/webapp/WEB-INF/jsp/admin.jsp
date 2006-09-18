@@ -208,6 +208,7 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_FILE_DIR %>"><f:message key="admin.caption.filedir" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= props.getProperty(Environment.PROP_BASE_FILE_DIR) %>" size="50" id="<%= Environment.PROP_BASE_FILE_DIR %>" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.filedirhelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label></td>
 	<td class="formelement">
@@ -313,10 +314,12 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_FULL_PATH %>"><f:message key="admin.caption.uploaddir" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" value="<%= props.getProperty(Environment.PROP_FILE_DIR_FULL_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirhelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>"><f:message key="admin.caption.uploaddirrel" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= props.getProperty(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
 
 <%--
 FIXME - LDAP not supported at the moment, comment this out

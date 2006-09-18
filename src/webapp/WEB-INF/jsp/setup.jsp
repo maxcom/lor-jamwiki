@@ -27,7 +27,34 @@
 <%@ include file="page-init.jsp" %>
 
 <html>
-<head></head>
+<head>
+<style>
+body {
+	background: #f9f9f9;
+	color: black;
+	margin: 0;
+	padding: 5px;
+}
+
+body, input, select {
+	font: 95% sans-serif, tahoma;
+}
+td.formcaption {
+}
+td.formelement {
+}
+td.formhelp {
+	font-size: 85%;
+	color: #5f5f5f;
+}
+.red {
+	font: verdana, helvetica, sans-serif;
+	font-size: 110%;
+	color: #ff0000;
+	text-align: center;
+}
+</style>
+</head>
 <body>
 
 <script type="text/javascript">
@@ -53,18 +80,18 @@ function onPersistenceType() {
 <form name="setup" method="post">
 <table style="border:2px solid #333333;padding=1em;">
 <c:if test="${!empty errors}">
-<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
+<tr><td class="red" colspan="2"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
 </c:if>
-<c:if test="${!empty message}"><tr><td colspan="2" align="center"><div style="color:green;size=110%;"><f:message key="${message.key}" /></div></td></tr></c:if>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td><label for="<%= Environment.PROP_BASE_FILE_DIR %>"><f:message key="admin.caption.filedir" /></label>:</td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_FILE_DIR %>"><f:message key="admin.caption.filedir" /></label>:</td>
 	<td><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= Environment.getValue(Environment.PROP_BASE_FILE_DIR) %>" size="50" id="<%= Environment.PROP_BASE_FILE_DIR %>" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.filedirhelp" /></td></tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label>:</td>
-	<td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label>:</td>
+	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
 		<option value="<%=WikiBase.FILE%>"<%= WikiBase.getPersistenceType() == WikiBase.FILE ? " selected" : "" %>><f:message key="admin.persistencetype.flatfile"/></option>
 		<option value="<%=WikiBase.DATABASE%>"<%= WikiBase.getPersistenceType() == WikiBase.DATABASE ? " selected" : "" %>><f:message key="admin.persistencetype.database"/></option>
@@ -72,12 +99,12 @@ function onPersistenceType() {
 	</td>
 </tr>
 <tr>
-	<td><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.caption.databasedriver" /></label>:</td>
-	<td><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50"></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.caption.databasedriver" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50"></td>
 </tr>
 <tr>
-	<td><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label>:</td>
-	<td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label>:</td>
+	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<option value="mysql"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql") ? " selected" : "" %>>mysql</option>
 		<option value="ansi"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi") ? " selected" : "" %>>ansi</option>
@@ -87,38 +114,40 @@ function onPersistenceType() {
 	</td>
 </tr>
 <tr>
-	<td><label for="<%= Environment.PROP_DB_URL %>"><f:message key="admin.caption.databaseurl" /></label>:</td>
-	<td><input type="text" name="<%= Environment.PROP_DB_URL %>" id="<%= Environment.PROP_DB_URL %>" value="<%= Environment.getValue(Environment.PROP_DB_URL) %>" size="50"></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_URL %>"><f:message key="admin.caption.databaseurl" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_URL %>" id="<%= Environment.PROP_DB_URL %>" value="<%= Environment.getValue(Environment.PROP_DB_URL) %>" size="50"></td>
 </tr>
 <tr>
-	<td><label for="<%= Environment.PROP_DB_USERNAME %>"><f:message key="admin.caption.databaseuser" /></label>:</td>
-	<td><input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15"></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_USERNAME %>"><f:message key="admin.caption.databaseuser" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15"></td>
 </tr>
 <tr>
-	<td><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.caption.databasepass" /></label>:</td>
-	<td><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="15"></td>
-</tr>
-<tr><td colspan="2">&#160;</td></tr>
-<tr>
-	<td><label for="<%= Environment.PROP_FILE_DIR_FULL_PATH %>"><f:message key="admin.caption.uploaddir" /></label>:</td>
-	<td><input type="text" name="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" /></td>
-</tr>
-<tr>
-	<td><label for="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>"><f:message key="admin.caption.uploaddirrel" /></label>:</td>
-	<td><input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.caption.databasepass" /></label>:</td>
+	<td class="formelement"><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="15"></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
-	<td><label for="setupLogin"><f:message key="setup.caption.adminlogin"/></label>:</td>
-	<td><input type="text" name="login" value="<c:out value="${login}" />" id="setupLogin" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_FULL_PATH %>"><f:message key="admin.caption.uploaddir" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_FULL_PATH %>" /></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirhelp" /></td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>"><f:message key="admin.caption.uploaddirrel" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" /></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
+<tr><td colspan="2">&#160;</td></tr>
+<tr>
+	<td class="formcaption"><label for="setupLogin"><f:message key="setup.caption.adminlogin"/></label>:</td>
+	<td class="formelement"><input type="text" name="login" value="<c:out value="${login}" />" id="setupLogin" /></td>
 </tr>
 <tr>
-	<td><label for="setupNewPassword"><f:message key="register.caption.newpassword" /></label>:</td>
-	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="setupNewPassword" /></td>
+	<td class="formcaption"><label for="setupNewPassword"><f:message key="register.caption.newpassword" /></label>:</td>
+	<td class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="setupNewPassword" /></td>
 </tr>
 <tr>
-	<td><label for="setupConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</td>
-	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="setupConfirmPassword" /></td>
+	<td class="formcaption"><label for="setupConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</td>
+	<td class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="setupConfirmPassword" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="admin.action.save" />" /></td></tr>

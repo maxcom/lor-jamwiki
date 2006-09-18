@@ -23,7 +23,31 @@
 <%@ include file="page-init.jsp" %>
 
 <html>
-<head></head>
+<head>
+<style>
+body {
+	background: #f9f9f9;
+	color: black;
+	margin: 0;
+	padding: 5px;
+}
+body, input, select {
+	font: 95% sans-serif, tahoma;
+}
+.red {
+	font: verdana, helvetica, sans-serif;
+	font-size: 110%;
+	color: #ff0000;
+	text-align: center;
+}
+.green {
+	font: verdana, helvetica, sans-serif;
+	font-size: 110%;
+	color: #ff0000;
+	text-align: center;
+}
+</style>
+</head>
 <body>
 
 <script type="text/javascript" language="JavaScript">
@@ -35,11 +59,11 @@ function confirmSubmit() {
 </script>
 
 <c:if test="${!empty message}">
-<p align="center" style="color:green;size=110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p>
+<p class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p>
 </c:if>
 
 <c:if test="${!empty error}">
-<p align="center" style="color:red;size=110%;"><f:message key="${error.key}" /></p>
+<p class="red"><f:message key="${error.key}" /></p>
 </c:if>
 
 <c:if test="${empty message && empty error}">
