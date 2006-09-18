@@ -88,9 +88,8 @@ public class WikiLogger {
 			logger.addHandler(WikiLogger.DEFAULT_LOG_HANDLER);
 			logger.severe("JAMWiki log initialized with pattern " + pattern);
 		} catch (Exception e) {
-			System.out.println("Unable to load custom JAMWiki logging configuration, using system default " + e.getMessage());
+			System.out.println("WARNING: Unable to load custom JAMWiki logging configuration, using system default " + e.getMessage());
 			WikiLogger.DEFAULT_LOG_HANDLER = null;
-			e.printStackTrace();
 		} finally {
 			if (stream != null) {
 				try {
