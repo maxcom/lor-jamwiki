@@ -65,7 +65,7 @@ public class JAMWikiParser extends AbstractParser {
 	public String isRedirect(String content) {
 		if (!StringUtils.hasText(content)) return null;
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
-		return (m.matches()) ? Utilities.decodeURL(m.group(1).trim()) : null;
+		return (m.matches()) ? Utilities.decodeFromURL(m.group(1).trim()) : null;
 	}
 
 	/**

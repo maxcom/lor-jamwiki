@@ -64,10 +64,10 @@ import org.jamwiki.utils.Utilities;
 				return link;
 			}
 		} else if (description.equals(link)) {
-			return "<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeURL(link)
+			return "<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeForURL(link)
 				+ "\">" + description + "</a>";
 		} else {
-			return description + " (<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeURL(link)
+			return description + " (<a class=\"edit\" href=\"Special:Edit?topic=" + Utilities.encodeForURL(link)
 				+ "\">" + link + "</a>)";
 		}
 	}

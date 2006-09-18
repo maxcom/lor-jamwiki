@@ -40,9 +40,9 @@ public class LinkUtil {
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
 		if (StringUtils.hasText(query)) {
 			if (!query.startsWith("?")) query = "?" + query;
-			query += "&amp;topic=" + Utilities.encodeURL(topic);
+			query += "&amp;topic=" + Utilities.encodeForURL(topic);
 		} else {
-			query = "?topic=" + Utilities.encodeURL(topic);
+			query = "?topic=" + Utilities.encodeForURL(topic);
 		}
 		if (section > 0) {
 			query += "&amp;section=" + section;
@@ -164,7 +164,7 @@ public class LinkUtil {
 		if (!StringUtils.hasText(topic) && StringUtils.hasText(section)) {
 			String url = "";
 			if (section.startsWith("#")) section = section.substring(1);
-			return "#" + Utilities.encodeURL(section);
+			return "#" + Utilities.encodeForURL(section);
 		}
 		if (!WikiBase.exists(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
@@ -173,12 +173,12 @@ public class LinkUtil {
 		// context never ends with a "/" per servlet specification
 		url += "/";
 		// get the virtual wiki, which should have been set by the parent servlet
-		url += Utilities.encodeURL(virtualWiki);
+		url += Utilities.encodeForURL(virtualWiki);
 		url += "/";
-		url += Utilities.encodeURL(topic);
+		url += Utilities.encodeForURL(topic);
 		if (StringUtils.hasText(section)) {
 			if (!section.startsWith("#")) url += "#";
-			url += Utilities.encodeURL(section);
+			url += Utilities.encodeForURL(section);
 		}
 		if (StringUtils.hasText(query)) {
 			if (!query.startsWith("?")) url += "?";
@@ -208,7 +208,7 @@ public class LinkUtil {
 		int pos = text.indexOf('#');
 		if (pos == -1 || text.length() <= pos) return null;
 		String section = text.substring(pos+1).trim();
-		return Utilities.encodeURL(section);
+		return Utilities.encodeForURL(section);
 	}
 
 	/**
@@ -230,6 +230,6 @@ public class LinkUtil {
 		}
 		// convert any underscores in the topic name to spaces
 		topic = StringUtils.replace(topic, "_", " ");
-		return Utilities.decodeURL(topic.trim());
+		return Utilities.decodeFromRequest(topic.trim());
 	}
 }

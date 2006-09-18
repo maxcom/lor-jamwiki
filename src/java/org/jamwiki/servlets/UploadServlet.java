@@ -102,7 +102,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		// decode, then encode to ensure that any previously encoded characters
 		// aren't encoded twice
-		return Utilities.encodeURL(Utilities.decodeURL(fileName));
+		return Utilities.encodeForURL(Utilities.decodeFromURL(fileName));
 	}
 
 	/**
@@ -168,7 +168,7 @@ public class UploadServlet extends JAMWikiServlet {
 			}
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeURL(fileName);
+		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeFromURL(fileName);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			topic = new Topic();

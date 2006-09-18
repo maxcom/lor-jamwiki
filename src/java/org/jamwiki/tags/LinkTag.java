@@ -86,10 +86,10 @@ public class LinkTag extends BodyTagSupport {
 		} else {
 			this.queryParams += "&amp;";
 		}
-		this.queryParams += Utilities.encodeURL(key);
+		this.queryParams += Utilities.encodeForURL(key);
 		this.queryParams += "=";
 		if (StringUtils.hasText(value)) {
-			this.queryParams += Utilities.encodeURL(value);
+			this.queryParams += Utilities.encodeForURL(value);
 		}
 	}
 

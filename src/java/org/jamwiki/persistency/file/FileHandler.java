@@ -351,7 +351,7 @@ public class FileHandler extends PersistencyHandler {
 			for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
 				String childTopicName = (String)categoryIterator.next();
 				Category category = new Category();
-				category.setName(Utilities.decodeURL(files[i].getName()));
+				category.setName(Utilities.decodeFromURL(files[i].getName()));
 				category.setChildTopicName(childTopicName);
 				category.setSortKey((String)categoryHash.get(childTopicName));
 				category.setVirtualWiki(virtualWiki);
@@ -374,7 +374,7 @@ public class FileHandler extends PersistencyHandler {
 			int pos = topicName.lastIndexOf(EXT);
 			if (pos != -1) topicName = topicName.substring(0, pos);
 			// decode
-			topicName = Utilities.decodeURL(topicName);
+			topicName = Utilities.decodeFromURL(topicName);
 			all.add(topicName);
 		}
 		return all;
@@ -411,7 +411,7 @@ public class FileHandler extends PersistencyHandler {
 			int pos = topicName.lastIndexOf(EXT);
 			if (pos != -1) topicName = topicName.substring(0, pos);
 			// decode
-			topicName = Utilities.decodeURL(topicName);
+			topicName = Utilities.decodeFromURL(topicName);
 			all.add(topicName);
 		}
 		return all;
@@ -444,7 +444,7 @@ public class FileHandler extends PersistencyHandler {
 			int pos = login.lastIndexOf(EXT);
 			if (pos != -1) login = login.substring(0, pos);
 			// decode
-			login = Utilities.decodeURL(login);
+			login = Utilities.decodeFromURL(login);
 			all.add(login);
 		}
 		return all;
@@ -470,11 +470,11 @@ public class FileHandler extends PersistencyHandler {
 		buffer.append(fileBase(virtualWiki));
 		buffer.append(File.separator);
 		if (dir1 != null) {
-			buffer.append(Utilities.encodeSafeFileName(dir1));
+			buffer.append(Utilities.encodeForFilename(dir1));
 			buffer.append(File.separator);
 		}
 		if (dir2 != null) {
-			buffer.append(Utilities.encodeSafeFileName(dir2));
+			buffer.append(Utilities.encodeForFilename(dir2));
 			buffer.append(File.separator);
 		}
 		File directory = new File(buffer.toString());
@@ -482,7 +482,7 @@ public class FileHandler extends PersistencyHandler {
 			directory.mkdirs();
 		}
 		if (fileName != null) {
-			buffer.append(Utilities.encodeSafeFileName(fileName));
+			buffer.append(Utilities.encodeForFilename(fileName));
 		}
 		return new File(buffer.toString());
 	}

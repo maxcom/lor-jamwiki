@@ -155,7 +155,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			throw new Exception("No topic in URL: " + uri);
 		}
 		String topic = uri.substring(slashIndex + 1);
-		topic = Utilities.decodeURL(topic);
+		topic = Utilities.decodeFromURL(topic);
 		return topic;
 	}
 
@@ -168,7 +168,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			topic = (String)request.getAttribute(JAMWikiServlet.PARAMETER_TOPIC);
 		}
 		if (topic == null) return null;
-		topic = Utilities.decodeURL(topic);
+		topic = Utilities.decodeFromRequest(topic);
 		return topic;
 	}
 
@@ -278,7 +278,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
 				next.addObject("article", article);
 				next.addObject("comments", comments);
-				String editLink = "Special:Edit?topic=" + Utilities.encodeURL(pageInfo.getTopicName());
+				String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageInfo.getTopicName());
 				if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
 					editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 				}

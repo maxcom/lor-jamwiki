@@ -663,7 +663,7 @@ public abstract class PersistencyHandler {
 		String subdirectory = WikiBase.SPECIAL_PAGE_DIR + File.separator;
 		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
 			try {
-				filename = subdirectory + Utilities.encodeURL(topicName + "_" + language + "_" + country) + ".txt";
+				filename = subdirectory + Utilities.encodeForFilename(topicName + "_" + language + "_" + country) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.warning("File " + filename + " does not exist");
@@ -671,7 +671,7 @@ public abstract class PersistencyHandler {
 		}
 		if (contents == null && StringUtils.hasText(language)) {
 			try {
-				filename = subdirectory + Utilities.encodeURL(topicName + "_" + language) + ".txt";
+				filename = subdirectory + Utilities.encodeForFilename(topicName + "_" + language) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.warning("File " + filename + " does not exist");
@@ -679,7 +679,7 @@ public abstract class PersistencyHandler {
 		}
 		if (contents == null) {
 			try {
-				filename = subdirectory + Utilities.encodeURL(topicName) + ".txt";
+				filename = subdirectory + Utilities.encodeForFilename(topicName) + ".txt";
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.warning("File " + filename + " could not be read", e);

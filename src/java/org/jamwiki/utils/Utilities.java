@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -137,28 +136,35 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String decodeURL(String url) {
-		try {
-			url = URLDecoder.decode(url, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.severe("Failure while decoding url " + url + " with charset UTF-8", e);
-		}
+	public static String decodeFromRequest(String url) {
 		// convert underscores to spaces
 		url = StringUtils.replace(url, "_", " ");
 		return url;
 	}
 
 	/**
+	 *
+	 */
+	public static String decodeFromURL(String url) {
+		try {
+			url = URLDecoder.decode(url, "UTF-8");
+		} catch (Exception e) {
+			logger.warning("Failure while decoding url " + url + " with charset UTF-8");
+		}
+		return Utilities.decodeFromRequest(url);
+	}
+
+	/**
 	 * Converts arbitrary string into string usable as file name.
 	 */
-	public static String encodeSafeFileName(String name) {
+	public static String encodeForFilename(String name) {
 		// replace spaces with underscores
 		name = StringUtils.replace(name, " ", "_");
 		// URL encode the rest of the name
 		try {
 			name = URLEncoder.encode(name, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.severe("Failure while encoding " + name + " with charset UTF-8", e);
+		} catch (Exception e) {
+			logger.warning("Failure while encoding " + name + " with charset UTF-8");
 		}
 		return name;
 	}
@@ -166,14 +172,8 @@ public class Utilities {
 	/**
 	 *
 	 */
-	public static String encodeURL(String url) {
-		// convert spaces to underscores
-		url = StringUtils.replace(url, " ", "_");
-		try {
-			url = URLEncoder.encode(url, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.severe("Failure while encoding url " + url + " with charset UTF-8", e);
-		}
+	public static String encodeForURL(String url) {
+		url = Utilities.encodeForFilename(url);
 		// FIXME - un-encode colons.  handle this better.
 		url = StringUtils.replace(url, "%3A", ":");
 		return url;

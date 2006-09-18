@@ -214,7 +214,7 @@ public class TableOfContents {
 			adjustedLevel = ((entry.level - minLevel) + 1);
 			closeList(adjustedLevel, text);
 			openList(adjustedLevel, text);
-			text.append("<a href=\"#").append(entry.name).append("\">").append(Utilities.escapeHTML(entry.text)).append("</a>");
+			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(Utilities.escapeHTML(entry.text)).append("</a>");
 		}
 		closeList(0, text);
 		text.append("</td></tr></table>");

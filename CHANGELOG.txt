@@ -15,6 +15,7 @@
 * BUG: Modify search engine initialization to avoid setup errors.
 * BUG: Correctly maintain file history when redirecting using file
   persistency.
+* BUG: Topic names containing percent signs ("%") caused errors.  Fixed.
 * FEATURE: Validate system settings during upgrades.
 * FEATURE: Add instructions for performing a manual upgrade.
 * FEATURE: Clean up the layout of the Special:Admin page.

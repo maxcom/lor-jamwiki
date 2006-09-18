@@ -75,7 +75,7 @@ public class MoveServlet extends JAMWikiServlet {
 			return;
 		}
 		if (StringUtils.hasText(request.getParameter("moveCommentsPage"))) {
-			String moveCommentsPage = Utilities.decodeURL(request.getParameter("moveCommentsPage"));
+			String moveCommentsPage = Utilities.decodeFromRequest(request.getParameter("moveCommentsPage"));
 			String commentsDestination = Utilities.extractCommentsLink(moveDestination);
 			if (Utilities.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
 				if (!movePage(request, next, pageInfo, moveCommentsPage, commentsDestination)) {

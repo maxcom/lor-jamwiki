@@ -656,10 +656,10 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <NORMAL>^{h1} {
     logger.finer("h1: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(1, yytext().length() - 1).trim());
-    String tagName = Utilities.encodeURL(tagText);
+    String tagName = tagText;
     String output = updateToc(tagName, tagText, 1);
     output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h1>";
+    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h1>";
     // pushback to process heading text
     yypushback(yytext().length() - 1);
     this.wikih1 = true;
@@ -678,10 +678,10 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <NORMAL>^{h2} {
     logger.finer("h2: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(2, yytext().length() - 2).trim());
-    String tagName = Utilities.encodeURL(tagText);
+    String tagName = tagText;
     String output = updateToc(tagName, tagText, 2);
     output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h2>";
+    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h2>";
     // pushback to process heading text
     yypushback(yytext().length() - 2);
     this.wikih2 = true;
@@ -700,10 +700,10 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <NORMAL>^{h3} {
     logger.finer("h3: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(3, yytext().length() - 3).trim());
-    String tagName = Utilities.encodeURL(tagText);
+    String tagName = tagText;
     String output = updateToc(tagName, tagText, 3);
     output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h3>";
+    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h3>";
     // pushback to process heading text
     yypushback(yytext().length() - 3);
     this.wikih3 = true;
@@ -722,10 +722,10 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <NORMAL>^{h4} {
     logger.finer("h4: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(4, yytext().length() - 4).trim());
-    String tagName = Utilities.encodeURL(tagText);
+    String tagName = tagText;
     String output = updateToc(tagName, tagText, 4);
     output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h4>";
+    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h4>";
     // pushback to process heading text
     yypushback(yytext().length() - 4);
     this.wikih4 = true;
@@ -744,10 +744,10 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <NORMAL>^{h5} {
     logger.finer("h5: " + yytext() + " (" + yystate() + ")");
     String tagText = ParserUtil.stripMarkup(yytext().substring(5, yytext().length() - 5).trim());
-    String tagName = Utilities.encodeURL(tagText);
+    String tagName = tagText;
     String output = updateToc(tagName, tagText, 5);
     output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
-    output += "<a name=\"" + tagName + "\"></a><h5>";
+    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h5>";
     // pushback to process heading text
     yypushback(yytext().length() - 5);
     this.wikih5 = true;
