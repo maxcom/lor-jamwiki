@@ -61,9 +61,6 @@ public class WikiLogger {
 		if (WikiLogger.DEFAULT_LOG_HANDLER != null) {
 			logger.addHandler(WikiLogger.DEFAULT_LOG_HANDLER);
 		}
-		if (WikiLogger.DEFAULT_LOG_LEVEL != null) {
-			logger.setLevel(WikiLogger.DEFAULT_LOG_LEVEL);
-		}
 		return new WikiLogger(logger);
 	}
 
@@ -85,8 +82,14 @@ public class WikiLogger {
 			DEFAULT_LOG_LEVEL = Level.parse(properties.getProperty("org.jamwiki.level"));
 			WikiLogger.DEFAULT_LOG_HANDLER = new FileHandler(pattern, limit, count, append);
 			DEFAULT_LOG_HANDLER.setFormatter(new WikiLogFormatter(datePattern));
+			DEFAULT_LOG_HANDLER.setLevel(DEFAULT_LOG_LEVEL);
+			// test the logger to verify permissions are OK
+			Logger logger = Logger.getLogger(WikiLogger.class.getName());
+			logger.addHandler(WikiLogger.DEFAULT_LOG_HANDLER);
+			logger.severe("JAMWiki log initialized with pattern " + pattern);
 		} catch (Exception e) {
 			System.out.println("Unable to load custom JAMWiki logging configuration, using system default " + e.getMessage());
+			WikiLogger.DEFAULT_LOG_HANDLER = null;
 			e.printStackTrace();
 		} finally {
 			if (stream != null) {
