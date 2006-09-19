@@ -16,6 +16,7 @@
 * BUG: Correctly maintain file history when redirecting using file
   persistency.
 * BUG: Topic names containing percent signs ("%") caused errors.  Fixed.
+* BUG: Do not display option to change user login in Special:Account.
 * FEATURE: Allow additional symbols such as quotation marks in topic names.
 * FEATURE: Be more restrictive about characters allowed in user logins.
 * FEATURE: Validate system settings during upgrades.

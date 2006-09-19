@@ -25,18 +25,23 @@
 <p><f:message key="register.form.info" /></p>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
-<table>
 <c:if test="${!empty errors}">
-<tr><td colspan="2" align="center">
-	<p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></p>
-</td></tr>
+<p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></p>
 </c:if>
+<table>
 <%-- FIXME - handle LDAP --%>
+<c:if test="${empty newuser.userId || newuser.userId <= 0}">
 <tr>
 	<td><label for="registerLogin"><f:message key="common.login" /></label>:</td>
 	<td><input type="text" name="login" value="<c:out value="${newuser.login}" />" id="registerLogin" /></td>
 </tr>
+</c:if>
 <c:if test="${newuser.userId > 0}">
+<tr>
+	<input type="hidden" name="login" value="<c:out value="${newuser.login}" />" />
+	<td><f:message key="common.login" />:</td>
+	<td><c:out value="${newuser.login}" /></td>
+</tr>
 <tr>
 	<td><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</td>
 	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></td>
