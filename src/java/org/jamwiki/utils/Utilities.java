@@ -66,7 +66,7 @@ public class Utilities {
 
 	static {
 		try {
-			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>]+)");
+			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>\\[\\]]+)");
 			VALID_USER_NAME_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
