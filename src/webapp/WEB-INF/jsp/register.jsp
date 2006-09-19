@@ -24,19 +24,19 @@
 
 <p><f:message key="register.form.info" /></p>
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
-<input type="hidden" name="userId" value="<c:out value="${user.userId}" />" />
+<input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
 <table>
 <c:if test="${!empty errors}">
 <tr><td colspan="2" align="center">
-	<p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}" /><br /></c:forEach></p>
+	<p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></p>
 </td></tr>
 </c:if>
 <%-- FIXME - handle LDAP --%>
 <tr>
 	<td><label for="registerLogin"><f:message key="common.login" /></label>:</td>
-	<td><input type="text" name="login" value="<c:out value="${user.login}" />" id="registerLogin" /></td>
+	<td><input type="text" name="login" value="<c:out value="${newuser.login}" />" id="registerLogin" /></td>
 </tr>
-<c:if test="${user.userId > 0}">
+<c:if test="${newuser.userId > 0}">
 <tr>
 	<td><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</td>
 	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></td>
@@ -52,11 +52,11 @@
 </tr>
 <tr>
 	<td><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</td>
-	<td><input type="text" name="displayName" value="<c:out value="${user.displayName}" />" id="registerDisplayName" /></td>
+	<td><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></td>
 </tr>
 <tr>
 	<td><label for="registerEmail"><f:message key="register.caption.email" /></label>:</td>
-	<td><input type="text" name="email" value="<c:out value="${user.email}" />" id="registerEmail" /></td>
+	<td><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" /></td>
 </tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>

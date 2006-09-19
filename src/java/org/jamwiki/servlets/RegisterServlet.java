@@ -27,6 +27,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -64,6 +65,9 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (Utilities.currentUser(request) != null) {
+			next.addObject("newuser", Utilities.currentUser(request));
+		}
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
@@ -94,7 +98,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
-		next.addObject("user", user);
+		next.addObject("newuser", user);
 		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
 			next.addObject("errors", errors);
@@ -123,6 +127,9 @@ public class RegisterServlet extends JAMWikiServlet {
 		Vector errors = new Vector();
 		if (!StringUtils.hasText(user.getLogin())) {
 			errors.add(new WikiMessage("error.loginempty"));
+		}
+		if (!Utilities.validateUserName(user.getLogin())) {
+			errors.add(new WikiMessage("common.exception.name", user.getLogin()));
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword, false) == null) {

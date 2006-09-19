@@ -678,7 +678,7 @@ public class Utilities {
 	public static boolean validateUserName(String name) {
 		if (!Utilities.validateTopicName(name)) return false;
 		Matcher m = VALID_USER_NAME_PATTERN.matcher(name);
-		if (!m.find()) return false;
+		if (!m.matches()) return false;
 		return true;
 	}
 }
