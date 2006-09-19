@@ -374,7 +374,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		if (!Utilities.validateName(topicName)) {
+		if (!Utilities.validateTopicName(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.name", topicName));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
@@ -406,7 +406,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		if (!Utilities.validateName(topic.getName())) {
+		if (!Utilities.validateTopicName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {

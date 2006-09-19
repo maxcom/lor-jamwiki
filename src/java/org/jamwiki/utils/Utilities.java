@@ -33,6 +33,8 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +61,17 @@ import org.springframework.util.StringUtils;
 public class Utilities {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
+	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
+	private static Pattern VALID_USER_NAME_PATTERN = null;
+
+	static {
+		try {
+			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>]+)");
+			VALID_USER_NAME_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
+		} catch (Exception e) {
+			logger.severe("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 *
@@ -597,17 +610,6 @@ public class Utilities {
 	}
 
 	/**
-	 *
-	 */
-	public static boolean validateName(String name) {
-		if (!StringUtils.hasText(name)) return false;
-		if (name.toLowerCase().trim().startsWith(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
-		// try to remove invalid characters
-		String cleaned = StringUtils.deleteAny(name, "\n\r\"><{}#/\\=[]");
-		return name.equals(cleaned);
-	}
-
-	/**
 	 * Validate that vital system properties, such as database connection settings,
 	 * have been specified properly.
 	 */
@@ -657,5 +659,26 @@ public class Utilities {
 		}
 		if (!validParser) errors.add(new WikiMessage("error.parserclass", parserClass));
 		return errors;
+	}
+
+	/**
+	 *
+	 */
+	public static boolean validateTopicName(String name) {
+		if (!StringUtils.hasText(name)) return false;
+		if (name.toLowerCase().trim().startsWith(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
+		Matcher m = INVALID_TOPIC_NAME_PATTERN.matcher(name);
+		if (m.find()) return false;
+		return true;
+	}
+
+	/**
+	 *
+	 */
+	public static boolean validateUserName(String name) {
+		if (!Utilities.validateTopicName(name)) return false;
+		Matcher m = VALID_USER_NAME_PATTERN.matcher(name);
+		if (!m.find()) return false;
+		return true;
 	}
 }

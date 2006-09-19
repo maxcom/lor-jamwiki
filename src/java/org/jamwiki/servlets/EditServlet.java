@@ -72,7 +72,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		if (!Utilities.validateName(topicName)) {
+		if (!Utilities.validateTopicName(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.name", topicName));
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);

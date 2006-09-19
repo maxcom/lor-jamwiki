@@ -949,7 +949,7 @@ public abstract class PersistencyHandler {
 	 *  temporarily deleting a topic during page moves.
 	 */
 	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Object[] params, boolean userVisible) throws Exception {
-		if (!Utilities.validateName(topic.getName())) {
+		if (!Utilities.validateTopicName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
 		if (topic.getTopicId() <= 0) {
@@ -1002,7 +1002,7 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception {
-		if (!Utilities.validateName(virtualWiki.getName())) {
+		if (!Utilities.validateTopicName(virtualWiki.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", virtualWiki.getName()));
 		}
 		Object params[] = null;
@@ -1027,7 +1027,7 @@ public abstract class PersistencyHandler {
 	 *
 	 */
 	public void writeWikiUser(WikiUser user) throws Exception {
-		if (!Utilities.validateName(user.getLogin())) {
+		if (!Utilities.validateUserName(user.getLogin())) {
 			throw new WikiException(new WikiMessage("common.exception.name", user.getLogin()));
 		}
 		Object params[] = null;
