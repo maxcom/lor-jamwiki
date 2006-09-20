@@ -13,6 +13,7 @@ JAMWiki Contributors
      German:                Axel Kramer (axelclk)
      Danish:                Anders Monrad (g9adm)
      Hungarian:             Daniel Tar (bDaneE)
+     Polish:                Robert Matyja (dlpa)
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
   Other contributors:       Scott Croco (scroco)
 
