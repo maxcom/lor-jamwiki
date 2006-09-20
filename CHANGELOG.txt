@@ -26,7 +26,7 @@
 * FEATURE: Add validation checks to Special:Admin.
 * FEATURE: Add additional validation checks to Special:Setup.
 * FEATURE: Remove beta warning from the Special:Translation tool.
-* FEATURE: Updated Hungarian translations from bDaneE.
+* FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 * FEATURE: Updated Chinese translations from ewen0930.
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 * FEATURE: Added Polish translations from Robert Matyja (dlpa).

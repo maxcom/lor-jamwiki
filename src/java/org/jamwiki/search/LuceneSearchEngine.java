@@ -331,6 +331,16 @@ public class LuceneSearchEngine {
 				}
 			}
 		}
+		try {
+			if (System.getProperty("org.apache.lucene.lockdir") == null) {
+				// set the Lucene lock directory.  this defaults to java.io.tmpdir,
+				// which may not be writable on some systems.
+				System.setProperty("org.apache.lucene.lockdir", parent.getPath());
+			}
+		} catch (Exception e) {
+			// probably a security exception
+			logger.warning("Unable to specify Lucene lock directory, default will be used: " + e.getMessage());
+		}
 		return child.getPath();
 	}
 
