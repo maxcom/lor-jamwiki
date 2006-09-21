@@ -33,8 +33,6 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;

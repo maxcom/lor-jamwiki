@@ -19,7 +19,6 @@ package org.jamwiki.persistency.file;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.StringReader;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;

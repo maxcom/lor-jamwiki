@@ -29,7 +29,6 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.Utilities;
 
 /**

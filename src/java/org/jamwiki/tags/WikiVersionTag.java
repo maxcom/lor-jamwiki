@@ -16,7 +16,6 @@
  */
 package org.jamwiki.tags;
 
-import java.io.IOException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;

@@ -25,10 +25,10 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
 
 /**
- * Experimental class. This class may be used in two ways:
+ * This class may be used in two ways:
  *
  * The static addTableOfContents(String) method may be called to automatically
- * adds a table of contents on the right side of an article.  This method
+ * add a table of contents on the right side of an article.  This method
  * works with all lexers, because it parses the HTML for headers. However it
  * doesn't care where it is. So if you have a header on the LeftMenu or
  * BottomArea, it will also add a TOC there...
