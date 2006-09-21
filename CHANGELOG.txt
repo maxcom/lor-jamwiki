@@ -3,6 +3,7 @@
 =====
 
 * FEATURE: Add support for the DB2 database.
+* FEATURE: Add support for topics of the form "Topic/Subtopic".
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 
 0.3.4

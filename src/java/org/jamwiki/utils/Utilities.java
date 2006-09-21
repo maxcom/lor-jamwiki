@@ -208,8 +208,10 @@ public class Utilities {
 	 */
 	public static String encodeForURL(String url) {
 		url = Utilities.encodeForFilename(url);
-		// FIXME - un-encode colons.  handle this better.
+		// un-encode colons
 		url = StringUtils.replace(url, "%3A", ":");
+		// un-encode forward slashes
+		url = StringUtils.replace(url, "%2F", "/");
 		return url;
 	}
 
@@ -730,6 +732,40 @@ public class Utilities {
 		}
 		if (cookie == null) return null;
 		return cookie.getValue();
+	}
+
+	/**
+	 * Utility method for retrieving values from the URI.  This method
+	 * will attempt to properly convert the URI encoding, and then offers a way
+	 * to return directories after the initial context directory.  For example,
+	 * if the URI is "/context/first/second/third" and this method is called
+	 * with a skipCount of 1, the return value is "second/third".
+	 *
+	 * @param request The servlet request object.
+	 * @param skipCount The number of directories to skip.
+	 * @return A UTF-8 encoded portion of the URL that skips the web application
+	 *  context and skipCount directories, or <code>null</code> if the number of
+	 *  directories is less than skipCount.
+	 */
+	public static String retrieveDirectoriesFromURI(HttpServletRequest request, int skipCount) {
+		String uri = request.getRequestURI().trim();
+		// FIXME - needs testing on other platforms
+		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
+		String contextPath = request.getContextPath().trim();
+		if (!StringUtils.hasText(uri) || contextPath == null) {
+			return null;
+		}
+		uri = uri.substring(contextPath.length() + 1);
+		int i = 0;
+		while (i < skipCount) {
+			int slashIndex = uri.indexOf('/');
+			if (slashIndex == -1) {
+				return null;
+			}
+			uri = uri.substring(slashIndex + 1);
+			i++;
+		}
+		return uri;
 	}
 
 	/**

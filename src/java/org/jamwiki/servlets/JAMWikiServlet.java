@@ -134,29 +134,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *
 	 */
 	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
-		String uri = request.getRequestURI().trim();
-		// FIXME - needs testing on other platforms
-		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
-		if (uri == null || uri.length() <= 0) {
-			throw new Exception("URI string is empty");
+		// skip one directory, which is the virutal wiki
+		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
+		if (topic == null) {
+			throw new Exception("No topic in URL: " + request.getRequestURI());
 		}
-		if (!Utilities.convertEncoding(uri, "UTF-8", "ISO-8859-1").equals(request.getRequestURI().trim())) {
-			// url wasn't ISO-8859-1, default to UTF-8
-			uri = request.getRequestURI().trim();
-			logger.warning("Unable to convert URI from ISO-8859-1 " + uri);
-			if (StringUtils.hasText(request.getCharacterEncoding())) {
-				// FIXME - needs testing on other platforms
-				logger.warning("Attempting to convert URI from " + request.getCharacterEncoding() + " " + uri);
-				uri = Utilities.convertEncoding(uri, request.getCharacterEncoding(), "UTF-8");
-			}
-		}
-		int slashIndex = uri.lastIndexOf('/');
-		if (slashIndex == -1) {
-			throw new Exception("No topic in URL: " + uri);
-		}
-		String topic = uri.substring(slashIndex + 1);
-		topic = Utilities.decodeFromURL(topic);
-		return topic;
+		return Utilities.decodeFromURL(topic);
 	}
 
 	/**
@@ -168,29 +151,25 @@ public abstract class JAMWikiServlet extends AbstractController {
 			topic = (String)request.getAttribute(JAMWikiServlet.PARAMETER_TOPIC);
 		}
 		if (topic == null) return null;
-		topic = Utilities.decodeFromRequest(topic);
-		return topic;
+		return Utilities.decodeFromRequest(topic);
 	}
 
 	/**
 	 *
 	 */
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
-		String uri = request.getRequestURI().trim();
-		// FIXME - needs testing on other platforms
-		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
-		String contextPath = request.getContextPath().trim();
-		String virtualWiki = null;
-		if (!StringUtils.hasText(uri) || contextPath == null) {
+		String uri = Utilities.retrieveDirectoriesFromURI(request, 0);
+		if (uri == null) {
+			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
 			return null;
 		}
-		uri = uri.substring(contextPath.length() + 1);
 		int slashIndex = uri.indexOf('/');
 		if (slashIndex == -1) {
+			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
 			return null;
 		}
-		virtualWiki = uri.substring(0, slashIndex);
-		return virtualWiki;
+		String virtualWiki = uri.substring(0, slashIndex);
+		return Utilities.decodeFromURL(virtualWiki);
 	}
 
 	/**
