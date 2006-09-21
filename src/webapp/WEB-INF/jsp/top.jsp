@@ -30,7 +30,7 @@ if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environ
 <%
 }
 %>
-	<link href="jamwiki.css" type="text/css" rel="stylesheet" />
+	<link href="<jamwiki:link value="jamwiki.css" />" type="text/css" rel="stylesheet" />
 	<link rel="search" title="<f:message key="generalmenu.search"/>" href="<c:out value="${pathRoot}"/>Special:Search" />
 	<link rel="index" title="<f:message key="generalmenu.search"/>" href="<c:out value="${pathRoot}"/>Special:Allpages" />
 </head>
