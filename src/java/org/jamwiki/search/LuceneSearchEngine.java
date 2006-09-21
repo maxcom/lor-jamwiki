@@ -308,6 +308,16 @@ public class LuceneSearchEngine {
 	 */
 	private static String getSearchIndexPath(String virtualWiki) {
 		File parent = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), SEARCH_DIR);
+		try {
+			if (System.getProperty("org.apache.lucene.lockdir") == null) {
+				// set the Lucene lock directory.  this defaults to java.io.tmpdir,
+				// which may not be writable on some systems.
+				System.setProperty("org.apache.lucene.lockdir", parent.getPath());
+			}
+		} catch (Exception e) {
+			// probably a security exception
+			logger.warning("Unable to specify Lucene lock directory, default will be used: " + e.getMessage());
+		}
 		File child = new File(parent.getPath(), "index" + virtualWiki + File.separator);
 		if (!child.exists()) {
 			child.mkdirs();
@@ -329,16 +339,6 @@ public class LuceneSearchEngine {
 					logger.severe("Exception during close", e);
 				}
 			}
-		}
-		try {
-			if (System.getProperty("org.apache.lucene.lockdir") == null) {
-				// set the Lucene lock directory.  this defaults to java.io.tmpdir,
-				// which may not be writable on some systems.
-				System.setProperty("org.apache.lucene.lockdir", parent.getPath());
-			}
-		} catch (Exception e) {
-			// probably a security exception
-			logger.warning("Unable to specify Lucene lock directory, default will be used: " + e.getMessage());
 		}
 		return child.getPath();
 	}
