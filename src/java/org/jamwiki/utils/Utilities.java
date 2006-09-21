@@ -56,7 +56,7 @@ import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * This class provides a variety of utility methods.
  */
 public class Utilities {
 
@@ -74,7 +74,14 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method for setting a cookie.  This method will overwrite an existing
+	 * cookie of the same name if such a cookie already exists.
 	 *
+	 * @param response The servlet response object.
+	 * @param cookieName The name of the cookie to be set.
+	 * @param cookieValue The value of the cookie to be set.
+	 * @param cookieAge The length of time before the cookie expires, specified in seconds.
+	 * @throws Exception Thrown if any error occurs while setting cookie values.
 	 */
 	public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int cookieAge) throws Exception {
 		Cookie cookie = null;
@@ -85,24 +92,12 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns true if the given collection of strings contains the given string where the case
-	 * of either is ignored
-	 * @param collection collection of {@link String}s
-	 * @param string string to find
-	 * @return true if the string is in the collection with no regard to case
-	 */
-	public static boolean containsStringIgnoreCase(Collection collection, String string) {
-		for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-			String s = (String) iterator.next();
-			if (s.equalsIgnoreCase(string)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
+	 * Convert a string value from one encoding to another.
 	 *
+	 * @param text The string that is to be converted.
+	 * @param fromEncoding The encoding that the string is currently encoded in.
+	 * @param toEncoding The encoding that the string is to be encoded to.
+	 * @return The encoded string.
 	 */
 	public static String convertEncoding(String text, String fromEncoding, String toEncoding) {
 		if (!StringUtils.hasText(text)) return text;
@@ -124,7 +119,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Retrieve the current logged-in user from the servlet request.  If there is
+	 * no user return <code>null</code>.
 	 *
+	 * @param reqeust The servlet request object.
+	 * @return The current logged-in user, or <code>null</code> if there is no
+	 *  user currently logged in.
 	 */
 	public static WikiUser currentUser(HttpServletRequest request) {
 		// first look for user in the session
@@ -147,7 +147,11 @@ public class Utilities {
 	}
 
 	/**
+	 * Decode a value that has been retrieved from a servlet request.  This
+	 * method will replace any underscores with spaces.
 	 *
+	 * @param The encoded value that is to be decoded.
+	 * @return A decoded value.
 	 */
 	public static String decodeFromRequest(String url) {
 		// convert underscores to spaces
@@ -156,7 +160,14 @@ public class Utilities {
 	}
 
 	/**
+	 * Decode a value that has been retrieved directly from a URL or file
+	 * name.  This method will URL decode the value and then replace any
+	 * underscores with spaces.  Note that this method SHOULD NOT be called
+	 * for values retrieved using request.getParameter(), but only values
+	 * taken directly from a URL.
 	 *
+	 * @param The encoded value that is to be decoded.
+	 * @return A decoded value.
 	 */
 	public static String decodeFromURL(String url) {
 		try {
@@ -168,7 +179,12 @@ public class Utilities {
 	}
 
 	/**
-	 * Converts arbitrary string into string usable as file name.
+	 * Convert a topic name or other value into a value suitable for use as a
+	 * file name.  This method replaces spaces with underscores, and then URL
+	 * encodes the value.
+	 *
+	 * @param name The value that is to be encoded for use as a file name.
+	 * @return The encoded value.
 	 */
 	public static String encodeForFilename(String name) {
 		// replace spaces with underscores
@@ -183,7 +199,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Encode a topic name for use in a URL.  This method will replace spaces
+	 * with underscores and URL encode the value, but it will not URL encode
+	 * colons.
 	 *
+	 * @param url The topic name to be encoded for use in a URL.
+	 * @return The encoded topic name value.
 	 */
 	public static String encodeForURL(String url) {
 		url = Utilities.encodeForFilename(url);
@@ -194,6 +215,9 @@ public class Utilities {
 
 	/**
 	 * Replace any occurrences of <, >, ", ', or & with their HTML equivalents.
+	 *
+	 * @param input The text from which XML characters are to be escaped.
+	 * @return An escaped version of the given text.
 	 */
 	public static String escapeHTML(String input) {
 		if (!StringUtils.hasText(input)) return input;
@@ -208,6 +232,12 @@ public class Utilities {
 
 	/**
 	 * Given an article name, return the appropriate comments topic article name.
+	 * For example, if the article name is "Topic" then the return value is
+	 * "Comments:Topic".
+	 *
+	 * @param name The article name from which a comments article name is to
+	 *  be constructed.
+	 * @return The comments article name for the article name.
 	 */
 	public static String extractCommentsLink(String name) {
 		if (name == null || name.startsWith(WikiBase.NAMESPACE_SPECIAL)) {
@@ -229,7 +259,13 @@ public class Utilities {
 	}
 
 	/**
-	 * Given an article name, return the appropriate topic article name.
+	 * Given an article name, extract an appropriate topic article name.  For
+	 * example, if the article name is "Comments:Topic" then the return value
+	 * is "Topic".
+	 *
+	 * @param name The article name from which a topic article name is to be
+	 *  constructed.
+	 * @return The topic article name for the article name.
 	 */
 	public static String extractTopicLink(String name) {
 		if (name == null) {
@@ -254,9 +290,11 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns any trailing . , ; : characters on the given string
-	 * @param text
-	 * @return empty string if none are found
+	 * Returns any trailing . , ; : characters from the given string.
+	 *
+	 * @param text The text from which trailing punctuation should be returned.
+	 * @return Any trailing punctuation from the given text, or an empty string
+	 *  otherwise.
 	 */
 	public static String extractTrailingPunctuation(String text) {
 		StringBuffer buffer = new StringBuffer();
@@ -274,7 +312,14 @@ public class Utilities {
 	}
 
 	/**
+	 * Given a file name for a file that is located somewhere in the application
+	 * classpath, return a File object representing the file.
 	 *
+	 * @param filename The name of the file (relative to the classpath) that is
+	 *  to be retrieved.
+	 * @return A file object representing the requested filename
+	 * @throws Exception Thrown if the classloader can not be found or if
+	 *  the file can not be found in the classpath.
 	 */
 	public static File getClassLoaderFile(String filename) throws Exception {
 		// note that this method is used when initializing logging, so it must
@@ -314,9 +359,12 @@ public class Utilities {
 	}
 
 	/**
-	 * Attempt to get the class loader root directory by retrieving a file
-	 * that MUST exist in the class loader root and then returning its
-	 * parent directory.
+	 * Attempt to get the class loader root directory.  This method works
+	 * by searching for a file that MUST exist in the class loader root
+	 * and then returning its parent directory.
+	 *
+	 * @return Returns a file indicating the directory of the class loader.
+	 * @throws Exception Thrown if the class loader can not be found.
 	 */
 	public static File getClassLoaderRoot() throws Exception {
 		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
@@ -327,9 +375,12 @@ public class Utilities {
 	}
 
 	/**
-	 * Get messages for the given locale
-	 * @param locale locale
-	 * @return
+	 * Given a message key and locale return a locale-specific message.
+	 *
+	 * @param key The message key that corresponds to the formatted message
+	 *  being retrieved.
+	 * @param locale The locale for the message that is to be retrieved.
+	 * @return A formatted message string that is specific to the locale.
 	 */
 	public static String getMessage(String key, Locale locale) {
 		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
@@ -337,7 +388,15 @@ public class Utilities {
 	}
 
 	/**
+	 * Given a message key, locale, and formatting parameters, return a
+	 * locale-specific message.
 	 *
+	 * @param key The message key that corresponds to the formatted message
+	 *  being retrieved.
+	 * @param locale The locale for the message that is to be retrieved.
+	 * @param params An array of formatting parameters to use in the message
+	 *  being returned.
+	 * @return A formatted message string that is specific to the locale.
 	 */
 	public static String getMessage(String key, Locale locale, Object[] params) {
 		MessageFormat formatter = new MessageFormat("");
@@ -348,7 +407,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Finds the current WikiUser object in the request and determines
+	 * if that user is an admin.
 	 *
+	 * @param request The current servlet request object.
+	 * @return <code>true</code> if the current request contains a valid user
+	 *  object and if that user is an admin, <code>false</code> otherwise.
 	 */
 	public static boolean isAdmin(HttpServletRequest request) {
 		WikiUser user = currentUser(request);
@@ -356,7 +420,13 @@ public class Utilities {
 	}
 
 	/**
+	 * Given a topic name, determine if that name corresponds to a comments
+	 * page.
 	 *
+	 * @param topicName The topic name (non-null) to examine to determine if it
+	 *  is a comments page or not.
+	 * @return <code>true</code> if the page is a comments page, <code>false</code>
+	 *  otherwise.
 	 */
 	public static boolean isCommentsPage(String topicName) {
 		if (topicName.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
@@ -375,14 +445,23 @@ public class Utilities {
 	}
 
 	/**
+	 * Determine if the system properties file exists and has been initialized.
+	 * This method is primarily used to determine whether or not to display
+	 * the system setup page or not.
 	 *
+	 * @return <code>true</code> if the properties file has NOT been initialized,
+	 *  <code>false</code> otherwise.
 	 */
 	public static boolean isFirstUse() {
 		return !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED);
 	}
 
 	/**
+	 * Determine if the system code has been upgraded from the configured system
+	 * version.  Thus if the system is upgraded, this method returns <code>true</code>
 	 *
+	 * @return <code>true</code> if the system has been upgraded, <code>false</code>
+	 *  otherwise.
 	 */
 	public static boolean isUpgrade() {
 		if (Utilities.isFirstUse()) return false;
@@ -392,7 +471,13 @@ public class Utilities {
 	}
 
 	/**
-	 * Determine if the given string is an IP address.
+	 * Determine if the given string is an IP address.  This method uses pattern
+	 * matching to see if the given string could be a valid IP address.
+	 *
+	 * @param ipAddress A string that is to be examined to verify whether or not
+	 *  it could be a valid IP address.
+	 * @return <code>true</code> if the string is a value that is a valid IP address,
+	 *  <code>false</code> otherwise.
 	 */
 	public static boolean isIpAddress(String ipAddress) {
 		// note that a regular expression would be the easiest way to handle
@@ -423,7 +508,15 @@ public class Utilities {
 	}
 
 	/**
+	 * Using the system parser, parse system content.
 	 *
+	 * @param parserInput A ParserInput object that contains parser configuration
+	 *  information.
+	 * @param content The raw topic content that is to be parsed.
+	 * @param topicName The name of the topic being parsed.
+	 * @return Returns a ParserOutput object with parsed topic content and other
+	 *  parser output fields set.
+	 * @throws Exception Thrown if there are any parsing errors.
 	 */
 	public static ParserOutput parse(ParserInput parserInput, String content, String topicName) throws Exception {
 		if (content == null) {
@@ -434,7 +527,15 @@ public class Utilities {
 	}
 
 	/**
+	 * Using the system parser, parse system content that should not be persisted
+	 * such as signatures.
 	 *
+	 * @param parserInput A ParserInput object that contains parser configuration
+	 *  information.
+	 * @param content The raw topic content that is to be parsed.
+	 * @return Returns a ParserOutput object with minimally parsed topic content
+	 *  and other parser output fields set.
+	 * @throws Exception Thrown if there are any parsing errors.
 	 */
 	public static ParserOutput parsePreSave(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
@@ -442,7 +543,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method to retrieve an instance of the current system parser.
 	 *
+	 * @param parserInput A ParserInput object that contains parser configuration
+	 *  information.
+	 * @return An instance of the system parser.
+	 * @throws Exception Thrown if a parser instance can not be instantiated.
 	 */
 	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
@@ -457,7 +563,13 @@ public class Utilities {
 	}
 
 	/**
+	 * Given a topic name, return the parser-specific syntax to indicate a page
+	 * redirect.
 	 *
+	 * @param topicName The name of the topic that is being redirected to.
+	 * @return A string containing the syntax indicating a redirect.
+	 * @throws Exception Thrown if a parser instance cannot be instantiated or
+	 *  if any other parser error occurs.
 	 */
 	public static String parserRedirectContent(String topicName) throws Exception {
 		AbstractParser parser = parserInstance(null);
@@ -465,7 +577,14 @@ public class Utilities {
 	}
 
 	/**
+	 * Retrieve a default ParserOutput object for a given topic name.  Note that
+	 * the content has almost no parsing performed on it other than to generate
+	 * parser output metadata.
 	 *
+	 * @param content The raw topic content.
+	 * @return Returns a minimal ParserOutput object initialized primarily with
+	 *  parser metadata such as links.
+	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserOutput parserOutput(String content) throws Exception {
 		ParserInput parserInput = new ParserInput();
@@ -474,7 +593,16 @@ public class Utilities {
 	}
 
 	/**
+	 * When editing a section of a topic, this method provides a way of slicing
+	 * out a given section of the raw topic content.
 	 *
+	 * @param request The servlet request object.
+	 * @param virtualWiki The virtual wiki for the topic being parsed.
+	 * @param topicName The name of the topic being parsed.
+	 * @param targetSection The section to be sliced and returned.
+	 * @return Returns a ParserOutput object containing the raw topic content
+	 *  for the target section.
+	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserOutput parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
@@ -492,7 +620,18 @@ public class Utilities {
 	}
 
 	/**
+	 * When editing a section of a topic, this method provides a way of splicing
+	 * an edited section back into the raw topic content.
 	 *
+	 * @param request The servlet request object.
+	 * @param virtualWiki The virtual wiki for the topic being parsed.
+	 * @param topicName The name of the topic being parsed.
+	 * @param targetSection The section to be sliced and returned.
+	 * @param replacementText The edited content that is to be spliced back into
+	 *  the raw topic.
+	 * @return Returns a ParserOutput object containing the raw topic content
+	 *  including the new replacement text.
+	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserOutput parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
@@ -510,7 +649,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method for parsing a multipart servlet request.  This method returns
+	 * an iterator of FileItem objects that corresponds to the request.
 	 *
+	 * @param request The servlet request containing the multipart request.
+	 * @return Returns an iterator of FileItem objects the corresponds to the request.
+	 * @throws Exception Thrown if any problems occur while processing the request.
 	 */
 	public static Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
 		// Create a factory for disk-based file items
@@ -522,7 +666,14 @@ public class Utilities {
 	}
 
 	/**
-	 * Read a file and return its contents as a String.
+	 * Utility method for reading a file from a classpath directory and returning
+	 * its contents as a String.
+	 *
+	 * @param filename The name of the file to be read, either as an absolute file
+	 *  path or relative to the classpath.
+	 * @return A string representation of the file contents.
+	 * @throws Exception Thrown if the file cannot be found or if an I/O exception
+	 *  occurs.
 	 */
 	public static String readFile(String filename) throws Exception {
 		File file = new File(filename);
@@ -544,7 +695,11 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method used to delete a cookie by setting its expiration time to the
+	 * current time.
 	 *
+	 * @param response The servlet response object.
+	 * @param cookieName The name of the cookie that is to be deleted.
 	 */
 	public static final void removeCookie(HttpServletResponse response, String cookieName) {
 		Cookie cookie = new Cookie(cookieName, null);
@@ -555,7 +710,13 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method used to retrieve the value of a specific cookie from the request.
 	 *
+	 * @param request The servlet request object.
+	 * @param cookieName The name of the cookie whose value is being retrieved from
+	 *  the request.
+	 * @return Returns the content of the cookie value, or <code>null</code> if the
+	 *  cookie cannot be found in the request.
 	 */
 	public static String retrieveCookieValue(HttpServletRequest request, String cookieName) {
 		Cookie[] cookies = request.getCookies();
@@ -612,6 +773,10 @@ public class Utilities {
 	/**
 	 * Validate that vital system properties, such as database connection settings,
 	 * have been specified properly.
+	 *
+	 * @param props The property object to validate against.
+	 * @return A Vector of WikiMessage objects containing any errors encountered,
+	 *  or an empty Vector if no errors are encountered.
 	 */
 	public static Vector validateSystemSettings(Properties props) {
 		Vector errors = new Vector();
@@ -662,7 +827,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method for determining if a topic name is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
+	 * @param name The topic name to validate.
+	 * @return <code>true</code> if the name is a valid topic name, <code>false</code>
+	 *  otherwise.
 	 */
 	public static boolean validateTopicName(String name) {
 		if (!StringUtils.hasText(name)) return false;
@@ -673,7 +843,12 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method for determining if a user login is valid for use on the Wiki,
+	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
+	 * @param name The user login to validate.
+	 * @return <code>true</code> if the name is a valid user login, <code>false</code>
+	 *  otherwise.
 	 */
 	public static boolean validateUserName(String name) {
 		if (!Utilities.validateTopicName(name)) return false;
