@@ -41,11 +41,11 @@ import org.jamwiki.utils.Encryption;
  */
 public class DatabaseHandler extends PersistencyHandler {
 
-	public static final String DB_TYPE_ORACLE = "oracle";
+	public static final String DB_TYPE_ANSI = "ansi";
+	public static final String DB_TYPE_DB2 = "db2";
 	public static final String DB_TYPE_MYSQL = "mysql";
+	public static final String DB_TYPE_ORACLE = "oracle";
 	public static final String DB_TYPE_POSTGRES = "postgres";
-	private static final String INIT_SCRIPT_ANSI = "create_ansi.sql";
-	private static final String INIT_SCRIPT_ORACLE = "create_oracle.sql";
 	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 	private static QueryHandler queryHandler = null;
 	private boolean initialized = false;
@@ -60,6 +60,8 @@ public class DatabaseHandler extends PersistencyHandler {
 			DatabaseHandler.queryHandler = new MySqlQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {
 			DatabaseHandler.queryHandler = new OracleQueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2)) {
+			DatabaseHandler.queryHandler = new DB2QueryHandler();
 		} else {
 			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}

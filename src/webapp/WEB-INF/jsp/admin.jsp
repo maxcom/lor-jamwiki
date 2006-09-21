@@ -20,6 +20,7 @@
         java.util.Properties,
         org.jamwiki.Environment,
         org.jamwiki.WikiBase,
+        org.jamwiki.persistency.db.DatabaseHandler,
         org.jamwiki.servlets.JAMWikiServlet,
         org.jamwiki.users.Usergroup,
         org.apache.commons.pool.impl.GenericObjectPool
@@ -227,10 +228,11 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
-		<option value="mysql"<%= props.getProperty(Environment.PROP_DB_TYPE).equals("mysql") ? " selected" : "" %>>mysql</option>
-		<option value="ansi"<%= props.getProperty(Environment.PROP_DB_TYPE).equals("ansi") ? " selected" : "" %>>ansi</option>
-		<option value="oracle"<%= props.getProperty(Environment.PROP_DB_TYPE).equals("oracle") ? " selected" : "" %>>oracle</option>
-		<option value="postgres"<%= props.getProperty(Environment.PROP_DB_TYPE).equals("postgres") ? " selected" : "" %>>postgres</option>
+		<option value="<%= DatabaseHandler.DB_TYPE_ANSI %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ANSI) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ANSI %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_DB2 %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2 %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_MYSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MYSQL %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_ORACLE %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ORACLE %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_POSTGRES %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_POSTGRES %></option>
 		</select>
 	</td>
 </tr>

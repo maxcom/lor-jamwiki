@@ -714,6 +714,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	private static String now() {
 		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES)) {
 			return "CURRENT_TIMESTAMP";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2)) {
+			return "CURRENT_TIMESTAMP";
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
 			return "CURRENT_TIMESTAMP";
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
@@ -729,22 +731,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	public void reloadRecentChanges(Connection conn) throws Exception {
 		DatabaseConnection.executeUpdate(STATEMENT_DELETE_RECENT_CHANGES, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_INSERT_RECENT_CHANGES, conn);
-	}
-
-	/**
-	 * Utility method for returning a database-appropriate value that corresponds
-	 * to the SQL type for text values.
-	 */
-	private static String text() {
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES)) {
-			return "TEXT";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
-			return "TEXT";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
-			return "CLOB";
-		} else {
-			return "TEXT";
-		}
 	}
 
 	/**

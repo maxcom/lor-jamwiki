@@ -2,6 +2,7 @@
 0.3.5
 =====
 
+* FEATURE: Add support for the DB2 database.
 
 0.3.4
 =====
