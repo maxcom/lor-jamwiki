@@ -19,7 +19,7 @@ package org.jamwiki.search;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * This class is a utility class used to hold search result information.
  */
 public class SearchResultEntry {
 

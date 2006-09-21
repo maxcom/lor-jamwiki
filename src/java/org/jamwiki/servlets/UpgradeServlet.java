@@ -32,7 +32,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseUpgrades;
 import org.jamwiki.persistency.file.FileUpgrades;
-import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -183,7 +182,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgrade020(HttpServletRequest request, Vector messages) {
 		try {
 			// rebuild search index
-			LuceneSearchEngine.refreshIndex();
+			WikiBase.getSearchEngine().refreshIndex();
 			messages.add("Refreshed search index");
 			// upgrade stylesheet
 			upgradeStyleSheet(request, messages);

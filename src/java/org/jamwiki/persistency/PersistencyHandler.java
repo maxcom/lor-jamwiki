@@ -40,7 +40,6 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCacheMap;
@@ -254,7 +253,7 @@ public abstract class PersistencyHandler {
 				}
 			}
 			// FIXME - since search index info is in the same directory it gets deleted
-			LuceneSearchEngine.refreshIndex();
+			WikiBase.getSearchEngine().refreshIndex();
 			return messages;
 		} catch (Exception e) {
 			toHandler.handleErrors(params);
@@ -992,8 +991,8 @@ public abstract class PersistencyHandler {
 		// reset topic non-existence vector
 		cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		if (parserOutput != null) {
-			LuceneSearchEngine.deleteFromIndex(topic);
-			LuceneSearchEngine.addToIndex(topic, parserOutput.getLinks());
+			WikiBase.getSearchEngine().deleteFromIndex(topic);
+			WikiBase.getSearchEngine().addToIndex(topic, parserOutput.getLinks());
 		}
 	}
 

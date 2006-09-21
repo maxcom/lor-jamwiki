@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -85,7 +84,7 @@ public class SearchServlet extends JAMWikiServlet {
 			return;
 		}
 		// grab search engine instance and find
-		Collection results = LuceneSearchEngine.findMultiple(virtualWiki, searchField);
+		Collection results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
 		next.addObject("searchField", searchField);
 		next.addObject("results", results);
 		pageInfo.setAction(WikiPageInfo.ACTION_SEARCH_RESULTS);

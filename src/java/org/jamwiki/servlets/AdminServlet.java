@@ -30,7 +30,6 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseConnection;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -263,7 +262,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	private void refreshIndex(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
-			LuceneSearchEngine.refreshIndex();
+			WikiBase.getSearchEngine().refreshIndex();
 			next.addObject("message", new WikiMessage("admin.message.indexrefreshed"));
 		} catch (Exception e) {
 			logger.severe("Failure while refreshing search index", e);

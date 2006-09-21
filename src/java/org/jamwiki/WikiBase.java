@@ -23,6 +23,7 @@ import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.search.LuceneSearchEngine;
+import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
@@ -43,6 +44,8 @@ public class WikiBase {
 	private static WikiBase instance = null;
 	/** The handler that looks after read/write operations for a persistence type. */
 	private static PersistencyHandler handler = null;
+	/** The search engine instance. */
+	private static SearchEngine searchEngine = null;
 
 	/** The topics are stored in a flat file */
 	public static final int FILE = 0;
@@ -88,6 +91,7 @@ public class WikiBase {
 		} else {
 			WikiBase.handler = new FileHandler();
 		}
+		this.searchEngine = new LuceneSearchEngine();
 	}
 
 	/**
@@ -138,6 +142,15 @@ public class WikiBase {
 	}
 
 	/**
+	 * Get an instance of the current persistency handler.
+	 *
+	 * @return The current handler instance.
+	 */
+	public static SearchEngine getSearchEngine() {
+		return WikiBase.searchEngine;
+	}
+
+	/**
 	 * Return an instance of the current user group type (usually LDAP or database).
 	 *
 	 * @return The current user group type.
@@ -170,7 +183,7 @@ public class WikiBase {
 			WikiBase.handler.initialize(locale, user);
 		}
 		JAMWikiServlet.removeCachedContents();
-		LuceneSearchEngine.refreshIndex();
+		WikiBase.searchEngine.refreshIndex();
 	}
 
 	/**
