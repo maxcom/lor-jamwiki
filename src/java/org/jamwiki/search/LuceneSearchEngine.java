@@ -87,22 +87,8 @@ public class LuceneSearchEngine implements SearchEngine {
 		String topicName = topic.getName();
 		String contents = topic.getTopicContent();
 		IndexWriter writer = null;
-		IndexReader reader = null;
 		try {
 			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false);
-			// delete the current document
-			try {
-				reader = IndexReader.open(directory);
-				reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
-			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (Exception e) {}
-				}
-			}
-			directory.close();
-			// add new document
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(), false);
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -123,6 +109,7 @@ public class LuceneSearchEngine implements SearchEngine {
 					}
 				} catch (Exception e) {}
 			}
+			directory.close();
 		} catch (Exception e) {
 			logger.severe("Exception while adding topic " + topicName, e);
 		}
@@ -227,8 +214,27 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
-	// FIXME - implement this method
 	public synchronized void deleteFromIndex(Topic topic) {
+		String virtualWiki = topic.getVirtualWiki();
+		String topicName = topic.getName();
+		IndexReader reader = null;
+		try {
+			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false);
+			// delete the current document
+			try {
+				reader = IndexReader.open(directory);
+				reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (Exception e) {}
+				}
+			}
+			directory.close();
+		} catch (Exception e) {
+			logger.severe("Exception while adding topic " + topicName, e);
+		}
 	}
 
 	/**
