@@ -54,7 +54,6 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_VALIDATION_QUERY %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=true
 	} else {
@@ -72,7 +71,6 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_VALIDATION_QUERY %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=false
 	}
@@ -291,10 +289,6 @@ FIXME - Email not supported right now, comment this out
 		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_GROW%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_GROW ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.grow" /></option>
 		</select>
 	</td>
-</tr>
-<tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>"><f:message key="admin.caption.dbcp.validationquery" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" id="<%= Environment.PROP_DBCP_VALIDATION_QUERY %>" value="<%= props.getProperty(Environment.PROP_DBCP_VALIDATION_QUERY) %>" size="50" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>"><f:message key="admin.caption.dbcp.removeabandoned" /></label></td>

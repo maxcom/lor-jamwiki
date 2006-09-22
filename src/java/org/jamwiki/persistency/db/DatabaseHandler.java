@@ -46,6 +46,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	public static final String DB_TYPE_MYSQL = "mysql";
 	public static final String DB_TYPE_ORACLE = "oracle";
 	public static final String DB_TYPE_POSTGRES = "postgres";
+	public static String CONNECTION_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 	private static QueryHandler queryHandler = null;
 	private boolean initialized = false;
@@ -65,6 +66,7 @@ public class DatabaseHandler extends PersistencyHandler {
 		} else {
 			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}
+		DatabaseHandler.CONNECTION_VALIDATION_QUERY = DatabaseHandler.queryHandler.connectionValidationQuery();
 	}
 
 	/**

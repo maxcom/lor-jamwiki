@@ -39,6 +39,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	private static WikiLogger logger = WikiLogger.getLogger(DefaultQueryHandler.class.getName());
 	protected static final String SQL_PROPERTY_FILE_NAME = "sql.ansi.properties";
 
+	protected static String STATEMENT_CONNECTION_VALIDATION_QUERY = null;
 	protected static String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_INFO_TABLE = null;
@@ -111,6 +112,13 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected DefaultQueryHandler() {
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME);
 		this.init(props);
+	}
+
+	/**
+	 *
+	 */
+	public String connectionValidationQuery() {
+		return STATEMENT_CONNECTION_VALIDATION_QUERY;
 	}
 
 	/**
@@ -272,6 +280,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	 *
 	 */
 	protected void init(Properties props) {
+		STATEMENT_CONNECTION_VALIDATION_QUERY    = props.getProperty("STATEMENT_CONNECTION_VALIDATION_QUERY");
 		STATEMENT_CREATE_VIRTUAL_WIKI_TABLE      = props.getProperty("STATEMENT_CREATE_VIRTUAL_WIKI_TABLE");
 		STATEMENT_CREATE_WIKI_USER_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_USER_TABLE");
 		STATEMENT_CREATE_WIKI_USER_INFO_TABLE    = props.getProperty("STATEMENT_CREATE_WIKI_USER_INFO_TABLE");

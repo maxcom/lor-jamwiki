@@ -58,7 +58,6 @@ public class Environment {
 	public static final String PROP_DBCP_TEST_ON_RETURN = "dbcp-test-on-return";
 	public static final String PROP_DBCP_TEST_WHILE_IDLE = "dbcp-test-while-idle";
 	public static final String PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS = "dbcp-time-between-eviction-runs";
-	public static final String PROP_DBCP_VALIDATION_QUERY = "dbcp-validation-query";
 	public static final String PROP_DBCP_WHEN_EXHAUSTED_ACTION = "dbcp-when-exhausted-action";
 	public static final String PROP_EMAIL_REPLY_ADDRESS = "reply-address";
 	public static final String PROP_EMAIL_SMTP_HOST = "smtp-host";
@@ -160,7 +159,6 @@ public class Environment {
 		defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, "true");
 		defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, "true");
 		defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
-		defaults.setProperty(PROP_DBCP_VALIDATION_QUERY, "SELECT 1");
 		defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
 		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");

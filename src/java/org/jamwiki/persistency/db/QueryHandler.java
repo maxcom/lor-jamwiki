@@ -33,6 +33,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public String connectionValidationQuery();
+
+	/**
+	 *
+	 */
 	public void createTables(Connection conn) throws Exception;
 
 	/**

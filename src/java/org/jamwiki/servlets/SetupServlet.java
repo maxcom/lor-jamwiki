@@ -150,10 +150,6 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setValue(Environment.PROP_DB_USERNAME, request.getParameter(Environment.PROP_DB_USERNAME));
 			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD), null);
 			next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
-			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
-				// oracle must use a different validation query
-				Environment.setValue(Environment.PROP_DBCP_VALIDATION_QUERY, "select 1 from dual");
-			}
 		}
 	}
 
