@@ -292,12 +292,19 @@ public class DatabaseConnection {
 	 */
 	public static boolean testDatabase(String driver, String url, String user, String password) {
 		Connection conn = null;
+		String sql = null;
 		try {
 			Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
 			conn = DriverManager.getConnection(url, user, password);
+			sql = DatabaseHandler.CONNECTION_VALIDATION_QUERY;
+			DatabaseConnection.executeQuery(sql, conn);
 		} catch (Exception e) {
 			// database settings incorrect
-			logger.severe("Invalid database settings", e);
+			if (sql == null) {
+				logger.severe("Invalid database settings", e);
+			} else {
+				logger.severe("Invalid database connection validation query: " + sql, e);
+			}
 			return false;
 		} finally {
 			if (conn != null) {
