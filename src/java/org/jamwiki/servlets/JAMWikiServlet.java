@@ -36,6 +36,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -219,7 +220,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Utility method for adding category content to the ModelAndView object.
 	 */
 	protected void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
-		String categoryName = topicName.substring(WikiBase.NAMESPACE_CATEGORY.length());
+		String categoryName = topicName.substring(WikiBase.NAMESPACE_CATEGORY.length() + WikiBase.NAMESPACE_SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
 		Collection categoryTopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
 		next.addObject("categoryTopics", categoryTopics);
@@ -231,7 +232,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		LinkedHashMap subCategories = new LinkedHashMap();
 		for (Iterator iterator = tempSubcategories.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();
-			String value = category.getChildTopicName().substring(WikiBase.NAMESPACE_CATEGORY.length());
+			String value = category.getChildTopicName().substring(WikiBase.NAMESPACE_CATEGORY.length() + WikiBase.NAMESPACE_SEPARATOR.length());
 			subCategories.put(category.getChildTopicName(), value);
 		}
 		next.addObject("subCategories", subCategories);
@@ -248,8 +249,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			// add link to user page and comments page
 			WikiUser user = Utilities.currentUser(request);
 			if (user != null) {
-				next.addObject("userpage", WikiBase.NAMESPACE_USER + user.getLogin());
-				next.addObject("usercomments", WikiBase.NAMESPACE_USER_COMMENTS + user.getLogin());
+				next.addObject("userpage", WikiBase.NAMESPACE_USER + WikiBase.NAMESPACE_SEPARATOR + user.getLogin());
+				next.addObject("usercomments", WikiBase.NAMESPACE_USER_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + user.getLogin());
 				next.addObject("adminUser", new Boolean(user.getAdmin()));
 			}
 			if (!pageInfo.getSpecial()) {
@@ -331,7 +332,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 				VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
-			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic, null, request.getQueryString());
+			WikiLink wikiLink = new WikiLink();
+			wikiLink.setDestination(topic);
+			wikiLink.setQuery(request.getQueryString());
+			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, wikiLink);
 		}
 		next.addObject("redirect", redirect);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));
@@ -417,7 +421,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				LinkedHashMap categories = new LinkedHashMap();
 				for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
 					String key = (String)iterator.next();
-					String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
+					String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length() + WikiBase.NAMESPACE_SEPARATOR.length());
 					categories.put(key, value);
 				}
 				next.addObject("categories", categories);

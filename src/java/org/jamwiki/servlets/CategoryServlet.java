@@ -60,7 +60,7 @@ public class CategoryServlet extends JAMWikiServlet {
 		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();
 			String key = category.getName();
-			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length());
+			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length() + WikiBase.NAMESPACE_SEPARATOR.length());
 			categories.put(key, value);
 		}
 		next.addObject("categoryCount", new Integer(categories.size()));

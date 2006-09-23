@@ -62,12 +62,12 @@ public class Utilities {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
-	private static Pattern VALID_USER_NAME_PATTERN = null;
+	private static Pattern VALID_USER_LOGIN_PATTERN = null;
 
 	static {
 		try {
-			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>\\[\\]]+)");
-			VALID_USER_NAME_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
+			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>\\[\\]?#]+)");
+			VALID_USER_LOGIN_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -242,22 +242,27 @@ public class Utilities {
 	 * @return The comments article name for the article name.
 	 */
 	public static String extractCommentsLink(String name) {
-		if (name == null || name.startsWith(WikiBase.NAMESPACE_SPECIAL)) {
+		if (name == null) {
 			return null;
 		}
-		if (Utilities.isCommentsPage(name)) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
+		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+			return WikiBase.NAMESPACE_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + name;
+		}
+		String namespace = wikiLink.getNamespace();
+		if (namespace.equals(WikiBase.NAMESPACE_SPECIAL)) {
+			return null;
+		} else if (Utilities.isCommentsPage(name)) {
 			return name;
+		} else if (namespace.equals(WikiBase.NAMESPACE_CATEGORY)) {
+			return WikiBase.NAMESPACE_CATEGORY_COMMENTS + name.substring(namespace.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE)) {
+			return WikiBase.NAMESPACE_IMAGE_COMMENTS + name.substring(namespace.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_USER)) {
+			return WikiBase.NAMESPACE_USER_COMMENTS + name.substring(namespace.length());
+		} else {
+			return null;
 		}
-		if (name.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
-			return WikiBase.NAMESPACE_CATEGORY_COMMENTS + name.substring(WikiBase.NAMESPACE_CATEGORY.length());
-		}
-		if (name.startsWith(WikiBase.NAMESPACE_IMAGE)) {
-			return WikiBase.NAMESPACE_IMAGE_COMMENTS + name.substring(WikiBase.NAMESPACE_IMAGE.length());
-		}
-		if (name.startsWith(WikiBase.NAMESPACE_USER)) {
-			return WikiBase.NAMESPACE_USER_COMMENTS + name.substring(WikiBase.NAMESPACE_USER.length());
-		}
-		return WikiBase.NAMESPACE_COMMENTS + name;
 	}
 
 	/**
@@ -273,22 +278,24 @@ public class Utilities {
 		if (name == null) {
 			return null;
 		}
-		if (!Utilities.isCommentsPage(name)) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
+		if (!StringUtils.hasText(wikiLink.getNamespace())) {
 			return name;
 		}
-		if (name.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
-			return name.substring(WikiBase.NAMESPACE_COMMENTS.length());
+		String namespace = wikiLink.getNamespace();
+		if (!Utilities.isCommentsPage(name)) {
+			return name;
+		} else if (namespace.equals(WikiBase.NAMESPACE_COMMENTS)) {
+			return name.substring(namespace.length() + WikiBase.NAMESPACE_SEPARATOR.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
+			return WikiBase.NAMESPACE_CATEGORY + name.substring(namespace.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
+			return WikiBase.NAMESPACE_IMAGE + name.substring(namespace.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_USER_COMMENTS)) {
+			return WikiBase.NAMESPACE_USER + name.substring(namespace.length());
+		} else {
+			return null;
 		}
-		if (name.startsWith(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
-			return WikiBase.NAMESPACE_CATEGORY + name.substring(WikiBase.NAMESPACE_CATEGORY_COMMENTS.length());
-		}
-		if (name.startsWith(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
-			return WikiBase.NAMESPACE_IMAGE + name.substring(WikiBase.NAMESPACE_IMAGE_COMMENTS.length());
-		}
-		if (name.startsWith(WikiBase.NAMESPACE_USER_COMMENTS)) {
-			return WikiBase.NAMESPACE_USER + name.substring(WikiBase.NAMESPACE_USER_COMMENTS.length());
-		}
-		return name;
 	}
 
 	/**
@@ -431,16 +438,18 @@ public class Utilities {
 	 *  otherwise.
 	 */
 	public static boolean isCommentsPage(String topicName) {
-		if (topicName.startsWith(WikiBase.NAMESPACE_COMMENTS)) {
-			return true;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+			return false;
 		}
-		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
+		String namespace = wikiLink.getNamespace();
+		if (namespace.equals(WikiBase.NAMESPACE_COMMENTS)) {
 			return true;
-		}
-		if (topicName.startsWith(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
+		} else if (namespace.equals(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
 			return true;
-		}
-		if (topicName.startsWith(WikiBase.NAMESPACE_USER_COMMENTS)) {
+		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
+			return true;
+		} else if (namespace.equals(WikiBase.NAMESPACE_USER_COMMENTS)) {
 			return true;
 		}
 		return false;
@@ -872,7 +881,9 @@ public class Utilities {
 	 */
 	public static boolean validateTopicName(String name) {
 		if (!StringUtils.hasText(name)) return false;
-		if (name.toLowerCase().trim().startsWith(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
+		String namespace = wikiLink.getNamespace();
+		if (namespace != null && namespace.toLowerCase().trim().equals(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
 		Matcher m = INVALID_TOPIC_NAME_PATTERN.matcher(name);
 		if (m.find()) return false;
 		return true;
@@ -888,7 +899,7 @@ public class Utilities {
 	 */
 	public static boolean validateUserName(String name) {
 		if (!Utilities.validateTopicName(name)) return false;
-		Matcher m = VALID_USER_NAME_PATTERN.matcher(name);
+		Matcher m = VALID_USER_LOGIN_PATTERN.matcher(name);
 		if (!m.matches()) return false;
 		return true;
 	}

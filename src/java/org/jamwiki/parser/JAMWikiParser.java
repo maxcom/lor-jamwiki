@@ -24,6 +24,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 /**
@@ -159,7 +160,9 @@ public class JAMWikiParser extends AbstractParser {
 		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim())) {
 			style = "edit redirect";
 		}
-		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), redirect, null, null, null, style, false);
+		WikiLink wikiLink = new WikiLink();
+		wikiLink.setDestination(redirect);
+		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, false);
 		parserOutput.setContent(content);
 		return parserOutput;
 	}

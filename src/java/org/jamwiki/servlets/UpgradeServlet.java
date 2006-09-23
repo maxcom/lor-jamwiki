@@ -35,6 +35,7 @@ import org.jamwiki.persistency.file.FileUpgrades;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -103,7 +104,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			Environment.saveProperties();
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
-			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), virtualWiki.getDefaultTopicName(), virtualWiki.getDefaultTopicName(), null, true);
+			WikiLink wikiLink = new WikiLink();
+			wikiLink.setDestination(virtualWiki.getDefaultTopicName());
+			String htmlLink = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki.getName(), wikiLink, virtualWiki.getDefaultTopicName(), null, true);
 			WikiMessage wm = new WikiMessage("upgrade.caption.upgradecomplete");
 			// do not escape the HTML link
 			wm.setParamsWithoutEscaping(new String[]{htmlLink});

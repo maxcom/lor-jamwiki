@@ -166,7 +166,7 @@ public class UploadServlet extends JAMWikiServlet {
 			}
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = WikiBase.NAMESPACE_IMAGE + Utilities.decodeFromURL(fileName);
+		String topicName = WikiBase.NAMESPACE_IMAGE + WikiBase.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			topic = new Topic();

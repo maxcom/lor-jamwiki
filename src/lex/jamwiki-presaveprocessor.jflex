@@ -6,8 +6,9 @@ package org.jamwiki.parser;
 
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 %%
@@ -41,26 +42,15 @@ import org.springframework.util.StringUtils;
      *
      */
     public void processLink(String raw) {
-        String content = ParserUtil.extractLinkContent(raw);
-        if (!StringUtils.hasText(content)) {
-            // invalid link
+        WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
+        if (!StringUtils.hasText(wikiLink.getDestination())) {
             return;
         }
-        String url = ParserUtil.extractLinkUrl(content);
-        String topic = LinkUtil.extractLinkTopic(url);
-        if (!StringUtils.hasText(topic)) {
-            return;
+        if (wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
+            this.parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
         }
-        if (topic.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
-            String sortKey = ParserUtil.extractLinkText(content);
-            this.parserOutput.addCategory(topic, sortKey);
-        }
-        if (topic.startsWith(":") && topic.length() > 1) {
-            // strip opening colon
-            topic = topic.substring(1).trim();
-        }
-        if (StringUtils.hasText(topic)) {
-            this.parserOutput.addLink(topic);
+        if (StringUtils.hasText(wikiLink.getDestination())) {
+            this.parserOutput.addLink(wikiLink.getDestination());
         }
     }
     

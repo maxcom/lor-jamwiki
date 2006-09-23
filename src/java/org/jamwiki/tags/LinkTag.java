@@ -25,6 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 /**
@@ -49,20 +50,21 @@ public class LinkTag extends BodyTagSupport {
 			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
 			throw e;
 		}
+		WikiLink wikiLink = LinkUtil.parseWikiLink(tagValue);
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
 		String virtualWiki = retrieveVirtualWiki(request);
-		if (!StringUtils.hasText(this.queryParams)) {
-			this.queryParams = LinkUtil.extractLinkQuery(tagValue);
+		if (StringUtils.hasText(this.queryParams)) {
+			wikiLink.setQuery(this.queryParams);
 		}
 		try {
 			if (StringUtils.hasText(tagText)) {
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, LinkUtil.extractLinkTopic(tagValue), LinkUtil.extractLinkSection(tagValue), this.queryParams, tagText, this.style, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, true);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
-				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, LinkUtil.extractLinkTopic(tagValue), LinkUtil.extractLinkSection(tagValue), this.queryParams);
+				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink);
 			}
 			this.pageContext.getOut().print(url);
 		} catch (Exception e) {

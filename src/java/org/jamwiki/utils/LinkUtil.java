@@ -17,6 +17,8 @@
 package org.jamwiki.utils;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
@@ -33,6 +35,15 @@ import org.springframework.util.StringUtils;
 public class LinkUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LinkUtil.class.getName());
+	private static Pattern TOPIC_LINK_PATTERN = null;
+
+	static {
+		try {
+			TOPIC_LINK_PATTERN = Pattern.compile("(((([^\\n\\r\\?\\#\\:]+)\\:)?([^\\n\\r\\?\\#]+))?(#([^\\n\\r\\?]+))?)+(\\?([^\\n\\r]+))?");
+		} catch (Exception e) {
+			logger.severe("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 *
@@ -47,7 +58,11 @@ public class LinkUtil {
 		if (section > 0) {
 			query += "&amp;section=" + section;
 		}
-		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, "Special:Edit", null, query);
+		WikiLink wikiLink = new WikiLink();
+		// FIXME - hard coding
+		wikiLink.setDestination("Special:Edit");
+		wikiLink.setQuery(query);
+		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
 	}
 
 	/**
@@ -59,7 +74,7 @@ public class LinkUtil {
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (!StringUtils.hasText(caption)) {
-				caption = topicName.substring(WikiBase.NAMESPACE_IMAGE.length());
+				caption = topicName.substring(WikiBase.NAMESPACE_IMAGE.length() + 1);
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
 			url = FilenameUtils.separatorsToUnix(url);
@@ -119,15 +134,9 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String text, String style, boolean escapeHtml) throws Exception {
-		return LinkUtil.buildInternalLinkHtml(context, virtualWiki, extractLinkTopic(topic), extractLinkSection(topic), extractLinkQuery(topic), text, style, escapeHtml);
-	}
-
-	/**
-	 *
-	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, String topic, String section, String query, String text, String style, boolean escapeHtml) throws Exception {
-		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, topic, section, query);
+	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, boolean escapeHtml) throws Exception {
+		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
+		String topic = wikiLink.getDestination();
 		if (!StringUtils.hasText(text)) text = topic;
 		if (StringUtils.hasText(topic) && !WikiBase.exists(virtualWiki, topic) && !StringUtils.hasText(style)) {
 			style = "edit";
@@ -154,16 +163,19 @@ public class LinkUtil {
 		if (!StringUtils.hasText(topic)) {
 			return null;
 		}
-		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, extractLinkTopic(topic), extractLinkSection(topic), extractLinkQuery(topic));
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topic);
+		return LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
 	}
 
 	/**
 	 *
 	 */
-	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic, String section, String query) throws Exception {
+	public static String buildInternalLinkUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
+		String topic = wikiLink.getDestination();
+		String section = wikiLink.getSection();
+		String query = wikiLink.getQuery();
 		if (!StringUtils.hasText(topic) && StringUtils.hasText(section)) {
 			String url = "";
-			if (section.startsWith("#")) section = section.substring(1);
 			return "#" + Utilities.encodeForURL(section);
 		}
 		if (!WikiBase.exists(virtualWiki, topic)) {
@@ -177,59 +189,35 @@ public class LinkUtil {
 		url += "/";
 		url += Utilities.encodeForURL(topic);
 		if (StringUtils.hasText(section)) {
-			if (!section.startsWith("#")) url += "#";
-			url += Utilities.encodeForURL(section);
+			url += "#" + Utilities.encodeForURL(section);
 		}
 		if (StringUtils.hasText(query)) {
-			if (!query.startsWith("?")) url += "?";
-			url += query;
+			url += "?" + query;
 		}
 		return url;
 	}
 
 	/**
+	 * Parse a topic name of the form "Topic#Section?Query", and return a WikiLink
+	 * object representing the link.
 	 *
+	 * @param raw The raw topic link text.
+	 * @return A WikiLink object that represents the link.
 	 */
-	public static String extractLinkQuery(String text) {
-		String query = null;
-		int pos = text.indexOf('?');
-		if (pos > 0) {
-			if (text.length() > pos) {
-				query = text.substring(pos+1).trim();
-			}
+	public static WikiLink parseWikiLink(String raw) {
+		WikiLink wikiLink = new WikiLink();
+		if (!StringUtils.hasText(raw)) {
+			return new WikiLink();
 		}
-		return query;
-	}
-
-	/**
-	 *
-	 */
-	public static String extractLinkSection(String text) {
-		int pos = text.indexOf('#');
-		if (pos == -1 || text.length() <= pos) return null;
-		String section = text.substring(pos+1).trim();
-		return Utilities.encodeForURL(section);
-	}
-
-	/**
-	 *
-	 */
-	public static String extractLinkTopic(String text) {
-		String topic = text;
-		int pos = topic.indexOf("#");
-		if (pos == 0) {
-			// no topic, just a section
-			return "";
+		raw = raw.trim();
+		Matcher m = TOPIC_LINK_PATTERN.matcher(raw);
+		if (!m.matches()) {
+			return new WikiLink();
 		}
-		if (pos != -1) {
-			topic = topic.substring(0, pos);
-		}
-		pos = text.indexOf('?');
-		if (pos > 0) {
-			topic = text.substring(0, pos).trim();
-		}
-		// convert any underscores in the topic name to spaces
-		topic = StringUtils.replace(topic, "_", " ");
-		return Utilities.decodeFromRequest(topic.trim());
+		wikiLink.setNamespace(m.group(4));
+		wikiLink.setDestination(m.group(2));
+		wikiLink.setSection(m.group(7));
+		wikiLink.setQuery(m.group(9));
+		return wikiLink;
 	}
 }

@@ -28,6 +28,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 /**
@@ -40,6 +41,7 @@ public class ParserUtil {
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
 	private static Pattern IMAGE_SIZE_PATTERN = null;
+	private static Pattern WIKI_LINK_PATTERN = null;
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
@@ -52,6 +54,7 @@ public class ParserUtil {
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
+			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -132,49 +135,37 @@ public class ParserUtil {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		try {
-			String content = ParserUtil.extractLinkContent(raw);
-			if (!StringUtils.hasText(content)) {
+			WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
+			if (wikiLink == null) {
 				// invalid link
 				return raw;
 			}
-			String url = ParserUtil.extractLinkUrl(content);
-			String topic = LinkUtil.extractLinkTopic(url);
-			String section = LinkUtil.extractLinkSection(url);
-			String query = LinkUtil.extractLinkQuery(url);
-			if (!StringUtils.hasText(topic) && !StringUtils.hasText(section)) {
+			if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 				// invalid topic
 				return raw;
 			}
-			if (topic.startsWith(WikiBase.NAMESPACE_IMAGE)) {
+			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
-				return ParserUtil.parseImageLink(parserInput, content);
+				return ParserUtil.parseImageLink(parserInput, wikiLink);
 			}
-			if (topic.startsWith(":") && StringUtils.countOccurrencesOf(topic, ":") >= 2) {
-				// see if this is a virtual wiki
-				int pos = topic.indexOf(":", 1);
-				String tmp = topic.substring(1, pos);
-				if (WikiBase.getHandler().lookupVirtualWiki(tmp) != null && topic.length() > pos) {
-					virtualWiki = tmp;
-					topic = topic.substring(pos + 1);
+			if (wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace())) {
+				if (WikiBase.getHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+					virtualWiki = wikiLink.getNamespace();
+					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + WikiBase.NAMESPACE_SEPARATOR.length()));
 				}
 			}
-			if (topic.startsWith(":") && topic.length() > 1) {
-				// strip opening colon
-				topic = topic.substring(1);
-			}
-			String text = ParserUtil.extractLinkText(content);
-			if (!StringUtils.hasText(text) && StringUtils.hasText(topic)) {
-				text = topic;
-				if (StringUtils.hasText(section)) {
-					text += "#" + Utilities.decodeFromURL(section);
+			if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getDestination())) {
+				wikiLink.setText(wikiLink.getDestination());
+				if (StringUtils.hasText(wikiLink.getSection())) {
+					wikiLink.setText(wikiLink.getText() + "#" + Utilities.decodeFromURL(wikiLink.getSection()));
 				}
-			} else if (!StringUtils.hasText(text) && StringUtils.hasText(section)) {
-				text = Utilities.decodeFromURL(section);
+			} else if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getSection())) {
+				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection()));
 			} else {
-				text = ParserUtil.parseFragment(parserInput, text);
+				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText()));
 			}
 			// do not escape text html - already done by parser
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, topic, section, query, text, null, false);
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, false);
 		} catch (Exception e) {
 			logger.severe("Failure while parsing link " + raw, e);
 			return "";
@@ -204,10 +195,10 @@ public class ParserUtil {
 				String text = parserInput.getUserIpAddress();
 				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
 				Object params[] = new Object[7];
-				params[0] = WikiBase.NAMESPACE_USER + login;
+				params[0] = WikiBase.NAMESPACE_USER + WikiBase.NAMESPACE_SEPARATOR + login;
 				// FIXME - hard coding
-				params[1] = WikiBase.NAMESPACE_SPECIAL + "Contributions?contributor=" + login;
-				params[2] = WikiBase.NAMESPACE_USER_COMMENTS + login;
+				params[1] = WikiBase.NAMESPACE_SPECIAL + WikiBase.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
+				params[2] = WikiBase.NAMESPACE_USER_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + login;
 				params[3] = login;
 				params[4] = displayName;
 				params[5] = email;
@@ -231,59 +222,6 @@ public class ParserUtil {
 			// FIXME - return empty or a failure indicator?
 			return "";
 		}
-	}
-
-	/**
-	 *
-	 */
-	protected static String extractLinkContent(String raw) {
-		if (raw == null || raw.length() <= 4 || !raw.startsWith("[[") || !raw.endsWith("]]")) {
-			logger.warning("ParserUtil.extractLinkContent called with invalid raw text: " + raw);
-			return null;
-		}
-		// strip the first and last brackets
-		String content = raw.substring(2, raw.length() - 2).trim();
-		if (!StringUtils.hasText(content)) {
-			// empty brackets, no topic to display
-			return null;
-		}
-		return content.trim();
-	}
-
-	/**
-	 *
-	 */
-	protected static String extractLinkText(String raw) {
-		if (raw == null) {
-			logger.warning("ParserUtil.extractLinkText called with invalid raw text: " + raw);
-			return null;
-		}
-		// search for topic text ("|" followed by text)
-		int pos = raw.indexOf('|');
-		if (pos <= 0 || raw.length() <= (pos + 1)) {
-			return null;
-		}
-		return raw.substring(pos+1).trim();
-	}
-
-	/**
-	 *
-	 */
-	protected static String extractLinkUrl(String raw) {
-		if (raw == null) {
-			logger.warning("ParserUtil.extractLinkTopic called with invalid raw text: " + raw);
-			return null;
-		}
-		String url = raw;
-		int pos = url.indexOf("|");
-		if (pos == 0) {
-			// topic cannot start with "|"
-			return null;
-		}
-		if (pos != -1) {
-			url = url.substring(0, pos);
-		}
-		return url;
 	}
 
 	/**
@@ -338,19 +276,16 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String parseImageLink(ParserInput parserInput, String content) throws Exception {
+	private static String parseImageLink(ParserInput parserInput, WikiLink wikiLink) throws Exception {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
-		String url = ParserUtil.extractLinkUrl(content);
-		String topic = LinkUtil.extractLinkTopic(url);
-		String text = ParserUtil.extractLinkText(content);
 		boolean thumb = false;
 		boolean frame = false;
 		String caption = null;
 		String align = null;
 		int maxDimension = -1;
-		if (text != null) {
-			StringTokenizer tokens = new StringTokenizer(text, "|");
+		if (StringUtils.hasText(wikiLink.getText())) {
+			StringTokenizer tokens = new StringTokenizer(wikiLink.getText(), "|");
 			while (tokens.hasMoreTokens()) {
 				String token = tokens.nextToken();
 				if (!StringUtils.hasText(token)) continue;
@@ -387,7 +322,7 @@ public class ParserUtil {
 			caption = ParserUtil.parseFragment(parserInput, caption);
 		}
 		// do not escape html for caption since parser does it above
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, topic, frame, thumb, align, caption, maxDimension, false, null, false);
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
 	}
 
 	/**
@@ -403,6 +338,28 @@ public class ParserUtil {
 		StringReader raw = new StringReader(fragment);
 		ParserOutput parserOutput = parser.parsePreProcess(raw);
 		return parserOutput.getContent();
+	}
+
+	/**
+	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
+	 * object representing the link.
+	 *
+	 * @param raw The raw Wiki link text.
+	 * @return A WikiLink object that represents the link.
+	 */
+	protected static WikiLink parseWikiLink(String raw) {
+		if (!StringUtils.hasText(raw)) {
+			return new WikiLink();
+		}
+		Matcher m = WIKI_LINK_PATTERN.matcher(raw.trim());
+		if (!m.matches()) {
+			return new WikiLink();
+		}
+		String url = m.group(2);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
+		wikiLink.setColon((m.group(1) != null));
+		wikiLink.setText(m.group(4));
+		return wikiLink;
 	}
 
 	/**

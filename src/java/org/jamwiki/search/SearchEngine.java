@@ -47,9 +47,8 @@ public interface SearchEngine {
 	 * @param topicName The name of the topic.
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  link to the topic.
-	 * @throws Exception Thrown if an error occurs while searching.
 	 */
-	public Collection findLinkedTo(String virtualWiki, String topicName) throws Exception;
+	public Collection findLinkedTo(String virtualWiki, String topicName);
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
@@ -58,7 +57,6 @@ public interface SearchEngine {
 	 * @param text The search term being searched for.
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  contain the search term.
-	 * @throws Exception Thrown if an error occurs while searching.
 	 */
 	public Collection findResults(String virtualWiki, String text);
 

@@ -55,15 +55,16 @@ public class WikiBase {
 	public static final int LDAP = 2;
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
-	public static final String NAMESPACE_CATEGORY = "Category:";
-	public static final String NAMESPACE_CATEGORY_COMMENTS = "Category comments:";
-	public static final String NAMESPACE_COMMENTS = "Comments:";
-	public static final String NAMESPACE_IMAGE = "Image:";
-	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments:";
-	public static final String NAMESPACE_JAMWIKI = "JAMWiki:";
-	public static final String NAMESPACE_SPECIAL = "Special:";
-	public static final String NAMESPACE_USER = "User:";
-	public static final String NAMESPACE_USER_COMMENTS = "User comments:";
+	public static final String NAMESPACE_CATEGORY = "Category";
+	public static final String NAMESPACE_CATEGORY_COMMENTS = "Category comments";
+	public static final String NAMESPACE_COMMENTS = "Comments";
+	public static final String NAMESPACE_IMAGE = "Image";
+	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments";
+	public static final String NAMESPACE_JAMWIKI = "JAMWiki";
+	public static final String NAMESPACE_SPECIAL = "Special";
+	public static final String NAMESPACE_USER = "User";
+	public static final String NAMESPACE_USER_COMMENTS = "User comments";
+	public static final String NAMESPACE_SEPARATOR = ":";
 	public static final String SPECIAL_PAGE_DIR = "pages";
 	public static final String SPECIAL_PAGE_STARTING_POINTS = "StartingPoints";
 	public static final String SPECIAL_PAGE_LEFT_MENU = "LeftMenu";

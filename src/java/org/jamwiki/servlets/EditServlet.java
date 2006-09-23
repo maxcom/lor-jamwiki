@@ -33,7 +33,9 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.DiffUtil;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -130,7 +132,9 @@ public class EditServlet extends JAMWikiServlet {
 	private void loadEdit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String virtualWiki, String topicName, boolean useSection) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("edit.title", topicName));
 		pageInfo.setTopicName(topicName);
-		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		if (namespace != null && namespace.equals(WikiBase.NAMESPACE_CATEGORY)) {
 			loadCategoryContent(next, virtualWiki, topicName);
 		}
 		if (request.getParameter("editComment") != null) {
@@ -158,7 +162,9 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setName(topicName);
 			topic.setVirtualWiki(virtualWiki);
 		}
-		if (topicName.startsWith(WikiBase.NAMESPACE_CATEGORY)) {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		if (namespace != null && namespace.equals(WikiBase.NAMESPACE_CATEGORY)) {
 			topic.setTopicType(Topic.TYPE_CATEGORY);
 		}
 		if (topic.getReadOnly()) {
