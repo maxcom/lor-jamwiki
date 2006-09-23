@@ -189,10 +189,12 @@ public class LinkUtil {
 		url += "/";
 		url += Utilities.encodeForURL(topic);
 		if (StringUtils.hasText(section)) {
-			url += "#" + Utilities.encodeForURL(section);
+			if (!section.startsWith("#")) url += "#";
+			url += Utilities.encodeForURL(section);
 		}
 		if (StringUtils.hasText(query)) {
-			url += "?" + query;
+			if (!query.startsWith("?")) url += "?";
+			url += query;
 		}
 		return url;
 	}
