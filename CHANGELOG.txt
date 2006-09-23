@@ -6,6 +6,7 @@
 * FEATURE: Add support for topics of the form "Topic/Subtopic".
 * FEATURE: Add additional database validation checks during setup.
 * FEATURE: Re-engineer link handling to simplify the code.
+* FEATURE: Use the file system, not RAM, when rebuilding search index.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 
 0.3.4

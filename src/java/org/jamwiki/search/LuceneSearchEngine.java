@@ -19,7 +19,6 @@ package org.jamwiki.search;
 import java.io.File;
 import java.io.StringReader;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
 import org.apache.lucene.analysis.Token;
@@ -43,9 +42,6 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.store.RAMDirectory;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
@@ -112,62 +108,6 @@ public class LuceneSearchEngine implements SearchEngine {
 			directory.close();
 		} catch (Exception e) {
 			logger.severe("Exception while adding topic " + topicName, e);
-		}
-	}
-
-	/**
-	 * Copy an index from RAM to file.
-	 *
-	 * @param ram The index in RAM
-	 * @param indexFile The index on disc
-	 * @throws Exception
-	 */
-	private void copyRamIndexToFileIndex(RAMDirectory ram, File indexFile) throws Exception {
-		FSDirectory index = FSDirectory.getDirectory(indexFile, true);
-		try {
-			if (IndexReader.isLocked(index)) {
-				// FIXME - huh?
-				// wait up to ten seconds until unlocked
-				int count = 0;
-				while (IndexReader.isLocked(index) && count < 20) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ie) {
-						; // do nothing
-					}
-					count++;
-				}
-				// if still locked, force to unlock it
-				if (IndexReader.isLocked(index)) {
-					IndexReader.unlock(index);
-					logger.severe("Unlocking search index by force");
-				}
-			}
-			IndexWriter indexWriter = new IndexWriter(index, null, true);
-			indexWriter.close();
-		} catch (Exception e) {
-			logger.severe("Cannot create empty directory: ", e);
-			// delete all files in the temp directory
-			File[] files = indexFile.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				files[i].delete();
-			}
-		}
-		// actually copy files
-		String[] ar = ram.list();
-		for (int i = 0; i < ar.length; i++) {
-			// make place on ram disk
-			IndexOutput os = index.createOutput(ar[i]);
-			// read current file
-			IndexInput is = ram.openInput(ar[i]);
-			// and copy to ram disk
-			int len = (int) is.length();
-			byte[] buf = new byte[len];
-			is.readBytes(buf, 0, len);
-			os.writeBytes(buf, len);
-			// graceful cleanup
-			is.close();
-			os.close();
 		}
 	}
 
@@ -373,14 +313,12 @@ public class LuceneSearchEngine implements SearchEngine {
 			long start = System.currentTimeMillis();
 			int count = 0;
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-			File indexFile = new File(this.getSearchIndexPath(virtualWiki.getName()));
-			// initially create index in ram
-			RAMDirectory ram = new RAMDirectory();
+			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()), true);
 			StandardAnalyzer analyzer = new StandardAnalyzer();
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
 			try {
-				writer = new IndexWriter(ram, analyzer, true);
+				writer = new IndexWriter(directory, analyzer, true);
 				Collection topicNames = WikiBase.getHandler().getAllTopicNames(virtualWiki.getName());
 				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
 					String topicName = (String)iter.next();
@@ -412,8 +350,7 @@ public class LuceneSearchEngine implements SearchEngine {
 					logger.severe("Exception during close", e);
 				}
 			}
-			// write back to disc
-			copyRamIndexToFileIndex(ram, indexFile);
+			directory.close();
 			logger.info("Rebuilt search index for " + virtualWiki.getName() + " (" + count + " documents) in " + ((System.currentTimeMillis() - start) / 1000.000) + " seconds");
 		}
 	}
