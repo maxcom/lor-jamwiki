@@ -63,6 +63,7 @@ public class WikiBase {
 	public static final String NAMESPACE_IMAGE = "Image";
 	public static final String NAMESPACE_IMAGE_COMMENTS = "Image comments";
 	public static final String NAMESPACE_JAMWIKI = "JAMWiki";
+	public static final String NAMESPACE_JAMWIKI_COMMENTS = "JAMWiki comments";
 	public static final String NAMESPACE_SPECIAL = "Special";
 	public static final String NAMESPACE_USER = "User";
 	public static final String NAMESPACE_USER_COMMENTS = "User comments";

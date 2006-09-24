@@ -260,6 +260,8 @@ public class Utilities {
 			return WikiBase.NAMESPACE_IMAGE_COMMENTS + name.substring(namespace.length());
 		} else if (namespace.equals(WikiBase.NAMESPACE_USER)) {
 			return WikiBase.NAMESPACE_USER_COMMENTS + name.substring(namespace.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI)) {
+			return WikiBase.NAMESPACE_JAMWIKI_COMMENTS + name.substring(namespace.length());
 		} else {
 			return null;
 		}
@@ -293,6 +295,8 @@ public class Utilities {
 			return WikiBase.NAMESPACE_IMAGE + name.substring(namespace.length());
 		} else if (namespace.equals(WikiBase.NAMESPACE_USER_COMMENTS)) {
 			return WikiBase.NAMESPACE_USER + name.substring(namespace.length());
+		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI_COMMENTS)) {
+			return WikiBase.NAMESPACE_JAMWIKI + name.substring(namespace.length());
 		} else {
 			return null;
 		}
@@ -450,6 +454,8 @@ public class Utilities {
 		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
 			return true;
 		} else if (namespace.equals(WikiBase.NAMESPACE_USER_COMMENTS)) {
+			return true;
+		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI_COMMENTS)) {
 			return true;
 		}
 		return false;
