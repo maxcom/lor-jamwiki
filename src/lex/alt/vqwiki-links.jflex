@@ -268,16 +268,7 @@ externalend = (\[<\/[A-Za-z]+>\])
 <NORMAL>{extlink} {
   logger.fine("{extlink}");
   String text = yytext();
-  try{
-    return LinkExtender.generateLink(
-      text.substring( 0, text.indexOf( ':' ) ),
-      text.substring( text.indexOf( ':' ) + 1 ),
-      text
-    );
-  }catch( Exception err ){
-    logger.severe( "error generating link from extender", err );
-    return text;
-  }
+  return text;
 }
 
 <NORMAL>{framedextlink} {
@@ -285,16 +276,7 @@ externalend = (\[<\/[A-Za-z]+>\])
   String text = yytext();
   // trim off the square brackets
   text = text.substring(1, text.length()-1);
-  try{
-    return LinkExtender.generateLink(
-      text.substring( 0, text.indexOf( ':' ) ),
-      text.substring( text.indexOf( ':' ) + 1 ),
-      text
-    );
-  }catch( Exception err ){
-    logger.severe( "error generating link from extender", err );
-    return text;
-  }
+  return text;
 }
 
 <NORMAL, OFF, PRE, EXTERNAL>{whitespace} {
