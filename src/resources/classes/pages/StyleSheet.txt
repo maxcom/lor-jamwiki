@@ -27,9 +27,6 @@ a.logo {
 	border: 0;
 }
 
-a.external {
-}
-
 a.externallink:after {
 	content:url("../images/external.png");
 }
@@ -51,6 +48,10 @@ a.redirect {
 
 a.redirect:before {
 	content:url("../images/redirect-arrow.png");
+}
+
+a.interwiki:after {
+	content:url("../images/external.png");
 }
 
 table {

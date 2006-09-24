@@ -14,38 +14,27 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki;
+package org.jamwiki.utils;
 
 import java.util.Properties;
-import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.Environment;
 
 /**
  * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to
- * a redirect URL rather than a real Wiki topic. Examples are Special:RecentChanges
- * and Special:Edit. The mappings of topic names to redirect URLs are persisted
- * in WEB-INF/classes/pseudotopics.properties
- * <p/>
+ * an internal Wikk page, such as Special:RecentChanges and Special:Edit. The
+ * mappings of topic names to redirect URLs are persisted in
+ * WEB-INF/classes/pseudotopics.properties.
  */
 public class PseudoTopicHandler {
 
 	/** Logger */
 	private static final WikiLogger logger = WikiLogger.getLogger(PseudoTopicHandler.class.getName());
-	/** Singleton instance */
-	private static PseudoTopicHandler instance;
 	/** Properties bundle to store mappings */
 	private static Properties mapping;
 	/** Name of resource to access the persisted bundle */
 	private static final String RESOURCE_NAME = "/pseudotopics.properties";
 
-	// initialize the singleton instance
 	static {
-		instance = new PseudoTopicHandler();
-	}
-
-	/**
-	 * Hide constructor
-	 */
-	private PseudoTopicHandler() {
 		PseudoTopicHandler.mapping = Environment.loadProperties(RESOURCE_NAME);
 	}
 

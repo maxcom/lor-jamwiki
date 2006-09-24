@@ -26,6 +26,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
@@ -147,6 +148,10 @@ public class ParserUtil {
 			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
 				return ParserUtil.parseImageLink(parserInput, wikiLink);
+			}
+			if (StringUtils.hasText(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
+				// inter-wiki link
+				return LinkUtil.interWiki(wikiLink);
 			}
 			if (wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace())) {
 				if (WikiBase.getHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {

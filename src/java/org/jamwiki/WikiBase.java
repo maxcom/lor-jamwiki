@@ -28,6 +28,8 @@ import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
+import org.jamwiki.utils.InterWikiHandler;
+import org.jamwiki.utils.PseudoTopicHandler;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -107,6 +109,9 @@ public class WikiBase {
 	 */
 	public static boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
+			return true;
+		}
+		if (InterWikiHandler.isInterWiki(topicName)) {
 			return true;
 		}
 		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {

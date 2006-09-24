@@ -138,8 +138,12 @@ public class LinkUtil {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
 		if (!StringUtils.hasText(text)) text = topic;
-		if (StringUtils.hasText(topic) && !WikiBase.exists(virtualWiki, topic) && !StringUtils.hasText(style)) {
-			style = "edit";
+		if (StringUtils.hasText(topic) && !StringUtils.hasText(style)) {
+			if (InterWikiHandler.isInterWiki(virtualWiki)) {
+				style = "interwiki";
+			} else if (!WikiBase.exists(virtualWiki, topic)) {
+				style = "edit";
+			}
 		}
 		if (StringUtils.hasText(style)) {
 			style = " class=\"" + style + "\"";
@@ -197,6 +201,19 @@ public class LinkUtil {
 			url += query;
 		}
 		return url;
+	}
+
+	/**
+	 *
+	 */
+	public static String interWiki(WikiLink wikiLink) {
+		// remove namespace from link destination
+		String destination = wikiLink.getDestination();
+		String namespace = wikiLink.getNamespace();
+		destination = destination.substring(wikiLink.getNamespace().length() + WikiBase.NAMESPACE_SEPARATOR.length());
+		String url = InterWikiHandler.formatInterWiki(namespace, destination);
+		String text = (StringUtils.hasText(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
+		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
 
 	/**
