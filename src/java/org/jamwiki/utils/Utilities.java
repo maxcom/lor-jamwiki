@@ -263,7 +263,7 @@ public class Utilities {
 		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI)) {
 			return WikiBase.NAMESPACE_JAMWIKI_COMMENTS + name.substring(namespace.length());
 		} else {
-			return null;
+			return WikiBase.NAMESPACE_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + name;
 		}
 	}
 
@@ -298,7 +298,7 @@ public class Utilities {
 		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI_COMMENTS)) {
 			return WikiBase.NAMESPACE_JAMWIKI + name.substring(namespace.length());
 		} else {
-			return null;
+			return name;
 		}
 	}
 
