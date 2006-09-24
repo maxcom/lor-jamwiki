@@ -504,6 +504,27 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection getRecentChanges(String virtualWiki, String topicName, int numChanges, boolean descending) throws Exception {
+		Vector results = new Vector();
+		Topic topic = this.lookupTopic(virtualWiki, topicName);
+		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
+		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
+			TopicVersion version = (TopicVersion)iterator.next();
+			String authorName = version.getAuthorIpAddress();
+			Integer authorId = version.getAuthorId();
+			if (authorId != null) {
+				authorName = lookupWikiUserLogin(authorId);
+			}
+			RecentChange change = new RecentChange(topic, version, authorName);
+			results.add(change);
+			if (results.size() >= numChanges) break;
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		Vector all = new Vector();
 		File[] files = retrieveUserContributionsFiles(virtualWiki, userString, descending);

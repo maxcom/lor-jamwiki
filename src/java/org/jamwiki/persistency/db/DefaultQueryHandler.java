@@ -76,6 +76,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_CATEGORIES = null;
 	protected static String STATEMENT_SELECT_CATEGORY_TOPICS = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
+	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC_DELETE_OK = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
@@ -255,6 +256,17 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getRecentChanges(int topicId, int num, boolean descending) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
+		stmt.setInt(1, topicId);
+		stmt.setInt(2, num);
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = null;
 		if (Utilities.isIpAddress(userString)) {
@@ -317,6 +329,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_CATEGORIES              = props.getProperty("STATEMENT_SELECT_CATEGORIES");
 		STATEMENT_SELECT_CATEGORY_TOPICS         = props.getProperty("STATEMENT_SELECT_CATEGORY_TOPICS");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
+		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
 		STATEMENT_SELECT_TOPIC_DELETE_OK         = props.getProperty("STATEMENT_SELECT_TOPIC_DELETE_OK");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");

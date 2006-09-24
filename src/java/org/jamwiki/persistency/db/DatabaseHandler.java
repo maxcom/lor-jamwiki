@@ -292,6 +292,21 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
+	public Collection getRecentChanges(String virtualWiki, String topicName, int num, boolean descending) throws Exception {
+		Vector all = new Vector();
+		Topic topic = lookupTopic(virtualWiki, topicName, true);
+		if (topic == null) return all;
+		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(topic.getTopicId(), num, descending);
+		while (rs.next()) {
+			RecentChange change = initRecentChange(rs);
+			all.add(change);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
 		Collection all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, num, descending);

@@ -7,6 +7,7 @@
 * FEATURE: Support for interwiki links ([[Wikipedia:Main Page]]).
 * FEATURE: Add additional database validation checks during setup.
 * FEATURE: Re-engineer link handling to simplify the code.
+* FEATURE: Add selector for number of changes on Special:History.
 * FEATURE: Use the file system, not RAM, when rebuilding search index.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 

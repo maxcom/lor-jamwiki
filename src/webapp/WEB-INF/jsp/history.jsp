@@ -16,7 +16,10 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp"
+<%@ page import="
+        org.jamwiki.Environment
+    "
+    errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
 
@@ -28,38 +31,38 @@
 function inactive(element) {
   var found = 0;
   var totalChecked = 0;
-  for (i=0; i < document.historyForm.length; i++) {
-    if (element.type != document.historyForm.elements[i].type) continue;
-    if (document.historyForm.elements[i].checked) totalChecked++;
+  for (i=0; i < document.diffForm.length; i++) {
+    if (element.type != document.diffForm.elements[i].type) continue;
+    if (document.diffForm.elements[i].checked) totalChecked++;
   }
-  for (i=0; i < document.historyForm.length; i++) {
-    if (element.type != document.historyForm.elements[i].type) continue;
-    if (document.historyForm.elements[i].checked && found < 2) {
+  for (i=0; i < document.diffForm.length; i++) {
+    if (element.type != document.diffForm.elements[i].type) continue;
+    if (document.diffForm.elements[i].checked && found < 2) {
       found++;
       continue;
     }
     if (totalChecked == 0) {
       // enable everything
-      document.historyForm.elements[i].checked = false;
-      document.historyForm.elements[i].disabled = false;
+      document.diffForm.elements[i].checked = false;
+      document.diffForm.elements[i].disabled = false;
       continue;
     }
     if (found == 0 && totalChecked == 1) {
       // disable everything up to the first one
-      document.historyForm.elements[i].checked = false;
-      document.historyForm.elements[i].disabled = true;
+      document.diffForm.elements[i].checked = false;
+      document.diffForm.elements[i].disabled = true;
       continue;
     }
     if (found == 1 && totalChecked >= 1) {
       // un-select everything after the first one
-      document.historyForm.elements[i].checked = false;
-      document.historyForm.elements[i].disabled = false;
+      document.diffForm.elements[i].checked = false;
+      document.diffForm.elements[i].disabled = false;
       continue;
     }
     if (found == 2 && totalChecked >= 2) {
       // disable elements after the second one
-      document.historyForm.elements[i].checked = false;
-      document.historyForm.elements[i].disabled = true;
+      document.diffForm.elements[i].checked = false;
+      document.diffForm.elements[i].disabled = true;
       continue;
     }
   }
@@ -70,9 +73,36 @@ function inactive(element) {
 
 <div id="change">
 
-<form action="<jamwiki:link value="Special:Diff" />" method="get" name="historyForm">
+<br />
+
+<form action="<jamwiki:link value="Special:History" />" method="get" name="historyForm">
+<input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>
+<%-- FIXME: use JSP tag --%>
+<%
+int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
+if (request.getParameter("num") != null) {
+	// FIXME - breaks if non-integer
+	num = new Integer(request.getParameter("num")).intValue();
+}
+%>
+<select name="num">
+<option value="10"<%= (num == 10) ? " selected=\"selected\"" : "" %>>10</option>
+<option value="25"<%= (num == 25) ? " selected=\"selected\"" : "" %>>25</option>
+<option value="50"<%= (num == 50) ? " selected=\"selected\"" : "" %>>50</option>
+<option value="100"<%= (num == 100) ? " selected=\"selected\"" : "" %>>100</option>
+<option value="250"<%= (num == 250) ? " selected=\"selected\"" : "" %>>250</option>
+<option value="500"<%= (num == 500) ? " selected=\"selected\"" : "" %>>500</option>
+</select>
+&#160;
+<input type="submit" value="<f:message key="common.change" />" />
+</form>
+
+<br /><br />
+
+<form action="<jamwiki:link value="Special:Diff" />" method="get" name="diffForm">
 <input type="hidden" name="type" value="arbitrary"/>
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>
+
 <input type="submit" value='<f:message key="history.diff"/>'/>
 
 <br /><br />

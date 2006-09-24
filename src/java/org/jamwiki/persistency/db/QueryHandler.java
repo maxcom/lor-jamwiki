@@ -93,6 +93,11 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getRecentChanges(int topicId, int num, boolean descending) throws Exception;
+
+	/**
+	 *
+	 */
 	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception;
 
 	/**

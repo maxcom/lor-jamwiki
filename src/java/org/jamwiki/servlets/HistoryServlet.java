@@ -17,9 +17,10 @@
 package org.jamwiki.servlets;
 
 import java.text.DateFormat;
-import java.util.Vector;
+import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.utils.WikiLogger;
@@ -65,8 +66,14 @@ public class HistoryServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_HISTORY);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
-		Vector changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, true);
+		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
+		if (request.getParameter("num") != null) {
+			// FIXME - verify it's a number
+			num = new Integer(request.getParameter("num")).intValue();
+		}
+		Collection changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, num, true);
 		next.addObject("changes", changes);
+		next.addObject("num", new Integer(num));
 	}
 
 	/**

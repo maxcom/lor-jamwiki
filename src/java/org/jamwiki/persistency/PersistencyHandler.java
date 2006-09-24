@@ -396,22 +396,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public Vector getRecentChanges(String virtualWiki, String topicName, boolean descending) throws Exception {
-		Vector results = new Vector();
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
-		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
-			TopicVersion version = (TopicVersion)iterator.next();
-			String authorName = version.getAuthorIpAddress();
-			Integer authorId = version.getAuthorId();
-			if (authorId != null) {
-				authorName = lookupWikiUserLogin(authorId);
-			}
-			RecentChange change = new RecentChange(topic, version, authorName);
-			results.add(change);
-		}
-		return results;
-	}
+	public abstract Collection getRecentChanges(String virtualWiki, String topicName, int numChanges, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -577,7 +562,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	private String lookupWikiUserLogin(Integer authorId) throws Exception {
+	protected String lookupWikiUserLogin(Integer authorId) throws Exception {
 		String login = (String)cachedUserLoginHash.get(authorId);
 		if (login != null) {
 			return login;
