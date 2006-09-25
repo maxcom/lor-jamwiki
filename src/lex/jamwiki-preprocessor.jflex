@@ -308,7 +308,7 @@ import org.springframework.util.StringUtils;
         if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
             return "";
         }
-        if (wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
+        if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
             this.parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
             return "";
         }
