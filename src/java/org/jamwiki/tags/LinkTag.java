@@ -54,7 +54,7 @@ public class LinkTag extends BodyTagSupport {
 		String tagText = buildLinkText();
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
-		String virtualWiki = retrieveVirtualWiki(request);
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromRequest(request);
 		if (StringUtils.hasText(this.queryParams)) {
 			wikiLink.setQuery(this.queryParams);
 		}
@@ -113,21 +113,6 @@ public class LinkTag extends BodyTagSupport {
 			tagText = body;
 		}
 		return tagText;
-	}
-
-	/**
-	 *
-	 */
-	private static String retrieveVirtualWiki(HttpServletRequest request) throws JspException {
-		String virtualWiki = request.getParameter(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
-		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
-		}
-		if (virtualWiki == null) {
-			logger.severe("No virtual wiki found for context path: " + request.getContextPath());
-			throw new JspException("No virtual wiki value found");
-		}
-		return virtualWiki;
 	}
 
 	/**

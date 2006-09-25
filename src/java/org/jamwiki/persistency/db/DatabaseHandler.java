@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Vector;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.model.Category;
@@ -191,14 +192,14 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getAllCategories(String virtualWiki) throws Exception {
+	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
 		Collection results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = DatabaseHandler.queryHandler.getCategories(virtualWikiId);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getCategories(virtualWikiId, pagination);
 		while (rs.next()) {
 			Category category = new Category();
 			category.setName(rs.getString("category_name"));
-			category.setChildTopicName(rs.getString("topic_name"));
+			// FIXME - child topic name not initialized
 			category.setVirtualWiki(virtualWiki);
 			category.setSortKey(rs.getString("sort_key"));
 			results.add(category);
@@ -279,9 +280,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
+	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, num, descending);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -292,11 +293,11 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, String topicName, int num, boolean descending) throws Exception {
+	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
 		Topic topic = lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) return all;
-		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(topic.getTopicId(), num, descending);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(topic.getTopicId(), pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -307,9 +308,9 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
+	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		Collection all = new Vector();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, num, descending);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -650,10 +651,10 @@ public class DatabaseHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception {
+	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicByType(virtualWikiId, topicType);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicByType(virtualWikiId, topicType, pagination);
 		while (rs.next()) {
 			results.add(rs.getString("topic_name"));
 		}

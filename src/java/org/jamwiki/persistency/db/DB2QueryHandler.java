@@ -18,6 +18,8 @@ package org.jamwiki.persistency.db;
 
 import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -37,5 +39,70 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getStart());
+		stmt.setInt(3, pagination.getEnd());
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
+		stmt.setString(1, virtualWiki);
+		stmt.setInt(2, pagination.getStart());
+		stmt.setInt(3, pagination.getEnd());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
+		stmt.setInt(1, topicId);
+		stmt.setInt(2, pagination.getStart());
+		stmt.setInt(3, pagination.getEnd());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
+		WikiPreparedStatement stmt = null;
+		if (Utilities.isIpAddress(userString)) {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+		} else {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+		}
+		stmt.setString(1, virtualWiki);
+		stmt.setString(2, userString);
+		stmt.setInt(3, pagination.getStart());
+		stmt.setInt(4, pagination.getEnd());
+		// FIXME - sort order ignored
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, topicType);
+		stmt.setInt(3, pagination.getStart());
+		stmt.setInt(4, pagination.getEnd());
+		return stmt.executeQuery();
 	}
 }

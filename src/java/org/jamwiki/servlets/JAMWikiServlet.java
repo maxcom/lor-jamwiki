@@ -35,6 +35,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
@@ -57,18 +58,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	// FIXME - make configurable
 	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
 	private static LinkedHashMap cachedContents = new LinkedHashMap();
-
-	/**
-	 *
-	 */
-	protected void redirect(String destination, HttpServletResponse response) {
-		String url = response.encodeRedirectURL(destination);
-		try {
-			response.sendRedirect(url);
-		} catch (Exception e) {
-			logger.severe("Unable to redirect", e);
-		}
-	}
 
 	/**
 	 *
@@ -98,6 +87,60 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWikiName);
+	}
+
+	/**
+	 *
+	 */
+	public static Pagination buildPagination(HttpServletRequest request, ModelAndView next) {
+		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
+		if (request.getParameter("num") != null) {
+			try {
+				num = new Integer(request.getParameter("num")).intValue();
+			} catch (Exception e) {
+				// invalid number
+			}
+		}
+		int offset = 0;
+		if (request.getParameter("offset") != null) {
+			try {
+				offset = new Integer(request.getParameter("offset")).intValue();
+			} catch (Exception e) {
+				// invalid number
+			}
+		}
+		if (next != null) {
+			next.addObject("num", new Integer(num));
+			next.addObject("offset", new Integer(offset));
+		}
+		return new Pagination(num, offset);
+	}
+
+	/**
+	 *
+	 */
+	public static String getCachedContent(HttpServletRequest request, String virtualWiki, String topicName, boolean cook) {
+		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
+		if (content == null) {
+			try {
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+				content = topic.getTopicContent();
+				if (cook) {
+					ParserInput parserInput = new ParserInput();
+					parserInput.setContext(request.getContextPath());
+					parserInput.setLocale(request.getLocale());
+					parserInput.setVirtualWiki(virtualWiki);
+					parserInput.setTopicName(topicName);
+					ParserOutput parserOutput = Utilities.parse(parserInput, content, topicName);
+					content = parserOutput.getContent();
+				}
+				cachedContents.put(virtualWiki + "-" + topicName, content);
+			} catch (Exception e) {
+				logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
+				return null;
+			}
+		}
+		return content;
 	}
 
 	/**
@@ -158,6 +201,18 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
+	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
+		String virtualWiki = request.getParameter(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
+		if (virtualWiki == null) {
+			virtualWiki = (String)request.getAttribute(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
+		}
+		if (virtualWiki == null) return null;
+		return Utilities.decodeFromRequest(virtualWiki);
+	}
+
+	/**
+	 *
+	 */
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = Utilities.retrieveDirectoriesFromURI(request, 0);
 		if (uri == null) {
@@ -187,33 +242,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 			}
 		} catch (Exception e) {}
 		return false;
-	}
-
-	/**
-	 *
-	 */
-	public static String getCachedContent(HttpServletRequest request, String virtualWiki, String topicName, boolean cook) {
-		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
-		if (content == null) {
-			try {
-				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-				content = topic.getTopicContent();
-				if (cook) {
-					ParserInput parserInput = new ParserInput();
-					parserInput.setContext(request.getContextPath());
-					parserInput.setLocale(request.getLocale());
-					parserInput.setVirtualWiki(virtualWiki);
-					parserInput.setTopicName(topicName);
-					ParserOutput parserOutput = Utilities.parse(parserInput, content, topicName);
-					content = parserOutput.getContent();
-				}
-				cachedContents.put(virtualWiki + "-" + topicName, content);
-			} catch (Exception e) {
-				logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
-				return null;
-			}
-		}
-		return content;
 	}
 
 	/**
@@ -277,6 +305,18 @@ public abstract class JAMWikiServlet extends AbstractController {
 			logger.severe("Unable to build default page layout", e);
 		}
 		next.addObject(PARAMETER_PAGE_INFO, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	protected void redirect(String destination, HttpServletResponse response) {
+		String url = response.encodeRedirectURL(destination);
+		try {
+			response.sendRedirect(url);
+		} catch (Exception e) {
+			logger.severe("Unable to redirect", e);
+		}
 	}
 
 	/**

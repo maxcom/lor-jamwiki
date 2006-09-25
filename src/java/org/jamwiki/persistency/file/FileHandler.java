@@ -43,6 +43,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
 import org.springframework.util.StringUtils;
@@ -334,11 +335,12 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getAllCategories(String virtualWiki) throws Exception {
+	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
 		Collection results = new Vector();
 		File[] files = retrieveCategoryFiles(virtualWiki);
 		if (files == null) return results;
-		for (int i = 0; i < files.length; i++) {
+		for (int i = pagination.getStart(); i <= pagination.getEnd(); i++) {
+			if (i >= files.length) break;
 			Properties categoryHash = new Properties();
 			FileInputStream fis = null;
 			try {
@@ -489,12 +491,12 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, int numChanges, boolean descending) throws Exception {
+	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
 		File[] files = retrieveRecentChangeFiles(virtualWiki, descending);
 		if (files == null) return all;
-		for (int i = 0; i < files.length; i++) {
-			if (i >= numChanges) break;
+		for (int i = pagination.getStart(); i <= pagination.getEnd(); i++) {
+			if (i >= files.length) break;
 			RecentChange change = initRecentChange(files[i]);
 			all.add(change);
 		}
@@ -504,11 +506,17 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, String topicName, int numChanges, boolean descending) throws Exception {
+	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
 		Vector results = new Vector();
 		Topic topic = this.lookupTopic(virtualWiki, topicName);
 		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
+		int i = 0;
 		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
+			if (i < pagination.getStart()) {
+				i++;
+				continue;
+			}
+			if (i >= pagination.getEnd()) break;
 			TopicVersion version = (TopicVersion)iterator.next();
 			String authorName = version.getAuthorIpAddress();
 			Integer authorId = version.getAuthorId();
@@ -517,7 +525,7 @@ public class FileHandler extends PersistencyHandler {
 			}
 			RecentChange change = new RecentChange(topic, version, authorName);
 			results.add(change);
-			if (results.size() >= numChanges) break;
+			i++;
 		}
 		return results;
 	}
@@ -525,12 +533,12 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
+	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
 		File[] files = retrieveUserContributionsFiles(virtualWiki, userString, descending);
 		if (files == null) return all;
-		for (int i = 0; i < files.length; i++) {
-			if (i >= num) break;
+		for (int i = pagination.getStart(); i <= pagination.getEnd(); i++) {
+			if (i >= files.length) break;
 			RecentChange change = initRecentChange(files[i]);
 			all.add(change);
 		}
@@ -1009,16 +1017,23 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception {
+	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
 		// FIXME - this parses every single topic.  hugely inefficient
 		Collection topicNames = this.getAllTopicNames(virtualWiki);
 		Collection results = new Vector();
+		int i = 0;
 		for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
+			if (i < pagination.getStart()) {
+				i++;
+				continue;
+			}
+			if (i >= pagination.getEnd()) break;
 			String topicName = (String)topicIterator.next();
 			Topic topic = lookupTopic(virtualWiki, topicName);
 			if (topic.getTopicType() == topicType) {
 				results.add(topicName);
 			}
+			i++;
 		}
 		return results;
 	}

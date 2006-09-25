@@ -6,7 +6,7 @@
 * FEATURE: Add support for topics of the form "Topic/Subtopic".
 * FEATURE: Support for interwiki links ([[Wikipedia:Main Page]]).
 * FEATURE: Re-engineer link handling to simplify the code.
-* FEATURE: Add selector for number of changes on Special:History.
+* FEATURE: Add pagination support.
 * FEATURE: Use the file system, not RAM, when rebuilding search index.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).

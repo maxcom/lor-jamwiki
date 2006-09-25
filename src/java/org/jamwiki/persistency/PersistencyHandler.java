@@ -41,6 +41,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.utils.DiffUtil;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCacheMap;
 import org.springframework.util.StringUtils;
@@ -226,7 +227,8 @@ public abstract class PersistencyHandler {
 					}
 				}
 				// recent changes
-				Collection changes = fromHandler.getRecentChanges(virtualWiki.getName(), 1000, false);
+				Pagination pagination = new Pagination(1000, 0);
+				Collection changes = fromHandler.getRecentChanges(virtualWiki.getName(), pagination, false);
 				for (Iterator changeIterator = changes.iterator(); changeIterator.hasNext();) {
 					RecentChange change = (RecentChange)changeIterator.next();
 					try {
@@ -234,19 +236,6 @@ public abstract class PersistencyHandler {
 						messages.add("Added recent change " + virtualWiki.getName() + " / " + change.getTopicName());
 					} catch (Exception e) {
 						String msg = "Unable to convert recent change: " + virtualWiki.getName() + " / " + change.getTopicName();
-						logger.severe(msg, e);
-						messages.add(msg + ": " + e.getMessage());
-					}
-				}
-				// categories
-				Collection categories = fromHandler.getAllCategories(virtualWiki.getName());
-				for (Iterator categoryIterator = categories.iterator(); categoryIterator.hasNext();) {
-					Category category = (Category)categoryIterator.next();
-					try {
-						toHandler.addCategory(category, params);
-						messages.add("Added category " + virtualWiki.getName() + " / " + category.getName());
-					} catch (Exception e) {
-						String msg = "Unable to convert category: " + virtualWiki.getName() + " / " + category.getName();
 						logger.severe(msg, e);
 						messages.add(msg + ": " + e.getMessage());
 					}
@@ -361,7 +350,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection getAllCategories(String virtualWiki) throws Exception;
+	public abstract Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
 	 *
@@ -391,17 +380,17 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection getRecentChanges(String virtualWiki, int numChanges, boolean descending) throws Exception;
+	public abstract Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract Collection getRecentChanges(String virtualWiki, String topicName, int numChanges, boolean descending) throws Exception;
+	public abstract Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public abstract Collection getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception;
+	public abstract Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -490,7 +479,7 @@ public abstract class PersistencyHandler {
 	/**
 	 *
 	 */
-	public abstract Collection lookupTopicByType(String virtualWiki, int topicType) throws Exception;
+	public abstract Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
 
 	/**
 	 *

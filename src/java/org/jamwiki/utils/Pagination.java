@@ -14,30 +14,52 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.tags;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.WikiVersion;
+package org.jamwiki.utils;
 
 /**
  *
  */
-public class WikiVersionTag extends TagSupport {
+public class Pagination {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(WikiVersionTag.class.getName());
+	/** Logger */
+	public static final WikiLogger logger = WikiLogger.getLogger(Pagination.class.getName());
+
+	private int numResults = 0;
+	private int offset = 0;
 
 	/**
 	 *
 	 */
-	public int doEndTag() throws JspException {
-		try {
-			this.pageContext.getOut().print(WikiVersion.CURRENT_WIKI_VERSION);
-		} catch (Exception e) {
-			logger.severe("Failure while retrieving Wiki version", e);
-			throw new JspException(e);
-		}
-		return EVAL_PAGE;
+	public Pagination(int numResults, int offset) {
+		this.numResults = numResults;
+		this.offset = offset;
+	}
+
+	/**
+	 *
+	 */
+	public int getEnd() {
+		return this.offset + this.numResults;
+	}
+
+	/**
+	 *
+	 */
+	public int getNumResults() {
+		return this.numResults;
+	}
+
+	/**
+	 *
+	 */
+	public int getOffset() {
+		return this.offset;
+	}
+
+	/**
+	 *
+	 */
+	public int getStart() {
+		return this.offset;
 	}
 }

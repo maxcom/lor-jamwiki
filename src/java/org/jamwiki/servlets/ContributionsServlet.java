@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Utilities;
@@ -54,14 +55,10 @@ public class ContributionsServlet extends JAMWikiServlet {
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String userString = request.getParameter("contributor");
-		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
-		if (request.getParameter("num") != null) {
-			// FIXME - verify it's a number
-			num = new Integer(request.getParameter("num")).intValue();
-		}
-		Collection contributions = WikiBase.getHandler().getUserContributions(virtualWiki, userString, num, true);
+		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		Collection contributions = WikiBase.getHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
-		next.addObject("num", new Integer(num));
+		next.addObject("numContributions", new Integer(contributions.size()));
 		next.addObject("contributor", userString);
 		pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
 		pageInfo.setAction(WikiPageInfo.ACTION_CONTRIBUTIONS);

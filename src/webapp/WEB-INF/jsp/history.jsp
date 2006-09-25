@@ -16,10 +16,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page import="
-        org.jamwiki.Environment
-    "
-    errorPage="/WEB-INF/jsp/error.jsp"
+<%@ page errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
 
@@ -69,41 +66,20 @@ function inactive(element) {
 }
 </script>
 
-<br />
-
 <div id="change">
 
-<br />
+<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></p>
 
 <form action="<jamwiki:link value="Special:History" />" method="get" name="historyForm">
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>
-<%-- FIXME: use JSP tag --%>
-<%
-int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
-if (request.getParameter("num") != null) {
-	// FIXME - breaks if non-integer
-	num = new Integer(request.getParameter("num")).intValue();
-}
-%>
-<select name="num">
-<option value="10"<%= (num == 10) ? " selected=\"selected\"" : "" %>>10</option>
-<option value="25"<%= (num == 25) ? " selected=\"selected\"" : "" %>>25</option>
-<option value="50"<%= (num == 50) ? " selected=\"selected\"" : "" %>>50</option>
-<option value="100"<%= (num == 100) ? " selected=\"selected\"" : "" %>>100</option>
-<option value="250"<%= (num == 250) ? " selected=\"selected\"" : "" %>>250</option>
-<option value="500"<%= (num == 500) ? " selected=\"selected\"" : "" %>>500</option>
-</select>
-&#160;
-<input type="submit" value="<f:message key="common.change" />" />
-</form>
 
-<br /><br />
+</form>
 
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="diffForm">
 <input type="hidden" name="type" value="arbitrary"/>
-<input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>
+<input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}" />' />
 
-<input type="submit" value='<f:message key="history.diff"/>'/>
+<input type="submit" value='<f:message key="history.diff" />' />
 
 <br /><br />
 

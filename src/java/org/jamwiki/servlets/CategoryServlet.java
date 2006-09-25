@@ -25,6 +25,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
+import org.jamwiki.utils.Pagination;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -55,7 +56,8 @@ public class CategoryServlet extends JAMWikiServlet {
 	 */
 	private void viewCategories(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection categoryObjects = WikiBase.getHandler().getAllCategories(virtualWiki);
+		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		Collection categoryObjects = WikiBase.getHandler().getAllCategories(virtualWiki, pagination);
 		LinkedHashMap categories = new LinkedHashMap();
 		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();

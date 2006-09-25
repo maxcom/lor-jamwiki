@@ -22,9 +22,9 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="alltopics.overview"><f:param value="${topicCount}" /></f:message></p>
+<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${topicCount}" rootUrl="Special:Allpages" /></p>
 
-<ol>
+<ol start="<c:out value="${offset + 1}" />">
 <c:forEach items="${topics}" var="topicName">
 <li><jamwiki:link value="${topicName}" text="${topicName}" /></li>
 </c:forEach>

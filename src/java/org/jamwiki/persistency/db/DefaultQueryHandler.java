@@ -29,6 +29,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 
 /**
@@ -236,19 +237,22 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getCategories(int virtualWikiId) throws Exception {
+	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
 		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
 		return stmt.executeQuery();
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception {
+	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
-		stmt.setInt(2, num);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -256,10 +260,11 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, int num, boolean descending) throws Exception {
+	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
 		stmt.setInt(1, topicId);
-		stmt.setInt(2, num);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -267,7 +272,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception {
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = null;
 		if (Utilities.isIpAddress(userString)) {
 			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
@@ -276,7 +281,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		}
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
-		stmt.setInt(3, num);
+		stmt.setInt(3, pagination.getNumResults());
+		stmt.setInt(4, pagination.getOffset());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -591,10 +597,12 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType) throws Exception {
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType);
+		stmt.setInt(3, pagination.getNumResults());
+		stmt.setInt(4, pagination.getOffset());
 		return stmt.executeQuery();
 	}
 

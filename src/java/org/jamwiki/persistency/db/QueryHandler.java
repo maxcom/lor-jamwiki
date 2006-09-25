@@ -24,6 +24,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Pagination;
 
 /**
  *
@@ -83,22 +84,22 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getCategories(int virtualWikiId) throws Exception;
+	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, int num, boolean descending) throws Exception;
+	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, int num, boolean descending) throws Exception;
+	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, int num, boolean descending) throws Exception;
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 *
@@ -178,7 +179,7 @@ public interface QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType) throws Exception;
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception;
 
 	/**
 	 *

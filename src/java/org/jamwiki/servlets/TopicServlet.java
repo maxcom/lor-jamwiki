@@ -24,6 +24,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.utils.Pagination;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -65,7 +66,8 @@ public class TopicServlet extends JAMWikiServlet {
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Collection topics = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE);
+		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		Collection topics = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
 		next.addObject("topics", topics);
 		next.addObject("topicCount", new Integer(topics.size()));
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
