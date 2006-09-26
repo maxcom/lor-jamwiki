@@ -44,6 +44,9 @@ steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.3.5".
+  2. A new CSS style, "a.interwiki:after", should be added to the JAMWiki
+     StyleSheet topic.  An up-to-date version of the default the StyleSheet
+     topic can be found in the /WEB-INF/classes/pages/StyleSheet file.
 
   JAMWiki 0.3.4
   =============
