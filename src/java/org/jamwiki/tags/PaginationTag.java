@@ -21,7 +21,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.Environment;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.LinkUtil;
@@ -106,11 +105,11 @@ public class PaginationTag extends BodyTagSupport {
 			Object[] objects = new Object[1];
 			objects[0] = new Integer(pagination.getNumResults());
 			if (pagination.getOffset() == 0 && previous) {
-				output.append(Utilities.getMessage("common.pagination.previous", request.getLocale(), objects));
+				output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
 				return output;
 			}
 			if (pagination.getNumResults() != count && !previous) {
-				output.append(Utilities.getMessage("common.pagination.next", request.getLocale(), objects));
+				output.append(Utilities.formatMessage("common.pagination.next", request.getLocale(), objects));
 				return output;
 			}
 			output.append("<a href=\"");
@@ -127,9 +126,9 @@ public class PaginationTag extends BodyTagSupport {
 			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
 			output.append("\">");
 			if (previous) {
-				output.append(Utilities.getMessage("common.pagination.previous", request.getLocale(), objects));
+				output.append(Utilities.formatMessage("common.pagination.previous", request.getLocale(), objects));
 			} else {
-				output.append(Utilities.getMessage("common.pagination.next", request.getLocale(), objects));
+				output.append(Utilities.formatMessage("common.pagination.next", request.getLocale(), objects));
 			}
 			output.append("</a>");
 		} catch (Exception e) {
@@ -144,7 +143,7 @@ public class PaginationTag extends BodyTagSupport {
 	private StringBuffer numResults(Pagination pagination, String baseUrl) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		StringBuffer output = new StringBuffer();
-		output.append(Utilities.getMessage("common.pagination.results", request.getLocale())).append(":&#160;");
+		output.append(Utilities.formatMessage("common.pagination.results", request.getLocale())).append(":&#160;");
 		output.append(buildOption(10, pagination, baseUrl));
 		output.append("&#160;|&#160;");
 		output.append(buildOption(25, pagination, baseUrl));

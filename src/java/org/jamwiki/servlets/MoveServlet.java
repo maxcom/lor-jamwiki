@@ -109,7 +109,7 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("moveComment", request.getParameter("moveComment"));
 			return false;
 		}
-		String moveComment = Utilities.getMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
+		String moveComment = Utilities.formatMessage("move.editcomment", request.getLocale(), new String[]{moveFrom, moveDestination});
 		if (StringUtils.hasText(request.getParameter("moveComment"))) {
 			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}

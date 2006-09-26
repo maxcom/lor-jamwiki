@@ -74,7 +74,7 @@ public class ParserUtil {
 			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
 		output += "<a href=\"" + url + "\">";
-		output += Utilities.getMessage("common.sectionedit", parserInput.getLocale());
+		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
 		output += "</a>]</div>";
 		return output;
 	}

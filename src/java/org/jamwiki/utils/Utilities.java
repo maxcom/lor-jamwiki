@@ -325,6 +325,38 @@ public class Utilities {
 	}
 
 	/**
+	 * Given a message key and locale return a locale-specific message.
+	 *
+	 * @param key The message key that corresponds to the formatted message
+	 *  being retrieved.
+	 * @param locale The locale for the message that is to be retrieved.
+	 * @return A formatted message string that is specific to the locale.
+	 */
+	public static String formatMessage(String key, Locale locale) {
+		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
+		return messages.getString(key);
+	}
+
+	/**
+	 * Given a message key, locale, and formatting parameters, return a
+	 * locale-specific message.
+	 *
+	 * @param key The message key that corresponds to the formatted message
+	 *  being retrieved.
+	 * @param locale The locale for the message that is to be retrieved.
+	 * @param params An array of formatting parameters to use in the message
+	 *  being returned.
+	 * @return A formatted message string that is specific to the locale.
+	 */
+	public static String formatMessage(String key, Locale locale, Object[] params) {
+		MessageFormat formatter = new MessageFormat("");
+		formatter.setLocale(locale);
+		String message = Utilities.formatMessage(key, locale);
+		formatter.applyPattern(message);
+		return formatter.format(params);
+	}
+
+	/**
 	 * Given a file name for a file that is located somewhere in the application
 	 * classpath, return a File object representing the file.
 	 *
@@ -385,38 +417,6 @@ public class Utilities {
 			throw new Exception("Unable to find class loader root");
 		}
 		return file.getParentFile();
-	}
-
-	/**
-	 * Given a message key and locale return a locale-specific message.
-	 *
-	 * @param key The message key that corresponds to the formatted message
-	 *  being retrieved.
-	 * @param locale The locale for the message that is to be retrieved.
-	 * @return A formatted message string that is specific to the locale.
-	 */
-	public static String getMessage(String key, Locale locale) {
-		ResourceBundle messages = ResourceBundle.getBundle("ApplicationResources", locale);
-		return messages.getString(key);
-	}
-
-	/**
-	 * Given a message key, locale, and formatting parameters, return a
-	 * locale-specific message.
-	 *
-	 * @param key The message key that corresponds to the formatted message
-	 *  being retrieved.
-	 * @param locale The locale for the message that is to be retrieved.
-	 * @param params An array of formatting parameters to use in the message
-	 *  being returned.
-	 * @return A formatted message string that is specific to the locale.
-	 */
-	public static String getMessage(String key, Locale locale, Object[] params) {
-		MessageFormat formatter = new MessageFormat("");
-		formatter.setLocale(locale);
-		String message = Utilities.getMessage(key, locale);
-		formatter.applyPattern(message);
-		return formatter.format(params);
 	}
 
 	/**

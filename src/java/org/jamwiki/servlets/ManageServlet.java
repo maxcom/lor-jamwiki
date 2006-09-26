@@ -100,7 +100,7 @@ public class ManageServlet extends JAMWikiServlet {
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		String contents = previousVersion.getVersionContent();
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), Utilities.getMessage("manage.message.permissions", request.getLocale()), contents);
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
