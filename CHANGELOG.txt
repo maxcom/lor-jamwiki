@@ -8,6 +8,7 @@
 * FEATURE: Re-engineer link handling to simplify the code.
 * FEATURE: Add pagination support.
 * FEATURE: Use the file system, not RAM, when rebuilding search index.
+* FEATURE: Remove VQWiki parser - unsupported.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 
