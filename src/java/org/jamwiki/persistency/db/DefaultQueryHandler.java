@@ -746,6 +746,10 @@ public class DefaultQueryHandler implements QueryHandler {
 			return "CURRENT_TIMESTAMP";
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2)) {
 			return "CURRENT_TIMESTAMP";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2_400)) {
+			return "CURRENT_TIMESTAMP";
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL)) {
+			return "CURRENT_TIMESTAMP";
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
 			return "CURRENT_TIMESTAMP";
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
