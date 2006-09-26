@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import org.jamwiki.utils.WikiLogger;
 
-import org.jamwiki.parser.ParserInput;
-
 /**
  * Abstract class to be used when implementing new lexers.  New lexers
  * should extend this class and override any methods that need to be

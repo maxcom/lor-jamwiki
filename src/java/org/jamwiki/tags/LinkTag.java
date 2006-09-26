@@ -83,16 +83,7 @@ public class LinkTag extends BodyTagSupport {
 		if (!StringUtils.hasText(key)) {
 			throw new JspException("linkParam key value cannot be empty");
 		}
-		if (!StringUtils.hasText(this.queryParams)) {
-			this.queryParams = "?";
-		} else {
-			this.queryParams += "&amp;";
-		}
-		this.queryParams += Utilities.encodeForURL(key);
-		this.queryParams += "=";
-		if (StringUtils.hasText(value)) {
-			this.queryParams += Utilities.encodeForURL(value);
-		}
+		this.queryParams = LinkUtil.appendQueryParam(this.queryParams, key, value);
 	}
 
 	/**

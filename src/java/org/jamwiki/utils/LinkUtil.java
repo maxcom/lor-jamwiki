@@ -46,15 +46,35 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Build a query parameter.  If root is empty, this method returns
+	 * "?param=value".  If root is not empty this method this method
+	 * returns root + "&amp;param=value".  Note that parma and value will be
+	 * URL encoded, and if "query" does not start with a "?" then one will be
+	 * pre-pended.
+	 */
+	public static String appendQueryParam(String query, String param, String value) {
+		String url = "";
+		if (StringUtils.hasText(query)) {
+			if (!query.startsWith("?")) {
+				query = "?" + query;
+			}
+			url = query + "&amp;";
+		} else {
+			url = "?";
+		}
+		if (!StringUtils.hasText(param)) return query;
+		url += Utilities.encodeForURL(param) + "=";
+		if (StringUtils.hasText(value)) {
+			url += Utilities.encodeForURL(value);
+		}
+		return url;
+	}
+
+	/**
 	 *
 	 */
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
-		if (StringUtils.hasText(query)) {
-			if (!query.startsWith("?")) query = "?" + query;
-			query += "&amp;topic=" + Utilities.encodeForURL(topic);
-		} else {
-			query = "?topic=" + Utilities.encodeForURL(topic);
-		}
+		query = LinkUtil.appendQueryParam(query, "topic", topic);
 		if (section > 0) {
 			query += "&amp;section=" + section;
 		}

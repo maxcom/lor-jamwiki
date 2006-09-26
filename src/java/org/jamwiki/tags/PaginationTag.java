@@ -27,7 +27,6 @@ import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
-import org.springframework.util.StringUtils;
 
 /**
  *
@@ -70,13 +69,8 @@ public class PaginationTag extends BodyTagSupport {
 			output.append("<a href=\"");
 			String virtualWiki = JAMWikiServlet.getVirtualWikiFromRequest(request);
 			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
-			String query = wikiLink.getQuery();
-			if (!StringUtils.hasText(query)) {
-				query = "?";
-			} else {
-				query += "&amp;";
-			}
-			query += "num=" + num + "&amp;offset=" + pagination.getOffset();
+			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", new Integer(num).toString());
+			query += "&amp;offset=" + pagination.getOffset();
 			wikiLink.setQuery(query);
 			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
 			output.append("\">");
@@ -122,18 +116,13 @@ public class PaginationTag extends BodyTagSupport {
 			output.append("<a href=\"");
 			String virtualWiki = JAMWikiServlet.getVirtualWikiFromRequest(request);
 			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
-			String query = wikiLink.getQuery();
-			if (!StringUtils.hasText(query)) {
-				query = "?";
-			} else {
-				query += "&amp;";
-			}
 			int offset = pagination.getOffset() + pagination.getNumResults();
 			if (previous) {
 				offset = pagination.getOffset() - pagination.getNumResults();
 				if (offset < 0) offset = 0;
 			}
-			query += "num=" + pagination.getNumResults() + "&amp;offset=" + offset;
+			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", new Integer(pagination.getNumResults()).toString());
+			query += "&amp;offset=" + offset;
 			wikiLink.setQuery(query);
 			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
 			output.append("\">");
