@@ -254,7 +254,9 @@ public class LinkUtil {
 			return new WikiLink();
 		}
 		wikiLink.setNamespace(m.group(4));
-		wikiLink.setDestination(m.group(2));
+		String destination = m.group(2);
+		if (StringUtils.hasText(destination)) destination = Utilities.decodeFromURL(destination);
+		wikiLink.setDestination(destination);
 		wikiLink.setSection(m.group(7));
 		wikiLink.setQuery(m.group(9));
 		return wikiLink;

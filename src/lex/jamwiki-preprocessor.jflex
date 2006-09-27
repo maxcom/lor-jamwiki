@@ -315,9 +315,6 @@ import org.springframework.util.StringUtils;
         if (StringUtils.hasText(wikiLink.getDestination())) {
             this.parserOutput.addLink(wikiLink.getDestination());
         }
-        if (yystate() != PRESAVE && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
-            return "";
-        }
         return (yystate() == PRESAVE) ? yytext() : ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
     }
     
@@ -529,10 +526,9 @@ wikisig5           = "~~~~~"
 
 /* ----- wiki links ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{imagelinkcaption} {
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    processLink(yytext());
-    return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
+    return processLink(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikilink} {

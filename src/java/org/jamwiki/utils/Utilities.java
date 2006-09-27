@@ -173,7 +173,7 @@ public class Utilities {
 		try {
 			url = URLDecoder.decode(url, "UTF-8");
 		} catch (Exception e) {
-			logger.warning("Failure while decoding url " + url + " with charset UTF-8");
+			logger.info("Failure while decoding url " + url + " with charset UTF-8");
 		}
 		return Utilities.decodeFromRequest(url);
 	}
