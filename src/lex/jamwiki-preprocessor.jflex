@@ -49,7 +49,7 @@ import org.springframework.util.StringUtils;
 
 /* code included in the constructor */
 %init{
-    allowHtml = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
+    allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
     allowJavascript = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
@@ -95,7 +95,7 @@ import org.springframework.util.StringUtils;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
-    protected boolean allowHtml = false;
+    protected boolean allowHTML = false;
     protected boolean allowJavascript = false;
     protected boolean wikibold = false;
     protected boolean wikih1 = false;
@@ -131,8 +131,8 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    protected boolean allowHtml() {
-        return (allowHtml && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
+    protected boolean allowHTML() {
+        return (allowHTML && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
     }
     
     /**
@@ -164,6 +164,13 @@ import org.springframework.util.StringUtils;
         if (yystate() == TD) output = "</td>";
         if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
         return output;
+    }
+    
+    /**
+     *
+     */
+    private boolean escapeHTML() {
+        return (this.parserInput.getMode() != ParserInput.MODE_SAVE && this.parserInput.getMode() != ParserInput.MODE_SEARCH);
     }
     
     /**
@@ -306,16 +313,16 @@ import org.springframework.util.StringUtils;
     protected String processLink(String raw) {
         WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
         if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
-            return "";
+            return (yystate() == PRESAVE) ? yytext() : "";
         }
         if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
             this.parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
-            return "";
+            return (yystate() == PRESAVE) ? yytext() : "";
         }
         if (StringUtils.hasText(wikiLink.getDestination())) {
             this.parserOutput.addLink(wikiLink.getDestination());
         }
-        return ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
+        return (yystate() == PRESAVE) ? yytext() : ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
     }
     
     /**
@@ -338,10 +345,21 @@ import org.springframework.util.StringUtils;
         // validate parser settings
         boolean validated = true;
         if (this.parserInput == null) validated = false;
-        if (this.parserInput.getTableOfContents() == null) validated = false;
-        if (this.parserInput.getContext() == null) validated = false;
-        if (this.parserInput.getVirtualWiki() == null) validated = false;
-        if (this.parserInput.getTopicName() == null) validated = false;
+        if (this.parserInput.getMode() != ParserInput.MODE_SAVE && this.parserInput.getMode() != ParserInput.MODE_SEARCH) {
+            if (this.parserInput.getTableOfContents() == null) validated = false;
+            if (this.parserInput.getTopicName() == null) validated = false;
+        }
+        if (this.parserInput.getMode() != ParserInput.MODE_SEARCH) {
+            if (this.parserInput.getContext() == null) validated = false;
+            if (this.parserInput.getVirtualWiki() == null) validated = false;
+        }
+        if (this.parserInput.getMode() == ParserInput.MODE_SAVE) {
+            if (this.parserInput.getUserIpAddress() == null) validated = false;
+        }
+        if (this.parserInput.getMode() == ParserInput.MODE_SAVE || this.parserInput.getMode() == ParserInput.MODE_SEARCH) {
+            endState();
+            beginState(PRESAVE);
+        }
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
@@ -432,13 +450,18 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 /* FIXME - hard-coding of image namespace */
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}) [^\n\r\]\[]*)+ "]]"
 
-%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE
+/* signatures */
+wikisig3           = "~~~"
+wikisig4           = "~~~~"
+wikisig5           = "~~~~~"
+
+%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE, PRESAVE
 
 %%
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, LIST>{nowikistart} {
+<WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{nowikistart} {
     logger.finer("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
@@ -452,9 +475,9 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 /* ----- pre ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmlprestart} {
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (allowHtml) {
+    if (allowHTML) {
         beginState(PRE);
         return yytext();
     }
@@ -468,7 +491,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
     return yytext();
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, WIKIPRE>^{wikiprestart} {
+<NORMAL, TABLE, TD, TH, TC, LIST, WIKIPRE, PRESAVE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -503,12 +526,12 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 /* ----- wiki links ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{imagelinkcaption} {
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{wikilink} {
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     return processLink(yytext());
 }
@@ -521,6 +544,35 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllinkraw} {
     logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
     return ParserUtil.buildHtmlLinkRaw(yytext());
+}
+
+/* ----- signatures ----- */
+
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig3} {
+    logger.finer("wikisig3: " + yytext() + " (" + yystate() + ")");
+    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+        // called from search indexer, no need to parse signatures
+        return yytext();
+    }
+    return ParserUtil.buildWikiSignature(this.parserInput, true, false);
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig4} {
+    logger.finer("wikisig4: " + yytext() + " (" + yystate() + ")");
+    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+        // called from search indexer, no need to parse signatures
+        return yytext();
+    }
+    return ParserUtil.buildWikiSignature(this.parserInput, true, true);
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig5} {
+    logger.finer("wikisig5: " + yytext() + " (" + yystate() + ")");
+    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+        // called from search indexer, no need to parse signatures
+        return yytext();
+    }
+    return ParserUtil.buildWikiSignature(this.parserInput, false, true);
 }
 
 /* ----- tables ----- */
@@ -797,17 +849,17 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
+    return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
+    return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmltagattributes} {
     logger.finer("htmltagattributes: " + yytext() + " (" + yystate() + ")");
-    return (allowHtml()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
+    return (allowHTML()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 /* ----- javascript ----- */
@@ -844,33 +896,33 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
     logger.finer("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return "&lt;";
+    return (escapeHTML()) ? "&lt;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
     logger.finer("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return "&gt;";
+    return (escapeHTML()) ? "&gt;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
     logger.finer("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return "&quot;";
+    return (escapeHTML()) ? "&quot;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
     logger.finer("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return "&#39;";
+    return (escapeHTML()) ? "&#39;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>{whitespace} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT, PRESAVE>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT>. {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT, PRESAVE>. {
     // no need to log this
     return yytext();
 }

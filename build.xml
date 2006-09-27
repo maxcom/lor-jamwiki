@@ -5,7 +5,6 @@
 	<target name="cleanLexers" description="Cleans up after lexer generation">
 		<!-- delete old generated lexer source files -->
 		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreProcessor.java" />
-		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreSaveProcessor.java" />
 		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPostProcessor.java" />
 		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiSpliceProcessor.java" />
 	</target>
@@ -29,7 +28,6 @@
 	<target name="jflex" depends="init,cleanLexers" description="Generate Java files from the lexer files">
 		<!-- only generate new source files after old ones were deleted through cleanLexers target -->
 		<jflex file="${dir.src.lex}/jamwiki-preprocessor.jflex" destdir="${dir.src.java}" />
-		<jflex file="${dir.src.lex}/jamwiki-presaveprocessor.jflex" destdir="${dir.src.java}" />
 		<jflex file="${dir.src.lex}/jamwiki-postprocessor.jflex" destdir="${dir.src.java}" />
 		<jflex file="${dir.src.lex}/jamwiki-spliceprocessor.jflex" destdir="${dir.src.java}" />
 	</target>

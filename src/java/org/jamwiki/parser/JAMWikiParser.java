@@ -80,11 +80,6 @@ public class JAMWikiParser extends AbstractParser {
 		StringReader raw = new StringReader(rawText);
 		// maintain the original output, which has all of the category and link info
 		ParserOutput original = this.parsePreProcess(raw);
-		if (this.parserInput.getMode() != ParserInput.MODE_NORMAL) {
-			// save or preview mode, add pre-save processor
-			ParserOutput parserOutput = this.parsePreSave(original.getContent());
-			original.setContent(parserOutput.getContent());
-		}
 		raw = new StringReader(original.getContent());
 		ParserOutput parserOutput = this.parsePostProcess(raw);
 		original.setContent(parserOutput.getContent());
@@ -120,7 +115,7 @@ public class JAMWikiParser extends AbstractParser {
 	 */
 	public ParserOutput parsePreSave(String contents) throws Exception {
 		StringReader raw = new StringReader(contents);
-		JAMWikiPreSaveProcessor lexer = new JAMWikiPreSaveProcessor(raw);
+		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
 		lexer.setParserInput(this.parserInput);
 		ParserOutput parserOutput = this.lex(lexer);
 		// verify whether or not this is a redirect
