@@ -80,25 +80,24 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Vector messages = new Vector();
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		boolean success = true;
-		if (oldVersion.before(0, 0, 8)) {
-			if (!upgrade008(request, messages)) success = false;
-		}
 		if (oldVersion.before(0, 1, 0)) {
-			if (!upgrade010(request, messages)) success = false;
-		}
-		if (oldVersion.before(0, 2, 0)) {
-			if (!upgrade020(request, messages)) success = false;
-		}
-		if (oldVersion.before(0, 3, 0)) {
-			if (!upgrade030(request, messages)) success = false;
-		}
-		if (oldVersion.before(0, 3, 1)) {
-			if (!upgrade031(request, messages)) success = false;
-		}
-		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
-		if (errors.size() > 0) {
-			next.addObject("errors", errors);
+			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.1.0"));
 			success = false;
+		} else {
+			if (oldVersion.before(0, 2, 0)) {
+				if (!upgrade020(request, messages)) success = false;
+			}
+			if (oldVersion.before(0, 3, 0)) {
+				if (!upgrade030(request, messages)) success = false;
+			}
+			if (oldVersion.before(0, 3, 1)) {
+				if (!upgrade031(request, messages)) success = false;
+			}
+			Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
+			if (errors.size() > 0) {
+				next.addObject("errors", errors);
+				success = false;
+			}
 		}
 		if (success) {
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
@@ -118,65 +117,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade008(HttpServletRequest request, Vector messages) {
-		Collection userNames = null;
-		try {
-			userNames = WikiBase.getHandler().getAllWikiUserLogins();
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to retrieve user logins";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
-		for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
-			String userName = (String)userIterator.next();
-			try {
-				WikiUser user = WikiBase.getHandler().lookupWikiUser(userName);
-				if (!StringUtils.hasText(user.getEncodedPassword()) || (user.getEncodedPassword().length() != 12 && user.getEncodedPassword().length() != 24)) {
-					messages.add("User password for user " + userName + " is not Base64 encoded");
-					continue;
-				}
-				String password = Encryption.decrypt64(user.getEncodedPassword());
-				user.setEncodedPassword(Encryption.encrypt(password));
-				WikiBase.getHandler().writeWikiUser(user);
-				// FIXME - hard coding
-				messages.add("Converted user password to SHA-512 for user " + userName);
-			} catch (Exception e) {
-				// FIXME - hard coding
-				String msg = "Unable to convert user password to SHA-512 for user " + userName;
-				logger.severe(msg, e);
-				messages.add(msg + ": " + e.getMessage());
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade010(HttpServletRequest request, Vector messages) {
-		// update virtual wiki
-		try {
-			if (WikiBase.getHandler() instanceof DatabaseHandler) {
-				messages = DatabaseUpgrades.upgrade010(messages);
-			} else {
-				messages = FileUpgrades.upgrade010(messages);
-			}
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to update virtual wiki table";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
 	}
 
 	/**

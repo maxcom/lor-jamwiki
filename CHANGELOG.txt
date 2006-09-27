@@ -9,6 +9,7 @@
 * FEATURE: Add pagination support.
 * FEATURE: Use the file system, not RAM, when rebuilding search index.
 * FEATURE: Remove VQWiki parser - unsupported.
+* FEATURE: Remove ability to upgrade from JAMWiki versions prior to 0.1.0.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 

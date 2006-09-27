@@ -16,14 +16,8 @@
  */
 package org.jamwiki.persistency.file;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
-import org.apache.commons.io.FileUtils;
-import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.model.VirtualWiki;
 
 /**
  *
@@ -31,28 +25,6 @@ import org.jamwiki.model.VirtualWiki;
 public class FileUpgrades {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(FileUpgrades.class.getName());
-
-	/**
-	 *
-	 */
-	public static Vector upgrade010(Vector messages) throws Exception {
-		String VIRTUAL_WIKI_LIST = "virtualwikis";
-		File file = FileHandler.getPathFor("", null, VIRTUAL_WIKI_LIST);
-		if (file.exists()) {
-			List lines = FileUtils.readLines(file, "UTF-8");
-			for (Iterator iterator = lines.iterator(); iterator.hasNext();) {
-				String line = (String)iterator.next();
-				VirtualWiki virtualWiki = new VirtualWiki();
-				virtualWiki.setName(line);
-				virtualWiki.setDefaultTopicName(WikiBase.DEFAULT_VWIKI);
-				WikiBase.getHandler().writeVirtualWiki(virtualWiki);
-			}
-			file.delete();
-		}
-		// FIXME - hard coding
-		messages.add("Updated virtual wiki files");
-		return messages;
-	}
 
 	/**
 	 *
