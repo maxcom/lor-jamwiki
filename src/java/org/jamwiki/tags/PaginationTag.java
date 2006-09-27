@@ -69,7 +69,7 @@ public class PaginationTag extends BodyTagSupport {
 			String virtualWiki = JAMWikiServlet.getVirtualWikiFromRequest(request);
 			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
 			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", new Integer(num).toString());
-			query += "&amp;offset=" + pagination.getOffset();
+			query += "&amp;offset=0";
 			wikiLink.setQuery(query);
 			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
 			output.append("\">");

@@ -495,7 +495,7 @@ public class FileHandler extends PersistencyHandler {
 		Vector all = new Vector();
 		File[] files = retrieveRecentChangeFiles(virtualWiki, descending);
 		if (files == null) return all;
-		for (int i = pagination.getStart(); i <= pagination.getEnd(); i++) {
+		for (int i = pagination.getStart(); i < pagination.getEnd(); i++) {
 			if (i >= files.length) break;
 			RecentChange change = initRecentChange(files[i]);
 			all.add(change);
@@ -512,12 +512,12 @@ public class FileHandler extends PersistencyHandler {
 		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
 		int i = 0;
 		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
+			TopicVersion version = (TopicVersion)iterator.next();
 			if (i < pagination.getStart()) {
 				i++;
 				continue;
 			}
 			if (i >= pagination.getEnd()) break;
-			TopicVersion version = (TopicVersion)iterator.next();
 			String authorName = version.getAuthorIpAddress();
 			Integer authorId = version.getAuthorId();
 			if (authorId != null) {
@@ -537,7 +537,7 @@ public class FileHandler extends PersistencyHandler {
 		Vector all = new Vector();
 		File[] files = retrieveUserContributionsFiles(virtualWiki, userString, descending);
 		if (files == null) return all;
-		for (int i = pagination.getStart(); i <= pagination.getEnd(); i++) {
+		for (int i = pagination.getStart(); i < pagination.getEnd(); i++) {
 			if (i >= files.length) break;
 			RecentChange change = initRecentChange(files[i]);
 			all.add(change);
@@ -1023,12 +1023,12 @@ public class FileHandler extends PersistencyHandler {
 		Collection results = new Vector();
 		int i = 0;
 		for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
+			String topicName = (String)topicIterator.next();
 			if (i < pagination.getStart()) {
 				i++;
 				continue;
 			}
 			if (i >= pagination.getEnd()) break;
-			String topicName = (String)topicIterator.next();
 			Topic topic = lookupTopic(virtualWiki, topicName);
 			if (topic.getTopicType() == topicType) {
 				results.add(topicName);
@@ -1313,6 +1313,7 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveTopicFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.TOPIC_DIR);
 		File[] files = file.listFiles();
+		Arrays.sort(files);
 		return files;
 	}
 
