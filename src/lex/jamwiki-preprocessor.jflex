@@ -303,19 +303,39 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    protected String processLink(String raw) {
+    protected String processLinkContent(String raw) {
+        WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
+        if (yystate() == PRESAVE) {
+            // pushback to allow re-parsing in case of image caption links or signature
+            yypushback(yytext().length() - 2);
+            return yytext();
+        }
+        if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
+            // no destination or section
+            return yytext();
+        }
+        if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
+            // category tag, but not a category link
+            return "";
+        }
+        return ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
+    }
+    
+    /**
+     *
+     */
+    protected void processLinkMetadata(String raw) {
         WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
         if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
-            return (yystate() == PRESAVE) ? yytext() : "";
+            return;
         }
         if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
             this.parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
-            return (yystate() == PRESAVE) ? yytext() : "";
+            return;
         }
         if (StringUtils.hasText(wikiLink.getDestination())) {
             this.parserOutput.addLink(wikiLink.getDestination());
         }
-        return (yystate() == PRESAVE) ? yytext() : ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
     }
     
     /**
@@ -528,12 +548,14 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    return processLink(yytext());
+    processLinkMetadata(yytext());
+    return processLinkContent(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    return processLink(yytext());
+    processLinkMetadata(yytext());
+    return processLinkContent(yytext());
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
@@ -555,7 +577,7 @@ wikisig5           = "~~~~~"
         return yytext();
     }
     String text = ParserUtil.buildWikiSignature(this.parserInput, true, false);
-    processLink(text);
+    processLinkMetadata(text);
     return text;
 }
 
@@ -566,7 +588,7 @@ wikisig5           = "~~~~~"
         return yytext();
     }
     String text = ParserUtil.buildWikiSignature(this.parserInput, true, true);
-    processLink(text);
+    processLinkMetadata(text);
     return text;
 }
 
