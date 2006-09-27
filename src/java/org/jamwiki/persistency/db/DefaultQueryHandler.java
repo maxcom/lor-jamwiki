@@ -738,28 +738,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	}
 
 	/**
-	 * Utility method for returning a database-appropriate value that corresponds
-	 * to the SQL function indicating the current time.
-	 */
-	private static String now() {
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES)) {
-			return "CURRENT_TIMESTAMP";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2)) {
-			return "CURRENT_TIMESTAMP";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2_400)) {
-			return "CURRENT_TIMESTAMP";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL)) {
-			return "CURRENT_TIMESTAMP";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
-			return "CURRENT_TIMESTAMP";
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
-			return "SYSTIMESTAMP";
-		} else {
-			return "CURRENT_TIMESTAMP";
-		}
-	}
-
-	/**
 	 *
 	 */
 	public void reloadRecentChanges(Connection conn) throws Exception {
