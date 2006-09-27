@@ -169,13 +169,6 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    private boolean escapeHTML() {
-        return (this.parserInput.getMode() != ParserInput.MODE_SAVE && this.parserInput.getMode() != ParserInput.MODE_SEARCH);
-    }
-    
-    /**
-     *
-     */
     private static boolean isListTag(char value) {
         if (value == '*') {
             return true;
@@ -322,7 +315,17 @@ import org.springframework.util.StringUtils;
         if (StringUtils.hasText(wikiLink.getDestination())) {
             this.parserOutput.addLink(wikiLink.getDestination());
         }
+        if (yystate() != PRESAVE && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
+            return "";
+        }
         return (yystate() == PRESAVE) ? yytext() : ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
+    }
+    
+    /**
+     *
+     */
+    private boolean standardMode() {
+        return (this.parserInput.getMode() != ParserInput.MODE_SAVE && this.parserInput.getMode() != ParserInput.MODE_SEARCH);
     }
     
     /**
@@ -477,7 +480,7 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (allowHTML) {
+    if (allowHTML || !standardMode()) {
         beginState(PRE);
         return yytext();
     }
@@ -497,9 +500,9 @@ wikisig5           = "~~~~~"
     yypushback(1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
-        return "<pre>";
+        return (standardMode()) ? "<pre>" : yytext();
     }
-    return "";
+    return (standardMode()) ? "" : yytext();
 }
 
 <WIKIPRE>^{wikipreend} {
@@ -507,7 +510,7 @@ wikisig5           = "~~~~~"
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
-    return "</pre>\n";
+    return  (standardMode()) ? "</pre>\n" : yytext();
 }
 
 /* ----- processing commands ----- */
@@ -526,8 +529,9 @@ wikisig5           = "~~~~~"
 
 /* ----- wiki links ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
+<NORMAL, TABLE, TD, TH, TC, LIST>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
+    processLink(yytext());
     return ParserUtil.buildInternalLinkUrl(this.parserInput, yytext());
 }
 
@@ -554,7 +558,9 @@ wikisig5           = "~~~~~"
         // called from search indexer, no need to parse signatures
         return yytext();
     }
-    return ParserUtil.buildWikiSignature(this.parserInput, true, false);
+    String text = ParserUtil.buildWikiSignature(this.parserInput, true, false);
+    processLink(text);
+    return text;
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig4} {
@@ -563,7 +569,9 @@ wikisig5           = "~~~~~"
         // called from search indexer, no need to parse signatures
         return yytext();
     }
-    return ParserUtil.buildWikiSignature(this.parserInput, true, true);
+    String text = ParserUtil.buildWikiSignature(this.parserInput, true, true);
+    processLink(text);
+    return text;
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig5} {
@@ -896,25 +904,25 @@ wikisig5           = "~~~~~"
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
     logger.finer("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return (escapeHTML()) ? "&lt;" : yytext();
+    return (standardMode()) ? "&lt;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
     logger.finer("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return (escapeHTML()) ? "&gt;" : yytext();
+    return (standardMode()) ? "&gt;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
     logger.finer("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return (escapeHTML()) ? "&quot;" : yytext();
+    return (standardMode()) ? "&quot;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
     logger.finer("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
-    return (escapeHTML()) ? "&#39;" : yytext();
+    return (standardMode()) ? "&#39;" : yytext();
 }
 
 <WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT, PRESAVE>{whitespace} {
