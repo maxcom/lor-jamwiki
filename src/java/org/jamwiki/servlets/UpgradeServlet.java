@@ -200,6 +200,12 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (oldVersion.before(0, 1, 0)) {
+			Vector errors = new Vector();
+			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.1.0"));
+			next.addObject("errors", errors);
+		}
 		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));

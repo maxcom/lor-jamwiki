@@ -66,7 +66,7 @@ function confirmSubmit() {
 <p class="red"><f:message key="${error.key}" /></p>
 </c:if>
 
-<c:if test="${empty message && empty error}">
+<c:if test="${empty message && empty error && empty errors}">
 <form name="adminUpgrade" method="get">
 <input type="hidden" name="function" value="upgrade" />
 <table style="border:2px solid #333333;padding=1em;">
@@ -79,7 +79,7 @@ function confirmSubmit() {
 <c:if test="${!empty errors}">
 <br />
 <table>
-<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
+<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message><br /></c:forEach></td></tr>
 </table>
 </c:if>
 
