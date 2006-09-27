@@ -47,8 +47,8 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getNumResults());
 		return stmt.executeQuery();
 	}
 
@@ -58,8 +58,8 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
 		stmt.setString(1, virtualWiki);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getNumResults());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -70,8 +70,8 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
 		stmt.setInt(1, topicId);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getNumResults());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -88,8 +88,8 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 		}
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
-		stmt.setInt(3, pagination.getStart());
-		stmt.setInt(4, pagination.getEnd());
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getNumResults());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -101,8 +101,8 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getStart());
-		stmt.setInt(4, pagination.getEnd());
+		stmt.setInt(3, pagination.getEnd());
+		stmt.setInt(4, pagination.getNumResults());
 		return stmt.executeQuery();
 	}
 }
