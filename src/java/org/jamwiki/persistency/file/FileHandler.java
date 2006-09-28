@@ -1291,7 +1291,17 @@ public class FileHandler extends PersistencyHandler {
 	private File[] retrieveCategoryFiles(String virtualWiki) throws Exception {
 		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.CATEGORIES_DIR);
 		File[] files = file.listFiles();
-		return files;
+		// remove directories
+		Vector temp = new Vector();
+		for (int i=0; i < files.length; i++) {
+			if (files[i].isDirectory()) continue;
+			temp.add(files[i]);
+		}
+		File[] results = new File[temp.size()];
+		for (int i=0; i < temp.size(); i++) {
+			results[i] = (File)temp.elementAt(i);
+		}
+		return results;
 	}
 
 	/**

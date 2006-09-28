@@ -7,6 +7,8 @@
 * FEATURE: Support for interwiki links ([[Wikipedia:Main Page]]).
 * FEATURE: Re-engineer link handling to simplify the code.
 * FEATURE: Add pagination support.
+* BUG: Fix error on Special:Categories when in file persistency mode.
+* BUG: Allow signatures in image captions.
 * FEATURE: Use the file system, not RAM, when rebuilding search index.
 * FEATURE: Remove VQWiki parser - unsupported.
 * FEATURE: Simplify the parser by removing the pre-save parser.
