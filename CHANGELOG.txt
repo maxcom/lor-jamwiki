@@ -2,7 +2,7 @@
 0.3.5
 =====
 
-* FEATURE: Add beta support for the DB2 and DB2/400 databases.
+* FEATURE: Add experimental support for the DB2 and DB2/400 databases.
 * FEATURE: Add support for topics of the form "Topic/Subtopic".
 * FEATURE: Support for interwiki links ([[Wikipedia:Main Page]]).
 * FEATURE: Re-engineer link handling to simplify the code.
