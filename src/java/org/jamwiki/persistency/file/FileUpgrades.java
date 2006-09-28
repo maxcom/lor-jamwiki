@@ -25,18 +25,4 @@ import org.jamwiki.utils.WikiLogger;
 public class FileUpgrades {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(FileUpgrades.class.getName());
-
-	/**
-	 *
-	 */
-	public static Vector upgrade030(Vector messages) throws Exception {
-		return messages;
-	}
-
-	/**
-	 *
-	 */
-	public static Vector upgrade031(Vector messages) throws Exception {
-		return messages;
-	}
 }

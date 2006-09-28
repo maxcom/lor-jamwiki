@@ -93,6 +93,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			if (oldVersion.before(0, 3, 1)) {
 				if (!upgrade031(request, messages)) success = false;
 			}
+			if (oldVersion.before(0, 3, 5)) {
+				if (!upgrade035(request, messages)) success = false;
+			}
 			Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 			if (errors.size() > 0) {
 				next.addObject("errors", errors);
@@ -147,8 +150,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		try {
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
 				messages = DatabaseUpgrades.upgrade030(messages);
-			} else {
-				messages = FileUpgrades.upgrade030(messages);
 			}
 			// upgrade stylesheet
 			upgradeStyleSheet(request, messages);
@@ -169,9 +170,24 @@ public class UpgradeServlet extends JAMWikiServlet {
 		try {
 			if (WikiBase.getHandler() instanceof DatabaseHandler) {
 				messages = DatabaseUpgrades.upgrade031(messages);
-			} else {
-				messages = FileUpgrades.upgrade031(messages);
 			}
+			// upgrade stylesheet
+			upgradeStyleSheet(request, messages);
+			return true;
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to complete upgrade to new JAMWiki version.";
+			logger.severe(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private boolean upgrade035(HttpServletRequest request, Vector messages) {
+		try {
 			// upgrade stylesheet
 			upgradeStyleSheet(request, messages);
 			return true;
