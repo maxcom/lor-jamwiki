@@ -1020,19 +1020,24 @@ public class FileHandler extends PersistencyHandler {
 	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
 		// FIXME - this parses every single topic.  hugely inefficient
 		Collection topicNames = this.getAllTopicNames(virtualWiki);
-		Collection results = new Vector();
-		int i = 0;
+		Vector temp = new Vector();
 		for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
+			String topicName = (String)topicIterator.next();
+			Topic topic = lookupTopic(virtualWiki, topicName);
+			if (topic.getTopicType() == topicType) {
+				temp.add(topicName);
+			}
+		}
+		int i = 0;
+		Collection results = new Vector();
+		for (Iterator topicIterator = temp.iterator(); topicIterator.hasNext();) {
 			String topicName = (String)topicIterator.next();
 			if (i < pagination.getStart()) {
 				i++;
 				continue;
 			}
 			if (i >= pagination.getEnd()) break;
-			Topic topic = lookupTopic(virtualWiki, topicName);
-			if (topic.getTopicType() == topicType) {
-				results.add(topicName);
-			}
+			results.add(topicName);
 			i++;
 		}
 		return results;
