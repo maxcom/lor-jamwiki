@@ -169,20 +169,9 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    private static boolean isListTag(char value) {
-        if (value == '*') {
-            return true;
-        }
-        if (value == '#') {
-            return true;
-        }
-        if (value == ':') {
-            return true;
-        }
-        if (value == ';') {
-            return true;
-        }
-        return false;
+    private static boolean isListTag(char character) {
+        String value = character + "";
+        return (listOpenHash.get(value) != null);
     }
     
     /**
