@@ -2,7 +2,6 @@
 0.3.5
 =====
 
-* FEATURE: Add experimental support for the DB2 and DB2/400 databases.
 * FEATURE: Add support for topics of the form "Topic/Subtopic".
 * FEATURE: Support for interwiki links ([[Wikipedia:Main Page]]).
 * FEATURE: Re-engineer link handling to simplify the code.
@@ -15,6 +14,7 @@
 * FEATURE: Remove ability to upgrade from JAMWiki versions prior to 0.1.0.
 * FEATURE: Add ANT target for building Javadoc.
 * BUG: Table of contents should be enabled by default.
+* FEATURE: Add experimental support for the DB2, DB2/400 and MSSQL databases.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 

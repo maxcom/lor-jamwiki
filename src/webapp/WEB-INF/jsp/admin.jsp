@@ -232,6 +232,7 @@ FIXME - Email not supported right now, comment this out
 		<option value="<%= DatabaseHandler.DB_TYPE_POSTGRES %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_POSTGRES %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_DB2 %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2 %> (<f:message key="common.caption.experimental" />)</option>
 		<option value="<%= DatabaseHandler.DB_TYPE_DB2_400 %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2_400) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2_400 %> (<f:message key="common.caption.experimental" />)</option>
+		<option value="<%= DatabaseHandler.DB_TYPE_MSSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MSSQL %> (<f:message key="common.caption.experimental" />)</option>
 		</select>
 	</td>
 </tr>
