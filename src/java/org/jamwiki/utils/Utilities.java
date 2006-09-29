@@ -122,7 +122,7 @@ public class Utilities {
 	 * Retrieve the current logged-in user from the servlet request.  If there is
 	 * no user return <code>null</code>.
 	 *
-	 * @param reqeust The servlet request object.
+	 * @param request The servlet request object.
 	 * @return The current logged-in user, or <code>null</code> if there is no
 	 *  user currently logged in.
 	 */
@@ -150,7 +150,7 @@ public class Utilities {
 	 * Decode a value that has been retrieved from a servlet request.  This
 	 * method will replace any underscores with spaces.
 	 *
-	 * @param The encoded value that is to be decoded.
+	 * @param url The encoded value that is to be decoded.
 	 * @return A decoded value.
 	 */
 	public static String decodeFromRequest(String url) {
@@ -166,7 +166,7 @@ public class Utilities {
 	 * for values retrieved using request.getParameter(), but only values
 	 * taken directly from a URL.
 	 *
-	 * @param The encoded value that is to be decoded.
+	 * @param url The encoded value that is to be decoded.
 	 * @return A decoded value.
 	 */
 	public static String decodeFromURL(String url) {

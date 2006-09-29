@@ -33,7 +33,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Encryption;
 
 /**
- *
+ * This class provides methods for retrieving database connections, executing queries,
+ * and setting up connection pools.
  */
 public class DatabaseConnection {
 
@@ -44,9 +45,14 @@ public class DatabaseConnection {
 	private static GenericObjectPool connectionPool = null;
 
 	/**
+	 * Set up the database connection.
 	 *
+	 * @param url The database connection url.
+	 * @param userName The user name to use when connecting to the database.
+	 * @param password The password to use when connecting to the database.
+	 * @throws Exception Thrown if any error occurs while initializing the connection pool.
 	 */
-	public static void setUpConnectionPool(String url, String userName, String password) throws Exception {
+	private static void setUpConnectionPool(String url, String userName, String password) throws Exception {
 		closeConnectionPool();
 		Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
 		connectionPool = new GenericObjectPool();
@@ -83,7 +89,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	public static void closeConnectionPool() throws Exception {
+	private static void closeConnectionPool() throws Exception {
 		if (connectionPool == null) {
 			return;
 		}

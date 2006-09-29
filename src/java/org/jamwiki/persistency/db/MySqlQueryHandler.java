@@ -21,7 +21,9 @@ import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * MySQL-specific implementation of the QueryHandler interface.  This class implements
+ * MySQL-specific methods for instances where MySQL does not support the default
+ * ASCII SQL syntax.
  */
 public class MySqlQueryHandler extends DefaultQueryHandler {
 

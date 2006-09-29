@@ -21,7 +21,9 @@ import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Postgres-specific implementation of the QueryHandler interface.  This class implements
+ * Postgres-specific methods for instances where Postgres does not support the default
+ * ASCII SQL syntax.
  */
 public class PostgresQueryHandler extends DefaultQueryHandler {
 

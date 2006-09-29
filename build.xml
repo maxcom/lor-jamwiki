@@ -116,6 +116,35 @@
 			<fileset dir="${dir.src.java}/org/incava" includes="COPYING, AUTHORS" />
 		</jar>
 	</target>
+	
+	<target name="javadoc" depends="jflex" description="Create Javadoc documentation">
+		<javadoc destdir="${dir.build.javadoc}">
+			<packageset dir="${dir.src.java}" defaultexcludes="yes">
+				<include name="org/jamwiki/**" />
+			</packageset>
+			<classpath>
+				<pathelement path="${dir.src.java}" />
+				<pathelement path="${dir.lib}/commons-codec.jar" />
+				<pathelement path="${dir.lib}/commons-dbcp-1.2.1.jar" />
+				<pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar" />
+				<pathelement path="${dir.lib}/commons-io-1.2.jar" />
+				<pathelement path="${dir.lib}/commons-logging-1.1.jar" />
+				<pathelement path="${dir.lib}/commons-pool-1.3.jar" />
+				<pathelement path="${dir.lib}/javadiff-1.0.5.jar" />
+				<pathelement path="${dir.lib}/jstl-1.0.6.jar" />
+				<pathelement path="${dir.lib}/lucene-core-2.0.0.jar" />
+				<pathelement path="${dir.lib}/lucene-highlighter-2.0.0.jar" />
+				<pathelement path="${dir.lib}/mail.jar" />
+				<pathelement path="${dir.lib}/servlet.jar" />
+				<pathelement path="${dir.lib}/spring-beans-1.2.8.jar" />
+				<pathelement path="${dir.lib}/spring-context-1.2.8.jar" />
+				<pathelement path="${dir.lib}/spring-core-1.2.8.jar" />
+				<pathelement path="${dir.lib}/spring-web-1.2.8.jar" />
+				<pathelement path="${dir.lib}/spring-webmvc-1.2.8.jar" />
+				<pathelement path="${dir.lib}/standard-1.0.6.jar" />
+			</classpath>
+		</javadoc>
+	</target>
 
 	<target name="help" description="Displays a list of possible targets for the project.">
 		<echo>Available targets.  Most users will want the "war" target:
@@ -128,6 +157,7 @@ war-local - Generates a war file suitable for deployment to a web
 clean     - Removes any build artifacts from the tree.
 source    - Build a zip file of the application source.
 javadiff  - Generate the javadiff.jar file.
-help      - Displays this text.</echo>
+help      - Displays this text.
+javadoc   - Build Javadoc documentation.</echo>
 	</target>
 </project>

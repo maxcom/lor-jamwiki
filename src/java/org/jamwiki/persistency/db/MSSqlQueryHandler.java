@@ -21,7 +21,9 @@ import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Microsoft SQL Server-specific implementation of the QueryHandler interface.
+ * This class implements SQL Server-specific methods for instances where SQL Server
+ * does not support the default ASCII SQL syntax.
  */
 public class MSSqlQueryHandler extends DefaultQueryHandler {
 

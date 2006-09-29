@@ -58,8 +58,8 @@ public class TableOfContents {
 	 * Adds TOC at the beginning as a table on the right side of the page if the
 	 * page has any HTML-headers.
 	 *
-	 * @param text
-	 * @return
+	 * @param text The parsed content into which a table of contents is to be added.
+	 * @return The parsed content with a table of contents included in it.
 	 */
 	public static String addTableOfContents(String text) {
 		logger.fine("Start TOC generating...");

@@ -23,7 +23,9 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Oracle-specific implementation of the QueryHandler interface.  This class implements
+ * Oracle-specific methods for instances where Oracle does not support the default
+ * ASCII SQL syntax.
  */
 public class OracleQueryHandler extends DefaultQueryHandler {
 

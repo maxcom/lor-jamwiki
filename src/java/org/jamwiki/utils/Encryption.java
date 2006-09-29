@@ -64,7 +64,7 @@ public class Encryption {
 	/**
 	 * Encrypt a String value using the DES encryption algorithm.
 	 *
-	 * @param unencryptedString The unencrypted String value that is to be encrypted.
+	 * @param unencryptedBytes The unencrypted String value that is to be encrypted.
 	 * @return An encrypted version of the String that was passed to this method.
 	 */
 	public static String encrypt64(byte[] unencryptedBytes) throws Exception {

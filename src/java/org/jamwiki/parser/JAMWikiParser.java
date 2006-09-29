@@ -110,7 +110,7 @@ public class JAMWikiParser extends AbstractParser {
 	 * saved as part of the topic source.  This method is usually only called
 	 * during edits.
 	 *
-	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @param contents The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserOutput object containing results of the parsing process.
 	 */
 	public ParserOutput parsePreSave(String contents) throws Exception {

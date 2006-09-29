@@ -43,7 +43,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- *
+ * JAMWikiServlet is the base servlet which all other JAMWiki servlets extend.
  */
 public abstract class JAMWikiServlet extends AbstractController {
 
@@ -332,7 +332,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Action used when redirecting to an error page.
 	 *
 	 * @param request The servlet request object.
-	 * @param next The Spring ModelAndView object.
+	 * @return Returns a ModelAndView object corresponding to the error page display.
 	 * @param e The exception that is the source of the error.
 	 */
 	protected ModelAndView viewError(HttpServletRequest request, Exception e) {
@@ -358,9 +358,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Action used when redirecting to a login page.
 	 *
 	 * @param request The servlet request object.
-	 * @param next The Spring ModelAndView object.
 	 * @param topic The topic to be redirected to.  Valid examples are "Special:Admin",
 	 *  "StartingPoints", etc.
+	 * @param errorMessage A WikiMessage object to be displayed on the login page.
+	 * @return Returns a ModelAndView object corresponding to the login page display.
+	 * @throws Exception Thrown if any error occurs while preparing the login page display.
 	 */
 	protected ModelAndView viewLogin(HttpServletRequest request, String topic, WikiMessage errorMessage) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
@@ -421,8 +423,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *
 	 * @param request The servlet request object.
 	 * @param next The Spring ModelAndView object.
-	 * @param topicName The topic being viewed.  This value must be a valid topic that
-	 *  can be loaded as a org.jamwiki.model.Topic object.
+	 * @param pageInfo A WikiPageInfo object containing page configuration info.
+	 * @param topic The Topic object for the topic being displayed.
+	 * @param sectionEdit Set to <code>true</code> if edit links should be displayed
+	 *  for each section of the topic.
+	 * @param preview Set to <code>true</code> if this topic is being displayed in
+	 *  preview mode.
+	 * @throws Exception Thrown if any error occurs during topic display.
 	 */
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit, boolean preview) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?

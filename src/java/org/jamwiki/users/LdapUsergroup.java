@@ -43,10 +43,10 @@ public class LdapUsergroup extends Usergroup {
 	private static final WikiLogger logger = WikiLogger.getLogger(LdapUsergroup.class.getName());
 
 	/**
-	 * Get the email address of an user by its user-ID
-	 * @param uid The user-ID of this user
+	 * Get the email address of an user by its user-ID.
+	 *
+	 * @param id The user-ID of this user
 	 * @return The email address of this user
-	 * @see jamwiki.users.Usergroup#getKnownEmailById(java.lang.String)
 	 */
 	public String getKnownEmailById(String id) {
 		if (id == null) {
@@ -56,10 +56,10 @@ public class LdapUsergroup extends Usergroup {
 	}
 
 	/**
-	 * Get the full name of an user by its user-ID
-	 * @param uid The user-ID of this user
+	 * Get the full name of an user by its user-ID.
+	 *
+	 * @param id The user-ID of this user
 	 * @return The full name of this user
-	 * @see jamwiki.users.Usergroup#getFullnameById(java.lang.String)
 	 */
 	public String getFullnameById(String id) {
 		if (id == null) {
@@ -74,8 +74,8 @@ public class LdapUsergroup extends Usergroup {
 
 	/**
 	 * Get an instance of the user group class.
+	 *
 	 * @return Instance to the user group class
-	 * @see jamwiki.users.Usergroup#getInstance()
 	 */
 	public static Usergroup getInstance() {
 		LdapUsergroup lug = new LdapUsergroup();
@@ -84,10 +84,9 @@ public class LdapUsergroup extends Usergroup {
 
 	/**
 	 * Get a list of all users.
-	 * @return List of all users. The list contains SelectorBeans with the user-ID as key and the full
-	 * username as label.
-	 * @see jamwiki.servlets.beans.SelectorBean
-	 * @see jamwiki.users.Usergroup#getListOfAllUsers()
+	 *
+	 * @return List of all users. The list contains SelectorBeans with the
+	 *  user-ID as key and the full username as label.
 	 */
 	public List getListOfAllUsers() {
 		List list = new ArrayList();
@@ -126,12 +125,12 @@ public class LdapUsergroup extends Usergroup {
 	}
 
 	/**
-	 * Get the user details of this user by its user-ID. The user details is a string, which is
-	 * set in the admin section. It contains some placeholders, which are replaced by values from
-	 * the user repository
-	 * @param uid The user-ID of this user
+	 * Get the user details of this user by its user-ID. The user details
+	 * is a string, which is set in the admin section. It contains some
+	 * placeholders, which are replaced by values from the user repository.
+	 *
+	 * @param id The user-ID of this user
 	 * @return The user details section
-	 * @see jamwiki.users.Usergroup#getUserDetails(java.lang.String)
 	 */
 	public String getUserDetails(String id) {
 		if (id == null) {
@@ -178,17 +177,19 @@ public class LdapUsergroup extends Usergroup {
 	}
 
 	/**
-	 * Contains the repository valid (already confirmed) email addresses?
-	 * If yes, then we can skip the registration process and the user is automatically registered.
+	 * Contains the repository valid (already confirmed) email addresses? If
+	 * yes, then we can skip the registration process and the user is
+	 * automatically registered.
+	 *
 	 * @return true, if so. false otherwise.
-	 * @see jamwiki.users.Usergroup#isEmailValidated()
 	 */
 	public boolean isEmailValidated() {
 		return true;
 	}
 
 	/**
-	 * Get an (LDAP) Attribute by its name
+	 * Get an (LDAP) Attribute by its name.
+	 *
 	 * @param id  The uid (user-ID)
 	 * @param attribute The name of the attribtue to get
 	 * @return The content of that attribute (as string) or an empty string.
@@ -208,7 +209,8 @@ public class LdapUsergroup extends Usergroup {
 	}
 
 	/**
-	 * Get all Attributes of a user
+	 * Get all Attributes of a user.
+	 *
 	 * @param id The uid (user-ID)
 	 * @param ctx The LDAP context
 	 * @return The attributes of that user.
@@ -230,7 +232,8 @@ public class LdapUsergroup extends Usergroup {
 	}
 
 	/**
-	 * Connect to the LDAP server and return a context
+	 * Connect to the LDAP server and return a context.
+	 *
 	 * @return The Context to work with
 	 * @throws NamingException if an exception occured during connecting
 	 */
@@ -251,6 +254,7 @@ public class LdapUsergroup extends Usergroup {
 
 	/**
 	 * If there are any restrictions to the search, they are filled in here.
+	 *
 	 * @param matchAttrs the list of attributes containing the search restrictions.
 	 */
 	private void fillSearchRestrictions(Attributes matchAttrs) {

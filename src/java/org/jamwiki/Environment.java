@@ -277,7 +277,7 @@ public class Environment {
 	 * Load a property file and return the property file object.
 	 *
 	 * @param propertyFile The name of the property file to load.
-	 * @param defaults Default property values.
+	 * @param def Default property values.
 	 * @return The loaded property file.
 	 */
 	public static SortedProperties loadProperties(String propertyFile, Properties def) {

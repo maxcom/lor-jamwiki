@@ -382,11 +382,16 @@ public class FileHandler extends PersistencyHandler {
 	}
 
 	/**
-	 * Returns all versions of the given topic in reverse chronological order
-	 * @param virtualWiki
-	 * @param topicName
-	 * @return
-	 * @throws Exception
+	 * Returns all versions of the given topic in reverse chronological order.
+	 *
+	 * @param virtualWiki The name of the virtual wiki for which topic versions
+	 *  are being retrieved.
+	 * @param topicName The name of the topic for which versions are being retrieved.
+	 * @param descending Set to <code>true</code> if the results should be ordered
+	 *  in reverse chronological order.
+	 * @return A Collection containing all TopicVersion objects for the given topic
+	 *  in reverse chronological order.
+	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	protected Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		Vector all = new Vector();

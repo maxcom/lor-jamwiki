@@ -23,7 +23,9 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * DB2/400-specific implementation of the QueryHandler interface.  This class implements
+ * DB2/400-specific methods for instances where DB2/400 does not support the default
+ * ASCII SQL syntax.
  */
 public class DB2400QueryHandler extends DefaultQueryHandler {
 

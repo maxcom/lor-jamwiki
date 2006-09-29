@@ -26,28 +26,28 @@ public class NoUsergroup extends Usergroup {
 
 	/**
 	 * Get an instance of the user group class.
+	 *
 	 * @return Instance to the user group class
-	 * @see jamwiki.users.Usergroup#getInstance()
 	 */
 	public static Usergroup getInstance() {
 		return new NoUsergroup();
 	}
 
 	/**
-	 * Get the full name of an user by its user-ID
+	 * Get the full name of an user by its user-ID.
+	 *
 	 * @param uid The user-ID of this user
 	 * @return The full name of this user
-	 * @see jamwiki.users.Usergroup#getFullnameById(java.lang.String)
 	 */
 	public String getFullnameById(String uid) {
 		return uid;
 	}
 
 	/**
-	 * Get the email address of an user by its user-ID
-	 * @param uid The user-ID of this user
+	 * Get the email address of an user by its user-ID.
+	 *
+	 * @param user The user-ID of this user
 	 * @return The email address of this user
-	 * @see jamwiki.users.Usergroup#getKnownEmailById(java.lang.String)
 	 */
 	public String getKnownEmailById(String user) {
 		return null;
@@ -55,32 +55,32 @@ public class NoUsergroup extends Usergroup {
 
 	/**
 	 * Get a list of all users.
-	 * @return List of all users. The list contains SelectorBeans with the user-ID as key and the full
-	 * username as label.
-	 * @see jamwiki.servlets.beans.SelectorBean
-	 * @see jamwiki.users.Usergroup#getListOfAllUsers()
+	 *
+	 * @return List of all users. The list contains SelectorBeans with the
+	 *  user-ID as key and the full username as label.
 	 */
 	public List getListOfAllUsers() {
 		return null;
 	}
 
 	/**
-	 * Get the user details of this user by its user-ID. The user details is a string, which is
-	 * set in the admin section. It contains some placeholders, which are replaced by values from
-	 * the user repository
+	 * Get the user details of this user by its user-ID. The user details is
+	 * a string, which is set in the admin section. It contains some
+	 * placeholders, which are replaced by values from the user repository.
+	 *
 	 * @param uid The user-ID of this user
 	 * @return The user details section
-	 * @see jamwiki.users.Usergroup#getUserDetails(java.lang.String)
 	 */
 	public String getUserDetails(String uid) {
 		return null;
 	}
 
 	/**
-	 * Contains the repository valid (already confirmed) email addresses?
-	 * If yes, then we can skip the registration process and the user is automatically registered.
+	 * Contains the repository valid (already confirmed) email addresses? If
+	 * yes, then we can skip the registration process and the user is
+	 * automatically registered.
+	 *
 	 * @return true, if so. false otherwise.
-	 * @see jamwiki.users.Usergroup#isEmailValidated()
 	 */
 	public boolean isEmailValidated() {
 		return false;
