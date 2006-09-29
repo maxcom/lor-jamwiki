@@ -39,6 +39,12 @@ upgrading from version 0.3.0 to version 0.3.3, you must apply the upgrade
 steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
 
 
+  JAMWiki 0.4.0
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.4.0".
+  
   JAMWiki 0.3.5
   =============
 
