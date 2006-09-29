@@ -101,7 +101,7 @@ public class Environment {
 	}
 
 	/**
-	 * Constructor loads property values from the property file.
+	 * The constructor loads property values from the property file.
 	 */
 	private Environment() {
 		try {
@@ -121,6 +121,9 @@ public class Environment {
 	 * @param filename The name of the property file to be loaded.  This name can be
 	 *  either absolute or relative; if relative then the file will be loaded from
 	 *  the class path or from the directory from which the JVM was loaded.
+	 * @return A File object containing the properties file instance.
+	 * @throws FileNotFoundException Thrown if the specified property file cannot
+	 *  be located.
 	 */
 	private static File findProperties(String filename) throws FileNotFoundException {
 		// read in properties file
@@ -211,10 +214,11 @@ public class Environment {
 	}
 
 	/**
-	 * Return an instance of the current properties object.  This method should
-	 * not be used by most classes.
+	 * Return an instance of the current properties object.  The property instance
+	 * returned should not be directly modified.
+	 *
+	 * @return Returns an instance of the current system properties.
 	 */
-	// FIXME - find a way to get rid of this method
 	public static Properties getInstance() {
 		return props;
 	}
@@ -264,21 +268,23 @@ public class Environment {
 	}
 
 	/**
-	 * Load a property file and return the property file object.
+	 * Given a property file name, load the property file and return an object
+	 * representing the property values.
 	 *
 	 * @param propertyFile The name of the property file to load.
-	 * @return The loaded property file.
+	 * @return The loaded SortedProperties object.
 	 */
 	public static SortedProperties loadProperties(String propertyFile) {
 		return loadProperties(propertyFile, null);
 	}
 
 	/**
-	 * Load a property file and return the property file object.
+	 * Given a property file name, load the property file and return an object
+	 * representing the property values.
 	 *
 	 * @param propertyFile The name of the property file to load.
-	 * @param def Default property values.
-	 * @return The loaded property file.
+	 * @param def Default property values, or <code>null</code> if there are no defaults.
+	 * @return The loaded SortedProperties object.
 	 */
 	public static SortedProperties loadProperties(String propertyFile, Properties def) {
 		SortedProperties properties = new SortedProperties();
@@ -309,6 +315,8 @@ public class Environment {
 	 * @param filename Given a filename return a File object for the file.  The filename
 	 *  may be relative to the class path or the directory from which the JVM was
 	 *  initialized.
+	 * @return Returns a file representing the filename, or <code>null</code> if
+	 *  the file cannot be found.
 	 */
 	private static File retrievePropertyFile(String filename) {
 		File file = null;
@@ -328,18 +336,23 @@ public class Environment {
 	}
 
 	/**
-	 * Used to persist the current properties to disk.
+	 * Save the current Wiki system properties to the filesystem.
+	 *
+	 * @throws IOException Thrown if the file cannot be found or if an I/O
+	 *  error occurs.
 	 */
 	public static void saveProperties() throws IOException {
 		Environment.saveProperties(PROPERTY_FILE_NAME, props, null);
 	}
 
 	/**
-	 * Used to persist a property file to disk.
+	 * Save the specified property values to the filesystem.
 	 *
 	 * @param propertyFile The name of the property file to save.
 	 * @param properties The properties object that is to be saved.
 	 * @param comments A comment to save in the properties file.
+	 * @throws IOException Thrown if the file cannot be found or if an I/O
+	 *  error occurs.
 	 */
 	public static void saveProperties(String propertyFile, SortedProperties properties, String comments) throws IOException {
 		File file = findProperties(propertyFile);
@@ -359,10 +372,10 @@ public class Environment {
 	}
 
 	/**
-	 * Sets a new boolean value for the given property name.
+	 * Set a new boolean value for the given property name.
 	 *
-	 * @param name
-	 * @param value
+	 * @param name The name of the property whose value is to be set.
+	 * @param value The value of the property being set.
 	 */
 	public static void setBooleanValue(String name, boolean value) {
 		props.setProperty(name, new Boolean(value).toString());
@@ -371,8 +384,8 @@ public class Environment {
 	/**
 	 * Sets a new integer value for the given property name.
 	 *
-	 * @param name
-	 * @param value
+	 * @param name The name of the property whose value is to be set.
+	 * @param value The value of the property being set.
 	 */
 	public static void setIntValue(String name, int value) {
 		props.setProperty(name, new Integer(value).toString());
@@ -381,8 +394,8 @@ public class Environment {
 	/**
 	 * Sets a new value for the given property name.
 	 *
-	 * @param name
-	 * @param value
+	 * @param name The name of the property whose value is to be set.
+	 * @param value The value of the property being set.
 	 */
 	public static void setValue(String name, String value) {
 		// it is invalid to set a property value null, so convert to empty string

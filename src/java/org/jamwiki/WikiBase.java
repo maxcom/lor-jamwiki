@@ -34,9 +34,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- * This class should be used as a singleton instance for retrieving core JAMWiki
- * elements, such as the current persitency handler (database, file, etc), current
- * software version, etc.
+ * This class should be used for retrieving core JAMWiki elements, such as the
+ * current persitency handler (database, file, etc).
  */
 public class WikiBase {
 
@@ -86,7 +85,7 @@ public class WikiBase {
 	/**
 	 * Creates an instance of <code>WikiBase</code> with a specified persistency sub-system.
 	 *
-	 * @throws Exception If the handler cannot be instantiated.
+	 * @throws Exception If the instance cannot be instantiated.
 	 */
 	private WikiBase() throws Exception {
 		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
@@ -149,9 +148,9 @@ public class WikiBase {
 	}
 
 	/**
-	 * Get an instance of the current persistency handler.
+	 * Get an instance of the current search engine.
 	 *
-	 * @return The current handler instance.
+	 * @return The current search engine instance.
 	 */
 	public static SearchEngine getSearchEngine() {
 		return WikiBase.searchEngine;
@@ -161,6 +160,7 @@ public class WikiBase {
 	 * Return an instance of the current user group type (usually LDAP or database).
 	 *
 	 * @return The current user group type.
+	 * @throws Exception Thrown if an error occurs while initializing the user group instance.
 	 */
 	public static Usergroup getUsergroupInstance() throws Exception {
 		switch (Usergroup.getUsergroupType()) {
@@ -197,6 +197,8 @@ public class WikiBase {
 	 * Set the current persistency type.  This method is not meant for general
 	 * use - WikiBase.reset() should be used in most cases when changing persistency
 	 * type.
+	 *
+	 * @param handler A new PersistencyHandler instance to use for the wiki.
 	 */
 	public static void setHandler(PersistencyHandler handler) {
 		WikiBase.handler = handler;

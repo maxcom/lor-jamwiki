@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Custom exception for JAMWiki servlet errors.
+ * Custom exception class for JAMWiki servlet errors.
  */
 public class WikiException extends Exception {
 
@@ -29,7 +29,7 @@ public class WikiException extends Exception {
 	private WikiMessage wikiMessage = null;
 
 	/**
-	 *
+	 * Constructor for a WikiException containing a Wiki message value.
 	 */
 	public WikiException(WikiMessage wikiMessage) {
 		super();
@@ -37,7 +37,9 @@ public class WikiException extends Exception {
 	}
 
 	/**
+	 * Return the WikiMessage object associated with this exception.
 	 *
+	 * @return The WikiMessage object assocated with this exception.
 	 */
 	public WikiMessage getWikiMessage() {
 		return this.wikiMessage;

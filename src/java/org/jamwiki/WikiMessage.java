@@ -31,7 +31,7 @@ public class WikiMessage {
 
 	/**
 	 * Create a new message that is mapped to the specified ApplicationResources
-	 * key value using parameter param1.
+	 * key value.
 	 *
 	 * @param key The ApplicationResources key that corresponds to the message
 	 *  to display.
@@ -42,7 +42,7 @@ public class WikiMessage {
 
 	/**
 	 * Create a new message that is mapped to the specified ApplicationResources
-	 * key value using parameter param1.
+	 * key value using a single parameter.
 	 *
 	 * @param key The ApplicationResources key that corresponds to the message
 	 *  to display.
@@ -58,7 +58,7 @@ public class WikiMessage {
 
 	/**
 	 * Create a new message that is mapped to the specified ApplicationResources
-	 * key value using parameter param1.
+	 * key value using two parameters.
 	 *
 	 * @param key The ApplicationResources key that corresponds to the message
 	 *  to display.
@@ -78,7 +78,7 @@ public class WikiMessage {
 
 	/**
 	 * Create a new message that is mapped to the specified ApplicationResources
-	 * key value using parameter param1.
+	 * key value using an array of parameters.
 	 *
 	 * @param key The ApplicationResources key that corresponds to the message
 	 *  to display.
@@ -97,14 +97,18 @@ public class WikiMessage {
 	}
 
 	/**
+	 * Return the ApplicationResources message key associated with this message.
 	 *
+	 * @return The ApplicationResources message key associated with this message.
 	 */
 	public String getKey() {
 		return this.key;
 	}
 
 	/**
+	 * Return the array of parameter objects associated with this message.
 	 *
+	 * @return The array of parameter objects associated with this message.
 	 */
 	public String[] getParams() {
 		return this.params;
@@ -115,6 +119,8 @@ public class WikiMessage {
 	 * Note that this can be a gaping security hole as it opens the site up to
 	 * cross-site scripting attacks.  USE THIS METHOD ONLY IF YOU KNOW WHAT YOU ARE
 	 * DOING!
+	 *
+	 * @param params The array of parameter objects to associate with this message.
 	 */
 	public void setParamsWithoutEscaping(String[] params) {
 		this.params = params;
