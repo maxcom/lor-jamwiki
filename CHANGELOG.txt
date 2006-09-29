@@ -14,6 +14,7 @@
 * FEATURE: Simplify the parser by removing the pre-save parser.
 * FEATURE: Remove ability to upgrade from JAMWiki versions prior to 0.1.0.
 * FEATURE: Add ANT target for building Javadoc.
+* BUG: Table of contents should be enabled by default.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
 
