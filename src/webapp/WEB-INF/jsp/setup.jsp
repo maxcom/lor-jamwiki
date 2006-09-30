@@ -60,7 +60,7 @@ td.formhelp {
 
 <script type="text/javascript">
 function onPersistenceType() {
-	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.FILE %>") {
+	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL_DB %>") {
 		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true
@@ -94,8 +94,8 @@ function onPersistenceType() {
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label>:</td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
-		<option value="<%=WikiBase.FILE%>"<%= WikiBase.getPersistenceType() == WikiBase.FILE ? " selected" : "" %>><f:message key="admin.persistencetype.flatfile"/></option>
-		<option value="<%=WikiBase.DATABASE%>"<%= WikiBase.getPersistenceType() == WikiBase.DATABASE ? " selected" : "" %>><f:message key="admin.persistencetype.database"/></option>
+		<option value="<%=WikiBase.PERSISTENCE_INTERNAL_DB%>"<%= WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_INTERNAL_DB ? " selected" : "" %>><f:message key="admin.persistencetype.internal"/></option>
+		<option value="<%=WikiBase.PERSISTENCE_EXTERNAL_DB%>"<%= WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_EXTERNAL_DB ? " selected" : "" %>><f:message key="admin.persistencetype.database"/></option>
 		</select>
 	</td>
 </tr>
@@ -108,6 +108,7 @@ function onPersistenceType() {
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<option value="<%= DatabaseHandler.DB_TYPE_ANSI %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ANSI) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ANSI %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_HSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_HSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_HSQL %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_MYSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MYSQL %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_ORACLE %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ORACLE %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_POSTGRES %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_POSTGRES %></option>

@@ -45,6 +45,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	public static final String DB_TYPE_ANSI = "ansi";
 	public static final String DB_TYPE_DB2 = "db2";
 	public static final String DB_TYPE_DB2_400 = "db2/400";
+	public static final String DB_TYPE_HSQL = "hsql";
 	public static final String DB_TYPE_MSSQL = "mssql";
 	public static final String DB_TYPE_MYSQL = "mysql";
 	public static final String DB_TYPE_ORACLE = "oracle";
@@ -58,18 +59,20 @@ public class DatabaseHandler extends PersistencyHandler {
 	 *
 	 */
 	public DatabaseHandler() {
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
-			DatabaseHandler.queryHandler = new PostgresQueryHandler();
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2)) {
+			DatabaseHandler.queryHandler = new DB2QueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2_400)) {
+			DatabaseHandler.queryHandler = new DB2400QueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
 			DatabaseHandler.queryHandler = new MSSqlQueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_HSQL)) {
+			DatabaseHandler.queryHandler = new HSQLQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
 			DatabaseHandler.queryHandler = new MySqlQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {
 			DatabaseHandler.queryHandler = new OracleQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2)) {
-			DatabaseHandler.queryHandler = new DB2QueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2_400)) {
-			DatabaseHandler.queryHandler = new DB2400QueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
+			DatabaseHandler.queryHandler = new PostgresQueryHandler();
 		} else {
 			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}

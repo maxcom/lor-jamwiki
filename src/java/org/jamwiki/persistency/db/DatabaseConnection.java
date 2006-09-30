@@ -31,6 +31,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Encryption;
+import org.springframework.util.StringUtils;
 
 /**
  * This class provides methods for retrieving database connections, executing queries,
@@ -54,7 +55,9 @@ public class DatabaseConnection {
 	 */
 	private static void setUpConnectionPool(String url, String userName, String password) throws Exception {
 		closeConnectionPool();
-		Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
+		if (StringUtils.hasText(Environment.getValue(Environment.PROP_DB_DRIVER))) {
+			Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
+		}
 		connectionPool = new GenericObjectPool();
 		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
 		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
@@ -300,7 +303,9 @@ public class DatabaseConnection {
 		Connection conn = null;
 		String sql = null;
 		try {
-			Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+			if (StringUtils.hasText(driver)) {
+				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+			}
 			conn = DriverManager.getConnection(url, user, password);
 		} catch (Exception e) {
 			// database settings incorrect

@@ -87,7 +87,7 @@ public abstract class Usergroup {
 		if (persistenceType.equals("LDAP")) {
 			return WikiBase.LDAP;
 		} else if (persistenceType.equals("DATABASE")) {
-			return WikiBase.DATABASE;
+			return WikiBase.PERSISTENCE_EXTERNAL_DB;
 		} else {
 			return 0;
 		}
@@ -100,7 +100,7 @@ public abstract class Usergroup {
 		String usergroupType;
 		if (membershipType == WikiBase.LDAP) {
 			usergroupType = "LDAP";
-		} else if (membershipType == WikiBase.DATABASE) {
+		} else if (membershipType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 			usergroupType = "DATABASE";
 		} else {
 			usergroupType = "";

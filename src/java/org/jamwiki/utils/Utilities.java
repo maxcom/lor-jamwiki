@@ -851,15 +851,12 @@ public class Utilities {
 			errors.add(new WikiMessage("error.directorywrite", classesDir, e.getMessage()));
 		}
 		// test database
-		String databaseType = props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE);
-		if (databaseType != null && databaseType.equals("DATABASE")) {
-			String driver = props.getProperty(Environment.PROP_DB_DRIVER);
-			String url = props.getProperty(Environment.PROP_DB_URL);
-			String userName = props.getProperty(Environment.PROP_DB_USERNAME);
-			String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
-			if (!DatabaseConnection.testDatabase(driver, url, userName, password)) {
-				errors.add(new WikiMessage("error.databaseconnection"));
-			}
+		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
+		String url = props.getProperty(Environment.PROP_DB_URL);
+		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
+		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
+		if (!DatabaseConnection.testDatabase(driver, url, userName, password)) {
+			errors.add(new WikiMessage("error.databaseconnection"));
 		}
 		// verify valid parser class
 		boolean validParser = true;

@@ -39,40 +39,18 @@ int maximumFileSize = (int)((float)(new Integer(props.getProperty(Environment.PR
 
 <script type="text/javascript">
 function onPersistenceType() {
-	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.FILE %>") {
+	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL_DB %>") {
 		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true
 		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_MAX_ACTIVE %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_MAX_IDLE %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_BORROW %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_RETURN %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=true
 	} else {
 		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false
 		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_MAX_ACTIVE %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_MAX_IDLE %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_BORROW %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_TEST_ON_RETURN %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>").disabled=false
 	}
 }
 <%--
@@ -212,8 +190,8 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
-		<option value="<%=WikiBase.FILE%>"<%= WikiBase.getPersistenceType() == WikiBase.FILE ? " selected" : "" %>><f:message key="admin.persistencetype.flatfile" /></option>
-		<option value="<%=WikiBase.DATABASE%>"<%= WikiBase.getPersistenceType() == WikiBase.DATABASE ? " selected" : "" %>><f:message key="admin.persistencetype.database" /></option>
+		<option value="<%=WikiBase.PERSISTENCE_INTERNAL_DB%>"<%= WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_INTERNAL_DB ? " selected" : "" %>><f:message key="admin.persistencetype.internal" /></option>
+		<option value="<%=WikiBase.PERSISTENCE_EXTERNAL_DB%>"<%= WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_EXTERNAL_DB ? " selected" : "" %>><f:message key="admin.persistencetype.database" /></option>
 		</select>
 	</td>
 </tr>
@@ -227,6 +205,7 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<option value="<%= DatabaseHandler.DB_TYPE_ANSI %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ANSI) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ANSI %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_HSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_HSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_HSQL %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_MYSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MYSQL %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_ORACLE %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ORACLE %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_POSTGRES %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_POSTGRES %></option>

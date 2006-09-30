@@ -138,14 +138,22 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_FILE_DIR_FULL_PATH, request.getParameter(Environment.PROP_FILE_DIR_FULL_PATH));
 		Environment.setValue(Environment.PROP_FILE_DIR_RELATIVE_PATH, request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH));
 		int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
-		if (persistenceType == WikiBase.FILE) {
+		if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
 			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
-		} else if (persistenceType == WikiBase.DATABASE) {
+			Environment.setValue(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
+			Environment.setValue(Environment.PROP_DB_TYPE, DatabaseHandler.DB_TYPE_HSQL);
+			Environment.setValue(Environment.PROP_DB_USERNAME, "sa");
+			Environment.setValue(Environment.PROP_DB_PASSWORD, "");
+			File file = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database");
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
+			Environment.setValue(Environment.PROP_DB_URL, url);
+		} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
-		}
-		if (request.getParameter(Environment.PROP_DB_DRIVER) != null) {
-			Environment.setValue(Environment.PROP_DB_TYPE, request.getParameter(Environment.PROP_DB_TYPE));
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));
+			Environment.setValue(Environment.PROP_DB_TYPE, request.getParameter(Environment.PROP_DB_TYPE));
 			Environment.setValue(Environment.PROP_DB_URL, request.getParameter(Environment.PROP_DB_URL));
 			Environment.setValue(Environment.PROP_DB_USERNAME, request.getParameter(Environment.PROP_DB_USERNAME));
 			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD), null);

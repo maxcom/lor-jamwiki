@@ -49,9 +49,9 @@ public class WikiBase {
 	private static SearchEngine searchEngine = null;
 
 	/** The topics are stored in a flat file */
-	public static final int FILE = 0;
+	public static final int PERSISTENCE_INTERNAL_DB = 0;
 	/** The topics are stored in a database */
-	public static final int DATABASE = 1;
+	public static final int PERSISTENCE_EXTERNAL_DB = 1;
 	/** Members are retrieved from LDAP */
 	public static final int LDAP = 2;
 	/** Name of the default wiki */
@@ -141,9 +141,9 @@ public class WikiBase {
 	 */
 	public static int getPersistenceType() {
 		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
-			return WikiBase.DATABASE;
+			return WikiBase.PERSISTENCE_EXTERNAL_DB;
 		} else {
-			return WikiBase.FILE;
+			return WikiBase.PERSISTENCE_INTERNAL_DB;
 		}
 	}
 

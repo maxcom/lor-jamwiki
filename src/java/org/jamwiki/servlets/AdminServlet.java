@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -127,20 +128,32 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
-			if (persistenceType == WikiBase.FILE) {
+
+			if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
 				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
-			} else if (persistenceType == WikiBase.DATABASE) {
+				props.setProperty(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
+				props.setProperty(Environment.PROP_DB_TYPE, DatabaseHandler.DB_TYPE_HSQL);
+				props.setProperty(Environment.PROP_DB_USERNAME, "sa");
+				props.setProperty(Environment.PROP_DB_PASSWORD, "");
+				File file = new File(props.getProperty(Environment.PROP_BASE_FILE_DIR), "database");
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+				String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
+				logger.severe("TEST: " + url);
+				props.setProperty(Environment.PROP_DB_URL, url);
+			} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
-			}
-			setProperty(props, request, Environment.PROP_DB_DRIVER);
-			setProperty(props, request, Environment.PROP_DB_TYPE);
-			setProperty(props, request, Environment.PROP_DB_URL);
-			setProperty(props, request, Environment.PROP_DB_USERNAME);
-			if (StringUtils.hasText(request.getParameter(Environment.PROP_DB_PASSWORD))) {
-				setEncryptedProperty(props, request, Environment.PROP_DB_PASSWORD);
-				next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
-			} else {
-				props.setProperty(Environment.PROP_DB_PASSWORD, Environment.getValue(Environment.PROP_DB_PASSWORD));
+				setProperty(props, request, Environment.PROP_DB_DRIVER);
+				setProperty(props, request, Environment.PROP_DB_TYPE);
+				setProperty(props, request, Environment.PROP_DB_URL);
+				setProperty(props, request, Environment.PROP_DB_USERNAME);
+				if (StringUtils.hasText(request.getParameter(Environment.PROP_DB_PASSWORD))) {
+					setEncryptedProperty(props, request, Environment.PROP_DB_PASSWORD);
+					next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
+				} else {
+					props.setProperty(Environment.PROP_DB_PASSWORD, Environment.getValue(Environment.PROP_DB_PASSWORD));
+				}
 			}
 			setProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE);
 			setProperty(props, request, Environment.PROP_DBCP_MAX_IDLE);
@@ -176,7 +189,7 @@ public class AdminServlet extends JAMWikiServlet {
 			String usergroupType;
 			if (membershipType == WikiBase.LDAP) {
 				usergroupType = "LDAP";
-			} else if (membershipType == WikiBase.DATABASE) {
+			} else if (membershipType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 				usergroupType = "DATABASE";
 			} else {
 				usergroupType = "0";
@@ -215,7 +228,7 @@ public class AdminServlet extends JAMWikiServlet {
 					String value = props.getProperty(key);
 					Environment.setValue(key, value);
 				}
-				if (WikiBase.getPersistenceType() == WikiBase.DATABASE) {
+				if (WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 					// initialize connection pool in its own try-catch to avoid an error
 					// causing property values not to be saved.
 					try {

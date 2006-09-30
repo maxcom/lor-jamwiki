@@ -2,6 +2,8 @@
 0.4.0
 =====
 
+* FEATURE: Replace file persistency mode with an embedded version of the
+  HSQL database.
 
 0.3.5
 =====
