@@ -84,13 +84,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Vector messages = new Vector();
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		boolean success = true;
-		if (oldVersion.before(0, 1, 0)) {
-			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.1.0"));
+		if (oldVersion.before(0, 2, 0)) {
+			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.2.0"));
 			success = false;
 		} else {
-			if (oldVersion.before(0, 2, 0)) {
-				if (!upgrade020(request, messages)) success = false;
-			}
 			if (oldVersion.before(0, 3, 0)) {
 				if (!upgrade030(request, messages)) success = false;
 			}
@@ -127,26 +124,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade020(HttpServletRequest request, Vector messages) {
-		try {
-			// rebuild search index
-			WikiBase.getSearchEngine().refreshIndex();
-			messages.add("Refreshed search index");
-			// upgrade stylesheet
-			upgradeStyleSheet(request, messages);
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to update virtual wiki table";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
 	}
 
 	/**
