@@ -32,7 +32,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseUpgrades;
 import org.jamwiki.persistency.file.FileHandler;
-import org.jamwiki.persistency.file.FileUpgrades;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
