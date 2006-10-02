@@ -130,18 +130,7 @@ public class AdminServlet extends JAMWikiServlet {
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 
 			if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
-				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
-				props.setProperty(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
-				props.setProperty(Environment.PROP_DB_TYPE, DatabaseHandler.DB_TYPE_HSQL);
-				props.setProperty(Environment.PROP_DB_USERNAME, "sa");
-				props.setProperty(Environment.PROP_DB_PASSWORD, "");
-				File file = new File(props.getProperty(Environment.PROP_BASE_FILE_DIR), "database");
-				if (!file.exists()) {
-					file.mkdirs();
-				}
-				String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
-				logger.severe("TEST: " + url);
-				props.setProperty(Environment.PROP_DB_URL, url);
+				DatabaseHandler.setupDefaultDatabase(props);
 			} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
 				setProperty(props, request, Environment.PROP_DB_DRIVER);
@@ -228,15 +217,13 @@ public class AdminServlet extends JAMWikiServlet {
 					String value = props.getProperty(key);
 					Environment.setValue(key, value);
 				}
-				if (WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_EXTERNAL_DB) {
-					// initialize connection pool in its own try-catch to avoid an error
-					// causing property values not to be saved.
-					try {
-						DatabaseConnection.setPoolInitialized(false);
-					} catch (Exception e) {
-						String message = e.getMessage();
-						next.addObject("message", message);
-					}
+				// initialize connection pool in its own try-catch to avoid an error
+				// causing property values not to be saved.
+				try {
+					DatabaseConnection.setPoolInitialized(false);
+				} catch (Exception e) {
+					String message = e.getMessage();
+					next.addObject("message", message);
 				}
 				// re-initialize to reset PersistencyHandler settings (if needed)
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));

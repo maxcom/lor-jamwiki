@@ -89,7 +89,7 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
-		if (type != null && type.equals("DATABASE")) {
+		if (type != null && (type.equals("DATABASE") || type.equals("INTERNAL"))) {
 			WikiBase.handler = new DatabaseHandler();
 		} else {
 			WikiBase.handler = new FileHandler();

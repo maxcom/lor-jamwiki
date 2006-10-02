@@ -31,6 +31,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.persistency.db.DatabaseHandler;
 import org.jamwiki.persistency.db.DatabaseUpgrades;
+import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.persistency.file.FileUpgrades;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
@@ -60,6 +61,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 		try {
 			if (!Utilities.isUpgrade()) {
 				throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
+			}
+			if (!Utilities.isAdmin(request)) {
+				WikiMessage errorMessage = new WikiMessage("upgrade.caption.login");
+				return viewLogin(request, "Special:Admin", errorMessage);
 			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
@@ -95,6 +100,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			if (oldVersion.before(0, 3, 5)) {
 				if (!upgrade035(request, messages)) success = false;
+			}
+			if (oldVersion.before(0, 4, 0)) {
+				if (!upgrade040(request, messages)) success = false;
 			}
 			Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 			if (errors.size() > 0) {
@@ -190,6 +198,30 @@ public class UpgradeServlet extends JAMWikiServlet {
 		try {
 			// upgrade stylesheet
 			upgradeStyleSheet(request, messages);
+			return true;
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to complete upgrade to new JAMWiki version.";
+			logger.severe(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private boolean upgrade040(HttpServletRequest request, Vector messages) {
+		try {
+			if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
+				// convert file to default database
+				DatabaseHandler.setupDefaultDatabase(Environment.getInstance());
+				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
+				Environment.saveProperties();
+				FileHandler fromHandler = new FileHandler();
+				DatabaseHandler toHandler = new DatabaseHandler();
+				messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
+			}
 			return true;
 		} catch (Exception e) {
 			// FIXME - hard coding

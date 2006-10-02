@@ -145,7 +145,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
 		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo.gif");
 		defaults.setProperty(PROP_BASE_INITIALIZED, "false");
-		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "FILE");
+		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");

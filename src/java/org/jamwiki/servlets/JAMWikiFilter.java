@@ -77,7 +77,7 @@ public class JAMWikiFilter implements Filter {
 			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
 			redirect(request, response, url);
 			return true;
-		} else if (Utilities.isUpgrade() && !JAMWikiServlet.isTopic(request, "Special:Upgrade")) {
+		} else if (Utilities.isUpgrade() && !JAMWikiServlet.isTopic(request, "Special:Upgrade") && !JAMWikiServlet.isTopic(request, "Special:Login")) {
 			// redirect to upgrade page
 			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
 			redirect(request, response, url);

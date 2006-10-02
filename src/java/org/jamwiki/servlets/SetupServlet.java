@@ -139,17 +139,7 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_FILE_DIR_RELATIVE_PATH, request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH));
 		int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 		if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
-			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "FILE");
-			Environment.setValue(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
-			Environment.setValue(Environment.PROP_DB_TYPE, DatabaseHandler.DB_TYPE_HSQL);
-			Environment.setValue(Environment.PROP_DB_USERNAME, "sa");
-			Environment.setValue(Environment.PROP_DB_PASSWORD, "");
-			File file = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database");
-			if (!file.exists()) {
-				file.mkdirs();
-			}
-			String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
-			Environment.setValue(Environment.PROP_DB_URL, url);
+			DatabaseHandler.setupDefaultDatabase(Environment.getInstance());
 		} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));

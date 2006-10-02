@@ -76,7 +76,7 @@ public class DatabaseConnection {
 			properties.setProperty("SetBigStringTryClob", "true");
 		}
 		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
-		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.CONNECTION_VALIDATION_QUERY, false, true);
+		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.getValidationQuery(), false, true);
 		PoolingDriver driver = new PoolingDriver();
 		driver.registerPool("jamwiki", connectionPool);
 		Connection conn = null;

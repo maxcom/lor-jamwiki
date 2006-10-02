@@ -16,12 +16,14 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Vector;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Pagination;
@@ -36,6 +38,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -50,7 +53,7 @@ public class DatabaseHandler extends PersistencyHandler {
 	public static final String DB_TYPE_MYSQL = "mysql";
 	public static final String DB_TYPE_ORACLE = "oracle";
 	public static final String DB_TYPE_POSTGRES = "postgres";
-	public static String CONNECTION_VALIDATION_QUERY = null;
+	private static String CONNECTION_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 	private static QueryHandler queryHandler = null;
 	private boolean initialized = false;
@@ -325,6 +328,13 @@ public class DatabaseHandler extends PersistencyHandler {
 			all.add(change);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	public static String getValidationQuery() {
+		return (StringUtils.hasText(CONNECTION_VALIDATION_QUERY)) ? CONNECTION_VALIDATION_QUERY : null;
 	}
 
 	/**
@@ -783,6 +793,23 @@ public class DatabaseHandler extends PersistencyHandler {
 	protected void reloadRecentChanges(Object[] params) throws Exception {
 		Connection conn = (Connection)params[0];
 		DatabaseHandler.queryHandler.reloadRecentChanges(conn);
+	}
+
+	/**
+	 *
+	 */
+	public static void setupDefaultDatabase(Properties props) {
+		props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
+		props.setProperty(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
+		props.setProperty(Environment.PROP_DB_TYPE, DatabaseHandler.DB_TYPE_HSQL);
+		props.setProperty(Environment.PROP_DB_USERNAME, "sa");
+		props.setProperty(Environment.PROP_DB_PASSWORD, "");
+		File file = new File(props.getProperty(Environment.PROP_BASE_FILE_DIR), "database");
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
+		props.setProperty(Environment.PROP_DB_URL, url);
 	}
 
 	/**

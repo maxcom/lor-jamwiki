@@ -44,6 +44,13 @@ steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.4.0".
+  2. File persistency mode only: convert existing content to use the HSQL
+     database by doing the following:
+       a) From Special:Admin change the Persistence setting to "Internal
+          Database".
+       b) From Special:Convert choose the option to convert file content to
+          database content.
+        
   
   JAMWiki 0.3.5
   =============
