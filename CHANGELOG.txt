@@ -5,6 +5,7 @@
 * FEATURE: Replace file persistency mode with an embedded version of the
   HSQL database.
 * FEATURE: Require admin user login to perform an upgrade.
+* FEATURE: Add additional support for the DB2/400 database.
 
 0.3.5
 =====

@@ -16,6 +16,7 @@
  */
 package org.jamwiki.persistency.db;
 
+import java.text.MessageFormat;
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Pagination;
@@ -44,13 +45,33 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	}
 
 	/**
+	 * DB2/400 will not allow query parameters such as "fetch ? rows only", so
+	 * this method provides a way of formatting the query limits without using
+	 * query parameters.
+	 *
+	 * @param sql The SQL statement, with the last result parameter specified as
+	 *  {0} and the total number of rows parameter specified as {1}.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @return A formatted SQL string.
+	 */
+	private static String formatStatement(String sql, Pagination pagination) {
+		try {
+			Object[] objects = {new Integer(pagination.getEnd()), new Integer(pagination.getNumResults())};
+			return MessageFormat.format(sql, objects);
+		} catch (Exception e) {
+			logger.warning("Unable to format " + sql + " with values " + pagination.getEnd() + " / " + pagination.getNumResults(), e);
+			return null;
+		}
+	}
+
+	/**
 	 *
 	 */
 	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
+		String sql = formatStatement(STATEMENT_SELECT_CATEGORIES, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getEnd());
-		stmt.setInt(3, pagination.getNumResults());
 		return stmt.executeQuery();
 	}
 
@@ -58,10 +79,9 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
+		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setString(1, virtualWiki);
-		stmt.setInt(2, pagination.getEnd());
-		stmt.setInt(3, pagination.getNumResults());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -70,10 +90,9 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
+		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, topicId);
-		stmt.setInt(2, pagination.getEnd());
-		stmt.setInt(3, pagination.getNumResults());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -82,16 +101,15 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = null;
+		String sql = null;
 		if (Utilities.isIpAddress(userString)) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
 		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN, pagination);
 		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
-		stmt.setInt(3, pagination.getEnd());
-		stmt.setInt(4, pagination.getNumResults());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -100,11 +118,10 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getEnd());
-		stmt.setInt(4, pagination.getNumResults());
 		return stmt.executeQuery();
 	}
 }
