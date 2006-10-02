@@ -48,8 +48,7 @@ public class TopicServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			// FIXME - remove Special:AllTopics
-			if (isTopic(request, "Special:Allpages") || isTopic(request, "Special:AllTopics")) {
+			if (isTopic(request, "Special:Allpages")) {
 				allTopics(request, next, pageInfo);
 			} else {
 				viewTopic(request, next, pageInfo);
