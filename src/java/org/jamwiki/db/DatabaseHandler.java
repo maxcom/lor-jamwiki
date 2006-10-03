@@ -137,7 +137,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion, Connection conn) throws Exception {
+	protected void addTopicVersion(String topicName, TopicVersion topicVersion, Connection conn) throws Exception {
 		if (topicVersion.getTopicVersionId() < 1) {
 			int topicVersionId = DatabaseHandler.queryHandler.nextTopicVersionId(conn);
 			topicVersion.setTopicVersionId(topicVersionId);
@@ -175,7 +175,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
+	protected void addWikiFileVersion(String topicName, WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
 		if (wikiFileVersion.getFileVersionId() < 1) {
 			int fileVersionId = DatabaseHandler.queryHandler.nextWikiFileVersionId(conn);
 			wikiFileVersion.setFileVersionId(fileVersionId);
@@ -217,7 +217,8 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 *
+	 * @deprecated This method exists solely to allow upgrades to JAMWiki 0.4.0 or
+	 *  greater and will be replaced during the JAMWiki 0.5.x or JAMWiki 0.6.x series.
 	 */
 	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, DatabaseHandler toHandler) throws Exception {
 		Connection conn = null;
@@ -301,7 +302,7 @@ public class DatabaseHandler {
 					TopicVersion topicVersion = (TopicVersion)versionsMap.get(key);
 					String topicName = (String)topicNameMap.get(key);
 					try {
-						toHandler.addTopicVersion(virtualWiki.getName(), topicName, topicVersion, conn);
+						toHandler.addTopicVersion(topicName, topicVersion, conn);
 						success++;
 					} catch (Exception e) {
 						String msg = "Unable to convert topic version: " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId();
@@ -338,7 +339,7 @@ public class DatabaseHandler {
 					for (Iterator wikiFileVersionIterator = versions.iterator(); wikiFileVersionIterator.hasNext();) {
 						WikiFileVersion wikiFileVersion = (WikiFileVersion)wikiFileVersionIterator.next();
 						try {
-							toHandler.addWikiFileVersion(virtualWiki.getName(), topicName, wikiFileVersion, conn);
+							toHandler.addWikiFileVersion(topicName, wikiFileVersion, conn);
 							success++;
 						} catch (Exception e) {
 							String msg = "Unable to convert wiki file version: " + virtualWiki.getName() + " / " + topicName;
@@ -364,7 +365,8 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 *
+	 * @deprecated This method exists solely to allow upgrades to JAMWiki 0.4.0 or
+	 *  greater and will be replaced during the JAMWiki 0.5.x or JAMWiki 0.6.x series.
 	 */
 	public static Vector convertToFile(WikiUser user, Locale locale, DatabaseHandler fromHandler, FileHandler toHandler) throws Exception {
 		try {
@@ -539,11 +541,11 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public Vector diff(String virtualWiki, String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
-		TopicVersion version1 = lookupTopicVersion(virtualWiki, topicName, topicVersionId1);
-		TopicVersion version2 = lookupTopicVersion(virtualWiki, topicName, topicVersionId2);
+	public Vector diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
+		TopicVersion version1 = lookupTopicVersion(topicName, topicVersionId1);
+		TopicVersion version2 = lookupTopicVersion(topicName, topicVersionId2);
 		if (version1 == null && version2 == null) {
-			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName + " / " + virtualWiki;
+			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
 			logger.severe(msg);
 			throw new Exception(msg);
 		}
@@ -1032,7 +1034,7 @@ public class DatabaseHandler {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic);
 		if (rs.size() == 0) return null;
 		int topicVersionId = rs.getInt("topic_version_id");
-		return lookupTopicVersion(virtualWiki, topicName, topicVersionId);
+		return lookupTopicVersion(topicName, topicVersionId);
 	}
 
 	/**
@@ -1044,7 +1046,7 @@ public class DatabaseHandler {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic, conn);
 		if (rs.size() == 0) return null;
 		int topicVersionId = rs.getInt("topic_version_id");
-		return lookupTopicVersion(virtualWiki, topicName, topicVersionId, conn);
+		return lookupTopicVersion(topicName, topicVersionId, conn);
 	}
 
 	/**
@@ -1090,7 +1092,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId) throws Exception {
+	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);
@@ -1099,7 +1101,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Connection conn) throws Exception {
+	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId, conn);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);
@@ -1555,7 +1557,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public synchronized void writeFile(String topicName, WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception {
+	public void writeFile(String topicName, WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -1567,7 +1569,7 @@ public class DatabaseHandler {
 			wikiFileVersion.setFileId(wikiFile.getFileId());
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 				// write version
-				addWikiFileVersion(wikiFile.getVirtualWiki(), topicName, wikiFileVersion, conn);
+				addWikiFileVersion(topicName, wikiFileVersion, conn);
 			}
 		} catch (Exception e) {
 			this.handleErrors(conn);
@@ -1580,7 +1582,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput) throws Exception {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -1613,7 +1615,7 @@ public class DatabaseHandler {
 	 *  to Wiki users.  This flag should be true except in rare cases, such as when
 	 *  temporarily deleting a topic during page moves.
 	 */
-	protected synchronized void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Connection conn, boolean userVisible) throws Exception {
+	protected void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Connection conn, boolean userVisible) throws Exception {
 		if (!Utilities.validateTopicName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
@@ -1630,7 +1632,7 @@ public class DatabaseHandler {
 			topicVersion.setTopicId(topic.getTopicId());
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
 				// write version
-				addTopicVersion(topic.getVirtualWiki(), topic.getName(), topicVersion, conn);
+				addTopicVersion(topic.getName(), topicVersion, conn);
 			}
 			String authorName = topicVersion.getAuthorIpAddress();
 			Integer authorId = topicVersion.getAuthorId();

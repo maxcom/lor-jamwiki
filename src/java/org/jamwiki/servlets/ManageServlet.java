@@ -119,7 +119,7 @@ public class ManageServlet extends JAMWikiServlet {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
-			previousVersion = WikiBase.getHandler().lookupTopicVersion(virtualWiki, topicName, previousVersion.getPreviousTopicVersionId().intValue());
+			previousVersion = WikiBase.getHandler().lookupTopicVersion(topicName, previousVersion.getPreviousTopicVersionId().intValue());
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
