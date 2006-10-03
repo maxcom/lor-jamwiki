@@ -143,7 +143,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
-		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo.gif");
+		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
 		defaults.setProperty(PROP_BASE_INITIALIZED, "false");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");

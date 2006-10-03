@@ -15,6 +15,7 @@ JAMWiki Contributors
      Hungarian:             Daniel Tar (bDaneE)
      Polish:                Robert Matyja (dlpa)
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
+                            Oliver (okohll)
   Other contributors:       Scott Croco (scroco)
 
 
