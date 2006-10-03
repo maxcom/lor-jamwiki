@@ -19,9 +19,7 @@ package org.jamwiki;
 import java.util.Locale;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.persistency.db.DatabaseHandler;
-import org.jamwiki.persistency.file.FileHandler;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.JAMWikiServlet;
@@ -44,7 +42,7 @@ public class WikiBase {
 	/** The singleton instance of this class. */
 	private static WikiBase instance = null;
 	/** The handler that looks after read/write operations for a persistence type. */
-	private static PersistencyHandler handler = null;
+	private static DatabaseHandler handler = null;
 	/** The search engine instance. */
 	private static SearchEngine searchEngine = null;
 
@@ -89,11 +87,7 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
-		if (type != null && (type.equals("DATABASE") || type.equals("INTERNAL"))) {
-			WikiBase.handler = new DatabaseHandler();
-		} else {
-			WikiBase.handler = new FileHandler();
-		}
+		WikiBase.handler = new DatabaseHandler();
 		this.searchEngine = new LuceneSearchEngine();
 	}
 
@@ -126,7 +120,7 @@ public class WikiBase {
 	 *
 	 * @return The current handler instance.
 	 */
-	public static PersistencyHandler getHandler() {
+	public static DatabaseHandler getHandler() {
 		if (!WikiBase.handler.isInitialized()) {
 			// not initialized yet
 			return null;
@@ -198,9 +192,9 @@ public class WikiBase {
 	 * use - WikiBase.reset() should be used in most cases when changing persistency
 	 * type.
 	 *
-	 * @param handler A new PersistencyHandler instance to use for the wiki.
+	 * @param handler A new DatabaseHandler instance to use for the wiki.
 	 */
-	public static void setHandler(PersistencyHandler handler) {
+	public static void setHandler(DatabaseHandler handler) {
 		WikiBase.handler = handler;
 	}
 }

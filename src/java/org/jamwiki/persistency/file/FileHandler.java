@@ -33,8 +33,6 @@ import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.model.Category;
-import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiFile;
@@ -54,12 +52,10 @@ import org.w3c.dom.NodeList;
 /**
  *
  */
-public class FileHandler extends PersistencyHandler {
+public class FileHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(FileHandler.class.getName());
 
-	private static final String CATEGORIES_DIR = "categories";
-	private static final String CATEGORY_TOPICS_DIR = "topics";
 	private static final String CONTRIBUTIONS_DIR = "contributions";
 	private static final String DELETE_DIR = "deletes";
 	private final static String EXT = ".xml";
@@ -166,21 +162,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addCategory(Category category, Object[] params) throws Exception {
-		this.saveCategory(category);
-	}
-
-	/**
-	 *
-	 */
-	protected void addRecentChange(RecentChange change, Object[] params) throws Exception {
-		this.saveRecentChange(change);
-	}
-
-	/**
-	 *
-	 */
-	protected void addTopic(Topic topic, Object[] params) throws Exception {
+	public void addTopic(Topic topic) throws Exception {
 		if (topic.getTopicId() < 1) {
 			topic.setTopicId(nextTopicId());
 		}
@@ -190,14 +172,14 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion, Object[] params) throws Exception {
+	public void addTopicVersion(String virtualWiki, String topicName, TopicVersion topicVersion) throws Exception {
 		this.saveTopicVersion(virtualWiki, topicName, topicVersion);
 	}
 
 	/**
 	 *
 	 */
-	protected void addVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception {
+	public void addVirtualWiki(VirtualWiki virtualWiki) throws Exception {
 		if (virtualWiki.getVirtualWikiId() < 1) {
 			virtualWiki.setVirtualWikiId(nextVirtualWikiId());
 		}
@@ -207,7 +189,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
+	public void addWikiFile(String topicName, WikiFile wikiFile) throws Exception {
 		if (wikiFile.getFileId() < 1) {
 			wikiFile.setFileId(nextWikiFileId());
 		}
@@ -217,108 +199,18 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion, Object[] params) throws Exception {
+	public void addWikiFileVersion(String virtualWiki, String topicName, WikiFileVersion wikiFileVersion) throws Exception {
 		this.saveWikiFileVersion(virtualWiki, topicName, wikiFileVersion);
 	}
 
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user, Object[] params) throws Exception {
+	public void addWikiUser(WikiUser user) throws Exception {
 		if (user.getUserId() < 1) {
 			user.setUserId(nextWikiUserId());
 		}
 		this.saveWikiUser(user);
-	}
-
-	/**
-	 *
-	 */
-	protected static String categoryFilename(String categoryName) {
-		return categoryName;
-	}
-
-	/**
-	 *
-	 */
-	protected static String categoryTopicFilename(String categoryTopicName) {
-		return categoryTopicName;
-	}
-
-	/**
-	 *
-	 */
-	protected void deleteRecentChanges(Topic topic, Object params[]) throws Exception {
-		Collection topicVersions = this.getAllTopicVersions(topic.getVirtualWiki(), topic.getName(), false);
-		for (Iterator topicVersionIterator = topicVersions.iterator(); topicVersionIterator.hasNext();) {
-			TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
-			String filename = recentChangeFilename(topicVersion.getTopicVersionId());
-			File file = FileHandler.getPathFor(topic.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
-			if (!file.delete()) {
-				logger.severe("Unable to delete recent change file " + file.getAbsolutePath());
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
-	protected void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object[] params) throws Exception {
-		String filename = topicFilename(topic.getName());
-		// move file from topic directory to delete directory
-		File oldFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
-		File newFile = getPathFor(topic.getVirtualWiki(), DELETE_DIR, filename);
-		if (!oldFile.renameTo(newFile)) {
-			throw new Exception("Unable to move file to delete directory for topic " + topic.getVirtualWiki() + " / " + topic.getName());
-		}
-		super.deleteTopic(topic, topicVersion, userVisible, params);
-	}
-
-	/**
-	 *
-	 */
-	protected void deleteTopicCategories(Topic topic, Object params[]) throws Exception {
-		// get categories for topic
-		String filename = categoryTopicFilename(topic.getName());
-		File categoryTopicFile = getPathFor(topic.getVirtualWiki(), CATEGORIES_DIR, CATEGORY_TOPICS_DIR, filename);
-		Properties categoryTopicHash = new Properties();
-		if (categoryTopicFile.exists()) {
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(categoryTopicFile);
-				categoryTopicHash.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		}
-		// remove topic from each category
-		for (Iterator categoryTopicIterator = categoryTopicHash.keySet().iterator(); categoryTopicIterator.hasNext();) {
-			String categoryName = (String)categoryTopicIterator.next();
-			String categoryFilename = categoryFilename(categoryName);
-			File categoryFile = getPathFor(topic.getVirtualWiki(), CATEGORIES_DIR, categoryFilename);
-			Properties categoryHash = new Properties();
-			if (categoryFile.exists()) {
-				FileInputStream fis = null;
-				try {
-					fis = new FileInputStream(categoryFile);
-					categoryHash.load(fis);
-				} finally {
-					if (fis != null) fis.close();
-				}
-			}
-			categoryHash.remove(topic.getName());
-			FileOutputStream fos = null;
-			try {
-				fos = new FileOutputStream(categoryFile);
-				categoryHash.store(fos, null);
-			} finally {
-				if (fos != null) fos.close();
-			}
-		}
-		// delete the topic category file
-		if (categoryTopicFile.exists()) {
-			FileUtils.forceDelete(categoryTopicFile);
-		}
 	}
 
 	/**
@@ -330,36 +222,6 @@ public class FileHandler extends PersistencyHandler {
 			path += File.separator + virtualWiki;
 		}
 		return path;
-	}
-
-	/**
-	 *
-	 */
-	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
-		Collection results = new Vector();
-		File[] files = retrieveCategoryFiles(virtualWiki);
-		if (files == null) return results;
-		for (int i = pagination.getStart(); i <= pagination.getEnd(); i++) {
-			if (i >= files.length) break;
-			Properties categoryHash = new Properties();
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(files[i]);
-				categoryHash.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-			for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
-				String childTopicName = (String)categoryIterator.next();
-				Category category = new Category();
-				category.setName(Utilities.decodeFromURL(files[i].getName()));
-				category.setChildTopicName(childTopicName);
-				category.setSortKey((String)categoryHash.get(childTopicName));
-				category.setVirtualWiki(virtualWiki);
-				results.add(category);
-			}
-		}
-		return results;
 	}
 
 	/**
@@ -393,7 +255,7 @@ public class FileHandler extends PersistencyHandler {
 	 *  in reverse chronological order.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	protected Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+	public Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		Vector all = new Vector();
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, descending);
 		if (files == null) return all;
@@ -407,7 +269,7 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+	public Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception {
 		Vector all = new Vector();
 		File[] files = retrieveWikiFileFiles(virtualWiki);
 		if (files == null) return all;
@@ -496,130 +358,15 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
-		Vector all = new Vector();
-		File[] files = retrieveRecentChangeFiles(virtualWiki, descending);
-		if (files == null) return all;
-		for (int i = pagination.getStart(); i < pagination.getEnd(); i++) {
-			if (i >= files.length) break;
-			RecentChange change = initRecentChange(files[i]);
-			all.add(change);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
+	public Collection getVirtualWikiList() throws Exception {
 		Vector results = new Vector();
-		Topic topic = this.lookupTopic(virtualWiki, topicName);
-		Collection versions = getAllTopicVersions(virtualWiki, topicName, descending);
-		int i = 0;
-		for (Iterator iterator = versions.iterator(); iterator.hasNext();) {
-			TopicVersion version = (TopicVersion)iterator.next();
-			if (i < pagination.getStart()) {
-				i++;
-				continue;
-			}
-			if (i >= pagination.getEnd()) break;
-			String authorName = version.getAuthorIpAddress();
-			Integer authorId = version.getAuthorId();
-			if (authorId != null) {
-				authorName = lookupWikiUserLogin(authorId);
-			}
-			RecentChange change = new RecentChange(topic, version, authorName);
-			results.add(change);
-			i++;
+		File[] files = retrieveVirtualWikiFiles();
+		if (files == null) return results;
+		for (int i = 0; i < files.length; i++) {
+			VirtualWiki virtualWiki = initVirtualWiki(files[i]);
+			results.add(virtualWiki);
 		}
 		return results;
-	}
-
-	/**
-	 *
-	 */
-	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
-		Vector all = new Vector();
-		File[] files = retrieveUserContributionsFiles(virtualWiki, userString, descending);
-		if (files == null) return all;
-		for (int i = pagination.getStart(); i < pagination.getEnd(); i++) {
-			if (i >= files.length) break;
-			RecentChange change = initRecentChange(files[i]);
-			all.add(change);
-		}
-		return all;
-	}
-
-	/**
-	 *
-	 */
-	protected void handleErrors(Object[] params) {
-	}
-
-	/**
-	 * Set up database tables, and then call the parent method to initialize
-	 * default values.
-	 */
-	public void initialize(Locale locale, WikiUser user) throws Exception {
-		if (this.isInitialized()) {
-			logger.warning("Attempt to initialize when initialization already complete");
-			return;
-		}
-		super.initialize(locale, user);
-		this.initialized = true;
-	}
-
-	/**
-	 *
-	 */
-	protected Object[] initParams() throws Exception {
-		// no extra params needed
-		return null;
-	}
-
-	/**
-	 *
-	 */
-	private RecentChange initRecentChange(File file) {
-		if (!file.exists()) return null;
-		try {
-			RecentChange change = new RecentChange();
-			Document document = XMLUtil.parseXML(file, false);
-			// get root node
-			Node rootNode = document.getElementsByTagName(XML_RECENT_CHANGE_ROOT).item(0);
-			NodeList rootChildren = rootNode.getChildNodes();
-			Node rootChild = null;
-			String childName = null;
-			for (int i=0; i < rootChildren.getLength(); i++) {
-				rootChild = rootChildren.item(i);
-				childName = rootChild.getNodeName();
-				if (childName.equals(XML_RECENT_CHANGE_TOPIC_ID)) {
-					change.setTopicId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
-				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_NAME)) {
-					change.setTopicName(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_RECENT_CHANGE_TOPIC_VERSION_ID)) {
-					change.setTopicVersionId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
-				} else if (childName.equals(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID)) {
-					change.setPreviousTopicVersionId(new Integer(XMLUtil.getTextContent(rootChild)));
-				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_ID)) {
-					change.setAuthorId(new Integer(XMLUtil.getTextContent(rootChild)));
-				} else if (childName.equals(XML_RECENT_CHANGE_AUTHOR_NAME)) {
-					change.setAuthorName(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_COMMENT)) {
-					change.setEditComment(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_DATE)) {
-					change.setEditDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
-				} else if (childName.equals(XML_RECENT_CHANGE_EDIT_TYPE)) {
-					change.setEditType(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
-				} else if (childName.equals(XML_RECENT_CHANGE_VIRTUAL_WIKI)) {
-					change.setVirtualWiki(XMLUtil.getTextContent(rootChild));
-				}
-			}
-			return change;
-		} catch (Exception e) {
-			logger.severe("Failure while initializing recent changes for file " + file.getAbsolutePath(), e);
-			return null;
-		}
 	}
 
 	/**
@@ -915,80 +662,12 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	protected void loadVirtualWikiHashes() throws Exception {
-		PersistencyHandler.virtualWikiNameHash = new Hashtable();
-		PersistencyHandler.virtualWikiIdHash = new Hashtable();
-		try {
-			File[] files = retrieveVirtualWikiFiles();
-			if (files == null) return;
-			for (int i = 0; i < files.length; i++) {
-				VirtualWiki virtualWiki = initVirtualWiki(files[i]);
-				PersistencyHandler.virtualWikiNameHash.put(virtualWiki.getName(), virtualWiki);
-				PersistencyHandler.virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
-			}
-		} catch (Exception e) {
-			logger.severe("Failure while loading virtual wiki hashtable ", e);
-			// if there is an error make sure the hashtable is reset since it wasn't
-			// properly initialized
-			PersistencyHandler.virtualWikiNameHash = null;
-			PersistencyHandler.virtualWikiIdHash = null;
-			throw e;
-		}
-	}
-
-	/**
-	 *
-	 */
-	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
-		String filename = categoryFilename(categoryName);
-		File categoryFile = getPathFor(virtualWiki, CATEGORIES_DIR, filename);
-		Properties categoryHash = new Properties();
-		if (categoryFile.exists()) {
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(categoryFile);
-				categoryHash.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		}
-		TreeMap sortedResults = new TreeMap();
-		for (Iterator categoryIterator = categoryHash.keySet().iterator(); categoryIterator.hasNext();) {
-			String topicName = (String)categoryIterator.next();
-			Topic topic = lookupTopic(virtualWiki, topicName);
-			if (topic.getTopicType() != topicType) {
-				continue;
-			}
-			String sortKey = (String)categoryHash.get(topicName);
-			if (!StringUtils.hasText(sortKey)) {
-				sortKey = topicName;
-			}
-			Category category = new Category();
-			category.setVirtualWiki(virtualWiki);
-			category.setName(categoryName);
-			category.setSortKey(sortKey);
-			category.setChildTopicName(topicName);
-			sortedResults.put(sortKey, category);
-		}
-		return sortedResults.values();
-	}
-
-	/**
-	 *
-	 */
 	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
 		// get all files, sorted.  last one is last version.
 		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, true);
 		if (files == null) return null;
 		File file = files[0];
 		return initTopicVersion(file);
-	}
-
-	/**
-	 *
-	 */
-	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Object[] params) throws Exception {
-		return this.lookupLastTopicVersion(virtualWiki, topicName);
 	}
 
 	/**
@@ -1010,13 +689,6 @@ public class FileHandler extends PersistencyHandler {
 			topic = initTopic(file);
 		}
 		return topic;
-	}
-
-	/**
-	 *
-	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object[] params) throws Exception {
-		return this.lookupTopic(virtualWiki, topicName, deleteOK);
 	}
 
 	/**
@@ -1060,13 +732,6 @@ public class FileHandler extends PersistencyHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(String virtualWiki, String topicName, int topicVersionId, Object[] params) throws Exception {
-		return this.lookupTopicVersion(virtualWiki, topicName, topicVersionId);
-	}
-
-	/**
-	 *
-	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
 		// wiki file named after its associated topic
 		String filename = topicFilename(topicName);
@@ -1080,13 +745,6 @@ public class FileHandler extends PersistencyHandler {
 	public WikiUser lookupWikiUser(int userId) throws Exception {
 		String login = retrieveWikiUserLogin(userId);
 		return lookupWikiUser(login);
-	}
-
-	/**
-	 *
-	 */
-	protected WikiUser lookupWikiUser(int userId, Object[] params) throws Exception {
-		return this.lookupWikiUser(userId);
 	}
 
 	/**
@@ -1221,32 +879,11 @@ public class FileHandler extends PersistencyHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	protected void purgeData(Object[] params) throws Exception {
+	public void purgeData() throws Exception {
 		String rootDir = Environment.getValue(Environment.PROP_BASE_FILE_DIR);
 		File rootDirFile = new File(rootDir);
 		// BOOM!  Everything gone...
 		FileUtils.cleanDirectory(rootDirFile);
-	}
-
-	/**
-	 *
-	 */
-	protected static String recentChangeFilename(int topicVersionId) {
-		return topicVersionId + EXT;
-	}
-
-	/**
-	 *
-	 */
-	protected void releaseParams(Object[] params) throws Exception {
-	}
-
-	/**
-	 *
-	 */
-	protected void reloadRecentChanges(Object[] params) throws Exception {
-		// FIXME - implement this
-		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -1293,38 +930,6 @@ public class FileHandler extends PersistencyHandler {
 				throw new Exception("Unable to rename version directory from " + topic.getVirtualWiki() + " / " + topic.getName() + " to " + renameTo);
 			}
 		}
-	}
-
-	/**
-	 *
-	 */
-	private File[] retrieveCategoryFiles(String virtualWiki) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.CATEGORIES_DIR);
-		File[] files = file.listFiles();
-		// remove directories
-		Vector temp = new Vector();
-		for (int i=0; i < files.length; i++) {
-			if (files[i].isDirectory()) continue;
-			temp.add(files[i]);
-		}
-		File[] results = new File[temp.size()];
-		for (int i=0; i < temp.size(); i++) {
-			results[i] = (File)temp.elementAt(i);
-		}
-		return results;
-	}
-
-	/**
-	 *
-	 */
-	private File[] retrieveRecentChangeFiles(String virtualWiki, boolean descending) throws Exception {
-		File file = FileHandler.getPathFor(virtualWiki, null, FileHandler.RECENT_CHANGE_DIR);
-		File[] files = file.listFiles();
-		if (files == null) return null;
-		Comparator comparator = new WikiDescendingFileComparator();
-		if (!descending) comparator = new WikiAscendingFileComparator();
-		Arrays.sort(files, comparator);
-		return files;
 	}
 
 	/**
@@ -1421,98 +1026,6 @@ public class FileHandler extends PersistencyHandler {
 			}
 		}
 		return WIKI_USER_ID_HASH.getProperty(new Integer(userId).toString());
-	}
-
-	/**
-	 *
-	 */
-	protected void saveCategory(Category category) throws Exception {
-		// store one copy in the categories directory
-		String filename = categoryFilename(category.getName());
-		File categoryFile = getPathFor(category.getVirtualWiki(), CATEGORIES_DIR, filename);
-		Properties categoryHash = new Properties();
-		if (categoryFile.exists()) {
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(categoryFile);
-				categoryHash.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		}
-		String sortKey = (category.getSortKey() == null) ? "" : category.getSortKey();
-		categoryHash.setProperty(category.getChildTopicName(), sortKey);
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(categoryFile);
-			categoryHash.store(fos, null);
-		} finally {
-			if (fos != null) fos.close();
-		}
-		// store a second copy in the categories/topics directory
-		filename = categoryTopicFilename(category.getChildTopicName());
-		File categoryTopicFile = getPathFor(category.getVirtualWiki(), CATEGORIES_DIR, CATEGORY_TOPICS_DIR, filename);
-		Properties categoryTopicHash = new Properties();
-		if (categoryTopicFile.exists()) {
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(categoryTopicFile);
-				categoryTopicHash.load(fis);
-			} finally {
-				if (fis != null) fis.close();
-			}
-		}
-		categoryTopicHash.setProperty(category.getName(), "");
-		try {
-			fos = new FileOutputStream(categoryTopicFile);
-			categoryTopicHash.store(fos, null);
-		} finally {
-			if (fos != null) fos.close();
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void saveRecentChange(RecentChange change) throws Exception {
-		StringBuffer content = new StringBuffer();
-		content.append("<mediawiki xmlns=\"http://www.mediawiki.org/xml/export-0.3/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd\" version=\"0.3\" xml:lang=\"en\">");
-		content.append("\n");
-		content.append("<").append(XML_RECENT_CHANGE_ROOT).append(">");
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_ID, change.getTopicId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_NAME, change.getTopicName(), true));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_TOPIC_VERSION_ID, change.getTopicVersionId()));
-		content.append("\n");
-		if (change.getPreviousTopicVersionId() != null) {
-			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_PREVIOUS_TOPIC_VERSION_ID, change.getPreviousTopicVersionId()));
-			content.append("\n");
-		}
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_ID, change.getAuthorId()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_AUTHOR_NAME, change.getAuthorName(), true));
-		content.append("\n");
-		if (change.getEditComment() != null) {
-			content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_COMMENT, change.getEditComment(), true));
-			content.append("\n");
-		}
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_DATE, change.getEditDate()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_EDIT_TYPE, change.getEditType()));
-		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_RECENT_CHANGE_VIRTUAL_WIKI, change.getVirtualWiki(), true));
-		content.append("\n");
-		content.append("</").append(XML_RECENT_CHANGE_ROOT).append(">");
-		content.append("\n");
-		content.append("</mediawiki>");
-		String filename = recentChangeFilename(change.getTopicVersionId());
-		File file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.RECENT_CHANGE_DIR, filename);
-		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
-		// also write to user contributions directory
-		file = FileHandler.getPathFor(change.getVirtualWiki(), FileHandler.CONTRIBUTIONS_DIR, change.getAuthorName(), filename);
-		FileUtils.writeStringToFile(file, content.toString(), "UTF-8");
 	}
 
 	/**
@@ -1798,48 +1311,6 @@ public class FileHandler extends PersistencyHandler {
 	 */
 	protected static String topicVersionFilename(int topicVersionId) {
 		return topicVersionId + EXT;
-	}
-
-	/**
-	 *
-	 */
-	protected void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object[] params) throws Exception {
-		String filename = topicFilename(topic.getName());
-		// move file from topic directory to delete directory
-		File oldFile = getPathFor(topic.getVirtualWiki(), DELETE_DIR, filename);
-		File newFile = getPathFor(topic.getVirtualWiki(), TOPIC_DIR, filename);
-		if (!oldFile.renameTo(newFile)) {
-			throw new Exception("Unable to undelete topic " + topic.getVirtualWiki() + " / " + topic.getName());
-		}
-		super.undeleteTopic(topic, topicVersion, userVisible, params);
-	}
-
-	/**
-	 *
-	 */
-	protected void updateTopic(Topic topic, Object[] params) throws Exception {
-		this.saveTopic(topic);
-	}
-
-	/**
-	 *
-	 */
-	protected void updateVirtualWiki(VirtualWiki virtualWiki, Object[] params) throws Exception {
-		this.saveVirtualWiki(virtualWiki);
-	}
-
-	/**
-	 *
-	 */
-	protected void updateWikiFile(String topicName, WikiFile wikiFile, Object[] params) throws Exception {
-		this.saveWikiFile(topicName, wikiFile);
-	}
-
-	/**
-	 *
-	 */
-	protected void updateWikiUser(WikiUser user, Object[] params) throws Exception {
-		this.saveWikiUser(user);
 	}
 
 	/**

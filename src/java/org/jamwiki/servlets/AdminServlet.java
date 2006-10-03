@@ -217,15 +217,7 @@ public class AdminServlet extends JAMWikiServlet {
 					String value = props.getProperty(key);
 					Environment.setValue(key, value);
 				}
-				// initialize connection pool in its own try-catch to avoid an error
-				// causing property values not to be saved.
-				try {
-					DatabaseConnection.setPoolInitialized(false);
-				} catch (Exception e) {
-					String message = e.getMessage();
-					next.addObject("message", message);
-				}
-				// re-initialize to reset PersistencyHandler settings (if needed)
+				// re-initialize to reset DatabaseHandler settings (if needed)
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));

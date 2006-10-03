@@ -233,7 +233,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	public static void setPoolInitialized(boolean poolInitialized) {
+	protected static void setPoolInitialized(boolean poolInitialized) {
 		DatabaseConnection.poolInitialized = poolInitialized;
 	}
 

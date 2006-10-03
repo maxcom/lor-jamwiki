@@ -71,7 +71,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 		try {
 			FileHandler fromHandler = new FileHandler();
 			DatabaseHandler toHandler = new DatabaseHandler();
-			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
+			Vector messages = DatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
 			next.addObject("message", new WikiMessage("convert.database.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {
@@ -88,7 +88,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 		try {
 			FileHandler toHandler = new FileHandler();
 			DatabaseHandler fromHandler = new DatabaseHandler();
-			Vector messages = WikiBase.getHandler().convert(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
+			Vector messages = DatabaseHandler.convertToFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
 			next.addObject("message", new WikiMessage("convert.file.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {

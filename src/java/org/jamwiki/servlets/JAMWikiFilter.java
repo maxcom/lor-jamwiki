@@ -72,12 +72,12 @@ public class JAMWikiFilter implements Filter {
 		}
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
-		if (Utilities.isFirstUse() && !JAMWikiServlet.isTopic(request, "Special:Setup")) {
+		if (Utilities.isFirstUse() && !JAMWikiServlet.isTopic(request, "Special:Setup") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
 			// redirect to setup page
 			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
 			redirect(request, response, url);
 			return true;
-		} else if (Utilities.isUpgrade() && !JAMWikiServlet.isTopic(request, "Special:Upgrade") && !JAMWikiServlet.isTopic(request, "Special:Login")) {
+		} else if (Utilities.isUpgrade() && !JAMWikiServlet.isTopic(request, "Special:Upgrade") && !JAMWikiServlet.isTopic(request, "Special:Login") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
 			// redirect to upgrade page
 			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
 			redirect(request, response, url);
