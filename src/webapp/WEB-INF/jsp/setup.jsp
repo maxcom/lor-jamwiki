@@ -19,7 +19,7 @@
 <%@ page import="
         org.jamwiki.Environment,
         org.jamwiki.WikiBase,
-        org.jamwiki.persistency.db.DatabaseHandler
+        org.jamwiki.db.DatabaseHandler
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"

@@ -14,7 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.persistency.db;
+package org.jamwiki.db;
 
 import java.util.Properties;
 import org.jamwiki.Environment;
@@ -23,21 +23,21 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Oracle-specific implementation of the QueryHandler interface.  This class implements
- * Oracle-specific methods for instances where Oracle does not support the default
- * ASCII SQL syntax.
+ * Microsoft SQL Server-specific implementation of the QueryHandler interface.
+ * This class implements SQL Server-specific methods for instances where SQL Server
+ * does not support the default ASCII SQL syntax.
  */
-public class OracleQueryHandler extends DefaultQueryHandler {
+public class MSSqlQueryHandler extends DefaultQueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(OracleQueryHandler.class.getName());
-	private static final String SQL_PROPERTY_FILE_NAME = "sql.oracle.properties";
+	private static WikiLogger logger = WikiLogger.getLogger(MSSqlQueryHandler.class.getName());
+	private static final String SQL_PROPERTY_FILE_NAME = "sql.mssql.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
-	protected OracleQueryHandler() {
+	protected MSSqlQueryHandler() {
 		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
@@ -48,9 +48,9 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 */
 	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getEnd());
-		stmt.setInt(3, pagination.getStart());
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, virtualWikiId);
 		return stmt.executeQuery();
 	}
 
@@ -59,9 +59,9 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
-		stmt.setString(1, virtualWiki);
-		stmt.setInt(2, pagination.getEnd());
-		stmt.setInt(3, pagination.getStart());
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setString(3, virtualWiki);
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -71,9 +71,9 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 */
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
-		stmt.setInt(1, topicId);
-		stmt.setInt(2, pagination.getEnd());
-		stmt.setInt(3, pagination.getStart());
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, topicId);
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -88,10 +88,10 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 		} else {
 			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
 		}
-		stmt.setString(1, virtualWiki);
-		stmt.setString(2, userString);
-		stmt.setInt(3, pagination.getEnd());
-		stmt.setInt(4, pagination.getStart());
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setString(3, virtualWiki);
+		stmt.setString(4, userString);
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -101,10 +101,10 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 */
 	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
-		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getEnd());
-		stmt.setInt(4, pagination.getStart());
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, virtualWikiId);
+		stmt.setInt(4, topicType);
 		return stmt.executeQuery();
 	}
 }

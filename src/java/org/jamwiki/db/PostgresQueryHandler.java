@@ -14,28 +14,28 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.persistency.db;
+package org.jamwiki.db;
 
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * MySQL-specific implementation of the QueryHandler interface.  This class implements
- * MySQL-specific methods for instances where MySQL does not support the default
+ * Postgres-specific implementation of the QueryHandler interface.  This class implements
+ * Postgres-specific methods for instances where Postgres does not support the default
  * ASCII SQL syntax.
  */
-public class MySqlQueryHandler extends DefaultQueryHandler {
+public class PostgresQueryHandler extends DefaultQueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(MySqlQueryHandler.class.getName());
-	private static final String SQL_PROPERTY_FILE_NAME = "sql.mysql.properties";
+	private static WikiLogger logger = WikiLogger.getLogger(PostgresQueryHandler.class.getName());
+	private static final String SQL_PROPERTY_FILE_NAME = "sql.postgres.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
-	protected MySqlQueryHandler() {
+	protected PostgresQueryHandler() {
 		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);

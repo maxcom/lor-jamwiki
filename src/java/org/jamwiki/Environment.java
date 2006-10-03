@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Properties;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.jamwiki.persistency.db.DatabaseHandler;
+import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;

@@ -20,7 +20,7 @@
         java.util.Properties,
         org.jamwiki.Environment,
         org.jamwiki.WikiBase,
-        org.jamwiki.persistency.db.DatabaseHandler,
+        org.jamwiki.db.DatabaseHandler,
         org.jamwiki.servlets.JAMWikiServlet,
         org.jamwiki.users.Usergroup,
         org.apache.commons.pool.impl.GenericObjectPool

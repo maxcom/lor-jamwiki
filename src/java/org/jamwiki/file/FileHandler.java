@@ -14,7 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.persistency.file;
+package org.jamwiki.file;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +39,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.persistency.PersistencyHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;

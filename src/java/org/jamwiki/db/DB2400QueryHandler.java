@@ -14,8 +14,9 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.persistency.db;
+package org.jamwiki.db;
 
+import java.text.MessageFormat;
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Pagination;
@@ -23,34 +24,54 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * DB/2-specific implementation of the QueryHandler interface.  This class implements
- * DB/2-specific methods for instances where DB/2 does not support the default
+ * DB2/400-specific implementation of the QueryHandler interface.  This class implements
+ * DB2/400-specific methods for instances where DB2/400 does not support the default
  * ASCII SQL syntax.
  */
-public class DB2QueryHandler extends DefaultQueryHandler {
+public class DB2400QueryHandler extends DefaultQueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(DB2QueryHandler.class.getName());
-	private static final String SQL_PROPERTY_FILE_NAME = "sql.db2.properties";
+	private static WikiLogger logger = WikiLogger.getLogger(DB2400QueryHandler.class.getName());
+	private static final String SQL_PROPERTY_FILE_NAME = "sql.db2400.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;
 
 	/**
 	 *
 	 */
-	protected DB2QueryHandler() {
+	protected DB2400QueryHandler() {
 		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}
 
 	/**
+	 * DB2/400 will not allow query parameters such as "fetch ? rows only", so
+	 * this method provides a way of formatting the query limits without using
+	 * query parameters.
+	 *
+	 * @param sql The SQL statement, with the last result parameter specified as
+	 *  {0} and the total number of rows parameter specified as {1}.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @return A formatted SQL string.
+	 */
+	private static String formatStatement(String sql, Pagination pagination) {
+		try {
+			Object[] objects = {new Integer(pagination.getEnd()), new Integer(pagination.getNumResults())};
+			return MessageFormat.format(sql, objects);
+		} catch (Exception e) {
+			logger.warning("Unable to format " + sql + " with values " + pagination.getEnd() + " / " + pagination.getNumResults(), e);
+			return null;
+		}
+	}
+
+	/**
 	 *
 	 */
 	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORIES);
+		String sql = formatStatement(STATEMENT_SELECT_CATEGORIES, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
 		return stmt.executeQuery();
 	}
 
@@ -58,10 +79,9 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES);
+		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setString(1, virtualWiki);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -70,10 +90,9 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC);
+		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, topicId);
-		stmt.setInt(2, pagination.getStart());
-		stmt.setInt(3, pagination.getEnd());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -82,16 +101,15 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
-		WikiPreparedStatement stmt = null;
+		String sql = null;
 		if (Utilities.isIpAddress(userString)) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS);
+			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
 		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN);
+			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN, pagination);
 		}
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setString(1, virtualWiki);
 		stmt.setString(2, userString);
-		stmt.setInt(3, pagination.getStart());
-		stmt.setInt(4, pagination.getEnd());
 		// FIXME - sort order ignored
 		return stmt.executeQuery();
 	}
@@ -100,11 +118,10 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
+		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicType);
-		stmt.setInt(3, pagination.getStart());
-		stmt.setInt(4, pagination.getEnd());
 		return stmt.executeQuery();
 	}
 }
