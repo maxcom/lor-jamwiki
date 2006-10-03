@@ -638,17 +638,6 @@ public class FileHandler {
 	/**
 	 *
 	 */
-	public synchronized TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
-		// get all files, sorted.  last one is last version.
-		File[] files = retrieveTopicVersionFiles(virtualWiki, topicName, true);
-		if (files == null) return null;
-		File file = files[0];
-		return initTopicVersion(file);
-	}
-
-	/**
-	 *
-	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		return lookupTopic(virtualWiki, topicName, false);
 	}
@@ -680,32 +669,11 @@ public class FileHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(int userId) throws Exception {
-		String login = retrieveWikiUserLogin(userId);
-		return lookupWikiUser(login);
-	}
-
-	/**
-	 *
-	 */
 	public WikiUser lookupWikiUser(String login) throws Exception {
 		if (login == null) return null;
 		String filename = wikiUserFilename(login);
 		File file = getPathFor(null, WIKI_USER_DIR, filename);
 		return initWikiUser(file);
-	}
-
-	/**
-	 *
-	 */
-	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
-		WikiUser user = lookupWikiUser(login);
-		if (user == null || password == null) return null;
-		String encryptedPassword = password;
-		if (!encrypted) {
-			encryptedPassword = Encryption.encrypt(password);
-		}
-		return (user.getEncodedPassword().equals(encryptedPassword) ? user : null);
 	}
 
 	/**
@@ -885,26 +853,6 @@ public class FileHandler {
 		File file = FileHandler.getPathFor(null, null, FileHandler.WIKI_USER_DIR);
 		File[] files = file.listFiles();
 		return files;
-	}
-
-	/**
-	 *
-	 */
-	private static String retrieveWikiUserLogin(int userId) throws Exception {
-		if (WIKI_USER_ID_HASH == null) {
-			WIKI_USER_ID_HASH = new Properties();
-			File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
-			if (userIdHashFile.exists()) {
-				FileInputStream fis = null;
-				try {
-					fis = new FileInputStream(userIdHashFile);
-					WIKI_USER_ID_HASH.load(fis);
-				} finally {
-					if (fis != null) fis.close();
-				}
-			}
-		}
-		return WIKI_USER_ID_HASH.getProperty(new Integer(userId).toString());
 	}
 
 	/**

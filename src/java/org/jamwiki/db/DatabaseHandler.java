@@ -63,8 +63,8 @@ public class DatabaseHandler {
 	private static WikiCacheMap cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	/** For performance reasons, keep a (small) list of recently looked-up user logins and ids around in memory. */
 	private static WikiCacheMap cachedUserLoginHash = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-	protected static Hashtable virtualWikiIdHash = null;
-	protected static Hashtable virtualWikiNameHash = null;
+	private static Hashtable virtualWikiIdHash = null;
+	private static Hashtable virtualWikiNameHash = null;
 	public static final String DB_TYPE_ANSI = "ansi";
 	public static final String DB_TYPE_DB2 = "db2";
 	public static final String DB_TYPE_DB2_400 = "db2/400";
@@ -108,7 +108,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addCategory(Category category, Connection conn) throws Exception {
+	private void addCategory(Category category, Connection conn) throws Exception {
 		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), false, conn);
 		int childTopicId = childTopic.getTopicId();
 		DatabaseHandler.queryHandler.insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
@@ -117,7 +117,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addRecentChange(RecentChange change, Connection conn) throws Exception {
+	private void addRecentChange(RecentChange change, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(change.getVirtualWiki());
 		DatabaseHandler.queryHandler.insertRecentChange(change, virtualWikiId, conn);
 	}
@@ -125,7 +125,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addTopic(Topic topic, Connection conn) throws Exception {
+	private void addTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		if (topic.getTopicId() < 1) {
 			int topicId = DatabaseHandler.queryHandler.nextTopicId(conn);
@@ -137,7 +137,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addTopicVersion(String topicName, TopicVersion topicVersion, Connection conn) throws Exception {
+	private void addTopicVersion(String topicName, TopicVersion topicVersion, Connection conn) throws Exception {
 		if (topicVersion.getTopicVersionId() < 1) {
 			int topicVersionId = DatabaseHandler.queryHandler.nextTopicVersionId(conn);
 			topicVersion.setTopicVersionId(topicVersionId);
@@ -152,7 +152,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
+	private void addVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		if (virtualWiki.getVirtualWikiId() < 1) {
 			int virtualWikiId = DatabaseHandler.queryHandler.nextVirtualWikiId(conn);
 			virtualWiki.setVirtualWikiId(virtualWikiId);
@@ -163,7 +163,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
+	private void addWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
 		if (wikiFile.getFileId() < 1) {
 			int fileId = DatabaseHandler.queryHandler.nextWikiFileId(conn);
 			wikiFile.setFileId(fileId);
@@ -175,7 +175,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addWikiFileVersion(String topicName, WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
+	private void addWikiFileVersion(String topicName, WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
 		if (wikiFileVersion.getFileVersionId() < 1) {
 			int fileVersionId = DatabaseHandler.queryHandler.nextWikiFileVersionId(conn);
 			wikiFileVersion.setFileVersionId(fileVersionId);
@@ -190,7 +190,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user, Connection conn) throws Exception {
+	private void addWikiUser(WikiUser user, Connection conn) throws Exception {
 		if (user.getUserId() < 1) {
 			int nextUserId = DatabaseHandler.queryHandler.nextWikiUserId(conn);
 			user.setUserId(nextUserId);
@@ -494,7 +494,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void deleteRecentChanges(Topic topic, Connection conn) throws Exception {
+	private void deleteRecentChanges(Topic topic, Connection conn) throws Exception {
 		DatabaseHandler.queryHandler.deleteRecentChanges(topic.getTopicId(), conn);
 	}
 
@@ -517,7 +517,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Connection conn) throws Exception {
+	private void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Connection conn) throws Exception {
 		if (userVisible) {
 			// delete old recent changes
 			deleteRecentChanges(topic, conn);
@@ -534,7 +534,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void deleteTopicCategories(Topic topic, Connection conn) throws Exception {
+	private void deleteTopicCategories(Topic topic, Connection conn) throws Exception {
 		DatabaseHandler.queryHandler.deleteTopicCategories(topic.getTopicId(), conn);
 	}
 
@@ -623,7 +623,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+	private Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		Vector all = new Vector();
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -639,7 +639,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception {
+	private Collection getAllWikiFileTopicNames(String virtualWiki) throws Exception {
 		Vector all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.getAllWikiFileTopicNames(virtualWikiId);
@@ -680,7 +680,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected Connection getConnection() throws Exception {
+	private Connection getConnection() throws Exception {
 		// add a connection to the conn array.  BE SURE TO RELEASE IT!
 		Connection conn = DatabaseConnection.getConnection();
 		conn.setAutoCommit(false);
@@ -748,7 +748,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void handleErrors(Connection conn) {
+	private void handleErrors(Connection conn) {
 		if (conn == null) return;
 		try {
 			logger.warning("Rolling back database transactions");
@@ -987,7 +987,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void loadVirtualWikiHashes() throws Exception {
+	private void loadVirtualWikiHashes() throws Exception {
 		DatabaseHandler.virtualWikiNameHash = new Hashtable();
 		DatabaseHandler.virtualWikiIdHash = new Hashtable();
 		try {
@@ -1163,7 +1163,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected WikiUser lookupWikiUser(int userId, Connection conn) throws Exception {
+	private WikiUser lookupWikiUser(int userId, Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUser(userId, conn);
 		if (rs.size() == 0) return null;
 		return initWikiUser(rs);
@@ -1198,7 +1198,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected String lookupWikiUserLogin(Integer authorId) throws Exception {
+	private String lookupWikiUserLogin(Integer authorId) throws Exception {
 		String login = (String)cachedUserLoginHash.get(authorId);
 		if (login != null) {
 			return login;
@@ -1229,7 +1229,6 @@ public class DatabaseHandler {
 				this.deleteTopic(toTopic, null, false, conn);
 			}
 			String fromTopicName = fromTopic.getName();
-			this.renameTopic(fromTopic, destination);
 			fromTopic.setName(destination);
 			writeTopic(fromTopic, fromVersion, Utilities.parserOutput(fromTopic.getTopicContent()), conn, true);
 			if (detinationExistsFlag) {
@@ -1264,7 +1263,7 @@ public class DatabaseHandler {
 	 * when totally re-initializing a system.  To reiterate: CALLING THIS METHOD WILL
 	 * DELETE ALL WIKI DATA!
 	 */
-	protected void purgeData(Connection conn) throws Exception {
+	private void purgeData(Connection conn) throws Exception {
 		// BOOM!  Everything gone...
 		DatabaseHandler.queryHandler.dropTables(conn);
 		try {
@@ -1321,7 +1320,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void releaseParams(Connection conn) throws Exception {
+	private void releaseParams(Connection conn) throws Exception {
 		if (conn == null) return;
 		try {
 			conn.commit();
@@ -1337,7 +1336,7 @@ public class DatabaseHandler {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
-			this.reloadRecentChanges(conn);
+			DatabaseHandler.queryHandler.reloadRecentChanges(conn);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
@@ -1349,20 +1348,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void reloadRecentChanges(Connection conn) throws Exception {
-		DatabaseHandler.queryHandler.reloadRecentChanges(conn);
-	}
-
-	/**
-	 *
-	 */
-	protected void renameTopic(Topic topic, String renameTo) throws Exception {
-	}
-
-	/**
-	 *
-	 */
-	protected void resetCache() {
+	private void resetCache() {
 		DatabaseHandler.virtualWikiIdHash = null;
 		DatabaseHandler.virtualWikiNameHash = null;
 		DatabaseHandler.cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
@@ -1490,7 +1476,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Connection conn) throws Exception {
+	private void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Connection conn) throws Exception {
 		// update topic to indicate deleted, add delete topic version.  parser output
 		// should be empty since nothing to add to search engine.
 		ParserOutput parserOutput = new ParserOutput();
@@ -1525,7 +1511,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void updateTopic(Topic topic, Connection conn) throws Exception {
+	private void updateTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		DatabaseHandler.queryHandler.updateTopic(topic, virtualWikiId, conn);
 	}
@@ -1533,14 +1519,14 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
+	private void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		DatabaseHandler.queryHandler.updateVirtualWiki(virtualWiki, conn);
 	}
 
 	/**
 	 *
 	 */
-	protected void updateWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
+	private void updateWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
 		DatabaseHandler.queryHandler.updateWikiFile(wikiFile, virtualWikiId, conn);
 	}
@@ -1548,7 +1534,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void updateWikiUser(WikiUser user, Connection conn) throws Exception {
+	private void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		DatabaseHandler.queryHandler.updateWikiUser(user, conn);
 		// FIXME - may be in LDAP
 		DatabaseHandler.queryHandler.updateWikiUserInfo(user, conn);
@@ -1615,7 +1601,7 @@ public class DatabaseHandler {
 	 *  to Wiki users.  This flag should be true except in rare cases, such as when
 	 *  temporarily deleting a topic during page moves.
 	 */
-	protected void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Connection conn, boolean userVisible) throws Exception {
+	private void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Connection conn, boolean userVisible) throws Exception {
 		if (!Utilities.validateTopicName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
