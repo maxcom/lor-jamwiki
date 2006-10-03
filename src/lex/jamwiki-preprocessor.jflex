@@ -26,12 +26,16 @@
  *   <math>
  *   Templates
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
 import java.util.Hashtable;
 import java.util.Stack;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.AbstractLexer;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;

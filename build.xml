@@ -4,9 +4,9 @@
 
 	<target name="cleanLexers" description="Cleans up after lexer generation">
 		<!-- delete old generated lexer source files -->
-		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPreProcessor.java" />
-		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiPostProcessor.java" />
-		<delete file="${dir.src.java}/org/jamwiki/parser/JAMWikiSpliceProcessor.java" />
+		<delete file="${dir.src.java}/org/jamwiki/parser/jflex/JAMWikiPreProcessor.java" />
+		<delete file="${dir.src.java}/org/jamwiki/parser/jflex/JAMWikiPostProcessor.java" />
+		<delete file="${dir.src.java}/org/jamwiki/parser/jflex/JAMWikiSpliceProcessor.java" />
 	</target>
 
 	<target name="clean" depends="cleanLexers" description="Cleans up the directory structure, removing any build artifacts">

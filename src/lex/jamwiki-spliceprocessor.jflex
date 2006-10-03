@@ -4,9 +4,12 @@
  * defined as a body of text between two heading tags of the same level,
  * such as two &lt;h2&gt; tags.
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
+import org.jamwiki.parser.AbstractLexer;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
 %%

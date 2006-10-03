@@ -1,8 +1,11 @@
 /*
  * This class adds paragraph tags as appropriate.
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
+import org.jamwiki.parser.AbstractLexer;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
 %%

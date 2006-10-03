@@ -50,7 +50,9 @@ steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
           Database".
        b) From Special:Convert choose the option to convert file content to
           database content.
-        
+  3. The default JAMWiki parser has changed.  To continue using the default
+     parser, modify the /WEB-INF/classes/jamwiki.properties file and change
+     the "parser" value to "parser=org.jamwiki.parser.jflex.JFlexParser".        
   
   JAMWiki 0.3.5
   =============

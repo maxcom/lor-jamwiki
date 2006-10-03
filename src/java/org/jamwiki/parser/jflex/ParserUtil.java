@@ -14,7 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -24,12 +24,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
@@ -339,7 +341,7 @@ public class ParserUtil {
 		// FIXME - consider yypushstream() and yypopstream() as potentially more efficient
 		// ways to handle this functionality
 		if (!StringUtils.hasText(fragment)) return fragment;
-		JAMWikiParser parser = new JAMWikiParser(parserInput);
+		JFlexParser parser = new JFlexParser(parserInput);
 		StringReader raw = new StringReader(fragment);
 		ParserOutput parserOutput = parser.parsePreProcess(raw);
 		return parserOutput.getContent();

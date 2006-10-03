@@ -108,6 +108,10 @@ public class Environment {
 			initDefaultProperties();
 			logger.config("Default properties initialized: " + defaults.toString());
 			props = loadProperties(PROPERTY_FILE_NAME, defaults);
+			// FIXME - remove this code after upgrading from 0.3.5 is removed
+			if (props.getProperty(PROP_PARSER_CLASS) != null && props.getProperty(PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
+				props.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
+			}
 			logger.fine("Property file loaded: " + props.toString());
 		} catch (Exception e) {
 			logger.severe("Failure while initializing property values", e);
@@ -174,7 +178,7 @@ public class Environment {
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "450");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, "false");
-		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.JAMWikiParser");
+		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
 		defaults.setProperty(PROP_PARSER_TOC, "true");

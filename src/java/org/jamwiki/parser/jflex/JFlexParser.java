@@ -14,13 +14,16 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.parser.AbstractParser;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -30,9 +33,9 @@ import org.springframework.util.StringUtils;
 /**
  * Parser used to implement MediaWiki syntax.
  */
-public class JAMWikiParser extends AbstractParser {
+public class JFlexParser extends AbstractParser {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiParser.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParser.class.getName());
 	private static Pattern REDIRECT_PATTERN = null;
 
 	static {
@@ -49,7 +52,7 @@ public class JAMWikiParser extends AbstractParser {
 	 *
 	 * @param parserInput General information about this parser.
 	 */
-	public JAMWikiParser(ParserInput parserInput) {
+	public JFlexParser(ParserInput parserInput) {
 		super(parserInput);
 	}
 
