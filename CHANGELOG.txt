@@ -11,6 +11,9 @@
 * FEATURE: Remove Special:AllTopics; it was replaced by Special:Allpages
   in JAMWiki 0.3.0.
 * FEATURE: Change default logo to submission from Oliver (okohll).
+* FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
+* FEATURE: Updated Polish translations from Robert Matyja (dlpa).
+* FEATURE: Added French translations from Henri Gomez (hgomez).
 
 0.3.5
 =====

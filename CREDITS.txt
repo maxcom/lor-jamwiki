@@ -10,6 +10,7 @@ JAMWiki Contributors
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
      Chinese (traditional): Jiading (ewen0930)
+     French:                Henri Gomez (hgomez)
      German:                Axel Kramer (axelclk)
      Danish:                Anders Monrad (g9adm)
      Hungarian:             Daniel Tar (bDaneE)
