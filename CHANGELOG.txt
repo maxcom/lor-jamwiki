@@ -11,6 +11,11 @@
 * FEATURE: Remove Special:AllTopics; it was replaced by Special:Allpages
   in JAMWiki 0.3.0.
 * FEATURE: Change default logo to submission from Oliver (okohll).
+
+0.3.6
+=====
+
+* BUG: Fix setup.jsp typo that caused compile errors.
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated Chinese translations from ewen0930.
