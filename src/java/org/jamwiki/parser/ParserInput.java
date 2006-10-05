@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser;
 
+import java.util.Hashtable;
 import java.util.Locale;
 import org.jamwiki.model.WikiUser;
 
@@ -37,6 +38,7 @@ public class ParserInput {
 	private Locale locale = null;
 	private int mode = MODE_NORMAL;
 	private TableOfContents tableOfContents = new TableOfContents();
+	private Hashtable templateParameterValues = null;
 	private String topicName = null;
 	/** IP address of the current user. */
 	private String userIpAddress = null;
@@ -118,6 +120,20 @@ public class ParserInput {
 	 */
 	public void setTableOfContents(TableOfContents tableOfContents) {
 		this.tableOfContents = tableOfContents;
+	}
+
+	/**
+	 *
+	 */
+	public Hashtable getTemplateParameterValues() {
+		return this.templateParameterValues;
+	}
+
+	/**
+	 *
+	 */
+	public void setTemplateParameterValues(Hashtable templateParameterValues) {
+		this.templateParameterValues = templateParameterValues;
 	}
 
 	/**

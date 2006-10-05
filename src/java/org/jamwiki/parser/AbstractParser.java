@@ -47,7 +47,6 @@ public abstract class AbstractParser {
 
 	/**
 	 * Utility method for executing a lexer parse.
-	 * FIXME - this is copy & pasted here and in VQWikiParser
 	 */
 	 protected ParserOutput lex(AbstractLexer lexer) throws Exception {
 		StringBuffer content = new StringBuffer();

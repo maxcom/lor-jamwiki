@@ -462,6 +462,11 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 /* FIXME - hard-coding of image namespace */
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}) [^\n\r\]\[]*)+ "]]"
 
+/* templates */
+template           = "{{" [^\{\}]+ "}}"
+templateembedded   = "{{" ([^\{\}]* ({template}) [^\}]*)+ "}}"
+templateparam      = "{{{" [^\}]+ "}}}"
+
 /* signatures */
 wikisig3           = "~~~"
 wikisig4           = "~~~~"
@@ -534,6 +539,44 @@ wikisig5           = "~~~~~"
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     return yytext();
+}
+
+/* ----- templates ----- */
+
+<NORMAL, TABLE, TD, TH, TC, LIST>{template} {
+    logger.severe("template: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        TemplateHandler templateHandler = new TemplateHandler();
+        return templateHandler.parse(this.parserInput, this.parserOutput, raw);
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST>{templateparam} {
+    logger.severe("templateparam: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        TemplateHandler templateHandler = new TemplateHandler();
+        return templateHandler.applyParameter(this.parserInput, this.parserOutput, raw);
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST>{templateembedded} {
+    logger.severe("templateembedded: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        TemplateHandler templateHandler = new TemplateHandler();
+        return templateHandler.parse(this.parserInput, this.parserOutput, raw);
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- wiki links ----- */
