@@ -81,7 +81,9 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
+	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_DELETE_OK = null;
+	protected static String STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
@@ -339,7 +341,9 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
+		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPIC_DELETE_OK         = props.getProperty("STATEMENT_SELECT_TOPIC_DELETE_OK");
+		STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER   = props.getProperty("STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
@@ -569,12 +573,21 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean deleteOK) throws Exception {
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK) throws Exception {
 		WikiPreparedStatement stmt = null;
-		if (!deleteOK) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+		if (!caseSensitive) {
+			topicName = topicName.toLowerCase();
+			if (!deleteOK) {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_LOWER);
+			} else {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER);
+			}
 		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK);
+			if (!deleteOK) {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+			} else {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK);
+			}
 		}
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
@@ -584,12 +597,21 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean deleteOK, Connection conn) throws Exception {
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = null;
-		if (!deleteOK) {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+		if (!caseSensitive) {
+			topicName = topicName.toLowerCase();
+			if (!deleteOK) {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_LOWER);
+			} else {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER);
+			}
 		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK);
+			if (!deleteOK) {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+			} else {
+				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK);
+			}
 		}
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);

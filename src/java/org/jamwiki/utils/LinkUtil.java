@@ -89,7 +89,7 @@ public class LinkUtil {
 	 *
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false);
 		if (topic == null) {
 			WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload");
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", true);
@@ -165,7 +165,7 @@ public class LinkUtil {
 		if (StringUtils.hasText(topic) && !StringUtils.hasText(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
-			} else if (!WikiBase.exists(virtualWiki, topic)) {
+			} else if (!WikiBase.exists(virtualWiki, topic, true)) {
 				style = "edit";
 			}
 		}
@@ -206,7 +206,7 @@ public class LinkUtil {
 			String url = "";
 			return "#" + Utilities.encodeForURL(section);
 		}
-		if (!WikiBase.exists(virtualWiki, topic)) {
+		if (!WikiBase.exists(virtualWiki, topic, true)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
 		}
 		String url = context;

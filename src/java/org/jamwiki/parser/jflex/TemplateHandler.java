@@ -116,7 +116,7 @@ public class TemplateHandler {
 	 */
 	private String parseTemplateBody(ParserInput parserInput, String name) throws Exception {
 		// get the parsed template body
-		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name);
+		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
 		if (templateTopic == null) {
 			// FIXME - no need for an exception
 			throw new Exception("Template " + name + " does not yet exist");

@@ -628,7 +628,7 @@ public class Utilities {
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserOutput parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
@@ -657,7 +657,7 @@ public class Utilities {
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserOutput parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}

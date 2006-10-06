@@ -72,7 +72,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true, true);
 		String contents = "";
 		topic.setTopicContent(contents);
 		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
@@ -92,7 +92,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -116,7 +116,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true, true);
 		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			previousVersion = WikiBase.getHandler().lookupTopicVersion(topicName, previousVersion.getPreviousTopicVersionId().intValue());
@@ -137,7 +137,7 @@ public class ManageServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true, true);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

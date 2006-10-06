@@ -376,6 +376,8 @@ public interface QueryHandler {
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic
 	 *  being retrieved.
 	 * @param topicName The name of the topic being retrieved.
+	 * @param caseSensitive Set to <code>true</code> if the topic name should be
+	 *  searched for in a case-sensitive manner.
 	 * @param deleteOK Set to <code>true</code> if deleted topics should be searched,
 	 *  otherwise deleted topics will not be included in the result set.
 	 * @return A WikiResultSet containing all topic information for the given topic
@@ -383,7 +385,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean deleteOK) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all topic information for a given topic.
@@ -391,6 +393,8 @@ public interface QueryHandler {
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic
 	 *  being retrieved.
 	 * @param topicName The name of the topic being retrieved.
+	 * @param caseSensitive Set to <code>true</code> if the topic name should be
+	 *  searched for in a case-sensitive manner.
 	 * @param deleteOK Set to <code>true</code> if deleted topics should be searched,
 	 *  otherwise deleted topics will not be included in the result set.
 	 * @param conn A database connection to use when connecting to the database
@@ -400,7 +404,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean deleteOK, Connection conn) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set of all topics of a given type within a virtual wiki.

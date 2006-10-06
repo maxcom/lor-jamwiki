@@ -123,7 +123,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
 		if (content == null) {
 			try {
-				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 				content = topic.getTopicContent();
 				if (cook) {
 					ParserInput parserInput = new ParserInput();
@@ -157,7 +157,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
 		}
 		// get the topic that is being redirected to
-		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo());
+		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), true);
 		if (child == null) {
 			// child being redirected to doesn't exist, return parent
 			return parent;
@@ -166,7 +166,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			// found a topic that is not a redirect, return
 			return child;
 		}
-		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo()) == null) {
+		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), true) == null) {
 			// child is a redirect, but its target does not exist
 			return child;
 		}
@@ -293,7 +293,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				next.addObject("edit", editLink);
 				if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
 					String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-					if (!WikiBase.getHandler().exists(virtualWiki, article)) {
+					if (!WikiBase.getHandler().exists(virtualWiki, article, true)) {
 						pageInfo.setCanMove(true);
 					}
 				}
@@ -406,7 +406,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			// topic does not exist, display empty page
 			topic = new Topic();
