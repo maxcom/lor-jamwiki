@@ -62,6 +62,11 @@ import org.springframework.util.StringUtils;
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
+    if (StringUtils.hasText(this.templateString)) {
+        // FIXME - this leaves unparsed text
+        output.append(this.templateString);
+        this.templateString = "";
+    }
     if (wikibold) {
         wikibold = false;
         output.append("</b>");
@@ -109,6 +114,8 @@ import org.springframework.util.StringUtils;
     protected boolean wikih5 = false;
     protected boolean wikiitalic = false;
     protected int nextSection = 0;
+    protected int templateCharCount = 0;
+    protected String templateString = "";
     protected Stack listOpenStack = new Stack();
     protected Stack listCloseStack = new Stack();
     protected static Hashtable listOpenHash = new Hashtable();
@@ -463,16 +470,16 @@ htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}) [^\n\r\]\[]*)+ "]]"
 
 /* templates */
-template           = "{{" [^\{\}]+ "}}"
-templateparam      = "{{{" [^\}]+ "}}}"
-templateembedded   = "{{" ([^\{\}]* ({template} | {templateparam}) [^\}]*)+ "}}"
+templatestart      = "{{" ([^\{\}]+)
+templatestartchar  = "{"
+templateendchar    = "}"
 
 /* signatures */
 wikisig3           = "~~~"
 wikisig4           = "~~~~"
 wikisig5           = "~~~~~"
 
-%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE, PRESAVE
+%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE, PRESAVE, TEMPLATE
 
 %%
 
@@ -543,46 +550,63 @@ wikisig5           = "~~~~~"
 
 /* ----- templates ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{template} {
-    logger.severe("template: " + yytext() + " (" + yystate() + ")");
+<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE>{templatestart} {
+    logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
-    try {
-        TemplateHandler templateHandler = new TemplateHandler();
-        String value = templateHandler.parse(this.parserInput, this.parserOutput, raw);
-        logger.severe("\n\t" + raw + "\n\t" + value);
-        return value;
-    } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
-        return raw;
+    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES)) {
+        yypushback(raw.length() - 2);
+        return yytext();
     }
+    this.templateString += raw;
+    this.templateCharCount += 2;
+    if (yystate() != TEMPLATE) {
+        beginState(TEMPLATE);
+    }
+    return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{templateparam} {
-    logger.severe("templateparam: " + yytext() + " (" + yystate() + ")");
+<TEMPLATE>{templateendchar} {
+    logger.finer("templateendchar: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
-    try {
-        TemplateHandler templateHandler = new TemplateHandler();
-        String value = templateHandler.applyParameter(this.parserInput, this.parserOutput, raw);
-        logger.severe("\n\t" + raw + "\n\t" + value);
-        return value;
-    } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
-        return raw;
+    this.templateString += raw;
+    this.templateCharCount -= raw.length();
+    if (this.templateCharCount == 0) {
+        endState();
+        String value = new String(this.templateString);
+        this.templateString = "";
+        try {
+            TemplateHandler templateHandler = new TemplateHandler();
+            value = templateHandler.parse(this.parserInput, this.parserOutput, value);
+            return value;
+        } catch (Exception e) {
+            logger.severe("Unable to parse " + this.templateString, e);
+            this.templateString = "";
+            return value;
+        }
     }
+    return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{templateembedded} {
-    logger.severe("templateembedded: " + yytext() + " (" + yystate() + ")");
+<TEMPLATE>{templatestartchar} {
+    logger.finer("templatestartchar: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
-    try {
-        TemplateHandler templateHandler = new TemplateHandler();
-        String value = templateHandler.parse(this.parserInput, this.parserOutput, raw);
-        logger.severe("\n\t" + raw + "\n\t" + value);
-        return value;
-    } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
-        return raw;
-    }
+    this.templateString += raw;
+    this.templateCharCount += raw.length();
+    return "";
+}
+
+<TEMPLATE>{whitespace} {
+    // no need to log this
+    String raw = yytext();
+    this.templateString += raw;
+    return "";
+}
+
+<TEMPLATE>. {
+    // no need to log this
+    String raw = yytext();
+    this.templateString += raw;
+    return "";
 }
 
 /* ----- wiki links ----- */

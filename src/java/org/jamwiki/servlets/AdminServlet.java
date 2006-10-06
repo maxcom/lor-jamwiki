@@ -124,6 +124,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_HTML);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
+			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_TEMPLATES);
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_USER_PATTERN);
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);

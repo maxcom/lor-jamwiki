@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Hashtable;
 import java.util.Locale;
 import org.jamwiki.model.WikiUser;
 
@@ -40,7 +39,6 @@ public class ParserInput {
 	private Locale locale = null;
 	private int mode = MODE_NORMAL;
 	private TableOfContents tableOfContents = new TableOfContents();
-	private Hashtable templateParameterValues = null;
 	private String topicName = null;
 	/** IP address of the current user. */
 	private String userIpAddress = null;
@@ -52,23 +50,6 @@ public class ParserInput {
 	 *
 	 */
 	public ParserInput() {
-	}
-
-	/**
-	 *
-	 */
-	public ParserInput(ParserInput parserInput) {
-		this.allowSectionEdit = parserInput.allowSectionEdit;
-		this.context = parserInput.context;
-		this.depth = parserInput.depth;
-		this.locale = parserInput.locale;
-		this.mode = parserInput.mode;
-		this.tableOfContents = parserInput.tableOfContents;
-		this.templateParameterValues = parserInput.templateParameterValues;
-		this.topicName = parserInput.topicName;
-		this.userIpAddress = parserInput.userIpAddress;
-		this.virtualWiki = parserInput.virtualWiki;
-		this.wikiUser = parserInput.wikiUser;
 	}
 
 	/**
@@ -104,6 +85,13 @@ public class ParserInput {
 	 */
 	public int getDepth() {
 		return depth;
+	}
+
+	/**
+	 *
+	 */
+	public void incrementDepth() {
+		this.depth++;
 	}
 
 	/**
@@ -153,20 +141,6 @@ public class ParserInput {
 	 */
 	public void setTableOfContents(TableOfContents tableOfContents) {
 		this.tableOfContents = tableOfContents;
-	}
-
-	/**
-	 *
-	 */
-	public Hashtable getTemplateParameterValues() {
-		return this.templateParameterValues;
-	}
-
-	/**
-	 *
-	 */
-	public void setTemplateParameterValues(Hashtable templateParameterValues) {
-		this.templateParameterValues = templateParameterValues;
 	}
 
 	/**

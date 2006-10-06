@@ -32,18 +32,12 @@ import org.springframework.util.StringUtils;
 public class TemplateHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(TemplateHandler.class.getName());
-	private static Pattern LINK_PATTERN = null;
-	private static Pattern TEMPLATE_PATTERN = null;
-	private static Pattern NAME_PATTERN = null;
-	private static Pattern TABLE_PATTERN = null;
+	private static Pattern PARAM_NAME_PATTERN = null;
 	private Hashtable parameterValues = new Hashtable();
 
 	static {
 		try {
-			LINK_PATTERN = Pattern.compile("(\\[{2}(.)+\\]{2})(.*)");
-			TEMPLATE_PATTERN = Pattern.compile("(\\{{2,3}(.+)\\}{2,3})(.*)");
-			NAME_PATTERN = Pattern.compile("(([^\\[\\{\\=]+)=)(.*)");
-			TABLE_PATTERN = Pattern.compile("^((\\{\\|)(.+)^(\\|\\}))(.*)");
+			PARAM_NAME_PATTERN = Pattern.compile("(([^\\[\\{\\=]+)=)(.*)");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -52,14 +46,36 @@ public class TemplateHandler {
 	/**
 	 *
 	 */
-	public String applyParameter(ParserInput parserInput, ParserOutput parserOutput, String raw) throws Exception {
-		this.parameterValues = parserInput.getTemplateParameterValues();
-		if (parameterValues == null) return raw;
-		String name = this.parseParamName(raw);
-		String defaultValue = this.parseParamDefaultValue(parserInput, raw);
+	private String applyParameter(ParserInput parserInput, String param) throws Exception {
+		if (this.parameterValues == null) return param;
+		String name = this.parseParamName(param);
+		String defaultValue = this.parseParamDefaultValue(parserInput, param);
 		String value = (String)this.parameterValues.get(name);
-		if (value == null && defaultValue == null) return raw;
+		if (value == null && defaultValue == null) return param;
 		return (value != null) ? value : defaultValue;
+	}
+
+	/**
+	 *
+	 */
+	private int findMatchingEndTag(String content, int start, String startToken, String endToken) {
+		int pos = start;
+		int count = 0;
+		String substring = "";
+		while (pos < content.length()) {
+			substring = content.substring(pos);
+			if (substring.startsWith(startToken)) {
+				count++;
+				pos += startToken.length();
+			} else if (substring.startsWith(endToken)) {
+				count--;
+				pos += endToken.length();
+			} else {
+				pos++;
+			}
+			if (count == 0) return pos;
+		}
+		return -1;
 	}
 
 	/**
@@ -70,13 +86,18 @@ public class TemplateHandler {
 			throw new Exception("Empty template text");
 		}
 		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
-			throw new Exception ("Invalid template text");
+			throw new Exception ("Invalid template text: " + raw);
 		}
 		// extract the template name
 		String name = this.parseTemplateName(raw);
 		// set template parameter values
 		this.parseTemplateParameterValues(parserInput, raw);
-		return this.parseTemplateBody(parserInput, name);
+		// get the parsed template body
+		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
+		if (templateTopic == null) {
+			return raw;
+		}
+		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
 	}
 
 	/**
@@ -86,6 +107,9 @@ public class TemplateHandler {
 		int pos = raw.indexOf("|");
 		String defaultValue = null;
 		if (pos == -1) {
+			return null;
+		}
+		if (pos + 1 >= raw.length() - "}}}".length()) {
 			return null;
 		}
 		defaultValue = raw.substring(pos + 1, raw.length() - "}}}".length());
@@ -114,17 +138,25 @@ public class TemplateHandler {
 	/**
 	 *
 	 */
-	private String parseTemplateBody(ParserInput parserInput, String name) throws Exception {
-		// get the parsed template body
-		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
-		if (templateTopic == null) {
-			// FIXME - no need for an exception
-			throw new Exception("Template " + name + " does not yet exist");
+	private String parseTemplateBody(ParserInput parserInput, String content) throws Exception {
+		StringBuffer output = new StringBuffer();
+		int pos = 0;
+		while (pos < content.length()) {
+			String substring = content.substring(pos);
+			if (substring.startsWith("{{{")) {
+				// template
+				int endPos = findMatchingEndTag(content, pos, "{", "}");
+				if (endPos != -1) {
+					String param = content.substring(pos, endPos);
+					output.append(this.applyParameter(parserInput, param));
+				}
+				pos = endPos;
+			} else {
+				output.append(content.charAt(pos));
+				pos++;
+			}
 		}
-		// FIXME - need check to avoid infinite nesting
-		ParserInput input = new ParserInput(parserInput);
-		input.setTemplateParameterValues(this.parameterValues);
-		return ParserUtil.parseFragment(input, templateTopic.getTopicContent());
+		return ParserUtil.parseFragment(parserInput, output.toString());
 	}
 
 	/**
@@ -153,66 +185,68 @@ public class TemplateHandler {
 	 *
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
-		String content = raw.substring("{{".length(), raw.length() - "}}".length());
+		long start = System.currentTimeMillis();
+		String content = "";
+		content = raw.substring("{{".length(), raw.length() - "}}".length());
 		// strip the template name
 		int pos = content.indexOf("|");
 		if (pos == -1) return;
 		pos++;
 		Matcher nameMatcher = null;
-		Matcher linkMatcher = null;
-		Matcher templateMatcher = null;
-		Matcher tableMatcher = null;
+		int endPos = -1;
 		int count = 1;
-		String value = "";
+		String substring = "";
 		String name = "";
+		String value = "";
 		while (pos < content.length()) {
+			substring = content.substring(pos);
 			if (!StringUtils.hasText(name)) {
-				nameMatcher = NAME_PATTERN.matcher(content.substring(pos));
+				nameMatcher = PARAM_NAME_PATTERN.matcher(substring);
 				if (nameMatcher.matches()) {
 					name = nameMatcher.group(2);
-					logger.severe("matched name " + name);
+					pos += nameMatcher.group(1).length();
+					continue;
 				} else {
 					name = new Integer(count).toString();
 				}
-				pos += nameMatcher.group(1).length();
-				continue;
 			}
-			linkMatcher = LINK_PATTERN.matcher(content.substring(pos));
-			if (linkMatcher.matches()) {
-				value += linkMatcher.group(1);
-				pos += linkMatcher.group(1).length();
-				logger.severe("matched link " + linkMatcher.group(1));
-				continue;
-			}
-			templateMatcher = TEMPLATE_PATTERN.matcher(content.substring(pos));
-			if (templateMatcher.matches()) {
-				value += templateMatcher.group(1);
-				pos += templateMatcher.group(1).length();
-				logger.severe("matched template " + templateMatcher.group(1));
-				continue;
-			}
-			tableMatcher = TABLE_PATTERN.matcher(content.substring(pos));
-			if (tableMatcher.matches()) {
-				value += tableMatcher.group(1);
-				pos += tableMatcher.group(1).length();
-				logger.severe("matched table " + tableMatcher.group(1));
-				continue;
-			}
-			if (content.charAt(pos) == '|') {
+			endPos = -1;
+			if (substring.startsWith("{{{")) {
+				// template parameter
+				endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
+			} else if (substring.startsWith("{{")) {
+				// template
+				endPos = findMatchingEndTag(content, pos, "{{", "}}");
+			} else if (substring.startsWith("[[")) {
+				// link
+				endPos = findMatchingEndTag(content, pos, "[[", "]]");
+			} else if (substring.startsWith("{|")) {
+				// table
+				endPos = findMatchingEndTag(content, pos, "{|", "|}");
+			} else if (content.charAt(pos) == '|') {
+				// new parameter
 				value = ParserUtil.parseFragment(parserInput, value);
 				this.parameterValues.put(name, value);
-				count++;
 				name = "";
 				value = "";
 				pos++;
+				count++;
 				continue;
 			}
-			value += content.charAt(pos);
-			pos++;
+			if (endPos != -1) {
+				value += content.substring(pos, endPos);
+				pos = endPos;
+			} else {
+				value += content.charAt(pos);
+				pos++;
+			}
 		}
-		if (StringUtils.hasText(name) && StringUtils.hasText(value)) {
+		if (StringUtils.hasText(name)) {
+			// add the last one
 			value = ParserUtil.parseFragment(parserInput, value);
 			this.parameterValues.put(name, value);
 		}
+		long execution = System.currentTimeMillis() - start;
+		logger.info("Parsed " + raw + " (" + (execution / 1000.000) + " s.)");
 	}
 }

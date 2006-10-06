@@ -48,7 +48,11 @@ public abstract class AbstractParser {
 	/**
 	 * Utility method for executing a lexer parse.
 	 */
-	 protected ParserOutput lex(AbstractLexer lexer) throws Exception {
+	protected ParserOutput lex(AbstractLexer lexer) throws Exception {
+		this.parserInput.incrementDepth();
+		if (this.parserInput.getDepth() > 100) {
+			throw new Exception("Infinite parsing loop - over 100 parser iterations");
+		}
 		StringBuffer content = new StringBuffer();
 		while (true) {
 			String line = lexer.yylex();

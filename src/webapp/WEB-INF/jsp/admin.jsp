@@ -145,6 +145,10 @@ function onUserGroupType() {
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_JAVASCRIPT).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" /></td>
 </tr>
 <tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>"><f:message key="admin.caption.allowtemplates" /></label></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_TEMPLATES).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>" /></td>
+</tr>
+<tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><f:message key="admin.caption.signatureuser" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>" value="<%= props.getProperty(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN) %>" size="50" id="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>" /></td>
 </tr>
