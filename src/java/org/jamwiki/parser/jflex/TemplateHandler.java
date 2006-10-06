@@ -17,6 +17,8 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
@@ -30,7 +32,22 @@ import org.springframework.util.StringUtils;
 public class TemplateHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(TemplateHandler.class.getName());
+	private static Pattern LINK_PATTERN = null;
+	private static Pattern TEMPLATE_PATTERN = null;
+	private static Pattern NAME_PATTERN = null;
+	private static Pattern TABLE_PATTERN = null;
 	private Hashtable parameterValues = new Hashtable();
+
+	static {
+		try {
+			LINK_PATTERN = Pattern.compile("(\\[{2}(.)+\\]{2})(.*)");
+			TEMPLATE_PATTERN = Pattern.compile("(\\{{2,3}(.+)\\}{2,3})(.*)");
+			NAME_PATTERN = Pattern.compile("(([^\\[\\{\\=]+)=)(.*)");
+			TABLE_PATTERN = Pattern.compile("^((\\{\\|)(.+)^(\\|\\}))(.*)");
+		} catch (Exception e) {
+			logger.severe("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 *
@@ -58,7 +75,7 @@ public class TemplateHandler {
 		// extract the template name
 		String name = this.parseTemplateName(raw);
 		// set template parameter values
-		this.parseTemplateParameterValues(raw);
+		this.parseTemplateParameterValues(parserInput, raw);
 		return this.parseTemplateBody(parserInput, name);
 	}
 
@@ -71,7 +88,7 @@ public class TemplateHandler {
 		if (pos == -1) {
 			return null;
 		}
-		defaultValue = raw.substring(pos, raw.length() - "}}}".length());
+		defaultValue = raw.substring(pos + 1, raw.length() - "}}}".length());
 		return ParserUtil.parseFragment(parserInput, defaultValue);
 	}
 
@@ -105,9 +122,9 @@ public class TemplateHandler {
 			throw new Exception("Template " + name + " does not yet exist");
 		}
 		// FIXME - need check to avoid infinite nesting
-		parserInput.setTemplateParameterValues(this.parameterValues);
-		return ParserUtil.parseFragment(parserInput, templateTopic.getTopicContent());
-		// FIXME - reset template parameter values
+		ParserInput input = new ParserInput(parserInput);
+		input.setTemplateParameterValues(this.parameterValues);
+		return ParserUtil.parseFragment(input, templateTopic.getTopicContent());
 	}
 
 	/**
@@ -135,27 +152,67 @@ public class TemplateHandler {
 	/**
 	 *
 	 */
-	private void parseTemplateParameterValues(String raw) throws Exception {
-		raw = raw.substring("{{".length(), raw.length() - "}}".length());
-		// strip template name
-		int pos = raw.indexOf("|");
-		if (pos == -1) {
-			return;
-		}
-		raw = raw.substring(pos + 1);
-		// any pipe after the name is a param
-		pos = raw.indexOf("|");
+	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
+		String content = raw.substring("{{".length(), raw.length() - "}}".length());
+		// strip the template name
+		int pos = content.indexOf("|");
+		if (pos == -1) return;
+		pos++;
+		Matcher nameMatcher = null;
+		Matcher linkMatcher = null;
+		Matcher templateMatcher = null;
+		Matcher tableMatcher = null;
 		int count = 1;
-		do {
-			String name = new Integer(count).toString();
-			String value = (pos != -1) ? raw.substring(0, pos) : raw;
-			if (value.indexOf("=") != -1) {
-				name = value.substring(0, value.indexOf("="));
-				value = value.substring(value.indexOf("=") + 1);
+		String value = "";
+		String name = "";
+		while (pos < content.length()) {
+			if (!StringUtils.hasText(name)) {
+				nameMatcher = NAME_PATTERN.matcher(content.substring(pos));
+				if (nameMatcher.matches()) {
+					name = nameMatcher.group(2);
+					logger.severe("matched name " + name);
+				} else {
+					name = new Integer(count).toString();
+				}
+				pos += nameMatcher.group(1).length();
+				continue;
 			}
+			linkMatcher = LINK_PATTERN.matcher(content.substring(pos));
+			if (linkMatcher.matches()) {
+				value += linkMatcher.group(1);
+				pos += linkMatcher.group(1).length();
+				logger.severe("matched link " + linkMatcher.group(1));
+				continue;
+			}
+			templateMatcher = TEMPLATE_PATTERN.matcher(content.substring(pos));
+			if (templateMatcher.matches()) {
+				value += templateMatcher.group(1);
+				pos += templateMatcher.group(1).length();
+				logger.severe("matched template " + templateMatcher.group(1));
+				continue;
+			}
+			tableMatcher = TABLE_PATTERN.matcher(content.substring(pos));
+			if (tableMatcher.matches()) {
+				value += tableMatcher.group(1);
+				pos += tableMatcher.group(1).length();
+				logger.severe("matched table " + tableMatcher.group(1));
+				continue;
+			}
+			if (content.charAt(pos) == '|') {
+				value = ParserUtil.parseFragment(parserInput, value);
+				this.parameterValues.put(name, value);
+				count++;
+				name = "";
+				value = "";
+				pos++;
+				continue;
+			}
+			value += content.charAt(pos);
+			pos++;
+		}
+		if (StringUtils.hasText(name) && StringUtils.hasText(value)) {
+			value = ParserUtil.parseFragment(parserInput, value);
 			this.parameterValues.put(name, value);
-			if (pos != -1) raw = raw.substring(pos + 1);
-			count++;
-		} while ((pos = raw.indexOf("|")) != -1);
+		}
 	}
 }

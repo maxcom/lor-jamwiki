@@ -464,8 +464,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}
 
 /* templates */
 template           = "{{" [^\{\}]+ "}}"
-templateembedded   = "{{" ([^\{\}]* ({template}) [^\}]*)+ "}}"
 templateparam      = "{{{" [^\}]+ "}}}"
+templateembedded   = "{{" ([^\{\}]* ({template} | {templateparam}) [^\}]*)+ "}}"
 
 /* signatures */
 wikisig3           = "~~~"
@@ -548,7 +548,9 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         TemplateHandler templateHandler = new TemplateHandler();
-        return templateHandler.parse(this.parserInput, this.parserOutput, raw);
+        String value = templateHandler.parse(this.parserInput, this.parserOutput, raw);
+        logger.severe("\n\t" + raw + "\n\t" + value);
+        return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
         return raw;
@@ -560,7 +562,9 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         TemplateHandler templateHandler = new TemplateHandler();
-        return templateHandler.applyParameter(this.parserInput, this.parserOutput, raw);
+        String value = templateHandler.applyParameter(this.parserInput, this.parserOutput, raw);
+        logger.severe("\n\t" + raw + "\n\t" + value);
+        return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
         return raw;
@@ -572,7 +576,9 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         TemplateHandler templateHandler = new TemplateHandler();
-        return templateHandler.parse(this.parserInput, this.parserOutput, raw);
+        String value = templateHandler.parse(this.parserInput, this.parserOutput, raw);
+        logger.severe("\n\t" + raw + "\n\t" + value);
+        return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
         return raw;

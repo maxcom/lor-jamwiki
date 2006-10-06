@@ -35,6 +35,8 @@ public class ParserInput {
 	public static final int MODE_SEARCH = 6;
 	private boolean allowSectionEdit = true;
 	private String context = null;
+	/** Depth is used to prevent infinite nesting of templates and other objects. */
+	private int depth = 0;
 	private Locale locale = null;
 	private int mode = MODE_NORMAL;
 	private TableOfContents tableOfContents = new TableOfContents();
@@ -50,6 +52,23 @@ public class ParserInput {
 	 *
 	 */
 	public ParserInput() {
+	}
+
+	/**
+	 *
+	 */
+	public ParserInput(ParserInput parserInput) {
+		this.allowSectionEdit = parserInput.allowSectionEdit;
+		this.context = parserInput.context;
+		this.depth = parserInput.depth;
+		this.locale = parserInput.locale;
+		this.mode = parserInput.mode;
+		this.tableOfContents = parserInput.tableOfContents;
+		this.templateParameterValues = parserInput.templateParameterValues;
+		this.topicName = parserInput.topicName;
+		this.userIpAddress = parserInput.userIpAddress;
+		this.virtualWiki = parserInput.virtualWiki;
+		this.wikiUser = parserInput.wikiUser;
 	}
 
 	/**
@@ -78,6 +97,20 @@ public class ParserInput {
 	 */
 	public void setContext(String context) {
 		this.context = context;
+	}
+
+	/**
+	 *
+	 */
+	public int getDepth() {
+		return depth;
+	}
+
+	/**
+	 *
+	 */
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 
 	/**
