@@ -7,6 +7,7 @@
 * FEATURE: Add option to enable/disable Mediawiki templates.
 * FEATURE: Replace file persistency mode with an embedded version of the
   HSQL database.
+* BUG: "Move" tab being incorrectly hidden on topic pages.
 * FEATURE: Require admin user login to perform an upgrade.
 * FEATURE: Add additional support for the DB2/400 database.
 * FEATURE: Remove ability to automatically upgrade from JAMWiki versions

@@ -293,7 +293,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				next.addObject("edit", editLink);
 				if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
 					String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-					if (!WikiBase.getHandler().exists(virtualWiki, article, true)) {
+					if (WikiBase.getHandler().exists(virtualWiki, article, true)) {
 						pageInfo.setCanMove(true);
 					}
 				}
