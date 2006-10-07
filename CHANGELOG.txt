@@ -15,6 +15,7 @@
   in JAMWiki 0.3.0.
 * FEATURE: Change default logo to submission from Oliver (okohll).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
+* FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 
 0.3.6
 =====
