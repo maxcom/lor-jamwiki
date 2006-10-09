@@ -190,7 +190,6 @@ public class TemplateHandler {
 	 *
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, ParserMode mode, String raw) throws Exception {
-		long start = System.currentTimeMillis();
 		ParserMode templateMode = new ParserMode(mode);
 		templateMode.addMode(ParserMode.MODE_TEMPLATE);
 		String content = "";
@@ -253,7 +252,5 @@ public class TemplateHandler {
 			value = ParserUtil.parseFragment(parserInput, value, templateMode.getMode());
 			this.parameterValues.put(name, value);
 		}
-		long execution = System.currentTimeMillis() - start;
-		logger.info("Parsed " + raw + " (" + (execution / 1000.000) + " s.)");
 	}
 }

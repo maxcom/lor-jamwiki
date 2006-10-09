@@ -50,7 +50,8 @@ public abstract class AbstractParser {
 	 */
 	protected ParserOutput lex(AbstractLexer lexer) throws Exception {
 		this.parserInput.incrementDepth();
-		if (this.parserInput.getDepth() > 100) {
+		// FIXME - this is a sloppy way to avoid infinite loops
+		if (this.parserInput.getDepth() > 100000) {
 			throw new Exception("Infinite parsing loop - over 100 parser iterations");
 		}
 		StringBuffer content = new StringBuffer();
