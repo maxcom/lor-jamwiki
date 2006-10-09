@@ -650,12 +650,28 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildHtmlLink(yytext());
+    String raw = yytext();
+    try {
+        HtmlLinkHandler htmlLinkHandler = new HtmlLinkHandler();
+        String value = htmlLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllinkraw} {
     logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.buildHtmlLinkRaw(yytext());
+    String raw = yytext();
+    try {
+        HtmlLinkHandler htmlLinkHandler = new HtmlLinkHandler();
+        String value = htmlLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- signatures ----- */

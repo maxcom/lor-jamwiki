@@ -80,56 +80,6 @@ public class ParserUtil {
 	}
 
 	/**
-	 * Given a String that represents a Wiki HTML link (a URL with an optional
-	 * link text that is enclosed in brackets), return a formatted HTML anchor tag.
-	 *
-	 * @param raw The raw Wiki syntax that is to be converted into an HTML link.
-	 * @return A formatted HTML link for the Wiki syntax.
-	 */
-	protected static String buildHtmlLink(String raw) {
-		if (raw == null || raw.length() <= 2) {
-			// no link, display the raw text
-			return raw;
-		}
-		// strip the first and last brackets
-		String link = raw.substring(1, raw.length() - 1).trim();
-		return buildHtmlLinkRaw(link);
-	}
-
-	/**
-	 * Given a String that represents a raw HTML link (a URL link that is
-	 * not enclosed in brackets), return a formatted HTML anchor tag.
-	 *
-	 * @param raw The raw HTML link that is to be converted into an HTML link.
-	 * @return A formatted HTML link.
-	 */
-	protected static String buildHtmlLinkRaw(String raw) {
-		if (raw == null) return raw;
-		String link = raw.trim();
-		if (link.length() <= 0) {
-			// no link to display
-			return raw;
-		}
-		// search for link text (space followed by text)
-		String punctuation = Utilities.extractTrailingPunctuation(link);
-		String text = "";
-		int pos = link.indexOf(' ');
-		if (pos == -1) {
-			pos = link.indexOf('\t');
-		}
-		if (pos > 0) {
-			text = link.substring(pos+1).trim();
-			link = link.substring(0, pos).trim();
-			punctuation = "";
-		} else {
-			link = link.substring(0, link.length() - punctuation.length()).trim();
-			text = link;
-		}
-		String html = linkHtml(link, text, punctuation);
-		return (html != null) ? html : raw;
-	}
-
-	/**
 	 *
 	 */
 	public static String buildWikiSignature(ParserInput parserInput, boolean includeUser, boolean includeDate, ParserMode mode) {
@@ -179,55 +129,6 @@ public class ParserUtil {
 			// FIXME - return empty or a failure indicator?
 			return "";
 		}
-	}
-
-	/**
-	 *
-	 */
-	protected static String linkHtml(String link, String text, String punctuation) {
-		String html = null;
-		// in case of script attack, replace script tags (cannot use escapeHTML due
-		// to the possibility of ampersands in the link)
-		link = StringUtils.replace(link, "<", "&lt;");
-		link = StringUtils.replace(link, ">", "&gt;");
-		link = StringUtils.replace(link, "\"", "&quot;");
-		link = StringUtils.replace(link, "'", "&#39;");
-		text = Utilities.escapeHTML(text);
-		String linkLower = link.toLowerCase();
-		if (linkLower.startsWith("mailto://")) {
-			// fix bad mailto syntax
-			link = "mailto:" + link.substring("mailto://".length());
-		}
-		if (linkLower.startsWith("http://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if  (linkLower.startsWith("https://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("ftp://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("mailto:")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("news://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("telnet://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("file://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		}
-		return html;
 	}
 
 	/**

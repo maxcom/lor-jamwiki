@@ -36,8 +36,6 @@ public class WikiLinkHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiLinkHandler.class.getName());
 	private static Pattern WIKI_LINK_PATTERN = null;
-	// FIXME - make configurable
-	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
 	static {
 		try {
