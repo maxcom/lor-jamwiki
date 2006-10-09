@@ -22,8 +22,6 @@ package org.jamwiki.parser;
 public class ParserMode {
 
 	public static final int MODE_NORMAL = 1;
-	/** Preview mode indicates that the topic is being edited but not saved yet. */
-	public static final int MODE_PREVIEW = 2;
 	/** Save mode indicates that the topic was edited and is being saved. */
 	public static final int MODE_SAVE = 4;
 	public static final int MODE_SPLICE = 8;

@@ -416,7 +416,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			next.addObject("notopic", new WikiMessage("topic.notcreated", topicName));
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		viewTopic(request, next, pageInfo, pageTitle, topic, true, false);
+		viewTopic(request, next, pageInfo, pageTitle, topic, true);
 	}
 
 	/**
@@ -428,11 +428,9 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param topic The Topic object for the topic being displayed.
 	 * @param sectionEdit Set to <code>true</code> if edit links should be displayed
 	 *  for each section of the topic.
-	 * @param preview Set to <code>true</code> if this topic is being displayed in
-	 *  preview mode.
 	 * @throws Exception Thrown if any error occurs during topic display.
 	 */
-	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit, boolean preview) throws Exception {
+	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
@@ -460,8 +458,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
-		int mode = (preview) ? ParserMode.MODE_NORMAL : ParserMode.MODE_PREVIEW;
-		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName, mode);
+		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName, ParserMode.MODE_NORMAL);
 		if (parserOutput != null) {
 			if (parserOutput.getCategories().size() > 0) {
 				LinkedHashMap categories = new LinkedHashMap();

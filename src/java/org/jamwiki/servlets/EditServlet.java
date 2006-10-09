@@ -208,7 +208,7 @@ public class EditServlet extends JAMWikiServlet {
 		previewTopic.setVirtualWiki(virtualWiki);
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_PREVIEW);
 		next.addObject("contents", contents);
-		viewTopic(request, next, pageInfo, null, previewTopic, false, true);
+		viewTopic(request, next, pageInfo, null, previewTopic, false);
 	}
 
 	/**

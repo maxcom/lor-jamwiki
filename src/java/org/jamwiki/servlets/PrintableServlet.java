@@ -66,6 +66,6 @@ public class PrintableServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		viewTopic(request, next, pageInfo, pageTitle, topic, false, false);
+		viewTopic(request, next, pageInfo, pageTitle, topic, false);
 	}
 }

@@ -212,7 +212,7 @@ public class ParserUtil {
 				params[5] = email;
 				params[6] = userId;
 				signature = formatter.format(params);
-				if (mode.hasMode(ParserMode.MODE_SAVE)) {
+				if (!mode.hasMode(ParserMode.MODE_SAVE)) {
 					signature = ParserUtil.parseFragment(parserInput, signature, mode.getMode());
 				}
 			}

@@ -89,6 +89,6 @@ public class HistoryServlet extends JAMWikiServlet {
 		topic.setTopicContent(topicVersion.getVersionContent());
 		String versionDate = DateFormat.getDateTimeInstance().format(topicVersion.getEditDate());
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + versionDate);
-		viewTopic(request, next, pageInfo, pageTitle, topic, false, false);
+		viewTopic(request, next, pageInfo, pageTitle, topic, false);
 	}
 }
