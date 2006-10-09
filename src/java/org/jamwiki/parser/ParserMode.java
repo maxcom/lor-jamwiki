@@ -21,13 +21,13 @@ package org.jamwiki.parser;
  */
 public class ParserMode {
 
-	public static final int MODE_NORMAL = 1;
+	public static final int MODE_SPLICE = 1;
+	public static final int MODE_SLICE = 2;
 	/** Save mode indicates that the topic was edited and is being saved. */
 	public static final int MODE_SAVE = 4;
-	public static final int MODE_SPLICE = 8;
-	public static final int MODE_SLICE = 16;
-	public static final int MODE_SEARCH = 32;
-	public static final int MODE_TEMPLATE = 64;
+	public static final int MODE_TEMPLATE = 8;
+	public static final int MODE_SEARCH = 16;
+	public static final int MODE_NORMAL = 32;
 
 	private int mode = MODE_NORMAL;
 

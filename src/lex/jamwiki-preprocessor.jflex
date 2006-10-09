@@ -333,43 +333,6 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    protected String processLinkContent(String raw) {
-        WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
-        if (yystate() == PRESAVE) {
-            // pushback to allow re-parsing in case of image caption links or signature
-            yypushback(yytext().length() - 2);
-            return yytext();
-        }
-        if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
-            // no destination or section
-            return yytext();
-        }
-        if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
-            // category tag, but not a category link
-            return "";
-        }
-        return ParserUtil.buildInternalLinkUrl(this.parserInput, raw);
-    }
-    
-    /**
-     *
-     */
-    protected void processLinkMetadata(String raw) {
-        WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
-        if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
-            return;
-        }
-        if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
-            this.parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
-        }
-        if (StringUtils.hasText(wikiLink.getDestination())) {
-            this.parserOutput.addLink(wikiLink.getDestination());
-        }
-    }
-    
-    /**
-     *
-     */
     private boolean standardMode() {
         return (!this.mode.hasMode(ParserMode.MODE_SAVE) && !this.mode.hasMode(ParserMode.MODE_SEARCH));
     }
@@ -661,14 +624,28 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    processLinkMetadata(yytext());
-    return processLinkContent(yytext());
+    String raw = yytext();
+    try {
+        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
+        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    processLinkMetadata(yytext());
-    return processLinkContent(yytext());
+    String raw = yytext();
+    try {
+        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
+        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
@@ -690,7 +667,13 @@ wikisig5           = "~~~~~"
         return yytext();
     }
     String text = ParserUtil.buildWikiSignature(this.parserInput, true, false, this.mode);
-    processLinkMetadata(text);
+    // process link metadata
+    try {
+        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
+        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, text);
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + text, e);
+    }
     return text;
 }
 
@@ -701,7 +684,13 @@ wikisig5           = "~~~~~"
         return yytext();
     }
     String text = ParserUtil.buildWikiSignature(this.parserInput, true, true, this.mode);
-    processLinkMetadata(text);
+    // process link metadata
+    try {
+        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
+        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, text);
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + text, e);
+    }
     return text;
 }
 
@@ -838,7 +827,7 @@ wikisig5           = "~~~~~"
     String tagText = ParserUtil.stripMarkup(yytext().substring(1, yytext().length() - 1).trim());
     String tagName = tagText;
     String output = updateToc(tagName, tagText, 1);
-    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
+    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
     output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h1>";
     // pushback to process heading text
     yypushback(yytext().length() - 1);
@@ -860,7 +849,7 @@ wikisig5           = "~~~~~"
     String tagText = ParserUtil.stripMarkup(yytext().substring(2, yytext().length() - 2).trim());
     String tagName = tagText;
     String output = updateToc(tagName, tagText, 2);
-    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
+    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
     output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h2>";
     // pushback to process heading text
     yypushback(yytext().length() - 2);
@@ -882,7 +871,7 @@ wikisig5           = "~~~~~"
     String tagText = ParserUtil.stripMarkup(yytext().substring(3, yytext().length() - 3).trim());
     String tagName = tagText;
     String output = updateToc(tagName, tagText, 3);
-    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
+    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
     output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h3>";
     // pushback to process heading text
     yypushback(yytext().length() - 3);
@@ -904,7 +893,7 @@ wikisig5           = "~~~~~"
     String tagText = ParserUtil.stripMarkup(yytext().substring(4, yytext().length() - 4).trim());
     String tagName = tagText;
     String output = updateToc(tagName, tagText, 4);
-    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
+    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
     output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h4>";
     // pushback to process heading text
     yypushback(yytext().length() - 4);
@@ -926,7 +915,7 @@ wikisig5           = "~~~~~"
     String tagText = ParserUtil.stripMarkup(yytext().substring(5, yytext().length() - 5).trim());
     String tagName = tagText;
     String output = updateToc(tagName, tagText, 5);
-    output += ParserUtil.buildEditLinkUrl(this.parserInput, nextSection());
+    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
     output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h5>";
     // pushback to process heading text
     yypushback(yytext().length() - 5);

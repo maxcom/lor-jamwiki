@@ -80,7 +80,8 @@ public class TemplateHandler {
 	}
 
 	/**
-	 *
+	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
+	 * and return the resulting template output.
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
 		if (!StringUtils.hasText(raw)) {

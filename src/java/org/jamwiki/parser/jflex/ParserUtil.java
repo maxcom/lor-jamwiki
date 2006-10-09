@@ -28,7 +28,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
@@ -45,7 +44,6 @@ public class ParserUtil {
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
 	private static Pattern IMAGE_SIZE_PATTERN = null;
-	private static Pattern WIKI_LINK_PATTERN = null;
 	// FIXME - make configurable
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
@@ -58,7 +56,6 @@ public class ParserUtil {
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
-			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -67,7 +64,7 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	protected static String buildEditLinkUrl(ParserInput parserInput, int section) {
+	protected static String buildSectionEditLink(ParserInput parserInput, int section) {
 		if (!parserInput.getAllowSectionEdit()) return "";
 		String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
 		String url = "";
@@ -130,54 +127,6 @@ public class ParserUtil {
 		}
 		String html = linkHtml(link, text, punctuation);
 		return (html != null) ? html : raw;
-	}
-
-	/**
-	 *
-	 */
-	protected static String buildInternalLinkUrl(ParserInput parserInput, String raw) {
-		String context = parserInput.getContext();
-		String virtualWiki = parserInput.getVirtualWiki();
-		try {
-			WikiLink wikiLink = ParserUtil.parseWikiLink(raw);
-			if (wikiLink == null) {
-				// invalid link
-				return raw;
-			}
-			if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
-				// invalid topic
-				return raw;
-			}
-			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
-				// parse as an image
-				return ParserUtil.parseImageLink(parserInput, wikiLink);
-			}
-			if (StringUtils.hasText(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
-				// inter-wiki link
-				return LinkUtil.interWiki(wikiLink);
-			}
-			if (wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace())) {
-				if (WikiBase.getHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
-					virtualWiki = wikiLink.getNamespace();
-					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + WikiBase.NAMESPACE_SEPARATOR.length()));
-				}
-			}
-			if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getDestination())) {
-				wikiLink.setText(wikiLink.getDestination());
-				if (StringUtils.hasText(wikiLink.getSection())) {
-					wikiLink.setText(wikiLink.getText() + "#" + Utilities.decodeFromURL(wikiLink.getSection()));
-				}
-			} else if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getSection())) {
-				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection()));
-			} else {
-				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), ParserMode.MODE_NORMAL));
-			}
-			// do not escape text html - already done by parser
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, false);
-		} catch (Exception e) {
-			logger.severe("Failure while parsing link " + raw, e);
-			return "";
-		}
 	}
 
 	/**
@@ -284,7 +233,7 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	private static String parseImageLink(ParserInput parserInput, WikiLink wikiLink) throws Exception {
+	public static String parseImageLink(ParserInput parserInput, WikiLink wikiLink) throws Exception {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		boolean thumb = false;
@@ -347,28 +296,6 @@ public class ParserUtil {
 		ParserMode parserMode = new ParserMode(mode);
 		ParserOutput parserOutput = parser.parsePreProcess(raw, parserMode);
 		return parserOutput.getContent();
-	}
-
-	/**
-	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
-	 * object representing the link.
-	 *
-	 * @param raw The raw Wiki link text.
-	 * @return A WikiLink object that represents the link.
-	 */
-	protected static WikiLink parseWikiLink(String raw) {
-		if (!StringUtils.hasText(raw)) {
-			return new WikiLink();
-		}
-		Matcher m = WIKI_LINK_PATTERN.matcher(raw.trim());
-		if (!m.matches()) {
-			return new WikiLink();
-		}
-		String url = m.group(2);
-		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
-		wikiLink.setColon((m.group(1) != null));
-		wikiLink.setText(m.group(4));
-		return wikiLink;
 	}
 
 	/**
