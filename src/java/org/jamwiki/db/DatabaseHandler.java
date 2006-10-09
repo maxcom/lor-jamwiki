@@ -1417,7 +1417,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	private void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Connection conn) throws Exception {
-		if (exists(virtualWiki, topicName, true)) {
+		if (this.lookupTopic(virtualWiki, topicName, true, false, conn) != null) {
 			logger.warning("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
 		}
