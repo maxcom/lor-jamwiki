@@ -26,6 +26,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
@@ -169,7 +170,7 @@ public class ParserUtil {
 			} else if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getSection())) {
 				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection()));
 			} else {
-				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText()));
+				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), ParserMode.MODE_NORMAL));
 			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, false);
@@ -182,7 +183,7 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	public static String buildWikiSignature(ParserInput parserInput, boolean includeUser, boolean includeDate) {
+	public static String buildWikiSignature(ParserInput parserInput, boolean includeUser, boolean includeDate, ParserMode mode) {
 		try {
 			String signature = "";
 			if (includeUser) {
@@ -211,8 +212,8 @@ public class ParserUtil {
 				params[5] = email;
 				params[6] = userId;
 				signature = formatter.format(params);
-				if (parserInput.getMode() != ParserInput.MODE_SAVE) {
-					signature = ParserUtil.parseFragment(parserInput, signature);
+				if (mode.hasMode(ParserMode.MODE_SAVE)) {
+					signature = ParserUtil.parseFragment(parserInput, signature, mode.getMode());
 				}
 			}
 			if (includeUser && includeDate) {
@@ -326,7 +327,7 @@ public class ParserUtil {
 			if (thumb && maxDimension <= 0) {
 				maxDimension = DEFAULT_THUMBNAIL_SIZE;
 			}
-			caption = ParserUtil.parseFragment(parserInput, caption);
+			caption = ParserUtil.parseFragment(parserInput, caption, ParserMode.MODE_NORMAL);
 		}
 		// do not escape html for caption since parser does it above
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
@@ -337,13 +338,14 @@ public class ParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	protected static String parseFragment(ParserInput parserInput, String fragment) throws Exception {
+	protected static String parseFragment(ParserInput parserInput, String fragment, int mode) throws Exception {
 		// FIXME - consider yypushstream() and yypopstream() as potentially more efficient
 		// ways to handle this functionality
 		if (!StringUtils.hasText(fragment)) return fragment;
 		JFlexParser parser = new JFlexParser(parserInput);
 		StringReader raw = new StringReader(fragment);
-		ParserOutput parserOutput = parser.parsePreProcess(raw);
+		ParserMode parserMode = new ParserMode(mode);
+		ParserOutput parserOutput = parser.parsePreProcess(raw, parserMode);
 		return parserOutput.getContent();
 	}
 

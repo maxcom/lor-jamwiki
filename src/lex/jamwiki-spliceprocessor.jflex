@@ -9,6 +9,7 @@ package org.jamwiki.parser.jflex;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
@@ -54,7 +55,7 @@ import org.jamwiki.utils.WikiLogger;
         } else if (this.targetSection == this.section) {
             inTargetSection = true;
             this.sectionDepth = level;
-            if (this.parserInput.getMode() == ParserInput.MODE_SPLICE) return this.replacementText;
+            if (this.mode.hasMode(ParserMode.MODE_SPLICE)) return this.replacementText;
         }
         return returnText(headingText);
     }
@@ -63,18 +64,19 @@ import org.jamwiki.utils.WikiLogger;
      *
      */
     private String returnText(String text) {
-        return (inTargetSection && this.parserInput.getMode() == ParserInput.MODE_SPLICE || !inTargetSection && this.parserInput.getMode() == ParserInput.MODE_SLICE) ? "" : text;
+        return (inTargetSection && this.mode.hasMode(ParserMode.MODE_SPLICE) || !inTargetSection && this.mode.hasMode(ParserMode.MODE_SLICE)) ? "" : text;
     }
     
     /**
      *
      */
-    public void setParserInput(ParserInput parserInput) throws Exception {
+    public void init(ParserInput parserInput, ParserMode mode) throws Exception {
         this.parserInput = parserInput;
+        this.mode = mode;
         // validate parser settings
         boolean validated = true;
         if (this.parserInput == null) validated = false;
-        if (this.parserInput.getMode() != ParserInput.MODE_SPLICE && this.parserInput.getMode() != ParserInput.MODE_SLICE) validated = false;
+        if (!this.mode.hasMode(ParserMode.MODE_SPLICE) && !this.mode.hasMode(ParserMode.MODE_SLICE)) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }

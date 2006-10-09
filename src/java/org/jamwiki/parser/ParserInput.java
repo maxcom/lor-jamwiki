@@ -24,20 +24,11 @@ import org.jamwiki.model.WikiUser;
  */
 public class ParserInput {
 
-	public static final int MODE_NORMAL = 1;
-	/** Preview mode indicates that the topic is being edited but not saved yet. */
-	public static final int MODE_PREVIEW = 2;
-	/** Save mode indicates that the topic was edited and is being saved. */
-	public static final int MODE_SAVE = 3;
-	public static final int MODE_SPLICE = 4;
-	public static final int MODE_SLICE = 5;
-	public static final int MODE_SEARCH = 6;
 	private boolean allowSectionEdit = true;
 	private String context = null;
 	/** Depth is used to prevent infinite nesting of templates and other objects. */
 	private int depth = 0;
 	private Locale locale = null;
-	private int mode = MODE_NORMAL;
 	private TableOfContents tableOfContents = new TableOfContents();
 	private String topicName = null;
 	/** IP address of the current user. */
@@ -113,20 +104,6 @@ public class ParserInput {
 	 */
 	public void setLocale(Locale locale) {
 		this.locale = locale;
-	}
-
-	/**
-	 *
-	 */
-	public int getMode() {
-		return this.mode;
-	}
-
-	/**
-	 *
-	 */
-	public void setMode(int mode) {
-		this.mode = mode;
 	}
 
 	/**

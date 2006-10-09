@@ -34,6 +34,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
@@ -175,6 +176,35 @@ import org.springframework.util.StringUtils;
         if (yystate() == TD) output = "</td>";
         if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
         return output;
+    }
+    
+    /**
+     *
+     */
+    public void init(ParserInput parserInput, ParserMode mode) throws Exception {
+        this.parserInput = parserInput;
+        this.mode = mode;
+        // validate parser settings
+        boolean validated = true;
+        if (this.parserInput == null) validated = false;
+        if (this.standardMode()) {
+            if (this.parserInput.getTableOfContents() == null) validated = false;
+            if (this.parserInput.getTopicName() == null) validated = false;
+        }
+        if (!this.mode.hasMode(ParserMode.MODE_SEARCH)) {
+            if (this.parserInput.getContext() == null) validated = false;
+            if (this.parserInput.getVirtualWiki() == null) validated = false;
+        }
+        if (this.mode.hasMode(ParserMode.MODE_SAVE)) {
+            if (this.parserInput.getUserIpAddress() == null) validated = false;
+        }
+        if (!this.standardMode()) {
+            endState();
+            beginState(PRESAVE);
+        }
+        if (!validated) {
+            throw new Exception("Parser info not properly initialized");
+        }
     }
     
     /**
@@ -341,7 +371,7 @@ import org.springframework.util.StringUtils;
      *
      */
     private boolean standardMode() {
-        return (this.parserInput.getMode() != ParserInput.MODE_SAVE && this.parserInput.getMode() != ParserInput.MODE_SEARCH);
+        return (!this.mode.hasMode(ParserMode.MODE_SAVE) && !this.mode.hasMode(ParserMode.MODE_SEARCH));
     }
     
     /**
@@ -354,34 +384,6 @@ import org.springframework.util.StringUtils;
         }
         this.parserInput.getTableOfContents().addEntry(name, text, level);
         return output;
-    }
-    
-    /**
-     *
-     */
-    public void setParserInput(ParserInput parserInput) throws Exception {
-        this.parserInput = parserInput;
-        // validate parser settings
-        boolean validated = true;
-        if (this.parserInput == null) validated = false;
-        if (this.parserInput.getMode() != ParserInput.MODE_SAVE && this.parserInput.getMode() != ParserInput.MODE_SEARCH) {
-            if (this.parserInput.getTableOfContents() == null) validated = false;
-            if (this.parserInput.getTopicName() == null) validated = false;
-        }
-        if (this.parserInput.getMode() != ParserInput.MODE_SEARCH) {
-            if (this.parserInput.getContext() == null) validated = false;
-            if (this.parserInput.getVirtualWiki() == null) validated = false;
-        }
-        if (this.parserInput.getMode() == ParserInput.MODE_SAVE) {
-            if (this.parserInput.getUserIpAddress() == null) validated = false;
-        }
-        if (this.parserInput.getMode() == ParserInput.MODE_SAVE || this.parserInput.getMode() == ParserInput.MODE_SEARCH) {
-            endState();
-            beginState(PRESAVE);
-        }
-        if (!validated) {
-            throw new Exception("Parser info not properly initialized");
-        }
     }
 %}
 
@@ -460,6 +462,10 @@ tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
 tableheadings      = "||" | "!!"
 tablerow           = "|-" {inputcharacter}* {newline}
 tablecaption       = "|+"
+includeonlyopen    = (<[ ]*includeonly[ ]*[\/]?[ ]*>)
+includeonlyclose   = (<[ ]*\/[ ]*includeonly[ ]*>)
+noincludeopen      = (<[ ]*noinclude[ ]*[\/]?[ ]*>)
+noincludeclose     = (<[ ]*\/[ ]*noinclude[ ]*>)
 
 /* wiki links */
 wikilink           = "[[" [^\]\n\r]+ "]]"
@@ -479,7 +485,7 @@ wikisig3           = "~~~"
 wikisig4           = "~~~~"
 wikisig5           = "~~~~~"
 
-%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE, PRESAVE, TEMPLATE
+%state NORMAL, TABLE, TD, TH, TC, LIST, NOWIKI, PRE, JAVASCRIPT, WIKIPRE, PRESAVE, TEMPLATE, NOINCLUDE, INCLUDEONLY
 
 %%
 
@@ -576,7 +582,7 @@ wikisig5           = "~~~~~"
         this.templateString = "";
         try {
             TemplateHandler templateHandler = new TemplateHandler();
-            value = templateHandler.parse(this.parserInput, this.parserOutput, value);
+            value = templateHandler.parse(this.parserInput, this.parserOutput, this.mode, value);
             return value;
         } catch (Exception e) {
             logger.severe("Unable to parse " + this.templateString, e);
@@ -609,6 +615,48 @@ wikisig5           = "~~~~~"
     return "";
 }
 
+<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE>{includeonlyopen} {
+    logger.finer("includeonlyopen: " + yytext() + " (" + yystate() + ")");
+    if (!this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
+        yybegin(INCLUDEONLY);
+    }
+    return "";
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE, INCLUDEONLY>{includeonlyclose} {
+    logger.finer("includeonlyclose: " + yytext() + " (" + yystate() + ")");
+    if (!this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
+        endState();
+    }
+    return "";
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE>{noincludeopen} {
+    logger.finer("noincludeopen: " + yytext() + " (" + yystate() + ")");
+    if (this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
+        yybegin(NOINCLUDE);
+    }
+    return "";
+}
+
+<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE, NOINCLUDE>{noincludeclose} {
+    logger.finer("noincludeclose: " + yytext() + " (" + yystate() + ")");
+    if (this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
+        endState();
+    }
+    return "";
+}
+
+<INCLUDEONLY, NOINCLUDE>{whitespace} {
+    // no need to log this
+    return "";
+}
+
+<INCLUDEONLY, NOINCLUDE>. {
+    // no need to log this
+    return "";
+}
+
 /* ----- wiki links ----- */
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
@@ -637,33 +685,33 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig3} {
     logger.finer("wikisig3: " + yytext() + " (" + yystate() + ")");
-    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+    if (this.mode.hasMode(ParserMode.MODE_SEARCH)) {
         // called from search indexer, no need to parse signatures
         return yytext();
     }
-    String text = ParserUtil.buildWikiSignature(this.parserInput, true, false);
+    String text = ParserUtil.buildWikiSignature(this.parserInput, true, false, this.mode);
     processLinkMetadata(text);
     return text;
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig4} {
     logger.finer("wikisig4: " + yytext() + " (" + yystate() + ")");
-    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+    if (this.mode.hasMode(ParserMode.MODE_SEARCH)) {
         // called from search indexer, no need to parse signatures
         return yytext();
     }
-    String text = ParserUtil.buildWikiSignature(this.parserInput, true, true);
+    String text = ParserUtil.buildWikiSignature(this.parserInput, true, true, this.mode);
     processLinkMetadata(text);
     return text;
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig5} {
     logger.finer("wikisig5: " + yytext() + " (" + yystate() + ")");
-    if (parserInput.getMode() == ParserInput.MODE_SEARCH) {
+    if (this.mode.hasMode(ParserMode.MODE_SEARCH)) {
         // called from search indexer, no need to parse signatures
         return yytext();
     }
-    return ParserUtil.buildWikiSignature(this.parserInput, false, true);
+    return ParserUtil.buildWikiSignature(this.parserInput, false, true, this.mode);
 }
 
 /* ----- tables ----- */

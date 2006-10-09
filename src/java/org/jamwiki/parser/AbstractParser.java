@@ -69,7 +69,7 @@ public abstract class AbstractParser {
 	 *
 	 * @param rawtext The raw Wiki syntax to be converted into HTML.
 	 */
-	public abstract ParserOutput parseHTML(String rawtext, String topicName) throws Exception;
+	public abstract ParserOutput parseHTML(String rawtext, String topicName, ParserMode mode) throws Exception;
 
 	/**
 	 * For syntax that is not saved with the topic source, this method provides
@@ -78,7 +78,7 @@ public abstract class AbstractParser {
 	 * @param rawtext The raw Wiki syntax to be converted into HTML.
 	 * @return Results from parser execution.
 	 */
-	public abstract ParserOutput parsePreSave(String rawtext) throws Exception;
+	public abstract ParserOutput parsePreSave(String rawtext, ParserMode mode) throws Exception;
 
 	/**
 	 * When making a section edit this function provides the capability to retrieve

@@ -50,6 +50,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.servlets.JAMWikiServlet;
@@ -541,12 +542,13 @@ public class Utilities {
 	 *  parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parse(ParserInput parserInput, String content, String topicName) throws Exception {
+	public static ParserOutput parse(ParserInput parserInput, String content, String topicName, int mode) throws Exception {
 		if (content == null) {
 			return null;
 		}
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseHTML(content, topicName);
+		ParserMode parserMode = new ParserMode(mode);
+		return parser.parseHTML(content, topicName, parserMode);
 	}
 
 	/**
@@ -560,9 +562,10 @@ public class Utilities {
 	 *  and other parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parsePreSave(ParserInput parserInput, String content) throws Exception {
+	public static ParserOutput parsePreSave(ParserInput parserInput, String content, int mode) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parsePreSave(content);
+		ParserMode parserMode = new ParserMode(mode);
+		return parser.parsePreSave(content, parserMode);
 	}
 
 	/**
@@ -611,8 +614,7 @@ public class Utilities {
 	 */
 	public static ParserOutput parserOutput(String content) throws Exception {
 		ParserInput parserInput = new ParserInput();
-		parserInput.setMode(ParserInput.MODE_SEARCH);
-		return Utilities.parsePreSave(parserInput, content);
+		return Utilities.parsePreSave(parserInput, content, ParserMode.MODE_SEARCH);
 	}
 
 	/**
@@ -637,7 +639,6 @@ public class Utilities {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
-		parserInput.setMode(ParserInput.MODE_SLICE);
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
 	}
@@ -666,7 +667,6 @@ public class Utilities {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
-		parserInput.setMode(ParserInput.MODE_SPLICE);
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
 	}

@@ -23,6 +23,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
@@ -75,16 +76,16 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 * Parse text for online display.
 	 */
-	public ParserOutput parseHTML(String rawText, String topicName) throws Exception {
+	public ParserOutput parseHTML(String rawText, String topicName, ParserMode mode) throws Exception {
 		long start = System.currentTimeMillis();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		rawText += '\n';
 		StringReader raw = new StringReader(rawText);
 		// maintain the original output, which has all of the category and link info
-		ParserOutput original = this.parsePreProcess(raw);
+		ParserOutput original = this.parsePreProcess(raw, mode);
 		raw = new StringReader(original.getContent());
-		ParserOutput parserOutput = this.parsePostProcess(raw);
+		ParserOutput parserOutput = this.parsePostProcess(raw, mode);
 		original.setContent(parserOutput.getContent());
 		if (StringUtils.hasText(this.isRedirect(rawText))) {
 			// redirects are parsed differently
@@ -102,9 +103,9 @@ public class JFlexParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserOutput object containing results of the parsing process.
 	 */
-	protected ParserOutput parsePreProcess(StringReader raw) throws Exception {
+	protected ParserOutput parsePreProcess(StringReader raw, ParserMode mode) throws Exception {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
-		lexer.setParserInput(this.parserInput);
+		lexer.init(this.parserInput, mode);
 		return this.lex(lexer);
 	}
 
@@ -116,10 +117,10 @@ public class JFlexParser extends AbstractParser {
 	 * @param contents The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserOutput object containing results of the parsing process.
 	 */
-	public ParserOutput parsePreSave(String contents) throws Exception {
+	public ParserOutput parsePreSave(String contents, ParserMode mode) throws Exception {
 		StringReader raw = new StringReader(contents);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
-		lexer.setParserInput(this.parserInput);
+		lexer.init(this.parserInput, mode);
 		ParserOutput parserOutput = this.lex(lexer);
 		// verify whether or not this is a redirect
 		String redirect = this.isRedirect(contents);
@@ -137,9 +138,9 @@ public class JFlexParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserOutput object containing results of the parsing process.
 	 */
-	private ParserOutput parsePostProcess(StringReader raw) throws Exception {
+	private ParserOutput parsePostProcess(StringReader raw, ParserMode mode) throws Exception {
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(raw);
-		lexer.setParserInput(this.parserInput);
+		lexer.init(this.parserInput, mode);
 		return this.lex(lexer);
 	}
 
@@ -184,7 +185,8 @@ public class JFlexParser extends AbstractParser {
 		long start = System.currentTimeMillis();
 		StringReader raw = new StringReader(rawText);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
-		lexer.setParserInput(this.parserInput);
+		ParserMode mode = new ParserMode(ParserMode.MODE_SLICE);
+		lexer.init(this.parserInput, mode);
 		lexer.setTargetSection(targetSection);
 		ParserOutput parserOutput = this.lex(lexer);
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
@@ -210,7 +212,8 @@ public class JFlexParser extends AbstractParser {
 		long start = System.currentTimeMillis();
 		StringReader raw = new StringReader(rawText);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(raw);
-		lexer.setParserInput(this.parserInput);
+		ParserMode mode = new ParserMode(ParserMode.MODE_SPLICE);
+		lexer.init(this.parserInput, mode);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		ParserOutput parserOutput = this.lex(lexer);

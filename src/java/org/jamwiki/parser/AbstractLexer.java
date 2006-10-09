@@ -35,6 +35,8 @@ public abstract class AbstractLexer {
 	protected ParserInput parserInput = null;
 	/** Parser parsing results. */
 	protected ParserOutput parserOutput = new ParserOutput();
+	/** Lexer mode */
+	protected ParserMode mode = new ParserMode();
 
 	/**
 	 * Begin a new state and store the old state onto the stack.
@@ -75,7 +77,7 @@ public abstract class AbstractLexer {
 	 * all settings required for the parser have been set, and if not it
 	 * should throw an exception.
 	 */
-	public abstract void setParserInput(ParserInput parserInput) throws Exception;
+	public abstract void init(ParserInput parserInput, ParserMode mode) throws Exception;
 
 	/**
 	 *

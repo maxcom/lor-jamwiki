@@ -5,6 +5,7 @@ package org.jamwiki.parser.jflex;
 
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
@@ -40,8 +41,9 @@ import org.jamwiki.utils.WikiLogger;
     /**
      *
      */
-    public void setParserInput(ParserInput parserInput) throws Exception {
+    public void init(ParserInput parserInput, ParserMode mode) throws Exception {
         this.parserInput = parserInput;
+        this.mode = mode;
         // validate parser settings
         boolean validated = true;
         if (this.parserInput == null) validated = false;
