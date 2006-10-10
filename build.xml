@@ -1,7 +1,36 @@
 <project name="vqwiki" basedir="." default="help">
 
 	<property file="build.properties" />
+	
+	<!-- build a list all jar files needed for compiling -->
+	<path id="jamwiki.lib.classpath">
+		<pathelement path="${dir.lib}/commons-codec.jar" />
+		<pathelement path="${dir.lib}/commons-dbcp-1.2.1.jar" />
+		<pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar" />
+		<pathelement path="${dir.lib}/commons-io-1.2.jar" />
+		<pathelement path="${dir.lib}/commons-logging-1.1.jar" />
+		<pathelement path="${dir.lib}/commons-pool-1.3.jar" />
+		<pathelement path="${dir.lib}/javadiff-1.0.5.jar" />
+		<pathelement path="${dir.lib}/jstl-1.0.6.jar" />
+		<pathelement path="${dir.lib}/lucene-core-2.0.0.jar" />
+		<pathelement path="${dir.lib}/lucene-highlighter-2.0.0.jar" />
+		<pathelement path="${dir.lib}/mail.jar" />
+		<pathelement path="${dir.lib}/servlet.jar" />
+		<pathelement path="${dir.lib}/spring-beans-1.2.8.jar" />
+		<pathelement path="${dir.lib}/spring-context-1.2.8.jar" />
+		<pathelement path="${dir.lib}/spring-core-1.2.8.jar" />
+		<pathelement path="${dir.lib}/spring-web-1.2.8.jar" />
+		<pathelement path="${dir.lib}/spring-webmvc-1.2.8.jar" />
+		<pathelement path="${dir.lib}/standard-1.0.6.jar" />
+	</path>
 
+	<!-- generate task for JFlex -->
+	<taskdef classname="JFlex.anttask.JFlexTask" name="jflex" description="Create lexers for default lex plugin">
+		<classpath>
+			<pathelement location="${dir.lib}/jflex-1.4.1.jar" />
+		</classpath>
+	</taskdef>
+	
 	<target name="cleanLexers" description="Cleans up after lexer generation">
 		<!-- delete old generated lexer source files -->
 		<delete file="${dir.src.java}/org/jamwiki/parser/jflex/JAMWikiPreProcessor.java" />
@@ -18,13 +47,6 @@
 		<mkdir dir="${dir.build}/classes" />
 	</target>
 
-	<taskdef classname="JFlex.anttask.JFlexTask" name="jflex" description="Create lexers for default lex plugin">
-		<!-- generate task for JFlex -->
-		<classpath>
-			<pathelement location="${dir.lib}/jflex-1.4.1.jar" />
-		</classpath>
-	</taskdef>
-
 	<target name="jflex" depends="init,cleanLexers" description="Generate Java files from the lexer files">
 		<!-- only generate new source files after old ones were deleted through cleanLexers target -->
 		<jflex file="${dir.src.lex}/jamwiki-preprocessor.jflex" destdir="${dir.src.java}" />
@@ -36,27 +58,8 @@
 		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="1.4" source="1.4">
 			<src path="${dir.src.java}" />
 			<include name="org/jamwiki/**" />
-			<classpath>
-				<pathelement path="${dir.src.java}" />
-				<pathelement path="${dir.lib}/commons-codec.jar" />
-				<pathelement path="${dir.lib}/commons-dbcp-1.2.1.jar" />
-				<pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar" />
-				<pathelement path="${dir.lib}/commons-io-1.2.jar" />
-				<pathelement path="${dir.lib}/commons-logging-1.1.jar" />
-				<pathelement path="${dir.lib}/commons-pool-1.3.jar" />
-				<pathelement path="${dir.lib}/javadiff-1.0.5.jar" />
-				<pathelement path="${dir.lib}/jstl-1.0.6.jar" />
-				<pathelement path="${dir.lib}/lucene-core-2.0.0.jar" />
-				<pathelement path="${dir.lib}/lucene-highlighter-2.0.0.jar" />
-				<pathelement path="${dir.lib}/mail.jar" />
-				<pathelement path="${dir.lib}/servlet.jar" />
-				<pathelement path="${dir.lib}/spring-beans-1.2.8.jar" />
-				<pathelement path="${dir.lib}/spring-context-1.2.8.jar" />
-				<pathelement path="${dir.lib}/spring-core-1.2.8.jar" />
-				<pathelement path="${dir.lib}/spring-web-1.2.8.jar" />
-				<pathelement path="${dir.lib}/spring-webmvc-1.2.8.jar" />
-				<pathelement path="${dir.lib}/standard-1.0.6.jar" />
-			</classpath>
+			<exclude name="org/jamwiki/test/**" />
+			<classpath refid="jamwiki.lib.classpath" />
 		</javac>
 	</target>
 
@@ -64,7 +67,7 @@
 		<war destfile="${dir.build}/${war.name}-${app.version}.war" webxml="${dir.src.webapp}/WEB-INF/web.xml">
 			<classes dir="${dir.build.classes}" includes="org/jamwiki/**" />
 			<classes dir="${dir.src.properties}" />
-			<lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar,jflex-1.4.1.jar" />
+			<lib dir="${dir.lib}" includes="*.jar,*.txt" excludes="servlet.jar,jflex-1.4.1.jar,junit-*" />
 			<webinf dir="${dir.src.webapp}/WEB-INF" excludes="web.xml,**/index.jsp" />
 			<zipfileset dir="${dir.src.resources}/images" prefix="images" />
 			<zipfileset dir="${dir.src.resources}/js" prefix="js" />
@@ -95,6 +98,29 @@
 		</copy>
 		<war destfile="${dir.build}/${war.name}-${app.version}.war" basedir="${dir.build}/war" webxml="${dir.src.webapp}/WEB-INF/web.xml" />
 		<delete dir="${dir.build}/war" />
+	</target>
+
+	<target name="junit-compile" depends="compile" description="Compile JUnit source code">
+		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="1.4" source="1.4">
+			<src path="${dir.src.java}" />
+			<include name="org/jamwiki/test/**" />
+			<classpath refid="jamwiki.lib.classpath" />
+		</javac>
+	</target>
+
+	<target name="junit" depends="junit-compile" description="Run JUnit tests on the current code.">
+		<junit fork="yes" haltonfailure="no">
+			<test name="org.jamwiki.test.JAMWikiTestSuite" />
+			<formatter type="plain" usefile="false" />
+			<classpath>
+				<pathelement location="${dir.build.classes}" />
+				<pathelement location="${dir.local}" />
+				<pathelement location="${dir.src.resources}/classes" />
+				<fileset dir="${dir.lib}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</junit>
 	</target>
 
 	<target name="source" description="Build a zip file of the application source">
@@ -154,6 +180,7 @@ war       - Generates a war file suitable for deployment to a web
 war-local - Generates a war file suitable for deployment to a web
             application server, replacing jar and property files
             using any files found in the local-files directory.
+junit     - Run a series of JUnit tests on the current code.
 clean     - Removes any build artifacts from the tree.
 source    - Build a zip file of the application source.
 javadiff  - Generate the javadiff.jar file.
