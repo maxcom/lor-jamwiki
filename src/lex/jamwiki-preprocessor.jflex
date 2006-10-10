@@ -108,13 +108,7 @@ import org.springframework.util.StringUtils;
     protected boolean allowHTML = false;
     protected boolean allowJavascript = false;
     protected boolean wikibold = false;
-    protected boolean wikih1 = false;
-    protected boolean wikih2 = false;
-    protected boolean wikih3 = false;
-    protected boolean wikih4 = false;
-    protected boolean wikih5 = false;
     protected boolean wikiitalic = false;
-    protected int nextSection = 0;
     protected int templateCharCount = 0;
     protected String templateString = "";
     protected Stack listOpenStack = new Stack();
@@ -295,14 +289,6 @@ import org.springframework.util.StringUtils;
     }
     
     /**
-     *
-     */
-    protected int nextSection() {
-    	this.nextSection++;
-    	return this.nextSection;
-    }
-    
-    /**
      * Take Wiki text of the form "|" or "| style='foo' |" and convert to
      * and HTML <td> or <th> tag.
      *
@@ -336,18 +322,6 @@ import org.springframework.util.StringUtils;
     private boolean standardMode() {
         return (!this.mode.hasMode(ParserMode.MODE_SAVE) && !this.mode.hasMode(ParserMode.MODE_SEARCH));
     }
-    
-    /**
-     *
-     */
-    protected String updateToc(String name, String text, int level) {
-        String output = "";
-        if (this.parserInput.getTableOfContents().getStatus() == TableOfContents.STATUS_TOC_UNINITIALIZED) {
-            output = "__TOC__";
-        }
-        this.parserInput.getTableOfContents().addEntry(name, text, level);
-        return output;
-    }
 %}
 
 /* character expressions */
@@ -362,16 +336,7 @@ htmltag            = br|b|big|blockquote|caption|center|cite|code|del|div|em|fon
 
 /* non-container expressions */
 hr                 = "----"
-h1                 = "=" [^=\n]+ "="
-h1close            = "="
-h2                 = "==" [^=\n]+ "=="
-h2close            = "=="
-h3                 = "===" [^=\n]+ "==="
-h3close            = "==="
-h4                 = "====" [^=\n]+ "===="
-h4close            = "===="
-h5                 = "=====" [^=\n]+ "====="
-h5close            = "====="
+wikiheading        = [\=]+ [^\n\=]* [\=]+
 bold               = "'''"
 italic             = "''"
 
@@ -834,114 +799,17 @@ wikisig5           = "~~~~~"
     return "<hr />\n";
 }
 
-<NORMAL>^{h1} {
-    logger.finer("h1: " + yytext() + " (" + yystate() + ")");
-    String tagText = ParserUtil.stripMarkup(yytext().substring(1, yytext().length() - 1).trim());
-    String tagName = tagText;
-    String output = updateToc(tagName, tagText, 1);
-    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
-    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h1>";
-    // pushback to process heading text
-    yypushback(yytext().length() - 1);
-    this.wikih1 = true;
-    return output;
-}
-
-<NORMAL>{h1close} {
-    logger.finer("h1close: " + yytext() + " (" + yystate() + ")");
-    if (this.wikih1) {
-        this.wikih1 = false;
-        return "</h1>";
+<NORMAL>^{wikiheading} {
+    logger.finer("wikiheading: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        WikiHeadingTag wikiHeadingTag = new WikiHeadingTag();
+        String value = wikiHeadingTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
     }
-    return yytext();
-}
-
-<NORMAL>^{h2} {
-    logger.finer("h2: " + yytext() + " (" + yystate() + ")");
-    String tagText = ParserUtil.stripMarkup(yytext().substring(2, yytext().length() - 2).trim());
-    String tagName = tagText;
-    String output = updateToc(tagName, tagText, 2);
-    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
-    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h2>";
-    // pushback to process heading text
-    yypushback(yytext().length() - 2);
-    this.wikih2 = true;
-    return output;
-}
-
-<NORMAL>{h2close} {
-    logger.finer("h2close: " + yytext() + " (" + yystate() + ")");
-    if (this.wikih2) {
-        this.wikih2 = false;
-        return "</h2>";
-    }
-    return yytext();
-}
-
-<NORMAL>^{h3} {
-    logger.finer("h3: " + yytext() + " (" + yystate() + ")");
-    String tagText = ParserUtil.stripMarkup(yytext().substring(3, yytext().length() - 3).trim());
-    String tagName = tagText;
-    String output = updateToc(tagName, tagText, 3);
-    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
-    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h3>";
-    // pushback to process heading text
-    yypushback(yytext().length() - 3);
-    this.wikih3 = true;
-    return output;
-}
-
-<NORMAL>{h3close} {
-    logger.finer("h3close: " + yytext() + " (" + yystate() + ")");
-    if (this.wikih3) {
-        this.wikih3 = false;
-        return "</h3>";
-    }
-    return yytext();
-}
-
-<NORMAL>^{h4} {
-    logger.finer("h4: " + yytext() + " (" + yystate() + ")");
-    String tagText = ParserUtil.stripMarkup(yytext().substring(4, yytext().length() - 4).trim());
-    String tagName = tagText;
-    String output = updateToc(tagName, tagText, 4);
-    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
-    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h4>";
-    // pushback to process heading text
-    yypushback(yytext().length() - 4);
-    this.wikih4 = true;
-    return output;
-}
-
-<NORMAL>{h4close} {
-    logger.finer("h4close: " + yytext() + " (" + yystate() + ")");
-    if (this.wikih4) {
-        this.wikih4 = false;
-        return "</h4>";
-    }
-    return yytext();
-}
-
-<NORMAL>^{h5} {
-    logger.finer("h5: " + yytext() + " (" + yystate() + ")");
-    String tagText = ParserUtil.stripMarkup(yytext().substring(5, yytext().length() - 5).trim());
-    String tagName = tagText;
-    String output = updateToc(tagName, tagText, 5);
-    output += ParserUtil.buildSectionEditLink(this.parserInput, nextSection());
-    output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a><h5>";
-    // pushback to process heading text
-    yypushback(yytext().length() - 5);
-    this.wikih5 = true;
-    return output;
-}
-
-<NORMAL>{h5close} {
-    logger.finer("h5close: " + yytext() + " (" + yystate() + ")");
-    if (this.wikih5) {
-        this.wikih5 = false;
-        return "</h5>";
-    }
-    return yytext();
 }
 
 /* ----- lists ----- */

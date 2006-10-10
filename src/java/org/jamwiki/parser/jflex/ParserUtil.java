@@ -98,18 +98,6 @@ public class ParserUtil {
 	}
 
 	/**
-	 * Strip Wiki markup from text
-	 */
-	protected static String stripMarkup(String text) {
-		// FIXME - this could be a bit more thorough and also strip HTML
-		text = StringUtils.delete(text, "'''");
-		text = StringUtils.delete(text, "''");
-		text = StringUtils.delete(text, "[[");
-		text = StringUtils.delete(text, "]]");
-		return text;
-	}
-
-	/**
 	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
 	 * a bad thing, so clean up HTML tags to remove any such attributes.
 	 */
