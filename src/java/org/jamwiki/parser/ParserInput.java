@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser;
 
+import java.util.Hashtable;
 import java.util.Locale;
 import org.jamwiki.model.WikiUser;
 
@@ -30,6 +31,8 @@ public class ParserInput {
 	private int depth = 0;
 	private Locale locale = null;
 	private TableOfContents tableOfContents = new TableOfContents();
+	/** Hashtable of generic temporary objects used during parsing. */
+	private Hashtable tempParams = new Hashtable();
 	private String topicName = null;
 	/** IP address of the current user. */
 	private String userIpAddress = null;
@@ -118,6 +121,13 @@ public class ParserInput {
 	 */
 	public void setTableOfContents(TableOfContents tableOfContents) {
 		this.tableOfContents = tableOfContents;
+	}
+
+	/**
+	 *
+	 */
+	public Hashtable getTempParams() {
+		return this.tempParams;
 	}
 
 	/**

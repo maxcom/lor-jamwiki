@@ -28,19 +28,14 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.Hashtable;
-import java.util.Stack;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 %%
@@ -77,7 +72,15 @@ import org.springframework.util.StringUtils;
         output.append( "</i>" );
     }
     // close any open list tags
-    output.append(closeList());
+    if (yystate() == LIST) {
+        try {
+            WikiListTag wikiListTag = new WikiListTag();
+            String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, null);
+            output.append(value);
+        } catch (Exception e) {
+            logger.severe("Unable to close open list", e);
+        }
+    }
     // close any open tables
     if (yystate() == TD) {
         output.append("</td>");
@@ -111,28 +114,6 @@ import org.springframework.util.StringUtils;
     protected boolean wikiitalic = false;
     protected int templateCharCount = 0;
     protected String templateString = "";
-    protected Stack listOpenStack = new Stack();
-    protected Stack listCloseStack = new Stack();
-    protected static Hashtable listOpenHash = new Hashtable();
-    protected static Hashtable listCloseHash = new Hashtable();
-    protected static Hashtable listItemOpenHash = new Hashtable();
-
-    static {
-        listOpenHash.put("*", "<ul>");
-        listOpenHash.put("#", "<ol>");
-        listOpenHash.put(":", "<dl>");
-        listOpenHash.put(";", "<dl>");
-        listItemOpenHash.put("*", "<li>");
-        listItemOpenHash.put("#", "<li>");
-        listItemOpenHash.put(":", "<dd>");
-        listItemOpenHash.put(";", "<dt>");
-        listCloseHash.put("<ul>", "</ul>");
-        listCloseHash.put("<ol>", "</ol>");
-        listCloseHash.put("<dl>", "</dl>");
-        listCloseHash.put("<li>", "</li>");
-        listCloseHash.put("<dd>", "</dd>");
-        listCloseHash.put("<dt>", "</dt>");
-    }
     
     /**
      *
@@ -146,18 +127,6 @@ import org.springframework.util.StringUtils;
      */
     protected boolean allowJavascript() {
         return (allowJavascript && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
-    }
-    
-    /**
-     *
-     */
-    protected String closeList() {
-        StringBuffer output = new StringBuffer();
-        while (listOpenStack.size() > 0) {
-            listOpenStack.pop();
-            output.append(listCloseStack.pop());
-        }
-        return output.toString();
     }
     
     /**
@@ -199,93 +168,6 @@ import org.springframework.util.StringUtils;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
-    }
-    
-    /**
-     *
-     */
-    private static boolean isListTag(char character) {
-        String value = character + "";
-        return (listOpenHash.get(value) != null);
-    }
-    
-    /**
-     *
-     */
-    protected String listItem(String text) {
-        int count = 0;
-        for (int i=0; i < text.length(); i++) {
-            if (!isListTag(text.charAt(i))) break;
-            count++;
-        }
-        // trim all but the list tags
-        text = text.substring(0, count);
-        StringBuffer output = new StringBuffer();
-        // build a stack of html tags based on current values passed to lexer
-        Stack currentOpenStack = new Stack();
-        for (int i=0; i < text.length(); i++) {
-            String tag = "" + text.charAt(i);
-            String listOpenTag = (String)listOpenHash.get(tag);
-            String listItemOpenTag = (String)listItemOpenHash.get(tag);
-            if (listOpenTag == null || listItemOpenTag == null) {
-                logger.severe("Unknown list tag " + tag);
-                continue;
-            }
-            currentOpenStack.push(listOpenTag);
-            currentOpenStack.push(listItemOpenTag);
-        }
-        // if list was previously open to a greater depth, close the old list
-        while (listOpenStack.size() > currentOpenStack.size()) {
-            listOpenStack.pop();
-            output.append(listCloseStack.pop());
-        }
-        // if continuing the same list, process normally
-        if (currentOpenStack.equals(listOpenStack)) {
-            // get last tag in current stack
-            String currentOpenTag = (String)currentOpenStack.elementAt(currentOpenStack.size() - 1);
-            String listOpenTag = (String)listOpenStack.elementAt(listOpenStack.size() - 1);
-            String closeTag = (String)listCloseHash.get(listOpenTag);
-            output.append(closeTag);
-            output.append(currentOpenTag);
-            return output.toString();
-        }
-        // look for differences in the old list stack and the new list stack
-        int pos = 0;
-        while (pos < listOpenStack.size()) {
-            if (!listOpenStack.elementAt(pos).equals(currentOpenStack.elementAt(pos))) {
-                break;
-            }
-            pos++;
-        }
-        // if any differences found process them
-        while (listOpenStack.size() > pos) {
-            listOpenStack.pop();
-            output.append(listCloseStack.pop());
-        }
-        // continue processing differences
-        for (int i=pos; i < currentOpenStack.size(); i++) {
-            String currentOpenTag = (String)currentOpenStack.elementAt(i);
-            String currentCloseTag = (String)listCloseHash.get(currentOpenTag);
-            listOpenStack.push(currentOpenTag);
-            listCloseStack.push(currentCloseTag);
-            output.append(currentOpenTag);
-        }
-        return output.toString();
-    }
-    
-    /**
-     *
-     */
-    protected int listTagCount(String text) {
-        int count = 0;
-        for (int i=0; i < text.length(); i++) {
-            if (isListTag(text.charAt(i))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        return count;
     }
     
     /**
@@ -345,8 +227,8 @@ italic             = "''"
   the approach is to match the entire list item, change to a list state,
   parse out the lists tags, and then re-parse the remaining content.
 */
-listitem           = [\*#\:;]+ [^\n]* [\n]
-listend            = [^\*#\:;\r\n] [^\n]* [\n]
+listitem           = [\*#\:;]+ [^\n\r]* [\n\r]+
+listend            = [\*#\:;]+ [^\n\r]* [\n\r]+ [^\*#\:;\r\n]+
 
 /* nowiki */
 nowikistart        = (<[ ]*nowiki[ ]*>)
@@ -419,7 +301,7 @@ wikisig5           = "~~~~~"
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{nowikistart} {
+<WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, PRESAVE>{nowikistart} {
     logger.finer("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
@@ -433,7 +315,7 @@ wikisig5           = "~~~~~"
 
 /* ----- pre ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{htmlprestart} {
+<NORMAL, TABLE, TD, TH, TC, PRESAVE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHTML || !standardMode()) {
         beginState(PRE);
@@ -449,7 +331,7 @@ wikisig5           = "~~~~~"
     return yytext();
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, WIKIPRE, PRESAVE>^{wikiprestart} {
+<NORMAL, TABLE, TD, TH, TC, WIKIPRE, PRESAVE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -470,13 +352,13 @@ wikisig5           = "~~~~~"
 
 /* ----- processing commands ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{notoc} {
+<NORMAL, TABLE, TD, TH, TC>{notoc} {
     logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{toc} {
+<NORMAL, TABLE, TD, TH, TC>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     return yytext();
@@ -484,7 +366,7 @@ wikisig5           = "~~~~~"
 
 /* ----- templates ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE>{templatestart} {
+<NORMAL, TABLE, TD, TH, TC, TEMPLATE>{templatestart} {
     logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES)) {
@@ -543,7 +425,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE>{includeonlyopen} {
+<NORMAL, TABLE, TD, TH, TC, TEMPLATE>{includeonlyopen} {
     logger.finer("includeonlyopen: " + yytext() + " (" + yystate() + ")");
     if (!this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         yybegin(INCLUDEONLY);
@@ -551,7 +433,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE, INCLUDEONLY>{includeonlyclose} {
+<NORMAL, TABLE, TD, TH, TC, TEMPLATE, INCLUDEONLY>{includeonlyclose} {
     logger.finer("includeonlyclose: " + yytext() + " (" + yystate() + ")");
     if (!this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         endState();
@@ -559,7 +441,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE>{noincludeopen} {
+<NORMAL, TABLE, TD, TH, TC, TEMPLATE>{noincludeopen} {
     logger.finer("noincludeopen: " + yytext() + " (" + yystate() + ")");
     if (this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         yybegin(NOINCLUDE);
@@ -567,7 +449,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, TEMPLATE, NOINCLUDE>{noincludeclose} {
+<NORMAL, TABLE, TD, TH, TC, TEMPLATE, NOINCLUDE>{noincludeclose} {
     logger.finer("noincludeclose: " + yytext() + " (" + yystate() + ")");
     if (this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         endState();
@@ -587,7 +469,7 @@ wikisig5           = "~~~~~"
 
 /* ----- wiki links ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{imagelinkcaption} {
+<NORMAL, TABLE, TD, TH, TC, PRESAVE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -600,7 +482,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikilink} {
+<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -613,7 +495,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmllink} {
+<NORMAL, TABLE, TD, TH, TC>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -626,7 +508,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmllinkraw} {
+<NORMAL, TABLE, TD, TH, TC>{htmllinkraw} {
     logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -641,7 +523,7 @@ wikisig5           = "~~~~~"
 
 /* ----- signatures ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig3} {
+<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikisig3} {
     logger.finer("wikisig3: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -654,7 +536,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig4} {
+<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikisig4} {
     logger.finer("wikisig4: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -667,7 +549,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig5} {
+<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikisig5} {
     logger.finer("wikisig5: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -814,40 +696,49 @@ wikisig5           = "~~~~~"
 
 /* ----- lists ----- */
 
-<NORMAL, TABLE, TD, TH, TC>^{listitem} {
-    logger.finer("start of list: " + yytext() + " (" + yystate() + ")");
-    // switch to list processing mode
-    beginState(LIST);
-    // now that state is list, push back and re-process this line
-    yypushback(yylength());
-    return "";
+<NORMAL, TABLE, TD, TH, TC, LIST>^{listitem} {
+    logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
+    if (yystate() != LIST) beginState(LIST);
+    String raw = yytext();
+    try {
+        WikiListTag wikiListTag = new WikiListTag();
+        String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
-<LIST>^{listitem} {
-    logger.finer("list item: " + yytext() + " (" + yystate() + ")");
-    // process list item content (without the list markup)
-    String output = listItem(yytext());
-    yypushback(yylength() - listTagCount(yytext()));
-    return output;
-}
-
-<LIST>^{listend} {
-    logger.finer("end of list: " + yytext() + " (" + yystate() + ")");
-    // end of list, switch back to normal processing mode
+<NORMAL, TABLE, TD, TH, TC, LIST>^{listend} {
+    logger.finer("listend: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
     endState();
-    yypushback(yylength());
-    return closeList();
+    // pattern matches two lines, so get the list item, then rollback the following line
+    int pos = raw.indexOf("\n") + 1;
+    yypushback(raw.length() - pos);
+    raw = raw.substring(0, pos);
+    try {
+        WikiListTag wikiListTag = new WikiListTag();
+        String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        // close open list tags
+        value += wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, null);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- bold / italic ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{bold} {
+<NORMAL, TABLE, TD, TH, TC>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     wikibold = !wikibold;
     return (wikibold) ? "<b>" : "</b>";
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{italic} {
+<NORMAL, TABLE, TD, TH, TC>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     wikiitalic = !wikiitalic;
     return (wikiitalic) ? "<i>" : "</i>";
@@ -855,24 +746,24 @@ wikisig5           = "~~~~~"
 
 /* ----- html ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltagopen} {
+<NORMAL, TABLE, TD, TH, TC>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltagclose} {
+<NORMAL, TABLE, TD, TH, TC>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{htmltagattributes} {
+<NORMAL, TABLE, TD, TH, TC>{htmltagattributes} {
     logger.finer("htmltagattributes: " + yytext() + " (" + yystate() + ")");
     return (allowHTML()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 /* ----- javascript ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{jsopen} {
+<NORMAL, TABLE, TD, TH, TC>{jsopen} {
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -881,7 +772,7 @@ wikisig5           = "~~~~~"
     return Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>{jsattributes} {
+<NORMAL, TABLE, TD, TH, TC>{jsattributes} {
     logger.finer("jsattributes: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -901,36 +792,36 @@ wikisig5           = "~~~~~"
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{lessthan} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{lessthan} {
     logger.finer("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&lt;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{greaterthan} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{greaterthan} {
     logger.finer("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&gt;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{quotation} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{quotation} {
     logger.finer("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&quot;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST>{apostrophe} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{apostrophe} {
     logger.finer("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&#39;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT, PRESAVE>{whitespace} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, JAVASCRIPT, PRESAVE>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, LIST, JAVASCRIPT, PRESAVE>. {
+<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, JAVASCRIPT, PRESAVE>. {
     // no need to log this
     return yytext();
 }
