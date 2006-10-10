@@ -26,9 +26,9 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class HtmlLinkHandler {
+public class HtmlLinkTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HtmlLinkHandler.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
 
 	/**
 	 * Given a String that represents a Wiki HTML link (a URL with an optional

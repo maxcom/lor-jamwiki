@@ -19,7 +19,6 @@ package org.jamwiki.parser.jflex;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
@@ -30,7 +29,6 @@ import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -43,9 +41,6 @@ public class ParserUtil {
 	private static Pattern TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
-	private static Pattern IMAGE_SIZE_PATTERN = null;
-	// FIXME - make configurable
-	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
 	static {
 		try {
@@ -54,8 +49,6 @@ public class ParserUtil {
 			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
 			// catch script insertions that use a javascript url
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
-			// look for image size info in image tags
-			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -129,58 +122,6 @@ public class ParserUtil {
 			// FIXME - return empty or a failure indicator?
 			return "";
 		}
-	}
-
-	/**
-	 *
-	 */
-	public static String parseImageLink(ParserInput parserInput, WikiLink wikiLink) throws Exception {
-		String context = parserInput.getContext();
-		String virtualWiki = parserInput.getVirtualWiki();
-		boolean thumb = false;
-		boolean frame = false;
-		String caption = null;
-		String align = null;
-		int maxDimension = -1;
-		if (StringUtils.hasText(wikiLink.getText())) {
-			StringTokenizer tokens = new StringTokenizer(wikiLink.getText(), "|");
-			while (tokens.hasMoreTokens()) {
-				String token = tokens.nextToken();
-				if (!StringUtils.hasText(token)) continue;
-				if (token.equalsIgnoreCase("noframe")) {
-					frame = false;
-				} else if (token.equalsIgnoreCase("frame")) {
-					frame = true;
-				} else if (token.equalsIgnoreCase("thumb")) {
-					thumb = true;
-				} else if (token.equalsIgnoreCase("right")) {
-					align = "right";
-				} else if (token.equalsIgnoreCase("left")) {
-					align = "left";
-				} else if (token.equalsIgnoreCase("center")) {
-					align = "center";
-				} else {
-					Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
-					if (m.find()) {
-						maxDimension = new Integer(m.group(1)).intValue();
-					} else {
-						// FIXME - this is a hack.  images may contain piped links, so if
-						// there was previous caption info append the new info.
-						if (!StringUtils.hasText(caption)) {
-							caption = token;
-						} else {
-							caption += "|" + token;
-						}
-					}
-				}
-			}
-			if (thumb && maxDimension <= 0) {
-				maxDimension = DEFAULT_THUMBNAIL_SIZE;
-			}
-			caption = ParserUtil.parseFragment(parserInput, caption, ParserMode.MODE_NORMAL);
-		}
-		// do not escape html for caption since parser does it above
-		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
 	}
 
 	/**

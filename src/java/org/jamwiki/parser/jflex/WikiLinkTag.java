@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
@@ -32,14 +33,19 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class WikiLinkHandler {
+public class WikiLinkTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiLinkHandler.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
 	private static Pattern WIKI_LINK_PATTERN = null;
+	private static Pattern IMAGE_SIZE_PATTERN = null;
+	// FIXME - make configurable
+	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 
 	static {
 		try {
 			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]");
+			// look for image size info in image tags
+			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -48,7 +54,7 @@ public class WikiLinkHandler {
 	/**
 	 *
 	 */
-	private String buildInternalLinkUrl(ParserInput parserInput, String raw) {
+	private String buildInternalLinkUrl(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		try {
@@ -63,7 +69,7 @@ public class WikiLinkHandler {
 			}
 			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
-				return ParserUtil.parseImageLink(parserInput, wikiLink);
+				return this.parseImageLink(parserInput, wikiLink);
 			}
 			if (StringUtils.hasText(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
 				// inter-wiki link
@@ -107,6 +113,58 @@ public class WikiLinkHandler {
 	}
 
 	/**
+	 *
+	 */
+	private String parseImageLink(ParserInput parserInput, WikiLink wikiLink) throws Exception {
+		String context = parserInput.getContext();
+		String virtualWiki = parserInput.getVirtualWiki();
+		boolean thumb = false;
+		boolean frame = false;
+		String caption = null;
+		String align = null;
+		int maxDimension = -1;
+		if (StringUtils.hasText(wikiLink.getText())) {
+			StringTokenizer tokens = new StringTokenizer(wikiLink.getText(), "|");
+			while (tokens.hasMoreTokens()) {
+				String token = tokens.nextToken();
+				if (!StringUtils.hasText(token)) continue;
+				if (token.equalsIgnoreCase("noframe")) {
+					frame = false;
+				} else if (token.equalsIgnoreCase("frame")) {
+					frame = true;
+				} else if (token.equalsIgnoreCase("thumb")) {
+					thumb = true;
+				} else if (token.equalsIgnoreCase("right")) {
+					align = "right";
+				} else if (token.equalsIgnoreCase("left")) {
+					align = "left";
+				} else if (token.equalsIgnoreCase("center")) {
+					align = "center";
+				} else {
+					Matcher m = IMAGE_SIZE_PATTERN.matcher(token);
+					if (m.find()) {
+						maxDimension = new Integer(m.group(1)).intValue();
+					} else {
+						// FIXME - this is a hack.  images may contain piped links, so if
+						// there was previous caption info append the new info.
+						if (!StringUtils.hasText(caption)) {
+							caption = token;
+						} else {
+							caption += "|" + token;
+						}
+					}
+				}
+			}
+			if (thumb && maxDimension <= 0) {
+				maxDimension = DEFAULT_THUMBNAIL_SIZE;
+			}
+			caption = ParserUtil.parseFragment(parserInput, caption, ParserMode.MODE_NORMAL);
+		}
+		// do not escape html for caption since parser does it above
+		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
+	}
+
+	/**
 	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
 	 * object representing the link.
 	 *
@@ -141,7 +199,7 @@ public class WikiLinkHandler {
 			// category tag, but not a category link
 			return "";
 		}
-		return this.buildInternalLinkUrl(parserInput, raw);
+		return this.buildInternalLinkUrl(parserInput, parserOutput, mode, raw);
 	}
 
 	/**

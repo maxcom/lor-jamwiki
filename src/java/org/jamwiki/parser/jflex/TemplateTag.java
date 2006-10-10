@@ -30,9 +30,9 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class TemplateHandler {
+public class TemplateTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(TemplateHandler.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	private static Pattern PARAM_NAME_PATTERN = null;
 	private Hashtable parameterValues = new Hashtable();
 

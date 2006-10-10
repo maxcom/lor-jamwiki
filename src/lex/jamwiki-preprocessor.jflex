@@ -544,8 +544,8 @@ wikisig5           = "~~~~~"
         String value = new String(this.templateString);
         this.templateString = "";
         try {
-            TemplateHandler templateHandler = new TemplateHandler();
-            value = templateHandler.parse(this.parserInput, this.parserOutput, this.mode, value);
+            TemplateTag templateTag = new TemplateTag();
+            value = templateTag.parse(this.parserInput, this.parserOutput, this.mode, value);
             return value;
         } catch (Exception e) {
             logger.severe("Unable to parse " + this.templateString, e);
@@ -626,8 +626,8 @@ wikisig5           = "~~~~~"
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
-        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
-        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        WikiLinkTag wikiLinkTag = new WikiLinkTag();
+        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -639,8 +639,8 @@ wikisig5           = "~~~~~"
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
-        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
-        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        WikiLinkTag wikiLinkTag = new WikiLinkTag();
+        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -652,8 +652,8 @@ wikisig5           = "~~~~~"
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
-        HtmlLinkHandler htmlLinkHandler = new HtmlLinkHandler();
-        String value = htmlLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        HtmlLinkTag htmlLinkTag = new HtmlLinkTag();
+        String value = htmlLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -665,8 +665,8 @@ wikisig5           = "~~~~~"
     logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
-        HtmlLinkHandler htmlLinkHandler = new HtmlLinkHandler();
-        String value = htmlLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        HtmlLinkTag htmlLinkTag = new HtmlLinkTag();
+        String value = htmlLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -685,8 +685,8 @@ wikisig5           = "~~~~~"
     String text = ParserUtil.buildWikiSignature(this.parserInput, true, false, this.mode);
     // process link metadata
     try {
-        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
-        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, text);
+        WikiLinkTag wikiLinkTag = new WikiLinkTag();
+        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, text);
     } catch (Exception e) {
         logger.severe("Unable to parse " + text, e);
     }
@@ -702,8 +702,8 @@ wikisig5           = "~~~~~"
     String text = ParserUtil.buildWikiSignature(this.parserInput, true, true, this.mode);
     // process link metadata
     try {
-        WikiLinkHandler wikiLinkHandler = new WikiLinkHandler();
-        String value = wikiLinkHandler.parse(this.parserInput, this.parserOutput, this.mode, text);
+        WikiLinkTag wikiLinkTag = new WikiLinkTag();
+        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, text);
     } catch (Exception e) {
         logger.severe("Unable to parse " + text, e);
     }
