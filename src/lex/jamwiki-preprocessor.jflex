@@ -223,12 +223,8 @@ bold               = "'''"
 italic             = "''"
 
 /* lists */
-/*
-  the approach is to match the entire list item, change to a list state,
-  parse out the lists tags, and then re-parse the remaining content.
-*/
-listitem           = [\*#\:;]+ [^\n\r]* [\n\r]+
-listend            = [\*#\:;]+ [^\n\r]* [\n\r]+ [^\*#\:;\r\n]+
+listitem           = [\*#\:;]+ [^\*#\:;\r\n]
+listend            = [^\*#\:;\r\n]+ (.)+
 
 /* nowiki */
 nowikistart        = (<[ ]*nowiki[ ]*>)
@@ -301,7 +297,7 @@ wikisig5           = "~~~~~"
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL, TABLE, TD, TH, TC, PRESAVE>{nowikistart} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{nowikistart} {
     logger.finer("nowikistart: " + yytext() + " (" + yystate() + ")");
     beginState(NOWIKI);
     return yytext();
@@ -315,7 +311,7 @@ wikisig5           = "~~~~~"
 
 /* ----- pre ----- */
 
-<NORMAL, TABLE, TD, TH, TC, PRESAVE>{htmlprestart} {
+<NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHTML || !standardMode()) {
         beginState(PRE);
@@ -331,7 +327,7 @@ wikisig5           = "~~~~~"
     return yytext();
 }
 
-<NORMAL, TABLE, TD, TH, TC, WIKIPRE, PRESAVE>^{wikiprestart} {
+<NORMAL, LIST, TABLE, TD, TH, TC, WIKIPRE, PRESAVE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(1);
@@ -352,13 +348,13 @@ wikisig5           = "~~~~~"
 
 /* ----- processing commands ----- */
 
-<NORMAL, TABLE, TD, TH, TC>{notoc} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{notoc} {
     logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC>{toc} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     return yytext();
@@ -366,7 +362,7 @@ wikisig5           = "~~~~~"
 
 /* ----- templates ----- */
 
-<NORMAL, TABLE, TD, TH, TC, TEMPLATE>{templatestart} {
+<NORMAL, LIST, TABLE, TD, TH, TC, TEMPLATE>{templatestart} {
     logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES)) {
@@ -425,7 +421,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, TEMPLATE>{includeonlyopen} {
+<NORMAL, LIST, TABLE, TD, TH, TC, TEMPLATE>{includeonlyopen} {
     logger.finer("includeonlyopen: " + yytext() + " (" + yystate() + ")");
     if (!this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         yybegin(INCLUDEONLY);
@@ -433,7 +429,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, TEMPLATE, INCLUDEONLY>{includeonlyclose} {
+<NORMAL, LIST, TABLE, TD, TH, TC, TEMPLATE, INCLUDEONLY>{includeonlyclose} {
     logger.finer("includeonlyclose: " + yytext() + " (" + yystate() + ")");
     if (!this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         endState();
@@ -441,7 +437,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, TEMPLATE>{noincludeopen} {
+<NORMAL, LIST, TABLE, TD, TH, TC, TEMPLATE>{noincludeopen} {
     logger.finer("noincludeopen: " + yytext() + " (" + yystate() + ")");
     if (this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         yybegin(NOINCLUDE);
@@ -449,7 +445,7 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TABLE, TD, TH, TC, TEMPLATE, NOINCLUDE>{noincludeclose} {
+<NORMAL, LIST, TABLE, TD, TH, TC, TEMPLATE, NOINCLUDE>{noincludeclose} {
     logger.finer("noincludeclose: " + yytext() + " (" + yystate() + ")");
     if (this.mode.hasMode(ParserMode.MODE_TEMPLATE)) {
         endState();
@@ -469,7 +465,7 @@ wikisig5           = "~~~~~"
 
 /* ----- wiki links ----- */
 
-<NORMAL, TABLE, TD, TH, TC, PRESAVE>{imagelinkcaption} {
+<NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -482,7 +478,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikilink} {
+<NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -495,7 +491,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC>{htmllink} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -508,7 +504,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC>{htmllinkraw} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmllinkraw} {
     logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -523,7 +519,7 @@ wikisig5           = "~~~~~"
 
 /* ----- signatures ----- */
 
-<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikisig3} {
+<NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{wikisig3} {
     logger.finer("wikisig3: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -536,7 +532,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikisig4} {
+<NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{wikisig4} {
     logger.finer("wikisig4: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -549,7 +545,7 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, PRESAVE>{wikisig5} {
+<NORMAL, LIST, TABLE, TD, TH, TC, PRESAVE>{wikisig5} {
     logger.finer("wikisig5: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
@@ -564,7 +560,7 @@ wikisig5           = "~~~~~"
 
 /* ----- tables ----- */
 
-<NORMAL, TABLE, TD, TH, TC>^{tablestart} {
+<NORMAL, LIST, TABLE, TD, TH, TC>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
     String attributes = yytext().substring(2).trim();
@@ -668,7 +664,7 @@ wikisig5           = "~~~~~"
 
 /* ----- comments ----- */
 
-<NORMAL, TABLE, TD, TH, TC>{htmlcomment} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
     // remove comment
     return "";
@@ -696,10 +692,12 @@ wikisig5           = "~~~~~"
 
 /* ----- lists ----- */
 
-<NORMAL, TABLE, TD, TH, TC, LIST>^{listitem} {
+<NORMAL, LIST, TABLE, TD, TH, TC>^{listitem} {
     logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
     if (yystate() != LIST) beginState(LIST);
     String raw = yytext();
+    // one non-list character matched, roll it back
+    yypushback(1);
     try {
         WikiListTag wikiListTag = new WikiListTag();
         String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
@@ -710,35 +708,32 @@ wikisig5           = "~~~~~"
     }
 }
 
-<NORMAL, TABLE, TD, TH, TC, LIST>^{listend} {
+<LIST>^{listend} {
     logger.finer("listend: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
+    // roll back any matches to allow re-parsing
+    yypushback(raw.length());
     endState();
-    // pattern matches two lines, so get the list item, then rollback the following line
-    int pos = raw.indexOf("\n") + 1;
-    yypushback(raw.length() - pos);
-    raw = raw.substring(0, pos);
     try {
         WikiListTag wikiListTag = new WikiListTag();
-        String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
         // close open list tags
-        value += wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, null);
+        String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, null);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
-        return raw;
+        return "";
     }
 }
 
 /* ----- bold / italic ----- */
 
-<NORMAL, TABLE, TD, TH, TC>{bold} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     wikibold = !wikibold;
     return (wikibold) ? "<b>" : "</b>";
 }
 
-<NORMAL, TABLE, TD, TH, TC>{italic} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     wikiitalic = !wikiitalic;
     return (wikiitalic) ? "<i>" : "</i>";
@@ -746,24 +741,24 @@ wikisig5           = "~~~~~"
 
 /* ----- html ----- */
 
-<NORMAL, TABLE, TD, TH, TC>{htmltagopen} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC>{htmltagclose} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC>{htmltagattributes} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagattributes} {
     logger.finer("htmltagattributes: " + yytext() + " (" + yystate() + ")");
     return (allowHTML()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
 }
 
 /* ----- javascript ----- */
 
-<NORMAL, TABLE, TD, TH, TC>{jsopen} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{jsopen} {
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -772,7 +767,7 @@ wikisig5           = "~~~~~"
     return Utilities.escapeHTML(yytext());
 }
 
-<NORMAL, TABLE, TD, TH, TC>{jsattributes} {
+<NORMAL, LIST, TABLE, TD, TH, TC>{jsattributes} {
     logger.finer("jsattributes: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -792,36 +787,36 @@ wikisig5           = "~~~~~"
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{lessthan} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, LIST, TABLE, TD, TH, TC>{lessthan} {
     logger.finer("lessthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&lt;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{greaterthan} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, LIST, TABLE, TD, TH, TC>{greaterthan} {
     logger.finer("greaterthan: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&gt;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{quotation} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, LIST, TABLE, TD, TH, TC>{quotation} {
     logger.finer("quotation: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&quot;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC>{apostrophe} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, LIST, TABLE, TD, TH, TC>{apostrophe} {
     logger.finer("apostrophe: " + yytext() + " (" + yystate() + ")");
     // escape html not recognized by above tags
     return (standardMode()) ? "&#39;" : yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, JAVASCRIPT, PRESAVE>{whitespace} {
+<WIKIPRE, PRE, NOWIKI, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT, PRESAVE>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NOWIKI, NORMAL, TABLE, TD, TH, TC, JAVASCRIPT, PRESAVE>. {
+<WIKIPRE, PRE, NOWIKI, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT, PRESAVE>. {
     // no need to log this
     return yytext();
 }

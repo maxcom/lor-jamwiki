@@ -80,7 +80,7 @@ public class WikiListTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String listItem(ParserInput parserInput, ParserMode mode, String raw) throws Exception {
+	private String listItem(ParserInput parserInput, String raw) {
 		Stack listOpenStack = retrieveStack(parserInput, LIST_OPEN_STACK);
 		Stack listCloseStack = retrieveStack(parserInput, LIST_CLOSE_STACK);
 		int count = 0;
@@ -89,7 +89,6 @@ public class WikiListTag implements ParserTag {
 			count++;
 		}
 		String tags = raw.substring(0, count);
-		String text = (raw.length() >= count) ? raw.substring(count).trim() : "";
 		// get opening and closing tag for current list item
 		String currentTag = "" + tags.charAt(count - 1);
 		String currentItemOpenTag = (String)listItemOpenHash.get(currentTag);
@@ -113,9 +112,8 @@ public class WikiListTag implements ParserTag {
 			listOpenStack.pop();
 			output.append(listCloseStack.pop());
 		}
-		// if continuing the same list, process normally
 		if (currentOpenStack.equals(listOpenStack)) {
-			// close previous list element & open new element
+			// if continuing same list close previous list item & open new item
 			output.append(currentItemCloseTag);
 			output.append(currentItemOpenTag);
 		} else {
@@ -141,7 +139,6 @@ public class WikiListTag implements ParserTag {
 				output.append(openTag);
 			}
 		}
-		output.append(ParserUtil.parseFragment(parserInput, text, mode.getMode()));
 		updateStack(parserInput, listOpenStack, LIST_OPEN_STACK);
 		updateStack(parserInput, listCloseStack, LIST_CLOSE_STACK);
 		return output.toString();
@@ -163,14 +160,14 @@ public class WikiListTag implements ParserTag {
 	}
 
 	/**
-	 * Parse a Mediawiki list tag of the form "#* text" and return the
-	 * resulting HTML output.
+	 * Parse a Mediawiki list tag of the form "#*" and return the resulting
+	 * HTML output.
 	 */
 	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
 		if (raw == null || raw.length() == 0 || !isListTag(raw.charAt(0))) {
 			return this.closeList(parserInput);
 		} else {
-			return listItem(parserInput, mode, raw);
+			return listItem(parserInput, raw);
 		}
 	}
 
