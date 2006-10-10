@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class TemplateTag {
+public class TemplateTag implements ParserTag {
 
 	private static WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	private static Pattern PARAM_NAME_PATTERN = null;

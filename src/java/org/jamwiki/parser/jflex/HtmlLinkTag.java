@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class HtmlLinkTag {
+public class HtmlLinkTag implements ParserTag {
 
 	private static WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
 

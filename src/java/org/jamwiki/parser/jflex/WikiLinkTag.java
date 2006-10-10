@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class WikiLinkTag {
+public class WikiLinkTag implements ParserTag {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
 	private static Pattern WIKI_LINK_PATTERN = null;

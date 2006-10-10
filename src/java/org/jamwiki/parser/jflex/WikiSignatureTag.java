@@ -30,7 +30,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  *
  */
-public class WikiSignatureTag {
+public class WikiSignatureTag implements ParserTag {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiSignatureTag.class.getName());
 
