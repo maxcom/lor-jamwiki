@@ -678,45 +678,41 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig3} {
     logger.finer("wikisig3: " + yytext() + " (" + yystate() + ")");
-    if (this.mode.hasMode(ParserMode.MODE_SEARCH)) {
-        // called from search indexer, no need to parse signatures
-        return yytext();
-    }
-    String text = ParserUtil.buildWikiSignature(this.parserInput, true, false, this.mode);
-    // process link metadata
+    String raw = yytext();
     try {
-        WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, text);
+        WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
+        String value = wikiSignatureTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + text, e);
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
     }
-    return text;
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig4} {
     logger.finer("wikisig4: " + yytext() + " (" + yystate() + ")");
-    if (this.mode.hasMode(ParserMode.MODE_SEARCH)) {
-        // called from search indexer, no need to parse signatures
-        return yytext();
-    }
-    String text = ParserUtil.buildWikiSignature(this.parserInput, true, true, this.mode);
-    // process link metadata
+    String raw = yytext();
     try {
-        WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, text);
+        WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
+        String value = wikiSignatureTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + text, e);
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
     }
-    return text;
 }
 
 <NORMAL, TABLE, TD, TH, TC, LIST, PRESAVE>{wikisig5} {
     logger.finer("wikisig5: " + yytext() + " (" + yystate() + ")");
-    if (this.mode.hasMode(ParserMode.MODE_SEARCH)) {
-        // called from search indexer, no need to parse signatures
-        return yytext();
+    String raw = yytext();
+    try {
+        WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
+        String value = wikiSignatureTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
     }
-    return ParserUtil.buildWikiSignature(this.parserInput, false, true, this.mode);
 }
 
 /* ----- tables ----- */

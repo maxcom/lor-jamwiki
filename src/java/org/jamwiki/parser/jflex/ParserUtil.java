@@ -17,13 +17,9 @@
 package org.jamwiki.parser.jflex;
 
 import java.io.StringReader;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
@@ -70,58 +66,6 @@ public class ParserUtil {
 		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
 		output += "</a>]</div>";
 		return output;
-	}
-
-	/**
-	 *
-	 */
-	public static String buildWikiSignature(ParserInput parserInput, boolean includeUser, boolean includeDate, ParserMode mode) {
-		try {
-			String signature = "";
-			if (includeUser) {
-				String context = parserInput.getContext();
-				String virtualWiki = parserInput.getVirtualWiki();
-				String login = parserInput.getUserIpAddress();
-				String email = parserInput.getUserIpAddress();
-				String displayName = parserInput.getUserIpAddress();
-				String userId = "-1";
-				if (parserInput.getWikiUser() != null) {
-					WikiUser user = parserInput.getWikiUser();
-					login = user.getLogin();
-					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
-					email = user.getEmail();
-					userId = new Integer(user.getUserId()).toString();
-				}
-				String text = parserInput.getUserIpAddress();
-				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
-				Object params[] = new Object[7];
-				params[0] = WikiBase.NAMESPACE_USER + WikiBase.NAMESPACE_SEPARATOR + login;
-				// FIXME - hard coding
-				params[1] = WikiBase.NAMESPACE_SPECIAL + WikiBase.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
-				params[2] = WikiBase.NAMESPACE_USER_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + login;
-				params[3] = login;
-				params[4] = displayName;
-				params[5] = email;
-				params[6] = userId;
-				signature = formatter.format(params);
-				if (!mode.hasMode(ParserMode.MODE_SAVE)) {
-					signature = ParserUtil.parseFragment(parserInput, signature, mode.getMode());
-				}
-			}
-			if (includeUser && includeDate) {
-				signature += " ";
-			}
-			if (includeDate) {
-				SimpleDateFormat format = new SimpleDateFormat();
-				format.applyPattern(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN));
-				signature += format.format(new java.util.Date());
-			}
-			return signature;
-		} catch (Exception e) {
-			logger.severe("Failure while building wiki signature", e);
-			// FIXME - return empty or a failure indicator?
-			return "";
-		}
 	}
 
 	/**
