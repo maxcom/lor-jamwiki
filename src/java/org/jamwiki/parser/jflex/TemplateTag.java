@@ -24,6 +24,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 

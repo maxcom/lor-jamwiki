@@ -258,10 +258,6 @@ tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
 tableheadings      = "||" | "!!"
 tablerow           = "|-" {inputcharacter}* {newline}
 tablecaption       = "|+"
-includeonlyopen    = (<[ ]*includeonly[ ]*[\/]?[ ]*>)
-includeonlyclose   = (<[ ]*\/[ ]*includeonly[ ]*>)
-noincludeopen      = (<[ ]*noinclude[ ]*[\/]?[ ]*>)
-noincludeclose     = (<[ ]*\/[ ]*noinclude[ ]*>)
 
 /* wiki links */
 wikilink           = "[[" [^\]\n\r]+ "]]"
@@ -276,6 +272,10 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 templatestart      = "{{" ([^\{\}]+)
 templatestartchar  = "{"
 templateendchar    = "}"
+includeonlyopen    = (<[ ]*includeonly[ ]*[\/]?[ ]*>)
+includeonlyclose   = (<[ ]*\/[ ]*includeonly[ ]*>)
+noincludeopen      = (<[ ]*noinclude[ ]*[\/]?[ ]*>)
+noincludeclose     = (<[ ]*\/[ ]*noinclude[ ]*>)
 
 /* signatures */
 wikisig3           = "~~~"

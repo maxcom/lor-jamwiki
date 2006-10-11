@@ -14,14 +14,11 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser.jflex;
-
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
-import org.jamwiki.parser.ParserOutput;
+package org.jamwiki.parser;
 
 /**
- *
+ * A tag parses a specific set of Wiki syntax that has been passed to it.  This
+ * interface defines methods that must be implemented by each parser tag.
  */
 public interface ParserTag {
 
