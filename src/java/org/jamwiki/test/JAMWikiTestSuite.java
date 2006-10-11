@@ -37,7 +37,8 @@ public class JAMWikiTestSuite extends TestCase {
 	 */
 	public static Test suite() {
 		TestSuite s = new TestSuite();
-		s.addTestSuite(org.jamwiki.test.parser.jflex.JFlexParserTest.class);
+		s.addTestSuite(org.jamwiki.test.parser.jflex.WikiListTagTest.class);
+		s.addTestSuite(org.jamwiki.test.parser.jflex.WikiHeadingTagTest.class);
 		return s;
 	}
 }

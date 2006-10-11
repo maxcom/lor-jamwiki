@@ -40,19 +40,12 @@ public class JFlexParserTest extends TestCase {
 	/**
 	 *
 	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	/**
-	 *
-	 */
-	private String parse(String raw) {
+	protected String parse(String raw) {
 		ParserMode mode = new ParserMode(ParserMode.MODE_NORMAL);
 		// FIXME - hard coding
 		String topicName = "DUMMY";
 		ParserInput parserInput = new ParserInput();
-		parserInput.setContext("/wiki/");
+		parserInput.setContext("/wiki");
 		parserInput.setLocale(new Locale("en-US"));
 		parserInput.setWikiUser(null);
 		parserInput.setTopicName(topicName);
@@ -71,63 +64,7 @@ public class JFlexParserTest extends TestCase {
 	/**
 	 *
 	 */
-	public static Test suite() {
-		return new TestSuite(JFlexParserTest.class);
-	}
-
-	/**
-	 *
-	 */
-	public void testDefinitionList() {
-		String input = "";
-		String output = "";
-		input = ";first\n:second";
-		output = "<dl><dt>first\n</dt><dd>second\n</dd></dl>";
-		assertEquals(output, this.parse(input));
-		input = ";1\n::2.1\n;;2.2\n;2";
-		output = "<dl><dt>1\n<dl><dd>2.1\n</dd><dt>2.2\n</dt></dl></dt><dt>2\n</dt></dl>";
-		assertEquals(output, this.parse(input));
-	}
-
-	/**
-	 *
-	 */
-	public void testMixedList() {
-		String input = "";
-		String output = "";
-		input = "#1\n*2\n#3";
-		output = "<ol><li>1\n</li></ol><ul><li>2\n</li></ul><ol><li>3\n</li></ol>";
-		assertEquals(output, this.parse(input));
-		input = "#1\n#*1.1\n#*1.2\n#*:1.2.1\n#*;1.2.2\n#*;*1.2.2.1\n#*;1.2.3\n#2";
-		output = "<ol><li>1\n<ul><li>1.1\n</li><li>1.2\n<dl><dd>1.2.1\n</dd><dt>1.2.2\n<ul><li>1.2.2.1\n</li></ul></dt><dt>1.2.3\n</dt></dl></li></ul></li><li>2\n</li></ol>";
-		assertEquals(output, this.parse(input));
-	}
-
-	/**
-	 *
-	 */
-	public void testOrderedList() {
-		String input = "";
-		String output = "";
-		input = "#1\n#2";
-		output = "<ol><li>1\n</li><li>2\n</li></ol>";
-		assertEquals(output, this.parse(input));
-		input = "#1\n#2\n##2.1\n##2.2\n###2.2.1\n###2.2.2\n#3";
-		output = "<ol><li>1\n</li><li>2\n<ol><li>2.1\n</li><li>2.2\n<ol><li>2.2.1\n</li><li>2.2.2\n</li></ol></li></ol></li><li>3\n</li></ol>";
-		assertEquals(output, this.parse(input));
-	}
-
-	/**
-	 *
-	 */
-	public void testUnorderedList() {
-		String input = "";
-		String output = "";
-		input = "*1\n*2";
-		output = "<ul><li>1\n</li><li>2\n</li></ul>";
-		assertEquals(output, this.parse(input));
-		input = "*1\n**1.1\n**1.2\n***1.2.1\n***1.2.2\n*2";
-		output = "<ul><li>1\n<ul><li>1.1\n</li><li>1.2\n<ul><li>1.2.1\n</li><li>1.2.2\n</li></ul></li></ul></li><li>2\n</li></ul>";
-		assertEquals(output, this.parse(input));
+	protected void setUp() throws Exception {
+		super.setUp();
 	}
 }
