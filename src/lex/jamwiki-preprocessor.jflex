@@ -118,13 +118,6 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    protected boolean allowHTML() {
-        return (allowHTML && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
-    }
-    
-    /**
-     *
-     */
     protected boolean allowJavascript() {
         return (allowJavascript && yystate() != PRE && yystate() != NOWIKI && yystate() != WIKIPRE);
     }
@@ -214,7 +207,6 @@ lessthan           = "<"
 greaterthan        = ">"
 quotation          = "\""
 apostrophe         = "\'"
-htmlkeyword            = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
 
 /* non-container expressions */
 hr                 = "----"
@@ -237,12 +229,12 @@ wikiprestart       = (" ") ([^ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
+htmlkeyword        = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
 htmltag            = (<[ ]*[\/]?[ ]*) {htmlkeyword} ([ ]+[^>\/]+)* ([ ]*[\/]?[ ]*>)
 
 /* javascript */
-jsopen             = (<[ ]*script[ ]*[\/]?[ ]*>)
+jsopen             = (<[ ]*) script ([ ]+[^>\/]+)* ([ ]*[\/]?[ ]*>)
 jsclose            = (<[ ]*\/[ ]*script[ ]*>)
-jsattributes       = (<[ ]*script[ ]+[^>\/]+[\/]?[ ]*>)
 
 /* processing commands */
 notoc              = "__NOTOC__"
@@ -757,15 +749,6 @@ wikisig5           = "~~~~~"
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{jsopen} {
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
-    if (allowJavascript()) {
-        beginState(JAVASCRIPT);
-        return ParserUtil.sanitizeHtmlTag(yytext());
-    }
-    return Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, LIST, TABLE, TD, TH, TC>{jsattributes} {
-    logger.finer("jsattributes: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
         return ParserUtil.sanitizeHtmlTag(yytext());
