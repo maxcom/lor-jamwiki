@@ -266,10 +266,11 @@ noincludeclose     = (<[ ]*\/[ ]*noinclude[ ]*>)
 /* wiki links */
 wikilink           = "[[" [^\]\n\r]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
-htmllink           = "[" ({protocol}) ([^\]\n\r]+) "]"
-htmllinkraw        = ({protocol})  ([^ \n\r\t]+)
+htmllinkwiki       = "[" ({protocol}) ([^\]\n\r]+) "]"
+htmllinkraw        = ({protocol}) ([^ \n\r\t]+)
+htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 /* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllink}) [^\n\r\]\[]*)+ "]]"
+imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
 
 /* templates */
 templatestart      = "{{" ([^\{\}]+)
@@ -483,19 +484,6 @@ wikisig5           = "~~~~~"
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        HtmlLinkTag htmlLinkTag = new HtmlLinkTag();
-        String value = htmlLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
-        return raw;
-    }
-}
-
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmllinkraw} {
-    logger.finer("htmllinkraw: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     try {
         HtmlLinkTag htmlLinkTag = new HtmlLinkTag();
