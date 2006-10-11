@@ -58,7 +58,7 @@ public class HtmlLinkTag implements ParserTag {
 		String link = raw.trim();
 		// search for link text (space followed by text)
 		String punctuation = Utilities.extractTrailingPunctuation(link);
-		String text = "";
+		String text = null;
 		int pos = link.indexOf(' ');
 		if (pos == -1) {
 			pos = link.indexOf('\t');
@@ -69,7 +69,6 @@ public class HtmlLinkTag implements ParserTag {
 			punctuation = "";
 		} else {
 			link = link.substring(0, link.length() - punctuation.length()).trim();
-			text = link;
 		}
 		String html = this.linkHtml(link, text, punctuation);
 		return (html != null) ? html : raw;
@@ -86,39 +85,42 @@ public class HtmlLinkTag implements ParserTag {
 		link = StringUtils.replace(link, ">", "&gt;");
 		link = StringUtils.replace(link, "\"", "&quot;");
 		link = StringUtils.replace(link, "'", "&#39;");
-		text = Utilities.escapeHTML(text);
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("mailto://")) {
 			// fix bad mailto syntax
 			link = "mailto:" + link.substring("mailto://".length());
 		}
+		if (!StringUtils.hasText(text)) {
+			text = link;
+		}
+		text = Utilities.escapeHTML(text);
 		if (linkLower.startsWith("http://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if  (linkLower.startsWith("https://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("ftp://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("mailto:")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("news://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("telnet://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		} else if (linkLower.startsWith("file://")) {
 			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + link + "\" href=\"" + link + "\">" + text + "</a>"
+				 + text + "\" href=\"" + link + "\">" + text + "</a>"
 				 + punctuation;
 		}
 		return html;

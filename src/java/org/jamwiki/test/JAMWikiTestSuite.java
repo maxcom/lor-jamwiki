@@ -40,6 +40,7 @@ public class JAMWikiTestSuite extends TestCase {
 		s.addTestSuite(org.jamwiki.test.parser.jflex.WikiListTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.WikiHeadingTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlTagTest.class);
+		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlLinkTagTest.class);
 		return s;
 	}
 }
