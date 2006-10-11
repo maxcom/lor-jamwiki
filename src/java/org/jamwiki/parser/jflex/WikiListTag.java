@@ -17,6 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Stack;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
@@ -112,15 +113,16 @@ public class WikiListTag implements ParserTag {
 			listOpenStack.pop();
 			output.append(listCloseStack.pop());
 		}
-		if (currentOpenStack.equals(listOpenStack)) {
+		if (this.listStackEquals(currentOpenStack, listOpenStack)) {
 			// if continuing same list close previous list item & open new item
-			output.append(currentItemCloseTag);
+			output.append(listCloseStack.pop());
+			listCloseStack.push(currentItemCloseTag);
 			output.append(currentItemOpenTag);
 		} else {
 			// look for differences in the old list stack and the new list stack
 			int pos = 0;
 			while (pos < listOpenStack.size()) {
-				if (!listOpenStack.elementAt(pos).equals(currentOpenStack.elementAt(pos))) {
+				if (!this.listStackEquals(currentOpenStack.subList(0, pos), listOpenStack.subList(0, pos))) {
 					break;
 				}
 				pos++;
@@ -142,6 +144,30 @@ public class WikiListTag implements ParserTag {
 		updateStack(parserInput, listOpenStack, LIST_OPEN_STACK);
 		updateStack(parserInput, listCloseStack, LIST_CLOSE_STACK);
 		return output.toString();
+	}
+
+	/**
+	 *
+	 */
+	private boolean listStackEquals(List stack1, List stack2) {
+		int pos = 0;
+		String stack1Tag = "";
+		String stack2Tag = "";
+		if (stack1.size() != stack2.size()) return false;
+		while (pos < stack1.size() && pos < stack2.size()) {
+			stack1Tag = (String)stack1.get(pos);
+			stack2Tag = (String)stack2.get(pos);
+			if (!stack1Tag.equals(stack2Tag)) {
+				// definition lists are sneaky - <dd> and <dt> must be considered equal
+				if ((stack1Tag.equals("<dt>") || stack1Tag.equals("<dd>")) &&
+				    (stack2Tag.equals("<dd>") || stack2Tag.equals("<dt>"))) {
+					pos++;
+					continue;
+				}
+			}
+			pos++;
+		}
+		return true;
 	}
 
 	/**

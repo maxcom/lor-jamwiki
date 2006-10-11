@@ -85,7 +85,7 @@ public class JFlexParserTest extends TestCase {
 		output = "<dl><dt>first\n</dt><dd>second\n</dd></dl>";
 		assertEquals(output, this.parse(input));
 		input = ";1\n::2.1\n;;2.2\n;2";
-		output = "<dl><dt>1\n<dl><dd>2.1\n</dt><dt>2.2\n</dt></dl></dd></dl><dl><dt>2\n</dt></dl>";
+		output = "<dl><dt>1\n<dl><dd>2.1\n</dd><dt>2.2\n</dt></dl></dt><dt>2\n</dt></dl>";
 		assertEquals(output, this.parse(input));
 	}
 
