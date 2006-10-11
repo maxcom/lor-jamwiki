@@ -695,9 +695,9 @@ wikisig5           = "~~~~~"
 <NORMAL, LIST, TABLE, TD, TH, TC>^{listitem} {
     logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
     if (yystate() != LIST) beginState(LIST);
-    String raw = yytext();
     // one non-list character matched, roll it back
     yypushback(1);
+    String raw = yytext();
     try {
         WikiListTag wikiListTag = new WikiListTag();
         String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, raw);

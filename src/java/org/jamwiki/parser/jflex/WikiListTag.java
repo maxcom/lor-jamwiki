@@ -84,30 +84,11 @@ public class WikiListTag implements ParserTag {
 	private String listItem(ParserInput parserInput, String raw) {
 		Stack listOpenStack = retrieveStack(parserInput, LIST_OPEN_STACK);
 		Stack listCloseStack = retrieveStack(parserInput, LIST_CLOSE_STACK);
-		int count = 0;
-		for (int i=0; i < raw.length(); i++) {
-			if (!isListTag(raw.charAt(i))) break;
-			count++;
-		}
-		String tags = raw.substring(0, count);
-		// get opening and closing tag for current list item
-		String currentTag = "" + tags.charAt(count - 1);
-		String currentItemOpenTag = (String)listItemOpenHash.get(currentTag);
-		String currentItemCloseTag = (String)listCloseHash.get(currentItemOpenTag);
 		StringBuffer output = new StringBuffer();
 		// build a stack of html tags based on current values passed to lexer
-		Stack currentOpenStack = new Stack();
-		for (int i=0; i < tags.length(); i++) {
-			String tag = "" + tags.charAt(i);
-			String listOpenTag = (String)listOpenHash.get(tag);
-			String listItemOpenTag = (String)listItemOpenHash.get(tag);
-			if (listOpenTag == null || listItemOpenTag == null) {
-				logger.severe("Unknown list tag " + tag);
-				continue;
-			}
-			currentOpenStack.push(listOpenTag);
-			currentOpenStack.push(listItemOpenTag);
-		}
+		Stack currentOpenStack = tagsToStack(raw);
+		String currentItemOpenTag = (String)currentOpenStack.peek();
+		String currentItemCloseTag = (String)listCloseHash.get(currentItemOpenTag);
 		// if list was previously open to a greater depth, close the old list
 		while (listOpenStack.size() > currentOpenStack.size()) {
 			listOpenStack.pop();
@@ -122,7 +103,7 @@ public class WikiListTag implements ParserTag {
 			// look for differences in the old list stack and the new list stack
 			int pos = 0;
 			while (pos < listOpenStack.size()) {
-				if (!this.listStackEquals(currentOpenStack.subList(0, pos), listOpenStack.subList(0, pos))) {
+				if (!this.listStackEquals(currentOpenStack.subList(0, pos+1), listOpenStack.subList(0, pos+1))) {
 					break;
 				}
 				pos++;
@@ -154,7 +135,7 @@ public class WikiListTag implements ParserTag {
 		String stack1Tag = "";
 		String stack2Tag = "";
 		if (stack1.size() != stack2.size()) return false;
-		while (pos < stack1.size() && pos < stack2.size()) {
+		while (pos < stack1.size()) {
 			stack1Tag = (String)stack1.get(pos);
 			stack2Tag = (String)stack2.get(pos);
 			if (!stack1Tag.equals(stack2Tag)) {
@@ -164,6 +145,7 @@ public class WikiListTag implements ParserTag {
 					pos++;
 					continue;
 				}
+				return false;
 			}
 			pos++;
 		}
@@ -207,6 +189,32 @@ public class WikiListTag implements ParserTag {
 			parserInput.getTempParams().put(stackName, stack);
 		}
 		return stack;
+	}
+
+	/**
+	 *
+	 */
+	private Stack tagsToStack(String raw) {
+		int count = 0;
+		for (int i=0; i < raw.length(); i++) {
+			if (!isListTag(raw.charAt(i))) break;
+			count++;
+		}
+		String tags = raw.substring(0, count);
+		// build a stack of html tags based on current values passed to lexer
+		Stack currentOpenStack = new Stack();
+		for (int i=0; i < tags.length(); i++) {
+			String tag = "" + tags.charAt(i);
+			String listOpenTag = (String)listOpenHash.get(tag);
+			String listItemOpenTag = (String)listItemOpenHash.get(tag);
+			if (listOpenTag == null || listItemOpenTag == null) {
+				logger.severe("Unknown list tag " + tag);
+				continue;
+			}
+			currentOpenStack.push(listOpenTag);
+			currentOpenStack.push(listItemOpenTag);
+		}
+		return currentOpenStack;
 	}
 
 	/**
