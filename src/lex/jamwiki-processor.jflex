@@ -41,7 +41,7 @@ import org.springframework.util.StringUtils;
 %%
 
 %public
-%class JAMWikiPreProcessor
+%class JAMWikiProcessor
 %extends AbstractLexer
 %type String
 %unicode
@@ -107,7 +107,7 @@ import org.springframework.util.StringUtils;
 
 /* code copied verbatim into the generated .java file */
 %{
-    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
+    protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
     protected boolean allowHTML = false;
     protected boolean allowJavascript = false;
     protected boolean wikibold = false;

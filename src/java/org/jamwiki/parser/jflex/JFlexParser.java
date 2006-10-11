@@ -104,7 +104,7 @@ public class JFlexParser extends AbstractParser {
 	 * @return A ParserOutput object containing results of the parsing process.
 	 */
 	protected ParserOutput parsePreProcess(StringReader raw, ParserMode mode) throws Exception {
-		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
+		JAMWikiProcessor lexer = new JAMWikiProcessor(raw);
 		lexer.init(this.parserInput, mode);
 		return this.lex(lexer);
 	}
@@ -119,7 +119,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	public ParserOutput parsePreSave(String contents, ParserMode mode) throws Exception {
 		StringReader raw = new StringReader(contents);
-		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(raw);
+		JAMWikiProcessor lexer = new JAMWikiProcessor(raw);
 		lexer.init(this.parserInput, mode);
 		ParserOutput parserOutput = this.lex(lexer);
 		// verify whether or not this is a redirect
