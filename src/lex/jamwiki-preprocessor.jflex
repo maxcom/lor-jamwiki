@@ -214,7 +214,7 @@ lessthan           = "<"
 greaterthan        = ">"
 quotation          = "\""
 apostrophe         = "\'"
-htmltag            = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
+htmlkeyword            = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
 
 /* non-container expressions */
 hr                 = "----"
@@ -237,9 +237,7 @@ wikiprestart       = (" ") ([^ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
-htmltagopen        = (<[ ]*) {htmltag} ([ ]*[\/]?[ ]*>)
-htmltagclose       = (<[ ]*\/[ ]*) {htmltag} ([ ]*>)
-htmltagattributes  = (<[ ]*) {htmltag} ([ ]+[^>\/]+[\/]?[ ]*>)
+htmltag            = (<[ ]*[\/]?[ ]*) {htmlkeyword} ([ ]+[^>\/]+)* ([ ]*[\/]?[ ]*>)
 
 /* javascript */
 jsopen             = (<[ ]*script[ ]*[\/]?[ ]*>)
@@ -741,19 +739,18 @@ wikisig5           = "~~~~~"
 
 /* ----- html ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagopen} {
-    logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagclose} {
-    logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    return (allowHTML()) ? ParserUtil.sanitizeHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
-}
-
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagattributes} {
-    logger.finer("htmltagattributes: " + yytext() + " (" + yystate() + ")");
-    return (allowHTML()) ? ParserUtil.validateHtmlTag(yytext()) : Utilities.escapeHTML(yytext());
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltag} {
+    logger.finer("htmltag: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        HtmlTag htmlTag = new HtmlTag();
+        String value = htmlTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        // FIXME - what should be returned? escaped html?
+        return "";
+    }
 }
 
 /* ----- javascript ----- */

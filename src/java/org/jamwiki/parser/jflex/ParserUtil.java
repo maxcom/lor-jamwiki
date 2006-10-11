@@ -23,8 +23,6 @@ import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -40,7 +38,7 @@ public class ParserUtil {
 
 	static {
 		try {
-			TAG_PATTERN = Pattern.compile("<[ ]*([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
+			TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
 			// catch script insertions of the form "onsubmit="
 			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
 			// catch script insertions that use a javascript url
@@ -48,24 +46,6 @@ public class ParserUtil {
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
-	}
-
-	/**
-	 *
-	 */
-	protected static String buildSectionEditLink(ParserInput parserInput, int section) {
-		if (!parserInput.getAllowSectionEdit()) return "";
-		String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
-		String url = "";
-		try {
-			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
-		} catch (Exception e) {
-			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
-		}
-		output += "<a href=\"" + url + "\">";
-		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
-		output += "</a>]</div>";
-		return output;
 	}
 
 	/**
@@ -108,14 +88,20 @@ public class ParserUtil {
 			return tag;
 		}
 		String tagOpen = m.group(1);
-		String attributes = m.group(2);
-		String tagClose = m.group(4);
-		attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-		tag = "<" + tagOpen.toLowerCase().trim();
-		tag += attributes;
-		if (!attributes.endsWith(" ")) tag += " ";
+		String tagKeyword = m.group(2);
+		String attributes = m.group(3);
+		String tagClose = m.group(5);
+		tag = "<";
+		if (tagOpen.indexOf("/") != -1) {
+			tag += "/";
+		}
+		tag += tagKeyword.toLowerCase().trim();
+		if (StringUtils.hasText(attributes)) {
+			attributes = ParserUtil.validateHtmlTagAttributes(attributes);
+			tag += " " + attributes.trim();
+		}
 		if (tagClose.indexOf("/") != -1) {
-			tagClose = "/>";
+			tagClose = " />";
 		}
 		tag += tagClose.trim();
 		return tag;

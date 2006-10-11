@@ -20,6 +20,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.TableOfContents;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,24 @@ import org.springframework.util.StringUtils;
 public class WikiHeadingTag implements ParserTag {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
+
+	/**
+	 *
+	 */
+	private String buildSectionEditLink(ParserInput parserInput, int section) {
+		if (!parserInput.getAllowSectionEdit()) return "";
+		String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
+		String url = "";
+		try {
+			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
+		} catch (Exception e) {
+			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
+		}
+		output += "<a href=\"" + url + "\">";
+		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
+		output += "</a>]</div>";
+		return output;
+	}
 
 	/**
 	 * Parse a Mediawiki heading of the form "==heading==" and return the
@@ -55,7 +74,7 @@ public class WikiHeadingTag implements ParserTag {
 		String tagName = tocText;
 		String output = this.updateToc(parserInput, tagName, tocText, level);
 		int nextSection = parserInput.getTableOfContents().size();
-		output += ParserUtil.buildSectionEditLink(parserInput, nextSection);
+		output += this.buildSectionEditLink(parserInput, nextSection);
 		output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
 		output += "<h" + level + ">";
 		output += ParserUtil.parseFragment(parserInput, tagText, mode.getMode());
