@@ -23,7 +23,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -86,7 +86,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 * Utility method for executing a lexer parse.
 	 */
-	private ParserOutput lex(AbstractLexer lexer) throws Exception {
+	private ParserDocument lex(AbstractLexer lexer) throws Exception {
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
 		if (this.parserInput.getDepth() > 100) {
@@ -99,10 +99,10 @@ public class JFlexParser extends AbstractParser {
 			if (line == null) break;
 			content.append(line);
 		}
-		ParserOutput parserOutput = lexer.getParserOutput();
-		parserOutput.setContent(content.toString());
+		ParserDocument parserDocument = lexer.getParserDocument();
+		parserDocument.setContent(content.toString());
 		this.parserInput.decrementDepth();
-		return parserOutput;
+		return parserDocument;
 	}
 
 	/**
@@ -113,42 +113,42 @@ public class JFlexParser extends AbstractParser {
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
-	public ParserOutput parseFragment(String raw, int mode) throws Exception {
+	public ParserDocument parseFragment(String raw, int mode) throws Exception {
 		StringReader reader = new StringReader(raw);
 		// maintain the original output, which has all of the category and link info
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
-		ParserOutput parserOutput = this.parsePreProcess(reader, preMode);
+		ParserDocument parserDocument = new ParserDocument();
+		parserDocument = this.parsePreProcess(reader, parserDocument, preMode);
 		if (mode >= JFlexParser.MODE_PROCESS) {
-			reader = new StringReader(parserOutput.getContent());
-			// FIXME - metadata in parser output now lost
-			parserOutput = this.parseProcess(reader, JFlexParser.MODE_PROCESS);
+			reader = new StringReader(parserDocument.getContent());
+			parserDocument = this.parseProcess(reader, parserDocument, JFlexParser.MODE_PROCESS);
 		}
-		return parserOutput;
+		return parserDocument;
 	}
 
 	/**
 	 * Parse text for online display.
 	 */
-	public ParserOutput parseHTML(String raw) throws Exception {
+	public ParserDocument parseHTML(String raw) throws Exception {
 		long start = System.currentTimeMillis();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		raw += '\n';
 		StringReader reader = new StringReader(raw);
 		// maintain the original output, which has all of the category and link info
-		ParserOutput parserOutput = this.parsePreProcess(reader, JFlexParser.MODE_PREPROCESS);
-		reader = new StringReader(parserOutput.getContent());
-		// FIXME - metadata in parser output now lost
-		parserOutput = this.parseProcess(reader, JFlexParser.MODE_PROCESS);
-		reader = new StringReader(parserOutput.getContent());
-		parserOutput = this.parsePostProcess(reader, JFlexParser.MODE_LAYOUT);
+		ParserDocument parserDocument = new ParserDocument();
+		parserDocument = this.parsePreProcess(reader, parserDocument, JFlexParser.MODE_PREPROCESS);
+		reader = new StringReader(parserDocument.getContent());
+		parserDocument = this.parseProcess(reader, parserDocument, JFlexParser.MODE_PROCESS);
+		reader = new StringReader(parserDocument.getContent());
+		parserDocument = this.parsePostProcess(reader, parserDocument, JFlexParser.MODE_LAYOUT);
 		if (StringUtils.hasText(this.isRedirect(raw))) {
 			// redirects are parsed differently
-			parserOutput = this.parseRedirect(raw);
+			parserDocument = this.parseRedirect(raw, parserDocument);
 		}
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserOutput;
+		return parserDocument;
 	}
 
 	/**
@@ -156,14 +156,14 @@ public class JFlexParser extends AbstractParser {
 	 * such as link values used by the search engine.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	public ParserOutput parseMetadata(String raw) throws Exception {
+	public ParserDocument parseMetadata(String raw) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
-		lexer.init(this.parserInput, JFlexParser.MODE_METADATA);
-		ParserOutput parserOutput = this.lex(lexer);
-		return parserOutput;
+		ParserDocument parserDocument = new ParserDocument();
+		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_METADATA);
+		return this.lex(lexer);
 	}
 
 	/**
@@ -171,12 +171,12 @@ public class JFlexParser extends AbstractParser {
 	 * and builds metadata.
 	 *
 	 * @param reader The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	private ParserOutput parsePreProcess(StringReader reader, int mode) throws Exception {
+	private ParserDocument parsePreProcess(StringReader reader, ParserDocument parserDocument, int mode) throws Exception {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
-		lexer.init(this.parserInput, preMode);
+		lexer.init(this.parserInput, parserDocument, preMode);
 		return this.lex(lexer);
 	}
 
@@ -185,11 +185,11 @@ public class JFlexParser extends AbstractParser {
 	 * HTML, and performs the majority of the parser conversion.
 	 *
 	 * @param reader The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	private ParserOutput parseProcess(StringReader reader, int mode) throws Exception {
+	private ParserDocument parseProcess(StringReader reader, ParserDocument parserDocument, int mode) throws Exception {
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
-		lexer.init(this.parserInput, JFlexParser.MODE_PROCESS);
+		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_PROCESS);
 		return this.lex(lexer);
 	}
 
@@ -199,11 +199,11 @@ public class JFlexParser extends AbstractParser {
 	 * cannot be added during the first parsing stage.
 	 *
 	 * @param reader The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	private ParserOutput parsePostProcess(StringReader reader, int mode) throws Exception {
+	private ParserDocument parsePostProcess(StringReader reader, ParserDocument parserDocument, int mode) throws Exception {
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
-		lexer.init(this.parserInput, JFlexParser.MODE_LAYOUT);
+		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_LAYOUT);
 		return this.lex(lexer);
 	}
 
@@ -213,11 +213,10 @@ public class JFlexParser extends AbstractParser {
 	 * a redirect) the redirect page contents need to be displayed.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	public ParserOutput parseRedirect(String raw) throws Exception {
+	private ParserDocument parseRedirect(String raw, ParserDocument parserDocument) throws Exception {
 		String redirect = this.isRedirect(raw);
-		ParserOutput parserOutput = new ParserOutput();
 		String style = "redirect";
 		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim(), true)) {
 			style = "edit redirect";
@@ -225,8 +224,8 @@ public class JFlexParser extends AbstractParser {
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setDestination(redirect);
 		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, false);
-		parserOutput.setContent(content);
-		return parserOutput;
+		parserDocument.setContent(content);
+		return parserDocument;
 	}
 
 	/**
@@ -235,14 +234,14 @@ public class JFlexParser extends AbstractParser {
 	 * during edits.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	public ParserOutput parseSave(String raw) throws Exception {
+	public ParserDocument parseSave(String raw) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
-		lexer.init(this.parserInput, JFlexParser.MODE_SAVE);
-		ParserOutput parserOutput = this.lex(lexer);
-		return parserOutput;
+		ParserDocument parserDocument = new ParserDocument();
+		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SAVE);
+		return this.lex(lexer);
 	}
 
 	/**
@@ -257,18 +256,19 @@ public class JFlexParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax from which a section is to be retrieved.
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section of the document to be replaced (first section is 1).
-	 * @return All markup from the target section, contained within a ParserOutput
+	 * @return All markup from the target section, contained within a ParserDocument
 	 *  object.
 	 */
-	public ParserOutput parseSlice(String raw, String topicName, int targetSection) throws Exception {
+	public ParserDocument parseSlice(String raw, String topicName, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
-		lexer.init(this.parserInput, JFlexParser.MODE_SLICE);
+		ParserDocument parserDocument = new ParserDocument();
+		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SLICE);
 		lexer.setTargetSection(targetSection);
-		ParserOutput parserOutput = this.lex(lexer);
+		parserDocument = this.lex(lexer);
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserOutput;
+		return parserDocument;
 	}
 
 	/**
@@ -284,17 +284,18 @@ public class JFlexParser extends AbstractParser {
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section of the document to be replaced (first section is 1).
 	 * @param replacementText The text to replace the specified section text with.
-	 * @return The new topic markup, contained within a ParserOutput object.
+	 * @return The new topic markup, contained within a ParserDocument object.
 	 */
-	public ParserOutput parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception {
+	public ParserDocument parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
-		lexer.init(this.parserInput, JFlexParser.MODE_SPLICE);
+		ParserDocument parserDocument = new ParserDocument();
+		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SPLICE);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
-		ParserOutput parserOutput = this.lex(lexer);
+		parserDocument = this.lex(lexer);
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserOutput;
+		return parserDocument;
 	}
 }

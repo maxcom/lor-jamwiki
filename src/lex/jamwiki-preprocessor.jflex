@@ -5,7 +5,7 @@ package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
@@ -57,14 +57,18 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    public void init(ParserInput parserInput, int mode) throws Exception {
+    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
         this.parserInput = parserInput;
+        this.parserDocument = parserDocument;
         this.mode = mode;
         boolean validated = true;
         // validate parser settings
         if (this.mode > JFlexParser.MODE_PREPROCESS) validated = false;
         if (this.mode == JFlexParser.MODE_SAVE) {
             if (this.parserInput.getUserIpAddress() == null) validated = false;
+        }
+        if (this.mode >= JFlexParser.MODE_TEMPLATE) {
+            if (this.parserInput.getVirtualWiki() == null) validated = false;
         }
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
@@ -103,6 +107,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 templatestart      = "{{" ([^\{\}]+)
 templatestartchar  = "{"
 templateendchar    = "}"
+templateparam      = "{{{" [^\{\}\r\n]+ "}}}"
 includeonlyopen    = (<[ ]*includeonly[ ]*[\/]?[ ]*>)
 includeonlyclose   = (<[ ]*\/[ ]*includeonly[ ]*>)
 noincludeopen      = (<[ ]*noinclude[ ]*[\/]?[ ]*>)
@@ -124,7 +129,7 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -197,7 +202,7 @@ wikisig5           = "~~~~~"
         this.templateString = "";
         try {
             TemplateTag templateTag = new TemplateTag();
-            value = templateTag.parse(this.parserInput, this.parserOutput, this.mode, value);
+            value = templateTag.parse(this.parserInput, this.parserDocument, this.mode, value);
             return value;
         } catch (Exception e) {
             logger.severe("Unable to parse " + this.templateString, e);
@@ -214,6 +219,12 @@ wikisig5           = "~~~~~"
     this.templateString += raw;
     this.templateCharCount += raw.length();
     return "";
+}
+
+<NORMAL>{templateparam} {
+    logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    return raw;
 }
 
 <TEMPLATE>{whitespace} {
@@ -279,7 +290,7 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -292,7 +303,7 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -307,7 +318,7 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
-        String value = wikiSignatureTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -320,7 +331,7 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
-        String value = wikiSignatureTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -333,7 +344,7 @@ wikisig5           = "~~~~~"
     String raw = yytext();
     try {
         WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
-        String value = wikiSignatureTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);

@@ -47,7 +47,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
@@ -327,8 +327,8 @@ public class LuceneSearchEngine implements SearchEngine {
 					if (standardDocument != null) writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a
 					// moderately large Wiki
-					ParserOutput parserOutput = Utilities.parserOutput(topic.getTopicContent());
-					Document keywordDocument = createKeywordDocument(topic, parserOutput.getLinks());
+					ParserDocument parserDocument = Utilities.parserDocument(topic.getTopicContent(), virtualWiki.getName());
+					Document keywordDocument = createKeywordDocument(topic, parserDocument.getLinks());
 					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;
 				}

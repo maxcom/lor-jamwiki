@@ -18,7 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -33,7 +33,7 @@ public class HtmlTag implements ParserTag {
 	/**
 	 *
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
 			return Utilities.escapeHTML(raw);
 		} else {

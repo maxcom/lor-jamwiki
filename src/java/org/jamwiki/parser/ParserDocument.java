@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 /**
  *
  */
-public class ParserOutput {
+public class ParserDocument {
 
 	private LinkedHashMap categories = new LinkedHashMap();
 	private Vector links = new Vector();
@@ -32,7 +32,7 @@ public class ParserOutput {
 	/**
 	 *
 	 */
-	public ParserOutput() {
+	public ParserDocument() {
 	}
 
 	/**

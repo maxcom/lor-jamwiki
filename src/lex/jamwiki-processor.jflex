@@ -30,7 +30,7 @@ package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
@@ -68,7 +68,7 @@ import org.springframework.util.StringUtils;
     if (yystate() == LIST) {
         try {
             WikiListTag wikiListTag = new WikiListTag();
-            String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, null);
+            String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, null);
             output.append(value);
         } catch (Exception e) {
             logger.severe("Unable to close open list", e);
@@ -128,8 +128,9 @@ import org.springframework.util.StringUtils;
     /**
      *
      */
-    public void init(ParserInput parserInput, int mode) throws Exception {
+    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
         this.parserInput = parserInput;
+        this.parserDocument = parserDocument;
         this.mode = mode;
         // validate parser settings
         boolean validated = true;
@@ -251,7 +252,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -317,7 +318,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -330,7 +331,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -343,7 +344,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         HtmlLinkTag htmlLinkTag = new HtmlLinkTag();
-        String value = htmlLinkTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = htmlLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -475,7 +476,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         WikiHeadingTag wikiHeadingTag = new WikiHeadingTag();
-        String value = wikiHeadingTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiHeadingTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -493,7 +494,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         WikiListTag wikiListTag = new WikiListTag();
-        String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -510,7 +511,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     try {
         WikiListTag wikiListTag = new WikiListTag();
         // close open list tags
-        String value = wikiListTag.parse(this.parserInput, this.parserOutput, this.mode, null);
+        String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, null);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);
@@ -539,7 +540,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     String raw = yytext();
     try {
         HtmlTag htmlTag = new HtmlTag();
-        String value = htmlTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = htmlTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);

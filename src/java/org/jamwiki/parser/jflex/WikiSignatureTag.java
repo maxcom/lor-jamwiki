@@ -22,7 +22,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -37,7 +37,7 @@ public class WikiSignatureTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String buildWikiSignature(ParserInput parserInput, ParserOutput parserOutput, int mode, boolean includeUser, boolean includeDate) {
+	private String buildWikiSignature(ParserInput parserInput, ParserDocument parserDocument, int mode, boolean includeUser, boolean includeDate) {
 		try {
 			String signature = "";
 			if (includeUser) {
@@ -68,7 +68,7 @@ public class WikiSignatureTag implements ParserTag {
 				signature = formatter.format(params);
 				// parse signature as link in order to store link metadata
 				WikiLinkTag wikiLinkTag = new WikiLinkTag();
-				wikiLinkTag.parse(parserInput, parserOutput, mode, signature);
+				wikiLinkTag.parse(parserInput, parserDocument, mode, signature);
 				if (mode != JFlexParser.MODE_SAVE) {
 					signature = ParserUtil.parseFragment(parserInput, signature, mode);
 				}
@@ -93,13 +93,13 @@ public class WikiSignatureTag implements ParserTag {
 	 * Parse a Mediawiki signature of the form "~~~~" and return the resulting
 	 * HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		if (raw.equals("~~~")) {
-			return this.buildWikiSignature(parserInput, parserOutput, mode, true, false);
+			return this.buildWikiSignature(parserInput, parserDocument, mode, true, false);
 		} else if (raw.equals("~~~~")) {
-			return this.buildWikiSignature(parserInput, parserOutput, mode, true, true);
+			return this.buildWikiSignature(parserInput, parserDocument, mode, true, true);
 		} else if (raw.equals("~~~~~")) {
-			return this.buildWikiSignature(parserInput, parserOutput, mode, false, true);
+			return this.buildWikiSignature(parserInput, parserDocument, mode, false, true);
 		}
 		return raw;
 	}

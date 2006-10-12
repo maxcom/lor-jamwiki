@@ -4,7 +4,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -39,8 +39,9 @@ import org.jamwiki.utils.WikiLogger;
     /**
      *
      */
-    public void init(ParserInput parserInput, int mode) throws Exception {
+    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
         this.parserInput = parserInput;
+        this.parserDocument = parserDocument;
         this.mode = mode;
         // validate parser settings
         boolean validated = true;
@@ -94,7 +95,7 @@ paragraphstart     = ({inputcharacter})
     String raw = yytext();
     try {
         WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
         logger.severe("Unable to parse " + raw, e);

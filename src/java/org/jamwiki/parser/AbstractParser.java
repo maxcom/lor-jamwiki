@@ -55,14 +55,14 @@ public abstract class AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
 	// FIXME - should this have a mode flag???
-	public abstract ParserOutput parseFragment(String raw, int mode) throws Exception;
+	public abstract ParserDocument parseFragment(String raw, int mode) throws Exception;
 
 	/**
 	 * Returns a HTML representation of the given wiki raw text for online representation.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
-	public abstract ParserOutput parseHTML(String raw) throws Exception;
+	public abstract ParserDocument parseHTML(String raw) throws Exception;
 
 	/**
 	 * This method provides a way to parse content and set all output metadata,
@@ -71,7 +71,7 @@ public abstract class AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return Results from parser execution.
 	 */
-	public abstract ParserOutput parseMetadata(String raw) throws Exception;
+	public abstract ParserDocument parseMetadata(String raw) throws Exception;
 
 	/**
 	 * Parse MediaWiki signatures and other tags that should not be
@@ -79,9 +79,9 @@ public abstract class AbstractParser {
 	 * during edits.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserOutput object containing results of the parsing process.
+	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	public abstract ParserOutput parseSave(String raw) throws Exception;
+	public abstract ParserDocument parseSave(String raw) throws Exception;
 
 	/**
 	 * When making a section edit this function provides the capability to retrieve
@@ -94,7 +94,7 @@ public abstract class AbstractParser {
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 */
-	public abstract ParserOutput parseSlice(String raw, String topicName, int targetSection) throws Exception;
+	public abstract ParserDocument parseSlice(String raw, String topicName, int targetSection) throws Exception;
 
 	/**
 	 * This method provides the capability for re-integrating a section edit back
@@ -107,5 +107,5 @@ public abstract class AbstractParser {
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 * @param replacementText The text to replace the target section text with.
 	 */
-	public abstract ParserOutput parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception;
+	public abstract ParserDocument parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception;
 }

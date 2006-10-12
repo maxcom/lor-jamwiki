@@ -31,7 +31,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -102,8 +102,8 @@ public class EditServlet extends JAMWikiServlet {
 		} else if (StringUtils.hasText(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			ParserOutput parserOutput = Utilities.parseSlice(request, virtualWiki, topicName, section);
-			contents = parserOutput.getContent();
+			ParserDocument parserDocument = Utilities.parseSlice(request, virtualWiki, topicName, section);
+			contents = parserDocument.getContent();
 		} else {
 			// editing a full new or existing topic
 			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
@@ -259,8 +259,8 @@ public class EditServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			ParserOutput parserOutput = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
-			contents = parserOutput.getContent();
+			ParserDocument parserDocument = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
+			contents = parserDocument.getContent();
 		}
 		if (contents == null) {
 			logger.warning("The topic " + topicName + " has no content");
@@ -279,12 +279,12 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserOutput parserOutput = Utilities.parseSave(parserInput, contents);
-		contents = parserOutput.getContent();
+		ParserDocument parserDocument = Utilities.parseSave(parserInput, contents);
+		contents = parserDocument.getContent();
 		topic.setTopicContent(contents);
-		if (StringUtils.hasText(parserOutput.getRedirect())) {
+		if (StringUtils.hasText(parserDocument.getRedirect())) {
 			// set up a redirect
-			topic.setRedirectTo(parserOutput.getRedirect());
+			topic.setRedirectTo(parserDocument.getRedirect());
 			topic.setTopicType(Topic.TYPE_REDIRECT);
 		} else if (topic.getTopicType() == Topic.TYPE_REDIRECT) {
 			// no longer a redirect
@@ -295,7 +295,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
-		WikiBase.getHandler().writeTopic(topic, topicVersion, parserOutput);
+		WikiBase.getHandler().writeTopic(topic, topicVersion, parserDocument);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
 		viewTopic(request, next, pageInfo, topicName);

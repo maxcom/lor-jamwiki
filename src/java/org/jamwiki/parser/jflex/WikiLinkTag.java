@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
@@ -54,7 +54,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String buildInternalLinkUrl(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	private String buildInternalLinkUrl(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		try {
@@ -103,13 +103,13 @@ public class WikiLinkTag implements ParserTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		this.processLinkMetadata(parserInput, parserOutput, raw);
+	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
+		this.processLinkMetadata(parserInput, parserDocument, raw);
 		if (mode <= JFlexParser.MODE_PREPROCESS) {
 			// do not parse to HTML when in preprocess mode
 			return raw;
 		}
-		return this.processLinkContent(parserInput, parserOutput, mode, raw);
+		return this.processLinkContent(parserInput, parserDocument, mode, raw);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+	private String processLinkContent(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 			// no destination or section
@@ -199,22 +199,22 @@ public class WikiLinkTag implements ParserTag {
 			// category tag, but not a category link
 			return "";
 		}
-		return this.buildInternalLinkUrl(parserInput, parserOutput, mode, raw);
+		return this.buildInternalLinkUrl(parserInput, parserDocument, mode, raw);
 	}
 
 	/**
 	 *
 	 */
-	private void processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, String raw) {
+	private void processLinkMetadata(ParserInput parserInput, ParserDocument parserDocument, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 			return;
 		}
 		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
-			parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
+			parserDocument.addCategory(wikiLink.getDestination(), wikiLink.getText());
 		}
 		if (StringUtils.hasText(wikiLink.getDestination())) {
-			parserOutput.addLink(wikiLink.getDestination());
+			parserDocument.addLink(wikiLink.getDestination());
 		}
 	}
 }

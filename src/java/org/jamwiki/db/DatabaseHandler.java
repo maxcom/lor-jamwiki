@@ -42,7 +42,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.file.FileHandler;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
@@ -524,9 +524,9 @@ public class DatabaseHandler {
 		}
 		// update topic to indicate deleted, add delete topic version.  parser output
 		// should be empty since nothing to add to search engine.
-		ParserOutput parserOutput = new ParserOutput();
+		ParserDocument parserDocument = new ParserDocument();
 		topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
-		writeTopic(topic, topicVersion, parserOutput, conn, userVisible);
+		writeTopic(topic, topicVersion, parserDocument, conn, userVisible);
 		// reset topic existence vector
 		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
@@ -1243,7 +1243,7 @@ public class DatabaseHandler {
 			}
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
-			writeTopic(fromTopic, fromVersion, Utilities.parserOutput(fromTopic.getTopicContent()), conn, true);
+			writeTopic(fromTopic, fromVersion, Utilities.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki()), conn, true);
 			if (detinationExistsFlag) {
 				// target topic was deleted, so rename and undelete
 				toTopic.setName(fromTopicName);
@@ -1262,7 +1262,7 @@ public class DatabaseHandler {
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
-			writeTopic(toTopic, toVersion, Utilities.parserOutput(content), conn, true);
+			writeTopic(toTopic, toVersion, Utilities.parserDocument(content, toTopic.getVirtualWiki()), conn, true);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
@@ -1430,7 +1430,7 @@ public class DatabaseHandler {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), conn, true);
+		writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki), conn, true);
 	}
 
 	/**
@@ -1492,9 +1492,9 @@ public class DatabaseHandler {
 	private void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Connection conn) throws Exception {
 		// update topic to indicate deleted, add delete topic version.  parser output
 		// should be empty since nothing to add to search engine.
-		ParserOutput parserOutput = new ParserOutput();
+		ParserDocument parserDocument = new ParserDocument();
 		topic.setDeleteDate(null);
-		writeTopic(topic, topicVersion, parserOutput, conn, userVisible);
+		writeTopic(topic, topicVersion, parserDocument, conn, userVisible);
 		// reset topic existence vector
 		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
@@ -1512,7 +1512,7 @@ public class DatabaseHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()), conn, true);
+			writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki), conn, true);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
@@ -1581,7 +1581,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument) throws Exception {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -1589,7 +1589,7 @@ public class DatabaseHandler {
 			if (topicVersion.getAuthorId() != null) {
 				user = lookupWikiUser(topicVersion.getAuthorId().intValue(), conn);
 			}
-			this.writeTopic(topic, topicVersion, parserOutput, conn, true);
+			this.writeTopic(topic, topicVersion, parserDocument, conn, true);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
@@ -1606,15 +1606,15 @@ public class DatabaseHandler {
 	 * @param topicVersion The version associated with the topic that is being added.
 	 *  This parameter should never be null UNLESS the change is not user visible, such as
 	 *  when deleting a topic temporarily during page moves.
-	 * @param parserOutput The parserOutput object that contains a list of links in the
+	 * @param parserDocument The parserDocument object that contains a list of links in the
 	 *  topic content, categories, etc.  This parameter may be set with the
-	 *  Utilities.getParserOutput() method.
+	 *  Utilities.getParserDocument() method.
 	 * @param conn Database connection or other parameters required for updates.
 	 * @param userVisible A flag indicating whether or not this change should be visible
 	 *  to Wiki users.  This flag should be true except in rare cases, such as when
 	 *  temporarily deleting a topic during page moves.
 	 */
-	private void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, Connection conn, boolean userVisible) throws Exception {
+	private void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, Connection conn, boolean userVisible) throws Exception {
 		if (!Utilities.validateTopicName(topic.getName())) {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
@@ -1642,10 +1642,10 @@ public class DatabaseHandler {
 			RecentChange change = new RecentChange(topic, topicVersion, authorName);
 			addRecentChange(change, conn);
 		}
-		if (parserOutput != null) {
+		if (parserDocument != null) {
 			// add / remove categories associated with the topic
 			this.deleteTopicCategories(topic, conn);
-			LinkedHashMap categories = parserOutput.getCategories();
+			LinkedHashMap categories = parserDocument.getCategories();
 			for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
 				String categoryName = (String)iterator.next();
 				Category category = new Category();
@@ -1658,9 +1658,9 @@ public class DatabaseHandler {
 		}
 		// reset topic non-existence vector
 		cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-		if (parserOutput != null) {
+		if (parserDocument != null) {
 			WikiBase.getSearchEngine().deleteFromIndex(topic);
-			WikiBase.getSearchEngine().addToIndex(topic, parserOutput.getLinks());
+			WikiBase.getSearchEngine().addToIndex(topic, parserDocument.getLinks());
 		}
 	}
 

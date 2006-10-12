@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -83,23 +83,16 @@ public class TemplateTag implements ParserTag {
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		if (!StringUtils.hasText(raw)) {
-			throw new Exception("Empty template text");
-		}
-		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
-			throw new Exception ("Invalid template text: " + raw);
-		}
+	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		// extract the template name
 		String name = this.parseTemplateName(raw);
-		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, raw);
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
-		if (templateTopic == null) {
+		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw);
+		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
 		}
-		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
+		return this.processTemplateContent(parserInput, parserDocument, templateTopic, raw);
 	}
 
 	/**
@@ -165,6 +158,12 @@ public class TemplateTag implements ParserTag {
 	 *
 	 */
 	private String parseTemplateName(String raw) throws Exception {
+		if (!StringUtils.hasText(raw)) {
+			throw new Exception("Empty template text");
+		}
+		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
+			throw new Exception ("Invalid template text: " + raw);
+		}
 		int pos = raw.indexOf("|");
 		String name = null;
 		if (pos != -1) {
@@ -247,5 +246,26 @@ public class TemplateTag implements ParserTag {
 			value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
 			this.parameterValues.put(name, value);
 		}
+	}
+
+	/**
+	 *
+	 */
+	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
+		String name = this.parseTemplateName(raw);
+		if (templateTopic == null) {
+			return "[[" + name + "]]";
+		}
+		// set template parameter values
+		this.parseTemplateParameterValues(parserInput, raw);
+		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
+	}
+
+	/**
+	 *
+	 */
+	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
+		String name = (templateTopic != null) ? templateTopic.getName() : this.parseTemplateName(raw);
+		parserDocument.addLink(name);
 	}
 }

@@ -50,7 +50,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
@@ -538,11 +538,11 @@ public class Utilities {
 	 *  information.
 	 * @param content The raw topic content that is to be parsed.
 	 * @param topicName The name of the topic being parsed.
-	 * @return Returns a ParserOutput object with parsed topic content and other
+	 * @return Returns a ParserDocument object with parsed topic content and other
 	 *  parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parse(ParserInput parserInput, String content) throws Exception {
+	public static ParserDocument parse(ParserInput parserInput, String content) throws Exception {
 		if (content == null) {
 			return null;
 		}
@@ -557,11 +557,11 @@ public class Utilities {
 	 * @param parserInput A ParserInput object that contains parser configuration
 	 *  information.
 	 * @param content The raw topic content that is to be parsed.
-	 * @return Returns a ParserOutput object with minimally parsed topic content
+	 * @return Returns a ParserDocument object with minimally parsed topic content
 	 *  and other parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parseMetadata(ParserInput parserInput, String content) throws Exception {
+	public static ParserDocument parseMetadata(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseMetadata(content);
 	}
@@ -601,17 +601,18 @@ public class Utilities {
 	}
 
 	/**
-	 * Retrieve a default ParserOutput object for a given topic name.  Note that
+	 * Retrieve a default ParserDocument object for a given topic name.  Note that
 	 * the content has almost no parsing performed on it other than to generate
 	 * parser output metadata.
 	 *
 	 * @param content The raw topic content.
-	 * @return Returns a minimal ParserOutput object initialized primarily with
+	 * @return Returns a minimal ParserDocument object initialized primarily with
 	 *  parser metadata such as links.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserOutput parserOutput(String content) throws Exception {
+	public static ParserDocument parserDocument(String content, String virtualWiki) throws Exception {
 		ParserInput parserInput = new ParserInput();
+		parserInput.setVirtualWiki(virtualWiki);
 		return Utilities.parseMetadata(parserInput, content);
 	}
 
@@ -622,11 +623,11 @@ public class Utilities {
 	 * @param parserInput A ParserInput object that contains parser configuration
 	 *  information.
 	 * @param content The raw topic content that is to be parsed.
-	 * @return Returns a ParserOutput object with minimally parsed topic content
+	 * @return Returns a ParserDocument object with minimally parsed topic content
 	 *  and other parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parseSave(ParserInput parserInput, String content) throws Exception {
+	public static ParserDocument parseSave(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseSave(content);
 	}
@@ -639,11 +640,11 @@ public class Utilities {
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
 	 * @param targetSection The section to be sliced and returned.
-	 * @return Returns a ParserOutput object containing the raw topic content
+	 * @return Returns a ParserDocument object containing the raw topic content
 	 *  for the target section.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserOutput parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
+	public static ParserDocument parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
@@ -667,11 +668,11 @@ public class Utilities {
 	 * @param targetSection The section to be sliced and returned.
 	 * @param replacementText The edited content that is to be spliced back into
 	 *  the raw topic.
-	 * @return Returns a ParserOutput object containing the raw topic content
+	 * @return Returns a ParserDocument object containing the raw topic content
 	 *  including the new replacement text.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserOutput parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+	public static ParserDocument parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;

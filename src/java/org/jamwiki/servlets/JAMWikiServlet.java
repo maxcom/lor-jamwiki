@@ -33,7 +33,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
@@ -131,8 +131,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 					parserInput.setLocale(request.getLocale());
 					parserInput.setVirtualWiki(virtualWiki);
 					parserInput.setTopicName(topicName);
-					ParserOutput parserOutput = Utilities.parse(parserInput, content);
-					content = parserOutput.getContent();
+					ParserDocument parserDocument = Utilities.parse(parserInput, content);
+					content = parserDocument.getContent();
 				}
 				cachedContents.put(virtualWiki + "-" + topicName, content);
 			} catch (Exception e) {
@@ -457,18 +457,18 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
-		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent());
-		if (parserOutput != null) {
-			if (parserOutput.getCategories().size() > 0) {
+		ParserDocument parserDocument = Utilities.parse(parserInput, topic.getTopicContent());
+		if (parserDocument != null) {
+			if (parserDocument.getCategories().size() > 0) {
 				LinkedHashMap categories = new LinkedHashMap();
-				for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
+				for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {
 					String key = (String)iterator.next();
 					String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length() + WikiBase.NAMESPACE_SEPARATOR.length());
 					categories.put(key, value);
 				}
 				next.addObject("categories", categories);
 			}
-			topic.setTopicContent(parserOutput.getContent());
+			topic.setTopicContent(parserDocument.getContent());
 		}
 		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
 			loadCategoryContent(next, virtualWiki, topic.getName());

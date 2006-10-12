@@ -21,7 +21,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.jflex.JFlexParser;
 
 /**
@@ -53,8 +53,8 @@ public class JFlexParserTest extends TestCase {
 		JFlexParser parser = new JFlexParser(parserInput);
 		String output = null;
 		try {
-			ParserOutput parserOutput = parser.parseHTML(raw);
-			output = parserOutput.getContent();
+			ParserDocument parserDocument = parser.parseHTML(raw);
+			output = parserDocument.getContent();
 		} catch (Exception e) {}
 		return output;
 	}

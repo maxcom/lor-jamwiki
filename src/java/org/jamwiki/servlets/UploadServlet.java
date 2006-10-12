@@ -204,7 +204,7 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setMimeType(contentType);
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserOutput(topic.getTopicContent()));
+		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki));
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
 		viewTopic(request, next, pageInfo, topicName);
