@@ -84,6 +84,13 @@ public class ParserInput {
 	/**
 	 *
 	 */
+	public void decrementDepth() {
+		this.depth--;
+	}
+
+	/**
+	 *
+	 */
 	public void incrementDepth() {
 		this.depth++;
 	}

@@ -88,10 +88,10 @@ public class JFlexParser extends AbstractParser {
 	 */
 	private ParserOutput lex(AbstractLexer lexer) throws Exception {
 		this.parserInput.incrementDepth();
-		// FIXME - this is a sloppy way to avoid infinite loops
-		if (this.parserInput.getDepth() > 100000) {
+		// avoid infinite loops
+		if (this.parserInput.getDepth() > 100) {
 			String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
-			throw new Exception("Infinite parsing loop - over 100 parser iterations while parsing topic " + topicName);
+			throw new Exception("Infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + topicName);
 		}
 		StringBuffer content = new StringBuffer();
 		while (true) {
@@ -101,6 +101,7 @@ public class JFlexParser extends AbstractParser {
 		}
 		ParserOutput parserOutput = lexer.getParserOutput();
 		parserOutput.setContent(content.toString());
+		this.parserInput.decrementDepth();
 		return parserOutput;
 	}
 
@@ -113,7 +114,6 @@ public class JFlexParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
 	public ParserOutput parseFragment(String raw, int mode) throws Exception {
-		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		// maintain the original output, which has all of the category and link info
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
@@ -123,8 +123,6 @@ public class JFlexParser extends AbstractParser {
 			// FIXME - metadata in parser output now lost
 			parserOutput = this.parseProcess(reader, JFlexParser.MODE_PROCESS);
 		}
-		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
-		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserOutput;
 	}
 
