@@ -98,7 +98,7 @@ paragraphstart     = ({inputcharacter})
         String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }

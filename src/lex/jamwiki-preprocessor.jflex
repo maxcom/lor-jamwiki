@@ -89,13 +89,6 @@ htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 wikiprestart       = (" ") ([^ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
 
-/* javascript */
-jsopen             = (<[ ]*) script ([ ]+[^>\/]+)* ([ ]*[\/]?[ ]*>)
-jsclose            = (<[ ]*\/[ ]*script[ ]*>)
-
-/* comments */
-htmlcomment        = "<!--" ~"-->"
-
 /* wiki links */
 wikilink           = "[[" [^\]\n\r]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
@@ -132,7 +125,7 @@ wikisig5           = "~~~~~"
         String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -143,9 +136,8 @@ wikisig5           = "~~~~~"
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHTML) {
         beginState(PRE);
-        return yytext();
     }
-    return "&lt;pre&gt;";
+    return yytext();
 }
 
 <PRE>{htmlpreend} {
@@ -161,7 +153,6 @@ wikisig5           = "~~~~~"
     yypushback(1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
-        return yytext();
     }
     return yytext();
 }
@@ -205,7 +196,7 @@ wikisig5           = "~~~~~"
             value = templateTag.parse(this.parserInput, this.parserDocument, this.mode, value);
             return value;
         } catch (Exception e) {
-            logger.severe("Unable to parse " + this.templateString, e);
+            logger.info("Unable to parse " + this.templateString, e);
             this.templateString = "";
             return value;
         }
@@ -293,7 +284,7 @@ wikisig5           = "~~~~~"
         String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -306,7 +297,7 @@ wikisig5           = "~~~~~"
         String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -321,7 +312,7 @@ wikisig5           = "~~~~~"
         String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -334,7 +325,7 @@ wikisig5           = "~~~~~"
         String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -347,37 +338,9 @@ wikisig5           = "~~~~~"
         String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
-}
-
-/* ----- comments ----- */
-
-<NORMAL>{htmlcomment} {
-    logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    // remove comment
-    return "";
-}
-
-/* ----- javascript ----- */
-
-<NORMAL>{jsopen} {
-    logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
-    if (allowJavascript()) {
-        beginState(JAVASCRIPT);
-        return ParserUtil.sanitizeHtmlTag(yytext());
-    }
-    return Utilities.escapeHTML(yytext());
-}
-
-<JAVASCRIPT>{jsclose} {
-    logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
-    if (allowJavascript()) {
-        endState();
-        return ParserUtil.sanitizeHtmlTag(yytext());
-    }
-    return Utilities.escapeHTML(yytext());
 }
 
 /* ----- other ----- */

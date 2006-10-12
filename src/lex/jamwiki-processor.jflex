@@ -255,7 +255,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -321,7 +321,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -334,7 +334,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -347,7 +347,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = htmlLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -479,7 +479,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = wikiHeadingTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -497,7 +497,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return raw;
     }
 }
@@ -514,7 +514,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, null);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         return "";
     }
 }
@@ -543,7 +543,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
         String value = htmlTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
         return value;
     } catch (Exception e) {
-        logger.severe("Unable to parse " + raw, e);
+        logger.info("Unable to parse " + raw, e);
         // FIXME - what should be returned? escaped html?
         return "";
     }

@@ -37,7 +37,7 @@ public class HtmlLinkTag implements ParserTag {
 	 * @param raw The raw Wiki syntax that is to be converted into an HTML link.
 	 * @return A formatted HTML link for the Wiki syntax.
 	 */
-	private String buildHtmlLink(String raw) {
+	private String buildHtmlLink(String raw) throws Exception {
 		if (raw.length() <= 2) {
 			// no link, display the raw text
 			return raw;
@@ -54,7 +54,7 @@ public class HtmlLinkTag implements ParserTag {
 	 * @param raw The raw HTML link that is to be converted into an HTML link.
 	 * @return A formatted HTML link.
 	 */
-	private String buildHtmlLinkRaw(String raw) {
+	private String buildHtmlLinkRaw(String raw) throws Exception {
 		String link = raw.trim();
 		// search for link text (space followed by text)
 		String punctuation = Utilities.extractTrailingPunctuation(link);
@@ -77,52 +77,44 @@ public class HtmlLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String linkHtml(String link, String text, String punctuation) {
+	private String linkHtml(String link, String text, String punctuation) throws Exception {
 		String html = null;
-		// in case of script attack, replace script tags (cannot use escapeHTML due
-		// to the possibility of ampersands in the link)
-		link = StringUtils.replace(link, "<", "&lt;");
-		link = StringUtils.replace(link, ">", "&gt;");
-		link = StringUtils.replace(link, "\"", "&quot;");
-		link = StringUtils.replace(link, "'", "&#39;");
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("mailto://")) {
 			// fix bad mailto syntax
 			link = "mailto:" + link.substring("mailto://".length());
 		}
+		String protocol = "";
+		if (linkLower.startsWith("http://")) {
+			protocol = "http://";
+		} else if  (linkLower.startsWith("https://")) {
+			protocol = "https://";
+		} else if (linkLower.startsWith("ftp://")) {
+			protocol = "ftp://";
+		} else if (linkLower.startsWith("mailto:")) {
+			protocol = "mailto:";
+		} else if (linkLower.startsWith("news://")) {
+			protocol = "news://";
+		} else if (linkLower.startsWith("telnet://")) {
+			protocol = "telnet://";
+		} else if (linkLower.startsWith("file://")) {
+			protocol = "file://";
+		} else {
+			throw new Exception("Invalid protocol in link " + link);
+		}
 		if (!StringUtils.hasText(text)) {
 			text = link;
 		}
 		text = Utilities.escapeHTML(text);
-		if (linkLower.startsWith("http://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if  (linkLower.startsWith("https://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("ftp://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("mailto:")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("news://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("telnet://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		} else if (linkLower.startsWith("file://")) {
-			html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-				 + text + "\" href=\"" + link + "\">" + text + "</a>"
-				 + punctuation;
-		}
+		link = link.substring(protocol.length());
+		// make sure link values are properly escaped.
+		link = StringUtils.replace(link, "<", "%3C");
+		link = StringUtils.replace(link, ">", "%3E");
+		link = StringUtils.replace(link, "\"", "%22");
+		link = StringUtils.replace(link, "\'", "%27");
+		html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
+			 + text + "\" href=\"" + protocol + link + "\">" + text + "</a>"
+			 + punctuation;
 		return html;
 	}
 

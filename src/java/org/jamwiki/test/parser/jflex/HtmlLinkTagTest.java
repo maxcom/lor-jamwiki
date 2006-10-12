@@ -73,6 +73,16 @@ public class HtmlLinkTagTest extends JFlexParserTest {
 	/**
 	 *
 	 */
+	public void testInvalidLinks() {
+		String input = "";
+		String output = "";
+		input = "[httpp://www.google.com]";
+		output = "<p>[httpp://www.google.com]\n</p>";
+	}
+
+	/**
+	 *
+	 */
 	public void testMailtoLinks() {
 		String input = "";
 		String output = "";
@@ -93,6 +103,17 @@ public class HtmlLinkTagTest extends JFlexParserTest {
 		assertEquals(output, this.parse(input));
 		input = "[mailto:email@email.com email at email dot com]";
 		output = "<p><a class=\"externallink\" rel=\"nofollow\" title=\"email at email dot com\" href=\"mailto:email@email.com\">email at email dot com</a>\n</p>";
+		assertEquals(output, this.parse(input));
+	}
+
+	/**
+	 *
+	 */
+	public void testXSS() {
+		String input = "";
+		String output = "";
+		input = "[http://jamwiki.org/wiki/en/Special:Print?topic=Bug_Reports</title><script>alert('Ownage');</script> XSS4]";
+		output = "<p><a class=\"externallink\" rel=\"nofollow\" title=\"XSS4\" href=\"http://jamwiki.org/wiki/en/Special:Print?topic=Bug_Reports%3C/title%3E%3Cscript%3Ealert(%27Ownage%27);%3C/script%3E\">XSS4</a>\n</p>";
 		assertEquals(output, this.parse(input));
 	}
 }
