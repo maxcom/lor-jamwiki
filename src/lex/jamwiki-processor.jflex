@@ -198,7 +198,7 @@ nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
-wikiprestart       = (" ") ([^ \t\r\n])
+wikiprestart       = (" ")+ ([^ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
@@ -296,7 +296,7 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 <NORMAL, LIST, TABLE, TD, TH, TC, WIKIPRE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
-    yypushback(1);
+    yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
         return "<pre>";
@@ -475,8 +475,15 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    // remove comment
-    return "";
+    String raw = yytext();
+    try {
+        HtmlCommentTag htmlCommentTag = new HtmlCommentTag();
+        String value = htmlCommentTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- headings ----- */

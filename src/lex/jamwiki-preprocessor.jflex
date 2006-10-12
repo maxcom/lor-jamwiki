@@ -23,7 +23,6 @@ import org.springframework.util.StringUtils;
 /* code included in the constructor */
 %init{
     allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
-    allowJavascript = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -43,16 +42,8 @@ import org.springframework.util.StringUtils;
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
     protected boolean allowHTML = false;
-    protected boolean allowJavascript = false;
     protected int templateCharCount = 0;
     protected String templateString = "";
-    
-    /**
-     *
-     */
-    protected boolean allowJavascript() {
-        return (allowJavascript && yystate() != PRE && yystate() != WIKIPRE);
-    }
     
     /**
      *
@@ -86,8 +77,11 @@ nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
-wikiprestart       = (" ") ([^ \t\r\n])
+wikiprestart       = (" ")+ ([^ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
+
+/* comments */
+htmlcomment        = "<!--" ~"-->"
 
 /* wiki links */
 wikilink           = "[[" [^\]\n\r]+ "]]"
@@ -101,17 +95,15 @@ templatestart      = "{{" ([^\{\}]+)
 templatestartchar  = "{"
 templateendchar    = "}"
 templateparam      = "{{{" [^\{\}\r\n]+ "}}}"
-includeonlyopen    = (<[ ]*includeonly[ ]*[\/]?[ ]*>)
-includeonlyclose   = (<[ ]*\/[ ]*includeonly[ ]*>)
-noincludeopen      = (<[ ]*noinclude[ ]*[\/]?[ ]*>)
-noincludeclose     = (<[ ]*\/[ ]*noinclude[ ]*>)
+includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
+noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 
 /* signatures */
 wikisig3           = "~~~"
 wikisig4           = "~~~~"
 wikisig5           = "~~~~~"
 
-%state NORMAL, PRE, JAVASCRIPT, WIKIPRE, TEMPLATE, NOINCLUDE, INCLUDEONLY
+%state NORMAL, PRE, WIKIPRE, TEMPLATE
 
 %%
 
@@ -166,7 +158,7 @@ wikisig5           = "~~~~~"
 <NORMAL, WIKIPRE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
-    yypushback(1);
+    yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
     }
@@ -248,46 +240,30 @@ wikisig5           = "~~~~~"
     return "";
 }
 
-<NORMAL, TEMPLATE>{includeonlyopen} {
-    logger.finer("includeonlyopen: " + yytext() + " (" + yystate() + ")");
-    if (this.mode != JFlexParser.MODE_TEMPLATE) {
-        yybegin(INCLUDEONLY);
+<NORMAL, TEMPLATE>{includeonly} {
+    logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        IncludeOnlyTag includeOnlyTag = new IncludeOnlyTag();
+        String value = includeOnlyTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
     }
-    return "";
 }
 
-<NORMAL, TEMPLATE, INCLUDEONLY>{includeonlyclose} {
-    logger.finer("includeonlyclose: " + yytext() + " (" + yystate() + ")");
-    if (this.mode != JFlexParser.MODE_TEMPLATE) {
-        endState();
+<NORMAL, TEMPLATE>{noinclude} {
+    logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        NoIncludeTag noIncludeTag = new NoIncludeTag();
+        String value = noIncludeTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
     }
-    return "";
-}
-
-<NORMAL, TEMPLATE>{noincludeopen} {
-    logger.finer("noincludeopen: " + yytext() + " (" + yystate() + ")");
-    if (this.mode == JFlexParser.MODE_TEMPLATE) {
-        yybegin(NOINCLUDE);
-    }
-    return "";
-}
-
-<NORMAL, TEMPLATE, NOINCLUDE>{noincludeclose} {
-    logger.finer("noincludeclose: " + yytext() + " (" + yystate() + ")");
-    if (this.mode == JFlexParser.MODE_TEMPLATE) {
-        endState();
-    }
-    return "";
-}
-
-<INCLUDEONLY, NOINCLUDE>{whitespace} {
-    // no need to log this
-    return "";
-}
-
-<INCLUDEONLY, NOINCLUDE>. {
-    // no need to log this
-    return "";
 }
 
 /* ----- wiki links ----- */
@@ -359,14 +335,29 @@ wikisig5           = "~~~~~"
     }
 }
 
+/* ----- comments ----- */
+
+<NORMAL>{htmlcomment} {
+    logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        HtmlCommentTag htmlCommentTag = new HtmlCommentTag();
+        String value = htmlCommentTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
+}
+
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL, JAVASCRIPT>{whitespace} {
+<WIKIPRE, PRE, NORMAL>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NORMAL, JAVASCRIPT>. {
+<WIKIPRE, PRE, NORMAL>. {
     // no need to log this
     return yytext();
 }

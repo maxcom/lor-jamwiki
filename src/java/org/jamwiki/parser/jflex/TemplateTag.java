@@ -57,7 +57,13 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
+	 * Search through content, starting at a specific position, and search for the
+	 * first position after a matching end tag for a specified start tag.  For instance,
+	 * if called with a start tag of "<b>" and an end tag of "</b>", this method
+	 * will operate as follows:
 	 *
+	 * "01<b>567</b>23" returns 12.
+	 * "01<b>56<b>01</b>67</b>23" returns 22.
 	 */
 	private int findMatchingEndTag(String content, int start, String startToken, String endToken) {
 		int pos = start;
