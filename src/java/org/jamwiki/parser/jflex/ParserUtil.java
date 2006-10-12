@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -53,14 +52,10 @@ public class ParserUtil {
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
-	protected static String parseFragment(ParserInput parserInput, String fragment, int mode) throws Exception {
-		// FIXME - consider yypushstream() and yypopstream() as potentially more efficient
-		// ways to handle this functionality
-		if (!StringUtils.hasText(fragment)) return fragment;
+	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws Exception {
+		if (!StringUtils.hasText(raw)) return raw;
 		JFlexParser parser = new JFlexParser(parserInput);
-		StringReader raw = new StringReader(fragment);
-		ParserMode parserMode = new ParserMode(mode);
-		ParserOutput parserOutput = parser.parsePreProcess(raw, parserMode);
+		ParserOutput parserOutput = parser.parseFragment(raw, mode);
 		return parserOutput.getContent();
 	}
 

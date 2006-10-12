@@ -17,7 +17,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
@@ -131,7 +130,7 @@ public class HtmlLinkTag implements ParserTag {
 	 * Parse a Mediawiki HTML link of the form "[http://www.site.com/ text]" or
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		if (raw == null || !StringUtils.hasText(raw)) {
 			// no link to display
 			return raw;

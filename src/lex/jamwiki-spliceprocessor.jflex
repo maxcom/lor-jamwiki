@@ -7,9 +7,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
-import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
@@ -55,7 +53,7 @@ import org.jamwiki.utils.WikiLogger;
         } else if (this.targetSection == this.section) {
             inTargetSection = true;
             this.sectionDepth = level;
-            if (this.mode.hasMode(ParserMode.MODE_SPLICE)) return this.replacementText;
+            if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;
         }
         return returnText(headingText);
     }
@@ -64,19 +62,18 @@ import org.jamwiki.utils.WikiLogger;
      *
      */
     private String returnText(String text) {
-        return (inTargetSection && this.mode.hasMode(ParserMode.MODE_SPLICE) || !inTargetSection && this.mode.hasMode(ParserMode.MODE_SLICE)) ? "" : text;
+        return ((inTargetSection && this.mode == JFlexParser.MODE_SPLICE) || (!inTargetSection && this.mode == JFlexParser.MODE_SLICE)) ? "" : text;
     }
     
     /**
      *
      */
-    public void init(ParserInput parserInput, ParserMode mode) throws Exception {
+    public void init(ParserInput parserInput, int mode) throws Exception {
         this.parserInput = parserInput;
         this.mode = mode;
         // validate parser settings
         boolean validated = true;
-        if (this.parserInput == null) validated = false;
-        if (!this.mode.hasMode(ParserMode.MODE_SPLICE) && !this.mode.hasMode(ParserMode.MODE_SLICE)) validated = false;
+        if (this.mode != JFlexParser.MODE_SLICE && this.mode != JFlexParser.MODE_SLICE) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }
@@ -114,8 +111,7 @@ h4                 = "====" [^=\n]+ ~"===="
 h5                 = "=====" [^=\n]+ ~"====="
 
 /* nowiki */
-nowikistart        = (<[ ]*nowiki[ ]*>)
-nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
+nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
@@ -124,20 +120,23 @@ htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
-%state NORMAL, NOWIKI, PRE
+%state NORMAL, PRE
 
 %%
 
 /* ----- parsing tags ----- */
 
-<PRE, NORMAL>{nowikistart} {
-    beginState(NOWIKI);
-    return returnText(yytext());
-}
-
-<NOWIKI>{nowikiend} {
-    endState();
-    return returnText(yytext());
+<PRE, NORMAL>{nowiki} {
+    logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
+        String value = wikiNowikiTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return returnText(value);
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return returnText(raw);
+    }
 }
 
 /* ----- nowiki ----- */
@@ -186,10 +185,10 @@ htmlcomment        = "<!--" ~"-->"
 
 /* ----- default ----- */
 
-<PRE, NOWIKI, NORMAL>{whitespace} {
+<PRE, NORMAL>{whitespace} {
     return returnText(yytext());
 }
 
-<PRE, NOWIKI, NORMAL>. {
+<PRE, NORMAL>. {
     return returnText(yytext());
 }

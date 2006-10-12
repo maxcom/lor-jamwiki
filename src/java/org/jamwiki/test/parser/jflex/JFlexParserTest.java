@@ -21,7 +21,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.JFlexParser;
 
@@ -41,7 +40,6 @@ public class JFlexParserTest extends TestCase {
 	 *
 	 */
 	protected String parse(String raw) {
-		ParserMode mode = new ParserMode(ParserMode.MODE_NORMAL);
 		// FIXME - hard coding
 		String topicName = "DUMMY";
 		ParserInput parserInput = new ParserInput();
@@ -55,7 +53,7 @@ public class JFlexParserTest extends TestCase {
 		JFlexParser parser = new JFlexParser(parserInput);
 		String output = null;
 		try {
-			ParserOutput parserOutput = parser.parseHTML(raw, "DUMMY", mode);
+			ParserOutput parserOutput = parser.parseHTML(raw);
 			output = parserOutput.getContent();
 		} catch (Exception e) {}
 		return output;

@@ -14,16 +14,15 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser;
+package org.jamwiki.parser.jflex;
 
 import java.util.Stack;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * This interface can be implemented in any way you like, it doesn't have to be for
- * a JLex generated lexer. As long as the implementing class implements a constructor
- * that takes a single InputStream or Reader parameter and returns one token at a
- * time from the yylex() method, it will work.
+ *
  */
 public abstract class AbstractLexer {
 
@@ -35,8 +34,8 @@ public abstract class AbstractLexer {
 	protected ParserInput parserInput = null;
 	/** Parser parsing results. */
 	protected ParserOutput parserOutput = new ParserOutput();
-	/** Lexer mode */
-	protected ParserMode mode = new ParserMode();
+	/** Parser mode */
+	protected int mode = JFlexParser.MODE_LAYOUT;
 
 	/**
 	 * Begin a new state and store the old state onto the stack.
@@ -77,7 +76,7 @@ public abstract class AbstractLexer {
 	 * all settings required for the parser have been set, and if not it
 	 * should throw an exception.
 	 */
-	public abstract void init(ParserInput parserInput, ParserMode mode) throws Exception;
+	public abstract void init(ParserInput parserInput, int mode) throws Exception;
 
 	/**
 	 *

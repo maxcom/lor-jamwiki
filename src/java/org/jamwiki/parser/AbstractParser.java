@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.util.Collection;
 import java.util.List;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  * Abstract class to be used when implementing new lexers.  New lexers
@@ -46,40 +47,41 @@ public abstract class AbstractParser {
 	public abstract String buildRedirectContent(String topicName);
 
 	/**
-	 * Utility method for executing a lexer parse.
+	 * This method parses content, performing all transformations except for
+	 * layout changes such as adding paragraph tags.  It is suitable to be used
+	 * when parsing the contents of a link or performing similar internal
+	 * manipulation.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
-	protected ParserOutput lex(AbstractLexer lexer) throws Exception {
-		this.parserInput.incrementDepth();
-		// FIXME - this is a sloppy way to avoid infinite loops
-		if (this.parserInput.getDepth() > 100000) {
-			throw new Exception("Infinite parsing loop - over 100 parser iterations");
-		}
-		StringBuffer content = new StringBuffer();
-		while (true) {
-			String line = lexer.yylex();
-			if (line == null) break;
-			content.append(line);
-		}
-		ParserOutput parserOutput = lexer.getParserOutput();
-		parserOutput.setContent(content.toString());
-		return parserOutput;
-	}
+	// FIXME - should this have a mode flag???
+	public abstract ParserOutput parseFragment(String raw, int mode) throws Exception;
 
 	/**
 	 * Returns a HTML representation of the given wiki raw text for online representation.
 	 *
-	 * @param rawtext The raw Wiki syntax to be converted into HTML.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
-	public abstract ParserOutput parseHTML(String rawtext, String topicName, ParserMode mode) throws Exception;
+	public abstract ParserOutput parseHTML(String raw) throws Exception;
 
 	/**
-	 * For syntax that is not saved with the topic source, this method provides
-	 * a way of parsing prior to saving.
+	 * This method provides a way to parse content and set all output metadata,
+	 * such as link values used by the search engine.
 	 *
-	 * @param rawtext The raw Wiki syntax to be converted into HTML.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return Results from parser execution.
 	 */
-	public abstract ParserOutput parsePreSave(String rawtext, ParserMode mode) throws Exception;
+	public abstract ParserOutput parseMetadata(String raw) throws Exception;
+
+	/**
+	 * Parse MediaWiki signatures and other tags that should not be
+	 * saved as part of the topic source.  This method is usually only called
+	 * during edits.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return A ParserOutput object containing results of the parsing process.
+	 */
+	public abstract ParserOutput parseSave(String raw) throws Exception;
 
 	/**
 	 * When making a section edit this function provides the capability to retrieve
@@ -88,11 +90,11 @@ public abstract class AbstractParser {
 	 * will return the heading tag and all text up to either the next &lt;h2&gt;,
 	 * &lt;h1&gt;, or the end of the document, whichever comes first.
 	 *
-	 * @param rawtext The raw Wiki text that is to be parsed.
+	 * @param raw The raw Wiki text that is to be parsed.
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 */
-	public abstract ParserOutput parseSlice(String rawtext, String topicName, int targetSection) throws Exception;
+	public abstract ParserOutput parseSlice(String raw, String topicName, int targetSection) throws Exception;
 
 	/**
 	 * This method provides the capability for re-integrating a section edit back
@@ -100,10 +102,10 @@ public abstract class AbstractParser {
 	 * full Wiki text and a targetSection.  All of the content of targetSection
 	 * is then replaced with the new text.
 	 *
-	 * @param rawtext The raw Wiki text that is to be parsed.
+	 * @param raw The raw Wiki text that is to be parsed.
 	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 * @param replacementText The text to replace the target section text with.
 	 */
-	public abstract ParserOutput parseSplice(String rawtext, String topicName, int targetSection, String replacementText) throws Exception;
+	public abstract ParserOutput parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception;
 }

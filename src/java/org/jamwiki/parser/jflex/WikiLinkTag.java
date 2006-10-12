@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.InterWikiHandler;
@@ -55,7 +54,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String buildInternalLinkUrl(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) {
+	private String buildInternalLinkUrl(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		try {
@@ -70,7 +69,7 @@ public class WikiLinkTag implements ParserTag {
 			}
 			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
 				// parse as an image
-				return this.parseImageLink(parserInput, wikiLink);
+				return this.parseImageLink(parserInput, mode, wikiLink);
 			}
 			if (StringUtils.hasText(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
 				// inter-wiki link
@@ -90,7 +89,7 @@ public class WikiLinkTag implements ParserTag {
 			} else if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getSection())) {
 				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection()));
 			} else {
-				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), ParserMode.MODE_NORMAL));
+				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, false);
@@ -104,10 +103,10 @@ public class WikiLinkTag implements ParserTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
-		this.processLinkMetadata(parserInput, parserOutput, mode, raw);
-		if (mode.hasMode(ParserMode.MODE_SAVE)) {
-			// do not parse to HTML when in save mode
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+		this.processLinkMetadata(parserInput, parserOutput, raw);
+		if (mode <= JFlexParser.MODE_PREPROCESS) {
+			// do not parse to HTML when in preprocess mode
 			return raw;
 		}
 		return this.processLinkContent(parserInput, parserOutput, mode, raw);
@@ -116,7 +115,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String parseImageLink(ParserInput parserInput, WikiLink wikiLink) throws Exception {
+	private String parseImageLink(ParserInput parserInput, int mode, WikiLink wikiLink) throws Exception {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		boolean thumb = false;
@@ -159,7 +158,7 @@ public class WikiLinkTag implements ParserTag {
 			if (thumb && maxDimension <= 0) {
 				maxDimension = DEFAULT_THUMBNAIL_SIZE;
 			}
-			caption = ParserUtil.parseFragment(parserInput, caption, ParserMode.MODE_NORMAL);
+			caption = ParserUtil.parseFragment(parserInput, caption, mode);
 		}
 		// do not escape html for caption since parser does it above
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);
@@ -190,7 +189,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) {
+	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 			// no destination or section
@@ -206,7 +205,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private void processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) {
+	private void processLinkMetadata(ParserInput parserInput, ParserOutput parserOutput, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 			return;

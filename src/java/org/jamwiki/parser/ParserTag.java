@@ -30,10 +30,9 @@ public interface ParserTag {
 	 *  settings.
 	 * @param parserOuput The ParserOutput object that holds output metadata and
 	 *  other values.
-	 * @param mode The ParserMode for the current parser state.
 	 * @param raw The raw Wiki sytnax that is being parsed.
 	 * @return A parsed version of the raw Wiki syntax.
 	 * @throws Exception Thrown if any parsing error occurs.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception;
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception;
 }

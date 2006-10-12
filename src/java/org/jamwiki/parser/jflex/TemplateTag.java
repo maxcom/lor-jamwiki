@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
@@ -48,10 +47,10 @@ public class TemplateTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String applyParameter(ParserInput parserInput, ParserMode mode, String param) throws Exception {
+	private String applyParameter(ParserInput parserInput, String param) throws Exception {
 		if (this.parameterValues == null) return param;
 		String name = this.parseParamName(param);
-		String defaultValue = this.parseParamDefaultValue(parserInput, mode, param);
+		String defaultValue = this.parseParamDefaultValue(parserInput, param);
 		String value = (String)this.parameterValues.get(name);
 		if (value == null && defaultValue == null) return param;
 		return (value != null) ? value : defaultValue;
@@ -84,7 +83,7 @@ public class TemplateTag implements ParserTag {
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		if (!StringUtils.hasText(raw)) {
 			throw new Exception("Empty template text");
 		}
@@ -94,19 +93,19 @@ public class TemplateTag implements ParserTag {
 		// extract the template name
 		String name = this.parseTemplateName(raw);
 		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, mode, raw);
+		this.parseTemplateParameterValues(parserInput, raw);
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
 		if (templateTopic == null) {
 			return raw;
 		}
-		return this.parseTemplateBody(parserInput, mode, templateTopic.getTopicContent());
+		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
 	}
 
 	/**
 	 *
 	 */
-	private String parseParamDefaultValue(ParserInput parserInput, ParserMode mode, String raw) throws Exception {
+	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
 		int pos = raw.indexOf("|");
 		String defaultValue = null;
 		if (pos == -1) {
@@ -116,9 +115,7 @@ public class TemplateTag implements ParserTag {
 			return null;
 		}
 		defaultValue = raw.substring(pos + 1, raw.length() - "}}}".length());
-		ParserMode templateMode = new ParserMode(mode);
-		templateMode.addMode(ParserMode.MODE_TEMPLATE);
-		return ParserUtil.parseFragment(parserInput, defaultValue, templateMode.getMode());
+		return ParserUtil.parseFragment(parserInput, defaultValue, JFlexParser.MODE_TEMPLATE);
 	}
 
 	/**
@@ -143,7 +140,7 @@ public class TemplateTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String parseTemplateBody(ParserInput parserInput, ParserMode mode, String content) throws Exception {
+	private String parseTemplateBody(ParserInput parserInput, String content) throws Exception {
 		StringBuffer output = new StringBuffer();
 		int pos = 0;
 		while (pos < content.length()) {
@@ -153,7 +150,7 @@ public class TemplateTag implements ParserTag {
 				int endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
 				if (endPos != -1) {
 					String param = content.substring(pos, endPos);
-					output.append(this.applyParameter(parserInput, mode, param));
+					output.append(this.applyParameter(parserInput, param));
 				}
 				pos = endPos;
 			} else {
@@ -161,9 +158,7 @@ public class TemplateTag implements ParserTag {
 				pos++;
 			}
 		}
-		ParserMode templateMode = new ParserMode(mode);
-		templateMode.addMode(ParserMode.MODE_TEMPLATE);
-		return ParserUtil.parseFragment(parserInput, output.toString(), templateMode.getMode());
+		return ParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_TEMPLATE);
 	}
 
 	/**
@@ -191,9 +186,7 @@ public class TemplateTag implements ParserTag {
 	/**
 	 *
 	 */
-	private void parseTemplateParameterValues(ParserInput parserInput, ParserMode mode, String raw) throws Exception {
-		ParserMode templateMode = new ParserMode(mode);
-		templateMode.addMode(ParserMode.MODE_TEMPLATE);
+	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
 		String content = "";
 		content = raw.substring("{{".length(), raw.length() - "}}".length());
 		// strip the template name
@@ -233,7 +226,7 @@ public class TemplateTag implements ParserTag {
 				endPos = findMatchingEndTag(content, pos, "{|", "|}");
 			} else if (content.charAt(pos) == '|') {
 				// new parameter
-				value = ParserUtil.parseFragment(parserInput, value, templateMode.getMode());
+				value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
 				this.parameterValues.put(name, value);
 				name = "";
 				value = "";
@@ -251,7 +244,7 @@ public class TemplateTag implements ParserTag {
 		}
 		if (StringUtils.hasText(name)) {
 			// add the last one
-			value = ParserUtil.parseFragment(parserInput, value, templateMode.getMode());
+			value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
 			this.parameterValues.put(name, value);
 		}
 	}

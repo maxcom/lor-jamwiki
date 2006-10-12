@@ -3,9 +3,7 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.parser.AbstractLexer;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
@@ -41,11 +39,12 @@ import org.jamwiki.utils.WikiLogger;
     /**
      *
      */
-    public void init(ParserInput parserInput, ParserMode mode) throws Exception {
+    public void init(ParserInput parserInput, int mode) throws Exception {
         this.parserInput = parserInput;
         this.mode = mode;
         // validate parser settings
         boolean validated = true;
+        if (this.mode != JFlexParser.MODE_LAYOUT) validated = false;
         if (this.parserInput == null) validated = false;
         if (this.parserInput.getTableOfContents() == null) validated = false;
         if (!validated) {
@@ -60,8 +59,7 @@ whitespace         = {newline} | [ \t\f]
 inputcharacter     = ([^ \n\r\t])
 
 /* nowiki */
-nowikistart        = (<[ ]*nowiki[ ]*>)
-nowikiend          = (<[ ]*\/[ ]*nowiki[ ]*>)
+nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
@@ -85,22 +83,23 @@ break              = (<[ ]*) br ([ ]*[\/]?[ ]*>)
 paragraphend       = ({newline} {newline})
 paragraphstart     = ({inputcharacter})
 
-%state NOWIKI, PRE, NORMAL, P, NONPARAGRAPH
+%state PRE, NORMAL, P, NONPARAGRAPH
 
 %%
 
 /* ----- nowiki ----- */
 
-<PRE, NORMAL, P, NONPARAGRAPH>{nowikistart} {
-    logger.finer("nowikistart: " + yytext() + " (" + yystate() + ")");
-    beginState(NOWIKI);
-    return "";
-}
-
-<NOWIKI>{nowikiend} {
-    logger.finer("nowikiend: " + yytext() + " (" + yystate() + ")");
-    endState();
-    return "";
+<PRE, NORMAL, P, NONPARAGRAPH>{nowiki} {
+    logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
+        String value = wikiNowikiTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.severe("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- pre ----- */
@@ -197,12 +196,12 @@ paragraphstart     = ({inputcharacter})
 
 /* ----- other ----- */
 
-<PRE, NOWIKI, NORMAL, NONPARAGRAPH, P>{whitespace} {
+<PRE, NORMAL, NONPARAGRAPH, P>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NOWIKI, NORMAL, NONPARAGRAPH, P>. {
+<PRE, NORMAL, NONPARAGRAPH, P>. {
     // no need to log this
     return yytext();
 }

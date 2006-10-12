@@ -20,7 +20,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
@@ -172,7 +171,7 @@ public class WikiListTag implements ParserTag {
 	 * Parse a Mediawiki list tag of the form "#*" and return the resulting
 	 * HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		if (raw == null || raw.length() == 0 || !isListTag(raw.charAt(0))) {
 			return this.closeList(parserInput);
 		} else {

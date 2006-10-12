@@ -33,7 +33,6 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Pagination;
@@ -132,7 +131,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 					parserInput.setLocale(request.getLocale());
 					parserInput.setVirtualWiki(virtualWiki);
 					parserInput.setTopicName(topicName);
-					ParserOutput parserOutput = Utilities.parse(parserInput, content, topicName, ParserMode.MODE_NORMAL);
+					ParserOutput parserOutput = Utilities.parse(parserInput, content);
 					content = parserOutput.getContent();
 				}
 				cachedContents.put(virtualWiki + "-" + topicName, content);
@@ -458,7 +457,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
-		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent(), topicName, ParserMode.MODE_NORMAL);
+		ParserOutput parserOutput = Utilities.parse(parserInput, topic.getTopicContent());
 		if (parserOutput != null) {
 			if (parserOutput.getCategories().size() > 0) {
 				LinkedHashMap categories = new LinkedHashMap();

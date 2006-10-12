@@ -17,7 +17,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.parser.TableOfContents;
@@ -55,7 +54,7 @@ public class WikiHeadingTag implements ParserTag {
 	 * Parse a Mediawiki heading of the form "==heading==" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, ParserMode mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		int level = 0;
 		if (raw.startsWith("=====") && raw.endsWith("=====")) {
 			level = 5;
@@ -78,7 +77,7 @@ public class WikiHeadingTag implements ParserTag {
 		output += this.buildSectionEditLink(parserInput, nextSection);
 		output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
 		output += "<h" + level + ">";
-		output += ParserUtil.parseFragment(parserInput, tagText, mode.getMode());
+		output += ParserUtil.parseFragment(parserInput, tagText, mode);
 		output += "</h" + level + ">";
 		return output.toString();
 	}

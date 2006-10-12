@@ -31,7 +31,6 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
@@ -280,7 +279,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserOutput parserOutput = Utilities.parsePreSave(parserInput, contents, ParserMode.MODE_SAVE);
+		ParserOutput parserOutput = Utilities.parseSave(parserInput, contents);
 		contents = parserOutput.getContent();
 		topic.setTopicContent(contents);
 		if (StringUtils.hasText(parserOutput.getRedirect())) {

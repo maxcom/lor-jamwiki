@@ -50,7 +50,6 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserMode;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.servlets.JAMWikiServlet;
@@ -222,6 +221,7 @@ public class Utilities {
 	 * @param input The text from which XML characters are to be escaped.
 	 * @return An escaped version of the given text.
 	 */
+	// FIXME - replace with org.springframework.web.util.HtmlUtils
 	public static String escapeHTML(String input) {
 		if (!StringUtils.hasText(input)) return input;
 		// for obvious reasons ampersand must be replaced first
@@ -542,18 +542,17 @@ public class Utilities {
 	 *  parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parse(ParserInput parserInput, String content, String topicName, int mode) throws Exception {
+	public static ParserOutput parse(ParserInput parserInput, String content) throws Exception {
 		if (content == null) {
 			return null;
 		}
 		AbstractParser parser = parserInstance(parserInput);
-		ParserMode parserMode = new ParserMode(mode);
-		return parser.parseHTML(content, topicName, parserMode);
+		return parser.parseHTML(content);
 	}
 
 	/**
-	 * Using the system parser, parse system content that should not be persisted
-	 * such as signatures.
+	 * This method provides a way to parse content and set all output metadata,
+	 * such as link values used by the search engine.
 	 *
 	 * @param parserInput A ParserInput object that contains parser configuration
 	 *  information.
@@ -562,10 +561,9 @@ public class Utilities {
 	 *  and other parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserOutput parsePreSave(ParserInput parserInput, String content, int mode) throws Exception {
+	public static ParserOutput parseMetadata(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
-		ParserMode parserMode = new ParserMode(mode);
-		return parser.parsePreSave(content, parserMode);
+		return parser.parseMetadata(content);
 	}
 
 	/**
@@ -614,7 +612,23 @@ public class Utilities {
 	 */
 	public static ParserOutput parserOutput(String content) throws Exception {
 		ParserInput parserInput = new ParserInput();
-		return Utilities.parsePreSave(parserInput, content, ParserMode.MODE_SEARCH);
+		return Utilities.parseMetadata(parserInput, content);
+	}
+
+	/**
+	 * Using the system parser, parse system content that should not be persisted
+	 * such as signatures.
+	 *
+	 * @param parserInput A ParserInput object that contains parser configuration
+	 *  information.
+	 * @param content The raw topic content that is to be parsed.
+	 * @return Returns a ParserOutput object with minimally parsed topic content
+	 *  and other parser output fields set.
+	 * @throws Exception Thrown if there are any parsing errors.
+	 */
+	public static ParserOutput parseSave(ParserInput parserInput, String content) throws Exception {
+		AbstractParser parser = parserInstance(parserInput);
+		return parser.parseSave(content);
 	}
 
 	/**

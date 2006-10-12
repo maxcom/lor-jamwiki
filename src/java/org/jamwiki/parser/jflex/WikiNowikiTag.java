@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
@@ -26,18 +25,41 @@ import org.jamwiki.utils.WikiLogger;
 /**
  *
  */
-public class HtmlTag implements ParserTag {
+public class WikiNowikiTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HtmlTag.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(WikiNowikiTag.class.getName());
+
+	/**
+	 * Parse a Mediawiki heading of the form "==heading==" and return the
+	 * resulting HTML output.
+	 */
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+		if (mode <= JFlexParser.MODE_PREPROCESS) {
+			// return content unchanged
+			return raw;
+		}
+		String content = tagContent(raw);
+		if (mode == JFlexParser.MODE_PROCESS) {
+			return "<nowiki>" + Utilities.escapeHTML(content) + "</nowiki>";
+		}
+		return content;
+	}
 
 	/**
 	 *
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
-			return Utilities.escapeHTML(raw);
-		} else {
-			return ParserUtil.validateHtmlTag(raw);
+	private String tagContent(String raw) {
+		int start = raw.indexOf(">") + 1;
+		int end = raw.lastIndexOf("<");
+		if (start == 0) {
+			// no tags
+			return raw;
 		}
+		if (end <= start) {
+			// no end tag?
+			end = start;
+			start = 0;
+		}
+		return raw.substring(start, end);
 	}
 }
