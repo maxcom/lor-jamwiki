@@ -108,13 +108,29 @@ paragraphstart     = ({inputcharacter})
 <NORMAL, P, NONPARAGRAPH>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
-    return "<pre>";
+    String raw = yytext();
+    try {
+        HtmlPreTag htmlPreTag = new HtmlPreTag();
+        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     endState();
-    return "</pre>";
+    String raw = yytext();
+    try {
+        HtmlPreTag htmlPreTag = new HtmlPreTag();
+        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- processing commands ----- */

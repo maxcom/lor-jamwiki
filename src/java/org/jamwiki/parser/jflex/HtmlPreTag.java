@@ -19,29 +19,29 @@ package org.jamwiki.parser.jflex;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  *
  */
-public class WikiNowikiTag implements ParserTag {
+public class HtmlPreTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiNowikiTag.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(HtmlPreTag.class.getName());
 
 	/**
 	 * Parse a Mediawiki heading of the form "==heading==" and return the
 	 * resulting HTML output.
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		if (mode <= JFlexParser.MODE_PREPROCESS) {
+		if (mode < JFlexParser.MODE_PROCESS) {
 			// return content unchanged
 			return raw;
 		}
-		String content = ParserUtil.tagContent(raw);
-		if (mode == JFlexParser.MODE_PROCESS) {
-			return "<nowiki>" + Utilities.escapeHTML(content) + "</nowiki>";
+		if (mode == JFlexParser.MODE_PROCESS && !Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+			return Utilities.escapeHTML(raw);
 		}
-		return content;
+		return ParserUtil.sanitizeHtmlTag(raw);
 	}
 }

@@ -145,15 +145,30 @@ htmlcomment        = "<!--" ~"-->"
 <NORMAL>{htmlprestart} {
     if (allowHtml) {
         beginState(PRE);
-        return returnText(yytext());
     }
-    return returnText("&lt;pre&gt;");
+    String raw = yytext();
+    try {
+        HtmlPreTag htmlPreTag = new HtmlPreTag();
+        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return returnText(value);
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <PRE>{htmlpreend} {
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    return returnText(yytext());
+    String raw = yytext();
+    try {
+        HtmlPreTag htmlPreTag = new HtmlPreTag();
+        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return returnText(value);
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- comments ----- */

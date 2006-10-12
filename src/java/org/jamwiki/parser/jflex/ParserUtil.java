@@ -64,12 +64,37 @@ public class ParserUtil {
 	 * unnecessary spaces).
 	 */
 	protected static String sanitizeHtmlTag(String tag) {
+		tag = tag.trim();
 		tag = StringUtils.deleteAny(tag, " ").toLowerCase();
 		if (tag.endsWith("/>")) {
 			// spaces were stripped, so make sure tag is of the form "<br />"
 			tag = tag.substring(0, tag.length() - 2) + " />";
 		}
 		return tag;
+	}
+
+	/**
+	 * Given a tag of the form "<tag>content</tag>", return all content between
+	 * the tags.  Consider the following examples:
+	 *
+	 * "<tag>content</tag>" returns "content".
+	 * "<tag />" returns and empty string.
+	 * "<tag><sub>content</sub></tag>" returns "<sub>content</sub>".
+	 *
+	 * @param raw The raw tag content to be analyzed.
+	 * @return The content for the tag being analyzed.
+	 */
+	protected static String tagContent(String raw) {
+		int start = raw.indexOf(">") + 1;
+		int end = raw.lastIndexOf("<");
+		if (start == 0) {
+			// no tags
+			return raw;
+		}
+		if (end <= start) {
+			return "";
+		}
+		return raw.substring(start, end);
 	}
 
 	/**

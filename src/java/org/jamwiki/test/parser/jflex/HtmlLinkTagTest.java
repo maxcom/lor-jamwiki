@@ -16,8 +16,6 @@
  */
 package org.jamwiki.test.parser.jflex;
 
-import java.util.Locale;
-
 /**
  *
  */

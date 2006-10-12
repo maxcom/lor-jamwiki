@@ -137,14 +137,30 @@ wikisig5           = "~~~~~"
     if (allowHTML) {
         beginState(PRE);
     }
-    return yytext();
+    String raw = yytext();
+    try {
+        HtmlPreTag htmlPreTag = new HtmlPreTag();
+        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    return yytext();
+    String raw = yytext();
+    try {
+        HtmlPreTag htmlPreTag = new HtmlPreTag();
+        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 <NORMAL, WIKIPRE>^{wikiprestart} {
