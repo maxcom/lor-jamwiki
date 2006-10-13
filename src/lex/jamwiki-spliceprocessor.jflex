@@ -75,6 +75,7 @@ import org.jamwiki.utils.WikiLogger;
         // validate parser settings
         boolean validated = true;
         if (this.mode != JFlexParser.MODE_SPLICE && this.mode != JFlexParser.MODE_SLICE) validated = false;
+        if (this.parserInput.getTopicName() == null) validated = false;
         if (!validated) {
             throw new Exception("Parser info not properly initialized");
         }

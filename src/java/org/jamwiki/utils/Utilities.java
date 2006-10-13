@@ -686,7 +686,7 @@ public class Utilities {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseSlice(topic.getTopicContent(), topicName, targetSection);
+		return parser.parseSlice(topic.getTopicContent(), targetSection);
 	}
 
 	/**
@@ -714,7 +714,7 @@ public class Utilities {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseSplice(topic.getTopicContent(), topicName, targetSection, replacementText);
+		return parser.parseSplice(topic.getTopicContent(), targetSection, replacementText);
 	}
 
 	/**

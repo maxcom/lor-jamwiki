@@ -91,10 +91,9 @@ public abstract class AbstractParser {
 	 * &lt;h1&gt;, or the end of the document, whichever comes first.
 	 *
 	 * @param raw The raw Wiki text that is to be parsed.
-	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 */
-	public abstract ParserDocument parseSlice(String raw, String topicName, int targetSection) throws Exception;
+	public abstract ParserDocument parseSlice(String raw, int targetSection) throws Exception;
 
 	/**
 	 * This method provides the capability for re-integrating a section edit back
@@ -103,9 +102,8 @@ public abstract class AbstractParser {
 	 * is then replaced with the new text.
 	 *
 	 * @param raw The raw Wiki text that is to be parsed.
-	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 * @param replacementText The text to replace the target section text with.
 	 */
-	public abstract ParserDocument parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception;
+	public abstract ParserDocument parseSplice(String raw, int targetSection, String replacementText) throws Exception;
 }

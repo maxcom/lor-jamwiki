@@ -77,7 +77,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 *
 	 */
-	public String isRedirect(String content) {
+	private String isRedirect(String content) {
 		if (!StringUtils.hasText(content)) return null;
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
 		return (m.matches()) ? Utilities.decodeFromURL(m.group(1).trim()) : null;
@@ -129,7 +129,9 @@ public class JFlexParser extends AbstractParser {
 	}
 
 	/**
-	 * Parse text for online display.
+	 * Returns a HTML representation of the given wiki raw text for online representation.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
 	public ParserDocument parseHTML(String raw) throws Exception {
 		long start = System.currentTimeMillis();
@@ -169,7 +171,7 @@ public class JFlexParser extends AbstractParser {
 	 * First stage of the parser, this method parses templates and signatures
 	 * and builds metadata.
 	 *
-	 * @param reader The raw Wiki syntax to be converted into HTML.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	private ParserDocument parsePreProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
@@ -184,7 +186,7 @@ public class JFlexParser extends AbstractParser {
 	 * Second stage of the parser, this method parses most Wiki syntax, validates
 	 * HTML, and performs the majority of the parser conversion.
 	 *
-	 * @param reader The raw Wiki syntax to be converted into HTML.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	private ParserDocument parseProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
@@ -199,7 +201,7 @@ public class JFlexParser extends AbstractParser {
 	 * adding paragraph tags and other layout elements that for various reasons
 	 * cannot be added during the first parsing stage.
 	 *
-	 * @param reader The raw Wiki syntax to be converted into HTML.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	private ParserDocument parsePostProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
@@ -261,7 +263,7 @@ public class JFlexParser extends AbstractParser {
 	 * @return All markup from the target section, contained within a ParserDocument
 	 *  object.
 	 */
-	public ParserDocument parseSlice(String raw, String topicName, int targetSection) throws Exception {
+	public ParserDocument parseSlice(String raw, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
@@ -269,6 +271,7 @@ public class JFlexParser extends AbstractParser {
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SLICE);
 		lexer.setTargetSection(targetSection);
 		parserDocument = this.lex(lexer, raw);
+		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserDocument;
 	}
@@ -288,7 +291,7 @@ public class JFlexParser extends AbstractParser {
 	 * @param replacementText The text to replace the specified section text with.
 	 * @return The new topic markup, contained within a ParserDocument object.
 	 */
-	public ParserDocument parseSplice(String raw, String topicName, int targetSection, String replacementText) throws Exception {
+	public ParserDocument parseSplice(String raw, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
@@ -297,6 +300,7 @@ public class JFlexParser extends AbstractParser {
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		parserDocument = this.lex(lexer, raw);
+		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserDocument;
 	}
