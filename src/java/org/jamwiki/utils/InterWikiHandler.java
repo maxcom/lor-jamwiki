@@ -42,7 +42,19 @@ public class InterWikiHandler {
 	}
 
 	/**
+	 * Retrieve an inter-wiki mapping for the given namespace and use the value
+	 * parameter to create a URL to that wiki.  For example, a namespace of
+	 * "wikipedia" and a value of "Main Page" will resolve to a the URL
+	 * "http://en.wikipedia.org/wiki/Main_Page".
 	 *
+	 * @param namespace The inter-wiki link namespace corresponding to the key
+	 *  value in the interwiki.properties file.  This link is compared in a
+	 *  case-insensitive manner.
+	 * @param value The page or topic name that is being linked to.
+	 * @return Returns a formatted URL that links to the page specified by the
+	 *  namespace and value.  If no namespace mapping is present then a string
+	 *  that combines the namespace and value is returned, such as
+	 *  "namespace:value".
 	 */
 	public static String formatInterWiki(String namespace, String value) {
 		String pattern = InterWikiHandler.mapping.getProperty(namespace.toLowerCase());
@@ -61,7 +73,9 @@ public class InterWikiHandler {
 	/**
 	 * Return true if there is an inter-wiki mapping for the given namespace.
 	 *
-	 * @param namespace The inter-wiki link namespace.
+	 * @param namespace The inter-wiki link namespace corresponding to the key
+	 *  value in the interwiki.properties file.  This link is compared in a
+	 *  case-insensitive manner.
 	 * @return <code>true</code> if an inter-wiki mapping exists, <code>false</code>
 	 *  otherwise.
 	 */

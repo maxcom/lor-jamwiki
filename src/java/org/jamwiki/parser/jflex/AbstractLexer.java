@@ -76,6 +76,9 @@ public abstract class AbstractLexer {
 	 * Set the parser settings.  This method should also validate that
 	 * all settings required for the parser have been set, and if not it
 	 * should throw an exception.
+	 *
+	 * @param mode The parser mode to use when parsing.  Mode affects what
+	 *  type of parsing actions are taken when processing raw text.
 	 */
 	public abstract void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception;
 

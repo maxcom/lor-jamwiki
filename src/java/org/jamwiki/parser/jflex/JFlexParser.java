@@ -37,14 +37,21 @@ public class JFlexParser extends AbstractParser {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParser.class.getName());
 
+	/** Splice mode is used when inserting an edited topic section back into the full topic content. */
 	protected static final int MODE_SPLICE = 1;
+	/** Slice mode is used when retrieving a section of a topic for editing. */
 	protected static final int MODE_SLICE = 2;
-	/** Save mode indicates that the topic was edited and is being saved. */
+	/** Save mode indicates that the topic was edited and is being saved.  This mode takes actions such as replacing signatures with Wiki markup. */
 	protected static final int MODE_SAVE = 3;
+	/** Template mode processes templates, replacing template calls with the template contents. */
 	protected static final int MODE_TEMPLATE = 4;
+	/** Metadata mode is primarily used by the search engine and parses topic content in order to set all ParserDocument metadata fields. */
 	protected static final int MODE_METADATA = 5;
+	/** Pre-process mode is currently equivalent to metadata mode and indicates that that the JFlex pre-processor parser should be run in full. */
 	protected static final int MODE_PREPROCESS = 6;
+	/** Processing mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output. */
 	protected static final int MODE_PROCESS = 7;
+	/** Layout mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
 	protected static final int MODE_LAYOUT = 8;
 
 	private static Pattern REDIRECT_PATTERN = null;
@@ -59,16 +66,24 @@ public class JFlexParser extends AbstractParser {
 	}
 
 	/**
-	 * Sets the basics for this parser.
+	 * The constructor creates a parser instance, initialized with the
+	 * specified parser input settings.
 	 *
-	 * @param parserInput General information about this parser.
+	 * @param parserInput Input configuration settings for this parser
+	 *  instance.
 	 */
 	public JFlexParser(ParserInput parserInput) {
 		super(parserInput);
 	}
 
 	/**
+	 * Return a parser-specific value that can be used as the content of a
+	 * topic representing a redirect.  For the Mediawiki syntax parser the
+	 * value returned would be of the form "#REDIRECT [[Topic]]".
 	 *
+	 * @param topicName The name of the topic to redirect to.
+	 * @return A parser-specific value that can be used as the content of a
+	 *  topic representing a redirect.
 	 */
 	public String buildRedirectContent(String topicName) {
 		return "#REDIRECT [[" + topicName + "]]";
@@ -116,6 +131,8 @@ public class JFlexParser extends AbstractParser {
 	 * manipulation.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @param mode The parser mode to use when parsing.  Mode affects what
+	 *  type of parsing actions are taken when processing raw text.
 	 */
 	public ParserDocument parseFragment(String raw, int mode) throws Exception {
 		// maintain the original output, which has all of the category and link info
@@ -172,6 +189,8 @@ public class JFlexParser extends AbstractParser {
 	 * and builds metadata.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @param mode The parser mode to use when parsing.  Mode affects what
+	 *  type of parsing actions are taken when processing raw text.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	private ParserDocument parsePreProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
@@ -187,6 +206,8 @@ public class JFlexParser extends AbstractParser {
 	 * HTML, and performs the majority of the parser conversion.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @param mode The parser mode to use when parsing.  Mode affects what
+	 *  type of parsing actions are taken when processing raw text.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	private ParserDocument parseProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
@@ -202,6 +223,8 @@ public class JFlexParser extends AbstractParser {
 	 * cannot be added during the first parsing stage.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @param mode The parser mode to use when parsing.  Mode affects what
+	 *  type of parsing actions are taken when processing raw text.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	private ParserDocument parsePostProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
@@ -258,7 +281,6 @@ public class JFlexParser extends AbstractParser {
 	 * will be returned.
 	 *
 	 * @param raw The raw Wiki syntax from which a section is to be retrieved.
-	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section of the document to be replaced (first section is 1).
 	 * @return All markup from the target section, contained within a ParserDocument
 	 *  object.
@@ -286,7 +308,6 @@ public class JFlexParser extends AbstractParser {
 	 * specified text.
 	 *
 	 * @param raw The raw Wiki syntax from which a section is to be replaced.
-	 * @param topicName The name of the topic that is being parsed.
 	 * @param targetSection The section of the document to be replaced (first section is 1).
 	 * @param replacementText The text to replace the specified section text with.
 	 * @return The new topic markup, contained within a ParserDocument object.

@@ -33,16 +33,24 @@ public abstract class AbstractParser {
 	protected ParserInput parserInput = null;
 
 	/**
-	 * Sets the basics for this parser.
+	 * The constructor creates a parser instance, initialized with the
+	 * specified parser input settings.
 	 *
-	 * @param parserInput General information about this parser.
+	 * @param parserInput Input configuration settings for this parser
+	 *  instance.
 	 */
 	public AbstractParser(ParserInput parserInput) {
 		this.parserInput = parserInput;
 	}
 
 	/**
+	 * Return a parser-specific value that can be used as the content of a
+	 * topic representing a redirect.  For the Mediawiki syntax parser the
+	 * value returned would be of the form "#REDIRECT [[Topic]]".
 	 *
+	 * @param topicName The name of the topic to redirect to.
+	 * @return A parser-specific value that can be used as the content of a
+	 *  topic representing a redirect.
 	 */
 	public abstract String buildRedirectContent(String topicName);
 
@@ -53,6 +61,8 @@ public abstract class AbstractParser {
 	 * manipulation.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @param mode The parser mode to use when parsing.  Mode affects what
+	 *  type of parsing actions are taken when processing raw text.
 	 */
 	// FIXME - should this have a mode flag???
 	public abstract ParserDocument parseFragment(String raw, int mode) throws Exception;

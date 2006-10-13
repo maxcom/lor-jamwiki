@@ -11,9 +11,9 @@ JAMWiki Contributors
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
      Chinese (traditional): Jiading (ewen0930)
+     Danish:                Anders Monrad (g9adm)
      French:                Henri Gomez (hgomez)
      German:                Axel Kramer (axelclk)
-     Danish:                Anders Monrad (g9adm)
      Hungarian:             Daniel Tar (bDaneE)
      Polish:                Robert Matyja (dlpa)
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
