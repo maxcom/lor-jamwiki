@@ -174,7 +174,15 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- comments ----- */
 
 <NORMAL>{htmlcomment} {
-    return returnText(yytext());
+    String raw = yytext();
+    try {
+        HtmlCommentTag htmlCommentTag = new HtmlCommentTag();
+        String value = htmlCommentTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return returnText(value);
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        return raw;
+    }
 }
 
 /* ----- headings ----- */
@@ -202,9 +210,27 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- default ----- */
 
 <PRE, NORMAL>{whitespace} {
-    return returnText(yytext());
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return returnText(value);
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }
 
 <PRE, NORMAL>. {
-    return returnText(yytext());
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return returnText(value);
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }

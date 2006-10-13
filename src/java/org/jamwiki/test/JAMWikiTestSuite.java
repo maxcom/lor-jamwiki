@@ -37,6 +37,7 @@ public class JAMWikiTestSuite extends TestCase {
 	 */
 	public static Test suite() {
 		TestSuite s = new TestSuite();
+		s.addTestSuite(org.jamwiki.test.parser.jflex.CharacterTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlLinkTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlPreTagTest.class);

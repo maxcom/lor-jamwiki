@@ -19,6 +19,7 @@
 * FEATURE: Updated MS SQL support from Robert Matyja (dlpa).
 * BUG: Fix possible database transaction blocking during setup using
   suggestions from Robert Matyja (dlpa).
+* BUG: Properly escape ampersands from the parser to ensure XHTML output.
 * FEATURE: Add JUnit test framework.
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).

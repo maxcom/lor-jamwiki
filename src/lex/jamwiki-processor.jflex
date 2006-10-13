@@ -177,10 +177,7 @@ import org.springframework.util.StringUtils;
 newline            = ((\r\n) | (\n))
 whitespace         = {newline} | [ \t\f]
 inputcharacter     = [^\r\n]
-lessthan           = "<"
-greaterthan        = ">"
-quotation          = "\""
-apostrophe         = "\'"
+entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{3,6};)
 
 /* non-container expressions */
 hr                 = "----"
@@ -593,36 +590,44 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{lessthan} {
-    logger.finer("lessthan: " + yytext() + " (" + yystate() + ")");
-    // escape html not recognized by above tags
-    return "&lt;";
-}
-
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{greaterthan} {
-    logger.finer("greaterthan: " + yytext() + " (" + yystate() + ")");
-    // escape html not recognized by above tags
-    return "&gt;";
-}
-
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{quotation} {
-    logger.finer("quotation: " + yytext() + " (" + yystate() + ")");
-    // escape html not recognized by above tags
-    return "&quot;";
-}
-
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{apostrophe} {
-    logger.finer("apostrophe: " + yytext() + " (" + yystate() + ")");
-    // escape html not recognized by above tags
-    return "&#39;";
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{entity} {
+    logger.finer("entity: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT>{whitespace} {
     // no need to log this
-    return yytext();
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT>. {
     // no need to log this
-    return yytext();
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }

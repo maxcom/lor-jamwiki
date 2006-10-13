@@ -354,10 +354,28 @@ wikisig5           = "~~~~~"
 
 <WIKIPRE, PRE, NORMAL>{whitespace} {
     // no need to log this
-    return yytext();
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }
 
 <WIKIPRE, PRE, NORMAL>. {
     // no need to log this
-    return yytext();
+    String raw = yytext();
+    try {
+        CharacterTag characterTag = new CharacterTag();
+        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+        return value;
+    } catch (Exception e) {
+        logger.info("Unable to parse " + raw, e);
+        // FIXME - what to return here?
+        return "";
+    }
 }
