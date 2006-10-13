@@ -99,9 +99,7 @@ includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ 
 noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 
 /* signatures */
-wikisig3           = "~~~"
-wikisig4           = "~~~~"
-wikisig5           = "~~~~~"
+wikisignature      = ([~]{3,5})
 
 %state NORMAL, PRE, WIKIPRE, TEMPLATE
 
@@ -111,15 +109,8 @@ wikisig5           = "~~~~~"
 
 <WIKIPRE, PRE, NORMAL>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiNowikiTag parserTag = new WikiNowikiTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- pre ----- */
@@ -129,30 +120,16 @@ wikisig5           = "~~~~~"
     if (allowHTML) {
         beginState(PRE);
     }
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <NORMAL, WIKIPRE>^{wikiprestart} {
@@ -199,15 +176,8 @@ wikisig5           = "~~~~~"
         endState();
         String value = new String(this.templateString);
         this.templateString = "";
-        try {
-            TemplateTag templateTag = new TemplateTag();
-            value = templateTag.parse(this.parserInput, this.parserDocument, this.mode, value);
-            return value;
-        } catch (Exception e) {
-            logger.info("Unable to parse " + this.templateString, e);
-            this.templateString = "";
-            return value;
-        }
+        TemplateTag parserTag = new TemplateTag();
+        return this.parseToken(value, parserTag);
     }
     return "";
 }
@@ -242,140 +212,56 @@ wikisig5           = "~~~~~"
 
 <NORMAL, TEMPLATE>{includeonly} {
     logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        IncludeOnlyTag includeOnlyTag = new IncludeOnlyTag();
-        String value = includeOnlyTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    IncludeOnlyTag parserTag = new IncludeOnlyTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <NORMAL, TEMPLATE>{noinclude} {
     logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        NoIncludeTag noIncludeTag = new NoIncludeTag();
-        String value = noIncludeTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    NoIncludeTag parserTag = new NoIncludeTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- wiki links ----- */
 
 <NORMAL>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiLinkTag parserTag = new WikiLinkTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <NORMAL>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiLinkTag parserTag = new WikiLinkTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- signatures ----- */
 
-<NORMAL>{wikisig3} {
-    logger.finer("wikisig3: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
-        String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
-}
-
-<NORMAL>{wikisig4} {
-    logger.finer("wikisig4: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
-        String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
-}
-
-<NORMAL>{wikisig5} {
-    logger.finer("wikisig5: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiSignatureTag wikiSignatureTag = new WikiSignatureTag();
-        String value = wikiSignatureTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+<NORMAL>{wikisignature} {
+    logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
+    WikiSignatureTag parserTag = new WikiSignatureTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- comments ----- */
 
 <NORMAL>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        HtmlCommentTag htmlCommentTag = new HtmlCommentTag();
-        String value = htmlCommentTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlCommentTag parserTag = new HtmlCommentTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- other ----- */
 
 <WIKIPRE, PRE, NORMAL>{whitespace} {
     // no need to log this
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <WIKIPRE, PRE, NORMAL>. {
     // no need to log this
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }

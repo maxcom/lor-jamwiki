@@ -92,15 +92,8 @@ paragraphstart     = ({inputcharacter})
 
 <PRE, NORMAL, P, NONPARAGRAPH>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiNowikiTag parserTag = new WikiNowikiTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- pre ----- */
@@ -108,29 +101,15 @@ paragraphstart     = ({inputcharacter})
 <NORMAL, P, NONPARAGRAPH>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     endState();
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- processing commands ----- */
@@ -215,28 +194,12 @@ paragraphstart     = ({inputcharacter})
 
 <PRE, NORMAL, NONPARAGRAPH, P>{whitespace} {
     // no need to log this
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <PRE, NORMAL, NONPARAGRAPH, P>. {
     // no need to log this
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }

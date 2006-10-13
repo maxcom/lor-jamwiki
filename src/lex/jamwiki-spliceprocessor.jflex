@@ -129,15 +129,8 @@ htmlcomment        = "<!--" ~"-->"
 
 <PRE, NORMAL>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return returnText(value);
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return returnText(raw);
-    }
+    WikiNowikiTag parserTag = new WikiNowikiTag();
+    return returnText(this.parseToken(yytext(), parserTag));
 }
 
 /* ----- nowiki ----- */
@@ -146,43 +139,22 @@ htmlcomment        = "<!--" ~"-->"
     if (allowHtml) {
         beginState(PRE);
     }
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return returnText(value);
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return returnText(this.parseToken(yytext(), parserTag));
 }
 
 <PRE>{htmlpreend} {
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return returnText(value);
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return returnText(this.parseToken(yytext(), parserTag));
 }
 
 /* ----- comments ----- */
 
 <NORMAL>{htmlcomment} {
-    String raw = yytext();
-    try {
-        HtmlCommentTag htmlCommentTag = new HtmlCommentTag();
-        String value = htmlCommentTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return returnText(value);
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlCommentTag parserTag = new HtmlCommentTag();
+    return returnText(this.parseToken(yytext(), parserTag));
 }
 
 /* ----- headings ----- */
@@ -210,27 +182,11 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- default ----- */
 
 <PRE, NORMAL>{whitespace} {
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return returnText(value);
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return returnText(this.parseToken(yytext(), parserTag));
 }
 
 <PRE, NORMAL>. {
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return returnText(value);
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return returnText(this.parseToken(yytext(), parserTag));
 }

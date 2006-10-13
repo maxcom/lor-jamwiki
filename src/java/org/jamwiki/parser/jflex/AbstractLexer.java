@@ -17,8 +17,9 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.Stack;
-import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -77,6 +78,18 @@ public abstract class AbstractLexer {
 	 * should throw an exception.
 	 */
 	public abstract void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception;
+
+	/**
+	 *
+	 */
+	protected String parseToken(String raw, ParserTag parserTag) {
+		try {
+			return parserTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
+		} catch (Exception e) {
+			logger.info("Unable to parse " + raw, e);
+			return raw;
+		}
+	}
 
 	/**
 	 *

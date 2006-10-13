@@ -40,7 +40,7 @@ public class CharacterTagTest extends JFlexParserTest {
 		input = "& \"";
 		output = "<p>&amp; &quot;\n</p>";
 		assertEquals(output, this.parse(input));
-		input = "&#39; \"";
+		input = "&#39;";
 		output = "<p>&#39;\n</p>";
 		assertEquals(output, this.parse(input));
 	}

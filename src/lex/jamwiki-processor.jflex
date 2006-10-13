@@ -66,13 +66,8 @@ import org.springframework.util.StringUtils;
     }
     // close any open list tags
     if (yystate() == LIST) {
-        try {
-            WikiListTag wikiListTag = new WikiListTag();
-            String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, null);
-            output.append(value);
-        } catch (Exception e) {
-            logger.severe("Unable to close open list", e);
-        }
+        WikiListTag parserTag = new WikiListTag();
+        output.append(this.parseToken(null, parserTag));
     }
     // close any open tables
     if (yystate() == TD) {
@@ -246,15 +241,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiNowikiTag wikiNowikiTag = new WikiNowikiTag();
-        String value = wikiNowikiTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiNowikiTag parserTag = new WikiNowikiTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- pre ----- */
@@ -264,30 +252,16 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     if (allowHTML) {
         beginState(PRE);
     }
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    String raw = yytext();
-    try {
-        HtmlPreTag htmlPreTag = new HtmlPreTag();
-        String value = htmlPreTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlPreTag parserTag = new HtmlPreTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC, WIKIPRE>^{wikiprestart} {
@@ -327,41 +301,20 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiLinkTag parserTag = new WikiLinkTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiLinkTag wikiLinkTag = new WikiLinkTag();
-        String value = wikiLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiLinkTag parserTag = new WikiLinkTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        HtmlLinkTag htmlLinkTag = new HtmlLinkTag();
-        String value = htmlLinkTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlLinkTag parserTag = new HtmlLinkTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- tables ----- */
@@ -472,15 +425,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        HtmlCommentTag htmlCommentTag = new HtmlCommentTag();
-        String value = htmlCommentTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    HtmlCommentTag parserTag = new HtmlCommentTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- headings ----- */
@@ -492,15 +438,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <NORMAL>^{wikiheading} {
     logger.finer("wikiheading: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        WikiHeadingTag wikiHeadingTag = new WikiHeadingTag();
-        String value = wikiHeadingTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiHeadingTag parserTag = new WikiHeadingTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- lists ----- */
@@ -510,15 +449,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     if (yystate() != LIST) beginState(LIST);
     // one non-list character matched, roll it back
     yypushback(1);
-    String raw = yytext();
-    try {
-        WikiListTag wikiListTag = new WikiListTag();
-        String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return raw;
-    }
+    WikiListTag parserTag = new WikiListTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <LIST>^{listend} {
@@ -527,15 +459,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     // roll back any matches to allow re-parsing
     yypushback(raw.length());
     endState();
-    try {
-        WikiListTag wikiListTag = new WikiListTag();
-        // close open list tags
-        String value = wikiListTag.parse(this.parserInput, this.parserDocument, this.mode, null);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        return "";
-    }
+    WikiListTag parserTag = new WikiListTag();
+    return this.parseToken(null, parserTag);
 }
 
 /* ----- bold / italic ----- */
@@ -556,16 +481,8 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmltag} {
     logger.finer("htmltag: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        HtmlTag htmlTag = new HtmlTag();
-        String value = htmlTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what should be returned? escaped html?
-        return "";
-    }
+    HtmlTag parserTag = new HtmlTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- javascript ----- */
@@ -592,42 +509,18 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{entity} {
     logger.finer("entity: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT>{whitespace} {
     // no need to log this
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT>. {
     // no need to log this
-    String raw = yytext();
-    try {
-        CharacterTag characterTag = new CharacterTag();
-        String value = characterTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-        return value;
-    } catch (Exception e) {
-        logger.info("Unable to parse " + raw, e);
-        // FIXME - what to return here?
-        return "";
-    }
+    CharacterTag parserTag = new CharacterTag();
+    return this.parseToken(yytext(), parserTag);
 }
