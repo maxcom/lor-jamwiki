@@ -54,7 +54,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 }
 %>
 
-<form name="form" method="post" action="<jamwiki:link value="Special:Edit" />">
+<form name="form" method="post" name="editform" action="<jamwiki:link value="Special:Edit" />">
 <p>
 <input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}"/>" />
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
