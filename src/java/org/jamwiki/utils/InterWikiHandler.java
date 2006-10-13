@@ -45,7 +45,7 @@ public class InterWikiHandler {
 	 *
 	 */
 	public static String formatInterWiki(String namespace, String value) {
-		String pattern = InterWikiHandler.mapping.getProperty(namespace);
+		String pattern = InterWikiHandler.mapping.getProperty(namespace.toLowerCase());
 		if (pattern == null) {
 			return namespace + WikiBase.NAMESPACE_SEPARATOR + value;
 		}
@@ -66,6 +66,6 @@ public class InterWikiHandler {
 	 *  otherwise.
 	 */
 	public static boolean isInterWiki(String namespace) {
-		return InterWikiHandler.mapping.containsKey(namespace);
+		return InterWikiHandler.mapping.containsKey(namespace.toLowerCase());
 	}
 }
