@@ -23,6 +23,7 @@
 * FEATURE: Add JUnit test framework.
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
+* FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.3.6
 =====
