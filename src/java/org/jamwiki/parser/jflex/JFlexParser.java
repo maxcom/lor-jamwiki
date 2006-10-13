@@ -86,7 +86,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 * Utility method for executing a lexer parse.
 	 */
-	private ParserDocument lex(AbstractLexer lexer) throws Exception {
+	private ParserDocument lex(AbstractLexer lexer, String raw) throws Exception {
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
 		if (this.parserInput.getDepth() > 100) {
@@ -102,6 +102,10 @@ public class JFlexParser extends AbstractParser {
 		ParserDocument parserDocument = lexer.getParserDocument();
 		parserDocument.setContent(content.toString());
 		this.parserInput.decrementDepth();
+		String redirect = this.isRedirect(raw);
+		if (StringUtils.hasText(redirect)) {
+			parserDocument.setRedirect(redirect);
+		}
 		return parserDocument;
 	}
 
@@ -114,14 +118,12 @@ public class JFlexParser extends AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
 	public ParserDocument parseFragment(String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
 		// maintain the original output, which has all of the category and link info
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		ParserDocument parserDocument = new ParserDocument();
-		parserDocument = this.parsePreProcess(reader, parserDocument, preMode);
+		parserDocument = this.parsePreProcess(raw, parserDocument, preMode);
 		if (mode >= JFlexParser.MODE_PROCESS) {
-			reader = new StringReader(parserDocument.getContent());
-			parserDocument = this.parseProcess(reader, parserDocument, JFlexParser.MODE_PROCESS);
+			parserDocument = this.parseProcess(parserDocument.getContent(), parserDocument, JFlexParser.MODE_PROCESS);
 		}
 		return parserDocument;
 	}
@@ -134,14 +136,11 @@ public class JFlexParser extends AbstractParser {
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		raw += '\n';
-		StringReader reader = new StringReader(raw);
 		// maintain the original output, which has all of the category and link info
 		ParserDocument parserDocument = new ParserDocument();
-		parserDocument = this.parsePreProcess(reader, parserDocument, JFlexParser.MODE_PREPROCESS);
-		reader = new StringReader(parserDocument.getContent());
-		parserDocument = this.parseProcess(reader, parserDocument, JFlexParser.MODE_PROCESS);
-		reader = new StringReader(parserDocument.getContent());
-		parserDocument = this.parsePostProcess(reader, parserDocument, JFlexParser.MODE_LAYOUT);
+		parserDocument = this.parsePreProcess(raw, parserDocument, JFlexParser.MODE_PREPROCESS);
+		parserDocument = this.parseProcess(parserDocument.getContent(), parserDocument, JFlexParser.MODE_PROCESS);
+		parserDocument = this.parsePostProcess(parserDocument.getContent(), parserDocument, JFlexParser.MODE_LAYOUT);
 		if (StringUtils.hasText(this.isRedirect(raw))) {
 			// redirects are parsed differently
 			parserDocument = this.parseRedirect(raw, parserDocument);
@@ -163,7 +162,7 @@ public class JFlexParser extends AbstractParser {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		ParserDocument parserDocument = new ParserDocument();
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_METADATA);
-		return this.lex(lexer);
+		return this.lex(lexer, raw);
 	}
 
 	/**
@@ -173,11 +172,12 @@ public class JFlexParser extends AbstractParser {
 	 * @param reader The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	private ParserDocument parsePreProcess(StringReader reader, ParserDocument parserDocument, int mode) throws Exception {
+	private ParserDocument parsePreProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
+		StringReader reader = new StringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		lexer.init(this.parserInput, parserDocument, preMode);
-		return this.lex(lexer);
+		return this.lex(lexer, raw);
 	}
 
 	/**
@@ -187,10 +187,11 @@ public class JFlexParser extends AbstractParser {
 	 * @param reader The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	private ParserDocument parseProcess(StringReader reader, ParserDocument parserDocument, int mode) throws Exception {
+	private ParserDocument parseProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
+		StringReader reader = new StringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_PROCESS);
-		return this.lex(lexer);
+		return this.lex(lexer, raw);
 	}
 
 	/**
@@ -201,10 +202,11 @@ public class JFlexParser extends AbstractParser {
 	 * @param reader The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
-	private ParserDocument parsePostProcess(StringReader reader, ParserDocument parserDocument, int mode) throws Exception {
+	private ParserDocument parsePostProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
+		StringReader reader = new StringReader(raw);
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_LAYOUT);
-		return this.lex(lexer);
+		return this.lex(lexer, raw);
 	}
 
 	/**
@@ -241,7 +243,7 @@ public class JFlexParser extends AbstractParser {
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		ParserDocument parserDocument = new ParserDocument();
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SAVE);
-		return this.lex(lexer);
+		return this.lex(lexer, raw);
 	}
 
 	/**
@@ -266,7 +268,7 @@ public class JFlexParser extends AbstractParser {
 		ParserDocument parserDocument = new ParserDocument();
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SLICE);
 		lexer.setTargetSection(targetSection);
-		parserDocument = this.lex(lexer);
+		parserDocument = this.lex(lexer, raw);
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserDocument;
 	}
@@ -294,7 +296,7 @@ public class JFlexParser extends AbstractParser {
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SPLICE);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
-		parserDocument = this.lex(lexer);
+		parserDocument = this.lex(lexer, raw);
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return parserDocument;
 	}

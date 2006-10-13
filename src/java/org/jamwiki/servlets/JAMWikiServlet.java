@@ -146,37 +146,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	protected Topic getRedirectTarget(Topic parent, int attempts) throws Exception {
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
-			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
-			return parent;
-		}
-		// avoid infinite redirection
-		attempts++;
-		if (attempts > 10) {
-			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
-		}
-		// get the topic that is being redirected to
-		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), true);
-		if (child == null) {
-			// child being redirected to doesn't exist, return parent
-			return parent;
-		}
-		if (!StringUtils.hasText(child.getRedirectTo())) {
-			// found a topic that is not a redirect, return
-			return child;
-		}
-		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), true) == null) {
-			// child is a redirect, but its target does not exist
-			return child;
-		}
-		// topic is a redirect, keep looking
-		return this.getRedirectTarget(child, attempts);
-	}
-
-	/**
-	 *
-	 */
 	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
 		// skip one directory, which is the virutal wiki
 		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
@@ -438,7 +407,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
 		}
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
-			Topic child = this.getRedirectTarget(topic, 0);
+			Topic child = Utilities.findRedirectedTopic(topic, 0);
 			if (!child.getName().equals(topic.getName())) {
 				pageInfo.setRedirectName(topic.getName());
 				pageTitle = new WikiMessage("topic.title", child.getName());

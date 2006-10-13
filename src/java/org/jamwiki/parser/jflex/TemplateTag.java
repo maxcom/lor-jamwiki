@@ -24,6 +24,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -95,6 +96,14 @@ public class TemplateTag implements ParserTag {
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw);
+		// make sure template was not redirected
+		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
+			templateTopic = Utilities.findRedirectedTopic(templateTopic, 0);
+		}
+		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
+			// redirection target does not exist
+			templateTopic = null;
+		}
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
 		}
@@ -158,6 +167,27 @@ public class TemplateTag implements ParserTag {
 			}
 		}
 		return ParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_TEMPLATE);
+	}
+
+	/**
+	 *
+	 */
+	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
+		String name = this.parseTemplateName(raw);
+		if (templateTopic == null) {
+			return "[[" + name + "]]";
+		}
+		// set template parameter values
+		this.parseTemplateParameterValues(parserInput, raw);
+		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
+	}
+
+	/**
+	 *
+	 */
+	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
+		String name = (templateTopic != null) ? templateTopic.getName() : this.parseTemplateName(raw);
+		parserDocument.addLink(name);
 	}
 
 	/**
@@ -252,26 +282,5 @@ public class TemplateTag implements ParserTag {
 			value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
 			this.parameterValues.put(name, value);
 		}
-	}
-
-	/**
-	 *
-	 */
-	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
-		String name = this.parseTemplateName(raw);
-		if (templateTopic == null) {
-			return "[[" + name + "]]";
-		}
-		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, raw);
-		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
-	}
-
-	/**
-	 *
-	 */
-	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
-		String name = (templateTopic != null) ? templateTopic.getName() : this.parseTemplateName(raw);
-		parserDocument.addLink(name);
 	}
 }

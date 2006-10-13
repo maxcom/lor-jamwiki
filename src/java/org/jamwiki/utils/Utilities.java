@@ -44,6 +44,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -327,6 +328,37 @@ public class Utilities {
 		if (buffer.length() == 0) return "";
 		buffer = buffer.reverse();
 		return buffer.toString();
+	}
+
+	/**
+	 *
+	 */
+	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
+			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
+			return parent;
+		}
+		// avoid infinite redirection
+		attempts++;
+		if (attempts > 10) {
+			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
+		}
+		// get the topic that is being redirected to
+		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), true);
+		if (child == null) {
+			// child being redirected to doesn't exist, return parent
+			return parent;
+		}
+		if (!StringUtils.hasText(child.getRedirectTo())) {
+			// found a topic that is not a redirect, return
+			return child;
+		}
+		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), true) == null) {
+			// child is a redirect, but its target does not exist
+			return child;
+		}
+		// topic is a redirect, keep looking
+		return Utilities.findRedirectedTopic(child, attempts);
 	}
 
 	/**
