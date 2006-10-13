@@ -93,9 +93,17 @@ public class TemplateTag implements ParserTag {
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		// extract the template name
 		String name = this.parseTemplateName(raw);
+		boolean inclusion = false;
+		if (name.startsWith(WikiBase.NAMESPACE_SEPARATOR)) {
+			name = name.substring(1);
+			inclusion = true;
+		}
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
-		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw);
+		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
+		if (mode < JFlexParser.MODE_TEMPLATE) {
+			return raw;
+		}
 		// make sure template was not redirected
 		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
 			templateTopic = Utilities.findRedirectedTopic(templateTopic, 0);
@@ -105,8 +113,8 @@ public class TemplateTag implements ParserTag {
 			// redirection target does not exist
 			templateTopic = null;
 		}
-		if (mode < JFlexParser.MODE_TEMPLATE) {
-			return raw;
+		if (inclusion) {
+			return this.processTemplateInclusion(parserInput, parserDocument, templateTopic, raw, name);
 		}
 		return this.processTemplateContent(parserInput, parserDocument, templateTopic, raw, name);
 	}
@@ -173,26 +181,6 @@ public class TemplateTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
-		if (templateTopic == null) {
-			return "[[" + name + "]]";
-		}
-		// set template parameter values
-		this.parseTemplateParameterValues(parserInput, raw);
-		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
-	}
-
-	/**
-	 *
-	 */
-	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
-		String name = (templateTopic != null) ? templateTopic.getName() : this.parseTemplateName(raw);
-		parserDocument.addLink(name);
-	}
-
-	/**
-	 *
-	 */
 	private String parseTemplateName(String raw) throws Exception {
 		if (!StringUtils.hasText(raw)) {
 			throw new Exception("Empty template text");
@@ -212,7 +200,12 @@ public class TemplateTag implements ParserTag {
 			// FIXME - no need for an exception
 			throw new Exception("No template name specified");
 		}
-		if (!name.startsWith(WikiBase.NAMESPACE_TEMPLATE + WikiBase.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(WikiBase.NAMESPACE_SEPARATOR)) {
+			if (name.length() == 1) {
+				// FIXME - no need for an exception
+				throw new Exception("No template name specified");
+			}
+		} else if (!name.startsWith(WikiBase.NAMESPACE_TEMPLATE + WikiBase.NAMESPACE_SEPARATOR)) {
 			name = WikiBase.NAMESPACE_TEMPLATE + WikiBase.NAMESPACE_SEPARATOR + name;
 		}
 		return name;
@@ -282,5 +275,35 @@ public class TemplateTag implements ParserTag {
 			value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
 			this.parameterValues.put(name, value);
 		}
+	}
+
+	/**
+	 *
+	 */
+	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
+		if (templateTopic == null) {
+			return "[[" + name + "]]";
+		}
+		// set template parameter values
+		this.parseTemplateParameterValues(parserInput, raw);
+		return this.parseTemplateBody(parserInput, templateTopic.getTopicContent());
+	}
+
+	/**
+	 *
+	 */
+	private String processTemplateInclusion(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
+		if (templateTopic == null) {
+			return "[[" + name + "]]";
+		}
+		return templateTopic.getTopicContent();
+	}
+
+	/**
+	 *
+	 */
+	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
+		name = (templateTopic != null) ? templateTopic.getName() : name;
+		parserDocument.addLink(name);
 	}
 }
