@@ -99,6 +99,7 @@ public class TemplateTag implements ParserTag {
 		// make sure template was not redirected
 		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
 			templateTopic = Utilities.findRedirectedTopic(templateTopic, 0);
+			name = templateTopic.getName();
 		}
 		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
 			// redirection target does not exist
@@ -107,7 +108,7 @@ public class TemplateTag implements ParserTag {
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
 		}
-		return this.processTemplateContent(parserInput, parserDocument, templateTopic, raw);
+		return this.processTemplateContent(parserInput, parserDocument, templateTopic, raw, name);
 	}
 
 	/**
@@ -172,8 +173,7 @@ public class TemplateTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw) throws Exception {
-		String name = this.parseTemplateName(raw);
+	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}

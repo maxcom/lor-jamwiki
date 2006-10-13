@@ -569,9 +569,8 @@ public class Utilities {
 	 * @param parserInput A ParserInput object that contains parser configuration
 	 *  information.
 	 * @param content The raw topic content that is to be parsed.
-	 * @param topicName The name of the topic being parsed.
-	 * @return Returns a ParserDocument object with parsed topic content and other
-	 *  parser output fields set.
+	 * @return A ParserDocument object with parsed topic content and other parser
+	 *  output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
 	public static ParserDocument parse(ParserInput parserInput, String content) throws Exception {

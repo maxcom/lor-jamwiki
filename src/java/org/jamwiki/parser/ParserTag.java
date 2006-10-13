@@ -23,13 +23,15 @@ package org.jamwiki.parser;
 public interface ParserTag {
 
 	/**
-	 * Interface method used for parsing a tag and returning a parsed version of that
-	 * tag, as well as setting all parser output metadata.
+	 * Interface method used for parsing a token and returning a parsed version of that
+	 * token, as well as setting all parser output metadata.
 	 *
 	 * @param parserInput The ParserInput object that contains parser configuration
 	 *  settings.
-	 * @param parserOuput The ParserDocument object that holds output metadata and
+	 * @param parserDocument The ParserDocument object that holds output metadata and
 	 *  other values.
+	 * @param mode The parser mode to use when parsing the token.  The return value
+	 *  may be different depending on the parsing mode used.
 	 * @param raw The raw Wiki sytnax that is being parsed.
 	 * @return A parsed version of the raw Wiki syntax.
 	 * @throws Exception Thrown if any parsing error occurs.
