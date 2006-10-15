@@ -641,9 +641,10 @@ public class Utilities {
 	 *  parser metadata such as links.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserDocument parserDocument(String content, String virtualWiki) throws Exception {
+	public static ParserDocument parserDocument(String content, String virtualWiki, String topicName) throws Exception {
 		ParserInput parserInput = new ParserInput();
 		parserInput.setVirtualWiki(virtualWiki);
+		parserInput.setTopicName(topicName);
 		return Utilities.parseMetadata(parserInput, content);
 	}
 

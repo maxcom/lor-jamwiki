@@ -60,6 +60,7 @@ import org.springframework.util.StringUtils;
         }
         if (this.mode >= JFlexParser.MODE_TEMPLATE) {
             if (this.parserInput.getVirtualWiki() == null) validated = false;
+            if (this.parserInput.getTopicName() == null) validated = false;
         }
         if (!validated) {
             throw new Exception("Parser info not properly initialized");

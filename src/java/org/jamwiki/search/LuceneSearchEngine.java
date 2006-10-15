@@ -327,7 +327,7 @@ public class LuceneSearchEngine implements SearchEngine {
 					if (standardDocument != null) writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a
 					// moderately large Wiki
-					ParserDocument parserDocument = Utilities.parserDocument(topic.getTopicContent(), virtualWiki.getName());
+					ParserDocument parserDocument = Utilities.parserDocument(topic.getTopicContent(), virtualWiki.getName(), topicName);
 					Document keywordDocument = createKeywordDocument(topic, parserDocument.getLinks());
 					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;

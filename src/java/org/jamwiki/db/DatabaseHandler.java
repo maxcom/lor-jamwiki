@@ -1243,7 +1243,7 @@ public class DatabaseHandler {
 			}
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
-			writeTopic(fromTopic, fromVersion, Utilities.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki()), conn, true);
+			writeTopic(fromTopic, fromVersion, Utilities.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopicName), conn, true);
 			if (detinationExistsFlag) {
 				// target topic was deleted, so rename and undelete
 				toTopic.setName(fromTopicName);
@@ -1262,7 +1262,7 @@ public class DatabaseHandler {
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
-			writeTopic(toTopic, toVersion, Utilities.parserDocument(content, toTopic.getVirtualWiki()), conn, true);
+			writeTopic(toTopic, toVersion, Utilities.parserDocument(content, toTopic.getVirtualWiki(), toTopic.getName()), conn, true);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
@@ -1430,7 +1430,7 @@ public class DatabaseHandler {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki), conn, true);
+		writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), conn, true);
 	}
 
 	/**
@@ -1512,7 +1512,7 @@ public class DatabaseHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki), conn, true);
+			writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), conn, true);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
