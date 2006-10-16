@@ -81,10 +81,11 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_SELECT_TOPIC = null;
-	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
+	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
+	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
 	protected static String STATEMENT_SELECT_TOPIC_DELETE_OK = null;
 	protected static String STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER = null;
-	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
+	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
@@ -94,6 +95,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE = null;
+	protected static String STATEMENT_SELECT_WIKI_FILE_COUNT = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE = null;
@@ -341,10 +343,11 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
 		STATEMENT_SELECT_TOPIC                   = props.getProperty("STATEMENT_SELECT_TOPIC");
-		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
+		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
+		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
 		STATEMENT_SELECT_TOPIC_DELETE_OK         = props.getProperty("STATEMENT_SELECT_TOPIC_DELETE_OK");
 		STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER   = props.getProperty("STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER");
-		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
+		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
@@ -354,6 +357,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
 		STATEMENT_SELECT_WIKI_FILE               = props.getProperty("STATEMENT_SELECT_WIKI_FILE");
+		STATEMENT_SELECT_WIKI_FILE_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_FILE_COUNT");
 		STATEMENT_SELECT_WIKI_FILE_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_FILE_SEQUENCE");
 		STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES   = props.getProperty("STATEMENT_SELECT_WIKI_FILE_TOPIC_NAMES");
 		STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE = props.getProperty("STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE");
@@ -631,6 +635,19 @@ public class DefaultQueryHandler implements QueryHandler {
 	}
 
 	/**
+	 * Return a count of all topics, including redirects, comments pages and templates,
+	 * currently available on the Wiki.  This method excludes deleted topics.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
+	 *  being retrieved.
+	 */
+	public WikiResultSet lookupTopicCount(int virtualWikiId) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_COUNT);
+		stmt.setInt(1, virtualWikiId);
+		return stmt.executeQuery();
+	}
+
+	/**
 	 *
 	 */
 	public WikiResultSet lookupTopicVersion(int topicVersionId) throws Exception {
@@ -655,6 +672,19 @@ public class DefaultQueryHandler implements QueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, topicId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 * Return a count of all wiki files currently available on the Wiki.  This
+	 * method excludes deleted files.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the files
+	 *  being retrieved.
+	 */
+	public WikiResultSet lookupWikiFileCount(int virtualWikiId) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_FILE_COUNT);
+		stmt.setInt(1, virtualWikiId);
 		return stmt.executeQuery();
 	}
 

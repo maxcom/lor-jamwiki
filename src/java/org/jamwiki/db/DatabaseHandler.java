@@ -1090,6 +1090,19 @@ public class DatabaseHandler {
 	}
 
 	/**
+	 * Return a count of all topics, including redirects, comments pages and templates,
+	 * currently available on the Wiki.  This method excludes deleted topics.
+	 *
+	 * @param virtualWiki The virtual wiki for which the total topic count is being returned
+	 *  for.
+	 */
+	public int lookupTopicCount(String virtualWiki) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicCount(virtualWikiId);
+		return rs.getInt("topic_count");
+	}
+
+	/**
 	 *
 	 */
 	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
@@ -1162,6 +1175,18 @@ public class DatabaseHandler {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFile(virtualWikiId, topic.getTopicId());
 		if (rs.size() == 0) return null;
 		return initWikiFile(rs);
+	}
+
+	/**
+	 * Return a count of all wiki files currently available on the Wiki.  This
+	 * method excludes deleted files.
+	 *
+	 * @param virtualWiki The virtual wiki of the files being retrieved.
+	 */
+	public int lookupWikiFileCount(String virtualWiki) throws Exception {
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFileCount(virtualWikiId);
+		return rs.getInt("file_count");
 	}
 
 	/**

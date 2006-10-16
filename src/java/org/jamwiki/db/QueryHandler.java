@@ -423,6 +423,15 @@ public interface QueryHandler {
 	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception;
 
 	/**
+	 * Return a count of all topics, including redirects, comments pages and templates,
+	 * currently available on the Wiki.  This method excludes deleted topics.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
+	 *  being retrieved.
+	 */
+	public WikiResultSet lookupTopicCount(int virtualWikiId) throws Exception;
+
+	/**
 	 * Retrieve a result set containing a specific topic version.
 	 *
 	 * @param topicVersionId The id for the topic version record being retrieved.
@@ -456,6 +465,15 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public WikiResultSet lookupWikiFile(int virtualWikiId, int topicId) throws Exception;
+
+	/**
+	 * Return a count of all wiki files currently available on the Wiki.  This
+	 * method excludes deleted files.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the files
+	 *  being retrieved.
+	 */
+	public WikiResultSet lookupWikiFileCount(int virtualWikiId) throws Exception;
 
 	/**
 	 * Retrieve a result set containing all user information for a given WikiUser.

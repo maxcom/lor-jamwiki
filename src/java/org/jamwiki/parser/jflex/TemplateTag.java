@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
@@ -455,7 +456,7 @@ public class TemplateTag implements ParserTag {
 	 * word value.  See http://meta.wikimedia.org/wiki/Help:Magic_words for a
 	 * list of Mediawiki magic words.
 	 */
-	private String processMagicWord(ParserInput parserInput, String name) {
+	private String processMagicWord(ParserInput parserInput, String name) throws Exception {
 		SimpleDateFormat formatter = new SimpleDateFormat();
 		TimeZone utc = TimeZone.getTimeZone("GMT+00");
 		Date current = new Date(System.currentTimeMillis());
@@ -537,15 +538,26 @@ public class TemplateTag implements ParserTag {
 			return formatter.format(current);
 		}
 		// statistics
+		NumberFormat numFormatter = NumberFormat.getInstance();
 		if (name.equals(MAGIC_CURRENT_VERSION)) {
 			return WikiVersion.CURRENT_WIKI_VERSION;
 		/*
 		} else if (name.equals(MAGIC_NUMBER_ARTICLES)) {
 		} else if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
+		*/
 		} else if (name.equals(MAGIC_NUMBER_PAGES)) {
+			int results = WikiBase.getHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_PAGES_R)) {
+			int results = WikiBase.getHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			return new Integer(results).toString();
 		} else if (name.equals(MAGIC_NUMBER_FILES)) {
+			int results = WikiBase.getHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
+			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_FILES_R)) {
+			int results = WikiBase.getHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
+			return new Integer(results).toString();
+		/*
 		} else if (name.equals(MAGIC_NUMBER_USERS)) {
 		} else if (name.equals(MAGIC_NUMBER_USERS_R)) {
 		} else if (name.equals(MAGIC_NUMBER_ADMINS)) {
