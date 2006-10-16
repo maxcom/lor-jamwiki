@@ -557,9 +557,13 @@ public class TemplateTag implements ParserTag {
 		} else if (name.equals(MAGIC_NUMBER_FILES_R)) {
 			int results = WikiBase.getHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
 			return new Integer(results).toString();
-		/*
 		} else if (name.equals(MAGIC_NUMBER_USERS)) {
+			int results = WikiBase.getHandler().lookupWikiUserCount();
+			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_USERS_R)) {
+			int results = WikiBase.getHandler().lookupWikiUserCount();
+			return new Integer(results).toString();
+		/*
 		} else if (name.equals(MAGIC_NUMBER_ADMINS)) {
 		} else if (name.equals(MAGIC_NUMBER_ADMINS_R)) {
 		} else if (name.equals(MAGIC_PAGES_IN_NAMESPACE)) {

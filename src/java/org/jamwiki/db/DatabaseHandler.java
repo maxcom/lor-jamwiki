@@ -1234,6 +1234,15 @@ public class DatabaseHandler {
 	}
 
 	/**
+	 * Return a count of all wiki users.
+	 */
+	public int lookupWikiUserCount() throws Exception {
+		// FIXME - handle LDAP
+		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiUserCount();
+		return rs.getInt("user_count");
+	}
+
+	/**
 	 *
 	 */
 	private String lookupWikiUserLogin(Integer authorId) throws Exception {

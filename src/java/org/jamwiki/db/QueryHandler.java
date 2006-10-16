@@ -520,6 +520,11 @@ public interface QueryHandler {
 	public WikiResultSet lookupWikiUser(String login, String encryptedPassword) throws Exception;
 
 	/**
+	 * Return a count of all wiki users.
+	 */
+	public WikiResultSet lookupWikiUserCount() throws Exception;
+
+	/**
 	 * Retrieve the next available topic id from the topic table.
 	 *
 	 * @param conn A database connection to use when connecting to the database

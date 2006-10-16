@@ -103,6 +103,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USER = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_COUNT = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_PASSWORD = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGINS = null;
@@ -365,6 +366,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER               = props.getProperty("STATEMENT_SELECT_WIKI_USER");
 		STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS");
 		STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN");
+		STATEMENT_SELECT_WIKI_USER_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_USER_COUNT");
 		STATEMENT_SELECT_WIKI_USER_LOGIN         = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_LOGINS        = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGINS");
 		STATEMENT_SELECT_WIKI_USER_PASSWORD      = props.getProperty("STATEMENT_SELECT_WIKI_USER_PASSWORD");
@@ -723,6 +725,13 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(1, login);
 		stmt.setString(2, encryptedPassword);
 		return stmt.executeQuery();
+	}
+
+	/**
+	 * Return a count of all wiki users.
+	 */
+	public WikiResultSet lookupWikiUserCount() throws Exception {
+		return DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_COUNT);
 	}
 
 	/**
