@@ -55,6 +55,9 @@ requires the following:
   4. The name and login of an administrative user.
   5. (Optional) If using a database for persistency then the database settings
      must also be provided (see the "Database Settings" section below).
+  6. (Optional) Once setup is complete, JAMWiki can be customized by using the
+     Special:Admin page, accessible to admins by clicking on the "Admin" link
+     on the top right portion of all JAMWiki pages.
 
 Once the settings have been verified JAMWiki will create the user account,
 database tables or file directories, base properties, and default topics.
@@ -70,7 +73,7 @@ the process for upgrading JAMWiki is:
 
   1. Download the latest JAMWiki WAR file.
   2. Back up all database and/or file data prior to upgrading.
-  3. Back up the jamwiki.properties file and the log4j.properties file that
+  3. Back up the jamwiki.properties file and the logging.properties file that
      can be found in the /WEB-INF/classes directory.
   4. If you have created any virtual wikis, back up the web.xml file that can
      be found in the /WEB-INF directory.
@@ -83,6 +86,9 @@ the process for upgrading JAMWiki is:
      installation.
   8. View any page on the Wiki.  You will be redirected to the upgrade page
      and any required upgrade steps will be automatically performed.
+
+If an upgrade fails please report the error on jamwiki.org, and then follow
+manual upgrade steps outlined in the UPGRADE.txt document.
 
 
 DATABASE SETTINGS
