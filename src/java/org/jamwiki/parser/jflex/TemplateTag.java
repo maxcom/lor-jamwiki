@@ -30,8 +30,10 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -573,26 +575,37 @@ public class TemplateTag implements ParserTag {
 		*/
 		}
 		// page values
+		WikiLink wikiLink = LinkUtil.parseWikiLink(parserInput.getTopicName());
 		if (name.equals(MAGIC_FULL_PAGE_NAME)) {
 			return parserInput.getTopicName();
 		} else if (name.equals(MAGIC_FULL_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(parserInput.getTopicName());
-		/*
 		} else if (name.equals(MAGIC_PAGE_NAME)) {
+			return wikiLink.getArticle();
 		} else if (name.equals(MAGIC_PAGE_NAME_E)) {
+			return Utilities.encodeForURL(wikiLink.getArticle());
+		/*
 		} else if (name.equals(MAGIC_SUB_PAGE_NAME)) {
 		} else if (name.equals(MAGIC_SUB_PAGE_NAME_E)) {
 		} else if (name.equals(MAGIC_BASE_PAGE_NAME)) {
 		} else if (name.equals(MAGIC_BASE_PAGE_NAME_E)) {
-		} else if (name.equals(MAGIC_NAMESPACE)) {
-		} else if (name.equals(MAGIC_NAMESPACE_E)) {
-		} else if (name.equals(MAGIC_TALK_SPACE)) {
-		} else if (name.equals(MAGIC_TALK_SPACE_E)) {
-		} else if (name.equals(MAGIC_SUBJECT_SPACE)) {
-		} else if (name.equals(MAGIC_SUBJECT_SPACE_E)) {
-		} else if (name.equals(MAGIC_ARTICLE_SPACE)) {
-		} else if (name.equals(MAGIC_ARTICLE_SPACE_E)) {
 		*/
+		} else if (name.equals(MAGIC_NAMESPACE)) {
+			return wikiLink.getNamespace();
+		} else if (name.equals(MAGIC_NAMESPACE_E)) {
+			return Utilities.encodeForURL(wikiLink.getNamespace());
+		} else if (name.equals(MAGIC_TALK_SPACE)) {
+			String namespace = wikiLink.getNamespace();
+			return NamespaceHandler.getCommentsNamespace(namespace);
+		} else if (name.equals(MAGIC_TALK_SPACE_E)) {
+			String namespace = wikiLink.getNamespace();
+			return Utilities.encodeForURL(NamespaceHandler.getCommentsNamespace(namespace));
+		} else if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
+			String namespace = wikiLink.getNamespace();
+			return NamespaceHandler.getMainNamespace(namespace);
+		} else if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
+			String namespace = wikiLink.getNamespace();
+			return Utilities.encodeForURL(NamespaceHandler.getMainNamespace(namespace));
 		} else if (name.equals(MAGIC_TALK_PAGE_NAME)) {
 			return Utilities.extractCommentsLink(parserInput.getTopicName());
 		} else if (name.equals(MAGIC_TALK_PAGE_NAME_E)) {
