@@ -205,15 +205,22 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Once the template call has been parsed and the template values have been
+	 * determined, parse the template body and apply those template values.
+	 * Parameters may be embedded or have default values, so there is some
+	 * voodoo magic that happens here to first parse any embedded values, and
+	 * to apply default values when no template value has been set.
 	 */
 	private String applyParameter(ParserInput parserInput, String param) throws Exception {
 		if (this.parameterValues == null) return param;
-		String name = this.parseParamName(param);
-		String defaultValue = this.parseParamDefaultValue(parserInput, param);
+		String content = param.substring("{{{".length(), param.length() - "}}}".length());
+		// re-parse in case of embedded templates or params
+		content = this.parseTemplateBody(parserInput, content);
+		String name = this.parseParamName(content);
+		String defaultValue = this.parseParamDefaultValue(parserInput, content);
 		String value = (String)this.parameterValues.get(name);
 		if (value == null && defaultValue == null) return param;
-		return (value != null) ? value : defaultValue;
+		return (value == null) ? defaultValue : value;
 	}
 
 	/**
@@ -294,31 +301,35 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Given template parameter content of the form "name" or "name|default",
+	 * return the default value if it exists.
 	 */
 	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
 		int pos = raw.indexOf("|");
 		String defaultValue = null;
 		if (pos == -1) {
+			// no default specified
 			return null;
 		}
-		if (pos + 1 >= raw.length() - "}}}".length()) {
-			return null;
+		if (pos + 1 >= raw.length()) {
+			// empty default
+			return "";
 		}
-		defaultValue = raw.substring(pos + 1, raw.length() - "}}}".length());
+		defaultValue = raw.substring(pos + 1);
 		return ParserUtil.parseFragment(parserInput, defaultValue, JFlexParser.MODE_TEMPLATE);
 	}
 
 	/**
-	 *
+	 * Given template parameter content of the form "name" or "name|default",
+	 * return the parameter name.
 	 */
 	private String parseParamName(String raw) throws Exception {
 		int pos = raw.indexOf("|");
 		String name = null;
 		if (pos != -1) {
-			name = raw.substring("{{{".length(), pos);
+			name = raw.substring(0, pos);
 		} else {
-			name = raw.substring("{{{".length(), raw.length() - "}}}".length());
+			name = raw;
 		}
 		name = name.trim();
 		if (!StringUtils.hasText(name)) {
@@ -329,7 +340,9 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * After template parameter values have been set, process the template body
+	 * and replace parameters with parameter values or defaults, processing any
+	 * embedded parameters or templates.
 	 */
 	private String parseTemplateBody(ParserInput parserInput, String content) throws Exception {
 		StringBuffer output = new StringBuffer();
@@ -353,7 +366,8 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Given a template call of the form "{{template|param|param}}", return
+	 * the template name.
 	 */
 	private String parseTemplateName(String raw) throws Exception {
 		if (!StringUtils.hasText(raw)) {
@@ -389,7 +403,8 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Given a template call of the form "{{name|param=value|param=value}}"
+	 * parse the parameter names and values.
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
 		String content = "";
@@ -653,7 +668,8 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Given a template call of the form "{{name|param|param}}" return the
+	 * parsed output.
 	 */
 	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
@@ -665,7 +681,8 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Given a template call of the form "{{:name}}" parse the template
+	 * inclusion.
 	 */
 	private String processTemplateInclusion(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
@@ -675,7 +692,7 @@ public class TemplateTag implements ParserTag {
 	}
 
 	/**
-	 *
+	 * Process template values, setting link and other metadata output values.
 	 */
 	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
 		name = (templateTopic != null) ? templateTopic.getName() : name;

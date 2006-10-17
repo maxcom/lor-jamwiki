@@ -41,7 +41,6 @@ public class CharacterTag implements ParserTag {
 			return raw;
 		}
 		if (isEntity(raw)) {
-			logger.severe("raw: " + raw + " / unescaped: " + HtmlUtils.htmlUnescape(raw));
 			return raw;
 		}
 		return Utilities.escapeHTML(raw);

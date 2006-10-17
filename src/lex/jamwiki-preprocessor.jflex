@@ -92,7 +92,7 @@ htmllinkwiki       = "[" ({protocol}) ([^\]\n\r]+) "]"
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
 
 /* templates */
-templatestart      = "{{" ([^\{\}]+)
+templatestart      = "{{"
 templatestartchar  = "{"
 templateendchar    = "}"
 templateparam      = "{{{" [^\{\}\r\n]+ "}}}"
@@ -157,7 +157,6 @@ wikisignature      = ([~]{3,5})
     logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES)) {
-        yypushback(raw.length() - 2);
         return yytext();
     }
     this.templateString += raw;
@@ -188,6 +187,14 @@ wikisignature      = ([~]{3,5})
     String raw = yytext();
     this.templateString += raw;
     this.templateCharCount += raw.length();
+    if (this.templateString.equals("{{{")) {
+        // param, not a template
+        this.templateCharCount = 0;
+        endState();
+        String value = new String(this.templateString);
+        this.templateString = "";
+        return value;
+    }
     return "";
 }
 
