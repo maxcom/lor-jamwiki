@@ -195,10 +195,13 @@ wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
 htmlkeyword        = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
-htmltag            = (<[ ]*[\/]?[ ]*) {htmlkeyword} ([ ]+[^>\/]+)* ([ ]*[\/]?[ ]*>)
+tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|style|valign|width
+htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
+htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
+htmltag            = (<[ ]*[\/]?[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*[\/]?[ ]*>)
 
 /* javascript */
-jsopen             = (<[ ]*) script ([ ]+[^>\/]+)* ([ ]*[\/]?[ ]*>)
+jsopen             = (<[ ]*) script ({htmlattribute})* ([ ]*[\/]?[ ]*>)
 jsclose            = (<[ ]*\/[ ]*script[ ]*>)
 
 /* processing commands */
@@ -209,19 +212,15 @@ toc                = "__TOC__"
 htmlcomment        = "<!--" ~"-->"
 
 /* tables */
+tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\r\|]+[ ]*)*
 tablestart         = "{|" {inputcharacter}* {newline}
 tableend           = "|}"
-/*
-FIXME - the tablecell and tablecellsstyle patterns must include "[" to account
-for links of the form "[[Topic|Text]]", but in the process this breaks any
-style that might (for some reason) include a "["
-*/
-tablecell          = "|" [^\+\-\}] | "|" [^\+\|\-\}\{\<\r\n] [^\|\r\n\[]+ "|" [^\|]
+tablecell          = "|" [^\+\-\}] | "|" ({tableattribute})+ "|" [^\|]
 tablecells         = "||"
-tablecellsstyle    = "||" ([^\|\r\n\[]+) "|" ([^|])
-tableheading       = "!" | "!" [^\!\|\-\{\<\r\n]+ "|" [^\|]
+tablecellsstyle    = "||" ({tableattribute})+ "|" ([^|])
+tableheading       = "!" | "!" ({tableattribute})+ "|" [^\|]
 tableheadings      = "||" | "!!"
-tablerow           = "|-" {inputcharacter}* {newline}
+tablerow           = "|-" [ ]* ({tableattribute})* {newline}
 tablecaption       = "|+"
 
 /* wiki links */
