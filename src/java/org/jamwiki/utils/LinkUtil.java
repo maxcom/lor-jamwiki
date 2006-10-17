@@ -257,7 +257,9 @@ public class LinkUtil {
 		if (!m.matches()) {
 			return new WikiLink();
 		}
-		wikiLink.setNamespace(m.group(4));
+		String namespace = m.group(4);
+		if (namespace == null) namespace = "";
+		wikiLink.setNamespace(namespace);
 		String destination = m.group(2);
 		if (StringUtils.hasText(destination)) destination = Utilities.decodeFromURL(destination);
 		wikiLink.setDestination(destination);

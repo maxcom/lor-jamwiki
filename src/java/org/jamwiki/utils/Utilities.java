@@ -243,9 +243,9 @@ public class Utilities {
 	 *  be constructed.
 	 * @return The comments article name for the article name.
 	 */
-	public static String extractCommentsLink(String name) {
-		if (name == null) {
-			return null;
+	public static String extractCommentsLink(String name) throws Exception {
+		if (!StringUtils.hasText(name)) {
+			throw new Exception("Empty topic name " + name);
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (!StringUtils.hasText(wikiLink.getNamespace())) {
@@ -265,9 +265,9 @@ public class Utilities {
 	 *  constructed.
 	 * @return The topic article name for the article name.
 	 */
-	public static String extractTopicLink(String name) {
-		if (name == null) {
-			return null;
+	public static String extractTopicLink(String name) throws Exception {
+		if (!StringUtils.hasText(name)) {
+			throw new Exception("Empty topic name " + name);
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (!StringUtils.hasText(wikiLink.getNamespace())) {
