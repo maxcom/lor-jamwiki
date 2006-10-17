@@ -584,12 +584,34 @@ public class TemplateTag implements ParserTag {
 			return wikiLink.getArticle();
 		} else if (name.equals(MAGIC_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(wikiLink.getArticle());
-		/*
 		} else if (name.equals(MAGIC_SUB_PAGE_NAME)) {
+			String topic = wikiLink.getArticle();
+			int pos = topic.lastIndexOf("/");
+			if (pos != -1 && pos < topic.length()) {
+				topic = topic.substring(pos + 1);
+			}
+			return topic;
 		} else if (name.equals(MAGIC_SUB_PAGE_NAME_E)) {
+			String topic = wikiLink.getArticle();
+			int pos = topic.lastIndexOf("/");
+			if (pos != -1 && pos < topic.length()) {
+				topic = topic.substring(pos + 1);
+			}
+			return Utilities.encodeForURL(topic);
 		} else if (name.equals(MAGIC_BASE_PAGE_NAME)) {
+			String topic = wikiLink.getArticle();
+			int pos = topic.lastIndexOf("/");
+			if (pos != -1 && pos < topic.length()) {
+				topic = topic.substring(0, pos);
+			}
+			return topic;
 		} else if (name.equals(MAGIC_BASE_PAGE_NAME_E)) {
-		*/
+			String topic = wikiLink.getArticle();
+			int pos = topic.lastIndexOf("/");
+			if (pos != -1 && pos < topic.length()) {
+				topic = topic.substring(0, pos);
+			}
+			return Utilities.encodeForURL(topic);
 		} else if (name.equals(MAGIC_NAMESPACE)) {
 			return wikiLink.getNamespace();
 		} else if (name.equals(MAGIC_NAMESPACE_E)) {
