@@ -25,6 +25,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -67,7 +68,7 @@ public class WikiLinkTag implements ParserTag {
 				// invalid topic
 				return raw;
 			}
-			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_IMAGE)) {
+			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_IMAGE)) {
 				// parse as an image
 				return this.parseImageLink(parserInput, mode, wikiLink);
 			}
@@ -78,7 +79,7 @@ public class WikiLinkTag implements ParserTag {
 			if (wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace())) {
 				if (WikiBase.getHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
 					virtualWiki = wikiLink.getNamespace();
-					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + WikiBase.NAMESPACE_SEPARATOR.length()));
+					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 				}
 			}
 			if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getDestination())) {
@@ -195,7 +196,7 @@ public class WikiLinkTag implements ParserTag {
 			// no destination or section
 			return raw;
 		}
-		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
+		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 			// category tag, but not a category link
 			return "";
 		}
@@ -210,7 +211,7 @@ public class WikiLinkTag implements ParserTag {
 		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 			return;
 		}
-		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(WikiBase.NAMESPACE_CATEGORY)) {
+		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 			parserDocument.addCategory(wikiLink.getDestination(), wikiLink.getText());
 		}
 		if (StringUtils.hasText(wikiLink.getDestination())) {

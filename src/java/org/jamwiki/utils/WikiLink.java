@@ -26,7 +26,9 @@ public class WikiLink {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiLink.class.getName());
 	/** Indicator that the link requires special handling, such as links starting with a colon. */
 	private boolean colon = false;
-	/** Link destination. */
+	/** Article name, not including namespace. */
+	private String article = null;
+	/** Link destination, including namespace. */
 	private String destination = null;
 	/** Namespace prefix for the link. */
 	private String namespace = null;
@@ -41,6 +43,20 @@ public class WikiLink {
 	 *
 	 */
 	public WikiLink() {
+	}
+
+	/**
+	 *
+	 */
+	public String getArticle() {
+		return this.article;
+	}
+
+	/**
+	 *
+	 */
+	public void setArticle(String article) {
+		this.article = article;
 	}
 
 	/**

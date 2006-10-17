@@ -34,6 +34,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
@@ -134,7 +135,7 @@ public class EditServlet extends JAMWikiServlet {
 		pageInfo.setTopicName(topicName);
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.equals(WikiBase.NAMESPACE_CATEGORY)) {
+		if (namespace != null && namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 			loadCategoryContent(next, virtualWiki, topicName);
 		}
 		if (request.getParameter("editComment") != null) {
@@ -164,7 +165,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.equals(WikiBase.NAMESPACE_CATEGORY)) {
+		if (namespace != null && namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 			topic.setTopicType(Topic.TYPE_CATEGORY);
 		}
 		if (topic.getReadOnly()) {

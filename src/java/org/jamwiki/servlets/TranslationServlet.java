@@ -25,12 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -151,7 +152,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = WikiBase.NAMESPACE_JAMWIKI + WikiBase.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
+		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {

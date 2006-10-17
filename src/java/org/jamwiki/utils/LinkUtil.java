@@ -98,7 +98,7 @@ public class LinkUtil {
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (!StringUtils.hasText(caption)) {
-				caption = topicName.substring(WikiBase.NAMESPACE_IMAGE.length() + 1);
+				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
 			url = FilenameUtils.separatorsToUnix(url);
@@ -234,7 +234,7 @@ public class LinkUtil {
 		// remove namespace from link destination
 		String destination = wikiLink.getDestination();
 		String namespace = wikiLink.getNamespace();
-		destination = destination.substring(wikiLink.getNamespace().length() + WikiBase.NAMESPACE_SEPARATOR.length());
+		destination = destination.substring(wikiLink.getNamespace().length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		String url = InterWikiHandler.formatInterWiki(namespace, destination);
 		String text = (StringUtils.hasText(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
 		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
@@ -261,6 +261,9 @@ public class LinkUtil {
 		String destination = m.group(2);
 		if (StringUtils.hasText(destination)) destination = Utilities.decodeFromURL(destination);
 		wikiLink.setDestination(destination);
+		String article = m.group(5);
+		if (StringUtils.hasText(article)) article = Utilities.decodeFromURL(article);
+		wikiLink.setArticle(article);
 		wikiLink.setSection(m.group(7));
 		wikiLink.setQuery(m.group(9));
 		return wikiLink;

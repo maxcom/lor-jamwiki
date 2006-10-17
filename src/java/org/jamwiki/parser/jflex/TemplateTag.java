@@ -30,6 +30,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -265,7 +266,7 @@ public class TemplateTag implements ParserTag {
 			return this.processMagicWord(parserInput, name);
 		}
 		boolean inclusion = false;
-		if (name.startsWith(WikiBase.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 			name = name.substring(1);
 			inclusion = true;
 		}
@@ -374,13 +375,13 @@ public class TemplateTag implements ParserTag {
 			// FIXME - no need for an exception
 			throw new Exception("No template name specified");
 		}
-		if (name.startsWith(WikiBase.NAMESPACE_SEPARATOR)) {
+		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
 			if (name.length() == 1) {
 				// FIXME - no need for an exception
 				throw new Exception("No template name specified");
 			}
-		} else if (!name.startsWith(WikiBase.NAMESPACE_TEMPLATE + WikiBase.NAMESPACE_SEPARATOR)) {
-			name = WikiBase.NAMESPACE_TEMPLATE + WikiBase.NAMESPACE_SEPARATOR + name;
+		} else if (!name.startsWith(NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR)) {
+			name = NamespaceHandler.NAMESPACE_TEMPLATE + NamespaceHandler.NAMESPACE_SEPARATOR + name;
 		}
 		return name;
 	}

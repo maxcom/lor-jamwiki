@@ -22,10 +22,11 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -62,7 +63,7 @@ public class CategoryServlet extends JAMWikiServlet {
 		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();
 			String key = category.getName();
-			String value = key.substring(WikiBase.NAMESPACE_CATEGORY.length() + WikiBase.NAMESPACE_SEPARATOR.length());
+			String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 			categories.put(key, value);
 		}
 		next.addObject("categoryCount", new Integer(categories.size()));

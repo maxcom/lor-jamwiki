@@ -19,11 +19,11 @@ package org.jamwiki.parser.jflex;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
@@ -57,10 +57,10 @@ public class WikiSignatureTag implements ParserTag {
 				String text = parserInput.getUserIpAddress();
 				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
 				Object params[] = new Object[7];
-				params[0] = WikiBase.NAMESPACE_USER + WikiBase.NAMESPACE_SEPARATOR + login;
+				params[0] = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + login;
 				// FIXME - hard coding
-				params[1] = WikiBase.NAMESPACE_SPECIAL + WikiBase.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
-				params[2] = WikiBase.NAMESPACE_USER_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + login;
+				params[1] = NamespaceHandler.NAMESPACE_SPECIAL + NamespaceHandler.NAMESPACE_SEPARATOR + "Contributions?contributor=" + login;
+				params[2] = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + login;
 				params[3] = login;
 				params[4] = displayName;
 				params[5] = email;

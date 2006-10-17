@@ -249,26 +249,11 @@ public class Utilities {
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (!StringUtils.hasText(wikiLink.getNamespace())) {
-			return WikiBase.NAMESPACE_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + name;
+			return NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + name;
 		}
 		String namespace = wikiLink.getNamespace();
-		if (namespace.equals(WikiBase.NAMESPACE_SPECIAL)) {
-			return null;
-		} else if (Utilities.isCommentsPage(name)) {
-			return name;
-		} else if (namespace.equals(WikiBase.NAMESPACE_CATEGORY)) {
-			return WikiBase.NAMESPACE_CATEGORY_COMMENTS + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE)) {
-			return WikiBase.NAMESPACE_IMAGE_COMMENTS + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_USER)) {
-			return WikiBase.NAMESPACE_USER_COMMENTS + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI)) {
-			return WikiBase.NAMESPACE_JAMWIKI_COMMENTS + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_TEMPLATE)) {
-			return WikiBase.NAMESPACE_TEMPLATE_COMMENTS + name.substring(namespace.length());
-		} else {
-			return WikiBase.NAMESPACE_COMMENTS + WikiBase.NAMESPACE_SEPARATOR + name;
-		}
+		String commentsNamespace = NamespaceHandler.getCommentsNamespace(namespace);
+		return (StringUtils.hasText(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
 	}
 
 	/**
@@ -289,23 +274,8 @@ public class Utilities {
 			return name;
 		}
 		String namespace = wikiLink.getNamespace();
-		if (!Utilities.isCommentsPage(name)) {
-			return name;
-		} else if (namespace.equals(WikiBase.NAMESPACE_COMMENTS)) {
-			return name.substring(namespace.length() + WikiBase.NAMESPACE_SEPARATOR.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
-			return WikiBase.NAMESPACE_CATEGORY + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
-			return WikiBase.NAMESPACE_IMAGE + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_USER_COMMENTS)) {
-			return WikiBase.NAMESPACE_USER + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI_COMMENTS)) {
-			return WikiBase.NAMESPACE_JAMWIKI + name.substring(namespace.length());
-		} else if (namespace.equals(WikiBase.NAMESPACE_TEMPLATE_COMMENTS)) {
-			return WikiBase.NAMESPACE_TEMPLATE + name.substring(namespace.length());
-		} else {
-			return name;
-		}
+		String mainNamespace = NamespaceHandler.getMainNamespace(namespace);
+		return (StringUtils.hasText(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -484,20 +454,9 @@ public class Utilities {
 			return false;
 		}
 		String namespace = wikiLink.getNamespace();
-		if (namespace.equals(WikiBase.NAMESPACE_COMMENTS)) {
-			return true;
-		} else if (namespace.equals(WikiBase.NAMESPACE_CATEGORY_COMMENTS)) {
-			return true;
-		} else if (namespace.equals(WikiBase.NAMESPACE_IMAGE_COMMENTS)) {
-			return true;
-		} else if (namespace.equals(WikiBase.NAMESPACE_USER_COMMENTS)) {
-			return true;
-		} else if (namespace.equals(WikiBase.NAMESPACE_JAMWIKI_COMMENTS)) {
-			return true;
-		} else if (namespace.equals(WikiBase.NAMESPACE_TEMPLATE_COMMENTS)) {
-			return true;
-		}
-		return false;
+		if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) return false;
+		String commentNamespace = NamespaceHandler.getCommentsNamespace(namespace);
+		return (namespace.equals(commentNamespace));
 	}
 
 	/**
@@ -939,7 +898,7 @@ public class Utilities {
 		if (!StringUtils.hasText(name)) return false;
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.toLowerCase().trim().equals(WikiBase.NAMESPACE_SPECIAL.toLowerCase())) return false;
+		if (namespace != null && namespace.toLowerCase().trim().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) return false;
 		Matcher m = INVALID_TOPIC_NAME_PATTERN.matcher(name);
 		if (m.find()) return false;
 		return true;

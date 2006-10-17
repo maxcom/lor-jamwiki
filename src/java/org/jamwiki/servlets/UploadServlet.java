@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.ImageUtil;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -166,7 +167,7 @@ public class UploadServlet extends JAMWikiServlet {
 			}
 		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = WikiBase.NAMESPACE_IMAGE + WikiBase.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
+		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			topic = new Topic();
