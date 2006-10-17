@@ -74,7 +74,13 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added redirect_to column to table jam_topic");
 			// convert topic_deleted (int) to delete_date (timestamp)
-			sql = "alter table jam_topic add column delete_date TIMESTAMP ";
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
+				sql = "alter table jam_topic add column delete_date DATETIME ";
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
+				sql = "alter table jam_topic add column delete_date DATETIME ";
+			} else {
+				sql = "alter table jam_topic add column delete_date TIMESTAMP ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added delete_date column to table jam_topic");
 			sql = "alter table jam_topic drop constraint jam_unique_topic_name_vwiki ";
@@ -91,7 +97,13 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped column topic_deleted from table jam_topic");
 			// convert file_deleted (int) to file_deleted (timestamp)
-			sql = "alter table jam_file add column delete_date TIMESTAMP ";
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
+				sql = "alter table jam_file add column delete_date DATETIME ";
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
+				sql = "alter table jam_file add column delete_date DATETIME ";
+			} else {
+				sql = "alter table jam_file add column delete_date TIMESTAMP ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added delete_date column to table jam_file");
 			sql = "update jam_file set delete_date = ? where file_deleted = '1' ";

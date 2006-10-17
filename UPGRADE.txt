@@ -44,15 +44,15 @@ steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.4.0".
-  2. File persistency mode only: convert existing content to use the HSQL
+  2. The default JAMWiki parser has changed.  To continue using the default
+     parser, modify the /WEB-INF/classes/jamwiki.properties file and change
+     the "parser" value to "parser=org.jamwiki.parser.jflex.JFlexParser".        
+  3. FILE PERSISTENCY MODE ONLY: convert existing content to use the HSQL
      database by doing the following:
        a) From Special:Admin change the Persistence setting to "Internal
           Database".
        b) From Special:Convert choose the option to convert file content to
           database content.
-  3. The default JAMWiki parser has changed.  To continue using the default
-     parser, modify the /WEB-INF/classes/jamwiki.properties file and change
-     the "parser" value to "parser=org.jamwiki.parser.jflex.JFlexParser".        
   
   JAMWiki 0.3.6
   =============
@@ -91,4 +91,59 @@ steps for 0.3.1, followed by 0.3.2, followed by 0.3.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.3.2".
+
+
+  JAMWiki 0.3.1
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.3.1".
+  2. DATABASE PERSISTENCY MODE ONLY: execute the following SQL statements
+     to update the database schema:
+       a) Add a redirect column to jam_topic.
+              alter table jam_topic add column redirect_to VARCHAR(200);
+       b) Add a delete_date column to jam_topic and jam_file.
+            MySql and MS SQL:
+              alter table jam_topic add column delete_date DATETIME;
+              alter table jam_file add column delete_date DATETIME;
+            Other databases:
+              alter table jam_topic add column delete_date TIMESTAMP;
+              alter table jam_file add column delete_date TIMESTAMP;
+       c) Update the unique constraint for topic names.
+              alter table jam_topic drop constraint jam_unique_topic_name_vwiki;
+              alter table jam_topic add constraint jam_unique_topic_name_vwiki
+                   UNIQUE (topic_name, virtual_wiki_id, delete_date);
+       d) Set the delete_date field for all topics and files.
+            MS SQL:
+              update jam_topic set delete_date = GETDATE()
+                   where topic_deleted = '1';
+              update jam_file set delete_date = GETDATE()
+                   where file_deleted = '1';
+            Oracle:
+              update jam_topic set delete_date = SYSTIMESTAMP
+                   where topic_deleted = '1';
+              update jam_file set delete_date = SYSTIMESTAMP
+                   where file_deleted = '1';
+            Other databases:
+              update jam_topic set delete_date = CURRENT_TIMESTAMP
+                   where topic_deleted = '1';
+              update jam_file set delete_date = CURRENT_TIMESTAMP
+                   where file_deleted = '1';
+       e) Drop the unused topic_deleted columns.
+              alter table jam_topic drop column topic_deleted;
+              alter table jam_file drop column file_deleted;
+       f) Drop the old user login uniqueness constraint.
+            MySql:
+              alter table jam_wiki_user drop constraint jam_unique_wiki_user_login;
+            Other databases:
+              alter table jam_wiki_user drop index jam_unique_wiki_user_login;
+       g) Create a new user login uniqueness constraint.
+            DB2, DB2/400, HSQL, MS SQL and MySQL:
+              create unique index jam_unique_wiki_user_login
+                   on jam_wiki_user (login);
+            Other databases:
+              create unique index jam_unique_wiki_user_login
+                   on jam_wiki_user (lower(login));
+  3. Update the JAMWiki StyleSheet topic to match the content of the
+     /WEB-INF/classes/pages/StyleSheet file.
 
