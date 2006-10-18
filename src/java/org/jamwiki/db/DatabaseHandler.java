@@ -1046,12 +1046,16 @@ public class DatabaseHandler {
 	 *
 	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName, true);
-		if (topic == null) return null;
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic);
-		if (rs.size() == 0) return null;
-		int topicVersionId = rs.getInt("topic_version_id");
-		return lookupTopicVersion(topicName, topicVersionId);
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			return this.lookupLastTopicVersion(virtualWiki, topicName, conn);
+		} catch (Exception e) {
+			this.handleErrors(conn);
+			throw e;
+		} finally {
+			this.releaseParams(conn);
+		}
 	}
 
 	/**
@@ -1142,9 +1146,16 @@ public class DatabaseHandler {
 	 *
 	 */
 	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId) throws Exception {
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId);
-		if (rs.size() == 0) return null;
-		return initTopicVersion(rs);
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			return this.lookupTopicVersion(topicName, topicVersionId, conn);
+		} catch (Exception e) {
+			this.handleErrors(conn);
+			throw e;
+		} finally {
+			this.releaseParams(conn);
+		}
 	}
 
 	/**

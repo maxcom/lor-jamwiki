@@ -360,17 +360,6 @@ public interface QueryHandler {
 	 * topic.
 	 *
 	 * @param topic The topic for which the most recent version is to be retrieved.
-	 * @return A WikiResultSet containing the most recent topic version for the
-	 *  specified topic.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet lookupLastTopicVersion(Topic topic) throws Exception;
-
-	/**
-	 * Retrieve a result set containing the most recent version of a specified
-	 * topic.
-	 *
-	 * @param topic The topic for which the most recent version is to be retrieved.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A WikiResultSet containing the most recent topic version for the
@@ -422,16 +411,6 @@ public interface QueryHandler {
 	 *  being retrieved.
 	 */
 	public WikiResultSet lookupTopicCount(int virtualWikiId) throws Exception;
-
-	/**
-	 * Retrieve a result set containing a specific topic version.
-	 *
-	 * @param topicVersionId The id for the topic version record being retrieved.
-	 * @return A WikiResultSet containing the topic version record, or an empty
-	 *  result set if no matching record is found.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet lookupTopicVersion(int topicVersionId) throws Exception;
 
 	/**
 	 * Retrieve a result set containing a specific topic version.

@@ -572,15 +572,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupLastTopicVersion(Topic topic) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
-		stmt.setInt(1, topic.getTopicId());
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
 	public WikiResultSet lookupLastTopicVersion(Topic topic, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
 		stmt.setInt(1, topic.getTopicId());
@@ -633,15 +624,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	public WikiResultSet lookupTopicCount(int virtualWikiId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_COUNT);
 		stmt.setInt(1, virtualWikiId);
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
-	public WikiResultSet lookupTopicVersion(int topicVersionId) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION);
-		stmt.setInt(1, topicVersionId);
 		return stmt.executeQuery();
 	}
 
