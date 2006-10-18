@@ -159,6 +159,15 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
+		stmt.setInt(1, childTopicId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
 	public void dropTables(Connection conn) {
 		// note that this method is called during creation failures, so be careful to
 		// catch errors that might result from a partial failure during install.  also
@@ -194,6 +203,17 @@ public class DefaultQueryHandler implements QueryHandler {
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE, conn);
 		} catch (Exception e) { logger.severe(e.getMessage()); }
+	}
+
+	/**
+	 * Return a simple query, that if successfully run indicates that JAMWiki
+	 * tables have been initialized in the database.
+	 *
+	 * @return Returns a simple query that, if successfully run, indicates
+	 *  that JAMWiki tables have been set up in the database.
+	 */
+	public String existenceValidationQuery() {
+		return STATEMENT_SELECT_VIRTUAL_WIKIS;
 	}
 
 	/**
@@ -376,15 +396,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
 		STATEMENT_UPDATE_WIKI_USER_INFO          = props.getProperty("STATEMENT_UPDATE_WIKI_USER_INFO");
-	}
-
-	/**
-	 *
-	 */
-	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
-		stmt.setInt(1, childTopicId);
-		stmt.executeUpdate(conn);
 	}
 
 	/**

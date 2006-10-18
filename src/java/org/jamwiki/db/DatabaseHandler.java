@@ -74,6 +74,7 @@ public class DatabaseHandler {
 	public static final String DB_TYPE_ORACLE = "oracle";
 	public static final String DB_TYPE_POSTGRES = "postgres";
 	private static String CONNECTION_VALIDATION_QUERY = null;
+	private static String EXISTENCE_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 	private static QueryHandler queryHandler = null;
 	private boolean initialized = false;
@@ -100,6 +101,7 @@ public class DatabaseHandler {
 			DatabaseHandler.queryHandler = new DefaultQueryHandler();
 		}
 		DatabaseHandler.CONNECTION_VALIDATION_QUERY = DatabaseHandler.queryHandler.connectionValidationQuery();
+		DatabaseHandler.EXISTENCE_VALIDATION_QUERY = DatabaseHandler.queryHandler.existenceValidationQuery();
 		// initialize connection pool in its own try-catch to avoid an error
 		// causing property values not to be saved.
 		DatabaseConnection.setPoolInitialized(false);
@@ -697,6 +699,20 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
+	public static String getConnectionValidationQuery() {
+		return (StringUtils.hasText(CONNECTION_VALIDATION_QUERY)) ? CONNECTION_VALIDATION_QUERY : null;
+	}
+
+	/**
+	 *
+	 */
+	public static String getExistenceValidationQuery() {
+		return (StringUtils.hasText(EXISTENCE_VALIDATION_QUERY)) ? EXISTENCE_VALIDATION_QUERY : null;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(virtualWiki, pagination, descending);
@@ -733,13 +749,6 @@ public class DatabaseHandler {
 			all.add(change);
 		}
 		return all;
-	}
-
-	/**
-	 *
-	 */
-	public static String getValidationQuery() {
-		return (StringUtils.hasText(CONNECTION_VALIDATION_QUERY)) ? CONNECTION_VALIDATION_QUERY : null;
 	}
 
 	/**

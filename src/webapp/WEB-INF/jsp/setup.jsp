@@ -79,9 +79,15 @@ function onPersistenceType() {
 <c:if test="${!empty errorMessage}"><p class="color"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></p></c:if>
 
 <form name="setup" method="post">
+<input type="hidden" value="<c:out value="${upgrade}" />" />
 <table style="border:2px solid #333333;padding=1em;">
 <c:if test="${!empty errors}">
 <tr><td class="red" colspan="2"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
+</c:if>
+<c:if test="${!empty upgrade}">
+<tr><td colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><font color="red"><f:message key="setup.error.upgrade" /></font></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" name="override" value="<f:message key="common.continue" />" /></td></tr>
 </c:if>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>

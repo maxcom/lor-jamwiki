@@ -74,9 +74,9 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added redirect_to column to table jam_topic");
 			// convert topic_deleted (int) to delete_date (timestamp)
-			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
 				sql = "alter table jam_topic add column delete_date DATETIME ";
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL)) {
 				sql = "alter table jam_topic add column delete_date DATETIME ";
 			} else {
 				sql = "alter table jam_topic add column delete_date TIMESTAMP ";
@@ -97,9 +97,9 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped column topic_deleted from table jam_topic");
 			// convert file_deleted (int) to file_deleted (timestamp)
-			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
 				sql = "alter table jam_file add column delete_date DATETIME ";
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL)) {
 				sql = "alter table jam_file add column delete_date DATETIME ";
 			} else {
 				sql = "alter table jam_file add column delete_date TIMESTAMP ";

@@ -88,6 +88,15 @@ public interface QueryHandler {
 	public void dropTables(Connection conn);
 
 	/**
+	 * Return a simple query, that if successfully run indicates that JAMWiki
+	 * tables have been initialized in the database.
+	 *
+	 * @return Returns a simple query that, if successfully run, indicates
+	 *  that JAMWiki tables have been set up in the database.
+	 */
+	public String existenceValidationQuery();
+
+	/**
 	 * Retrieve a WikiResultSet containing all topic names that exist for a
 	 * virtual wiki. This method will not return the names of previously
 	 * deleted topics.

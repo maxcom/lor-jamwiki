@@ -28,6 +28,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -55,7 +56,7 @@ public class SetupServlet extends JAMWikiServlet {
 			if (!Utilities.isFirstUse()) {
 				throw new WikiException(new WikiMessage("setup.error.notrequired"));
 			}
-			String function = request.getParameter("function");
+			String function = (request.getParameter("function") != null) ? request.getParameter("function") : request.getParameter("override");
 			if (function == null) function = "";
 			try {
 				if (!StringUtils.hasText(function)) {
@@ -108,6 +109,15 @@ public class SetupServlet extends JAMWikiServlet {
 			pageInfo.setPageTitle(new WikiMessage("setup.title"));
 			next.addObject("errors", errors);
 			next.addObject("login", user.getLogin());
+			next.addObject("newPassword", request.getParameter("newPassword"));
+			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
+			return false;
+		} else if (previousInstall() && request.getParameter("override") == null) {
+			// user is trying to do a new install when a previous installation exists
+			next.addObject("upgrade", "true");
+			next.addObject("login", user.getLogin());
+			next.addObject("newPassword", request.getParameter("newPassword"));
+			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
 			return false;
 		} else {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
@@ -117,6 +127,21 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.saveProperties();
 			return true;
 		}
+	}
+
+	/**
+	 *
+	 */
+	private boolean previousInstall() {
+		String driver = Environment.getValue(Environment.PROP_DB_DRIVER);
+		String url = Environment.getValue(Environment.PROP_DB_URL);
+		String userName = Environment.getValue(Environment.PROP_DB_USERNAME);
+		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, null);
+		if (DatabaseConnection.testDatabase(driver, url, userName, password, true)) {
+			// database instance exists
+			return true;
+		}
+		return false;
 	}
 
 	/**

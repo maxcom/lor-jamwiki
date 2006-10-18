@@ -76,7 +76,7 @@ public class DatabaseConnection {
 			properties.setProperty("SetBigStringTryClob", "true");
 		}
 		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
-		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.getValidationQuery(), false, true);
+		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.getConnectionValidationQuery(), false, true);
 		PoolingDriver driver = new PoolingDriver();
 		driver.registerPool("jamwiki", connectionPool);
 		Connection conn = null;
@@ -299,17 +299,20 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	public static boolean testDatabase(String driver, String url, String user, String password) {
+	public static boolean testDatabase(String driver, String url, String user, String password, boolean existence) {
 		Connection conn = null;
-		String sql = null;
 		try {
 			if (StringUtils.hasText(driver)) {
 				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
 			}
 			conn = DriverManager.getConnection(url, user, password);
+			if (existence) {
+				// test to see if database exists
+				executeQuery(DatabaseHandler.getConnectionValidationQuery(), conn);
+			}
 		} catch (Exception e) {
 			// database settings incorrect
-			logger.severe("Invalid database connection validation query: " + sql, e);
+			logger.severe("Invalid database settings", e);
 			return false;
 		} finally {
 			if (conn != null) {
