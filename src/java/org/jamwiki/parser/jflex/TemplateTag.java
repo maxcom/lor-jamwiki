@@ -119,6 +119,7 @@ public class TemplateTag implements ParserTag {
 	private static final String MAGIC_SCRIPT_PATH = "SCRIPTPATH";
 	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
 	private static Vector MAGIC_WORDS = new Vector();
+	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 
 	private Hashtable parameterValues = new Hashtable();
 
@@ -688,6 +689,8 @@ public class TemplateTag implements ParserTag {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
+		// FIXME - disable section editing
+		parserInput.getTempParams().put(TEMPLATE_INCLUSION, "true");
 		return templateTopic.getTopicContent();
 	}
 
