@@ -314,7 +314,7 @@ public class Utilities {
 			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
 		}
 		// get the topic that is being redirected to
-		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), true);
+		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo());
 		if (child == null) {
 			// child being redirected to doesn't exist, return parent
 			return parent;
@@ -323,7 +323,7 @@ public class Utilities {
 			// found a topic that is not a redirect, return
 			return child;
 		}
-		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), true) == null) {
+		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo()) == null) {
 			// child is a redirect, but its target does not exist
 			return child;
 		}
@@ -636,7 +636,7 @@ public class Utilities {
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserDocument parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
@@ -664,7 +664,7 @@ public class Utilities {
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserDocument parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}

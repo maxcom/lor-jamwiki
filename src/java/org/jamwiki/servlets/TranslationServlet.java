@@ -154,7 +154,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setVirtualWiki(virtualWiki);

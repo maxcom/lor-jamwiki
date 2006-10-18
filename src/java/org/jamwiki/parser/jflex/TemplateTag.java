@@ -282,7 +282,7 @@ public class TemplateTag implements ParserTag {
 			inclusion = true;
 		}
 		// get the parsed template body
-		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false);
+		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;

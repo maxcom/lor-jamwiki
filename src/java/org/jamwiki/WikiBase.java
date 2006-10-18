@@ -87,12 +87,10 @@ public class WikiBase {
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being checked.
 	 * @param topicName The name of the topic that is being checked.
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 * @return <code>true</code> if the topic exists or is a special system topic.
 	 * @throws Exception Thrown if any error occurs during lookup.
 	 */
-	public static boolean exists(String virtualWiki, String topicName, boolean caseSensitive) throws Exception {
+	public static boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			return true;
 		}
@@ -103,7 +101,7 @@ public class WikiBase {
 			// not initialized yet
 			return false;
 		}
-		return WikiBase.handler.exists(virtualWiki, topicName, caseSensitive);
+		return WikiBase.handler.exists(virtualWiki, topicName);
 	}
 
 	/**

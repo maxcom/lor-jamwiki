@@ -590,30 +590,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK) throws Exception {
-		WikiPreparedStatement stmt = null;
-		if (!caseSensitive) {
-			topicName = topicName.toLowerCase();
-			if (!deleteOK) {
-				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_LOWER);
-			} else {
-				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER);
-			}
-		} else {
-			if (!deleteOK) {
-				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
-			} else {
-				stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_DELETE_OK);
-			}
-		}
-		stmt.setInt(1, virtualWikiId);
-		stmt.setString(2, topicName);
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
 	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = null;
 		if (!caseSensitive) {

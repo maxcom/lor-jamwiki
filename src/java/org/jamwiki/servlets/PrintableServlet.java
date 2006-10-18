@@ -61,7 +61,7 @@ public class PrintableServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

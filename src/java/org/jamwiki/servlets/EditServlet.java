@@ -107,7 +107,7 @@ public class EditServlet extends JAMWikiServlet {
 			contents = parserDocument.getContent();
 		} else {
 			// editing a full new or existing topic
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 			contents = (topic == null) ? "" : topic.getTopicContent();
 		}
 		next.addObject("contents", contents);
@@ -157,7 +157,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			throw new WikiException(new WikiMessage("edit.exception.pseudotopic", topicName));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setName(topicName);
@@ -187,7 +187,7 @@ public class EditServlet extends JAMWikiServlet {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.login");
 			return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.loginadmin", topicName);
 			return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);

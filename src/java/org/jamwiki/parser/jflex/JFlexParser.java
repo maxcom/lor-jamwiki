@@ -245,7 +245,7 @@ public class JFlexParser extends AbstractParser {
 	private ParserDocument parseRedirect(String raw, ParserDocument parserDocument) throws Exception {
 		String redirect = this.isRedirect(raw);
 		String style = "redirect";
-		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim(), true)) {
+		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim())) {
 			style = "edit redirect";
 		}
 		WikiLink wikiLink = new WikiLink();

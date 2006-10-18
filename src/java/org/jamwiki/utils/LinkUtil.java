@@ -165,7 +165,7 @@ public class LinkUtil {
 		if (StringUtils.hasText(topic) && !StringUtils.hasText(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
-			} else if (!WikiBase.exists(virtualWiki, topic, true)) {
+			} else if (!WikiBase.exists(virtualWiki, topic)) {
 				style = "edit";
 			}
 		}
@@ -206,7 +206,7 @@ public class LinkUtil {
 			String url = "";
 			return "#" + Utilities.encodeForURL(section);
 		}
-		if (!WikiBase.exists(virtualWiki, topic, true)) {
+		if (!WikiBase.exists(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
 		}
 		String url = context;

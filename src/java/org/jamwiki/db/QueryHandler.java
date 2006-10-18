@@ -380,23 +380,6 @@ public interface QueryHandler {
 	public WikiResultSet lookupLastTopicVersion(Topic topic, Connection conn) throws Exception;
 
 	/**
-	 * Retrieve a WikiResultSet containing all topic information for a give topic.
-	 *
-	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic
-	 *  being retrieved.
-	 * @param topicName The name of the topic being retrieved.
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
-	 * @param deleteOK Set to <code>true</code> if deleted topics should be searched,
-	 *  otherwise deleted topics will not be included in the result set.
-	 * @return A WikiResultSet containing all topic information for the given topic
-	 *  name and virtual wiki.  If no matching topic is found an empty result set is
-	 *  returned.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK) throws Exception;
-
-	/**
 	 * Retrieve a WikiResultSet containing all topic information for a given topic.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic

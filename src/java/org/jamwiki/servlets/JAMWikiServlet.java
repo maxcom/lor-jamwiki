@@ -124,7 +124,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
 		if (content == null) {
 			try {
-				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 				content = topic.getTopicContent();
 				if (cook) {
 					ParserInput parserInput = new ParserInput();
@@ -263,7 +263,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				next.addObject("edit", editLink);
 				if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
 					String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-					if (WikiBase.getHandler().exists(virtualWiki, article, true)) {
+					if (WikiBase.getHandler().exists(virtualWiki, article)) {
 						pageInfo.setCanMove(true);
 					}
 				}
@@ -376,7 +376,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			// topic does not exist, display empty page
 			topic = new Topic();

@@ -32,8 +32,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.file.FileHandler;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
@@ -43,11 +42,15 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.file.FileHandler;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCacheMap;
+import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
@@ -111,7 +114,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	private void addCategory(Category category, Connection conn) throws Exception {
-		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), true, false, conn);
+		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), false, conn);
 		int childTopicId = childTopic.getTopicId();
 		DatabaseHandler.queryHandler.insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
 	}
@@ -206,7 +209,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public boolean canMoveTopic(Topic fromTopic, String destination) throws Exception {
-		Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination, true);
+		Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination);
 		if (toTopic == null || toTopic.getDeleteDate() != null) {
 			// destination doesn't exist or is deleted, so move is OK
 			return true;
@@ -273,7 +276,7 @@ public class DatabaseHandler {
 				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
 					try {
-						Topic topic = fromHandler.lookupTopic(virtualWiki.getName(), topicName, true);
+						Topic topic = fromHandler.lookupTopic(virtualWiki.getName(), topicName);
 						toHandler.addTopic(topic, conn);
 						success++;
 					} catch (Exception e) {
@@ -415,7 +418,7 @@ public class DatabaseHandler {
 				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
 					String topicName = (String)topicIterator.next();
 					try {
-						Topic topic = fromHandler.lookupTopic(virtualWiki.getName(), topicName, true);
+						Topic topic = fromHandler.lookupTopic(virtualWiki.getName(), topicName);
 						toHandler.addTopic(topic);
 						success++;
 					} catch (Exception e) {
@@ -572,12 +575,10 @@ public class DatabaseHandler {
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being checked.
 	 * @param topicName The name of the topic that is being checked.
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 * @return <code>true</code> if the topic exists.
 	 * @throws Exception Thrown if any error occurs during lookup.
 	 */
-	public boolean exists(String virtualWiki, String topicName, boolean caseSensitive) throws Exception {
+	public boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
 			return false;
 		}
@@ -589,7 +590,7 @@ public class DatabaseHandler {
 		if (cachedNonTopicsList.containsKey(key)) {
 			return false;
 		}
-		Topic topic = lookupTopic(virtualWiki, topicName, caseSensitive);
+		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getDeleteDate() != null) {
 			cachedNonTopicsList.put(key, null);
 			return false;
@@ -634,7 +635,7 @@ public class DatabaseHandler {
 	 */
 	private Collection getAllTopicVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		Vector all = new Vector();
-		Topic topic = lookupTopic(virtualWiki, topicName, true);
+		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
 		}
@@ -728,7 +729,7 @@ public class DatabaseHandler {
 	 */
 	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
-		Topic topic = lookupTopic(virtualWiki, topicName, true, true);
+		Topic topic = lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) return all;
 		WikiResultSet rs = DatabaseHandler.queryHandler.getRecentChanges(topic.getTopicId(), pagination, descending);
 		while (rs.next()) {
@@ -1045,7 +1046,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName, true, true);
+		Topic topic = lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic);
 		if (rs.size() == 0) return null;
@@ -1057,7 +1058,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Connection conn) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName, true, true, conn);
+		Topic topic = lookupTopic(virtualWiki, topicName, true, conn);
 		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic, conn);
 		if (rs.size() == 0) return null;
@@ -1067,31 +1068,44 @@ public class DatabaseHandler {
 
 	/**
 	 *
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean caseSensitive) throws Exception {
-		return lookupTopic(virtualWiki, topicName, caseSensitive, false);
+	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
+		return lookupTopic(virtualWiki, topicName, false);
 	}
 
 	/**
 	 *
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean caseSensitive, boolean deleteOK) throws Exception {
-		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName, caseSensitive, deleteOK);
-		if (rs.size() == 0) return null;
-		return initTopic(rs);
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK) throws Exception {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			return this.lookupTopic(virtualWiki, topicName, deleteOK, conn);
+		} catch (Exception e) {
+			this.handleErrors(conn);
+			throw e;
+		} finally {
+			this.releaseParams(conn);
+		}
 	}
 
 	/**
 	 *
-	 * @param caseSensitive Set to <code>true</code> if the topic name should be
-	 *  searched for in a case-sensitive manner.
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean caseSensitive, boolean deleteOK, Connection conn) throws Exception {
+	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws Exception {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		boolean caseSensitive = true;
+		if (namespace != null) {
+			if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
+				// invalid namespace
+				return null;
+			}
+			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE) || namespace.equals(NamespaceHandler.NAMESPACE_USER)) {
+				// user/template namespaces are case-insensitive
+				caseSensitive = false;
+			}
+		}
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopic(virtualWikiId, topicName, caseSensitive, deleteOK, conn);
 		if (rs.size() == 0) return null;
@@ -1178,7 +1192,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName, true);
+		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupWikiFile(virtualWikiId, topic.getTopicId());
@@ -1277,7 +1291,7 @@ public class DatabaseHandler {
 			if (!this.canMoveTopic(fromTopic, destination)) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
-			Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination, true);
+			Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination);
 			boolean detinationExistsFlag = (toTopic != null && toTopic.getDeleteDate() == null);
 			if (detinationExistsFlag) {
 				// if the target topic is a redirect to the source topic then the
@@ -1460,7 +1474,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	private void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Connection conn) throws Exception {
-		if (this.lookupTopic(virtualWiki, topicName, true, false, conn) != null) {
+		if (this.lookupTopic(virtualWiki, topicName, false, conn) != null) {
 			logger.warning("Special page " + virtualWiki + " / " + topicName + " already exists");
 			return;
 		}
@@ -1551,7 +1565,7 @@ public class DatabaseHandler {
 		try {
 			conn = this.getConnection();
 			String contents = DatabaseHandler.readSpecialPage(locale, topicName);
-			Topic topic = this.lookupTopic(virtualWiki, topicName, true, false, conn);
+			Topic topic = this.lookupTopic(virtualWiki, topicName, false, conn);
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);

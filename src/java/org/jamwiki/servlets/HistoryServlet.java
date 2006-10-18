@@ -85,7 +85,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		if (topicVersion == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		topic.setTopicContent(topicVersion.getVersionContent());
 		String versionDate = DateFormat.getDateTimeInstance().format(topicVersion.getEditDate());
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + versionDate);
