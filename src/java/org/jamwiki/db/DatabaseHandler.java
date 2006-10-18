@@ -1551,7 +1551,7 @@ public class DatabaseHandler {
 		try {
 			conn = this.getConnection();
 			String contents = DatabaseHandler.readSpecialPage(locale, topicName);
-			Topic topic = this.lookupTopic(virtualWiki, topicName, true);
+			Topic topic = this.lookupTopic(virtualWiki, topicName, true, false, conn);
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);

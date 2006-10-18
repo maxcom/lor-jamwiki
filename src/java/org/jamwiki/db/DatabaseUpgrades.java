@@ -83,9 +83,17 @@ public class DatabaseUpgrades {
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added delete_date column to table jam_topic");
-			sql = "alter table jam_topic drop constraint jam_unique_topic_name_vwiki ";
+			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
+				sql = "alter table jam_topic drop constraint jam_unique_topic_name_vwiki ";
+			} else {
+				sql = "alter table jam_topic drop index jam_unique_topic_name_vwiki ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
-			sql = "alter table jam_topic add constraint jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id, delete_date) ";
+			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL)) {
+				sql = "alter table jam_topic add constraint jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id, delete_date) ";
+			} else {
+				sql = "create unique index jam_unique_topic_name_vwiki on jam_topic(topic_name, virtual_wiki_id, delete_date) ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Updated unique topic name constraint");
 			sql = "update jam_topic set delete_date = ? where topic_deleted = '1' ";

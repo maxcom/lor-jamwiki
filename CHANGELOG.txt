@@ -3,26 +3,26 @@
 =====
 
 * FEATURE: Add support for Mediawiki templates (see 
-  http://meta.wikimedia.org/wiki/Help:Templates).
-* FEATURE: Add option to enable/disable Mediawiki templates.
+  http://meta.wikimedia.org/wiki/Help:Templates).  Disabled by default.
 * FEATURE: Replace file persistency mode with an embedded version of the
   HSQL database.
 * FEATURE: Major update to the JAMWiki parser code.
+* BUG: Properly escape ampersands from the parser to ensure XHTML output.
+* FEATURE: Updated interwiki file from Axel Kramer (axelclk).
+* FEATURE: Process interwiki prefixes case-insensitive.
 * BUG: "Move" tab being incorrectly hidden on topic pages.
-* FEATURE: Require admin user login to perform an upgrade.
-* FEATURE: Add additional support for the DB2/400 database.
+* BUG: Resolve issue when upgrading multiple versions.
 * FEATURE: Remove ability to automatically upgrade from JAMWiki versions
   prior to 0.2.0.
+* FEATURE: Require admin user login to perform an upgrade.
 * FEATURE: Remove Special:AllTopics; it was replaced by Special:Allpages
   in JAMWiki 0.3.0.
 * FEATURE: Add JUnit test framework.
 * FEATURE: Change default logo to submission from Oliver (okohll).
+* FEATURE: Add additional support for the DB2/400 database.
 * FEATURE: Updated MS SQL support from Robert Matyja (dlpa).
 * BUG: Fix possible database transaction blocking during setup using
   suggestions from Robert Matyja (dlpa).
-* BUG: Properly escape ampersands from the parser to ensure XHTML output.
-* FEATURE: Updated Interwiki file from Axel Kramer (axelclk), based on
-  values used by Mediawiki (http://meta.wikimedia.org/wiki/Interwiki_map).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).

@@ -88,6 +88,24 @@ public class UpgradeServlet extends JAMWikiServlet {
 			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.2.0"));
 			success = false;
 		} else {
+			// first perform database upgrades
+			if (WikiBase.getHandler() instanceof DatabaseHandler) {
+				try {
+					if (oldVersion.before(0, 3, 0)) {
+						messages = DatabaseUpgrades.upgrade030(messages);
+					}
+					if (oldVersion.before(0, 3, 1)) {
+						messages = DatabaseUpgrades.upgrade031(messages);
+					}
+				} catch (Exception e) {
+					// FIXME - hard coding
+					String msg = "Unable to complete upgrade to new JAMWiki version.";
+					logger.severe(msg, e);
+					messages.add(msg + ": " + e.getMessage());
+					success = false;
+				}
+			}
+			// then perform other needed upgrades
 			if (oldVersion.before(0, 3, 0)) {
 				if (!upgrade030(request, messages)) success = false;
 			}
@@ -132,9 +150,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgrade030(HttpServletRequest request, Vector messages) {
 		// drop jam_image table
 		try {
-			if (WikiBase.getHandler() instanceof DatabaseHandler) {
-				messages = DatabaseUpgrades.upgrade030(messages);
-			}
 			// upgrade stylesheet
 			upgradeStyleSheet(request, messages);
 			return true;
@@ -152,9 +167,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgrade031(HttpServletRequest request, Vector messages) {
 		try {
-			if (WikiBase.getHandler() instanceof DatabaseHandler) {
-				messages = DatabaseUpgrades.upgrade031(messages);
-			}
 			// upgrade stylesheet
 			upgradeStyleSheet(request, messages);
 			return true;
