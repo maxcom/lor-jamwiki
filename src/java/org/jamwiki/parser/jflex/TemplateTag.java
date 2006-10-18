@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
@@ -652,13 +653,27 @@ public class TemplateTag implements ParserTag {
 			return Utilities.extractTopicLink(parserInput.getTopicName());
 		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(Utilities.extractTopicLink(parserInput.getTopicName()));
+		}
+		TopicVersion topicVersion = WikiBase.getHandler().lookupLastTopicVersion(parserInput.getVirtualWiki(), parserInput.getTopicName());
+		Date revision = topicVersion.getEditDate();
+		formatter.setTimeZone(utc);
+		if (name.equals(MAGIC_REVISION_DAY)) {
+			formatter.applyPattern("d");
+			return formatter.format(revision);
+		} else if (name.equals(MAGIC_REVISION_DAY2)) {
+			formatter.applyPattern("dd");
+			return formatter.format(revision);
+		} else if (name.equals(MAGIC_REVISION_MONTH)) {
+			formatter.applyPattern("MM");
+			return formatter.format(revision);
+		} else if (name.equals(MAGIC_REVISION_YEAR)) {
+			formatter.applyPattern("yyyy");
+			return formatter.format(revision);
+		} else if (name.equals(MAGIC_REVISION_TIMESTAMP)) {
+			formatter.applyPattern("yyyyMMddHHmmss");
+			return formatter.format(revision);
 		/*
 		} else if (name.equals(MAGIC_REVISION_ID)) {
-		} else if (name.equals(MAGIC_REVISION_DAY)) {
-		} else if (name.equals(MAGIC_REVISION_DAY2)) {
-		} else if (name.equals(MAGIC_REVISION_MONTH)) {
-		} else if (name.equals(MAGIC_REVISION_YEAR)) {
-		} else if (name.equals(MAGIC_REVISION_TIMESTAMP)) {
 		} else if (name.equals(MAGIC_SITE_NAME)) {
 		} else if (name.equals(MAGIC_SERVER)) {
 		} else if (name.equals(MAGIC_SCRIPT_PATH)) {
