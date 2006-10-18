@@ -36,6 +36,8 @@ public class Topic {
 	public static final int TYPE_FILE = 6;
 	/* Internal files, do not display on Special:Allpages */
 	public static final int TYPE_SYSTEM_FILE = 7;
+	/* Wiki templates. */
+	public static final int TYPE_TEMPLATE = 8;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
 	private Timestamp deleteDate = null;

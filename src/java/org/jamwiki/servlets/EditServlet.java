@@ -16,8 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,9 +73,6 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		if (!Utilities.validateTopicName(topicName)) {
-			throw new WikiException(new WikiMessage("common.exception.name", topicName));
-		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		loadTopic(request, virtualWiki, topicName);
 		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
@@ -148,7 +143,9 @@ public class EditServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 *
+	 * Initialize topic values for the topic being edited.  If a topic with
+	 * the specified name already exists then it will be initialized,
+	 * otherwise a new topic is created.
 	 */
 	private Topic loadTopic(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
 		if (!StringUtils.hasText(topicName)) {
@@ -156,6 +153,9 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			throw new WikiException(new WikiMessage("edit.exception.pseudotopic", topicName));
+		}
+		if (!Utilities.validateTopicName(topicName)) {
+			throw new WikiException(new WikiMessage("common.exception.name", topicName));
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -165,8 +165,12 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			topic.setTopicType(Topic.TYPE_CATEGORY);
+		if (namespace != null) {
+			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+				topic.setTopicType(Topic.TYPE_CATEGORY);
+			} else if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
+				topic.setTopicType(Topic.TYPE_TEMPLATE);
+			}
 		}
 		if (topic.getReadOnly()) {
 			throw new WikiException(new WikiMessage("error.readonly"));
