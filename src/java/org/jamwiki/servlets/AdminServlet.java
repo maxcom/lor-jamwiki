@@ -235,16 +235,11 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
-			// FIXME - database specific
-			if (WikiBase.getHandler() instanceof DatabaseHandler) {
-				WikiBase.getHandler().reloadRecentChanges();
-				next.addObject("message", new WikiMessage("admin.message.recentchanges"));
-			} else {
-				next.addObject("message", new WikiMessage("admin.caption.recentchangesdb"));
-			}
+			WikiBase.getHandler().reloadRecentChanges();
+			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.severe("Failure while loading recent changes", e);
-			next.addObject("errorMessage", new WikiMessage("admin.caption.recentchangesdb", e.getMessage()));
+			next.addObject("errorMessage", new WikiMessage("admin.caption.recentchangesfail", e.getMessage()));
 		}
 		view(request, next, pageInfo, null);
 	}

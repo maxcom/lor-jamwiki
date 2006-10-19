@@ -453,7 +453,6 @@ onUserGroupType()
 	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.recentchangeshelp" /></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 </table>
 <input type="hidden" name="function" value="recentChanges" />

@@ -109,7 +109,7 @@ public class Environment {
 			initDefaultProperties();
 			logger.config("Default properties initialized: " + defaults.toString());
 			props = loadProperties(PROPERTY_FILE_NAME, defaults);
-			// FIXME - remove this code after upgrading from 0.3.5 is removed
+			// FIXME - remove this code after upgrading to 0.4.0 is removed
 			if (props.getProperty(PROP_PARSER_CLASS) != null && props.getProperty(PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
 				props.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
 			}

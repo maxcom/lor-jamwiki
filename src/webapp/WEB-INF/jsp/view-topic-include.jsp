@@ -24,7 +24,6 @@
 <c:if test="${empty notopic}">
 	<c:if test="${!empty topicObject}">
 <div id="content-article" class="clearblock">
-<%-- FIXME - ugly, clean this up --%>
 <c:if test="${topicImage}"><jamwiki:image value="${topicObject.name}" /></c:if>
 <c:if test="${topicFile}"><div id="topic-file-download"><f:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 <c:out value="${topicObject.topicContent}" escapeXml="false" />
