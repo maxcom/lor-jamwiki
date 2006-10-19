@@ -3,7 +3,7 @@
 =====
 
 * FEATURE: Add support for Mediawiki templates (see 
-  http://meta.wikimedia.org/wiki/Help:Templates).  Disabled by default.
+  http://meta.wikimedia.org/wiki/Help:Templates).
 * FEATURE: Replace file persistency mode with an embedded version of the
   HSQL database.
 * FEATURE: Major update to the JAMWiki parser code.

@@ -179,7 +179,7 @@ public class Environment {
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "450");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, "false");
-		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, "false");
+		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, "true");
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
