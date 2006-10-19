@@ -73,7 +73,9 @@ public class EditServlet extends JAMWikiServlet {
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		loadTopic(virtualWiki, topicName);
+		Topic topic = loadTopic(virtualWiki, topicName);
+		// topic name might be updated by loadTopic
+		topicName = topic.getName();
 		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
 		next.addObject("lastTopicVersionId", new Integer(lastTopicVersionId));
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, true);
@@ -101,7 +103,6 @@ public class EditServlet extends JAMWikiServlet {
 			contents = parserDocument.getContent();
 		} else {
 			// editing a full new or existing topic
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 			contents = (topic == null) ? "" : topic.getTopicContent();
 		}
 		next.addObject("contents", contents);

@@ -25,7 +25,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Topic;
@@ -39,6 +38,7 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -61,7 +61,12 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private static LinkedHashMap cachedContents = new LinkedHashMap();
 
 	/**
+	 * This method ensures that the left menu, logo, and other required values
+	 * have been loaded into the session object.
 	 *
+	 * @param request The servlet request object.
+	 * @param next A ModelAndView object corresponding to the page being
+	 *  constructed.
 	 */
 	private static void buildLayout(HttpServletRequest request, ModelAndView next) {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
@@ -91,7 +96,14 @@ public abstract class JAMWikiServlet extends AbstractController {
 	}
 
 	/**
+	 * Create a pagination object based on parameters found in the current
+	 * request.
 	 *
+	 * @param request The servlet request object.
+	 * @param next A ModelAndView object corresponding to the page being
+	 *  constructed.
+	 * @return A Pagination object constructed from parameters found in the
+	 *  request object.
 	 */
 	public static Pagination buildPagination(HttpServletRequest request, ModelAndView next) {
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);

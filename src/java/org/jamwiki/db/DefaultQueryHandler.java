@@ -21,7 +21,6 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Properties;
 import org.jamwiki.Environment;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -31,6 +30,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Default implementation of the QueryHandler implementation for retrieving, inserting,

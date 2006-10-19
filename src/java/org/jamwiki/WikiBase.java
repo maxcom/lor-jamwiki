@@ -17,9 +17,9 @@
 package org.jamwiki;
 
 import java.util.Locale;
+import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.JAMWikiServlet;
