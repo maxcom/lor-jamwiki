@@ -11,7 +11,7 @@
 * FEATURE: Updated interwiki file from Axel Kramer (axelclk).
 * FEATURE: Process interwiki prefixes case-insensitive.
 * BUG: "Move" tab being incorrectly hidden on topic pages.
-* BUG: Resolve issue when upgrading multiple versions.
+* BUG: Resolve issues that could cause upgrades to fail.
 * FEATURE: Remove ability to automatically upgrade from JAMWiki versions
   prior to 0.2.0.
 * FEATURE: Require admin user login to perform an upgrade.

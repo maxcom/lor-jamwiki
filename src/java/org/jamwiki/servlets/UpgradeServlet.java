@@ -128,18 +128,23 @@ public class UpgradeServlet extends JAMWikiServlet {
 				}
 			}
 			// then perform other needed upgrades
+			boolean stylesheet = false;
 			// the 0.4.0 file conversion needs to happen first
 			if (oldVersion.before(0, 4, 0)) {
 				if (!upgrade040(request, messages)) success = false;
 			}
 			if (oldVersion.before(0, 3, 0)) {
-				if (!upgrade030(request, messages)) success = false;
+				stylesheet = true;
 			}
 			if (oldVersion.before(0, 3, 1)) {
-				if (!upgrade031(request, messages)) success = false;
+				stylesheet = true;
 			}
 			if (oldVersion.before(0, 3, 5)) {
-				if (!upgrade035(request, messages)) success = false;
+				stylesheet = true;
+			}
+			if (stylesheet) {
+				// upgrade stylesheet
+				if (!upgradeStyleSheet(request, messages)) success = false;
 			}
 			Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 			if (errors.size() > 0) {
@@ -166,58 +171,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade030(HttpServletRequest request, Vector messages) {
-		// drop jam_image table
-		try {
-			// upgrade stylesheet
-			upgradeStyleSheet(request, messages);
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade031(HttpServletRequest request, Vector messages) {
-		try {
-			// upgrade stylesheet
-			upgradeStyleSheet(request, messages);
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade035(HttpServletRequest request, Vector messages) {
-		try {
-			// upgrade stylesheet
-			upgradeStyleSheet(request, messages);
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
 	}
 
 	/**
@@ -250,12 +203,21 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
-		Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
-		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-			WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, Utilities.currentUser(request), request.getRemoteAddr());
-			messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
+	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
+		try {
+			Collection virtualWikis = WikiBase.getHandler().getVirtualWikiList();
+			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
+				WikiBase.getHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, Utilities.currentUser(request), request.getRemoteAddr());
+				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
+			}
+			return true;
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to complete upgrade to new JAMWiki version.";
+			logger.severe(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+			return false;
 		}
 	}
 
