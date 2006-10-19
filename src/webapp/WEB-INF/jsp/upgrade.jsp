@@ -66,12 +66,20 @@ function confirmSubmit() {
 <p class="red"><f:message key="${error.key}" /></p>
 </c:if>
 
-<c:if test="${empty message && empty error && empty errors}">
-<form name="adminUpgrade" method="get">
+<c:if test="${empty message && empty failure}">
+<form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
 <table style="border:2px solid #333333;padding=1em;">
-<tr><td><f:message key="upgrade.caption.detected" /></td></tr>
-<tr><td align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
+<tr><td colspan="2"><f:message key="upgrade.caption.detected" /></td></tr>
+<tr>
+	<td><label for="loginUsername"><f:message key="login.username"/></label></td>
+	<td><input type="text" name="username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
+</tr>
+<tr>
+	<td><label for="loginPassword"><f:message key="login.password"/></label></td>
+	<td><input type="password" name="password" id="loginPassword" /></td>
+</tr>
+<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
 </table>
 </form>
 </c:if>

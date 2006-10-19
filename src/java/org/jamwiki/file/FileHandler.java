@@ -394,8 +394,8 @@ public class FileHandler {
 					try {
 						topic.setDeleteDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 					} catch (Exception e) {
-						if (XMLUtil.getTextContent(rootChild) != null && XMLUtil.getTextContent(rootChild).equals("1")) {
-							// FIXME - this can be removed once the ability to upgrade from 0.3.0 is removed
+						if (XMLUtil.getTextContent(rootChild) != null && (XMLUtil.getTextContent(rootChild).equals("1") || XMLUtil.getTextContent(rootChild).equals("true"))) {
+							// old file format
 							topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 						}
 					}
@@ -523,7 +523,14 @@ public class FileHandler {
 				} else if (childName.equals(XML_WIKI_FILE_READ_ONLY)) {
 					wikiFile.setReadOnly(new Boolean(XMLUtil.getTextContent(rootChild)).booleanValue());
 				} else if (childName.equals(XML_WIKI_FILE_DELETE_DATE)) {
-					wikiFile.setDeleteDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
+					try {
+						wikiFile.setDeleteDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
+					} catch (Exception e) {
+						if (XMLUtil.getTextContent(rootChild) != null && (XMLUtil.getTextContent(rootChild).equals("1") || XMLUtil.getTextContent(rootChild).equals("true"))) {
+							// old file format
+							wikiFile.setDeleteDate(new Timestamp(System.currentTimeMillis()));
+						}
+					}
 				} else if (childName.equals(XML_WIKI_FILE_MIME_TYPE)) {
 					wikiFile.setMimeType(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_FILE_SIZE)) {
@@ -674,6 +681,19 @@ public class FileHandler {
 		String filename = wikiUserFilename(login);
 		File file = getPathFor(null, WIKI_USER_DIR, filename);
 		return initWikiUser(file);
+	}
+
+	/**
+	 *
+	 */
+	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
+		WikiUser user = lookupWikiUser(login);
+		if (user == null || password == null) return null;
+		String encryptedPassword = password;
+		if (!encrypted) {
+			encryptedPassword = Encryption.encrypt(password);
+		}
+		return (user.getEncodedPassword().equals(encryptedPassword) ? user : null);
 	}
 
 	/**
