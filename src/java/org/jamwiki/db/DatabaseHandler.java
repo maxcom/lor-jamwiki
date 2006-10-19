@@ -1683,9 +1683,7 @@ public class DatabaseHandler {
 	 *  temporarily deleting a topic during page moves.
 	 */
 	private void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, Connection conn, boolean userVisible) throws Exception {
-		if (!Utilities.validateTopicName(topic.getName())) {
-			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
-		}
+		Utilities.validateTopicName(topic.getName());
 		if (topic.getTopicId() <= 0) {
 			addTopic(topic, conn);
 		} else {
@@ -1736,9 +1734,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception {
-		if (!Utilities.validateTopicName(virtualWiki.getName())) {
-			throw new WikiException(new WikiMessage("common.exception.name", virtualWiki.getName()));
-		}
+		Utilities.validateTopicName(virtualWiki.getName());
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
@@ -1761,9 +1757,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public void writeWikiUser(WikiUser user) throws Exception {
-		if (!Utilities.validateUserName(user.getLogin())) {
-			throw new WikiException(new WikiMessage("common.exception.name", user.getLogin()));
-		}
+		Utilities.validateUserName(user.getLogin());
 		Connection conn = null;
 		try {
 			conn = this.getConnection();

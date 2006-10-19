@@ -199,6 +199,31 @@ public abstract class JAMWikiServlet extends AbstractController {
 	}
 
 	/**
+	 * Initialize topic values for the topic being edited.  If a topic with
+	 * the specified name already exists then it will be initialized,
+	 * otherwise a new topic is created.
+	 */
+	protected Topic initializeTopic(String virtualWiki, String topicName) throws Exception {
+		Utilities.validateTopicName(topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			topic = new Topic();
+			topic.setName(topicName);
+			topic.setVirtualWiki(virtualWiki);
+			WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+			String namespace = wikiLink.getNamespace();
+			if (namespace != null) {
+				if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+					topic.setTopicType(Topic.TYPE_CATEGORY);
+				} else if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
+					topic.setTopicType(Topic.TYPE_TEMPLATE);
+				}
+			}
+		}
+		return topic;
+	}
+
+	/**
 	 *
 	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
@@ -369,19 +394,13 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *  can be loaded as a org.jamwiki.model.Topic object.
 	 */
 	protected void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		if (!Utilities.validateTopicName(topicName)) {
-			throw new WikiException(new WikiMessage("common.exception.name", topicName));
-		}
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
+		Topic topic = this.initializeTopic(virtualWiki, topicName);
+		if (topic.getTopicId() <= 0) {
 			// topic does not exist, display empty page
-			topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
 			next.addObject("notopic", new WikiMessage("topic.notcreated", topicName));
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
@@ -404,9 +423,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		if (!Utilities.validateTopicName(topic.getName())) {
-			throw new WikiException(new WikiMessage("common.exception.name", topic.getName()));
-		}
+		Utilities.validateTopicName(topic.getName());
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = Utilities.findRedirectedTopic(topic, 0);
 			if (!child.getName().equals(topic.getName())) {

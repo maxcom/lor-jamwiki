@@ -891,17 +891,24 @@ public class Utilities {
 	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
 	 * @param name The topic name to validate.
-	 * @return <code>true</code> if the name is a valid topic name, <code>false</code>
-	 *  otherwise.
+	 * @throws WikiException Thrown if the user name is invalid.
 	 */
-	public static boolean validateTopicName(String name) {
-		if (!StringUtils.hasText(name)) return false;
+	public static void validateTopicName(String name) throws WikiException {
+		if (!StringUtils.hasText(name)) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
+		if (PseudoTopicHandler.isPseudoTopic(name)) {
+			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
+		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.toLowerCase().trim().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) return false;
+		if (namespace != null && namespace.toLowerCase().trim().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
+			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
 		Matcher m = INVALID_TOPIC_NAME_PATTERN.matcher(name);
-		if (m.find()) return false;
-		return true;
+		if (m.find()) {
+			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
 	}
 
 	/**
@@ -909,13 +916,15 @@ public class Utilities {
 	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
 	 * @param name The user login to validate.
-	 * @return <code>true</code> if the name is a valid user login, <code>false</code>
-	 *  otherwise.
+	 * @throws WikiException Thrown if the user name is invalid.
 	 */
-	public static boolean validateUserName(String name) {
-		if (!Utilities.validateTopicName(name)) return false;
+	public static void validateUserName(String name) throws WikiException {
+		if (!StringUtils.hasText(name)) {
+			throw new WikiException(new WikiMessage("error.loginempty"));
+		}
 		Matcher m = VALID_USER_LOGIN_PATTERN.matcher(name);
-		if (!m.matches()) return false;
-		return true;
+		if (!m.matches()) {
+			throw new WikiException(new WikiMessage("common.exception.name", name));
+		}
 	}
 }

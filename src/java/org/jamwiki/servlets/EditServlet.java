@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
-import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.PseudoTopicHandler;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -35,6 +33,7 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -74,7 +73,7 @@ public class EditServlet extends JAMWikiServlet {
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		loadTopic(request, virtualWiki, topicName);
+		loadTopic(virtualWiki, topicName);
 		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
 		next.addObject("lastTopicVersionId", new Integer(lastTopicVersionId));
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, true);
@@ -147,31 +146,8 @@ public class EditServlet extends JAMWikiServlet {
 	 * the specified name already exists then it will be initialized,
 	 * otherwise a new topic is created.
 	 */
-	private Topic loadTopic(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
-		if (!StringUtils.hasText(topicName)) {
-			throw new WikiException(new WikiMessage("common.exception.notopic"));
-		}
-		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
-			throw new WikiException(new WikiMessage("edit.exception.pseudotopic", topicName));
-		}
-		if (!Utilities.validateTopicName(topicName)) {
-			throw new WikiException(new WikiMessage("common.exception.name", topicName));
-		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (topic == null) {
-			topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
-		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		String namespace = wikiLink.getNamespace();
-		if (namespace != null) {
-			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-				topic.setTopicType(Topic.TYPE_CATEGORY);
-			} else if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
-				topic.setTopicType(Topic.TYPE_TEMPLATE);
-			}
-		}
+	private Topic loadTopic(String virtualWiki, String topicName) throws Exception {
+		Topic topic = this.initializeTopic(virtualWiki, topicName);
 		if (topic.getReadOnly()) {
 			throw new WikiException(new WikiMessage("error.readonly"));
 		}
@@ -253,7 +229,7 @@ public class EditServlet extends JAMWikiServlet {
 	private void save(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = loadTopic(request, virtualWiki, topicName);
+		Topic topic = loadTopic(virtualWiki, topicName);
 		TopicVersion lastTopicVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
 		if (lastTopicVersion != null && lastTopicVersion.getTopicVersionId() != retrieveLastTopicVersionId(request, virtualWiki, topicName)) {
 			// someone else has edited the topic more recently

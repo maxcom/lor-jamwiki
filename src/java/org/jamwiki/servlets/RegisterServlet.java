@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.VirtualWiki;
@@ -125,11 +126,10 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = new Vector();
-		if (!StringUtils.hasText(user.getLogin())) {
-			errors.add(new WikiMessage("error.loginempty"));
-		}
-		if (!Utilities.validateUserName(user.getLogin())) {
-			errors.add(new WikiMessage("common.exception.name", user.getLogin()));
+		try {
+			Utilities.validateUserName(user.getLogin());
+		} catch (WikiException e) {
+			errors.add(e.getWikiMessage());
 		}
 		String oldPassword = request.getParameter("oldPassword");
 		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword, false) == null) {
