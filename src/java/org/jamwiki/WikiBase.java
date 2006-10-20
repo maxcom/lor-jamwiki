@@ -54,11 +54,17 @@ public class WikiBase {
 	public static final int LDAP = 2;
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
+	/** Root directory within the WAR distribution that contains the default topic pages. */
 	public static final String SPECIAL_PAGE_DIR = "pages";
+	/** Name of the default starting points topic. */
 	public static final String SPECIAL_PAGE_STARTING_POINTS = "StartingPoints";
+	/** Name of the default left menu topic. */
 	public static final String SPECIAL_PAGE_LEFT_MENU = "LeftMenu";
+	/** Name of the default footer topic. */
 	public static final String SPECIAL_PAGE_BOTTOM_AREA = "BottomArea";
+	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
+	/** Name of the default AdminOnlyTopics topic. */
 	public static final String SPECIAL_PAGE_ADMIN_ONLY_TOPICS = "AdminOnlyTopics";
 
 	static {
@@ -70,7 +76,8 @@ public class WikiBase {
 	}
 
 	/**
-	 * Creates an instance of <code>WikiBase</code> with a specified persistency sub-system.
+	 * Creates an instance of <code>WikiBase</code>, initializing the default
+	 * database handler instance and search engine instance.
 	 *
 	 * @throws Exception If the instance cannot be instantiated.
 	 */
@@ -105,9 +112,10 @@ public class WikiBase {
 	}
 
 	/**
-	 * Get an instance of the current persistency handler.
+	 * Get an instance of the current database handler.
 	 *
-	 * @return The current handler instance.
+	 * @return The current database handler instance, or <code>null</code>
+	 *  if the handler has not yet been initialized.
 	 */
 	public static DatabaseHandler getHandler() {
 		if (!WikiBase.handler.isInitialized()) {
@@ -118,7 +126,8 @@ public class WikiBase {
 	}
 
 	/**
-	 * Return an instance of the current persistency type (usually file or database).
+	 * Return an instance of the current persistency type, either internal
+	 * or external.
 	 *
 	 * @return The current persistency type.
 	 */
@@ -140,10 +149,12 @@ public class WikiBase {
 	}
 
 	/**
-	 * Return an instance of the current user group type (usually LDAP or database).
+	 * Return an instance of the current user group type, either LDAP,
+	 * database, or none.
 	 *
 	 * @return The current user group type.
-	 * @throws Exception Thrown if an error occurs while initializing the user group instance.
+	 * @throws Exception Thrown if an error occurs while initializing the
+	 *  user group instance.
 	 */
 	public static Usergroup getUsergroupInstance() throws Exception {
 		switch (Usergroup.getUsergroupType()) {
@@ -157,7 +168,7 @@ public class WikiBase {
 	}
 
 	/**
-	 * Reset the WikiBase object, re-initializing persistency type and
+	 * Reset the WikiBase object, re-initializing the database handler and
 	 * other values.
 	 *
 	 * @param locale The locale to be used if any system pages need to be set up
@@ -174,16 +185,5 @@ public class WikiBase {
 		}
 		JAMWikiServlet.removeCachedContents();
 		WikiBase.searchEngine.refreshIndex();
-	}
-
-	/**
-	 * Set the current persistency type.  This method is not meant for general
-	 * use - WikiBase.reset() should be used in most cases when changing persistency
-	 * type.
-	 *
-	 * @param handler A new DatabaseHandler instance to use for the wiki.
-	 */
-	public static void setHandler(DatabaseHandler handler) {
-		WikiBase.handler = handler;
 	}
 }
