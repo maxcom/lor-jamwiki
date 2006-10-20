@@ -26,24 +26,28 @@ import org.jamwiki.utils.Utilities;
 
 /**
  * This class may be used in two ways:
- *
- * The static addTableOfContents(String) method may be called to automatically
+ * <ol>
+ * <li>The static addTableOfContents(String) method may be called to automatically
  * add a table of contents on the right side of an article.  This method
  * works with all lexers, because it parses the HTML for headers. However it
  * doesn't care where it is. So if you have a header on the LeftMenu or
- * BottomArea, it will also add a TOC there...
+ * BottomArea, it will also add a TOC there...</li>
  *
- * The static addTableOfContents(TableOfContents, StringBuffer) method
+ * <li>The static addTableOfContents(TableOfContents, StringBuffer) method
  * may be called to insert a pre-built TableOfContents object into an
  * article.  This method requires that the parser has added all table of
  * contents headings to the object.  It is a bit more flexible but requires
- * more preperatory work.
+ * more preperatory work.</li>
+ * </ol>
  */
 public class TableOfContents {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TableOfContents.class.getName());
+	/** Status indicating that this TOC object has not yet been initialized.  For the JFlex parser this will mean no __TOC__ tag has been added to the document being parsed. */
 	public static final int STATUS_TOC_UNINITIALIZED = 0;
+	/** Status indicating that this TOC object has been initialized.  For the JFlex parser this will mean a __TOC__ tag has been added to the document being parsed. */
 	public static final int STATUS_TOC_INITIALIZED = 1;
+	/** Status indicating that the document being parsed does not allow a table of contents. */
 	public static final int STATUS_NO_TOC = 2;
 	private int currentLevel = 0;
 	/** It is possible for a user to include more than one "TOC" tag in a document, so keep count. */
@@ -99,7 +103,10 @@ public class TableOfContents {
 	}
 
 	/**
-	 * Add a new table of contents entry.
+	 * Add a new table of contents entry to the table of contents object.
+	 * The entry should contain the name to use in the HTML anchor tag,
+	 * the text to display in the table of contents, and the indentation
+	 * level for the entry within the table of contents.
 	 *
 	 * @param name The name of the entry, to be used in the anchor tag name.
 	 * @param text The text to display for the table of contents entry.
@@ -119,6 +126,10 @@ public class TableOfContents {
 	/**
 	 * This method checks to see if a TOC is allowed to be inserted, and if so
 	 * returns an HTML representation of the TOC.
+	 *
+	 * @return An HTML representation of the current table of contents object,
+	 *  or an empty string if the table of contents can not be inserted due
+	 *  to an inadequate number of entries or some other reason.
 	 */
 	public String attemptTOCInsertion() {
 		this.insertionAttempt++;
@@ -159,6 +170,8 @@ public class TableOfContents {
 	/**
 	 * Return the current table of contents status, such as "no table of contents
 	 * allowed" or "uninitialized".
+	 *
+	 * @return The current status of this table of contents object.
 	 */
 	public int getStatus() {
 		return this.status;
@@ -183,6 +196,8 @@ public class TableOfContents {
 	/**
 	 * Set the current table of contents status, such as "no table of contents
 	 * allowed" or "uninitialized".
+	 *
+	 * @param status The current status of this table of contents object.
 	 */
 	public void setStatus(int status) {
 		if (status == STATUS_TOC_INITIALIZED) {
@@ -194,6 +209,8 @@ public class TableOfContents {
 
 	/**
 	 * Return the number of entries in this TOC object.
+	 *
+	 * @return The number of entries in this table of contents object.
 	 */
 	public int size() {
 		return this.entries.size();
@@ -201,6 +218,8 @@ public class TableOfContents {
 
 	/**
 	 * Return an HTML representation of this table of contents object.
+	 *
+	 * @return An HTML representation of this table of contents object.
 	 */
 	public String toHTML() {
 		Enumeration e = entries.elements();

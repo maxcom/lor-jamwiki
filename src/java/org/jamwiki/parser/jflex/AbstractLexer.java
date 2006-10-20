@@ -23,7 +23,8 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Abstract class that is extended by the JFlex lexers.  This class primarily
+ * contains utility methods useful during parsing.
  */
 public abstract class AbstractLexer {
 
@@ -35,11 +36,13 @@ public abstract class AbstractLexer {
 	protected ParserInput parserInput = null;
 	/** Parser parsing results. */
 	protected ParserDocument parserDocument = null;
-	/** Parser mode */
+	/** Parser mode, which provides input to the parser about what steps to take. */
 	protected int mode = JFlexParser.MODE_LAYOUT;
 
 	/**
-	 * Begin a new state and store the old state onto the stack.
+	 * Begin a new parser state and store the old state onto the stack.
+	 *
+	 * @param state The new parsing state that is being entered.
 	 */
 	protected void beginState(int state) {
 		// store current state
@@ -50,7 +53,7 @@ public abstract class AbstractLexer {
 	}
 
 	/**
-	 * End processing of a state and switch to the previous state.
+	 * End processing of a parser state and switch to the previous parser state.
 	 */
 	protected void endState() {
 		// revert to previous state
@@ -77,13 +80,26 @@ public abstract class AbstractLexer {
 	 * all settings required for the parser have been set, and if not it
 	 * should throw an exception.
 	 *
+	 * @param parserInput The ParserInput object containing parser parameters
+	 *  required for successful parsing.
+	 * @param parserDocument The current parsed document.  When parsing is done
+	 *  in multiple stages that output values are also built in stages.
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
+	 * @throws Exception Thrown if the parser is not initialized properly,
+	 *  usually due to a parser input field not being set.
 	 */
 	public abstract void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception;
 
 	/**
+	 * Parse a token using the specified parser tag handler.  If an error
+	 * occurs during processing then this method will return the raw text
+	 * that was passed to it.
 	 *
+	 * @param raw The raw token text that is to be parsed.
+	 * @param parserTag The parser tag handler to use when parsing the token.
+	 * @return Returns the parsed text, or if an error occurs returns the raw
+	 *  text that was passed to this method.
 	 */
 	protected String parseToken(String raw, ParserTag parserTag) {
 		try {
@@ -95,22 +111,23 @@ public abstract class AbstractLexer {
 	}
 
 	/**
-	 *
+	 * JFlex internal method used to change the lexer state values.
 	 */
 	public abstract void yybegin(int newState);
 
 	/**
-	 *
+	 * JFlex internal method used to parse the next token.
 	 */
 	public abstract String yylex() throws Exception;
 
 	/**
-	 *
+	 * JFlex internal method used to retrieve the current lexer state value.
 	 */
 	public abstract int yystate();
 
 	/**
-	 *
+	 * JFlex internal method used to retrieve the current text matched by the
+	 * yylex() method.
 	 */
 	public abstract String yytext();
 }

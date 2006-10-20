@@ -23,13 +23,14 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- * Abstract class to be used when implementing new lexers.  New lexers
+ * Abstract class to be used when implementing new parsers.  New parsers
  * should extend this class and override any methods that need to be
  * implemented differently.
  */
 public abstract class AbstractParser {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(AbstractParser.class.getName());
+	/** Parser configuration information. */
 	protected ParserInput parserInput = null;
 
 	/**
@@ -63,23 +64,32 @@ public abstract class AbstractParser {
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
+	 * @return A ParserDocument object containing parser output, including
+	 *  parsed content and metadata.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	// FIXME - should this have a mode flag???
 	public abstract ParserDocument parseFragment(String raw, int mode) throws Exception;
 
 	/**
-	 * Returns a HTML representation of the given wiki raw text for online representation.
+	 * Returns a HTML representation of the given wiki raw text for online
+	 * representation.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return A ParserDocument object containing parser output, including
+	 *  parsed content and metadata.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	public abstract ParserDocument parseHTML(String raw) throws Exception;
 
 	/**
-	 * This method provides a way to parse content and set all output metadata,
-	 * such as link values used by the search engine.
+	 * This method provides a way to parse content and set all output
+	 * metadata, such as link values used by the search engine.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return Results from parser execution.
+	 * @return A ParserDocument object containing parser output, including
+	 *  parsed content and metadata.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	public abstract ParserDocument parseMetadata(String raw) throws Exception;
 
@@ -89,7 +99,9 @@ public abstract class AbstractParser {
 	 * during edits.
 	 *
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserDocument object containing results of the parsing process.
+	 * @return A ParserDocument object containing parser output, including
+	 *  parsed content and metadata.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	public abstract ParserDocument parseSave(String raw) throws Exception;
 
@@ -102,6 +114,9 @@ public abstract class AbstractParser {
 	 *
 	 * @param raw The raw Wiki text that is to be parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
+	 * @return A ParserDocument object containing parser output, including
+	 *  parsed content and metadata.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	public abstract ParserDocument parseSlice(String raw, int targetSection) throws Exception;
 
@@ -114,6 +129,9 @@ public abstract class AbstractParser {
 	 * @param raw The raw Wiki text that is to be parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 * @param replacementText The text to replace the target section text with.
+	 * @return A ParserDocument object containing parser output, including
+	 *  parsed content and metadata.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	public abstract ParserDocument parseSplice(String raw, int targetSection, String replacementText) throws Exception;
 }
