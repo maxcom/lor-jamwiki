@@ -29,7 +29,7 @@
 	<td><input type="file" name="contents" size="50" id="uploadSource" /></td>
 </tr>
 <tr>
-	<td><label for="uploadDescription">File Description</label>:</td>
+	<td><label for="uploadDescription"><f:message key="upload.caption.filedescription" /></label>:</td>
 	<td><textarea name="description" rows="6" cols="80" id="uploadDescription"></textarea></td>
 </tr>
 <tr>
