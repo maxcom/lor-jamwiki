@@ -161,13 +161,6 @@ public class TableOfContents {
 	}
 
 	/**
-	 *
-	 */
-	public int getInsertTagCount() {
-		return this.insertTagCount;
-	}
-
-	/**
 	 * Return the current table of contents status, such as "no table of contents
 	 * allowed" or "uninitialized".
 	 *
