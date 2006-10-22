@@ -100,6 +100,16 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception {
+		String sql = formatStatement(STATEMENT_SELECT_TOPICS_ADMIN, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+		stmt.setInt(1, virtualWikiId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		String sql = null;
 		if (Utilities.isIpAddress(userString)) {

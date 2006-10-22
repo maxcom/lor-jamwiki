@@ -4,7 +4,6 @@
 ----
 * [[Special:Allpages|All Pages]]
 * [[Special:Upload|Upload File]]
-* [[AdminOnlyTopics]]
 ----
 * [http://jamwiki.org/ JAMWiki]
 * [http://sourceforge.net/projects/jamwiki/ Sourceforge Page]

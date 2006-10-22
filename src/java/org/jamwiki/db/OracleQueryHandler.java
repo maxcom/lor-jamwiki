@@ -81,6 +81,17 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getEnd());
+		stmt.setInt(3, pagination.getStart());
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		WikiPreparedStatement stmt = null;
 		if (Utilities.isIpAddress(userString)) {

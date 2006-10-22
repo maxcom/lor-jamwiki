@@ -2,6 +2,7 @@
 0.4.1
 =====
 
+* FEATURE: AdminOnlyTopics replaced by Special:TopicsAdmin.
 
 0.4.0
 =====

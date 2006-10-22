@@ -205,6 +205,20 @@ public interface QueryHandler {
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception;
 
 	/**
+	 * Retrieve a WikiResultSet containing the topic names of all admin-only
+	 * topics for the virtual wiki.
+	 *
+	 * @param virtualWikiId The id of the virtual wiki for which topic names
+	 *  are being retrieved.
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @return A WikiResultSet containing the topic names of all admin-only
+	 *  topics for the virtual wiki.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception;
+
+	/**
 	 * Retrieve a WikiResultSet containing all recent changes made to the wiki by a
 	 * specific user.
 	 *

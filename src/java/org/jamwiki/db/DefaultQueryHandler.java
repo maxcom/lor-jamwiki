@@ -87,6 +87,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPIC_LOWER = null;
 	protected static String STATEMENT_SELECT_TOPICS = null;
+	protected static String STATEMENT_SELECT_TOPICS_ADMIN = null;
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSIONS = null;
@@ -317,6 +318,15 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS_ADMIN);
+		stmt.setInt(1, virtualWikiId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getVirtualWikis() throws Exception {
 		return DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKIS);
 	}
@@ -370,6 +380,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER   = props.getProperty("STATEMENT_SELECT_TOPIC_DELETE_OK_LOWER");
 		STATEMENT_SELECT_TOPIC_LOWER             = props.getProperty("STATEMENT_SELECT_TOPIC_LOWER");
 		STATEMENT_SELECT_TOPICS                  = props.getProperty("STATEMENT_SELECT_TOPICS");
+		STATEMENT_SELECT_TOPICS_ADMIN            = props.getProperty("STATEMENT_SELECT_TOPICS_ADMIN");
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
 		STATEMENT_SELECT_TOPIC_VERSIONS          = props.getProperty("STATEMENT_SELECT_TOPIC_VERSIONS");

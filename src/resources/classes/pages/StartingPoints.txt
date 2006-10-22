@@ -8,7 +8,7 @@ Some potentially useful functions:
 * [[Special:Account|Register]] - create an account so that edits are propertly credited
 * [[Special:Allpages|All Pages]] - a list of all the topics in the Wiki
 
-There are also several [[AdminOnlyTopics]] including:
+There are also several [[Special:TopicsAdmin]] including:
 
 * [[LeftMenu]]
 * [[BottomArea]]

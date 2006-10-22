@@ -58,8 +58,9 @@ public class WikiPageInfo {
 	public static final int ACTION_SEARCH = 21;
 	public static final int ACTION_SEARCH_RESULTS = 22;
 	public static final int ACTION_SETUP = 23;
-	public static final int ACTION_UPGRADE = 24;
-	public static final int ACTION_UPLOAD = 25;
+	public static final int ACTION_TOPICS_ADMIN = 24;
+	public static final int ACTION_UPGRADE = 25;
+	public static final int ACTION_UPLOAD = 26;
 
 	/**
 	 *
@@ -226,6 +227,13 @@ public class WikiPageInfo {
 	 */
 	public boolean getActionSetup() {
 		return (this.action == ACTION_SETUP);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionTopicsAdmin() {
+		return (this.action == ACTION_TOPICS_ADMIN);
 	}
 
 	/**

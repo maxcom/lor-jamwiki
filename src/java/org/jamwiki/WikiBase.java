@@ -64,8 +64,6 @@ public class WikiBase {
 	public static final String SPECIAL_PAGE_BOTTOM_AREA = "BottomArea";
 	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
-	/** Name of the default AdminOnlyTopics topic. */
-	public static final String SPECIAL_PAGE_ADMIN_ONLY_TOPICS = "AdminOnlyTopics";
 
 	static {
 		try {

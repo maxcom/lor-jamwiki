@@ -742,6 +742,20 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
+	public Collection getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
+		Collection all = new Vector();
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getTopicsAdmin(virtualWikiId, pagination);
+		while (rs.next()) {
+			String topicName = rs.getString("topic_name");
+			all.add(topicName);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		Collection all = new Vector();
 		WikiResultSet rs = DatabaseHandler.queryHandler.getUserContributions(virtualWiki, userString, pagination, descending);
@@ -1513,7 +1527,6 @@ public class DatabaseHandler {
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true, conn);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, conn);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, conn);
-			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_ADMIN_ONLY_TOPICS, user, true, conn);
 		} catch (Exception e) {
 			this.handleErrors(conn);
 			throw e;
@@ -1534,7 +1547,6 @@ public class DatabaseHandler {
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true, conn);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, conn);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, conn);
-			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_ADMIN_ONLY_TOPICS, user, true, conn);
 		}
 	}
 

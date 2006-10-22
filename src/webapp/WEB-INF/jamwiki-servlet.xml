@@ -25,6 +25,7 @@
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
+				<prop key="/**/Special:TopicsAdmin">TopicsAdmin</prop>
 				<prop key="/**/Special:Translation">Translation</prop>
 				<prop key="/**/Special:Upgrade">Upgrade</prop>
 				<prop key="/**/Special:Upload">Upload</prop>
@@ -55,6 +56,7 @@
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
 	<bean id="Stylesheet" class="org.jamwiki.servlets.StylesheetServlet" />
 	<bean id="Topic" class="org.jamwiki.servlets.TopicServlet" />
+	<bean id="TopicsAdmin" class="org.jamwiki.servlets.TopicsAdminServlet" />
 	<bean id="Translation" class="org.jamwiki.servlets.TranslationServlet" />
 	<bean id="Upgrade" class="org.jamwiki.servlets.UpgradeServlet" />
 	<bean id="Upload" class="org.jamwiki.servlets.UploadServlet" />
