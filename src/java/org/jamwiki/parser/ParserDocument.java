@@ -27,6 +27,7 @@ public class ParserDocument {
 
 	private LinkedHashMap categories = new LinkedHashMap();
 	private Vector links = new Vector();
+	private Vector templates = new Vector();
 	private String content = null;
 	private String redirect = null;
 
@@ -61,6 +62,17 @@ public class ParserDocument {
 	 */
 	public void addLink(String topicName) {
 		this.links.add(topicName);
+	}
+
+	/**
+	 * When a document contains a token indicating that the document includes
+	 * a Wiki template this method should be called to add that template
+	 * to the output metadata.
+	 *
+	 * @param template The name of the template that is being included.
+	 */
+	public void addTemplate(String template) {
+		this.templates.add(template);
 	}
 
 	/**
@@ -103,6 +115,18 @@ public class ParserDocument {
 	 */
 	public Vector getLinks() {
 		return this.links;
+	}
+
+	/**
+	 * For the document being parsed, return the current collection of
+	 * templates names for all templates that are included in the current
+	 * document.
+	 *
+	 * @return A collection of all template names that are included in the
+	 *  current document.
+	 */
+	public Vector getTemplates() {
+		return this.templates;
 	}
 
 	/**

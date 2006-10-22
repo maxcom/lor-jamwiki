@@ -715,5 +715,6 @@ public class TemplateTag implements ParserTag {
 	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
 		name = (templateTopic != null) ? templateTopic.getName() : name;
 		parserDocument.addLink(name);
+		parserDocument.addTemplate(name);
 	}
 }
