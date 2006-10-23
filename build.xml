@@ -17,11 +17,11 @@
 		<pathelement path="${dir.lib}/lucene-highlighter-2.0.0.jar" />
 		<pathelement path="${dir.lib}/mail.jar" />
 		<pathelement path="${dir.lib}/servlet.jar" />
-		<pathelement path="${dir.lib}/spring-beans-1.2.8.jar" />
-		<pathelement path="${dir.lib}/spring-context-1.2.8.jar" />
-		<pathelement path="${dir.lib}/spring-core-1.2.8.jar" />
-		<pathelement path="${dir.lib}/spring-web-1.2.8.jar" />
-		<pathelement path="${dir.lib}/spring-webmvc-1.2.8.jar" />
+		<pathelement path="${dir.lib}/spring-beans-2.0.jar" />
+		<pathelement path="${dir.lib}/spring-context-2.0.jar" />
+		<pathelement path="${dir.lib}/spring-core-2.0.jar" />
+		<pathelement path="${dir.lib}/spring-web-2.0.jar" />
+		<pathelement path="${dir.lib}/spring-webmvc-2.0.jar" />
 		<pathelement path="${dir.lib}/standard-1.0.6.jar" />
 	</path>
 

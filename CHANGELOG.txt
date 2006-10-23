@@ -3,6 +3,7 @@
 =====
 
 * FEATURE: AdminOnlyTopics replaced by Special:TopicsAdmin.
+* FEATURE: Upgrade to Spring Framework 2.0.
 
 0.4.0
 =====
