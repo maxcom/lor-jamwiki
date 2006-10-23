@@ -1075,7 +1075,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Connection conn) throws Exception {
+	private TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Connection conn) throws Exception {
 		Topic topic = lookupTopic(virtualWiki, topicName, true, conn);
 		if (topic == null) return null;
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic, conn);
@@ -1110,7 +1110,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws Exception {
+	private Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws Exception {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 		String namespace = wikiLink.getNamespace();
 		boolean caseSensitive = true;
@@ -1175,7 +1175,7 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Connection conn) throws Exception {
+	private TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseHandler.queryHandler.lookupTopicVersion(topicVersionId, conn);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);

@@ -55,6 +55,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.servlets.JAMWikiServlet;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
 
 /**
  * This class provides a variety of utility methods.
@@ -748,15 +749,7 @@ public class Utilities {
 	 *  cookie cannot be found in the request.
 	 */
 	public static String retrieveCookieValue(HttpServletRequest request, String cookieName) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies == null) return null;
-		Cookie cookie = null;
-		for (int i=0; i < cookies.length; i++) {
-			if (cookies[i].getName().equals(cookieName)) {
-				cookie = cookies[i];
-				break;
-			}
-		}
+		Cookie cookie = WebUtils.getCookie(request, cookieName);
 		if (cookie == null) return null;
 		return cookie.getValue();
 	}
