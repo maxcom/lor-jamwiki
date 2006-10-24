@@ -93,7 +93,7 @@ public class EditServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
 			contents = topicVersion.getVersionContent();
-			if (lastTopicVersionId != topicVersionId) {
+			if (!lastTopicVersionId.equals(topicVersionId)) {
 				next.addObject("topicVersionId", topicVersionId);
 			}
 		} else if (StringUtils.hasText(request.getParameter("section"))) {
@@ -225,7 +225,7 @@ public class EditServlet extends JAMWikiServlet {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Topic topic = loadTopic(virtualWiki, topicName);
 		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		if (lastTopic != null && lastTopic.getCurrentVersionId() != retrieveLastTopicVersionId(request, topic)) {
+		if (lastTopic != null && !lastTopic.getCurrentVersionId().equals(retrieveLastTopicVersionId(request, topic))) {
 			// someone else has edited the topic more recently
 			resolve(request, next, pageInfo);
 			return;
