@@ -93,7 +93,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSIONS = null;
-	protected static String STATEMENT_SELECT_TOPIC_VERSION_LAST = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
@@ -408,7 +407,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
 		STATEMENT_SELECT_TOPIC_VERSIONS          = props.getProperty("STATEMENT_SELECT_TOPIC_VERSIONS");
-		STATEMENT_SELECT_TOPIC_VERSION_LAST      = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_LAST");
 		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
@@ -614,15 +612,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(2, categoryName);
 		stmt.setInt(3, topicType);
 		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
-	public WikiResultSet lookupLastTopicVersion(Topic topic, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_VERSION_LAST);
-		stmt.setInt(1, topic.getTopicId());
-		return stmt.executeQuery(conn);
 	}
 
 	/**

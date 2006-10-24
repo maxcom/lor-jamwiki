@@ -384,19 +384,6 @@ public interface QueryHandler {
 	public WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName, int topicType) throws Exception;
 
 	/**
-	 * Retrieve a result set containing the most recent version of a specified
-	 * topic.
-	 *
-	 * @param topic The topic for which the most recent version is to be retrieved.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return A WikiResultSet containing the most recent topic version for the
-	 *  specified topic.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet lookupLastTopicVersion(Topic topic, Connection conn) throws Exception;
-
-	/**
 	 * Retrieve a WikiResultSet containing all topic information for a given topic.
 	 *
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topic

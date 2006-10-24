@@ -76,8 +76,8 @@ public class EditServlet extends JAMWikiServlet {
 		Topic topic = loadTopic(virtualWiki, topicName);
 		// topic name might be updated by loadTopic
 		topicName = topic.getName();
-		int lastTopicVersionId = retrieveLastTopicVersionId(request, virtualWiki, topicName);
-		next.addObject("lastTopicVersionId", new Integer(lastTopicVersionId));
+		Integer lastTopicVersionId = retrieveLastTopicVersionId(request, topic);
+		next.addObject("lastTopicVersionId", lastTopicVersionId);
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, true);
 		String contents = null;
 		if (isPreview(request)) {
@@ -87,14 +87,14 @@ public class EditServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT);
 		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
 			// editing an older version
-			int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
-			TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(topicName, topicVersionId);
+			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
+			TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(topicName, topicVersionId.intValue());
 			if (topicVersion == null) {
 				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
 			contents = topicVersion.getVersionContent();
 			if (lastTopicVersionId != topicVersionId) {
-				next.addObject("topicVersionId", new Integer(topicVersionId));
+				next.addObject("topicVersionId", topicVersionId);
 			}
 		} else if (StringUtils.hasText(request.getParameter("section"))) {
 			// editing a section of a topic
@@ -198,10 +198,10 @@ public class EditServlet extends JAMWikiServlet {
 	private void resolve(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		TopicVersion version = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
-		String contents1 = version.getVersionContent();
+		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		String contents1 = lastTopic.getTopicContent();
 		String contents2 = request.getParameter("contents");
-		next.addObject("lastTopicVersionId", new Integer(version.getTopicVersionId()));
+		next.addObject("lastTopicVersionId", lastTopic.getCurrentVersionId());
 		next.addObject("contents", contents1);
 		next.addObject("contentsResolve", contents2);
 		Vector diffs = DiffUtil.diff(contents1, contents2);
@@ -213,15 +213,8 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private int retrieveLastTopicVersionId(HttpServletRequest request, String virtualWiki, String topicName) throws Exception {
-		int lastTopicVersionId = 0;
-		if (request.getParameter("lastTopicVersionId") == null) {
-			TopicVersion version = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
-			if (version != null) lastTopicVersionId = version.getTopicVersionId();
-		} else {
-			lastTopicVersionId = new Integer(request.getParameter("lastTopicVersionId")).intValue();
-		}
-		return lastTopicVersionId;
+	private Integer retrieveLastTopicVersionId(HttpServletRequest request, Topic topic) throws Exception {
+		return (request.getParameter("lastTopicVersionId") == null) ? topic.getCurrentVersionId() : new Integer(request.getParameter("lastTopicVersionId"));
 	}
 
 	/**
@@ -231,8 +224,8 @@ public class EditServlet extends JAMWikiServlet {
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		Topic topic = loadTopic(virtualWiki, topicName);
-		TopicVersion lastTopicVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
-		if (lastTopicVersion != null && lastTopicVersion.getTopicVersionId() != retrieveLastTopicVersionId(request, virtualWiki, topicName)) {
+		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (lastTopic != null && lastTopic.getCurrentVersionId() != retrieveLastTopicVersionId(request, topic)) {
 			// someone else has edited the topic more recently
 			resolve(request, next, pageInfo);
 			return;
@@ -250,7 +243,7 @@ public class EditServlet extends JAMWikiServlet {
 			logger.warning("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
-		if (lastTopicVersion != null && lastTopicVersion.getVersionContent().equals(contents)) {
+		if (lastTopic != null && lastTopic.getTopicContent().equals(contents)) {
 			// topic hasn't changed. redirect to prevent user from refreshing and re-submitting
 			this.redirect(next, virtualWiki, topic.getName());
 		}

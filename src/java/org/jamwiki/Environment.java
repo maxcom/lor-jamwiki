@@ -78,7 +78,6 @@ public class Environment {
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
-	public static final String PROP_TOPIC_VERSIONING_ON = "versioningOn";
 	public static final String PROP_USERGROUP_BASIC_SEARCH = "usergroupBasicSearch";
 	public static final String PROP_USERGROUP_DETAILVIEW = "usergroupDetailView";
 	public static final String PROP_USERGROUP_FACTORY = "usergroupFactory";
@@ -188,7 +187,6 @@ public class Environment {
 		defaults.setProperty(PROP_TOPIC_NON_ADMIN_TOPIC_MOVE, "true");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
-		defaults.setProperty(PROP_TOPIC_VERSIONING_ON, "true");
 		defaults.setProperty(PROP_USERGROUP_BASIC_SEARCH, "ou=users,dc=mycompany,dc=com");
 		defaults.setProperty(PROP_USERGROUP_DETAILVIEW, "@@cn@@</a><br/>@@title@@<br/>Telefon: @@telephoneNumber@@<br/>Mobil: @@mobile@@<br/>@@ou@@ / @@businessCategory@@<br/><a href=\"mailto:@@mail@@\">@@mail@@</a> <br/>");
 		defaults.setProperty(PROP_USERGROUP_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");

@@ -1062,34 +1062,6 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName) throws Exception {
-		Connection conn = null;
-		try {
-			conn = this.getConnection();
-			return this.lookupLastTopicVersion(virtualWiki, topicName, conn);
-		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
-			throw e;
-		} finally {
-			this.releaseParams(conn);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private TopicVersion lookupLastTopicVersion(String virtualWiki, String topicName, Connection conn) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName, true, conn);
-		if (topic == null) return null;
-		WikiResultSet rs = DatabaseHandler.queryHandler.lookupLastTopicVersion(topic, conn);
-		if (rs.size() == 0) return null;
-		int topicVersionId = rs.getInt("topic_version_id");
-		return lookupTopicVersion(topicName, topicVersionId, conn);
-	}
-
-	/**
-	 *
-	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
 		return lookupTopic(virtualWiki, topicName, false);
 	}
@@ -1649,10 +1621,8 @@ public class DatabaseHandler {
 				updateWikiFile(topicName, wikiFile, conn);
 			}
 			wikiFileVersion.setFileId(wikiFile.getFileId());
-			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-				// write version
-				addWikiFileVersion(topicName, wikiFileVersion, conn);
-			}
+			// write version
+			addWikiFileVersion(topicName, wikiFileVersion, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1706,14 +1676,11 @@ public class DatabaseHandler {
 		}
 		if (userVisible) {
 			if (topicVersion.getPreviousTopicVersionId() == null) {
-				TopicVersion tmp = lookupLastTopicVersion(topic.getVirtualWiki(), topic.getName(), conn);
-				if (tmp != null) topicVersion.setPreviousTopicVersionId(new Integer(tmp.getTopicVersionId()));
+				if (topic.getCurrentVersionId() != null) topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
 			}
 			topicVersion.setTopicId(topic.getTopicId());
-			if (Environment.getBooleanValue(Environment.PROP_TOPIC_VERSIONING_ON)) {
-				// write version
-				addTopicVersion(topic.getName(), topicVersion, conn);
-			}
+			// write version
+			addTopicVersion(topic.getName(), topicVersion, conn);
 			String authorName = topicVersion.getAuthorIpAddress();
 			Integer authorId = topicVersion.getAuthorId();
 			if (authorId != null) {

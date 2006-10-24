@@ -98,9 +98,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
-		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
-		String contents = previousVersion.getVersionContent();
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), contents);
+		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getHandler().writeTopic(topic, topicVersion, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
@@ -117,8 +115,9 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
-		TopicVersion previousVersion = WikiBase.getHandler().lookupLastTopicVersion(virtualWiki, topicName);
+		TopicVersion previousVersion = WikiBase.getHandler().lookupTopicVersion(topicName, topic.getCurrentVersionId().intValue());
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
+			// loop back to find the last non-delete edit
 			previousVersion = WikiBase.getHandler().lookupTopicVersion(topicName, previousVersion.getPreviousTopicVersionId().intValue());
 		}
 		String contents = previousVersion.getVersionContent();

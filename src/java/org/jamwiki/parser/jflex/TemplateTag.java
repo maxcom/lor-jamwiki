@@ -654,7 +654,8 @@ public class TemplateTag implements ParserTag {
 		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(Utilities.extractTopicLink(parserInput.getTopicName()));
 		}
-		TopicVersion topicVersion = WikiBase.getHandler().lookupLastTopicVersion(parserInput.getVirtualWiki(), parserInput.getTopicName());
+		Topic topic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName());
+		TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(parserInput.getTopicName(), topic.getCurrentVersionId().intValue());
 		Date revision = topicVersion.getEditDate();
 		formatter.setTimeZone(utc);
 		if (name.equals(MAGIC_REVISION_DAY)) {

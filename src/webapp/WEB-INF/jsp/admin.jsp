@@ -103,10 +103,6 @@ function onUserGroupType() {
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_BASE_LOGO_IMAGE %>" value="<%= props.getProperty(Environment.PROP_BASE_LOGO_IMAGE) %>" size="30" id="<%= Environment.PROP_BASE_LOGO_IMAGE %>" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_VERSIONING_ON %>"><f:message key="admin.caption.useversioning" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_VERSIONING_ON %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_VERSIONING_ON).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_VERSIONING_ON %>" /></td>
-</tr>
-<tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>"><f:message key="admin.caption.nonadminmove" /></label></td>
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" /></td>
 </tr>
