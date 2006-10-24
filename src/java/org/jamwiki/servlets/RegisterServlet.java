@@ -27,7 +27,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
-import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -47,11 +46,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (request.getParameter("function") != null) {
-				if (register(request, response, next, pageInfo)) {
-					// FIXME - use Spring
-					// register successful, non-Spring redirect
-					return null;
-				}
+				register(request, next, pageInfo);
 			} else {
 				view(request, next, pageInfo);
 			}
@@ -77,8 +72,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	// FIXME - shouldn't need to pass in response
-	private boolean register(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
@@ -108,16 +102,12 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
 			if (newPassword != null) next.addObject("newPassword", newPassword);
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
-			return false;
 		} else {
 			WikiBase.getHandler().writeWikiUser(user);
 			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();
-			String redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic);
-			// FIXME - can a redirect be done with Spring?
-			redirect(redirect, response);
-			return true;
+			this.redirect(next, virtualWikiName, topic);
 		}
 	}
 

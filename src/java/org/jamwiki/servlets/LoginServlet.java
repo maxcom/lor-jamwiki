@@ -24,7 +24,6 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,17 +44,9 @@ public class LoginServlet extends JAMWikiServlet {
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (isTopic(request, "Special:Logout")) {
-				// FIXME - response is non-standard here
 				logout(request, response, next, pageInfo);
-				return null;
-			}
-			if (request.getParameter("function") != null) {
-				// FIXME - response is non-standard here
-				if (login(request, response, next, pageInfo)) {
-					// FIXME - use Spring
-					// login successful, non-Spring redirect
-					return null;
-				}
+			} else if (request.getParameter("function") != null) {
+				login(request, response, next, pageInfo);
 			} else {
 				return viewLogin(request, null, null);
 			}
@@ -78,23 +69,20 @@ public class LoginServlet extends JAMWikiServlet {
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			redirect = virtualWiki.getDefaultTopicName();
 		}
-		redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, redirect);
-		// FIXME - can a redirect be done with Spring?
-		redirect(redirect, response);
+		this.redirect(next, virtualWikiName, redirect);
 	}
 
 	/**
 	 *
 	 */
-	private boolean login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
-			String topic = virtualWiki.getDefaultTopicName();
-			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, topic);
+			redirect = virtualWiki.getDefaultTopicName();
 		}
 		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password, false);
 		if (user == null) {
@@ -103,15 +91,13 @@ public class LoginServlet extends JAMWikiServlet {
 			pageInfo.setPageTitle(new WikiMessage("login.title"));
 			pageInfo.setSpecial(true);
 			pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
-			return false;
+		} else {
+			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+			if (request.getParameter("remember") != null) {
+				String cookieValue = user.getLogin() + JAMWikiServlet.USER_COOKIE_DELIMITER + user.getEncodedPassword();
+				Utilities.addCookie(response, JAMWikiServlet.USER_COOKIE, cookieValue, JAMWikiServlet.USER_COOKIE_EXPIRES);
+			}
+			this.redirect(next, virtualWikiName, redirect);
 		}
-		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
-		if (request.getParameter("remember") != null) {
-			String cookieValue = user.getLogin() + JAMWikiServlet.USER_COOKIE_DELIMITER + user.getEncodedPassword();
-			Utilities.addCookie(response, JAMWikiServlet.USER_COOKIE, cookieValue, JAMWikiServlet.USER_COOKIE_EXPIRES);
-		}
-		// FIXME - can a redirect be done with Spring?
-		redirect(redirect, response);
-		return true;
 	}
 }

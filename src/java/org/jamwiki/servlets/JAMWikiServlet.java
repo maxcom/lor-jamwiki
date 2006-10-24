@@ -278,6 +278,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *
 	 */
 	protected void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		// if this is a redirect, no need to load anything
+		if (next.getViewName() != null && next.getViewName().startsWith("redirect:")) return;
 		// load cached top area, nav bar, etc.
 		try {
 			this.buildLayout(request, next);
@@ -317,13 +319,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	protected void redirect(String destination, HttpServletResponse response) {
-		String url = response.encodeRedirectURL(destination);
-		try {
-			response.sendRedirect(url);
-		} catch (Exception e) {
-			logger.severe("Unable to redirect", e);
-		}
+	protected void redirect(ModelAndView next, String virtualWiki, String destination) throws Exception {
+		String target = LinkUtil.buildInternalLinkUrl(null, virtualWiki, destination);
+		String view = "redirect:" + target;
+		next.clear();
+		next.setViewName(view);
 	}
 
 	/**
@@ -381,10 +381,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 				VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
-			WikiLink wikiLink = new WikiLink();
-			wikiLink.setDestination(topic);
-			wikiLink.setQuery(request.getQueryString());
-			redirect = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWikiName, wikiLink);
+			redirect = topic;
+			if (StringUtils.hasText(request.getQueryString())) {
+				redirect += "?" + request.getQueryString();
+			}
 		}
 		next.addObject("redirect", redirect);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));

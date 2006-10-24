@@ -197,6 +197,9 @@ public class LinkUtil {
 
 	/**
 	 *
+	 * @param context The servlet context path.  If this value is
+	 *  <code>null</code> then the resulting URL will NOT include context path,
+	 *  which breaks HTML links but is useful for servlet redirection URLs.
 	 */
 	public static String buildInternalLinkUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
 		String topic = wikiLink.getDestination();
@@ -209,7 +212,10 @@ public class LinkUtil {
 		if (!WikiBase.exists(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
 		}
-		String url = context;
+		String url = "";
+		if (context != null) {
+			url += context;
+		}
 		// context never ends with a "/" per servlet specification
 		url += "/";
 		// get the virtual wiki, which should have been set by the parent servlet

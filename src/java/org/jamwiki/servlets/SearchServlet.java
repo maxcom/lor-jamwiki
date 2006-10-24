@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.utils.LinkUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -40,12 +39,11 @@ public class SearchServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			String jumpto = request.getParameter("jumpto");
-			if (jumpto != null) {
-				jumpTo(request, response);
-				return null;
+			if (request.getParameter("jumpto") != null) {
+				jumpTo(request, next);
+			} else {
+				search(request, next, pageInfo);
 			}
-			search(request, next, pageInfo);
 		} catch (Exception e) {
 			return viewError(request, e);
 		}
@@ -56,14 +54,10 @@ public class SearchServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void jumpTo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private void jumpTo(HttpServletRequest request, ModelAndView next) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
 		String text = request.getParameter("text");
-		// FIXME - if topic doesn't exist, should probably go to an edit page
-		// or else give an error message
-		// FIXME - need a better way to do redirects
-		String redirectURL = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, text);
-		redirect(redirectURL, response);
+		this.redirect(next, virtualWiki, text);
 	}
 
 	/**

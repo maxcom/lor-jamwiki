@@ -280,6 +280,7 @@ public class EditServlet extends JAMWikiServlet {
 		WikiBase.getHandler().writeTopic(topic, topicVersion, parserDocument);
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
-		viewTopic(request, next, pageInfo, topicName);
+		// redirect to prevent user from refreshing and re-submitting
+		this.redirect(next, virtualWiki, topic.getName());
 	}
 }

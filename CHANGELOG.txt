@@ -4,6 +4,8 @@
 
 * FEATURE: AdminOnlyTopics replaced by Special:TopicsAdmin.
 * FEATURE: Upgrade to Spring Framework 2.0.
+* BUG: Refreshing after a form submission should no longer cause information
+  to be resubmitted.
 
 0.4.0
 =====
