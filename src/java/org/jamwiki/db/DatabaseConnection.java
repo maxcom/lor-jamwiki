@@ -321,7 +321,7 @@ public class DatabaseConnection {
 			conn = DriverManager.getConnection(url, user, password);
 			if (existence) {
 				// test to see if database exists
-				executeQuery(DatabaseHandler.getConnectionValidationQuery(), conn);
+				executeQuery(DatabaseHandler.getExistenceValidationQuery(), conn);
 			}
 		} catch (Exception e) {
 			// database settings incorrect
