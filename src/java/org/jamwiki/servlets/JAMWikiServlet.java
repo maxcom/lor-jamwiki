@@ -357,7 +357,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			WikiException we = (WikiException)e;
 			next.addObject("errorMessage", we.getWikiMessage());
 		} else {
-			next.addObject("errorMessage", new WikiMessage("error.unknown", e.getMessage()));
+			next.addObject("errorMessage", new WikiMessage("error.unknown", e.toString()));
 		}
 		loadDefaults(request, next, pageInfo);
 		return next;
