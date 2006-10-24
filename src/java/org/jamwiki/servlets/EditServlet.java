@@ -249,8 +249,8 @@ public class EditServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
 		if (lastTopicVersion != null && lastTopicVersion.getVersionContent().equals(contents)) {
-			viewTopic(request, next, pageInfo, topicName);
-			return;
+			// topic hasn't changed. redirect to prevent user from refreshing and re-submitting
+			this.redirect(next, virtualWiki, topic.getName());
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = Utilities.currentUser(request);

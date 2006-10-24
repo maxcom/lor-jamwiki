@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;

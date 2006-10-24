@@ -6,9 +6,7 @@ package org.jamwiki.parser.jflex;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
 %%

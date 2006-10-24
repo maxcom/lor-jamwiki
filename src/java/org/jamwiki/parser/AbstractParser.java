@@ -16,11 +16,7 @@
  */
 package org.jamwiki.parser;
 
-import java.io.Reader;
-import java.util.Collection;
-import java.util.List;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * Abstract class to be used when implementing new parsers.  New parsers

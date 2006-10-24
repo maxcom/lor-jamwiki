@@ -19,7 +19,6 @@ package org.jamwiki.servlets;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.file.FileHandler;

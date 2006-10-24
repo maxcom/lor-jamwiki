@@ -23,7 +23,6 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
