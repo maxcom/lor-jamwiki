@@ -2,6 +2,8 @@
 0.4.1
 =====
 
+* FEATURE: Add support for watchlists as described on
+  http://meta.wikimedia.org/wiki/Help:Watching_pages.
 * FEATURE: AdminOnlyTopics replaced by Special:TopicsAdmin.
 * FEATURE: Upgrade to Spring Framework 2.0.
 * BUG: Refreshing after a form submission should no longer cause information

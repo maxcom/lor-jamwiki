@@ -140,4 +140,18 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade041(Vector messages) throws Exception {
+		try {
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE);
+			messages.add("Created watchlist table");
+		} catch (Exception e) {
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);
+			throw e;
+		}
+		return messages;
+	}
 }
