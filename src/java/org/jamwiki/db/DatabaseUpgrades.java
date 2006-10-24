@@ -144,7 +144,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static Vector upgrade041(Vector messages) throws Exception {
+	public static Vector upgrade042(Vector messages) throws Exception {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();

@@ -1,5 +1,5 @@
 
-0.4.1
+0.4.2
 =====
 
 * FEATURE: Add support for watchlists as described on
@@ -13,6 +13,12 @@
 * FEATURE: After editing a section, page will now reload to that section.
 * FEATURE: Remove option to disable topic versioning.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
+
+0.4.1
+=====
+
+* BUG: Fix a setup bug that could incorrectly report that a database already
+  exists.
 
 0.4.0
 =====
