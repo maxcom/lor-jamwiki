@@ -50,6 +50,35 @@ followed by 0.3.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.4.1".
+  2. Update the database schema by executing the following SQL statements:
+       a) Create the jam_watchlist table.
+              CREATE TABLE jam_watchlist (
+                   watchlist_id INTEGER NOT NULL,
+                   wiki_user_id INTEGER NOT NULL,
+                   topic_id INTEGER,
+                   topic_name VARCHAR(200),
+                   virtual_wiki_id INTEGER NOT NULL,
+                   CONSTRAINT jam_pk_watchlist PRIMARY KEY (watchlist_id),
+                   CONSTRAINT jam_fk_watchlist_user_id
+                        FOREIGN KEY (wiki_user_id)
+                        REFERENCES jam_wiki_user(wiki_user_id),
+                   CONSTRAINT jam_fk_watchlist_topic_id FOREIGN KEY (topic_id)
+                        REFERENCES jam_topic(topic_id),
+                   CONSTRAINT jam_fk_watchlist_vwiki
+                        FOREIGN KEY (virtual_wiki_id)
+                        REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+              );
+       b) Update the jam_topic table.
+              alter table jam_topic drop column topic_content;
+              alter table jam_topic add column current_version_id INTEGER;
+              alter table jam_topic add constraint jam_fk_topic_topic_ver
+                   FOREIGN KEY (current_version_id)
+                   REFERENCES jam_topic_version(topic_version_id);
+       c) Update existing jam_topic records.
+              update jam_topic set current_version_id = (
+                   select max(topic_version_id) from jam_topic_version
+                   where jam_topic_version.topic_id = jam_topic.topic_id
+              );
 
   JAMWiki 0.4.0
   =============

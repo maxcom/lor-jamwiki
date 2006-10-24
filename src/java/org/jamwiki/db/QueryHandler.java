@@ -249,14 +249,15 @@ public interface QueryHandler {
 	 * Retrieve a WikiResultSet containing all recent changes for topics in the
 	 * user's watchlist.
 	 *
-	 * @param virtualWiki The name of the virtual wiki for the watchlist topics.
+	 * @param virtualWikiId The virtual wiki ID for the virtual wiki for the
+	 *  watchlist topics.
 	 * @param userId The user ID for the user retrieving the watchlist.
 	 * @param pagination A Pagination object that specifies the number of results
 	 *  and starting result offset for the result set to be retrieved.
 	 * @return A WikiResultSet containing recent changes for the watchlist.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
+	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception;
 
 	/**
 	 * Add a new category record to the database.  Note that this method will fail

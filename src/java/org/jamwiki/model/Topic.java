@@ -40,6 +40,7 @@ public class Topic {
 	public static final int TYPE_TEMPLATE = 8;
 	// FIXME - consider making this an ACL (more flexible)
 	private boolean adminOnly = false;
+	private Integer currentVersionId = null;
 	private Timestamp deleteDate = null;
 	private String name = null;
 	private boolean readOnly = false;
@@ -68,6 +69,20 @@ public class Topic {
 	 */
 	public void setAdminOnly(boolean adminOnly) {
 		this.adminOnly = adminOnly;
+	}
+
+	/**
+	 *
+	 */
+	public Integer getCurrentVersionId() {
+		return this.currentVersionId;
+	}
+
+	/**
+	 *
+	 */
+	public void setCurrentVersionId(Integer currentVersionId) {
+		this.currentVersionId = currentVersionId;
 	}
 
 	/**

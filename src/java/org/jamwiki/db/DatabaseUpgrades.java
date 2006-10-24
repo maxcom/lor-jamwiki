@@ -52,7 +52,7 @@ public class DatabaseUpgrades {
 			try {
 				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_TABLE, conn);
 			} catch (Exception ex) {}
-			conn.rollback();
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(conn);
@@ -133,7 +133,7 @@ public class DatabaseUpgrades {
 			messages.add("Updated unique wiki user login constraint");
 			conn.commit();
 		} catch (Exception e) {
-			conn.rollback();
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(conn);
@@ -145,12 +145,37 @@ public class DatabaseUpgrades {
 	 *
 	 */
 	public static Vector upgrade041(Vector messages) throws Exception {
+		Connection conn = null;
 		try {
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE);
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			// drop topic_content column
+			String sql = "alter table jam_topic drop column topic_content ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Dropped topic_content column from jam_topic");
+			// add current_version_id column
+			sql = "alter table jam_topic add column current_version_id INTEGER ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added current_version_id column to jam_topic");
+			// add current_version_id constraint
+			sql = "alter table jam_topic add constraint jam_fk_topic_topic_ver FOREIGN KEY (current_version_id) REFERENCES jam_topic_version(topic_version_id) ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added jam_fk_topic_topic_ver constraint to jam_topic");
+			// update jam_topic records
+			// FIXME - test with multiple databases
+			sql = "update jam_topic set current_version_id = (select max(topic_version_id) from jam_topic_version where jam_topic_version.topic_id = jam_topic.topic_id) ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added current_version_id values for jam_topic records");
+			// create the jam_watchlist table
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE, conn);
 			messages.add("Created watchlist table");
+			conn.commit();
 		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
 			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);
 			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
 		}
 		return messages;
 	}

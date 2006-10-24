@@ -781,7 +781,8 @@ public class DatabaseHandler {
 	 */
 	public Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
 		Collection all = new Vector();
-		WikiResultSet rs = DatabaseHandler.queryHandler.getWatchlist(virtualWiki, userId, pagination);
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getWatchlist(virtualWikiId, userId, pagination);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -866,7 +867,9 @@ public class DatabaseHandler {
 			topic.setAdminOnly(rs.getInt("topic_admin_only") != 0);
 			topic.setName(rs.getString("topic_name"));
 			topic.setVirtualWiki(virtualWiki);
-			topic.setTopicContent(rs.getString("topic_content"));
+			int currentVersionId = rs.getInt("current_version_id");
+			if (currentVersionId > 0) topic.setCurrentVersionId(new Integer(currentVersionId));
+			topic.setTopicContent(rs.getString("version_content"));
 			topic.setTopicId(rs.getInt("topic_id"));
 			topic.setReadOnly(rs.getInt("topic_read_only") != 0);
 			topic.setDeleteDate(rs.getTimestamp("delete_date"));

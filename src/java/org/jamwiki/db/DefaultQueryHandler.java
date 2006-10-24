@@ -342,9 +342,9 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST);
-		stmt.setString(1, virtualWiki);
+		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, userId);
 		stmt.setInt(3, pagination.getNumResults());
 		stmt.setInt(4, pagination.getOffset());
@@ -481,7 +481,11 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(3, topic.getName());
 		stmt.setInt(4, topic.getTopicType());
 		stmt.setInt(5, (topic.getReadOnly() ? 1 : 0));
-		stmt.setString(6, topic.getTopicContent());
+		if (topic.getCurrentVersionId() != null) {
+			stmt.setInt(6, topic.getCurrentVersionId().intValue());
+		} else {
+			stmt.setNull(6, Types.INTEGER);
+		}
 		stmt.setTimestamp(7, topic.getDeleteDate());
 		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
 		stmt.setString(9, topic.getRedirectTo());
@@ -832,7 +836,11 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setString(2, topic.getName());
 		stmt.setInt(3, topic.getTopicType());
 		stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
-		stmt.setString(5, topic.getTopicContent());
+		if (topic.getCurrentVersionId() != null) {
+			stmt.setInt(5, topic.getCurrentVersionId().intValue());
+		} else {
+			stmt.setNull(5, Types.INTEGER);
+		}
 		stmt.setTimestamp(6, topic.getDeleteDate());
 		stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));
 		stmt.setString(8, topic.getRedirectTo());

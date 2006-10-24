@@ -61,8 +61,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		if (user == null) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
-//		Collection changes = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
-		Collection changes = new java.util.Vector();
+		Collection changes = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
 		next.addObject("numChanges", new Integer(changes.size()));
 		next.addObject("changes", changes);
 		pageInfo.setPageTitle(new WikiMessage("watchlist.title"));
