@@ -779,6 +779,19 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
+	public Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+		Collection all = new Vector();
+		WikiResultSet rs = DatabaseHandler.queryHandler.getWatchlist(virtualWiki, userId, pagination);
+		while (rs.next()) {
+			RecentChange change = initRecentChange(rs);
+			all.add(change);
+		}
+		return all;
+	}
+
+	/**
+	 *
+	 */
 	private void handleErrors(Connection conn) {
 		if (conn == null) return;
 		try {

@@ -110,6 +110,18 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST);
+		stmt.setString(1, virtualWiki);
+		stmt.setInt(2, userId);
+		stmt.setInt(3, pagination.getStart());
+		stmt.setInt(4, pagination.getEnd());
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_BY_TYPE);
 		stmt.setInt(1, virtualWikiId);

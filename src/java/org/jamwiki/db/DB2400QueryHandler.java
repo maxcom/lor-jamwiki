@@ -127,6 +127,17 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+		String sql = formatStatement(STATEMENT_SELECT_WATCHLIST, pagination);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+		stmt.setString(1, virtualWiki);
+		stmt.setInt(2, userId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
 		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);

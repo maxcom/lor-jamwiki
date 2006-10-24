@@ -61,6 +61,7 @@ public class WikiPageInfo {
 	public static final int ACTION_TOPICS_ADMIN = 24;
 	public static final int ACTION_UPGRADE = 25;
 	public static final int ACTION_UPLOAD = 26;
+	public static final int ACTION_WATCHLIST = 27;
 
 	/**
 	 *
@@ -248,6 +249,13 @@ public class WikiPageInfo {
 	 */
 	public boolean getActionUpload() {
 		return (this.action == ACTION_UPLOAD);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionWatchlist() {
+		return (this.action == ACTION_WATCHLIST);
 	}
 
 	/**

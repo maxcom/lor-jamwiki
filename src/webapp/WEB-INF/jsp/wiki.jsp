@@ -125,6 +125,9 @@
 	<c:when test="${pageInfo.actionUpload}">
 		<jsp:include page="upload.jsp" flush="true" />
 	</c:when>
+	<c:when test="${pageInfo.actionWatchlist}">
+		<jsp:include page="watchlist.jsp" flush="true" />
+	</c:when>
 	<c:otherwise>
 		<%@ include file="category-include.jsp" %>
 		<%@ include file="view-topic-include.jsp" %>

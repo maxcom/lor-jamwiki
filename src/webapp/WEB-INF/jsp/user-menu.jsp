@@ -26,6 +26,7 @@
 <c:otherwise>
 	<td class="menu-user"><jamwiki:link value="${userpage}"><c:if test="${!empty user.displayName}"><c:out value="${user.displayName}" /></c:if><c:if test="${empty user.displayName}"><c:out value="${user.login}" /></c:if></jamwiki:link></td>
 	<td class="menu-user"><jamwiki:link value="${usercomments}"><f:message key="usermenu.usercomments" /></jamwiki:link></td>
+	<td class="menu-user"><jamwiki:link value="Special:Watchlist"><f:message key="usermenu.watchlist" /></jamwiki:link></td>
 	<td class="menu-user"><jamwiki:link value="Special:Account"><f:message key="usermenu.account" /></jamwiki:link></td>
 	<td class="menu-user"><jamwiki:link value="Special:Logout"><f:message key="common.logout" /></jamwiki:link></td>
 	<c:if test="${adminUser}"><td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="usermenu.admin" /></jamwiki:link></c:if>
