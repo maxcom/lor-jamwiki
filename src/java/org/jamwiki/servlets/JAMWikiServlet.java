@@ -54,6 +54,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
 	public static final String PARAMETER_USER = "user";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
+	public static final String SPRING_REDIRECT_PREFIX = "redirect:";
 	public static final String USER_COOKIE = "user-cookie";
 	public static final String USER_COOKIE_DELIMITER = "|";
 	// FIXME - make configurable
@@ -278,8 +279,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *
 	 */
 	protected void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
-		// if this is a redirect, no need to load anything
-		if (next.getViewName() != null && next.getViewName().startsWith("redirect:")) return;
+		if (next.getViewName() != null && next.getViewName().startsWith(SPRING_REDIRECT_PREFIX)) {
+			// if this is a redirect, no need to load anything
+			return;
+		}
 		// load cached top area, nav bar, etc.
 		try {
 			this.buildLayout(request, next);
@@ -321,7 +324,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	protected void redirect(ModelAndView next, String virtualWiki, String destination) throws Exception {
 		String target = LinkUtil.buildInternalLinkUrl(null, virtualWiki, destination);
-		String view = "redirect:" + target;
+		String view = SPRING_REDIRECT_PREFIX + target;
 		next.clear();
 		next.setViewName(view);
 	}
