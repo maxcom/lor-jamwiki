@@ -46,47 +46,62 @@ public class DatabaseConnection {
 	private static GenericObjectPool connectionPool = null;
 
 	/**
-	 * Set up the database connection.
+	 * Utility method for closing a database connection, a statement and a result set.
+	 * This method must ALWAYS be called for any connection retrieved by the
+	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
+	 * connection SHOULD NOT have already been closed.
 	 *
-	 * @param url The database connection url.
-	 * @param userName The user name to use when connecting to the database.
-	 * @param password The password to use when connecting to the database.
-	 * @throws Exception Thrown if any error occurs while initializing the connection pool.
+	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
+	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
+	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
+	 * @param rs A result set object that is to be closed.  May be <code>null</code>.
 	 */
-	private static void setUpConnectionPool(String url, String userName, String password) throws Exception {
-		closeConnectionPool();
-		if (StringUtils.hasText(Environment.getValue(Environment.PROP_DB_DRIVER))) {
-			Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
+	public static void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (Exception e) {}
 		}
-		connectionPool = new GenericObjectPool();
-		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
-		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
-		connectionPool.setMinEvictableIdleTimeMillis(Environment.getIntValue(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) * 1000);
-		connectionPool.setTestOnBorrow(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_BORROW));
-		connectionPool.setTestOnReturn(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_RETURN));
-		connectionPool.setTestWhileIdle(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_WHILE_IDLE));
-		connectionPool.setTimeBetweenEvictionRunsMillis(Environment.getIntValue(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) * 1000);
-		connectionPool.setNumTestsPerEvictionRun(Environment.getIntValue(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN));
-		connectionPool.setWhenExhaustedAction((byte) Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION));
-		Properties properties = new Properties();
-		properties.setProperty("user", userName);
-		properties.setProperty("password", password);
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
-			// handle clobs as strings, Oracle 10g and higher drivers (ojdbc14.jar)
-			properties.setProperty("SetBigStringTryClob", "true");
+		DatabaseConnection.closeConnection(conn, stmt);
+	}
+
+	/**
+	 * Utility method for closing a database connection and a statement.  This method
+	 * must ALWAYS be called for any connection retrieved by the
+	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
+	 * connection SHOULD NOT have already been closed.
+	 *
+	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
+	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
+	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
+	 */
+	public static void closeConnection(Connection conn, Statement stmt) {
+		if (stmt != null) {
+			try {
+				stmt.close();
+			} catch (Exception e) {}
 		}
-		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
-		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.getConnectionValidationQuery(), false, true);
-		PoolingDriver driver = new PoolingDriver();
-		driver.registerPool("jamwiki", connectionPool);
-		Connection conn = null;
+		DatabaseConnection.closeConnection(conn);
+	}
+
+	/**
+	 * Utility method for closing a database connection.  This method must ALWAYS be
+	 * called for any connection retrieved by the
+	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
+	 * connection SHOULD NOT have already been closed.
+	 *
+	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
+	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
+	 */
+	public static void closeConnection(Connection conn) {
+		if (conn == null) {
+			return;
+		}
 		try {
-			// try to get a test connection
-			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
-		} finally {
-			if (conn != null) closeConnection(conn);
+			conn.close();
+		} catch (Exception e) {
+			logger.severe("Failure while closing connection", e);
 		}
-		poolInitialized = true;
 	}
 
 	/**
@@ -233,67 +248,65 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
+	protected static void handleErrors(Connection conn) {
+		if (conn == null) return;
+		try {
+			logger.warning("Rolling back database transactions");
+			conn.rollback();
+		} catch (Exception e) {
+			logger.severe("Unable to rollback connection", e);
+		}
+	}
+
+	/**
+	 *
+	 */
 	protected static void setPoolInitialized(boolean poolInitialized) {
 		DatabaseConnection.poolInitialized = poolInitialized;
 	}
 
 	/**
-	 * Utility method for closing a database connection, a statement and a result set.
-	 * This method must ALWAYS be called for any connection retrieved by the
-	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
-	 * connection SHOULD NOT have already been closed.
+	 * Set up the database connection.
 	 *
-	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
-	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
-	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
-	 * @param rs A result set object that is to be closed.  May be <code>null</code>.
+	 * @param url The database connection url.
+	 * @param userName The user name to use when connecting to the database.
+	 * @param password The password to use when connecting to the database.
+	 * @throws Exception Thrown if any error occurs while initializing the connection pool.
 	 */
-	public static void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch (Exception e) {}
+	private static void setUpConnectionPool(String url, String userName, String password) throws Exception {
+		closeConnectionPool();
+		if (StringUtils.hasText(Environment.getValue(Environment.PROP_DB_DRIVER))) {
+			Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
 		}
-		DatabaseConnection.closeConnection(conn, stmt);
-	}
-
-	/**
-	 * Utility method for closing a database connection and a statement.  This method
-	 * must ALWAYS be called for any connection retrieved by the
-	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
-	 * connection SHOULD NOT have already been closed.
-	 *
-	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
-	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
-	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
-	 */
-	public static void closeConnection(Connection conn, Statement stmt) {
-		if (stmt != null) {
-			try {
-				stmt.close();
-			} catch (Exception e) {}
+		connectionPool = new GenericObjectPool();
+		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
+		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
+		connectionPool.setMinEvictableIdleTimeMillis(Environment.getIntValue(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) * 1000);
+		connectionPool.setTestOnBorrow(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_BORROW));
+		connectionPool.setTestOnReturn(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_RETURN));
+		connectionPool.setTestWhileIdle(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_WHILE_IDLE));
+		connectionPool.setTimeBetweenEvictionRunsMillis(Environment.getIntValue(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) * 1000);
+		connectionPool.setNumTestsPerEvictionRun(Environment.getIntValue(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN));
+		connectionPool.setWhenExhaustedAction((byte) Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION));
+		Properties properties = new Properties();
+		properties.setProperty("user", userName);
+		properties.setProperty("password", password);
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
+			// handle clobs as strings, Oracle 10g and higher drivers (ojdbc14.jar)
+			properties.setProperty("SetBigStringTryClob", "true");
 		}
-		DatabaseConnection.closeConnection(conn);
-	}
-
-	/**
-	 * Utility method for closing a database connection.  This method must ALWAYS be
-	 * called for any connection retrieved by the
-	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
-	 * connection SHOULD NOT have already been closed.
-	 *
-	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
-	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
-	 */
-	public static void closeConnection(Connection conn) {
-		if (conn == null) {
-			return;
-		}
+		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
+		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.getConnectionValidationQuery(), false, true);
+		PoolingDriver driver = new PoolingDriver();
+		driver.registerPool("jamwiki", connectionPool);
+		Connection conn = null;
 		try {
-			conn.close();
-		} catch (Exception e) {
-			logger.severe("Failure while closing connection", e);
+			// try to get a test connection
+			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
+		} finally {
+			if (conn != null) closeConnection(conn);
 		}
+		poolInitialized = true;
 	}
 
 	/**

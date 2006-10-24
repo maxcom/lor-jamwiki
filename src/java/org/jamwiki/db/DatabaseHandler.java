@@ -361,7 +361,7 @@ public class DatabaseHandler {
 			WikiBase.getSearchEngine().refreshIndex();
 			return messages;
 		} catch (Exception e) {
-			toHandler.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			toHandler.releaseParams(conn);
@@ -512,7 +512,7 @@ public class DatabaseHandler {
 			conn = this.getConnection();
 			this.deleteTopic(topic, topicVersion, userVisible, conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -790,19 +790,6 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 *
-	 */
-	private void handleErrors(Connection conn) {
-		if (conn == null) return;
-		try {
-			logger.warning("Rolling back database transactions");
-			conn.rollback();
-		} catch (Exception e) {
-			logger.severe("Unable to rollback connection", e);
-		}
-	}
-
-	/**
 	 * Set up database tables, and then call the parent method to initialize
 	 * default values.
 	 */
@@ -835,7 +822,7 @@ public class DatabaseHandler {
 			setupSpecialPages(locale, user, conn);
 			this.loadVirtualWikiHashes();
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1078,7 +1065,7 @@ public class DatabaseHandler {
 			conn = this.getConnection();
 			return this.lookupLastTopicVersion(virtualWiki, topicName, conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1113,7 +1100,7 @@ public class DatabaseHandler {
 			conn = this.getConnection();
 			return this.lookupTopic(virtualWiki, topicName, deleteOK, conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1178,7 +1165,7 @@ public class DatabaseHandler {
 			conn = this.getConnection();
 			return this.lookupTopicVersion(topicName, topicVersionId, conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1359,7 +1346,7 @@ public class DatabaseHandler {
 			toVersion.setVersionContent(content);
 			writeTopic(toTopic, toVersion, Utilities.parserDocument(content, toTopic.getVirtualWiki(), toTopic.getName()), conn, true);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1446,7 +1433,7 @@ public class DatabaseHandler {
 			conn = this.getConnection();
 			DatabaseHandler.queryHandler.reloadRecentChanges(conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1541,7 +1528,7 @@ public class DatabaseHandler {
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, conn);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1572,7 +1559,7 @@ public class DatabaseHandler {
 			conn = this.getConnection();
 			this.undeleteTopic(topic, topicVersion, userVisible, conn);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1607,7 +1594,7 @@ public class DatabaseHandler {
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
 			writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), conn, true);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1664,7 +1651,7 @@ public class DatabaseHandler {
 				addWikiFileVersion(topicName, wikiFileVersion, conn);
 			}
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1684,7 +1671,7 @@ public class DatabaseHandler {
 			}
 			this.writeTopic(topic, topicVersion, parserDocument, conn, true);
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1769,7 +1756,7 @@ public class DatabaseHandler {
 				this.updateVirtualWiki(virtualWiki, conn);
 			}
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
@@ -1792,7 +1779,7 @@ public class DatabaseHandler {
 				this.updateWikiUser(user, conn);
 			}
 		} catch (Exception e) {
-			this.handleErrors(conn);
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			this.releaseParams(conn);
