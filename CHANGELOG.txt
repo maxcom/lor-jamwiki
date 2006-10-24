@@ -8,6 +8,7 @@
   to be resubmitted.
 * FEATURE: "Go To" button in search should redirect to search results if
   no such topic exists.
+* FEATURE: After editing a section, page will now reload to that section.
 
 0.4.0
 =====

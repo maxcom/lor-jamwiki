@@ -238,11 +238,13 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		String contents = request.getParameter("contents");
+		String sectionName = "";
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
 			ParserDocument parserDocument = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
 			contents = parserDocument.getContent();
+			sectionName = parserDocument.getSectionName();
 		}
 		if (contents == null) {
 			logger.warning("The topic " + topicName + " has no content");
@@ -281,6 +283,10 @@ public class EditServlet extends JAMWikiServlet {
 		// a save request has been made
 		JAMWikiServlet.removeCachedContents();
 		// redirect to prevent user from refreshing and re-submitting
-		this.redirect(next, virtualWiki, topic.getName());
+		String redirect = topic.getName();
+		if (StringUtils.hasText(sectionName)) {
+			redirect += "#" + sectionName;
+		}
+		this.redirect(next, virtualWiki, redirect);
 	}
 }

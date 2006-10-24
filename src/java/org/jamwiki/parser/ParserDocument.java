@@ -30,6 +30,7 @@ public class ParserDocument {
 	private Vector templates = new Vector();
 	private String content = null;
 	private String redirect = null;
+	private String sectionName = null;
 
 	/**
 	 *
@@ -115,6 +116,32 @@ public class ParserDocument {
 	 */
 	public Vector getLinks() {
 		return this.links;
+	}
+
+	/**
+	 * When editing or parsing a section of a document, get the name of
+	 * the heading for that section.
+	 *
+	 * @return The name of the heading for a section of a document being
+	 *  parsed, or <code>null</code> if a section is not being parsed. If not
+	 *  <code>null</code> then the section name should be encoded for use in a
+	 *  URL.
+	 */
+	public String getSectionName() {
+		return this.sectionName;
+	}
+
+	/**
+	 * When editing or parsing a section of a document, set the name of
+	 * the heading for that section.
+	 *
+	 * @param sectionName The name of the heading for a section of a document
+	 *  being parsed, or <code>null</code> if a section is not being parsed.
+	 *  If not <code>null</code> then the section name should be encoded for
+	 *  use in a URL.
+	 */
+	public void setSectionName(String sectionName) {
+		this.sectionName = sectionName;
 	}
 
 	/**
