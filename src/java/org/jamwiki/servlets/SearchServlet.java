@@ -40,7 +40,7 @@ public class SearchServlet extends JAMWikiServlet {
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			if (request.getParameter("jumpto") != null) {
-				jumpTo(request, next);
+				jumpTo(request, next, pageInfo);
 			} else {
 				search(request, next, pageInfo);
 			}
@@ -54,10 +54,14 @@ public class SearchServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void jumpTo(HttpServletRequest request, ModelAndView next) throws Exception {
+	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String text = request.getParameter("text");
-		this.redirect(next, virtualWiki, text);
+		String topic = request.getParameter("text");
+		if (WikiBase.exists(virtualWiki, topic)) {
+			this.redirect(next, virtualWiki, topic);
+		} else {
+			this.search(request, next, pageInfo);
+		}
 	}
 
 	/**

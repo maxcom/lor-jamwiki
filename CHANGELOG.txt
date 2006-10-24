@@ -6,6 +6,8 @@
 * FEATURE: Upgrade to Spring Framework 2.0.
 * BUG: Refreshing after a form submission should no longer cause information
   to be resubmitted.
+* FEATURE: "Go To" button in search should redirect to search results if
+  no such topic exists.
 
 0.4.0
 =====
