@@ -162,9 +162,7 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_fk_topic_topic_ver constraint to jam_topic");
 			// update jam_topic records
-			// FIXME - test with multiple databases
-			sql = "update jam_topic set current_version_id = (select max(topic_version_id) from jam_topic_version where jam_topic_version.topic_id = jam_topic.topic_id) ";
-			DatabaseConnection.executeUpdate(sql, conn);
+			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS, conn);
 			messages.add("Added current_version_id values for jam_topic records");
 			// create the jam_watchlist table
 			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE, conn);

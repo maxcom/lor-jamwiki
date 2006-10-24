@@ -114,6 +114,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGINS = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_SEQUENCE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
+	protected static String STATEMENT_UPDATE_TOPIC_CURRENT_VERSION = null;
+	protected static String STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
 	protected static String STATEMENT_UPDATE_WIKI_USER = null;
@@ -427,6 +429,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER_PASSWORD      = props.getProperty("STATEMENT_SELECT_WIKI_USER_PASSWORD");
 		STATEMENT_SELECT_WIKI_USER_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_USER_SEQUENCE");
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
+		STATEMENT_UPDATE_TOPIC_CURRENT_VERSION   = props.getProperty("STATEMENT_UPDATE_TOPIC_CURRENT_VERSION");
+		STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS  = props.getProperty("STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS");
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
@@ -514,6 +518,10 @@ public class DefaultQueryHandler implements QueryHandler {
 		} else {
 			stmt.setNull(9, Types.INTEGER);
 		}
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
+		stmt.setInt(1, topicVersion.getTopicId());
+		stmt.setInt(2, topicVersion.getTopicId());
 		stmt.executeUpdate(conn);
 	}
 
