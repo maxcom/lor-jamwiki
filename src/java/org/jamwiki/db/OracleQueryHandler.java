@@ -111,7 +111,7 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, userId);
 		stmt.setInt(3, pagination.getEnd());

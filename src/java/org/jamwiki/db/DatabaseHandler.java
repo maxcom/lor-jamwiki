@@ -38,6 +38,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
@@ -163,6 +164,13 @@ public class DatabaseHandler {
 			virtualWiki.setVirtualWikiId(virtualWikiId);
 		}
 		DatabaseHandler.queryHandler.insertVirtualWiki(virtualWiki, conn);
+	}
+
+	/**
+	 *
+	 */
+	private void addWatchlistEntry(int virtualWikiId, int topicId, String topicName, int userId, Connection conn) throws Exception {
+		DatabaseHandler.queryHandler.insertWatchlistEntry(virtualWikiId, topicId, topicName, userId, conn);
 	}
 
 	/**
@@ -546,6 +554,27 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
+	public void deleteWatchlistEntry(String virtualWiki, int topicId, String topicName, int userId) throws Exception {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			if (topicId > 0) {
+				DatabaseHandler.queryHandler.deleteWatchlistEntryId(topicId, userId, conn);
+			} else if (StringUtils.hasText(topicName)) {
+				int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+				DatabaseHandler.queryHandler.deleteWatchlistEntryName(virtualWikiId, topicName, userId, conn);
+			}
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			this.releaseParams(conn);
+		}
+	}
+
+	/**
+	 *
+	 */
 	public Vector diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
 		TopicVersion version1 = lookupTopicVersion(topicName, topicVersionId1);
 		TopicVersion version2 = lookupTopicVersion(topicName, topicVersionId2);
@@ -777,7 +806,29 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 *
+	 * Retrieve a watchlist containing a Collection of topic ids and topic
+	 * names that can be used to determine if a topic is in a user's current
+	 * watchlist.
+	 */
+	public Watchlist getWatchlist(String virtualWiki, int userId) throws Exception {
+		Collection all = new Vector();
+		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+		WikiResultSet rs = DatabaseHandler.queryHandler.getWatchlist(virtualWikiId, userId);
+		while (rs.next()) {
+			String topicName = rs.getString("topic_name");
+			int topicId = rs.getInt("topic_id");
+			if (topicId > 0) {
+				all.add(new Integer(topicId));
+			} else {
+				all.add(topicName);
+			}
+		}
+		return new Watchlist(virtualWiki, all);
+	}
+
+	/**
+	 * Retrieve a watchlist containing a Collection of RecentChanges objects
+	 * that can be used for display on the Special:Watchlist page.
 	 */
 	public Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
 		Collection all = new Vector();
@@ -1733,6 +1784,23 @@ public class DatabaseHandler {
 		}
 		// update the hashtable AFTER the commit
 		this.loadVirtualWikiHashes();
+	}
+
+	/**
+	 *
+	 */
+	public void writeWatchlistEntry(String virtualWiki, int topicId, String topicName, int userId) throws Exception {
+		Connection conn = null;
+		try {
+			conn = this.getConnection();
+			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+			this.addWatchlistEntry(virtualWikiId, topicId, topicName, userId, conn);
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			this.releaseParams(conn);
+		}
 	}
 
 	/**

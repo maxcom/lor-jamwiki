@@ -58,6 +58,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
+	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY_ID = null;
+	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY_NAME = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
@@ -76,6 +78,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
+	protected static String STATEMENT_INSERT_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
 	protected static String STATEMENT_INSERT_WIKI_USER = null;
@@ -99,7 +102,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WATCHLIST = null;
-	protected static String STATEMENT_SELECT_WATCHLIST_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_WATCHLIST_CHANGES = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE_COUNT = null;
 	protected static String STATEMENT_SELECT_WIKI_FILE_SEQUENCE = null;
@@ -172,6 +175,27 @@ public class DefaultQueryHandler implements QueryHandler {
 	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
 		stmt.setInt(1, childTopicId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteWatchlistEntryId(int topicId, int userId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_WATCHLIST_ENTRY_ID);
+		stmt.setInt(1, topicId);
+		stmt.setInt(2, userId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteWatchlistEntryName(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_WATCHLIST_ENTRY_NAME);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setString(2, topicName);
+		stmt.setInt(3, userId);
 		stmt.executeUpdate(conn);
 	}
 
@@ -349,8 +373,18 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception {
+	public WikiResultSet getWatchlist(int virtualWikiId, int userId) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST);
+		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, userId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WATCHLIST_CHANGES);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setInt(2, userId);
 		stmt.setInt(3, pagination.getNumResults());
@@ -378,6 +412,8 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
+		STATEMENT_DELETE_WATCHLIST_ENTRY_ID      = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY_ID");
+		STATEMENT_DELETE_WATCHLIST_ENTRY_NAME    = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY_NAME");
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WIKI_USER_LOGIN_INDEX     = props.getProperty("STATEMENT_DROP_WIKI_USER_LOGIN_INDEX");
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
@@ -396,6 +432,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
+		STATEMENT_INSERT_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_INSERT_WATCHLIST_ENTRY");
 		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
 		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
 		STATEMENT_INSERT_WIKI_USER               = props.getProperty("STATEMENT_INSERT_WIKI_USER");
@@ -419,7 +456,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
 		STATEMENT_SELECT_WATCHLIST               = props.getProperty("STATEMENT_SELECT_WATCHLIST");
-		STATEMENT_SELECT_WATCHLIST_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WATCHLIST_SEQUENCE");
+		STATEMENT_SELECT_WATCHLIST_CHANGES       = props.getProperty("STATEMENT_SELECT_WATCHLIST_CHANGES");
 		STATEMENT_SELECT_WIKI_FILE               = props.getProperty("STATEMENT_SELECT_WIKI_FILE");
 		STATEMENT_SELECT_WIKI_FILE_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_FILE_COUNT");
 		STATEMENT_SELECT_WIKI_FILE_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_FILE_SEQUENCE");
@@ -539,6 +576,22 @@ public class DefaultQueryHandler implements QueryHandler {
 		stmt.setInt(1, virtualWiki.getVirtualWikiId());
 		stmt.setString(2, virtualWiki.getName());
 		stmt.setString(3, virtualWiki.getDefaultTopicName());
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void insertWatchlistEntry(int virtualWikiId, int topicId, String topicName, int userId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WATCHLIST_ENTRY);
+		stmt.setInt(1, virtualWikiId);
+		if (topicId > 0) {
+			stmt.setInt(2, topicId);
+		} else {
+			stmt.setNull(2, Types.INTEGER);
+		}
+		stmt.setString(3, topicName);
+		stmt.setInt(4, userId);
 		stmt.executeUpdate(conn);
 	}
 
@@ -776,17 +829,6 @@ public class DefaultQueryHandler implements QueryHandler {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE, conn);
 		int nextId = 0;
 		if (rs.size() > 0) nextId = rs.getInt("virtual_wiki_id");
-		// note - this returns the last id in the system, so add one
-		return nextId + 1;
-	}
-
-	/**
-	 *
-	 */
-	public int nextWatchlistId(Connection conn) throws Exception {
-		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WATCHLIST_SEQUENCE, conn);
-		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("watchlist_id");
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}

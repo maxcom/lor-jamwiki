@@ -60,20 +60,15 @@ public class AdminServlet extends JAMWikiServlet {
 				return viewLogin(request, "Special:Admin", errorMessage);
 			}
 			String function = request.getParameter("function");
-			if (function == null) function = "";
 			if (!StringUtils.hasText(function)) {
 				view(request, next, pageInfo, null);
-			}
-			if (function.equals("refreshIndex")) {
+			} else if (function.equals("refreshIndex")) {
 				refreshIndex(request, next, pageInfo);
-			}
-			if (function.equals("properties")) {
+			} else if (function.equals("properties")) {
 				properties(request, next, pageInfo);
-			}
-			if (function.equals("addVirtualWiki")) {
+			} else if (function.equals("addVirtualWiki")) {
 				addVirtualWiki(request, next, pageInfo);
-			}
-			if (function.equals("recentChanges")) {
+			} else if (function.equals("recentChanges")) {
 				recentChanges(request, next, pageInfo);
 			}
 		} catch (Exception e) {

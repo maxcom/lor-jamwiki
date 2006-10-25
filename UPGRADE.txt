@@ -53,19 +53,20 @@ followed by 0.3.3.
   2. Update the database schema by executing the following SQL statements:
        a) Create the jam_watchlist table.
               CREATE TABLE jam_watchlist (
-                   watchlist_id INTEGER NOT NULL,
                    wiki_user_id INTEGER NOT NULL,
                    topic_id INTEGER,
                    topic_name VARCHAR(200),
                    virtual_wiki_id INTEGER NOT NULL,
-                   CONSTRAINT jam_pk_watchlist PRIMARY KEY (watchlist_id),
-                   CONSTRAINT jam_fk_watchlist_user_id
-                        FOREIGN KEY (wiki_user_id)
+                   CONSTRAINT jam_pk_watchlist PRIMARY KEY
+                        (wiki_user_id, topic_id, topic_name, virtual_wiki_id),
+                   CONSTRAINT jam_fk_watchlist_user_id FOREIGN KEY
+                        (wiki_user_id)
                         REFERENCES jam_wiki_user(wiki_user_id),
-                   CONSTRAINT jam_fk_watchlist_topic_id FOREIGN KEY (topic_id)
+                   CONSTRAINT jam_fk_watchlist_topic_id FOREIGN KEY
+                        (topic_id)
                         REFERENCES jam_topic(topic_id),
-                   CONSTRAINT jam_fk_watchlist_vwiki
-                        FOREIGN KEY (virtual_wiki_id)
+                   CONSTRAINT jam_fk_watchlist_vwiki FOREIGN KEY
+                        (virtual_wiki_id)
                         REFERENCES jam_virtual_wiki(virtual_wiki_id) 
               );
        b) Update the jam_topic table.

@@ -24,6 +24,8 @@
 
 <div id="change">
 
+<c:if test="${!empty message}"><p><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p></c:if>
+
 <p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:Watchlist" /></p>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Watchlist" />">

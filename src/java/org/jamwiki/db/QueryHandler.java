@@ -77,6 +77,33 @@ public interface QueryHandler {
 	public void deleteTopicCategories(int topicId, Connection conn) throws Exception;
 
 	/**
+	 * Delete a user's watchlist entry using the topic ID (instead of the topic
+	 * name) to determine which entry to remove.
+	 *
+	 * @param topicId The topic for which the watchlist entry is being deleted.
+	 * @param userId The user for which the watchlist entry is being deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void deleteWatchlistEntryId(int topicId, int userId, Connection conn) throws Exception;
+
+	/**
+	 * Delete a user's watchlist entry using the topic name (instead of the topic
+	 * ID) to determine which entry to remove.
+	 *
+	 * @param virtualWikiId The id of the virtual wiki for which the watchlist
+	 *  entry is being deleted.
+	 * @param topicName The topic name for which the watchlist entry is being
+	 *  deleted.
+	 * @param userId The user for which the watchlist entry is being deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void deleteWatchlistEntryName(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
+
+	/**
 	 * Drop all JAMWiki database objects.  This method drops tables, indexes, and
 	 * any database objects, as well as all data in those objects.  Note that if
 	 * a failure occurs while deleting any one object the method will continue
@@ -246,6 +273,19 @@ public interface QueryHandler {
 	public WikiResultSet getVirtualWikis() throws Exception;
 
 	/**
+	 * Retrieve a WikiResultSet containing the topic ID and topic name for
+	 * topics in the user's watchlist.
+	 *
+	 * @param virtualWikiId The virtual wiki ID for the virtual wiki for the
+	 *  watchlist topics.
+	 * @param userId The user ID for the user retrieving the watchlist.
+	 * @return A WikiResultSet containing topic ID and topic name for all
+	 *  watchlist items.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getWatchlist(int virtualWikiId, int userId) throws Exception;
+
+	/**
 	 * Retrieve a WikiResultSet containing all recent changes for topics in the
 	 * user's watchlist.
 	 *
@@ -319,6 +359,24 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
+
+	/**
+	 * Add a new watchlist entry record to the database.  An identical entry
+	 * must not already exist or else an exception will be thrown.
+	 *
+	 * @param virtualWikiId The virtual wiki id for the watchlist entry being
+	 *  inserted.
+	 * @param topicId The ID of the topic for the watchlist entry.  If the
+	 *  topic does not yet exist then this value should be zero.
+	 * @param topicName The name of the topic for the watchlist entry.  This
+	 *  value should be set only for topics that do not yet exist, and should
+	 *  be set to <code>null</code> for existing topics.
+	 * @param userId The ID of the user for the watchlist entry.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void insertWatchlistEntry(int virtualWikiId, int topicId, String topicName, int userId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new wiki file record to the database.  The wiki file must not
