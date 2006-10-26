@@ -115,12 +115,12 @@ function onPersistenceType() {
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<option value="<%= DatabaseHandler.DB_TYPE_ANSI %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ANSI) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ANSI %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_HSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_HSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_HSQL %></option>
+		<option value="<%= DatabaseHandler.DB_TYPE_MSSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MSSQL %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_MYSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MYSQL %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_ORACLE %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ORACLE %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_POSTGRES %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_POSTGRES %></option>
 		<option value="<%= DatabaseHandler.DB_TYPE_DB2 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2 %> (<f:message key="common.caption.experimental" />)</option>
 		<option value="<%= DatabaseHandler.DB_TYPE_DB2_400 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2_400) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2_400 %> (<f:message key="common.caption.experimental" />)</option>
-		<option value="<%= DatabaseHandler.DB_TYPE_MSSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MSSQL %> (<f:message key="common.caption.experimental" />)</option>
 		</select>
 	</td>
 </tr>
