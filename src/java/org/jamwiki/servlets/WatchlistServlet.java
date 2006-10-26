@@ -75,14 +75,16 @@ public class WatchlistServlet extends JAMWikiServlet {
 			topicId = topic.getTopicId();
 		}
 		// get watchlist for user
-		Watchlist watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
+		Watchlist watchlist = Utilities.currentWatchlist(request);
 		if (watchlist.containsTopic(topicId) || watchlist.containsTopic(topicName)) {
 			// remove from watchlist
 			WikiBase.getHandler().deleteWatchlistEntry(virtualWiki, topicId, topicName, user.getUserId());
+			watchlist.remove(topicId, topicName);
 			next.addObject("message", new WikiMessage("watchlist.caption.removed", topicName));
 		} else {
 			// add to watchlist
 			WikiBase.getHandler().writeWatchlistEntry(virtualWiki, topicId, topicName, user.getUserId());
+			watchlist.add(topicId, topicName);
 			next.addObject("message", new WikiMessage("watchlist.caption.added", topicName));
 		}
 		this.view(request, next, pageInfo);

@@ -53,6 +53,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
 	public static final String PARAMETER_USER = "user";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
+	public static final String PARAMETER_WATCHLIST = "watchlist";
 	public static final String SPRING_REDIRECT_PREFIX = "redirect:";
 	public static final String USER_COOKIE = "user-cookie";
 	public static final String USER_COOKIE_DELIMITER = "|";

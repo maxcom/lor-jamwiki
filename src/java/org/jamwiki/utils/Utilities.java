@@ -47,6 +47,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
@@ -119,7 +120,7 @@ public class Utilities {
 	}
 
 	/**
-	 * Retrieve the current logged-in user from the servlet request.  If there is
+	 * Retrieve the current logged-in user from the session.  If there is
 	 * no user return <code>null</code>.
 	 *
 	 * @param request The servlet request object.
@@ -146,6 +147,20 @@ public class Utilities {
 			Utilities.login(request, null, user, false);
 		}
 		return user;
+	}
+
+	/**
+	 * Retrieve the current logged-in user's watchlist from the session.  If
+	 * there is no watchlist return an empty watchlist.
+	 *
+	 * @param request The servlet request object.
+	 * @return The current logged-in user's watchlist, or an empty watchlist
+	 *  if there is no watchlist in the session.
+	 */
+	public static Watchlist currentWatchlist(HttpServletRequest request) throws Exception {
+		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(JAMWikiServlet.PARAMETER_WATCHLIST);
+		if (watchlist == null) watchlist = new Watchlist();
+		return watchlist;
 	}
 
 	/**
@@ -539,6 +554,10 @@ public class Utilities {
 			return;
 		}
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+		// add user's watchlist to session
+		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		Watchlist watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
+		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_WATCHLIST, watchlist);
 		if (setCookie) {
 			if (response == null) {
 				logger.warning("Attempt to set user cookie without specifying servlet response");
