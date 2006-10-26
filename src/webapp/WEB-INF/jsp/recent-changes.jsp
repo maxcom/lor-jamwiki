@@ -46,8 +46,10 @@
 	&#160;
 	<f:formatDate value="${change.editDate}" type="both" pattern="HH:mm" />
 	&#160;
+	<jamwiki:watchlist topic="${change.topicName}">
 	<c:if test="${!change.delete}"><jamwiki:link value="${change.topicName}" text="${change.topicName}" /></c:if>
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>
+	</jamwiki:watchlist>
 	&#160;.&#160;.&#160;
 	<jamwiki:link value="User:${change.authorName}" text="${change.authorName}" />
 	(<jamwiki:link value="User comments:${change.authorName}"><f:message key="recentchanges.caption.comments" /></jamwiki:link>&#160;|&#160;<jamwiki:link value="Special:Contributions"><jamwiki:linkParam key="contributor" value="${change.authorName}" /><f:message key="recentchanges.caption.contributions" /></jamwiki:link>)

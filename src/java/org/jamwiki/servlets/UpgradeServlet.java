@@ -134,6 +134,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// then perform other needed upgrades
 			boolean stylesheet = false;
 			// the 0.4.0 file conversion needs to happen first
+			if (oldVersion.before(0, 4, 2)) {
+				stylesheet = true;
+			}
 			if (oldVersion.before(0, 4, 0)) {
 				if (!upgrade040(request, messages)) success = false;
 			}

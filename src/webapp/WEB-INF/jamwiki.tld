@@ -74,5 +74,14 @@
 			<required>true</required>
 		</attribute>
 	</tag>
+	<tag>
+		<name>watchlist</name>
+		<tag-class>org.jamwiki.tags.WatchlistTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>topic</name>
+			<required>true</required>
+		</attribute>
+	</tag>
 
 </taglib>

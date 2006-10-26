@@ -392,7 +392,6 @@ td.footer hr, td.footer br {
 /* recent changes, user contributions, history */
 
 #change a {
-	font-weight: normal;
 }
 
 li.minorchange {
