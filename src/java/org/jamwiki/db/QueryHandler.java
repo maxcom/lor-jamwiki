@@ -77,20 +77,8 @@ public interface QueryHandler {
 	public void deleteTopicCategories(int topicId, Connection conn) throws Exception;
 
 	/**
-	 * Delete a user's watchlist entry using the topic ID (instead of the topic
-	 * name) to determine which entry to remove.
-	 *
-	 * @param topicId The topic for which the watchlist entry is being deleted.
-	 * @param userId The user for which the watchlist entry is being deleted.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public void deleteWatchlistEntryId(int topicId, int userId, Connection conn) throws Exception;
-
-	/**
-	 * Delete a user's watchlist entry using the topic name (instead of the topic
-	 * ID) to determine which entry to remove.
+	 * Delete a user's watchlist entry using the topic name to determine which
+	 * entry to remove.
 	 *
 	 * @param virtualWikiId The id of the virtual wiki for which the watchlist
 	 *  entry is being deleted.
@@ -101,7 +89,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteWatchlistEntryName(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
+	public void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
 
 	/**
 	 * Drop all JAMWiki database objects.  This method drops tables, indexes, and
@@ -366,8 +354,6 @@ public interface QueryHandler {
 	 *
 	 * @param virtualWikiId The virtual wiki id for the watchlist entry being
 	 *  inserted.
-	 * @param topicId The ID of the topic for the watchlist entry.  If the
-	 *  topic does not yet exist then this value should be zero.
 	 * @param topicName The name of the topic for the watchlist entry.  This
 	 *  value should be set only for topics that do not yet exist, and should
 	 *  be set to <code>null</code> for existing topics.
@@ -376,7 +362,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWatchlistEntry(int virtualWikiId, int topicId, String topicName, int userId, Connection conn) throws Exception;
+	public void insertWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new wiki file record to the database.  The wiki file must not

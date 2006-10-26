@@ -58,8 +58,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
-	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY_ID = null;
-	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY_NAME = null;
+	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
@@ -181,18 +180,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void deleteWatchlistEntryId(int topicId, int userId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_WATCHLIST_ENTRY_ID);
-		stmt.setInt(1, topicId);
-		stmt.setInt(2, userId);
-		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
-	public void deleteWatchlistEntryName(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_WATCHLIST_ENTRY_NAME);
+	public void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_WATCHLIST_ENTRY);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
 		stmt.setInt(3, userId);
@@ -412,8 +401,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
-		STATEMENT_DELETE_WATCHLIST_ENTRY_ID      = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY_ID");
-		STATEMENT_DELETE_WATCHLIST_ENTRY_NAME    = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY_NAME");
+		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WIKI_USER_LOGIN_INDEX     = props.getProperty("STATEMENT_DROP_WIKI_USER_LOGIN_INDEX");
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
@@ -582,16 +570,11 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertWatchlistEntry(int virtualWikiId, int topicId, String topicName, int userId, Connection conn) throws Exception {
+	public void insertWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WATCHLIST_ENTRY);
 		stmt.setInt(1, virtualWikiId);
-		if (topicId > 0) {
-			stmt.setInt(2, topicId);
-		} else {
-			stmt.setNull(2, Types.INTEGER);
-		}
-		stmt.setString(3, topicName);
-		stmt.setInt(4, userId);
+		stmt.setString(2, topicName);
+		stmt.setInt(3, userId);
 		stmt.executeUpdate(conn);
 	}
 

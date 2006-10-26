@@ -169,8 +169,8 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	private void addWatchlistEntry(int virtualWikiId, int topicId, String topicName, int userId, Connection conn) throws Exception {
-		DatabaseHandler.queryHandler.insertWatchlistEntry(virtualWikiId, topicId, topicName, userId, conn);
+	private void addWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
+		DatabaseHandler.queryHandler.insertWatchlistEntry(virtualWikiId, topicName, userId, conn);
 	}
 
 	/**
@@ -554,16 +554,12 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public void deleteWatchlistEntry(String virtualWiki, int topicId, String topicName, int userId) throws Exception {
+	public void deleteWatchlistEntry(String virtualWiki, String topicName, int userId) throws Exception {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
-			if (topicId > 0) {
-				DatabaseHandler.queryHandler.deleteWatchlistEntryId(topicId, userId, conn);
-			} else if (StringUtils.hasText(topicName)) {
-				int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-				DatabaseHandler.queryHandler.deleteWatchlistEntryName(virtualWikiId, topicName, userId, conn);
-			}
+			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
+			DatabaseHandler.queryHandler.deleteWatchlistEntry(virtualWikiId, topicName, userId, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -816,12 +812,7 @@ public class DatabaseHandler {
 		WikiResultSet rs = DatabaseHandler.queryHandler.getWatchlist(virtualWikiId, userId);
 		while (rs.next()) {
 			String topicName = rs.getString("topic_name");
-			int topicId = rs.getInt("topic_id");
-			if (topicId > 0) {
-				all.add(new Integer(topicId));
-			} else {
-				all.add(topicName);
-			}
+			all.add(topicName);
 		}
 		return new Watchlist(virtualWiki, all);
 	}
@@ -1789,12 +1780,12 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public void writeWatchlistEntry(String virtualWiki, int topicId, String topicName, int userId) throws Exception {
+	public void writeWatchlistEntry(String virtualWiki, String topicName, int userId) throws Exception {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			this.addWatchlistEntry(virtualWikiId, topicId, topicName, userId, conn);
+			this.addWatchlistEntry(virtualWikiId, topicName, userId, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

@@ -69,23 +69,23 @@ public class WatchlistServlet extends JAMWikiServlet {
 		}
 		String topicName = JAMWikiServlet.getTopicFromRequest(request);
 		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		int topicId = 0;
-		if (topic != null) {
-			topicId = topic.getTopicId();
-		}
-		// get watchlist for user
+		String article = Utilities.extractTopicLink(topicName);
+		String comments = Utilities.extractCommentsLink(topicName);
 		Watchlist watchlist = Utilities.currentWatchlist(request);
-		if (watchlist.containsTopic(topicId) || watchlist.containsTopic(topicName)) {
+		if (watchlist.containsTopic(topicName)) {
 			// remove from watchlist
-			WikiBase.getHandler().deleteWatchlistEntry(virtualWiki, topicId, topicName, user.getUserId());
-			watchlist.remove(topicId, topicName);
-			next.addObject("message", new WikiMessage("watchlist.caption.removed", topicName));
+			WikiBase.getHandler().deleteWatchlistEntry(virtualWiki, article, user.getUserId());
+			WikiBase.getHandler().deleteWatchlistEntry(virtualWiki, comments, user.getUserId());
+			watchlist.remove(article);
+			watchlist.remove(comments);
+			next.addObject("message", new WikiMessage("watchlist.caption.removed", article));
 		} else {
 			// add to watchlist
-			WikiBase.getHandler().writeWatchlistEntry(virtualWiki, topicId, topicName, user.getUserId());
-			watchlist.add(topicId, topicName);
-			next.addObject("message", new WikiMessage("watchlist.caption.added", topicName));
+			WikiBase.getHandler().writeWatchlistEntry(virtualWiki, article, user.getUserId());
+			WikiBase.getHandler().writeWatchlistEntry(virtualWiki, comments, user.getUserId());
+			watchlist.add(article);
+			watchlist.add(comments);
+			next.addObject("message", new WikiMessage("watchlist.caption.added", article));
 		}
 		this.view(request, next, pageInfo);
 	}

@@ -46,18 +46,10 @@ public class Watchlist {
 	/**
 	 *
 	 */
-	public void add(int topicId, String topicName) {
-		this.topics.add(new Integer(topicId));
+	public void add(String topicName) {
 		if (topicName != null) {
 			this.topics.add(topicName);
 		}
-	}
-
-	/**
-	 *
-	 */
-	public boolean containsTopic(int topicId) {
-		return this.topics.contains(new Integer(topicId));
 	}
 
 	/**
@@ -92,8 +84,7 @@ public class Watchlist {
 	/**
 	 *
 	 */
-	public void remove(int topicId, String topicName) {
-		this.topics.remove(new Integer(topicId));
+	public void remove(String topicName) {
 		if (topicName != null) {
 			this.topics.remove(topicName);
 		}
