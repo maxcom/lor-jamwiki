@@ -34,6 +34,7 @@ public class WikiPageInfo {
 	private String redirectName = null;
 	private String topicName = "";
 	private boolean special = false;
+	private boolean watched = false;
 	// constants used as the action parameter in calls to this servlet
 	public static final int ACTION_ADMIN = 1;
 	public static final int ACTION_ADMIN_CONVERT = 2;
@@ -347,5 +348,19 @@ public class WikiPageInfo {
 	 */
 	public void setTopicName(String topicName) {
 		this.topicName = topicName;
+	}
+
+	/**
+	 *
+	 */
+	public boolean getWatched() {
+		return this.watched;
+	}
+
+	/**
+	 *
+	 */
+	public void setWatched(boolean watched) {
+		this.watched = watched;
 	}
 }

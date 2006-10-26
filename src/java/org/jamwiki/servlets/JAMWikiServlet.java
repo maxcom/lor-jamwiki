@@ -28,6 +28,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
@@ -308,6 +309,10 @@ public abstract class JAMWikiServlet extends AbstractController {
 					if (WikiBase.getHandler().exists(virtualWiki, article)) {
 						pageInfo.setCanMove(true);
 					}
+				}
+				Watchlist watchlist = Utilities.currentWatchlist(request);
+				if (watchlist.containsTopic(pageInfo.getTopicName())) {
+					pageInfo.setWatched(true);
 				}
 			}
 			if (!StringUtils.hasText(pageInfo.getTopicName())) {

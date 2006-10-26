@@ -33,7 +33,7 @@
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Move"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.move" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Watchlist"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.watch" /></jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Watchlist"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><c:if test="${pageInfo.watched}"><f:message key="menu.unwatch" /></c:if><c:if test="${!pageInfo.watched}"><f:message key="menu.watch" /></c:if></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:LinkTo"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.links" /></jamwiki:link></td>
 	<c:if test="${adminUser}">
