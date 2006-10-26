@@ -273,8 +273,6 @@ public class EditServlet extends JAMWikiServlet {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
 		WikiBase.getHandler().writeTopic(topic, topicVersion, parserDocument);
-		// a save request has been made
-		JAMWikiServlet.removeCachedContents();
 		// redirect to prevent user from refreshing and re-submitting
 		String redirect = topic.getName();
 		if (StringUtils.hasText(sectionName)) {

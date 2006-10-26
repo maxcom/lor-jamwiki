@@ -22,12 +22,12 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
-import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.users.LdapUsergroup;
 import org.jamwiki.users.NoUsergroup;
 import org.jamwiki.users.Usergroup;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.PseudoTopicHandler;
+import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -181,7 +181,7 @@ public class WikiBase {
 		if (!WikiBase.handler.isInitialized()) {
 			WikiBase.handler.initialize(locale, user);
 		}
-		JAMWikiServlet.removeCachedContents();
+		WikiCache.reset();
 		WikiBase.searchEngine.refreshIndex();
 	}
 }

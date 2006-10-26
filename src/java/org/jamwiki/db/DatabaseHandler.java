@@ -49,7 +49,7 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiCacheMap;
+import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -59,14 +59,6 @@ import org.springframework.util.StringUtils;
  */
 public class DatabaseHandler {
 
-	// FIXME - possibly make this a property, or configurable based on number of topics in the system
-	private static int MAX_CACHED_LIST_SIZE = 2000;
-	/** For performance reasons, keep a (small) list of recently looked-up topics around in memory. */
-	private static WikiCacheMap cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-	/** For performance reasons, keep a (small) list of recently looked-up non-topics around in memory. */
-	private static WikiCacheMap cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-	/** For performance reasons, keep a (small) list of recently looked-up user logins and ids around in memory. */
-	private static WikiCacheMap cachedUserLoginHash = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	private static Hashtable virtualWikiIdHash = null;
 	private static Hashtable virtualWikiNameHash = null;
 	public static final String DB_TYPE_ANSI = "ansi";
@@ -540,8 +532,6 @@ public class DatabaseHandler {
 		ParserDocument parserDocument = new ParserDocument();
 		topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
 		writeTopic(topic, topicVersion, parserDocument, conn, userVisible);
-		// reset topic existence vector
-		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
 
 	/**
@@ -609,18 +599,18 @@ public class DatabaseHandler {
 		}
 		// first check a cache of recently looked-up topics for performance reasons
 		String key = virtualWiki + "/" + topicName;
-		if (cachedTopicsList.containsKey(key)) {
+		if (WikiCache.isCached(WikiCache.CACHE_TOPIC_NAME, virtualWiki, topicName)) {
 			return true;
 		}
-		if (cachedNonTopicsList.containsKey(key)) {
+		if (WikiCache.isCached(WikiCache.CACHE_NON_TOPIC_NAME, virtualWiki, topicName)) {
 			return false;
 		}
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getDeleteDate() != null) {
-			cachedNonTopicsList.put(key, null);
+			WikiCache.addToCache(WikiCache.CACHE_NON_TOPIC_NAME, virtualWiki, topicName, null);
 			return false;
 		}
-		cachedTopicsList.put(key, null);
+		WikiCache.addToCache(WikiCache.CACHE_TOPIC_NAME, virtualWiki, topicName, null);
 		return true;
 	}
 
@@ -1052,12 +1042,12 @@ public class DatabaseHandler {
 		}
 		try {
 			WikiResultSet rs = DatabaseHandler.queryHandler.getVirtualWikis();
-			return rs.next();
+			this.initialized = rs.next();
 		} catch (Exception e) {
 			// tables don't exist, or some other problem
 			logger.warning("Database handler not initialized: " + e.getMessage());
-			return false;
 		}
+		return this.initialized;
 	}
 
 	/**
@@ -1311,14 +1301,14 @@ public class DatabaseHandler {
 	 *
 	 */
 	private String lookupWikiUserLogin(Integer authorId) throws Exception {
-		String login = (String)cachedUserLoginHash.get(authorId);
+		String login = (String)WikiCache.retrieveFromCache(WikiCache.CACHE_USER_LOGIN, authorId);
 		if (login != null) {
 			return login;
 		}
 		WikiUser user = lookupWikiUser(authorId.intValue());
 		login = user.getLogin();
 		if (login != null) {
-			cachedUserLoginHash.put(authorId, login);
+			WikiCache.addToCache(WikiCache.CACHE_USER_LOGIN, authorId, login);
 		}
 		return login;
 	}
@@ -1463,9 +1453,6 @@ public class DatabaseHandler {
 	private void resetCache() {
 		DatabaseHandler.virtualWikiIdHash = null;
 		DatabaseHandler.virtualWikiNameHash = null;
-		DatabaseHandler.cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-		DatabaseHandler.cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
-		DatabaseHandler.cachedUserLoginHash = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
 
 	/**
@@ -1592,8 +1579,6 @@ public class DatabaseHandler {
 		ParserDocument parserDocument = new ParserDocument();
 		topic.setDeleteDate(null);
 		writeTopic(topic, topicVersion, parserDocument, conn, userVisible);
-		// reset topic existence vector
-		cachedTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 	}
 
 	/**
@@ -1746,12 +1731,13 @@ public class DatabaseHandler {
 				this.addCategory(category, conn);
 			}
 		}
-		// reset topic non-existence vector
-		cachedNonTopicsList = new WikiCacheMap(MAX_CACHED_LIST_SIZE);
 		if (parserDocument != null) {
 			WikiBase.getSearchEngine().deleteFromIndex(topic);
 			WikiBase.getSearchEngine().addToIndex(topic, parserDocument.getLinks());
 		}
+		WikiCache.removeFromCache(WikiCache.CACHE_TOPIC_CONTENT, topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiCache.CACHE_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiCache.CACHE_NON_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
 	}
 
 	/**

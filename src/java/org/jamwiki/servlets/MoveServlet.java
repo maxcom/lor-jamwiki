@@ -83,7 +83,6 @@ public class MoveServlet extends JAMWikiServlet {
 				}
 			}
 		}
-		JAMWikiServlet.removeCachedContents();
 		viewTopic(request, next, pageInfo, topicName);
 	}
 

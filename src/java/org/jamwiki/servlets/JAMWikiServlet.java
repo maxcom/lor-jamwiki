@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.jamwiki.Environment;
@@ -37,6 +38,7 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -60,7 +62,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String USER_COOKIE_DELIMITER = "|";
 	// FIXME - make configurable
 	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
-	private static LinkedHashMap cachedContents = new LinkedHashMap();
 
 	/**
 	 * This method ensures that the left menu, logo, and other required values
@@ -88,11 +89,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 			defaultTopic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 		}
 		// build the layout contents
-		String leftMenu = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
+		String leftMenu = JAMWikiServlet.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
 		next.addObject("leftMenu", leftMenu);
 		next.addObject("defaultTopic", defaultTopic);
 		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
-		String bottomArea = JAMWikiServlet.getCachedContent(request, virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
+		String bottomArea = JAMWikiServlet.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(PARAMETER_VIRTUAL_WIKI, virtualWikiName);
 	}
@@ -134,26 +135,27 @@ public abstract class JAMWikiServlet extends AbstractController {
 	/**
 	 *
 	 */
-	public static String getCachedContent(HttpServletRequest request, String virtualWiki, String topicName, boolean cook) {
-		String content = (String)cachedContents.get(virtualWiki + "-" + topicName);
-		if (content == null) {
-			try {
-				Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-				content = topic.getTopicContent();
-				if (cook) {
-					ParserInput parserInput = new ParserInput();
-					parserInput.setContext(request.getContextPath());
-					parserInput.setLocale(request.getLocale());
-					parserInput.setVirtualWiki(virtualWiki);
-					parserInput.setTopicName(topicName);
-					ParserDocument parserDocument = Utilities.parse(parserInput, content);
-					content = parserDocument.getContent();
-				}
-				cachedContents.put(virtualWiki + "-" + topicName, content);
-			} catch (Exception e) {
-				logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
-				return null;
+	protected static String cachedContent(String context, Locale locale, String virtualWiki, String topicName, boolean cook) {
+		String content = (String)WikiCache.retrieveFromCache(WikiCache.CACHE_TOPIC_CONTENT, virtualWiki, topicName);
+		if (content != null) {
+			return content;
+		}
+		try {
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+			content = topic.getTopicContent();
+			if (cook) {
+				ParserInput parserInput = new ParserInput();
+				parserInput.setContext(context);
+				parserInput.setLocale(locale);
+				parserInput.setVirtualWiki(virtualWiki);
+				parserInput.setTopicName(topicName);
+				ParserDocument parserDocument = Utilities.parse(parserInput, content);
+				content = parserDocument.getContent();
 			}
+			WikiCache.addToCache(WikiCache.CACHE_TOPIC_CONTENT, virtualWiki, topicName, content);
+		} catch (Exception e) {
+			logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
+			return null;
 		}
 		return content;
 	}
@@ -332,15 +334,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 		String view = SPRING_REDIRECT_PREFIX + target;
 		next.clear();
 		next.setViewName(view);
-	}
-
-	/**
-	 * Clears cached contents including the top area, left nav, bottom area, etc.
-	 * This method should be called when the contents of these areas may have been
-	 * modified.
-	 */
-	public static void removeCachedContents() {
-		cachedContents.clear();
 	}
 
 	/**
