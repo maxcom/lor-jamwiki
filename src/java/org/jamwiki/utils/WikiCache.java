@@ -22,11 +22,10 @@ package org.jamwiki.utils;
 public class WikiCache {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
-	private static WikiCacheMap[] caches = new WikiCacheMap[4];
+	private static WikiCacheMap[] caches = new WikiCacheMap[3];
 	public static final int CACHE_TOPIC_CONTENT = 0;
 	public static final int CACHE_TOPIC_NAME = 1;
-	public static final int CACHE_NON_TOPIC_NAME = 2;
-	public static final int CACHE_USER_LOGIN = 3;
+	public static final int CACHE_USER_LOGIN = 2;
 
 	static {
 		WikiCache.reset();
@@ -94,7 +93,6 @@ public class WikiCache {
 		// FIXME - make the cache sizes configurable in some way
 		WikiCache.caches[CACHE_TOPIC_CONTENT] = new WikiCacheMap(100);
 		WikiCache.caches[CACHE_TOPIC_NAME] = new WikiCacheMap(2000);
-		WikiCache.caches[CACHE_NON_TOPIC_NAME] = new WikiCacheMap(2000);
 		WikiCache.caches[CACHE_USER_LOGIN] = new WikiCacheMap(2000);
 	}
 
