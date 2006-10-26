@@ -26,6 +26,9 @@
 
 <c:if test="${!empty message}"><p><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p></c:if>
 
+<c:if test="${empty changes}"><p><f:message key="watchlist.caption.empty" /></p></c:if>
+
+<c:if test="${!empty changes}">
 <p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:Watchlist" /></p>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Watchlist" />">
@@ -60,5 +63,6 @@
 </c:forEach>
 </ul>
 </form>
+</c:if>
 
 </div>
