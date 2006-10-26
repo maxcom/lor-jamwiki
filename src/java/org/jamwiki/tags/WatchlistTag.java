@@ -38,7 +38,6 @@ public class WatchlistTag extends BodyTagSupport {
 	public int doStartTag() throws JspException {
 		try {
 			String tagValue = evaluateTag();
-			logger.info("RYAN: " + this.topic + " / " + tagValue);
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			Watchlist watchlist = Utilities.currentWatchlist(request);
 			if (watchlist.containsTopic(tagValue)) {
@@ -57,7 +56,6 @@ public class WatchlistTag extends BodyTagSupport {
 	public int doEndTag() throws JspException {
 		try {
 			String tagValue = evaluateTag();
-			logger.info("RYAN: " + this.topic + " / " + tagValue);
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 			Watchlist watchlist = Utilities.currentWatchlist(request);
 			if (watchlist.containsTopic(tagValue)) {
