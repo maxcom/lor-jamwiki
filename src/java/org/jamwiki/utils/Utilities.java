@@ -37,7 +37,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -127,7 +126,7 @@ public class Utilities {
 	 * @return The current logged-in user, or <code>null</code> if there is no
 	 *  user currently logged in.
 	 */
-	public static WikiUser currentUser(HttpServletRequest request) {
+	public static WikiUser currentUser(HttpServletRequest request) throws Exception {
 		// first look for user in the session
 		WikiUser user = (WikiUser)request.getSession().getAttribute(JAMWikiServlet.PARAMETER_USER);
 		if (user != null) return user;
@@ -143,7 +142,9 @@ public class Utilities {
 		} catch (Exception e) {
 			// FIXME - safe to ignore?
 		}
-		if (user != null) request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+		if (user != null) {
+			Utilities.login(request, null, user, false);
+		}
 		return user;
 	}
 
@@ -434,7 +435,7 @@ public class Utilities {
 	 * @return <code>true</code> if the current request contains a valid user
 	 *  object and if that user is an admin, <code>false</code> otherwise.
 	 */
-	public static boolean isAdmin(HttpServletRequest request) {
+	public static boolean isAdmin(HttpServletRequest request) throws Exception {
 		WikiUser user = currentUser(request);
 		return (user != null && user.getAdmin());
 	}
@@ -520,6 +521,45 @@ public class Utilities {
 		}
 		// all tests passed, it's an IP address
 		return true;
+	}
+
+	/**
+	 * Login the current user, setting a cookie if needed and adding any
+	 * required objects to the session.
+	 *
+	 * @param request The servlet request object.
+	 * @param response The servlet response object.  May be <code>null</code>
+	 *  if setCookie is <code>false</code>.
+	 * @param user The WikiUser being logged in.
+	 * @param setCookie Set to <code>true</code> if a cookie should be set to
+	 *  automatically remember the user during future visits.
+	 */
+	public static void login(HttpServletRequest request, HttpServletResponse response, WikiUser user, boolean setCookie) throws Exception {
+		if (user == null) {
+			return;
+		}
+		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+		if (setCookie) {
+			if (response == null) {
+				logger.warning("Attempt to set user cookie without specifying servlet response");
+				return;
+			}
+			String cookieValue = user.getLogin() + JAMWikiServlet.USER_COOKIE_DELIMITER + user.getEncodedPassword();
+			Utilities.addCookie(response, JAMWikiServlet.USER_COOKIE, cookieValue, JAMWikiServlet.USER_COOKIE_EXPIRES);
+		}
+	}
+
+	/**
+	 * Logout the current user, removing any cookies and session objects that
+	 * need to be removed.
+	 *
+	 * @param request The servlet request object.
+	 * @param response The servlet response object.  May not be
+	 *  <code>null</code>.
+	 */
+	public static void logout(HttpServletRequest request, HttpServletResponse response) {
+		request.getSession().invalidate();
+		Utilities.removeCookie(response, JAMWikiServlet.USER_COOKIE);
 	}
 
 	/**
@@ -731,6 +771,10 @@ public class Utilities {
 	 * @param cookieName The name of the cookie that is to be deleted.
 	 */
 	public static final void removeCookie(HttpServletResponse response, String cookieName) {
+		if (response == null) {
+			logger.warning("Attempt to remove cookie using null response object");
+			return;
+		}
 		Cookie cookie = new Cookie(cookieName, null);
 		cookie.setMaxAge(0);
 		// FIXME - need path to be the server base

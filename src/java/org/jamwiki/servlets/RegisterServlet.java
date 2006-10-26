@@ -104,7 +104,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
 		} else {
 			WikiBase.getHandler().writeWikiUser(user);
-			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+			Utilities.login(request, null, user, false);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();
 			this.redirect(next, virtualWikiName, topic);

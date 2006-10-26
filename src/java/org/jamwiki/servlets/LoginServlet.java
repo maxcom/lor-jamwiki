@@ -62,8 +62,7 @@ public class LoginServlet extends JAMWikiServlet {
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
-		request.getSession().invalidate();
-		Utilities.removeCookie(response, JAMWikiServlet.USER_COOKIE);
+		Utilities.logout(request, response);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
@@ -92,11 +91,8 @@ public class LoginServlet extends JAMWikiServlet {
 			pageInfo.setSpecial(true);
 			pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
 		} else {
-			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
-			if (request.getParameter("remember") != null) {
-				String cookieValue = user.getLogin() + JAMWikiServlet.USER_COOKIE_DELIMITER + user.getEncodedPassword();
-				Utilities.addCookie(response, JAMWikiServlet.USER_COOKIE, cookieValue, JAMWikiServlet.USER_COOKIE_EXPIRES);
-			}
+			boolean remember = (request.getParameter("remember") != null);
+			Utilities.login(request, response, user, remember);
 			this.redirect(next, virtualWikiName, redirect);
 		}
 	}

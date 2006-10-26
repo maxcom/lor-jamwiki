@@ -73,7 +73,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 *
+	 * Special login method - it cannot be assumed that the database schema
+	 * is unchanged, so do not use standard methods.
 	 */
 	private boolean login(HttpServletRequest request) throws Exception {
 		String password = request.getParameter("password");
@@ -166,6 +167,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// do not escape the HTML link
 			wm.setParamsWithoutEscaping(new String[]{htmlLink});
 			next.addObject("message", wm);
+			// re-login now that everything is up-to-date
+			WikiUser user = Utilities.currentUser(request);
+			Utilities.login(request, null, user, false);
 		} else {
 			next.addObject("error", new WikiMessage("upgrade.caption.upgradefailed"));
 			next.addObject("failure", "true");

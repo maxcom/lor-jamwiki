@@ -123,7 +123,7 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			WikiBase.reset(request.getLocale(), user);
-			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+			Utilities.login(request, null, user, false);
 			Environment.saveProperties();
 			return true;
 		}
