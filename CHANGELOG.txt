@@ -17,6 +17,7 @@
 * FEATURE: After editing a section, page will now reload to that section.
 * BUG: Fix parsing error when template parameters are preceded by whitespace.
 * BUG: Fix error when uploading files with non-English file names.
+* BUG: Recompile the HSQL JAR file to allow use with JDK 1.4.
 * FEATURE: Remove option to disable topic versioning.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
