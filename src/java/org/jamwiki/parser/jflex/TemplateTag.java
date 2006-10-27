@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.TimeZone;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -44,7 +42,6 @@ import org.springframework.util.StringUtils;
 public class TemplateTag implements ParserTag {
 
 	private static WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
-	private static Pattern PARAM_NAME_PATTERN = null;
 	// current date values
 	private static final String MAGIC_CURRENT_DAY = "CURRENTDAY";
 	private static final String MAGIC_CURRENT_DAY2 = "CURRENTDAY2";
@@ -125,11 +122,6 @@ public class TemplateTag implements ParserTag {
 	private Hashtable parameterValues = new Hashtable();
 
 	static {
-		try {
-			PARAM_NAME_PATTERN = Pattern.compile("(([^\\[\\{\\=]+)=)(.*)");
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
 		// current date values
 		MAGIC_WORDS.add(MAGIC_CURRENT_DAY);
 		MAGIC_WORDS.add(MAGIC_CURRENT_DAY2);
@@ -415,7 +407,7 @@ public class TemplateTag implements ParserTag {
 		int pos = content.indexOf("|");
 		if (pos == -1) return;
 		pos++;
-		Matcher nameMatcher = null;
+		int startPos = pos;
 		int endPos = -1;
 		int count = 1;
 		String substring = "";
@@ -423,18 +415,13 @@ public class TemplateTag implements ParserTag {
 		String value = "";
 		while (pos < content.length()) {
 			substring = content.substring(pos);
-			if (!StringUtils.hasText(name)) {
-				nameMatcher = PARAM_NAME_PATTERN.matcher(substring);
-				if (nameMatcher.matches()) {
-					name = nameMatcher.group(2);
-					pos += nameMatcher.group(1).length();
-					continue;
-				} else {
-					name = new Integer(count).toString();
-				}
-			}
 			endPos = -1;
-			if (substring.startsWith("{{{")) {
+			if (content.charAt(pos) == '=' && !StringUtils.hasText(name)) {
+				name = content.substring(startPos, pos).trim();
+				value = "";
+				pos++;
+				continue;
+			} else if (substring.startsWith("{{{")) {
 				// template parameter
 				endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
 			} else if (substring.startsWith("{{")) {
@@ -453,6 +440,7 @@ public class TemplateTag implements ParserTag {
 				name = "";
 				value = "";
 				pos++;
+				startPos = pos;
 				count++;
 				continue;
 			}

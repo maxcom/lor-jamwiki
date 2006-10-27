@@ -140,7 +140,9 @@ public class JFlexParser extends AbstractParser {
 		ParserDocument parserDocument = new ParserDocument();
 		parserDocument = this.parsePreProcess(raw, parserDocument, preMode);
 		if (mode >= JFlexParser.MODE_PROCESS) {
-			parserDocument = this.parseProcess(parserDocument.getContent(), parserDocument, JFlexParser.MODE_PROCESS);
+			// layout should not be done while parsing fragments
+			preMode = JFlexParser.MODE_PROCESS;
+			parserDocument = this.parseProcess(parserDocument.getContent(), parserDocument, preMode);
 		}
 		return parserDocument;
 	}

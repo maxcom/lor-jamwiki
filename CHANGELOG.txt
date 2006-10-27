@@ -15,6 +15,7 @@
   comments page.
 * FEATURE: Provide an option to set maximum table of contents depth.
 * FEATURE: After editing a section, page will now reload to that section.
+* BUG: Fix parsing error when template parameters are preceded by whitespace.
 * FEATURE: Remove option to disable topic versioning.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 
