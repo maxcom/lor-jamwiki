@@ -246,6 +246,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (lastTopic != null && lastTopic.getTopicContent().equals(contents)) {
 			// topic hasn't changed. redirect to prevent user from refreshing and re-submitting
 			this.redirect(next, virtualWiki, topic.getName());
+			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = Utilities.currentUser(request);
