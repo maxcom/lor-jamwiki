@@ -18,6 +18,7 @@
 * BUG: Fix parsing error when template parameters are preceded by whitespace.
 * FEATURE: Remove option to disable topic versioning.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
+* FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 
 0.4.1
 =====
