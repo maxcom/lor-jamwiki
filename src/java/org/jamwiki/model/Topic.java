@@ -88,6 +88,13 @@ public class Topic {
 	/**
 	 *
 	 */
+	public boolean getDeleted() {
+		return (this.deleteDate != null);
+	}
+
+	/**
+	 *
+	 */
 	public Timestamp getDeleteDate() {
 		return this.deleteDate;
 	}

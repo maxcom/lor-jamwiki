@@ -11,6 +11,8 @@
 * FEATURE: "Go To" button in search should redirect to search results if
   no such topic exists.
 * FEATURE: Be more efficient with caching to improve performance.
+* FEATURE: Add a checkbox to Special:Manage to delete/undelete an associated
+  comments page.
 * FEATURE: After editing a section, page will now reload to that section.
 * FEATURE: Remove option to disable topic versioning.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).

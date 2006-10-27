@@ -38,6 +38,11 @@
 	<td class="formcaption" nowrap><label for="undeleteComment"><f:message key="manage.undelete.reason" /></label>: </td>
 	<td class="formelement" width="90%"><input type="text" name="undeleteComment" value="" id="undeleteComment" size="60" /></td>
 </tr>
+<c:if test="${!empty manageCommentsPage}">
+<tr>
+	<td class="formcaption" colspan="2"><label for="manageCommentsPage"><f:message key="manage.undelete.commentspage" /></label>:&#160;<input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></td>
+</tr>
+</c:if>
 <tr><td>&#160;</td><td align="left"><input type="submit" name="undelete" value="<f:message key="common.undelete" />" /></td></tr>
 </form>
 </c:if>
@@ -50,6 +55,11 @@
 	<td class="formcaption" nowrap><label for="deleteComment"><f:message key="manage.delete.reason" /></label>: </td>
 	<td class="formelement" width="90%"><input type="text" name="deleteComment" value="" id="deleteComment" size="60" /></td>
 </tr>
+<c:if test="${!empty manageCommentsPage}">
+<tr>
+	<td class="formcaption" colspan="2"><label for="manageCommentsPage"><f:message key="manage.delete.commentspage" /></label>:&#160;<input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></td>
+</tr>
+</c:if>
 <tr><td>&#160;</td><td align="left"><input type="submit" name="delete" value="<f:message key="common.delete" />" /></td></tr>
 </form>
 <tr><td colspan="2"><h4><f:message key="manage.caption.permissions" /></h4></td></tr>
