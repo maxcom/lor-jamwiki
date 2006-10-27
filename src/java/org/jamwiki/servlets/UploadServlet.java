@@ -99,9 +99,7 @@ public class UploadServlet extends JAMWikiServlet {
 		} else {
 			fileName = fileName.substring(0, pos) + suffix + fileName.substring(pos);
 		}
-		// decode, then encode to ensure that any previously encoded characters
-		// aren't encoded twice
-		return Utilities.encodeForURL(Utilities.decodeFromURL(fileName));
+		return fileName;
 	}
 
 	/**
@@ -120,6 +118,7 @@ public class UploadServlet extends JAMWikiServlet {
 			if ((pos + 1) >= filename.length()) return "";
 			filename = filename.substring(pos + 1);
 		}
+		filename = StringUtils.replace(filename.trim(), " ", "_");
 		return filename;
 	}
 
@@ -208,7 +207,7 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName));
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
-		viewTopic(request, next, pageInfo, topicName);
+		this.redirect(next, virtualWiki, topicName);
 	}
 
 	/**

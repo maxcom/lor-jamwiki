@@ -16,6 +16,7 @@
 * FEATURE: Provide an option to set maximum table of contents depth.
 * FEATURE: After editing a section, page will now reload to that section.
 * BUG: Fix parsing error when template parameters are preceded by whitespace.
+* BUG: Fix error when uploading files with non-English file names.
 * FEATURE: Remove option to disable topic versioning.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
