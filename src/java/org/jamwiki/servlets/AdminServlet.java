@@ -116,6 +116,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
 			setProperty(props, request, Environment.PROP_PARSER_CLASS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
+			setProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_HTML);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_ALLOW_TEMPLATES);
@@ -123,7 +124,6 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
-
 			if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
 				DatabaseHandler.setupDefaultDatabase(props);
 			} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {

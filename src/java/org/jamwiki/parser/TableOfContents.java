@@ -224,6 +224,10 @@ public class TableOfContents {
 			entry = (TableOfContentsEntry)e.nextElement();
 			// adjusted level determines how far to indent the list
 			adjustedLevel = ((entry.level - minLevel) + 1);
+			if (adjustedLevel > Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH)) {
+				// do not display if nested deeper than max
+				continue;
+			}
 			closeList(adjustedLevel, text);
 			openList(adjustedLevel, text);
 			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(Utilities.escapeHTML(entry.text)).append("</a>");

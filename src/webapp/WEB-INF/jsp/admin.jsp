@@ -112,11 +112,11 @@ function onUserGroupType() {
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>" size="5" maxlength="5" value="<%= props.getProperty(Environment.PROP_IMAGE_RESIZE_INCREMENT) %>" id="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>" size="5" maxlength="4" value="<%= props.getProperty(Environment.PROP_IMAGE_RESIZE_INCREMENT) %>" id="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_RECENT_CHANGES_NUM %>"><f:message key="admin.caption.recentchangesdefault" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_RECENT_CHANGES_NUM %>" size="3" maxlength="3" value="<%= props.getProperty(Environment.PROP_RECENT_CHANGES_NUM) %>" id="<%= Environment.PROP_RECENT_CHANGES_NUM %>" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_RECENT_CHANGES_NUM %>" size="5" maxlength="4" value="<%= props.getProperty(Environment.PROP_RECENT_CHANGES_NUM) %>" id="<%= Environment.PROP_RECENT_CHANGES_NUM %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>
@@ -132,6 +132,11 @@ function onUserGroupType() {
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC %>"><f:message key="admin.caption.tableofcontents" /></label></td>
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_TOC %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_TOC).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_TOC %>" /></td>
 </tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><f:message key="admin.caption.tableofcontentsdepth" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_PARSER_TOC_DEPTH %>" value="<%= props.getProperty(Environment.PROP_PARSER_TOC_DEPTH) %>" size="5" maxlength="1" id="<%= Environment.PROP_PARSER_TOC_DEPTH %>" /></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.tableofcontentsdepthhelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><f:message key="admin.caption.allowhtml" /></label></td>
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_HTML).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_HTML %>" /></td>
@@ -231,11 +236,11 @@ FIXME - Email not supported right now, comment this out
 <tr><td colspan="2"><h4><f:message key="admin.caption.dbcp.header" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_ACTIVE %>"><f:message key="admin.caption.dbcp.maxactive" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" id="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" value="<%= props.getProperty(Environment.PROP_DBCP_MAX_ACTIVE) %>" size="5" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" id="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" value="<%= props.getProperty(Environment.PROP_DBCP_MAX_ACTIVE) %>" size="5" maxlength="3" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_IDLE %>"><f:message key="admin.caption.dbcp.maxidle" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MAX_IDLE %>" id="<%= Environment.PROP_DBCP_MAX_IDLE %>" value="<%= props.getProperty(Environment.PROP_DBCP_MAX_IDLE) %>" size="5" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MAX_IDLE %>" id="<%= Environment.PROP_DBCP_MAX_IDLE %>" value="<%= props.getProperty(Environment.PROP_DBCP_MAX_IDLE) %>" size="5" maxlength="3" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>"><f:message key="admin.caption.dbcp.testonborrow" /></label></td>
@@ -251,15 +256,15 @@ FIXME - Email not supported right now, comment this out
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>"><f:message key="admin.caption.dbcp.minevictableidletime" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>" id="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>" value="<%= props.getProperty(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) %>" size="5" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>" id="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>" value="<%= props.getProperty(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) %>" size="5" maxlength="4" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>"><f:message key="admin.caption.dbcp.timebetweenevictionruns" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>" id="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>" value="<%= props.getProperty(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) %>" size="5" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>" id="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>" value="<%= props.getProperty(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) %>" size="5" maxlength="4" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>"><f:message key="admin.caption.dbcp.numtestsperevictionrun" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>" id="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>" value="<%= props.getProperty(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN) %>" size="5" /></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>" id="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>" value="<%= props.getProperty(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN) %>" size="5" maxlength="4" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>"><f:message key="admin.caption.dbcp.whenexhaustedaction" /></label></td>
