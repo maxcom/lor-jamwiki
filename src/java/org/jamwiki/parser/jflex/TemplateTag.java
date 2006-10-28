@@ -19,9 +19,12 @@ package org.jamwiki.parser.jflex;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -118,10 +121,16 @@ public class TemplateTag implements ParserTag {
 	private static final String MAGIC_SERVER_NAME = "SERVERNAME";
 	private static Vector MAGIC_WORDS = new Vector();
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
+	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
 
-	private Hashtable parameterValues = new Hashtable();
+	private HashMap parameterValues = new HashMap();
 
 	static {
+		try {
+			PARAM_NAME_VALUE_PATTERN = Pattern.compile("[\\s]*([A-Za-z0-9_\\ \\-]+)[\\s]*\\=([\\s\\S]*)");
+		} catch (Exception e) {
+			logger.severe("Unable to compile pattern", e);
+		}
 		// current date values
 		MAGIC_WORDS.add(MAGIC_CURRENT_DAY);
 		MAGIC_WORDS.add(MAGIC_CURRENT_DAY2);
@@ -401,60 +410,25 @@ public class TemplateTag implements ParserTag {
 	 * parse the parameter names and values.
 	 */
 	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
-		String content = "";
-		content = raw.substring("{{".length(), raw.length() - "}}".length());
-		// strip the template name
-		int pos = content.indexOf("|");
-		if (pos == -1) return;
-		pos++;
-		int startPos = pos;
-		int endPos = -1;
-		int count = 1;
-		String substring = "";
-		String name = "";
-		String value = "";
-		while (pos < content.length()) {
-			substring = content.substring(pos);
-			endPos = -1;
-			if (content.charAt(pos) == '=' && !StringUtils.hasText(name)) {
-				name = content.substring(startPos, pos).trim();
-				value = "";
-				pos++;
-				continue;
-			} else if (substring.startsWith("{{{")) {
-				// template parameter
-				endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
-			} else if (substring.startsWith("{{")) {
-				// template
-				endPos = findMatchingEndTag(content, pos, "{{", "}}");
-			} else if (substring.startsWith("[[")) {
-				// link
-				endPos = findMatchingEndTag(content, pos, "[[", "]]");
-			} else if (substring.startsWith("{|")) {
-				// table
-				endPos = findMatchingEndTag(content, pos, "{|", "|}");
-			} else if (content.charAt(pos) == '|') {
-				// new parameter
-				value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
-				this.parameterValues.put(name, value);
-				name = "";
-				value = "";
-				pos++;
-				startPos = pos;
-				count++;
-				continue;
-			}
-			if (endPos != -1) {
-				value += content.substring(pos, endPos);
-				pos = endPos;
-			} else {
-				value += content.charAt(pos);
-				pos++;
-			}
+		String content = raw.substring("{{".length(), raw.length() - "}}".length());
+		Vector tokens = this.tokenizeParams(content);
+		if (tokens.size() == 0) {
+			throw new Exception("No template name found in " + raw);
 		}
-		if (StringUtils.hasText(name)) {
-			// add the last one
-			value = ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
+		int count = -1;
+		for (Iterator iterator = tokens.iterator(); iterator.hasNext();) {
+			String token = (String)iterator.next();
+			count++;
+			if (count == 0) {
+				// first token is template name
+				continue;
+			}
+			String[] nameValue = this.tokenizeNameValue(token);
+			String name = nameValue[0];
+			if (name == null) {
+				name = new Integer(count).toString();
+			}
+			String value = (nameValue[1] == null) ? null : ParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_TEMPLATE);
 			this.parameterValues.put(name, value);
 		}
 	}
@@ -705,5 +679,65 @@ public class TemplateTag implements ParserTag {
 		name = (templateTopic != null) ? templateTopic.getName() : name;
 		parserDocument.addLink(name);
 		parserDocument.addTemplate(name);
+	}
+
+	/**
+	 *
+	 */
+	private String[] tokenizeNameValue(String content) {
+		String[] results = new String[2];
+		results[0] = null;
+		results[1] = content;
+		Matcher m = PARAM_NAME_VALUE_PATTERN.matcher(content);
+		if (m.matches()) {
+			results[0] = m.group(1);
+			results[1] = m.group(2);
+		}
+		return results;
+	}
+
+	/**
+	 * Parse a template string of the form "param1|param2|param3" into
+	 * tokens (param1, param2, and param3 in the example).
+	 */
+	private Vector tokenizeParams(String content) {
+		Vector tokens = new Vector();
+		int pos = 0;
+		int endPos = -1;
+		String substring = "";
+		String value = "";
+		while (pos < content.length()) {
+			substring = content.substring(pos);
+			endPos = -1;
+			if (substring.startsWith("{{{")) {
+				// template parameter
+				endPos = findMatchingEndTag(content, pos, "{{{", "}}}");
+			} else if (substring.startsWith("{{")) {
+				// template
+				endPos = findMatchingEndTag(content, pos, "{{", "}}");
+			} else if (substring.startsWith("[[")) {
+				// link
+				endPos = findMatchingEndTag(content, pos, "[[", "]]");
+			} else if (substring.startsWith("{|")) {
+				// table
+				endPos = findMatchingEndTag(content, pos, "{|", "|}");
+			} else if (content.charAt(pos) == '|') {
+				// new token
+				tokens.add(new String(value));
+				value = "";
+				pos++;
+				continue;
+			}
+			if (endPos != -1) {
+				value += content.substring(pos, endPos);
+				pos = endPos;
+			} else {
+				value += content.charAt(pos);
+				pos++;
+			}
+		}
+		// add the last one
+		tokens.add(new String(value));
+		return tokens;
 	}
 }
