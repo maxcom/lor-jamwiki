@@ -308,18 +308,15 @@ public class TemplateTag implements ParserTag {
 	 * return the default value if it exists.
 	 */
 	private String parseParamDefaultValue(ParserInput parserInput, String raw) throws Exception {
-		int pos = raw.indexOf("|");
-		String defaultValue = null;
-		if (pos == -1) {
-			// no default specified
+		Vector tokens = this.tokenizeParams(raw);
+		if (tokens.size() < 2) {
 			return null;
 		}
-		if (pos + 1 >= raw.length()) {
-			// empty default
-			return "";
-		}
-		defaultValue = raw.substring(pos + 1);
-		return ParserUtil.parseFragment(parserInput, defaultValue, JFlexParser.MODE_TEMPLATE);
+		// table elements mess up default processing, so just return anything after
+		// the first parameter to avoid having to implement special table logic
+		String param1 = (String)tokens.elementAt(0);
+		String value = raw.substring(param1.length() + 1);
+		return ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
 	}
 
 	/**
