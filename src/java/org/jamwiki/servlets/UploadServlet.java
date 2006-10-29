@@ -23,6 +23,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -108,15 +109,8 @@ public class UploadServlet extends JAMWikiServlet {
 	private static String sanitizeFilename(String filename) {
 		if (!StringUtils.hasText(filename)) return null;
 		// some browsers set the full path, so strip to just the file name
-		int pos = filename.lastIndexOf("/");
-		if (pos != -1) {
-			if ((pos + 1) >= filename.length()) return "";
-			filename = filename.substring(pos + 1);
-		}
-		pos = filename.lastIndexOf("\\");
-		if (pos != -1) {
-			if ((pos + 1) >= filename.length()) return "";
-			filename = filename.substring(pos + 1);
+		if (filename != null) {
+			filename = FilenameUtils.getName(filename);
 		}
 		filename = StringUtils.replace(filename.trim(), " ", "_");
 		return filename;
