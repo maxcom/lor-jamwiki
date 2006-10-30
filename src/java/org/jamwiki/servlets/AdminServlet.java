@@ -54,7 +54,7 @@ public class AdminServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, "Special:Admin", errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, "Special:Admin", errorMessage);
 		}
 		String function = request.getParameter("function");
 		if (!StringUtils.hasText(function)) {

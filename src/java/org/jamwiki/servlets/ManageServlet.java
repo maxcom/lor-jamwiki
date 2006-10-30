@@ -42,7 +42,7 @@ public class ManageServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
 		}
 		if (StringUtils.hasText(request.getParameter("delete"))) {
 			delete(request, next, pageInfo);

@@ -19,6 +19,8 @@
 * BUG: Fix error when uploading files with non-English file names.
 * BUG: Recompile the HSQL JAR file to allow use with JDK 1.4.
 * FEATURE: Remove option to disable topic versioning.
+* BUG: Some unhandled exceptions could cause confusing error messages to be
+  shown to the user, now fixed.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 

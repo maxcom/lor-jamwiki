@@ -45,7 +45,7 @@ public class LoginServlet extends JAMWikiServlet {
 		} else if (request.getParameter("function") != null) {
 			login(request, response, next, pageInfo);
 		} else {
-			return ServletUtil.viewLogin(request, null, null);
+			return ServletUtil.viewLogin(request, pageInfo, null, null);
 		}
 		return next;
 	}

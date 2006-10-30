@@ -270,47 +270,43 @@ public class ServletUtil {
 	/**
 	 *
 	 */
-	protected static void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+	protected static void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (next.getViewName() != null && next.getViewName().startsWith(ServletUtil.SPRING_REDIRECT_PREFIX)) {
 			// if this is a redirect, no need to load anything
 			return;
 		}
 		// load cached top area, nav bar, etc.
-		try {
-			ServletUtil.buildLayout(request, next);
-			// add link to user page and comments page
-			WikiUser user = Utilities.currentUser(request);
-			if (user != null) {
-				next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
-				next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
-				next.addObject("adminUser", new Boolean(user.getAdmin()));
+		ServletUtil.buildLayout(request, next);
+		// add link to user page and comments page
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) {
+			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
+			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
+			next.addObject("adminUser", new Boolean(user.getAdmin()));
+		}
+		if (!pageInfo.getSpecial() && !pageInfo.getAdmin()) {
+			String article = Utilities.extractTopicLink(pageInfo.getTopicName());
+			String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
+			next.addObject("article", article);
+			next.addObject("comments", comments);
+			String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageInfo.getTopicName());
+			if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+				editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 			}
-			if (!pageInfo.getSpecial()) {
-				String article = Utilities.extractTopicLink(pageInfo.getTopicName());
-				String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
-				next.addObject("article", article);
-				next.addObject("comments", comments);
-				String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageInfo.getTopicName());
-				if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
-					editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
-				}
-				next.addObject("edit", editLink);
-				if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
-					String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-					if (WikiBase.getHandler().exists(virtualWiki, article)) {
-						pageInfo.setCanMove(true);
-					}
-				}
-				Watchlist watchlist = Utilities.currentWatchlist(request);
-				if (watchlist.containsTopic(pageInfo.getTopicName())) {
-					pageInfo.setWatched(true);
+			next.addObject("edit", editLink);
+			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
+				String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+				if (WikiBase.getHandler().exists(virtualWiki, article)) {
+					pageInfo.setCanMove(true);
 				}
 			}
-			if (!StringUtils.hasText(pageInfo.getTopicName())) {
-				pageInfo.setTopicName(ServletUtil.getTopicFromURI(request));
+			Watchlist watchlist = Utilities.currentWatchlist(request);
+			if (watchlist.containsTopic(pageInfo.getTopicName())) {
+				pageInfo.setWatched(true);
 			}
-		} catch (Exception e) {
-			logger.severe("Unable to build default page layout", e);
+		}
+		if (!StringUtils.hasText(pageInfo.getTopicName())) {
+			pageInfo.setTopicName(ServletUtil.getTopicFromURI(request));
 		}
 		next.addObject(JAMWikiServlet.PARAMETER_PAGE_INFO, pageInfo);
 	}
@@ -347,7 +343,11 @@ public class ServletUtil {
 		} else {
 			next.addObject("errorMessage", new WikiMessage("error.unknown", e.toString()));
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		try {
+			ServletUtil.loadDefaults(request, next, pageInfo);
+		} catch (Exception err) {
+			logger.severe("Unable to load default layout", err);
+		}
 		return next;
 	}
 
@@ -361,9 +361,9 @@ public class ServletUtil {
 	 * @return Returns a ModelAndView object corresponding to the login page display.
 	 * @throws Exception Thrown if any error occurs while preparing the login page display.
 	 */
-	protected static ModelAndView viewLogin(HttpServletRequest request, String topic, WikiMessage errorMessage) throws Exception {
+	protected static ModelAndView viewLogin(HttpServletRequest request, WikiPageInfo pageInfo, String topic, WikiMessage errorMessage) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
+		pageInfo.reset();
 		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
@@ -383,7 +383,6 @@ public class ServletUtil {
 		if (errorMessage != null) {
 			next.addObject("errorMessage", errorMessage);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

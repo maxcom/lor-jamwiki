@@ -44,7 +44,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, "Special:Convert", errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, "Special:Convert", errorMessage);
 		}
 		if (StringUtils.hasText(request.getParameter("tofile"))) {
 			convertToFile(request, next, pageInfo);

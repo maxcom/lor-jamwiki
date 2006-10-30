@@ -48,7 +48,7 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		ModelAndView loginRequired = loginRequired(request);
+		ModelAndView loginRequired = loginRequired(request, pageInfo);
 		if (loginRequired != null) {
 			return loginRequired;
 		}
@@ -151,7 +151,7 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private ModelAndView loginRequired(HttpServletRequest request) throws Exception {
+	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = ServletUtil.getTopicFromRequest(request);
 		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(topicName) || !StringUtils.hasText(virtualWiki)) {
@@ -159,12 +159,12 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.login");
-			return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.loginadmin", topicName);
-			return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
 		}
 		return null;
 	}

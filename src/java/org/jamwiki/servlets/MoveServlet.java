@@ -42,7 +42,7 @@ public class MoveServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
 		}
 		if (request.getParameter("move") != null) {
 			move(request, next, pageInfo);

@@ -71,6 +71,20 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
+	protected void reset() {
+		this.admin = false;
+		this.action = -1;
+		this.canMove = false;
+		this.pageTitle = null;
+		this.redirectName = null;
+		this.topicName = "";
+		this.special = false;
+		this.watched = false;
+	}
+
+	/**
+	 *
+	 */
 	public boolean getActionAdmin() {
 		return (this.action == ACTION_ADMIN);
 	}

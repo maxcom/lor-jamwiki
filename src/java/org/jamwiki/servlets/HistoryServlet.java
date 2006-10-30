@@ -56,6 +56,9 @@ public class HistoryServlet extends JAMWikiServlet {
 	private void history(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String topicName = ServletUtil.getTopicFromRequest(request);
+		if (!StringUtils.hasText(topicName)) {
+			throw new WikiException(new WikiMessage("common.exception.notopic"));
+		}
 		pageInfo.setAction(WikiPageInfo.ACTION_HISTORY);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
