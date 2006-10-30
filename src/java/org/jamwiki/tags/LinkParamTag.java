@@ -16,7 +16,6 @@
  */
 package org.jamwiki.tags;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
