@@ -39,23 +39,16 @@ public class MoveServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
-				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
-			}
-			if (request.getParameter("move") != null) {
-				move(request, next, pageInfo);
-			} else {
-				view(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
+			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		if (request.getParameter("move") != null) {
+			move(request, next, pageInfo);
+		} else {
+			view(request, next, pageInfo);
+		}
 		return next;
 	}
 

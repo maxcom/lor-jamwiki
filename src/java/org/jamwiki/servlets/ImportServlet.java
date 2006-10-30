@@ -39,20 +39,13 @@ public class ImportServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
-			if (contentType.indexOf("multipart") != -1) {
-				importFile(request, next, pageInfo);
-			} else {
-				importView(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
+		if (contentType.indexOf("multipart") != -1) {
+			importFile(request, next, pageInfo);
+		} else {
+			importView(request, next, pageInfo);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

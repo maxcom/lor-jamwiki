@@ -50,20 +50,13 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
-			if (contentType.indexOf("multipart") != -1) {
-				upload(request, next, pageInfo);
-			} else {
-				view(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
+		if (contentType.indexOf("multipart") != -1) {
+			upload(request, next, pageInfo);
+		} else {
+			view(request, next, pageInfo);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

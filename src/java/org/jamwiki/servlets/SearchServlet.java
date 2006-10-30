@@ -35,19 +35,12 @@ public class SearchServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (request.getParameter("jumpto") != null) {
-				jumpTo(request, next, pageInfo);
-			} else {
-				search(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (request.getParameter("jumpto") != null) {
+			jumpTo(request, next, pageInfo);
+		} else {
+			search(request, next, pageInfo);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

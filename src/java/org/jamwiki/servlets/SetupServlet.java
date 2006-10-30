@@ -49,28 +49,20 @@ public class SetupServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("setup");
-		WikiPageInfo pageInfo = new WikiPageInfo();
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isFirstUse()) {
+			throw new WikiException(new WikiMessage("setup.error.notrequired"));
+		}
+		String function = (request.getParameter("function") != null) ? request.getParameter("function") : request.getParameter("override");
+		if (function == null) function = "";
 		try {
-			if (!Utilities.isFirstUse()) {
-				throw new WikiException(new WikiMessage("setup.error.notrequired"));
+			if (!StringUtils.hasText(function)) {
+				setup(request, next, pageInfo);
+			} else if (initialize(request, next, pageInfo)) {
+				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 			}
-			String function = (request.getParameter("function") != null) ? request.getParameter("function") : request.getParameter("override");
-			if (function == null) function = "";
-			try {
-				if (!StringUtils.hasText(function)) {
-					setup(request, next, pageInfo);
-				} else if (initialize(request, next, pageInfo)) {
-					next = new ModelAndView("wiki");
-					ServletUtil.viewTopic(request, next, pageInfo, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-					ServletUtil.loadDefaults(request, next, pageInfo);
-				}
-			} catch (Exception e) {
-				handleSetupError(request, next, pageInfo, e);
-			}
-		} catch (WikiException e) {
-			return ServletUtil.viewError(request, e);
+		} catch (Exception e) {
+			handleSetupError(request, next, pageInfo, e);
 		}
 		return next;
 	}
@@ -93,6 +85,14 @@ public class SetupServlet extends JAMWikiServlet {
 		} else {
 			next.addObject("errorMessage", new WikiMessage("error.unknown", e.getMessage()));
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected void initParams() {
+		this.layout = false;
+		this.displayJSP = "setup";
 	}
 
 	/**

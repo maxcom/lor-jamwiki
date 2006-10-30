@@ -36,30 +36,26 @@ public class PrintableServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("printable");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			print(request, next, pageInfo);
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
-		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		this.print(request, next, pageInfo);
 		return next;
 	}
 
 	/**
 	 *
 	 */
+	protected void initParams() {
+		this.displayJSP = "printable";
+	}
+
+	/**
+	 *
+	 */
 	private void print(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String topicName = ServletUtil.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
-		}
-		// FIXME - full URLs should be printed, need some sort of switch
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		if (!StringUtils.hasText(virtualWiki)) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {

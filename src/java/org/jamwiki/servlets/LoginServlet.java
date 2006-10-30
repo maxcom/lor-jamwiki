@@ -39,21 +39,14 @@ public class LoginServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (ServletUtil.isTopic(request, "Special:Logout")) {
-				logout(request, response, next, pageInfo);
-			} else if (request.getParameter("function") != null) {
-				login(request, response, next, pageInfo);
-			} else {
-				return ServletUtil.viewLogin(request, null, null);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (ServletUtil.isTopic(request, "Special:Logout")) {
+			logout(request, response, next, pageInfo);
+		} else if (request.getParameter("function") != null) {
+			login(request, response, next, pageInfo);
+		} else {
+			return ServletUtil.viewLogin(request, null, null);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

@@ -51,30 +51,23 @@ public class AdminServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!Utilities.isAdmin(request)) {
-				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return ServletUtil.viewLogin(request, "Special:Admin", errorMessage);
-			}
-			String function = request.getParameter("function");
-			if (!StringUtils.hasText(function)) {
-				view(request, next, pageInfo, null);
-			} else if (function.equals("refreshIndex")) {
-				refreshIndex(request, next, pageInfo);
-			} else if (function.equals("properties")) {
-				properties(request, next, pageInfo);
-			} else if (function.equals("addVirtualWiki")) {
-				addVirtualWiki(request, next, pageInfo);
-			} else if (function.equals("recentChanges")) {
-				recentChanges(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isAdmin(request)) {
+			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, "Special:Admin", errorMessage);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		String function = request.getParameter("function");
+		if (!StringUtils.hasText(function)) {
+			view(request, next, pageInfo, null);
+		} else if (function.equals("refreshIndex")) {
+			refreshIndex(request, next, pageInfo);
+		} else if (function.equals("properties")) {
+			properties(request, next, pageInfo);
+		} else if (function.equals("addVirtualWiki")) {
+			addVirtualWiki(request, next, pageInfo);
+		} else if (function.equals("recentChanges")) {
+			recentChanges(request, next, pageInfo);
+		}
 		return next;
 	}
 

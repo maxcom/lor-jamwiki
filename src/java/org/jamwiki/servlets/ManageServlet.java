@@ -39,27 +39,20 @@ public class ManageServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!Utilities.isAdmin(request)) {
-				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
-			}
-			if (StringUtils.hasText(request.getParameter("delete"))) {
-				delete(request, next, pageInfo);
-			} else if (StringUtils.hasText(request.getParameter("undelete"))) {
-				undelete(request, next, pageInfo);
-			} else if (StringUtils.hasText(request.getParameter("permissions"))) {
-				permissions(request, next, pageInfo);
-			} else {
-				view(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isAdmin(request)) {
+			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		if (StringUtils.hasText(request.getParameter("delete"))) {
+			delete(request, next, pageInfo);
+		} else if (StringUtils.hasText(request.getParameter("undelete"))) {
+			undelete(request, next, pageInfo);
+		} else if (StringUtils.hasText(request.getParameter("permissions"))) {
+			permissions(request, next, pageInfo);
+		} else {
+			view(request, next, pageInfo);
+		}
 		return next;
 	}
 

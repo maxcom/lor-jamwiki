@@ -41,19 +41,12 @@ public class HistoryServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!StringUtils.hasText(request.getParameter("topicVersionId"))) {
-				history(request, next, pageInfo);
-			} else {
-				viewVersion(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!StringUtils.hasText(request.getParameter("topicVersionId"))) {
+			history(request, next, pageInfo);
+		} else {
+			viewVersion(request, next, pageInfo);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

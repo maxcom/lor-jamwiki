@@ -47,23 +47,16 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			ModelAndView loginRequired = loginRequired(request);
-			if (loginRequired != null) {
-				return loginRequired;
-			}
-			if (isSave(request)) {
-				save(request, next, pageInfo);
-			} else {
-				edit(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		ModelAndView loginRequired = loginRequired(request);
+		if (loginRequired != null) {
+			return loginRequired;
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		if (isSave(request)) {
+			save(request, next, pageInfo);
+		} else {
+			edit(request, next, pageInfo);
+		}
 		return next;
 	}
 

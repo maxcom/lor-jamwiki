@@ -41,25 +41,18 @@ public class PersistencyServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!Utilities.isAdmin(request)) {
-				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return ServletUtil.viewLogin(request, "Special:Convert", errorMessage);
-			}
-			if (StringUtils.hasText(request.getParameter("tofile"))) {
-				convertToFile(request, next, pageInfo);
-			} else if (StringUtils.hasText(request.getParameter("todatabase"))) {
-				convertToDatabase(request, next, pageInfo);
-			} else {
-				view(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isAdmin(request)) {
+			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, "Special:Convert", errorMessage);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		if (StringUtils.hasText(request.getParameter("tofile"))) {
+			convertToFile(request, next, pageInfo);
+		} else if (StringUtils.hasText(request.getParameter("todatabase"))) {
+			convertToDatabase(request, next, pageInfo);
+		} else {
+			view(request, next, pageInfo);
+		}
 		return next;
 	}
 

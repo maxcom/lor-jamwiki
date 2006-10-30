@@ -53,23 +53,25 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("upgrade");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!Utilities.isUpgrade()) {
-				throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
-			}
-			String function = request.getParameter("function");
-			if (!StringUtils.hasText(function)) {
-				view(request, next, pageInfo);
-			} else if (function.equals("upgrade")) {
-				upgrade(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isUpgrade()) {
+			throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
+		}
+		String function = request.getParameter("function");
+		if (!StringUtils.hasText(function)) {
+			view(request, next, pageInfo);
+		} else if (function.equals("upgrade")) {
+			upgrade(request, next, pageInfo);
 		}
 		return next;
+	}
+
+	/**
+	 *
+	 */
+	protected void initParams() {
+		this.layout = false;
+		this.displayJSP = "upgrade";
 	}
 
 	/**

@@ -37,15 +37,8 @@ public class DiffServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			diff(request, next, pageInfo);
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
-		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		this.diff(request, next, pageInfo);
 		return next;
 	}
 

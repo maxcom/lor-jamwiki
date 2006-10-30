@@ -42,20 +42,13 @@ public class WatchlistServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			String topic = request.getParameter("topic");
-			if (!StringUtils.hasText(topic)) {
-				view(request, next, pageInfo);
-			} else {
-				update(request, next, pageInfo);
-			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String topic = request.getParameter("topic");
+		if (!StringUtils.hasText(topic)) {
+			view(request, next, pageInfo);
+		} else {
+			update(request, next, pageInfo);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

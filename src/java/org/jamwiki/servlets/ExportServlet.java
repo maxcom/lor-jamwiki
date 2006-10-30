@@ -32,7 +32,7 @@ public class ExportServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 			String content = "";
@@ -41,9 +41,16 @@ public class ExportServlet extends JAMWikiServlet {
 			out.print(content);
 			out.close();
 		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+			logger.severe("Failure while exporting", e);
 		}
 		// do not load defaults or redirect - return as raw XML
 		return null;
+	}
+
+	/**
+	 *
+	 */
+	protected void initParams() {
+		this.layout = false;
 	}
 }

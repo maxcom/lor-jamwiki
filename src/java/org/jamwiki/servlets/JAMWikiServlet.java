@@ -16,7 +16,10 @@
  */
 package org.jamwiki.servlets;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
@@ -35,4 +38,39 @@ public abstract class JAMWikiServlet extends AbstractController {
 	public static final String USER_COOKIE_DELIMITER = "|";
 	// FIXME - make configurable
 	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
+
+	/** Flag to indicate whether or not the servlet should load the nav bar and other layout elements. */
+	protected boolean layout = true;
+	/** The prefix of the JSP file used to display the servlet output. */
+	protected String displayJSP = "wiki";
+
+	/**
+	 *
+	 */
+	protected abstract ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception;
+
+	/**
+	 *
+	 */
+	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+		initParams();
+		ModelAndView next = new ModelAndView(this.displayJSP);
+		WikiPageInfo pageInfo = new WikiPageInfo();
+		try {
+			next = this.handleJAMWikiRequest(request, response, next, pageInfo);
+		} catch (Exception e) {
+			return ServletUtil.viewError(request, e);
+		}
+		if (this.layout) {
+			ServletUtil.loadDefaults(request, next, pageInfo);
+		}
+		return next;
+	}
+
+	/**
+	 * If any special servlet initialization needs to be performed it can be done
+	 * by overriding this method.
+	 */
+	protected void initParams() {
+	}
 }

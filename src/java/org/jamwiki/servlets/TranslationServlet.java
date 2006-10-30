@@ -50,28 +50,21 @@ public class TranslationServlet extends JAMWikiServlet {
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		try {
-			if (!Utilities.isAdmin(request)) {
-				String redirect = "Special:Translation";
-				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return ServletUtil.viewLogin(request, redirect, errorMessage);
-			}
-			String function = request.getParameter("function");
-			if (!StringUtils.hasText(function)) {
-				view(request, next, pageInfo);
-			} else {
-				translate(request, next, pageInfo);
-			}
-			next.addObject("translations", new TreeMap(this.translations));
-			next.addObject("codes", this.retrieveTranslationCodes());
-			if (request.getParameter("language") != null) next.addObject("language", request.getParameter("language"));
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isAdmin(request)) {
+			String redirect = "Special:Translation";
+			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, redirect, errorMessage);
 		}
-		ServletUtil.loadDefaults(request, next, pageInfo);
+		String function = request.getParameter("function");
+		if (!StringUtils.hasText(function)) {
+			view(request, next, pageInfo);
+		} else {
+			translate(request, next, pageInfo);
+		}
+		next.addObject("translations", new TreeMap(this.translations));
+		next.addObject("codes", this.retrieveTranslationCodes());
+		if (request.getParameter("language") != null) next.addObject("language", request.getParameter("language"));
 		return next;
 	}
 

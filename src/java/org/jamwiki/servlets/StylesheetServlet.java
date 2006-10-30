@@ -33,7 +33,7 @@ public class StylesheetServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = null;
 		try {
 			virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
@@ -50,5 +50,12 @@ public class StylesheetServlet extends JAMWikiServlet {
 		}
 		// do not load defaults or redirect - return as raw CSS
 		return null;
+	}
+
+	/**
+	 *
+	 */
+	protected void initParams() {
+		this.layout = false;
 	}
 }
