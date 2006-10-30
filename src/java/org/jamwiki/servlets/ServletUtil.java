@@ -284,7 +284,7 @@ public class ServletUtil {
 			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
 			next.addObject("adminUser", new Boolean(user.getAdmin()));
 		}
-		if (!pageInfo.getSpecial() && !pageInfo.getAdmin()) {
+		if (StringUtils.hasText(pageInfo.getTopicName())) {
 			String article = Utilities.extractTopicLink(pageInfo.getTopicName());
 			String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
 			next.addObject("article", article);
