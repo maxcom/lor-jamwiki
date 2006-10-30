@@ -45,7 +45,7 @@ public class ManageServlet extends JAMWikiServlet {
 		try {
 			if (!Utilities.isAdmin(request)) {
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
+				return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
 			}
 			if (StringUtils.hasText(request.getParameter("delete"))) {
 				delete(request, next, pageInfo);
@@ -57,9 +57,9 @@ public class ManageServlet extends JAMWikiServlet {
 				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -67,7 +67,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void delete(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -86,7 +86,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void deletePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic.getDeleted()) {
 			logger.warning("Attempt to delete a topic that is already deleted: " + virtualWiki + " / " + topicName);
@@ -103,8 +103,8 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void permissions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -125,7 +125,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void undelete(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		if (topicName == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -144,7 +144,7 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void undeletePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (!topic.getDeleted()) {
 			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
@@ -166,8 +166,8 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));

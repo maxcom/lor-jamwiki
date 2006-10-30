@@ -34,14 +34,14 @@ public class ExportServlet extends JAMWikiServlet {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+			String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 			String content = "";
 			response.setContentType("text/xml");
 			PrintWriter out = response.getWriter();
 			out.print(content);
 			out.close();
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
 		// do not load defaults or redirect - return as raw XML
 		return null;

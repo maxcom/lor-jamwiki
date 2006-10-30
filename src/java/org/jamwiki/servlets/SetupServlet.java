@@ -63,14 +63,14 @@ public class SetupServlet extends JAMWikiServlet {
 					setup(request, next, pageInfo);
 				} else if (initialize(request, next, pageInfo)) {
 					next = new ModelAndView("wiki");
-					viewTopic(request, next, pageInfo, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-					loadDefaults(request, next, pageInfo);
+					ServletUtil.viewTopic(request, next, pageInfo, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+					ServletUtil.loadDefaults(request, next, pageInfo);
 				}
 			} catch (Exception e) {
 				handleSetupError(request, next, pageInfo, e);
 			}
 		} catch (WikiException e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
 		return next;
 	}

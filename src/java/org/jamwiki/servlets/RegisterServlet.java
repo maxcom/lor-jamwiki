@@ -51,9 +51,9 @@ public class RegisterServlet extends JAMWikiServlet {
 				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -76,7 +76,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
-		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
 		String userIdString = request.getParameter("userId");
 		if (StringUtils.hasText(userIdString)) {
@@ -107,7 +107,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			Utilities.login(request, null, user, false);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();
-			this.redirect(next, virtualWikiName, topic);
+			ServletUtil.redirect(next, virtualWikiName, topic);
 		}
 	}
 

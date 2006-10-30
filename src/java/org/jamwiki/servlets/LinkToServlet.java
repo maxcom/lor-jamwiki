@@ -42,9 +42,9 @@ public class LinkToServlet extends JAMWikiServlet {
 		try {
 			linksTo(request, next, pageInfo);
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -52,8 +52,8 @@ public class LinkToServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void linksTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

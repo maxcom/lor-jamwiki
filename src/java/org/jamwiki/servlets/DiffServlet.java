@@ -43,9 +43,9 @@ public class DiffServlet extends JAMWikiServlet {
 		try {
 			diff(request, next, pageInfo);
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -53,7 +53,7 @@ public class DiffServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		String diffType = request.getParameter("type");
 		if (diffType != null && diffType.equals("arbitrary")) {
 			// FIXME - used with history.jsp, this is ugly

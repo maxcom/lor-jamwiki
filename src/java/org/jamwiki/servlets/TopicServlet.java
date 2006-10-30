@@ -48,15 +48,15 @@ public class TopicServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			if (isTopic(request, "Special:Allpages")) {
+			if (ServletUtil.isTopic(request, "Special:Allpages")) {
 				allTopics(request, next, pageInfo);
 			} else {
-				viewTopic(request, next, pageInfo);
+				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -64,8 +64,8 @@ public class TopicServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		Pagination pagination = ServletUtil.buildPagination(request, next);
 		Collection topics = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
 		next.addObject("topics", topics);
 		next.addObject("topicCount", new Integer(topics.size()));
@@ -77,13 +77,13 @@ public class TopicServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topic = JAMWikiServlet.getTopicFromURI(request);
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String topic = ServletUtil.getTopicFromURI(request);
 		if (!StringUtils.hasText(topic)) {
-			String virtualWikiName = getVirtualWikiFromURI(request);
+			String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			topic = virtualWiki.getDefaultTopicName();
 		}
-		super.viewTopic(request, next, pageInfo, topic);
+		ServletUtil.viewTopic(request, next, pageInfo, topic);
 	}
 }

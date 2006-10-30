@@ -42,9 +42,9 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		try {
 			recentChanges(request, next, pageInfo);
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -52,8 +52,8 @@ public class RecentChangesServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		Pagination pagination = ServletUtil.buildPagination(request, next);
 		Collection changes = WikiBase.getHandler().getRecentChanges(virtualWiki, pagination, true);
 		next.addObject("changes", changes);
 		next.addObject("numChanges", new Integer(changes.size()));

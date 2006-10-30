@@ -57,7 +57,7 @@ public class AdminServlet extends JAMWikiServlet {
 		try {
 			if (!Utilities.isAdmin(request)) {
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return viewLogin(request, "Special:Admin", errorMessage);
+				return ServletUtil.viewLogin(request, "Special:Admin", errorMessage);
 			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
@@ -72,9 +72,9 @@ public class AdminServlet extends JAMWikiServlet {
 				recentChanges(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

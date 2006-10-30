@@ -67,7 +67,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				upgrade(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
 		return next;
 	}

@@ -43,17 +43,17 @@ public class LoginServlet extends JAMWikiServlet {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
-			if (isTopic(request, "Special:Logout")) {
+			if (ServletUtil.isTopic(request, "Special:Logout")) {
 				logout(request, response, next, pageInfo);
 			} else if (request.getParameter("function") != null) {
 				login(request, response, next, pageInfo);
 			} else {
-				return viewLogin(request, null, null);
+				return ServletUtil.viewLogin(request, null, null);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -61,21 +61,21 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
 		Utilities.logout(request, response);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			redirect = virtualWiki.getDefaultTopicName();
 		}
-		this.redirect(next, virtualWikiName, redirect);
+		ServletUtil.redirect(next, virtualWikiName, redirect);
 	}
 
 	/**
 	 *
 	 */
 	private void login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
@@ -93,7 +93,7 @@ public class LoginServlet extends JAMWikiServlet {
 		} else {
 			boolean remember = (request.getParameter("remember") != null);
 			Utilities.login(request, response, user, remember);
-			this.redirect(next, virtualWikiName, redirect);
+			ServletUtil.redirect(next, virtualWikiName, redirect);
 		}
 	}
 }

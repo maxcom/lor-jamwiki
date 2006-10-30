@@ -53,6 +53,7 @@ import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.servlets.JAMWikiServlet;
+import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
@@ -555,7 +556,7 @@ public class Utilities {
 		}
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
 		// add user's watchlist to session
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Watchlist watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_WATCHLIST, watchlist);
 		if (setCookie) {

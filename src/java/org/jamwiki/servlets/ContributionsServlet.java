@@ -43,9 +43,9 @@ public class ContributionsServlet extends JAMWikiServlet {
 		try {
 			contributions(request, next, pageInfo);
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -53,9 +53,9 @@ public class ContributionsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String userString = request.getParameter("contributor");
-		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		Pagination pagination = ServletUtil.buildPagination(request, next);
 		Collection contributions = WikiBase.getHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
 		next.addObject("numContributions", new Integer(contributions.size()));

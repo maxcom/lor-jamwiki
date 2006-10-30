@@ -45,7 +45,7 @@ public class MoveServlet extends JAMWikiServlet {
 		try {
 			if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return viewLogin(request, JAMWikiServlet.getTopicFromURI(request), errorMessage);
+				return ServletUtil.viewLogin(request, ServletUtil.getTopicFromURI(request), errorMessage);
 			}
 			if (request.getParameter("move") != null) {
 				move(request, next, pageInfo);
@@ -53,9 +53,9 @@ public class MoveServlet extends JAMWikiServlet {
 				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -63,7 +63,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void move(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -83,14 +83,14 @@ public class MoveServlet extends JAMWikiServlet {
 				}
 			}
 		}
-		viewTopic(request, next, pageInfo, topicName);
+		ServletUtil.viewTopic(request, next, pageInfo, topicName);
 	}
 
 	/**
 	 *
 	 */
 	private boolean movePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String moveFrom, String moveDestination) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Topic fromTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveFrom);
 		if (fromTopic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
@@ -122,8 +122,8 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

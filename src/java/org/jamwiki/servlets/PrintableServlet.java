@@ -42,9 +42,9 @@ public class PrintableServlet extends JAMWikiServlet {
 		try {
 			print(request, next, pageInfo);
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -52,12 +52,12 @@ public class PrintableServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void print(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		// FIXME - full URLs should be printed, need some sort of switch
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
@@ -66,6 +66,6 @@ public class PrintableServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		viewTopic(request, next, pageInfo, pageTitle, topic, false);
+		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, false);
 	}
 }

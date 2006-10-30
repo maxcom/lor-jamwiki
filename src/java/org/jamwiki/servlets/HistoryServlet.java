@@ -51,9 +51,9 @@ public class HistoryServlet extends JAMWikiServlet {
 				viewVersion(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -61,12 +61,12 @@ public class HistoryServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void history(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		pageInfo.setAction(WikiPageInfo.ACTION_HISTORY);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
-		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		Pagination pagination = ServletUtil.buildPagination(request, next);
 		Collection changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, pagination, true);
 		next.addObject("changes", changes);
 		next.addObject("numChanges", new Integer(changes.size()));
@@ -77,8 +77,8 @@ public class HistoryServlet extends JAMWikiServlet {
 	 */
 	private void viewVersion(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// display an older version
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		String topicName = JAMWikiServlet.getTopicFromRequest(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = ServletUtil.getTopicFromRequest(request);
 		int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 		TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(topicName, topicVersionId);
 		if (topicVersion == null) {
@@ -88,6 +88,6 @@ public class HistoryServlet extends JAMWikiServlet {
 		topic.setTopicContent(topicVersion.getVersionContent());
 		String versionDate = DateFormat.getDateTimeInstance().format(topicVersion.getEditDate());
 		WikiMessage pageTitle = new WikiMessage("topic.title", topicName + " @" + versionDate);
-		viewTopic(request, next, pageInfo, pageTitle, topic, false);
+		ServletUtil.viewTopic(request, next, pageInfo, pageTitle, topic, false);
 	}
 }

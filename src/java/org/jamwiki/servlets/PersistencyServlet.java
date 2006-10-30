@@ -47,7 +47,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 		try {
 			if (!Utilities.isAdmin(request)) {
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return viewLogin(request, "Special:Convert", errorMessage);
+				return ServletUtil.viewLogin(request, "Special:Convert", errorMessage);
 			}
 			if (StringUtils.hasText(request.getParameter("tofile"))) {
 				convertToFile(request, next, pageInfo);
@@ -57,9 +57,9 @@ public class PersistencyServlet extends JAMWikiServlet {
 				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 

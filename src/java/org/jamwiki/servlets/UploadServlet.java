@@ -61,9 +61,9 @@ public class UploadServlet extends JAMWikiServlet {
 				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -159,7 +159,7 @@ public class UploadServlet extends JAMWikiServlet {
 				isImage = ImageUtil.isImage(uploadedFile);
 			}
 		}
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {
@@ -201,7 +201,7 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName));
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
-		this.redirect(next, virtualWiki, topicName);
+		ServletUtil.redirect(next, virtualWiki, topicName);
 	}
 
 	/**

@@ -50,9 +50,9 @@ public class ImportServlet extends JAMWikiServlet {
 				importView(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -60,7 +60,7 @@ public class ImportServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Iterator iterator = Utilities.processMultipartRequest(request);
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();

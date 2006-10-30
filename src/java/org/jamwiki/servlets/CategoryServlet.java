@@ -46,9 +46,9 @@ public class CategoryServlet extends JAMWikiServlet {
 		try {
 			viewCategories(request, next, pageInfo);
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -56,8 +56,8 @@ public class CategoryServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewCategories(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
-		Pagination pagination = JAMWikiServlet.buildPagination(request, next);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		Pagination pagination = ServletUtil.buildPagination(request, next);
 		Collection categoryObjects = WikiBase.getHandler().getAllCategories(virtualWiki, pagination);
 		LinkedHashMap categories = new LinkedHashMap();
 		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {

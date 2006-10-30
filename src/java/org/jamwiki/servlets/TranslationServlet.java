@@ -57,7 +57,7 @@ public class TranslationServlet extends JAMWikiServlet {
 			if (!Utilities.isAdmin(request)) {
 				String redirect = "Special:Translation";
 				WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-				return viewLogin(request, redirect, errorMessage);
+				return ServletUtil.viewLogin(request, redirect, errorMessage);
 			}
 			String function = request.getParameter("function");
 			if (!StringUtils.hasText(function)) {
@@ -69,9 +69,9 @@ public class TranslationServlet extends JAMWikiServlet {
 			next.addObject("codes", this.retrieveTranslationCodes());
 			if (request.getParameter("language") != null) next.addObject("language", request.getParameter("language"));
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -151,7 +151,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);

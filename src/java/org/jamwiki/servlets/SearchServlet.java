@@ -45,9 +45,9 @@ public class SearchServlet extends JAMWikiServlet {
 				search(request, next, pageInfo);
 			}
 		} catch (Exception e) {
-			return viewError(request, e);
+			return ServletUtil.viewError(request, e);
 		}
-		loadDefaults(request, next, pageInfo);
+		ServletUtil.loadDefaults(request, next, pageInfo);
 		return next;
 	}
 
@@ -55,10 +55,10 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String topic = request.getParameter("text");
 		if (WikiBase.exists(virtualWiki, topic)) {
-			this.redirect(next, virtualWiki, topic);
+			ServletUtil.redirect(next, virtualWiki, topic);
 		} else {
 			this.search(request, next, pageInfo);
 		}
@@ -68,7 +68,7 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = JAMWikiServlet.getVirtualWikiFromURI(request);
+		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		String searchField = request.getParameter("text");
 		if (request.getParameter("text") == null) {
 			pageInfo.setPageTitle(new WikiMessage("search.title"));
