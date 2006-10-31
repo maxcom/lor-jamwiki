@@ -331,6 +331,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPICS_ADMIN);
 		stmt.setInt(1, virtualWikiId);
+		stmt.setInt(2, pagination.getNumResults());
+		stmt.setInt(3, pagination.getOffset());
 		return stmt.executeQuery();
 	}
 
