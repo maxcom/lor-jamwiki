@@ -122,6 +122,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 					if (oldVersion.before(0, 3, 1)) {
 						messages = DatabaseUpgrades.upgrade031(messages);
 					}
+					if (oldVersion.before(0, 4, 2)) {
+						messages = DatabaseUpgrades.upgrade042(messages);
+					}
 				} catch (Exception e) {
 					// FIXME - hard coding
 					String msg = "Unable to complete upgrade to new JAMWiki version.";
@@ -133,19 +136,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// file persistence mode removed during 0.4.0
 			if (oldVersion.before(0, 4, 0)) {
 				if (!upgrade040(request, messages)) success = false;
-			}
-			if (!Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
-				try {
-					if (oldVersion.before(0, 4, 2)) {
-						messages = DatabaseUpgrades.upgrade042(messages);
-					}
-				} catch (Exception e) {
-					// FIXME - hard coding
-					String msg = "Unable to complete upgrade to new JAMWiki version.";
-					logger.severe(msg, e);
-					messages.add(msg + ": " + e.getMessage());
-					success = false;
-				}
 			}
 			// then perform other needed upgrades
 			boolean stylesheet = false;
