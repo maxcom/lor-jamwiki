@@ -22,6 +22,7 @@
 * BUG: Some unhandled exceptions could cause confusing error messages to be
   shown to the user, now fixed.
 * BUG: JUnit 4.1 requires JDK 1.5, downgrade to JUnit 3.8.2.
+* FEATURE: Update default start page text.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
 
