@@ -923,8 +923,11 @@ public class Utilities {
 		String url = props.getProperty(Environment.PROP_DB_URL);
 		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
 		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
-		if (!DatabaseConnection.testDatabase(driver, url, userName, password, false)) {
-			errors.add(new WikiMessage("error.databaseconnection"));
+		try {
+			DatabaseConnection.testDatabase(driver, url, userName, password, false);
+		} catch (Exception e) {
+			logger.severe("Invalid database settings", e);
+			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
 		}
 		// verify valid parser class
 		boolean validParser = true;

@@ -137,11 +137,13 @@ public class SetupServlet extends JAMWikiServlet {
 		String url = Environment.getValue(Environment.PROP_DB_URL);
 		String userName = Environment.getValue(Environment.PROP_DB_USERNAME);
 		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, null);
-		if (DatabaseConnection.testDatabase(driver, url, userName, password, true)) {
-			// database instance exists
-			return true;
+		try {
+			DatabaseConnection.testDatabase(driver, url, userName, password, true);
+		} catch (Exception e) {
+			// no previous database, all good
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	/**

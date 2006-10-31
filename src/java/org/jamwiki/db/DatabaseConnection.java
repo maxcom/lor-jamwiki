@@ -312,7 +312,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	public static boolean testDatabase(String driver, String url, String user, String password, boolean existence) {
+	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws Exception {
 		Connection conn = null;
 		try {
 			if (StringUtils.hasText(driver)) {
@@ -323,10 +323,6 @@ public class DatabaseConnection {
 				// test to see if database exists
 				executeQuery(DatabaseHandler.getExistenceValidationQuery(), conn);
 			}
-		} catch (Exception e) {
-			// database settings incorrect
-			logger.severe("Invalid database settings", e);
-			return false;
 		} finally {
 			if (conn != null) {
 				try {
@@ -334,6 +330,5 @@ public class DatabaseConnection {
 				} catch (Exception e) {}
 			}
 		}
-		return true;
 	}
 }
