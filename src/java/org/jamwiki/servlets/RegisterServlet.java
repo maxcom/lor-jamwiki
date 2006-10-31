@@ -132,6 +132,9 @@ public class RegisterServlet extends JAMWikiServlet {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
+		if (WikiBase.getHandler().lookupWikiUser(user.getLogin()) != null) {
+			errors.add(new WikiMessage("register.error.logininvalid", user.getLogin()));
+		}
 		return errors;
 	}
 }
