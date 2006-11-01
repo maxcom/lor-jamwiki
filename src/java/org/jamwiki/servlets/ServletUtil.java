@@ -45,7 +45,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Utility methods useful when processing JAMWiki servlet requests.
  */
 public class ServletUtil {
 
@@ -165,7 +165,12 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Retrieve a topic name from the servlet request.  This method will
+	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
+	 * and will decode it appropriately.
 	 *
+	 * @param request The servlet request object.
+	 * @return The decoded topic name retrieved from the request.
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
 		String topic = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
@@ -194,7 +199,12 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Retrieve a virtual wiki name from the servlet request.  This method
+	 * will retrieve a request parameter matching the PARAMETER_VIRTUAL_WIKI
+	 * value, and will decode it appropriately.
 	 *
+	 * @param request The servlet request object.
+	 * @return The decoded virtual wiki name retrieved from the request.
 	 */
 	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
 		String virtualWiki = request.getParameter(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
@@ -229,9 +239,20 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Initialize topic values for the topic being edited.  If a topic with
-	 * the specified name already exists then it will be initialized,
-	 * otherwise a new topic is created.
+	 * Initialize topic values for a Topic object.  This method will check to
+	 * see if a topic with the specified name exists, and if it does exist
+	 * then that topic will be returned.  Otherwise a new topic will be
+	 * initialized, setting initial parameters such as topic name, virtual
+	 * wiki, and topic type.
+	 *
+	 * @param virtualWiki The virtual wiki name for the topic being
+	 *  initialized.
+	 * @param topicName The name of the topic being initialized.
+	 * @return A new topic object with basic fields initialized, or if a topic
+	 *  with the given name already exists then the pre-existing topic is
+	 *  returned.
+	 * @throws Exception Thrown if any error occurs while retrieving or
+	 *  initializing the topic object.
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws Exception {
 		Utilities.validateTopicName(topicName);
@@ -276,7 +297,15 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Utility method for adding category content to the ModelAndView object.
+	 * Utility method for adding categories associated with the current topic
+	 * to the ModelAndView object.  This method adds a hashmap of category
+	 * names and sort keys to the session that can then be retrieved for
+	 * display during rendering.
+	 *
+	 * @param next The current ModelAndView object used to return rendering
+	 *  information.
+	 * @param virtualWiki The virtual wiki name for the topic being rendered.
+	 * @param topicName The name of the topic that is being rendered.
 	 */
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		String categoryName = topicName.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
@@ -299,7 +328,14 @@ public class ServletUtil {
 	}
 
 	/**
+	 * This method ensures that values required for rendering a JSP page have
+	 * been loaded into the ModelAndView object.  Examples of values that
+	 * may be handled by this method include topic name, user login, etc.
 	 *
+	 * @param request The current servlet request object.
+	 * @param next The current ModelAndView object.
+	 * @param pageInfo The current WikiPageInfo object, containing basic page
+	 *  rendering information.
 	 */
 	protected static void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (next.getViewName() != null && next.getViewName().startsWith(ServletUtil.SPRING_REDIRECT_PREFIX)) {
@@ -343,7 +379,16 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Modify the current ModelAndView object to create a Spring redirect
+	 * response, meaning that the view name becomes "redirect:" followed by
+	 * the redirection target.
 	 *
+	 * @param next The current ModelAndView object, which will be reset by
+	 *  this method.
+	 * @param virtualWiki The virtual wiki name for the page being redirected
+	 *  to.
+	 * @param destination The topic or page name that is the redirection
+	 *  target.  An example might be "Special:Login".
 	 */
 	protected static void redirect(ModelAndView next, String virtualWiki, String destination) throws Exception {
 		String target = LinkUtil.buildInternalLinkUrl(null, virtualWiki, destination);
@@ -353,11 +398,11 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Action used when redirecting to an error page.
+	 * Utility method used when redirecting to an error page.
 	 *
 	 * @param request The servlet request object.
-	 * @return Returns a ModelAndView object corresponding to the error page display.
 	 * @param e The exception that is the source of the error.
+	 * @return Returns a ModelAndView object corresponding to the error page display.
 	 */
 	protected static ModelAndView viewError(HttpServletRequest request, Exception e) {
 		if (!(e instanceof WikiException)) {
@@ -383,14 +428,18 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Action used when redirecting to a login page.
+	 * Utility method used when redirecting to a login page.
 	 *
 	 * @param request The servlet request object.
-	 * @param topic The topic to be redirected to.  Valid examples are "Special:Admin",
-	 *  "StartingPoints", etc.
-	 * @param errorMessage A WikiMessage object to be displayed on the login page.
-	 * @return Returns a ModelAndView object corresponding to the login page display.
-	 * @throws Exception Thrown if any error occurs while preparing the login page display.
+	 * @param pageInfo The current WikiPageInfo object, which contains
+	 *  information needed for rendering the final JSP page.
+	 * @param topic The topic to be redirected to.  Valid examples are
+	 *  "Special:Admin", "StartingPoints", etc.
+	 * @param errorMessage A WikiMessage object to be displayed on the login
+	 *  page.
+	 * @return Returns a ModelAndView object corresponding to the login page
+	 *  display.
+	 * @throws Exception Thrown if any error occurs during processing.
 	 */
 	protected static ModelAndView viewLogin(HttpServletRequest request, WikiPageInfo pageInfo, String topic, WikiMessage errorMessage) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
@@ -418,12 +467,15 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Action used when viewing a topic.
+	 * Utility method used when viewing a topic.
 	 *
-	 * @param request The servlet request object.
-	 * @param next The Spring ModelAndView object.
-	 * @param topicName The topic being viewed.  This value must be a valid topic that
-	 *  can be loaded as a org.jamwiki.model.Topic object.
+	 * @param request The current servlet request object.
+	 * @param next The current Spring ModelAndView object.
+	 * @param pageInfo The current WikiPageInfo object, which contains
+	 *  information needed for rendering the final JSP page.
+	 * @param topicName The topic being viewed.  This value must be a valid
+	 *  topic that can be loaded as a org.jamwiki.model.Topic object.
+	 * @throws Exception Thrown if any error occurs during processing.
 	 */
 	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
 		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
@@ -440,15 +492,17 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Action used when viewing a topic.
+	 * Utility method used when viewing a topic.
 	 *
-	 * @param request The servlet request object.
-	 * @param next The Spring ModelAndView object.
-	 * @param pageInfo A WikiPageInfo object containing page configuration info.
+	 * @param request The current servlet request object.
+	 * @param next The current Spring ModelAndView object.
+	 * @param pageInfo The current WikiPageInfo object, which contains
+	 *  information needed for rendering the final JSP page.
+	 * @param pageTitle The title of the page being rendered.
 	 * @param topic The Topic object for the topic being displayed.
 	 * @param sectionEdit Set to <code>true</code> if edit links should be displayed
 	 *  for each section of the topic.
-	 * @throws Exception Thrown if any error occurs during topic display.
+	 * @throws Exception Thrown if any error occurs during processing.
 	 */
 	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiMessage pageTitle, Topic topic, boolean sectionEdit) throws Exception {
 		// FIXME - what should the default be for topics that don't exist?
