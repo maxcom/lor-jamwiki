@@ -169,7 +169,8 @@ public class Encryption {
 	 * Encrypt and set a property value.
 	 *
 	 * @param name The name of the encrypted property being retrieved.
-	 * @value The enencrypted value of the property.
+	 * @param value The enencrypted value of the property.
+	 * @param props The property object in which the property is being set.
 	 */
 	public static void setEncryptedProperty(String name, String value, Properties props) throws Exception {
 		value = Encryption.encrypt64(value);

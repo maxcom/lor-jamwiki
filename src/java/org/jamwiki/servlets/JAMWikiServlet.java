@@ -45,12 +45,30 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected String displayJSP = "wiki";
 
 	/**
+	 * Abstract method that must be implemented by all sub-classes to handle
+	 * servlet requests.
 	 *
+	 * @param request The servlet request object.
+	 * @param response The servlet response object.
+	 * @param next A ModelAndView object that has been initialized to the view
+	 *  specified by the <code>displayJSP</code> member variable.
+	 * @param pageInfo A WikiPageInfo object that will hold output parameters
+	 *  to be passed to the output JSP.
+	 * @return A ModelAndView object corresponding to the information to be
+	 *  rendered, or <code>null</code> if the method directly handles its own
+	 *  output, for example by writing directly to the output response.
 	 */
 	protected abstract ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception;
 
 	/**
+	 * Implement the handleRequestInternal method specified by the
+	 * Spring AbstractController class.
 	 *
+	 * @param request The servlet request object.
+	 * @param response The servlet response object.
+	 * @return A ModelAndView object corresponding to the information to be
+	 *  rendered, or <code>null</code> if the method directly handles its own
+	 *  output, for example by writing directly to the output response.
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 		initParams();
@@ -69,7 +87,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 
 	/**
 	 * If any special servlet initialization needs to be performed it can be done
-	 * by overriding this method.
+	 * by overriding this method.  In particular, this method can be used to
+	 * override the defaults for the <code>layout</code> member variable, which
+	 * determines whether or not the output JSP should include the left navigation
+	 * and other layout values, and the <code>displayJSP</code> member variable,
+	 * which determine the JSP file used to render output.
 	 */
 	protected void initParams() {
 	}

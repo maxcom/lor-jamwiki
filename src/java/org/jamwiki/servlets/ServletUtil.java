@@ -122,7 +122,22 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Retrieve the content of a topic from the cache, or if it is not yet in
+	 * the cache then add it to the cache.
 	 *
+	 * @param context The servlet context for the topic being retrieved.  May
+	 *  be <code>null</code> if the <code>cook</code> parameter is set to
+	 *  <code>false</code>.
+	 * @param locale The locale for the topic being retrieved.  May be
+	 *  <code>null</code> if the <code>cook</code> parameter is set to
+	 *  <code>false</code>.
+	 * @param virtualWiki The virtual wiki for the topic being retrieved.
+	 * @param topicName The name of the topic being retrieved.
+	 * @param cook A parameter indicating whether or not the content should be
+	 *  parsed before it is added to the cache.  Stylesheet content (CSS) is not
+	 *  parsed, but most other content is parsed.
+	 * @return The parsed or unparsed (depending on the <code>cook</code>
+	 *  parameter) topic content.
 	 */
 	protected static String cachedContent(String context, Locale locale, String virtualWiki, String topicName, boolean cook) {
 		String content = (String)WikiCache.retrieveFromCache(WikiCache.CACHE_TOPIC_CONTENT, virtualWiki, topicName);
@@ -152,18 +167,6 @@ public class ServletUtil {
 	/**
 	 *
 	 */
-	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
-		// skip one directory, which is the virutal wiki
-		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
-		if (topic == null) {
-			throw new Exception("No topic in URL: " + request.getRequestURI());
-		}
-		return Utilities.decodeFromURL(topic);
-	}
-
-	/**
-	 *
-	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
 		String topic = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
 		if (topic == null) {
@@ -171,6 +174,23 @@ public class ServletUtil {
 		}
 		if (topic == null) return null;
 		return Utilities.decodeFromRequest(topic);
+	}
+
+	/**
+	 * Retrieve a topic name from the request URI.  This method will retrieve
+	 * the portion of the URI that follows the virtual wiki and decode it
+	 * appropriately.
+	 *
+	 * @param request The servlet request object.
+	 * @return The decoded topic name retrieved from the URI.
+	 */
+	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
+		// skip one directory, which is the virutal wiki
+		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
+		if (topic == null) {
+			throw new Exception("No topic in URL: " + request.getRequestURI());
+		}
+		return Utilities.decodeFromURL(topic);
 	}
 
 	/**
@@ -186,7 +206,12 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Retrieve a virtual wiki name from the request URI.  This method will
+	 * retrieve the portion of the URI that immediately follows the servlet
+	 * context and decode it appropriately.
 	 *
+	 * @param request The servlet request object.
+	 * @return The decoded virtual wiki name retrieved from the URI.
 	 */
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = Utilities.retrieveDirectoriesFromURI(request, 0);
@@ -229,7 +254,13 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Examine the request object, and see if the requested topic or page
+	 * matches a given value.
 	 *
+	 * @param request The servlet request object.
+	 * @param value The value to match against the current topic or page name.
+	 * @return <code>true</code> if the value matches the current topic or
+	 *  page name, <code>false</code> otherwise.
 	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {

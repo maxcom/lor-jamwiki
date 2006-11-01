@@ -69,11 +69,12 @@ public abstract class Usergroup {
 	public abstract String getUserDetails(String uid);
 
 	/**
-	 * Contains the repository valid (already confirmed) email addresses? If
-	 * yes, then we can skip the registration process and the user is
-	 * automatically registered.
+	 * If the repository contains confirmed validated email addresses then
+	 * return <code>true</code>.  This method allows the registration process
+	 * to skip email validation when addresses are known to be valid.
 	 *
-	 * @return true, if so. false otherwise.
+	 * @return <code>true</code> if the repository contains validated email
+	 *  addresses, otherwise returns <code>false</code>.
 	 */
 	public boolean isEmailValidated() {
 		return false;

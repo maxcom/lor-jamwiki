@@ -296,7 +296,9 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns any trailing . , ; : characters from the given string.
+	 * Returns any trailing period, comma, semicolon, or colon characters
+	 * from the given string.  This method is useful when parsing raw HTML
+	 * links, in which case trailing punctuation must be removed.
 	 *
 	 * @param text The text from which trailing punctuation should be returned.
 	 * @return Any trailing punctuation from the given text, or an empty string
