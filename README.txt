@@ -16,12 +16,11 @@ supports the following specifications:
   JDK 1.4 or later
   Servlet 2.3 or later
 
-In addition, JAMWiki can be run in either a file persistency mode, or a
-database persistency mode.  When running in a file persistency mode a
-directory must be available into which JAMWiki files can be written.  When
-running in database persistency mode JAMWiki requires a database user with
-permission to create tables and sequences.  JAMWiki has been tested with the
-following databases:
+In addition, JAMWiki can be run using an embedded database or using an
+external database.  When running with an embedded database no additional
+software or configuration is required; when using an external database
+JAMWiki requires a database user with permission to create tables and
+sequences.  JAMWiki has been tested with the following databases:
 
   Postgres 8.0
   Postgres 7.4

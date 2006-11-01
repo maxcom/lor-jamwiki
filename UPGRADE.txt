@@ -76,6 +76,11 @@ followed by 0.3.3.
                    select max(topic_version_id) from jam_topic_version
                    where jam_topic_version.topic_id = jam_topic.topic_id
               );
+  3. The #change CSS style should be modified to remove the font-weight
+     property.  An up-to-date version of the default the StyleSheet topic can
+     be found in the /WEB-INF/classes/pages/StyleSheet file.  Note that the
+     StyleSheet topic can only be edited AFTER all other upgrade steps have
+     been completed.
 
   JAMWiki 0.4.1
   =============
