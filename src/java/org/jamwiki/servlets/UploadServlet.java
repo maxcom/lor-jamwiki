@@ -118,7 +118,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
-		Iterator iterator = Utilities.processMultipartRequest(request);
+		Iterator iterator = ServletUtil.processMultipartRequest(request);
 		String fileName = null;
 		String url = null;
 		String contentType = null;

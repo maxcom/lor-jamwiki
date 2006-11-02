@@ -38,8 +38,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -848,23 +846,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Utility method for parsing a multipart servlet request.  This method returns
-	 * an iterator of FileItem objects that corresponds to the request.
-	 *
-	 * @param request The servlet request containing the multipart request.
-	 * @return Returns an iterator of FileItem objects the corresponds to the request.
-	 * @throws Exception Thrown if any problems occur while processing the request.
-	 */
-	public static Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
-		// Create a factory for disk-based file items
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setRepository(new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setSizeMax(Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		return upload.parseRequest(request).iterator();
-	}
-
-	/**
 	 * Utility method for reading a file from a classpath directory and returning
 	 * its contents as a String.
 	 *
@@ -940,7 +921,7 @@ public class Utilities {
 	 *  context and skipCount directories, or <code>null</code> if the number of
 	 *  directories is less than skipCount.
 	 */
-	public static String retrieveDirectoriesFromURI(HttpServletRequest request, int skipCount) {
+	private static String retrieveDirectoriesFromURI(HttpServletRequest request, int skipCount) {
 		String uri = request.getRequestURI().trim();
 		// FIXME - needs testing on other platforms
 		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
