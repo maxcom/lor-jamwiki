@@ -80,7 +80,12 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" />
-<label for="minorEdit"><f:message key="edit.isMinorEdit"/></label>
+<label for="minorEdit"><f:message key="edit.caption.minor" /></label>
+<c:if test="${!empty user}">
+&nbsp;&nbsp;&nbsp;
+<input type="checkbox" value="true" name="watchTopic"<c:if test="${watchTopic}"> checked</c:if> id="watchTopic" />
+<label for="watchTopic"><f:message key="edit.caption.watch" /></label>
+</c:if>
 </p>
 
 <c:if test="${pageInfo.actionEditResolve}">

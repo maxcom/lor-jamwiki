@@ -2,6 +2,7 @@
 0.4.3
 =====
 
+* FEATURE: Add "Watch Topic" checkbox when editing.
 
 0.4.2
 =====

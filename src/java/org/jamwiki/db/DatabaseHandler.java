@@ -544,18 +544,8 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public void deleteWatchlistEntry(String virtualWiki, String topicName, int userId) throws Exception {
-		Connection conn = null;
-		try {
-			conn = this.getConnection();
-			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			DatabaseHandler.queryHandler.deleteWatchlistEntry(virtualWikiId, topicName, userId, conn);
-		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
-			throw e;
-		} finally {
-			this.releaseParams(conn);
-		}
+	private void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
+		DatabaseHandler.queryHandler.deleteWatchlistEntry(virtualWikiId, topicName, userId, conn);
 	}
 
 	/**
@@ -1762,12 +1752,26 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public void writeWatchlistEntry(String virtualWiki, String topicName, int userId) throws Exception {
+	public void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId) throws Exception {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			this.addWatchlistEntry(virtualWikiId, topicName, userId, conn);
+			String article = Utilities.extractTopicLink(topicName);
+			String comments = Utilities.extractCommentsLink(topicName);
+			if (watchlist.containsTopic(topicName)) {
+				// remove from watchlist
+				this.deleteWatchlistEntry(virtualWikiId, article, userId, conn);
+				this.deleteWatchlistEntry(virtualWikiId, comments, userId, conn);
+				watchlist.remove(article);
+				watchlist.remove(comments);
+			} else {
+				// add to watchlist
+				this.addWatchlistEntry(virtualWikiId, article, userId, conn);
+				this.addWatchlistEntry(virtualWikiId, comments, userId, conn);
+				watchlist.add(article);
+				watchlist.add(comments);
+			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

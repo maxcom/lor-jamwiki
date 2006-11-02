@@ -25,6 +25,7 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
@@ -133,6 +134,10 @@ public class EditServlet extends JAMWikiServlet {
 			next.addObject("section", request.getParameter("section"));
 		}
 		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
+		Watchlist watchlist = Utilities.currentWatchlist(request);
+		if (request.getParameter("watchTopic") != null || watchlist.containsTopic(topicName)) {
+			next.addObject("watchTopic", new Boolean(true));
+		}
 	}
 
 	/**
@@ -267,6 +272,14 @@ public class EditServlet extends JAMWikiServlet {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
 		WikiBase.getHandler().writeTopic(topic, topicVersion, parserDocument);
+		// update watchlist
+		if (user != null) {
+			Watchlist watchlist = Utilities.currentWatchlist(request);
+			boolean watchTopic = (request.getParameter("watchTopic") != null);
+			if (watchlist.containsTopic(topicName) != watchTopic) {
+				WikiBase.getHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId());
+			}
+		}
 		// redirect to prevent user from refreshing and re-submitting
 		String redirect = topic.getName();
 		if (StringUtils.hasText(sectionName)) {
