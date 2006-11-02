@@ -50,7 +50,17 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServletUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ServletUtil.class.getName());
+	public static final String PARAMETER_PAGE_INFO = "pageInfo";
+	public static final String PARAMETER_TOPIC = "topic";
+	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
+	public static final String PARAMETER_USER = "user";
+	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
+	public static final String PARAMETER_WATCHLIST = "watchlist";
 	private static final String SPRING_REDIRECT_PREFIX = "redirect:";
+	public static final String USER_COOKIE = "user-cookie";
+	public static final String USER_COOKIE_DELIMITER = "|";
+	// FIXME - make configurable
+	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
 
 	/**
 	 * This method ensures that the left menu, logo, and other required values
@@ -84,7 +94,7 @@ public class ServletUtil {
 		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
 		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
-		next.addObject(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI, virtualWikiName);
+		next.addObject(ServletUtil.PARAMETER_VIRTUAL_WIKI, virtualWikiName);
 	}
 
 	/**
@@ -173,9 +183,9 @@ public class ServletUtil {
 	 * @return The decoded topic name retrieved from the request.
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		String topic = request.getParameter(JAMWikiServlet.PARAMETER_TOPIC);
+		String topic = request.getParameter(ServletUtil.PARAMETER_TOPIC);
 		if (topic == null) {
-			topic = (String)request.getAttribute(JAMWikiServlet.PARAMETER_TOPIC);
+			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
 		}
 		if (topic == null) return null;
 		return Utilities.decodeFromRequest(topic);
@@ -207,9 +217,9 @@ public class ServletUtil {
 	 * @return The decoded virtual wiki name retrieved from the request.
 	 */
 	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
-		String virtualWiki = request.getParameter(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
+		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
 		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
+			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
 		}
 		if (virtualWiki == null) return null;
 		return Utilities.decodeFromRequest(virtualWiki);
@@ -375,7 +385,7 @@ public class ServletUtil {
 		if (!StringUtils.hasText(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(ServletUtil.getTopicFromURI(request));
 		}
-		next.addObject(JAMWikiServlet.PARAMETER_PAGE_INFO, pageInfo);
+		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 	}
 
 	/**
@@ -564,7 +574,7 @@ public class ServletUtil {
 		}
 		pageInfo.setSpecial(false);
 		pageInfo.setTopicName(topicName);
-		next.addObject(JAMWikiServlet.PARAMETER_TOPIC_OBJECT, topic);
+		next.addObject(ServletUtil.PARAMETER_TOPIC_OBJECT, topic);
 		if (pageTitle != null) {
 			pageInfo.setPageTitle(pageTitle);
 		}

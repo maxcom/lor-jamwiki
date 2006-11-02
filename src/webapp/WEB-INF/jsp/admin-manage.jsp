@@ -17,7 +17,7 @@
 
 --%>
 <%@ page import="
-        org.jamwiki.servlets.JAMWikiServlet
+        org.jamwiki.servlets.ServletUtil
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
@@ -32,7 +32,7 @@
 <table border="0" class="contents">
 <c:if test="${deleted}">
 <form name="undelete" method="get" action="<jamwiki:link value="Special:Manage" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><h4><f:message key="manage.caption.undelete"><f:param value="${pageInfo.topicName}" /></f:message></h4></td></tr>
 <tr>
 	<td class="formcaption" nowrap><label for="undeleteComment"><f:message key="manage.undelete.reason" /></label>: </td>
@@ -48,7 +48,7 @@
 </c:if>
 <c:if test="${!deleted}">
 <form name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><h4><f:message key="manage.caption.delete"><f:param value="${pageInfo.topicName}" /></f:message></h4></td></tr>
 <tr><td colspan="2"><p><f:message key="manage.delete.warning" /></p></td></tr>
 <tr>
@@ -64,7 +64,7 @@
 </form>
 <tr><td colspan="2"><h4><f:message key="manage.caption.permissions" /></h4></td></tr>
 <form name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr>
 	<td class="formcaption" nowrap><label for="readOnly"><f:message key="manage.caption.readonly" /></label>: </td>
 	<td class="formelement"><input type="checkbox" name="readOnly" value="true"<c:if test="${readOnly}"> checked</c:if> id="readOnly" /></td>

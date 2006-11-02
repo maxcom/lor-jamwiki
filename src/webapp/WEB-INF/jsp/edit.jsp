@@ -17,8 +17,7 @@
 
 --%>
 <%@ page import="
-        org.jamwiki.Environment,
-        org.jamwiki.servlets.JAMWikiServlet
+        org.jamwiki.Environment
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"

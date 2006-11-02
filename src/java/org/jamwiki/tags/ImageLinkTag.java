@@ -21,7 +21,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.servlets.JAMWikiServlet;
+import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.LinkUtil;
 
 /**
@@ -73,9 +73,9 @@ public class ImageLinkTag extends TagSupport {
 	 *
 	 */
 	private static String retrieveVirtualWiki(HttpServletRequest request) throws JspException {
-		String virtualWiki = request.getParameter(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
+		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
 		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(JAMWikiServlet.PARAMETER_VIRTUAL_WIKI);
+			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
 		}
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for context path: " + request.getContextPath());

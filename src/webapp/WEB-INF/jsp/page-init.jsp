@@ -17,11 +17,6 @@
 
 --%>
 
-<%@ page import="
-        org.jamwiki.servlets.JAMWikiServlet
-    "
-%>
-
 <%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
 <%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
 <%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>

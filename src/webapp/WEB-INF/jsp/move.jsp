@@ -17,7 +17,7 @@
 
 --%>
 <%@ page import="
-        org.jamwiki.servlets.JAMWikiServlet
+        org.jamwiki.servlets.ServletUtil
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
@@ -29,7 +29,7 @@
 
 <table border="0" class="contents">
 <form name="delete" method="get" action="<jamwiki:link value="Special:Move" />">
-<input type="hidden" name="<%= JAMWikiServlet.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><p><f:message key="move.overview" /></p></td></tr>
 <tr>
 	<td class="formcaption" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </td>

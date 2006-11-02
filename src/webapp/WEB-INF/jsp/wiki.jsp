@@ -19,7 +19,6 @@
 <%@ page import="
         org.jamwiki.Environment,
         org.jamwiki.WikiBase,
-        org.jamwiki.servlets.JAMWikiServlet,
         org.jamwiki.utils.Utilities
     "
     errorPage="/WEB-INF/jsp/error.jsp"

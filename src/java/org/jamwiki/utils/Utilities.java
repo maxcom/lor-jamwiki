@@ -52,7 +52,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.servlets.JAMWikiServlet;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
@@ -130,12 +129,12 @@ public class Utilities {
 	 */
 	public static WikiUser currentUser(HttpServletRequest request) throws Exception {
 		// first look for user in the session
-		WikiUser user = (WikiUser)request.getSession().getAttribute(JAMWikiServlet.PARAMETER_USER);
+		WikiUser user = (WikiUser)request.getSession().getAttribute(ServletUtil.PARAMETER_USER);
 		if (user != null) return user;
 		// look for user cookie
-		String userInfo = Utilities.retrieveCookieValue(request, JAMWikiServlet.USER_COOKIE);
+		String userInfo = Utilities.retrieveCookieValue(request, ServletUtil.USER_COOKIE);
 		if (!StringUtils.hasText(userInfo)) return null;
-		StringTokenizer tokens = new StringTokenizer(userInfo, JAMWikiServlet.USER_COOKIE_DELIMITER);
+		StringTokenizer tokens = new StringTokenizer(userInfo, ServletUtil.USER_COOKIE_DELIMITER);
 		if (tokens.countTokens() != 2) return null;
 		String login = tokens.nextToken();
 		String encryptedPassword = tokens.nextToken();
@@ -159,7 +158,7 @@ public class Utilities {
 	 *  if there is no watchlist in the session.
 	 */
 	public static Watchlist currentWatchlist(HttpServletRequest request) throws Exception {
-		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(JAMWikiServlet.PARAMETER_WATCHLIST);
+		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(ServletUtil.PARAMETER_WATCHLIST);
 		if (watchlist == null) watchlist = new Watchlist();
 		return watchlist;
 	}
@@ -556,18 +555,18 @@ public class Utilities {
 		if (user == null) {
 			return;
 		}
-		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+		request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
 		// add user's watchlist to session
 		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
 		Watchlist watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
-		request.getSession().setAttribute(JAMWikiServlet.PARAMETER_WATCHLIST, watchlist);
+		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 		if (setCookie) {
 			if (response == null) {
 				logger.warning("Attempt to set user cookie without specifying servlet response");
 				return;
 			}
-			String cookieValue = user.getLogin() + JAMWikiServlet.USER_COOKIE_DELIMITER + user.getEncodedPassword();
-			Utilities.addCookie(response, JAMWikiServlet.USER_COOKIE, cookieValue, JAMWikiServlet.USER_COOKIE_EXPIRES);
+			String cookieValue = user.getLogin() + ServletUtil.USER_COOKIE_DELIMITER + user.getEncodedPassword();
+			Utilities.addCookie(response, ServletUtil.USER_COOKIE, cookieValue, ServletUtil.USER_COOKIE_EXPIRES);
 		}
 	}
 
@@ -581,7 +580,7 @@ public class Utilities {
 	 */
 	public static void logout(HttpServletRequest request, HttpServletResponse response) {
 		request.getSession().invalidate();
-		Utilities.removeCookie(response, JAMWikiServlet.USER_COOKIE);
+		Utilities.removeCookie(response, ServletUtil.USER_COOKIE);
 	}
 
 	/**

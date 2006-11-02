@@ -89,7 +89,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			user = WikiBase.getHandler().lookupWikiUser(username, password, false);
 		}
 		if (user != null) {
-			request.getSession().setAttribute(JAMWikiServlet.PARAMETER_USER, user);
+			request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
 			return true;
 		}
 		return false;
