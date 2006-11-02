@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -49,8 +50,8 @@ public class TopicsAdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		Pagination pagination = ServletUtil.buildPagination(request, next);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
 		Collection topicsAdmin = WikiBase.getHandler().getTopicsAdmin(virtualWiki, pagination);
 		next.addObject("topicsAdmin", topicsAdmin);
 		next.addObject("numTopicsAdmin", new Integer(topicsAdmin.size()));

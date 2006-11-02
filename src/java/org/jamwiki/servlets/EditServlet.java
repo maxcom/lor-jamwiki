@@ -64,8 +64,8 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void edit(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Topic topic = loadTopic(virtualWiki, topicName);
 		// topic name might be updated by loadTopic
 		topicName = topic.getName();
@@ -152,19 +152,19 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(topicName) || !StringUtils.hasText(virtualWiki)) {
 			return null;
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.login");
-			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
 		}
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.loginadmin", topicName);
-			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
 		}
 		return null;
 	}
@@ -173,8 +173,8 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void preview(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String contents = (String)request.getParameter("contents");
 		Topic previewTopic = new Topic();
 		previewTopic.setName(topicName);
@@ -189,8 +189,8 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void resolve(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		String contents1 = lastTopic.getTopicContent();
 		String contents2 = request.getParameter("contents");
@@ -214,8 +214,8 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void save(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Topic topic = loadTopic(virtualWiki, topicName);
 		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (lastTopic != null && !lastTopic.getCurrentVersionId().equals(retrieveLastTopicVersionId(request, topic))) {

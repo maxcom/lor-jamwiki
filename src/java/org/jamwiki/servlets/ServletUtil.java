@@ -71,7 +71,7 @@ public class ServletUtil {
 	 *  constructed.
 	 */
 	private static void buildLayout(HttpServletRequest request, ModelAndView next) {
-		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
@@ -95,40 +95,6 @@ public class ServletUtil {
 		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(ServletUtil.PARAMETER_VIRTUAL_WIKI, virtualWikiName);
-	}
-
-	/**
-	 * Create a pagination object based on parameters found in the current
-	 * request.
-	 *
-	 * @param request The servlet request object.
-	 * @param next A ModelAndView object corresponding to the page being
-	 *  constructed.
-	 * @return A Pagination object constructed from parameters found in the
-	 *  request object.
-	 */
-	public static Pagination buildPagination(HttpServletRequest request, ModelAndView next) {
-		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
-		if (request.getParameter("num") != null) {
-			try {
-				num = new Integer(request.getParameter("num")).intValue();
-			} catch (Exception e) {
-				// invalid number
-			}
-		}
-		int offset = 0;
-		if (request.getParameter("offset") != null) {
-			try {
-				offset = new Integer(request.getParameter("offset")).intValue();
-			} catch (Exception e) {
-				// invalid number
-			}
-		}
-		if (next != null) {
-			next.addObject("num", new Integer(num));
-			next.addObject("offset", new Integer(offset));
-		}
-		return new Pagination(num, offset);
 	}
 
 	/**
@@ -172,80 +138,6 @@ public class ServletUtil {
 			return null;
 		}
 		return content;
-	}
-
-	/**
-	 * Retrieve a topic name from the servlet request.  This method will
-	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
-	 * and will decode it appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded topic name retrieved from the request.
-	 */
-	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		String topic = request.getParameter(ServletUtil.PARAMETER_TOPIC);
-		if (topic == null) {
-			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
-		}
-		if (topic == null) return null;
-		return Utilities.decodeFromRequest(topic);
-	}
-
-	/**
-	 * Retrieve a topic name from the request URI.  This method will retrieve
-	 * the portion of the URI that follows the virtual wiki and decode it
-	 * appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded topic name retrieved from the URI.
-	 */
-	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
-		// skip one directory, which is the virutal wiki
-		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
-		if (topic == null) {
-			throw new Exception("No topic in URL: " + request.getRequestURI());
-		}
-		return Utilities.decodeFromURL(topic);
-	}
-
-	/**
-	 * Retrieve a virtual wiki name from the servlet request.  This method
-	 * will retrieve a request parameter matching the PARAMETER_VIRTUAL_WIKI
-	 * value, and will decode it appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded virtual wiki name retrieved from the request.
-	 */
-	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
-		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
-		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
-		}
-		if (virtualWiki == null) return null;
-		return Utilities.decodeFromRequest(virtualWiki);
-	}
-
-	/**
-	 * Retrieve a virtual wiki name from the request URI.  This method will
-	 * retrieve the portion of the URI that immediately follows the servlet
-	 * context and decode it appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded virtual wiki name retrieved from the URI.
-	 */
-	public static String getVirtualWikiFromURI(HttpServletRequest request) {
-		String uri = Utilities.retrieveDirectoriesFromURI(request, 0);
-		if (uri == null) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
-			return null;
-		}
-		int slashIndex = uri.indexOf('/');
-		if (slashIndex == -1) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
-			return null;
-		}
-		String virtualWiki = uri.substring(0, slashIndex);
-		return Utilities.decodeFromURL(virtualWiki);
 	}
 
 	/**
@@ -295,7 +187,7 @@ public class ServletUtil {
 	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
-			String topic = ServletUtil.getTopicFromURI(request);
+			String topic = Utilities.getTopicFromURI(request);
 			if (!StringUtils.hasText(topic)) {
 				return false;
 			}
@@ -372,7 +264,7 @@ public class ServletUtil {
 			}
 			next.addObject("edit", editLink);
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
-				String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+				String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 				if (WikiBase.getHandler().exists(virtualWiki, article)) {
 					pageInfo.setCanMove(true);
 				}
@@ -383,7 +275,7 @@ public class ServletUtil {
 			}
 		}
 		if (!StringUtils.hasText(pageInfo.getTopicName())) {
-			pageInfo.setTopicName(ServletUtil.getTopicFromURI(request));
+			pageInfo.setTopicName(Utilities.getTopicFromURI(request));
 		}
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 	}
@@ -454,7 +346,7 @@ public class ServletUtil {
 	protected static ModelAndView viewLogin(HttpServletRequest request, WikiPageInfo pageInfo, String topic, WikiMessage errorMessage) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		pageInfo.reset();
-		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			if (!StringUtils.hasText(topic)) {
@@ -488,7 +380,7 @@ public class ServletUtil {
 	 * @throws Exception Thrown if any error occurs during processing.
 	 */
 	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}

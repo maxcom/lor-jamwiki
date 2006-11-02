@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,8 +46,8 @@ public class RecentChangesServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		Pagination pagination = ServletUtil.buildPagination(request, next);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
 		Collection changes = WikiBase.getHandler().getRecentChanges(virtualWiki, pagination, true);
 		next.addObject("changes", changes);
 		next.addObject("numChanges", new Integer(changes.size()));

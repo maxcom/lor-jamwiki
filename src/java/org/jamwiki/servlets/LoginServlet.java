@@ -54,7 +54,7 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		Utilities.logout(request, response);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
@@ -68,7 +68,7 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");

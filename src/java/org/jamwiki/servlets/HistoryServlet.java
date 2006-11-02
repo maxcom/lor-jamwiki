@@ -23,11 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
-import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -54,15 +55,15 @@ public class HistoryServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void history(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		String topicName = ServletUtil.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		pageInfo.setAction(WikiPageInfo.ACTION_HISTORY);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
-		Pagination pagination = ServletUtil.buildPagination(request, next);
+		Pagination pagination = Utilities.buildPagination(request, next);
 		Collection changes = WikiBase.getHandler().getRecentChanges(virtualWiki, topicName, pagination, true);
 		next.addObject("changes", changes);
 		next.addObject("numChanges", new Integer(changes.size()));
@@ -73,8 +74,8 @@ public class HistoryServlet extends JAMWikiServlet {
 	 */
 	private void viewVersion(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// display an older version
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		String topicName = ServletUtil.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
 		int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
 		TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(topicName, topicVersionId);
 		if (topicVersion == null) {

@@ -53,7 +53,7 @@ public class ImportServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Iterator iterator = Utilities.processMultipartRequest(request);
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();

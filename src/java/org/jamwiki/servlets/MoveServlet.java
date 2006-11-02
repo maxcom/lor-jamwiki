@@ -42,7 +42,7 @@ public class MoveServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, pageInfo, ServletUtil.getTopicFromURI(request), errorMessage);
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
 		}
 		if (request.getParameter("move") != null) {
 			move(request, next, pageInfo);
@@ -56,7 +56,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void move(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
+		String topicName = Utilities.getTopicFromRequest(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -83,7 +83,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean movePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String moveFrom, String moveDestination) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Topic fromTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveFrom);
 		if (fromTopic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
@@ -115,8 +115,8 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

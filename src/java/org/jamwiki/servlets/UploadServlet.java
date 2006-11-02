@@ -152,7 +152,7 @@ public class UploadServlet extends JAMWikiServlet {
 				isImage = ImageUtil.isImage(uploadedFile);
 			}
 		}
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
 		if (topic == null) {

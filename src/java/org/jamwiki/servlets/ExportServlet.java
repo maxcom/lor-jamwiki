@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,7 +35,7 @@ public class ExportServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
-			String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 			String content = "";
 			response.setContentType("text/xml");
 			PrintWriter out = response.getWriter();

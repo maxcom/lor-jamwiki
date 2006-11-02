@@ -60,8 +60,8 @@ public class WatchlistServlet extends JAMWikiServlet {
 		if (user == null) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
-		String topicName = ServletUtil.getTopicFromRequest(request);
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String topicName = Utilities.getTopicFromRequest(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String article = Utilities.extractTopicLink(topicName);
 		String comments = Utilities.extractCommentsLink(topicName);
 		Watchlist watchlist = Utilities.currentWatchlist(request);
@@ -87,8 +87,8 @@ public class WatchlistServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		Pagination pagination = ServletUtil.buildPagination(request, next);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
 		WikiUser user = Utilities.currentUser(request);
 		if (user == null) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));

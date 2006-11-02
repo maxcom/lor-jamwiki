@@ -69,7 +69,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
-		String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
 		String userIdString = request.getParameter("userId");
 		if (StringUtils.hasText(userIdString)) {

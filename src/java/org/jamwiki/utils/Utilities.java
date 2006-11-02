@@ -54,6 +54,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -90,6 +91,40 @@ public class Utilities {
 		cookie = new Cookie(cookieName, cookieValue);
 		cookie.setMaxAge(cookieAge);
 		response.addCookie(cookie);
+	}
+
+	/**
+	 * Create a pagination object based on parameters found in the current
+	 * request.
+	 *
+	 * @param request The servlet request object.
+	 * @param next A ModelAndView object corresponding to the page being
+	 *  constructed.
+	 * @return A Pagination object constructed from parameters found in the
+	 *  request object.
+	 */
+	public static Pagination buildPagination(HttpServletRequest request, ModelAndView next) {
+		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
+		if (request.getParameter("num") != null) {
+			try {
+				num = new Integer(request.getParameter("num")).intValue();
+			} catch (Exception e) {
+				// invalid number
+			}
+		}
+		int offset = 0;
+		if (request.getParameter("offset") != null) {
+			try {
+				offset = new Integer(request.getParameter("offset")).intValue();
+			} catch (Exception e) {
+				// invalid number
+			}
+		}
+		if (next != null) {
+			next.addObject("num", new Integer(num));
+			next.addObject("offset", new Integer(offset));
+		}
+		return new Pagination(num, offset);
 	}
 
 	/**
@@ -445,6 +480,80 @@ public class Utilities {
 	}
 
 	/**
+	 * Retrieve a topic name from the servlet request.  This method will
+	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
+	 * and will decode it appropriately.
+	 *
+	 * @param request The servlet request object.
+	 * @return The decoded topic name retrieved from the request.
+	 */
+	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
+		String topic = request.getParameter(ServletUtil.PARAMETER_TOPIC);
+		if (topic == null) {
+			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
+		}
+		if (topic == null) return null;
+		return Utilities.decodeFromRequest(topic);
+	}
+
+	/**
+	 * Retrieve a topic name from the request URI.  This method will retrieve
+	 * the portion of the URI that follows the virtual wiki and decode it
+	 * appropriately.
+	 *
+	 * @param request The servlet request object.
+	 * @return The decoded topic name retrieved from the URI.
+	 */
+	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
+		// skip one directory, which is the virutal wiki
+		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
+		if (topic == null) {
+			throw new Exception("No topic in URL: " + request.getRequestURI());
+		}
+		return Utilities.decodeFromURL(topic);
+	}
+
+	/**
+	 * Retrieve a virtual wiki name from the servlet request.  This method
+	 * will retrieve a request parameter matching the PARAMETER_VIRTUAL_WIKI
+	 * value, and will decode it appropriately.
+	 *
+	 * @param request The servlet request object.
+	 * @return The decoded virtual wiki name retrieved from the request.
+	 */
+	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
+		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
+		if (virtualWiki == null) {
+			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
+		}
+		if (virtualWiki == null) return null;
+		return Utilities.decodeFromRequest(virtualWiki);
+	}
+
+	/**
+	 * Retrieve a virtual wiki name from the request URI.  This method will
+	 * retrieve the portion of the URI that immediately follows the servlet
+	 * context and decode it appropriately.
+	 *
+	 * @param request The servlet request object.
+	 * @return The decoded virtual wiki name retrieved from the URI.
+	 */
+	public static String getVirtualWikiFromURI(HttpServletRequest request) {
+		String uri = Utilities.retrieveDirectoriesFromURI(request, 0);
+		if (uri == null) {
+			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
+			return null;
+		}
+		int slashIndex = uri.indexOf('/');
+		if (slashIndex == -1) {
+			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
+			return null;
+		}
+		String virtualWiki = uri.substring(0, slashIndex);
+		return Utilities.decodeFromURL(virtualWiki);
+	}
+
+	/**
 	 * Finds the current WikiUser object in the request and determines
 	 * if that user is an admin.
 	 *
@@ -557,7 +666,7 @@ public class Utilities {
 		}
 		request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
 		// add user's watchlist to session
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Watchlist watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 		if (setCookie) {

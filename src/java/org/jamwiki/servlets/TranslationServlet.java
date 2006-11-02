@@ -144,7 +144,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);

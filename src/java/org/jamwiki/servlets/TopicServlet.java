@@ -25,6 +25,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -57,8 +58,8 @@ public class TopicServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = ServletUtil.getVirtualWikiFromURI(request);
-		Pagination pagination = ServletUtil.buildPagination(request, next);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
 		Collection topics = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
 		next.addObject("topics", topics);
 		next.addObject("topicCount", new Integer(topics.size()));
@@ -71,9 +72,9 @@ public class TopicServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String topic = ServletUtil.getTopicFromURI(request);
+		String topic = Utilities.getTopicFromURI(request);
 		if (!StringUtils.hasText(topic)) {
-			String virtualWikiName = ServletUtil.getVirtualWikiFromURI(request);
+			String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			topic = virtualWiki.getDefaultTopicName();
 		}
