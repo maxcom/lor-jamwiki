@@ -135,7 +135,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
 		Watchlist watchlist = Utilities.currentWatchlist(request);
-		if (request.getParameter("watchTopic") != null || watchlist.containsTopic(topicName)) {
+		if (request.getParameter("watchTopic") != null || (watchlist.containsTopic(topicName) && !isPreview(request))) {
 			next.addObject("watchTopic", new Boolean(true));
 		}
 	}
