@@ -14,33 +14,57 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser.jflex;
+package org.jamwiki.model;
 
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Utility class for handling reference objects.
  */
-public class NoIncludeTag implements ParserTag {
+public class WikiReference {
 
-	private static WikiLogger logger = WikiLogger.getLogger(NoIncludeTag.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(WikiReference.class.getName());
+
+	private int citation = 1;
+	private String content = null;
+	private int count = 0;
+	private String name = null;
 
 	/**
-	 * Parse a call to a Mediawiki noinclude tag of the form
-	 * "<noinclude>text</noinclude>" and return the resulting output.
+	 *
 	 */
-	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		if (mode < JFlexParser.MODE_TEMPLATE) {
-			return raw;
-		}
-		if (mode == JFlexParser.MODE_TEMPLATE) {
-			// no content is returned when called from a temlate
-			return "";
-		}
-		// anything else then strip tags and return
-		return ParserUtil.tagContent(raw);
+	public WikiReference(String name, String content, int citation, int count) {
+		this.name = name;
+		this.content = content;
+		this.citation = citation;
+		this.count = count;
+	}
+
+	/**
+	 *
+	 */
+	public int getCitation() {
+		return this.citation;
+	}
+
+	/**
+	 *
+	 */
+	public String getContent() {
+		return this.content;
+	}
+
+	/**
+	 *
+	 */
+	public int getCount() {
+		return this.count;
+	}
+
+	/**
+	 *
+	 */
+	public String getName() {
+		return this.name;
 	}
 }

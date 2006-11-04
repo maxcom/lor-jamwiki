@@ -232,6 +232,11 @@ htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 /* FIXME - hard-coding of image namespace */
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
 
+/* references */
+reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\n\r]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
+referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\n\r]+[ ]*)? ([ ]*\/[ ]*>)
+references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
+
 %state NORMAL, TABLE, TD, TH, TC, LIST, PRE, JAVASCRIPT, WIKIPRE
 
 %%
@@ -474,6 +479,26 @@ imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkw
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     wikiitalic = !wikiitalic;
     return (wikiitalic) ? "<i>" : "</i>";
+}
+
+/* ----- references ----- */
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{reference} {
+    logger.finer("reference: " + yytext() + " (" + yystate() + ")");
+    WikiReferenceTag parserTag = new WikiReferenceTag();
+    return this.parseToken(yytext(), parserTag);
+}
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{referencenocontent} {
+    logger.finer("referencenocontent: " + yytext() + " (" + yystate() + ")");
+    WikiReferenceTag parserTag = new WikiReferenceTag();
+    return this.parseToken(yytext(), parserTag);
+}
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{references} {
+    logger.finer("references: " + yytext() + " (" + yystate() + ")");
+    WikiReferencesTag parserTag = new WikiReferencesTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- html ----- */

@@ -72,6 +72,8 @@ javascript         = (<[ ]*script[^>]*>) ~(<[ ]*\/[ ]*script[ ]*>)
 /* processing commands */
 toc                = "__TOC__"
 
+/* references */
+references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraph */
 noparagraph        = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>))) | "<" [ ]* "hr" ~">"
@@ -117,6 +119,14 @@ paragraphstart     = ({inputcharacter})
 <NORMAL, P, NONPARAGRAPH>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     return this.parserInput.getTableOfContents().attemptTOCInsertion();
+}
+
+/* ----- references ----- */
+
+<NORMAL, P, NONPARAGRAPH>{references} {
+    logger.finer("references: " + yytext() + " (" + yystate() + ")");
+    WikiReferencesTag parserTag = new WikiReferencesTag();
+    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- javascript ----- */

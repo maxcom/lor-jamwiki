@@ -2,6 +2,8 @@
 0.4.3
 =====
 
+* FEATURE: Add support for Mediawiki <ref> tag as described on
+  http://meta.wikimedia.org/wiki/Help:Footnotes.
 * FEATURE: Add "Watch Topic" checkbox when editing.
 
 0.4.2

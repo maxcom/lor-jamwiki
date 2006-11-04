@@ -30,8 +30,8 @@ public class WikiNowikiTag implements ParserTag {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiNowikiTag.class.getName());
 
 	/**
-	 * Parse a Mediawiki heading of the form "==heading==" and return the
-	 * resulting HTML output.
+	 * Parse nowiki content - this method is passed content of the form
+	 * "<nowiki>content</nowiki>".
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		if (mode <= JFlexParser.MODE_PREPROCESS) {

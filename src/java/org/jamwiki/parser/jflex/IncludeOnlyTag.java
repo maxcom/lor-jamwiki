@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.Hashtable;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
