@@ -233,8 +233,8 @@ htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
 
 /* references */
-reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\n\r]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
-referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\n\r]+[ ]*)? ([ ]*\/[ ]*>)
+reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
+referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*) ([ ]*\/[ ]*>)
 references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 %state NORMAL, TABLE, TD, TH, TC, LIST, PRE, JAVASCRIPT, WIKIPRE
