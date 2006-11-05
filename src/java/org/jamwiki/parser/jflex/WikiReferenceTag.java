@@ -22,6 +22,7 @@ import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -72,7 +73,7 @@ public class WikiReferenceTag implements ParserTag {
 		if (!StringUtils.hasText(reference.getName())) {
 			return "_note-" + reference.getCitation();
 		}
-		return "_note-" + reference.getName();
+		return "_note-" + Utilities.encodeForURL(reference.getName());
 	}
 
 	/**
@@ -108,7 +109,7 @@ public class WikiReferenceTag implements ParserTag {
 		if (!StringUtils.hasText(reference.getName())) {
 			return "_ref-" + reference.getCitation();
 		}
-		return "_ref-" + reference.getName() + "_" + reference.getCount();
+		return "_ref-" + Utilities.encodeForURL(reference.getName()) + "_" + reference.getCount();
 	}
 
 	/**
