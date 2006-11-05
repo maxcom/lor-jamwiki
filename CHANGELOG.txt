@@ -5,6 +5,7 @@
 * FEATURE: Add support for Mediawiki <ref> tag as described on
   http://meta.wikimedia.org/wiki/Help:Footnotes.
 * FEATURE: Add "Watch Topic" checkbox when editing.
+* FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 
 0.4.2
 =====
