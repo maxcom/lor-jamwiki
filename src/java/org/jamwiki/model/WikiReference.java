@@ -16,7 +16,9 @@
  */
 package org.jamwiki.model;
 
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  * Utility class for handling reference objects.
@@ -66,5 +68,25 @@ public class WikiReference {
 	 */
 	public String getName() {
 		return this.name;
+	}
+
+	/**
+	 *
+	 */
+	public String getNotationName() {
+		if (!StringUtils.hasText(this.name)) {
+			return "_note-" + this.citation;
+		}
+		return "_note-" + Utilities.encodeForURL(this.name);
+	}
+
+	/**
+	 *
+	 */
+	public String getReferenceName() {
+		if (!StringUtils.hasText(this.name)) {
+			return "_ref-" + this.citation;
+		}
+		return "_ref-" + Utilities.encodeForURL(this.name) + "_" + this.count;
 	}
 }

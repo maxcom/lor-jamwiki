@@ -42,7 +42,7 @@ public class WikiReferencesTag implements ParserTag {
 		while (references.size() > 0) {
 			WikiReference reference = (WikiReference)references.elementAt(0);
 			references.removeElementAt(0);
-			html += "<li id=\"" + WikiReferenceTag.notationName(reference) + "\">";
+			html += "<li id=\"" + reference.getNotationName() + "\">";
 			html += "<sup>";
 			int pos = 0;
 			Vector citations = new Vector();
@@ -56,16 +56,16 @@ public class WikiReferencesTag implements ParserTag {
 				pos++;
 			}
 			if (citations.size() > 0) {
-				html += "<a href=\"#" + WikiReferenceTag.referenceName(reference) + "\" title=\"\">";
+				html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
 				html += reference.getCitation() + "." + reference.getCount() + "</a>&#160;";
 				while (citations.size() > 0) {
 					WikiReference citation = (WikiReference)citations.elementAt(0);
-					html += "&#160;<a href=\"#" + WikiReferenceTag.referenceName(citation) + "\" title=\"\">";
+					html += "&#160;<a href=\"#" + citation.getReferenceName() + "\" title=\"\">";
 					html += citation.getCitation() + "." + citation.getCount() + "</a>&#160;";
 					citations.removeElementAt(0);
 				}
 			} else {
-				html += "<a href=\"#" + WikiReferenceTag.referenceName(reference) + "\" title=\"\">";
+				html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
 				html += reference.getCitation() + "</a>&#160;";
 			}
 			html += "</sup>";

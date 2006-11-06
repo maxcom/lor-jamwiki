@@ -22,9 +22,7 @@ import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  *
@@ -69,16 +67,6 @@ public class WikiReferenceTag implements ParserTag {
 	/**
 	 *
 	 */
-	protected static String notationName(WikiReference reference) {
-		if (!StringUtils.hasText(reference.getName())) {
-			return "_note-" + reference.getCitation();
-		}
-		return "_note-" + Utilities.encodeForURL(reference.getName());
-	}
-
-	/**
-	 *
-	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		if (mode < JFlexParser.MODE_PROCESS) {
 			return raw;
@@ -87,9 +75,9 @@ public class WikiReferenceTag implements ParserTag {
 		this.processMetadata(parserInput, reference);
 		StringBuffer html = new StringBuffer();
 		html.append("<sup id=\"");
-		html.append(WikiReferenceTag.referenceName(reference));
+		html.append(reference.getReferenceName());
 		html.append("\" class=\"reference\"><a href=\"#");
-		html.append(WikiReferenceTag.notationName(reference));
+		html.append(reference.getNotationName());
 		html.append("\" title=\"\">[" + reference.getCitation() + "]</a></sup>");
 		return html.toString();
 	}
@@ -100,16 +88,6 @@ public class WikiReferenceTag implements ParserTag {
 	private void processMetadata(ParserInput parserInput, WikiReference reference) {
 		Vector references = this.retrieveReferences(parserInput);
 		references.add(reference);
-	}
-
-	/**
-	 *
-	 */
-	protected static String referenceName(WikiReference reference) {
-		if (!StringUtils.hasText(reference.getName())) {
-			return "_ref-" + reference.getCitation();
-		}
-		return "_ref-" + Utilities.encodeForURL(reference.getName()) + "_" + reference.getCount();
 	}
 
 	/**
