@@ -172,7 +172,7 @@ import org.springframework.util.StringUtils;
 newline            = ((\r\n) | (\n))
 whitespace         = {newline} | [ \t\f]
 inputcharacter     = [^\r\n]
-entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{3,6};)
+entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 
 /* non-container expressions */
 hr                 = "----"
