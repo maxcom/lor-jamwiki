@@ -3,6 +3,7 @@
 * [[Special:Search|Search]]
 ----
 * [[Special:Allpages|All Pages]]
+* [[Special:Specialpages|Special Pages]]
 * [[Special:Upload|Upload File]]
 ----
 * [http://jamwiki.org/ JAMWiki]

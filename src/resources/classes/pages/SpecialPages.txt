@@ -1,0 +1,19 @@
+
+===Special pages for all users===
+
+* [[Special:TopicsAdmin|Admin-only topics]]
+* [[Special:Allpages|All pages]]
+* [[Special:Categories|Categories]]
+* [[Special:RecentChanges|Recent changes]]
+* [[Special:Search|Search]]
+* [[Special:Upload|Upload]]
+* [[Special:Login|User login]]
+* [[Special:Logout|User logout]]
+* [[Special:Account|User registration]]
+
+===Administrative Pages===
+
+* [[Special:Admin|Admin]]
+* [[Special:Translation|Translations]]
+* [[Special:Setup|Wiki setup]]
+* [[Special:Upgrade|Wiki upgrade]]

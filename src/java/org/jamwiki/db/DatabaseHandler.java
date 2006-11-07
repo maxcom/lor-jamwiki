@@ -1365,48 +1365,6 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 * Utility method for reading default topic values from files and returning
-	 * the file contents.
-	 */
-	private static String readSpecialPage(Locale locale, String topicName) throws Exception {
-		String contents = null;
-		String filename = null;
-		String language = null;
-		String country = null;
-		if (locale != null) {
-			language = locale.getLanguage();
-			country = locale.getCountry();
-		}
-		String subdirectory = WikiBase.SPECIAL_PAGE_DIR + File.separator;
-		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
-			try {
-				filename = subdirectory + Utilities.encodeForFilename(topicName + "_" + language + "_" + country) + ".txt";
-				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
-				logger.warning("File " + filename + " does not exist");
-			}
-		}
-		if (contents == null && StringUtils.hasText(language)) {
-			try {
-				filename = subdirectory + Utilities.encodeForFilename(topicName + "_" + language) + ".txt";
-				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
-				logger.warning("File " + filename + " does not exist");
-			}
-		}
-		if (contents == null) {
-			try {
-				filename = subdirectory + Utilities.encodeForFilename(topicName) + ".txt";
-				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
-				logger.warning("File " + filename + " could not be read", e);
-				throw e;
-			}
-		}
-		return contents;
-	}
-
-	/**
 	 *
 	 */
 	private void releaseParams(Connection conn) throws Exception {
@@ -1495,7 +1453,7 @@ public class DatabaseHandler {
 			return;
 		}
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
-		String contents = DatabaseHandler.readSpecialPage(locale, topicName);
+		String contents = Utilities.readSpecialPage(locale, topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
@@ -1576,7 +1534,7 @@ public class DatabaseHandler {
 		Connection conn = null;
 		try {
 			conn = this.getConnection();
-			String contents = DatabaseHandler.readSpecialPage(locale, topicName);
+			String contents = Utilities.readSpecialPage(locale, topicName);
 			Topic topic = this.lookupTopic(virtualWiki, topicName, false, conn);
 			topic.setTopicContent(contents);
 			// FIXME - hard coding

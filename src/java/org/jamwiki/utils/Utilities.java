@@ -874,6 +874,51 @@ public class Utilities {
 	}
 
 	/**
+	 * Utility method for reading special topic values from files and returning
+	 * the file contents.
+	 *
+	 * @param locale The locale for the user viewing the special page.
+	 * @param pageName The name of the special page being retrieved.
+	 */
+	public static String readSpecialPage(Locale locale, String pageName) throws Exception {
+		String contents = null;
+		String filename = null;
+		String language = null;
+		String country = null;
+		if (locale != null) {
+			language = locale.getLanguage();
+			country = locale.getCountry();
+		}
+		String subdirectory = WikiBase.SPECIAL_PAGE_DIR + File.separator;
+		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
+			try {
+				filename = subdirectory + Utilities.encodeForFilename(pageName + "_" + language + "_" + country) + ".txt";
+				contents = Utilities.readFile(filename);
+			} catch (Exception e) {
+				logger.info("File " + filename + " does not exist");
+			}
+		}
+		if (contents == null && StringUtils.hasText(language)) {
+			try {
+				filename = subdirectory + Utilities.encodeForFilename(pageName + "_" + language) + ".txt";
+				contents = Utilities.readFile(filename);
+			} catch (Exception e) {
+				logger.info("File " + filename + " does not exist");
+			}
+		}
+		if (contents == null) {
+			try {
+				filename = subdirectory + Utilities.encodeForFilename(pageName) + ".txt";
+				contents = Utilities.readFile(filename);
+			} catch (Exception e) {
+				logger.warning("File " + filename + " could not be read", e);
+				throw e;
+			}
+		}
+		return contents;
+	}
+
+	/**
 	 * Utility method used to delete a cookie by setting its expiration time to the
 	 * current time.
 	 *

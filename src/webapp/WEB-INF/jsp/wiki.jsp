@@ -118,6 +118,9 @@
 	<c:when test="${pageInfo.actionSearchResults}">
 		<jsp:include page="search-results.jsp" flush="true" />
 	</c:when>
+	<c:when test="${pageInfo.actionSpecialPages}">
+		<jsp:include page="all-special-pages.jsp" flush="true" />
+	</c:when>
 	<c:when test="${pageInfo.actionTopicsAdmin}">
 		<jsp:include page="topics-admin.jsp" flush="true" />
 	</c:when>

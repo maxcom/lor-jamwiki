@@ -15,4 +15,4 @@ Some other useful functions:
 * [[Special:Search]] - Search the Wiki.
 * [[Special:Account]] - Create an account so that edits are propertly credited.
 * [[Special:Allpages]] - A list of all the topics in the Wiki.
-* [[Special:TopicsAdmin]] - A list of admin-only topics on the Wiki.
+* [[Special:Specialpages]] - An index of wiki "Special" pages.
