@@ -20,18 +20,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-	<title><f:message key="common.sitename" /> - <f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></title>
+	<title><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message> - <f:message key="common.sitename" /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<%
-if (Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) != null && Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC).length() > 0) {
-%>
-	<link rel="start" title="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" href="<c:out value="${pathRoot}"/><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" />
-	<link rel="home" title="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" href="<c:out value="${pathRoot}"/><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" />
-<%
-}
-%>
+	<meta name="DC.Title" content="<f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message> - <f:message key="common.sitename" />" />
+<c:if test="${!empty pageInfo.metaDescription}">
+	<meta name="description" content="<c:out value="${pageInfo.metaDescription}" />" />
+</c:if>
+<c:if test="${!empty pageInfo.defaultTopic}">
+	<link rel="start" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
+	<link rel="home" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
+</c:if>
 	<link href="<jamwiki:link value="jamwiki.css" />" type="text/css" rel="stylesheet" />
-	<link rel="search" title="<f:message key="generalmenu.search"/>" href="<c:out value="${pathRoot}"/>Special:Search" />
-	<link rel="index" title="<f:message key="generalmenu.search"/>" href="<c:out value="${pathRoot}"/>Special:Allpages" />
 </head>
 <body>

@@ -16,8 +16,11 @@
  */
 package org.jamwiki.servlets;
 
+import java.text.MessageFormat;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -317,8 +320,27 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
+	public String getDefaultTopic() {
+		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+	}
+
+	/**
+	 *
+	 */
 	public WikiMessage getPageTitle() {
 		return this.pageTitle;
+	}
+
+	/**
+	 *
+	 */
+	public String getMetaDescription() {
+		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
+		if (!StringUtils.hasText(pattern)) return "";
+		MessageFormat formatter = new MessageFormat(pattern);
+		Object params[] = new Object[1];
+		params[0] = (this.topicName != null) ? this.topicName : "";
+		return formatter.format(params);
 	}
 
 	/**

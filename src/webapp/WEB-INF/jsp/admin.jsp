@@ -121,6 +121,11 @@ function onUserGroupType() {
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_USE_PREVIEW).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" /></td>
 </tr>
+<tr>
+	<td class="formcaption" valign="top"><label for="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><f:message key="admin.caption.metadescription" /></label></td>
+	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><%= props.getProperty(Environment.PROP_BASE_META_DESCRIPTION) %></textarea></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.metadescriptionhelp" /></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2"><h4><f:message key="admin.caption.parserheader" /></h4></td></tr>
 <tr>
@@ -355,7 +360,7 @@ FIXME - LDAP not supported at the moment, comment this out
 </tr>
 <tr>
 	<td class="formcaption" valign="top"><label for="<%= Environment.PROP_USERGROUP_DETAILVIEW %>"><f:message key="admin.caption.usergroup.detailview" /></label></td>
-	<td class="formelement"><textarea cols="40" rows="5" name="<%= Environment.PROP_USERGROUP_DETAILVIEW %>" id="<%= Environment.PROP_USERGROUP_DETAILVIEW %>"><%= props.getProperty(Environment.PROP_USERGROUP_DETAILVIEW) %></textarea></td>
+	<td class="formelement"><textarea cols="30" rows="5" name="<%= Environment.PROP_USERGROUP_DETAILVIEW %>" id="<%= Environment.PROP_USERGROUP_DETAILVIEW %>"><%= props.getProperty(Environment.PROP_USERGROUP_DETAILVIEW) %></textarea></td>
 </tr>
 <!-- END USERGROUP-TYPE -->
 

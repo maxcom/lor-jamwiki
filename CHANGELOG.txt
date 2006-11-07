@@ -7,6 +7,7 @@
 * FEATURE: Add "Watch Topic" checkbox when editing.
 * FEATURE: Add "Special:Specialpages" page.
 * BUG: Do not HTML escape &lt; and &gt;.
+* FEATURE: Add support for setting HTML meta values.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 
 0.4.2
