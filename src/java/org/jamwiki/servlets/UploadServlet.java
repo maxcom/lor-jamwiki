@@ -131,10 +131,11 @@ public class UploadServlet extends JAMWikiServlet {
 			if (item.isFormField()) {
 				if (fieldName.equals("description")) {
 					// FIXME - these should be parsed
-					contents = item.getString();
+					contents = item.getString("UTF-8");
 				}
 			} else {
-				fileName = sanitizeFilename(item.getName());
+				// file name can have encoding issues, so manually convert
+				fileName = item.getName();
 				if (fileName == null) {
 					throw new WikiException(new WikiMessage("upload.error.filename"));
 				}

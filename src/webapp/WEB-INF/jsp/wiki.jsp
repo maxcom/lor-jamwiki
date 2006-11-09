@@ -126,8 +126,7 @@
 		<jsp:include page="watchlist.jsp" flush="true" />
 	</c:when>
 	<c:otherwise>
-		<%@ include file="category-include.jsp" %>
-		<%@ include file="view-topic-include.jsp" %>
+		<jsp:include page="topic.jsp" flush="true" />
 	</c:otherwise>
 </c:choose>
 		<br />
