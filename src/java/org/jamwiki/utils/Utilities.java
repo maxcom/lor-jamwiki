@@ -889,10 +889,11 @@ public class Utilities {
 			language = locale.getLanguage();
 			country = locale.getCountry();
 		}
-		String subdirectory = WikiBase.SPECIAL_PAGE_DIR + File.separator;
+		String subdirectory = "";
 		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
 			try {
-				filename = subdirectory + Utilities.encodeForFilename(pageName + "_" + language + "_" + country) + ".txt";
+				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
+				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.info("File " + filename + " does not exist");
@@ -900,7 +901,8 @@ public class Utilities {
 		}
 		if (contents == null && StringUtils.hasText(language)) {
 			try {
-				filename = subdirectory + Utilities.encodeForFilename(pageName + "_" + language) + ".txt";
+				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
+				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.info("File " + filename + " does not exist");
@@ -908,7 +910,8 @@ public class Utilities {
 		}
 		if (contents == null) {
 			try {
-				filename = subdirectory + Utilities.encodeForFilename(pageName) + ".txt";
+				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
+				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.warning("File " + filename + " could not be read", e);
