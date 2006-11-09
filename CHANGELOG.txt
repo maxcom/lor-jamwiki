@@ -12,6 +12,7 @@
 * FEATURE: Add support for setting HTML meta values.
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated Hungarian translations from Daniel Tar (bDaneE).
+* FEATURE: Updated Danish translations from Anders Monrad (g9adm).
 
 0.4.2
 =====
