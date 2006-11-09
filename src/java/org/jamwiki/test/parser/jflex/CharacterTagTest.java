@@ -43,6 +43,12 @@ public class CharacterTagTest extends JFlexParserTest {
 		input = "&#39;";
 		output = "<p>&#39;\n</p>";
 		assertEquals(output, this.parse(input));
+		input = "&lt;";
+		output = "<p>&lt;\n</p>";
+		assertEquals(output, this.parse(input));
+		input = "&lt; > &gt;";
+		output = "<p>&lt; &gt; &gt;\n</p>";
+		assertEquals(output, this.parse(input));
 	}
 
 	/**
