@@ -14,13 +14,9 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.users;
+package org.jamwiki.ldap;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.StringTokenizer;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -32,15 +28,16 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 import org.jamwiki.Environment;
+import org.jamwiki.UserHandler;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Encryption;
 
 /**
  * Use an LDAP server as usergroup.
  */
-public class LdapUsergroup extends Usergroup {
+public class LdapUserHandler extends UserHandler {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(LdapUsergroup.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(LdapUserHandler.class.getName());
 
 	/**
 	 * Get the email address of an user by its user-ID.
@@ -77,51 +74,9 @@ public class LdapUsergroup extends Usergroup {
 	 *
 	 * @return Instance to the user group class
 	 */
-	public static Usergroup getInstance() {
-		LdapUsergroup lug = new LdapUsergroup();
+	public static UserHandler getInstance() {
+		LdapUserHandler lug = new LdapUserHandler();
 		return lug;
-	}
-
-	/**
-	 * Get a list of all users.
-	 *
-	 * @return List of all users. The list contains SelectorBeans with the
-	 *  user-ID as key and the full username as label.
-	 */
-	public List getListOfAllUsers() {
-		List list = new ArrayList();
-		String userIdField = Environment.getValue(Environment.PROP_USERGROUP_USERID_FIELD);
-		String fullnameField = Environment.getValue(Environment.PROP_USERGROUP_FULLNAME_FIELD);
-		try {
-			DirContext ctx = connect();
-			String searchString = Environment.getValue(Environment.PROP_USERGROUP_BASIC_SEARCH);
-			Attributes matchAttrs = new BasicAttributes(true);
-			fillSearchRestrictions(matchAttrs);
-			NamingEnumeration answer = ctx.search(searchString,matchAttrs);
-			for (; answer.hasMoreElements();) {
-				try {
-					SearchResult searchResult = (SearchResult)answer.nextElement();
-					Attributes sr = searchResult.getAttributes();
-					SelectorBean bean = new SelectorBean();
-					bean.setKey(sr.get(userIdField).get().toString());
-					bean.setLabel(sr.get(fullnameField).get().toString());
-					list.add(bean);
-				} catch (Exception e) {
-					logger.severe("Cannot add a member", e);
-				}
-			}
-		} catch (Exception e) {
-			logger.severe("Cannot create member list", e);
-		}
-		logger.fine("List created with " + list.size()+ " entries");
-		Collections.sort(list,new Comparator() {
-			public int compare(Object o1, Object o2) {
-				SelectorBean bean1 = (SelectorBean) o1;
-				SelectorBean bean2 = (SelectorBean) o2;
-				return bean1.getLabel().compareToIgnoreCase(bean2.getLabel());
-			}
-		});
-		return list;
 	}
 
 	/**

@@ -21,9 +21,6 @@ import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
-import org.jamwiki.users.LdapUsergroup;
-import org.jamwiki.users.NoUsergroup;
-import org.jamwiki.users.Usergroup;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.PseudoTopicHandler;
 import org.jamwiki.utils.WikiCache;
@@ -49,8 +46,6 @@ public class WikiBase {
 	public static final int PERSISTENCE_INTERNAL_DB = 0;
 	/** The topics are stored in a database */
 	public static final int PERSISTENCE_EXTERNAL_DB = 1;
-	/** Members are retrieved from LDAP */
-	public static final int LDAP = 2;
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
 	/** Root directory within the WAR distribution that contains the default topic pages. */
@@ -145,25 +140,6 @@ public class WikiBase {
 	 */
 	public static SearchEngine getSearchEngine() {
 		return WikiBase.searchEngine;
-	}
-
-	/**
-	 * Return an instance of the current user group type, either LDAP,
-	 * database, or none.
-	 *
-	 * @return The current user group type.
-	 * @throws Exception Thrown if an error occurs while initializing the
-	 *  user group instance.
-	 */
-	public static Usergroup getUsergroupInstance() throws Exception {
-		switch (Usergroup.getUsergroupType()) {
-		case LDAP:
-			return LdapUsergroup.getInstance();
-			//TODO case DATABASE:
-			//  return DatabaseUsergroup.getInstance();
-		default:
-			return NoUsergroup.getInstance();
-		}
 	}
 
 	/**

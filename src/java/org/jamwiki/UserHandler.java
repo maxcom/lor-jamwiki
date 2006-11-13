@@ -14,23 +14,20 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.users;
-
-import java.util.List;
+package org.jamwiki;
 
 /**
- * Usergroup, if there is no usergroup. This class implements the
- * default wiki behavior.
+ * Abstract class to handle user groups
  */
-public class NoUsergroup extends Usergroup {
+public abstract class UserHandler {
 
 	/**
 	 * Get an instance of the user group class.
 	 *
 	 * @return Instance to the user group class
 	 */
-	public static Usergroup getInstance() {
-		return new NoUsergroup();
+	public static UserHandler getInstance() {
+		return null;
 	}
 
 	/**
@@ -39,9 +36,7 @@ public class NoUsergroup extends Usergroup {
 	 * @param uid The user-ID of this user
 	 * @return The full name of this user
 	 */
-	public String getFullnameById(String uid) {
-		return uid;
-	}
+	public abstract String getFullnameById(String uid);
 
 	/**
 	 * Get the email address of an user by its user-ID.
@@ -49,19 +44,7 @@ public class NoUsergroup extends Usergroup {
 	 * @param user The user-ID of this user
 	 * @return The email address of this user
 	 */
-	public String getKnownEmailById(String user) {
-		return null;
-	}
-
-	/**
-	 * Get a list of all users.
-	 *
-	 * @return List of all users. The list contains SelectorBeans with the
-	 *  user-ID as key and the full username as label.
-	 */
-	public List getListOfAllUsers() {
-		return null;
-	}
+	public abstract String getKnownEmailById(String user);
 
 	/**
 	 * Get the user details of this user by its user-ID. The user details is
@@ -71,9 +54,7 @@ public class NoUsergroup extends Usergroup {
 	 * @param uid The user-ID of this user
 	 * @return The user details section
 	 */
-	public String getUserDetails(String uid) {
-		return null;
-	}
+	public abstract String getUserDetails(String uid);
 
 	/**
 	 * If the repository contains confirmed validated email addresses then
