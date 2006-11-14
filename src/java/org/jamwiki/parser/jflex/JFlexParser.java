@@ -19,7 +19,6 @@ package org.jamwiki.parser.jflex;
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;

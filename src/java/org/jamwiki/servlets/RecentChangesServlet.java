@@ -19,7 +19,6 @@ package org.jamwiki.servlets;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;

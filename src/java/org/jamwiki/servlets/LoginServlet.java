@@ -18,7 +18,6 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
@@ -76,7 +75,7 @@ public class LoginServlet extends JAMWikiServlet {
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			redirect = virtualWiki.getDefaultTopicName();
 		}
-		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password, false);
+		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password);
 		if (user == null) {
 			next.addObject("errorMessage", new WikiMessage("error.login"));
 			next.addObject("redirect", redirect);

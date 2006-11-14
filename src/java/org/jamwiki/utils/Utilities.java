@@ -169,13 +169,13 @@ public class Utilities {
 		StringTokenizer tokens = new StringTokenizer(userInfo, ServletUtil.USER_COOKIE_DELIMITER);
 		if (tokens.countTokens() != 2) return null;
 		String login = tokens.nextToken();
-		String encryptedPassword = tokens.nextToken();
+		String rememberKey = tokens.nextToken();
 		try {
-			user = WikiBase.getHandler().lookupWikiUser(login, encryptedPassword, true);
+			user = WikiBase.getHandler().lookupWikiUser(login);
 		} catch (Exception e) {
 			// FIXME - safe to ignore?
 		}
-		if (user != null) {
+		if (user != null && user.getRememberKey().equals(rememberKey)) {
 			Utilities.login(request, null, user, false);
 		}
 		return user;

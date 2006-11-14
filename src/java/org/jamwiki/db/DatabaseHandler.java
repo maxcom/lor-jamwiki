@@ -18,16 +18,13 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Vector;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -184,7 +181,7 @@ public class DatabaseHandler {
 
 	/**
 	 * @deprecated This method exists solely to allow upgrades to JAMWiki 0.4.0 or
-	 *  greater and will be replaced during the JAMWiki 0.5.x or JAMWiki 0.6.x series.
+	 *  greater and will be replaced during the JAMWiki 0.6.x series.
 	 */
 	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, DatabaseHandler toHandler) throws Exception {
 		Connection conn = null;
@@ -1001,12 +998,10 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
+	public WikiUser lookupWikiUser(String login, String password) throws Exception {
 		// FIXME - handle LDAP
-		String encryptedPassword = password;
-		if (!encrypted) {
-			encryptedPassword = Encryption.encrypt(password);
-		}
+		// password is stored encrypted, so encrypt password
+		String encryptedPassword = Encryption.encrypt(password);
 		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUser(login, encryptedPassword);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");

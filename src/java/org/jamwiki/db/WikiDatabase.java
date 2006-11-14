@@ -24,8 +24,6 @@ import java.util.Locale;
 import java.util.Properties;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
-import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -246,18 +244,5 @@ public class WikiDatabase {
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, conn);
 			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, conn);
 		}
-	}
-
-	/**
-	 *
-	 */
-	public static void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress) throws Exception {
-		logger.info("Updating special page " + virtualWiki + " / " + topicName);
-		String contents = Utilities.readSpecialPage(locale, topicName);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
-		topic.setTopicContent(contents);
-		// FIXME - hard coding
-		TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName));
 	}
 }
