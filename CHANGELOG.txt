@@ -4,6 +4,7 @@
 
 * FEATURE: Add experimental support for LDAP.
 * BUG: Typo in MS SQL query, fix provided by Scott Croco (scroco).
+* FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
 * FEATURE: Updated Chinese translations from hfl.
 
 0.4.3

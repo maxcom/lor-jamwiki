@@ -38,10 +38,6 @@ function confirmSubmit() {
 <c:if test="${!empty message}"><p align="center" style="color:green;size=110%;"><f:message key="${message.key}" /></p></c:if>
 
 <table border="0" class="contents">
-<tr>
-	<td class="formcaption"><f:message key="convert.tofile" /></td>
-	<td class="formelement"><input type="submit" name="tofile" onclick="return confirmSubmit()" /></td>
-</tr>
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
 	<td class="formcaption"><f:message key="convert.todatabase" /></td>

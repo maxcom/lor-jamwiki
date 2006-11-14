@@ -126,32 +126,6 @@ public interface QueryHandler {
 	public WikiResultSet getAllTopicNames(int virtualWikiId) throws Exception;
 
 	/**
-	 * Retrieve a WikiResultSet consisting of all topic version information for
-	 * a given topic.  Version information is sorted by topic version id, which
-	 * in effect sorts the versions from newest to oldest.
-	 *
-	 * @param topic A Topic object for which version information is to be retrieved.
-	 * @param descending If <code>true</code> then results are sorted newest to
-	 *  oldest.
-	 * @return A WikiResultSet containing topic version information for all
-	 *  versions of the specified topic.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet getAllTopicVersions(Topic topic, boolean descending) throws Exception;
-
-	/**
-	 * Retrieve a WikiResultSet containing all topic names for the WikiFile
-	 * objects existing for a virtual wiki.
-	 *
-	 * @param virtualWikiId The id of the virtual wiki for which wiki file topic
-	 *  names are being retrieved.
-	 * @return A WikiResultSet containing the names of all wiki file topics for
-	 *  the virtual wiki, not including any previously deleted topics.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet getAllWikiFileTopicNames(int virtualWikiId) throws Exception;
-
-	/**
 	 * Retrieve a WikiResultSet consisting of all wiki file version information for
 	 * a given wiki file.  Version information is sorted by wiki file version id, which
 	 * in effect sorts the wiki file versions from newest to oldest.
@@ -164,14 +138,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws Exception;
-
-	/**
-	 * Retrieve a WikiResultSet containing the login of every registered wiki user.
-	 *
-	 * @return A WikiResultSet containing the login of every registered wiki user.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet getAllWikiUserLogins() throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all categories associated with a particular

@@ -46,9 +46,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
 			return ServletUtil.viewLogin(request, pageInfo, "Special:Convert", errorMessage);
 		}
-		if (StringUtils.hasText(request.getParameter("tofile"))) {
-			convertToFile(request, next, pageInfo);
-		} else if (StringUtils.hasText(request.getParameter("todatabase"))) {
+		if (StringUtils.hasText(request.getParameter("todatabase"))) {
 			convertToDatabase(request, next, pageInfo);
 		} else {
 			view(request, next, pageInfo);
@@ -69,23 +67,6 @@ public class PersistencyServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.severe("Failure while executing database-to-file conversion", e);
 			next.addObject("errorMessage", new WikiMessage("convert.database.failure", e.getMessage()));
-		}
-		view(request, next, pageInfo);
-	}
-
-	/**
-	 *
-	 */
-	private void convertToFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		try {
-			FileHandler toHandler = new FileHandler();
-			DatabaseHandler fromHandler = new DatabaseHandler();
-			Vector messages = DatabaseHandler.convertToFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
-			next.addObject("message", new WikiMessage("convert.file.success"));
-			next.addObject("messages", messages);
-		} catch (Exception e) {
-			logger.severe("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", new WikiMessage("convert.file.failure", e.getMessage()));
 		}
 		view(request, next, pageInfo);
 	}
