@@ -190,9 +190,21 @@ public class Utilities {
 	 *  if there is no watchlist in the session.
 	 */
 	public static Watchlist currentWatchlist(HttpServletRequest request) throws Exception {
+		// get watchlist stored in session
 		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(ServletUtil.PARAMETER_WATCHLIST);
-		if (watchlist == null) watchlist = new Watchlist();
-		return watchlist;
+		if (watchlist != null) {
+			return watchlist;
+		}
+		// no watchlist in session, retrieve from database
+		watchlist = new Watchlist();
+		WikiUser user = currentUser(request);
+		if (user == null) {
+			return watchlist;
+		}
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
+		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
+        return watchlist;
 	}
 
 	/**
