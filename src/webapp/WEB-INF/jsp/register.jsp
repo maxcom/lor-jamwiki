@@ -61,7 +61,7 @@
 </tr>
 <tr>
 	<td><label for="registerEmail"><f:message key="register.caption.email" /></label>:</td>
-	<td><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" /></td>
+	<td><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></td>
 </tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>

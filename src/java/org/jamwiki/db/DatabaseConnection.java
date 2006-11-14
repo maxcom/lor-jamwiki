@@ -291,12 +291,12 @@ public class DatabaseConnection {
 		Properties properties = new Properties();
 		properties.setProperty("user", userName);
 		properties.setProperty("password", password);
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE)) {
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE)) {
 			// handle clobs as strings, Oracle 10g and higher drivers (ojdbc14.jar)
 			properties.setProperty("SetBigStringTryClob", "true");
 		}
 		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
-		new PoolableConnectionFactory(connectionFactory, connectionPool, null, DatabaseHandler.getConnectionValidationQuery(), false, true);
+		new PoolableConnectionFactory(connectionFactory, connectionPool, null, WikiDatabase.getConnectionValidationQuery(), false, true);
 		PoolingDriver driver = new PoolingDriver();
 		driver.registerPool("jamwiki", connectionPool);
 		Connection conn = null;
@@ -321,7 +321,7 @@ public class DatabaseConnection {
 			conn = DriverManager.getConnection(url, user, password);
 			if (existence) {
 				// test to see if database exists
-				executeQuery(DatabaseHandler.getExistenceValidationQuery(), conn);
+				executeQuery(WikiDatabase.getExistenceValidationQuery(), conn);
 			}
 		} finally {
 			if (conn != null) {

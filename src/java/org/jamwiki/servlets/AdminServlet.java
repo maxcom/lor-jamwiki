@@ -27,7 +27,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.DatabaseConnection;
-import org.jamwiki.db.DatabaseHandler;
+import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -119,7 +119,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 			if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
-				DatabaseHandler.setupDefaultDatabase(props);
+				WikiDatabase.setupDefaultDatabase(props);
 			} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
 				setProperty(props, request, Environment.PROP_DB_DRIVER);
@@ -183,9 +183,9 @@ public class AdminServlet extends JAMWikiServlet {
 					String value = props.getProperty(key);
 					Environment.setValue(key, value);
 				}
-				// re-initialize to reset DatabaseHandler settings (if needed)
-				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
+				// re-initialize to reset database settings (if needed)
+				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {

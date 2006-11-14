@@ -56,7 +56,10 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (Utilities.currentUser(request) != null) {
-			next.addObject("newuser", Utilities.currentUser(request));
+			WikiUser user = Utilities.currentUser(request);
+			next.addObject("newuser", user);
+			WikiUserInfo userInfo = WikiBase.getHandler().lookupWikiUserInfo(user.getLogin());
+			next.addObject("newuserinfo", userInfo);
 		}
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
@@ -82,6 +85,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			}
 		}
 		user.setLogin(request.getParameter("login"));
+		userInfo.setLogin(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
 		userInfo.setEmail(request.getParameter("email"));
 		String newPassword = request.getParameter("newPassword");
@@ -93,6 +97,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
 		next.addObject("newuser", user);
+		next.addObject("newuserinfo", userInfo);
 		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
 			next.addObject("errors", errors);
@@ -138,7 +143,7 @@ public class RegisterServlet extends JAMWikiServlet {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
-		if (WikiBase.getHandler().lookupWikiUser(user.getLogin()) != null) {
+		if (user.getUserId() < 1 && WikiBase.getHandler().lookupWikiUser(user.getLogin()) != null) {
 			errors.add(new WikiMessage("register.error.logininvalid", user.getLogin()));
 		}
 		return errors;

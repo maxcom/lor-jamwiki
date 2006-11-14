@@ -19,7 +19,7 @@
 <%@ page import="
         org.jamwiki.Environment,
         org.jamwiki.WikiBase,
-        org.jamwiki.db.DatabaseHandler
+        org.jamwiki.db.WikiDatabase
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
@@ -113,14 +113,14 @@ function onPersistenceType() {
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label>:</td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
-		<option value="<%= DatabaseHandler.DB_TYPE_ANSI %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ANSI) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ANSI %></option>
-		<option value="<%= DatabaseHandler.DB_TYPE_HSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_HSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_HSQL %></option>
-		<option value="<%= DatabaseHandler.DB_TYPE_MSSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MSSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MSSQL %></option>
-		<option value="<%= DatabaseHandler.DB_TYPE_MYSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_MYSQL) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_MYSQL %></option>
-		<option value="<%= DatabaseHandler.DB_TYPE_ORACLE %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_ORACLE) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_ORACLE %></option>
-		<option value="<%= DatabaseHandler.DB_TYPE_POSTGRES %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_POSTGRES %></option>
-		<option value="<%= DatabaseHandler.DB_TYPE_DB2 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2 %> (<f:message key="common.caption.experimental" />)</option>
-		<option value="<%= DatabaseHandler.DB_TYPE_DB2_400 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(DatabaseHandler.DB_TYPE_DB2_400) ? " selected" : "" %>><%= DatabaseHandler.DB_TYPE_DB2_400 %> (<f:message key="common.caption.experimental" />)</option>
+		<option value="<%= WikiDatabase.DB_TYPE_ANSI %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ANSI) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_ANSI %></option>
+		<option value="<%= WikiDatabase.DB_TYPE_HSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_HSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_HSQL %></option>
+		<option value="<%= WikiDatabase.DB_TYPE_MSSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_MSSQL %></option>
+		<option value="<%= WikiDatabase.DB_TYPE_MYSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_MYSQL %></option>
+		<option value="<%= WikiDatabase.DB_TYPE_ORACLE %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_ORACLE %></option>
+		<option value="<%= WikiDatabase.DB_TYPE_POSTGRES %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_POSTGRES %></option>
+		<option value="<%= WikiDatabase.DB_TYPE_DB2 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_DB2 %> (<f:message key="common.caption.experimental" />)</option>
+		<option value="<%= WikiDatabase.DB_TYPE_DB2_400 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2_400) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_DB2_400 %> (<f:message key="common.caption.experimental" />)</option>
 		</select>
 	</td>
 </tr>

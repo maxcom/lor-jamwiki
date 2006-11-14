@@ -28,6 +28,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.db.DatabaseUpgrades;
+import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.file.FileHandler;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -195,7 +196,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		try {
 			if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
 				// convert file to default database
-				DatabaseHandler.setupDefaultDatabase(Environment.getInstance());
+				WikiDatabase.setupDefaultDatabase(Environment.getInstance());
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
 				FileHandler fromHandler = new FileHandler();

@@ -221,11 +221,13 @@ public interface QueryHandler {
 	 * Retrieve a WikiResultSet containing all virtual wiki information for all
 	 * virtual wikis.
 	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
 	 * @return Returns a WikiResult set containing all virtual wiki information
 	 *  for every virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getVirtualWikis() throws Exception;
+	public WikiResultSet getVirtualWikis(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing the topic ID and topic name for

@@ -76,7 +76,6 @@ public class WikiBase {
 	 * @throws Exception If the instance cannot be instantiated.
 	 */
 	private WikiBase() throws Exception {
-		String type = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE);
 		WikiBase.handler = new DatabaseHandler();
 		this.searchEngine = new LuceneSearchEngine();
 	}
@@ -112,10 +111,6 @@ public class WikiBase {
 	 *  if the handler has not yet been initialized.
 	 */
 	public static DatabaseHandler getHandler() {
-		if (!WikiBase.handler.isInitialized()) {
-			// not initialized yet
-			return null;
-		}
 		return WikiBase.handler;
 	}
 
@@ -155,10 +150,8 @@ public class WikiBase {
 	public static void reset(Locale locale, WikiUser user) throws Exception {
 		WikiMail.init();
 		WikiBase.instance = new WikiBase();
-		if (!WikiBase.handler.isInitialized()) {
-			WikiBase.handler.initialize(locale, user);
-		}
 		WikiCache.reset();
+		WikiBase.handler.setup(locale, user);
 		WikiBase.searchEngine.refreshIndex();
 	}
 }

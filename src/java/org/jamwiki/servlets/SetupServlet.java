@@ -26,7 +26,7 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseConnection;
-import org.jamwiki.db.DatabaseHandler;
+import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -166,7 +166,7 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_FILE_DIR_RELATIVE_PATH, request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH));
 		int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
 		if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
-			DatabaseHandler.setupDefaultDatabase(Environment.getInstance());
+			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
 		} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
 			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));
