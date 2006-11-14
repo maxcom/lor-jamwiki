@@ -162,38 +162,15 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
 			*/
-			/*
-			int membershipType = Integer.parseInt(request.getParameter(Environment.PROP_USERGROUP_TYPE));
-			String usergroupType;
-			if (membershipType == WikiBase.LDAP) {
-				usergroupType = "LDAP";
-			} else if (membershipType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
-				usergroupType = "DATABASE";
-			} else {
-				usergroupType = "0";
-			}
-			props.setProperty(Environment.PROP_USERGROUP_TYPE, usergroupType);
-			String[] autoFill = {
-				Environment.PROP_USERGROUP_FACTORY,
-				Environment.PROP_USERGROUP_URL,
-				Environment.PROP_USERGROUP_USERNAME,
-				Environment.PROP_USERGROUP_PASSWORD,
-				Environment.PROP_USERGROUP_BASIC_SEARCH,
-				Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS,
-				Environment.PROP_USERGROUP_USERID_FIELD,
-				Environment.PROP_USERGROUP_FULLNAME_FIELD,
-				Environment.PROP_USERGROUP_MAIL_FIELD,
-				Environment.PROP_USERGROUP_DETAILVIEW
-			};
-			for (int i = 0; i < autoFill.length; i++) {
-				if (autoFill[i].equals(Environment.PROP_USERGROUP_PASSWORD) && StringUtils.hasText(request.getParameter(autoFill[i]))) {
-					setEncryptedProperty(props, request, Environment.PROP_USERGROUP_PASSWORD);
-					next.addObject("userGroupPassword", request.getParameter(autoFill[i]));
-				} else {
-					setProperty(props, request, autoFill[i]);
-				}
-			}
-			*/
+			setProperty(props, request, Environment.PROP_LDAP_CONTEXT);
+			setProperty(props, request, Environment.PROP_LDAP_FACTORY_CLASS);
+			setProperty(props, request, Environment.PROP_LDAP_FIELD_EMAIL);
+			setProperty(props, request, Environment.PROP_LDAP_FIELD_FIRST_NAME);
+			setProperty(props, request, Environment.PROP_LDAP_FIELD_LAST_NAME);
+			setProperty(props, request, Environment.PROP_LDAP_FIELD_LOGIN);
+			setProperty(props, request, Environment.PROP_LDAP_HANDLER);
+			setProperty(props, request, Environment.PROP_LDAP_SECURITY_AUTHENTICATION);
+			setProperty(props, request, Environment.PROP_LDAP_URL);
 			Vector errors = Utilities.validateSystemSettings(props);
 			if (errors.size() > 0) {
 				next.addObject("errors", errors);

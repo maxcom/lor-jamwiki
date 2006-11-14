@@ -26,6 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
@@ -71,17 +72,22 @@ public class RegisterServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
 		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		WikiUser user = new WikiUser();
+		WikiUserInfo userInfo = new WikiUserInfo();
 		String userIdString = request.getParameter("userId");
 		if (StringUtils.hasText(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
-			if (userId > 0) user = WikiBase.getHandler().lookupWikiUser(userId);
+			if (userId > 0) {
+				user = WikiBase.getHandler().lookupWikiUser(userId);
+				userInfo = WikiBase.getHandler().lookupWikiUserInfo(user.getLogin());
+			}
 		}
 		user.setLogin(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
-		user.setEmail(request.getParameter("email"));
+		userInfo.setEmail(request.getParameter("email"));
 		String newPassword = request.getParameter("newPassword");
 		if (StringUtils.hasText(newPassword)) {
-			user.setEncodedPassword(Encryption.encrypt(newPassword));
+			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
+			user.setRememberKey(Encryption.encrypt(newPassword));
 		}
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(request.getRemoteAddr());
@@ -96,7 +102,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (newPassword != null) next.addObject("newPassword", newPassword);
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
 		} else {
-			WikiBase.getHandler().writeWikiUser(user);
+			WikiBase.getHandler().writeWikiUser(user, userInfo);
 			Utilities.login(request, null, user, false);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();

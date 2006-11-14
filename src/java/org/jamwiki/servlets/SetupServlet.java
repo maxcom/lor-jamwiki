@@ -151,7 +151,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private void setAdminUser(HttpServletRequest request, WikiUser user) throws Exception {
 		user.setLogin(request.getParameter("login"));
-		user.setEncodedPassword(Encryption.encrypt(request.getParameter("newPassword")));
+		user.setRememberKey(Encryption.encrypt(request.getParameter("newPassword")));
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
 		user.setAdmin(true);

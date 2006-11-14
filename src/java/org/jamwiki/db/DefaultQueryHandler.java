@@ -28,6 +28,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -112,9 +113,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_COUNT = null;
-	protected static String STATEMENT_SELECT_WIKI_USER_PASSWORD = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_INFO = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGINS = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_PASSWORD = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_SEQUENCE = null;
 	protected static String STATEMENT_UPDATE_TOPIC = null;
 	protected static String STATEMENT_UPDATE_TOPIC_CURRENT_VERSION = null;
@@ -457,6 +459,7 @@ public class DefaultQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS");
 		STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_USER_COUNT");
+		STATEMENT_SELECT_WIKI_USER_INFO          = props.getProperty("STATEMENT_SELECT_WIKI_USER_INFO");
 		STATEMENT_SELECT_WIKI_USER_LOGIN         = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_LOGINS        = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGINS");
 		STATEMENT_SELECT_WIKI_USER_PASSWORD      = props.getProperty("STATEMENT_SELECT_WIKI_USER_PASSWORD");
@@ -638,14 +641,14 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertWikiUserInfo(WikiUser user, Connection conn) throws Exception {
+	public void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
-		stmt.setInt(1, user.getUserId());
-		stmt.setString(2, user.getLogin());
-		stmt.setString(3, user.getEmail());
-		stmt.setString(4, user.getFirstName());
-		stmt.setString(5, user.getLastName());
-		stmt.setString(6, user.getEncodedPassword());
+		stmt.setInt(1, userInfo.getUserId());
+		stmt.setString(2, userInfo.getLogin());
+		stmt.setString(3, userInfo.getEmail());
+		stmt.setString(4, userInfo.getFirstName());
+		stmt.setString(5, userInfo.getLastName());
+		stmt.setString(6, userInfo.getEncodedPassword());
 		stmt.executeUpdate(conn);
 	}
 
@@ -788,6 +791,15 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet lookupWikiUserInfo(String login) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_INFO);
+		stmt.setString(1, login);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public int nextTopicId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
 		int nextId = 0;
@@ -925,14 +937,14 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUser user, Connection conn) throws Exception {
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
-		stmt.setString(1, user.getLogin());
-		stmt.setString(2, user.getEmail());
-		stmt.setString(3, user.getFirstName());
-		stmt.setString(4, user.getLastName());
-		stmt.setString(5, user.getEncodedPassword());
-		stmt.setInt(6, user.getUserId());
+		stmt.setString(1, userInfo.getLogin());
+		stmt.setString(2, userInfo.getEmail());
+		stmt.setString(3, userInfo.getFirstName());
+		stmt.setString(4, userInfo.getLastName());
+		stmt.setString(5, userInfo.getEncodedPassword());
+		stmt.setInt(6, userInfo.getUserId());
 		stmt.executeUpdate(conn);
 	}
 }

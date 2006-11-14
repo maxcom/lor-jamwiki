@@ -68,6 +68,15 @@ public class Environment {
 	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
 	public static final String PROP_FILE_MAX_FILE_SIZE = "max-file-size";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
+	public static final String PROP_LDAP_FACTORY_CLASS = "ldap-factory-class";
+	public static final String PROP_LDAP_CONTEXT = "ldap-context";
+	public static final String PROP_LDAP_FIELD_EMAIL = "ldap-email";
+	public static final String PROP_LDAP_FIELD_FIRST_NAME = "ldap-first-name";
+	public static final String PROP_LDAP_FIELD_LAST_NAME = "ldap-last-name";
+	public static final String PROP_LDAP_FIELD_LOGIN = "ldap-login";
+	public static final String PROP_LDAP_HANDLER = "ldap-handler";
+	public static final String PROP_LDAP_SECURITY_AUTHENTICATION = "ldap-security";
+	public static final String PROP_LDAP_URL = "ldap-url";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
@@ -80,17 +89,6 @@ public class Environment {
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
-	public static final String PROP_USERGROUP_BASIC_SEARCH = "usergroupBasicSearch";
-	public static final String PROP_USERGROUP_DETAILVIEW = "usergroupDetailView";
-	public static final String PROP_USERGROUP_FACTORY = "usergroupFactory";
-	public static final String PROP_USERGROUP_FULLNAME_FIELD = "usergroupFullnameField";
-	public static final String PROP_USERGROUP_MAIL_FIELD = "usergroupMailField";
-	public static final String PROP_USERGROUP_PASSWORD = "usergroupPassword";
-	public static final String PROP_USERGROUP_SEARCH_RESTRICTIONS = "usergroupSearchRestrictions";
-	public static final String PROP_USERGROUP_TYPE = "usergroup-type";
-	public static final String PROP_USERGROUP_URL = "usergroupUrl";
-	public static final String PROP_USERGROUP_USERID_FIELD = "usergroupUseridField";
-	public static final String PROP_USERGROUP_USERNAME = "usergroupUsername";
 	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
 
 	private static Properties defaults = null;
@@ -179,6 +177,15 @@ public class Environment {
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "450");
+		defaults.setProperty(PROP_LDAP_CONTEXT, "ou=users,dc=mycompany,dc=com");
+		defaults.setProperty(PROP_LDAP_FACTORY_CLASS, "com.sun.jndi.ldap.LdapCtxFactory");
+		defaults.setProperty(PROP_LDAP_FIELD_EMAIL, "mail");
+		defaults.setProperty(PROP_LDAP_FIELD_FIRST_NAME, "mail");
+		defaults.setProperty(PROP_LDAP_FIELD_LAST_NAME, "mail");
+		defaults.setProperty(PROP_LDAP_FIELD_LOGIN, "login");
+		defaults.setProperty(PROP_LDAP_HANDLER, "false");
+		defaults.setProperty(PROP_LDAP_SECURITY_AUTHENTICATION, "DIGEST-MD5");
+		defaults.setProperty(PROP_LDAP_URL, "ldap://localhost:389");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, "false");
 		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, "true");
@@ -191,17 +198,6 @@ public class Environment {
 		defaults.setProperty(PROP_TOPIC_NON_ADMIN_TOPIC_MOVE, "true");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
-		defaults.setProperty(PROP_USERGROUP_BASIC_SEARCH, "ou=users,dc=mycompany,dc=com");
-		defaults.setProperty(PROP_USERGROUP_DETAILVIEW, "@@cn@@</a><br/>@@title@@<br/>Telefon: @@telephoneNumber@@<br/>Mobil: @@mobile@@<br/>@@ou@@ / @@businessCategory@@<br/><a href=\"mailto:@@mail@@\">@@mail@@</a> <br/>");
-		defaults.setProperty(PROP_USERGROUP_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		defaults.setProperty(PROP_USERGROUP_FULLNAME_FIELD, "cn");
-		defaults.setProperty(PROP_USERGROUP_MAIL_FIELD, "mail");
-		defaults.setProperty(PROP_USERGROUP_PASSWORD, "");
-		defaults.setProperty(PROP_USERGROUP_SEARCH_RESTRICTIONS, "objectClass=person");
-		defaults.setProperty(PROP_USERGROUP_TYPE, "0");
-		defaults.setProperty(PROP_USERGROUP_URL, "ldap://localhost:389");
-		defaults.setProperty(PROP_USERGROUP_USERID_FIELD, "uid");
-		defaults.setProperty(PROP_USERGROUP_USERNAME, "");
 	}
 
 	/**

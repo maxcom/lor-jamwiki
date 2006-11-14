@@ -17,54 +17,17 @@
 package org.jamwiki;
 
 /**
- * Abstract class to handle user groups
+ *
  */
-public abstract class UserHandler {
+public interface UserHandler {
 
 	/**
-	 * Get an instance of the user group class.
 	 *
-	 * @return Instance to the user group class
 	 */
-	public static UserHandler getInstance() {
-		return null;
-	}
+	public boolean authenticate(String login, String password);
 
 	/**
-	 * Get the full name of an user by its user-ID.
 	 *
-	 * @param uid The user-ID of this user
-	 * @return The full name of this user
 	 */
-	public abstract String getFullnameById(String uid);
-
-	/**
-	 * Get the email address of an user by its user-ID.
-	 *
-	 * @param user The user-ID of this user
-	 * @return The email address of this user
-	 */
-	public abstract String getKnownEmailById(String user);
-
-	/**
-	 * Get the user details of this user by its user-ID. The user details is
-	 * a string, which is set in the admin section. It contains some
-	 * placeholders, which are replaced by values from the user repository.
-	 *
-	 * @param uid The user-ID of this user
-	 * @return The user details section
-	 */
-	public abstract String getUserDetails(String uid);
-
-	/**
-	 * If the repository contains confirmed validated email addresses then
-	 * return <code>true</code>.  This method allows the registration process
-	 * to skip email validation when addresses are known to be valid.
-	 *
-	 * @return <code>true</code> if the repository contains validated email
-	 *  addresses, otherwise returns <code>false</code>.
-	 */
-	public boolean isEmailValidated() {
-		return false;
-	}
+	public boolean canUpdate();
 }

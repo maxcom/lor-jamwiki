@@ -29,13 +29,10 @@ public class WikiUser {
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = null;
 	private String displayName = null;
-	private String email = null;
-	private String encodedPassword = null;
-	private String firstName = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = null;
-	private String lastName = null;
 	private String login = null;
+	private String rememberKey = null;
 	private int userId = -1;
 	private static WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
 
@@ -104,48 +101,6 @@ public class WikiUser {
 	/**
 	 *
 	 */
-	public String getEmail() {
-		return this.email;
-	}
-
-	/**
-	 *
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	/**
-	 *
-	 */
-	public String getEncodedPassword() {
-		return this.encodedPassword;
-	}
-
-	/**
-	 *
-	 */
-	public void setEncodedPassword(String encodedPassword) {
-		this.encodedPassword = encodedPassword;
-	}
-
-	/**
-	 *
-	 */
-	public String getFirstName() {
-		return this.firstName;
-	}
-
-	/**
-	 *
-	 */
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	/**
-	 *
-	 */
 	public Timestamp getLastLoginDate() {
 		return this.lastLoginDate;
 	}
@@ -174,20 +129,6 @@ public class WikiUser {
 	/**
 	 *
 	 */
-	public String getLastName() {
-		return this.lastName;
-	}
-
-	/**
-	 *
-	 */
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	/**
-	 *
-	 */
 	public String getLogin() {
 		return this.login;
 	}
@@ -197,6 +138,20 @@ public class WikiUser {
 	 */
 	public void setLogin(String login) {
 		this.login = login;
+	}
+
+	/**
+	 *
+	 */
+	public String getRememberKey() {
+		return this.rememberKey;
+	}
+
+	/**
+	 *
+	 */
+	public void setRememberKey(String rememberKey) {
+		this.rememberKey = rememberKey;
 	}
 
 	/**

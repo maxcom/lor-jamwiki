@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLUtil;
@@ -198,11 +199,11 @@ public class FileHandler {
 	/**
 	 *
 	 */
-	public void addWikiUser(WikiUser user) throws Exception {
+	public void addWikiUser(WikiUser user, WikiUserInfo userInfo) throws Exception {
 		if (user.getUserId() < 1) {
 			user.setUserId(nextWikiUserId());
 		}
-		this.saveWikiUser(user);
+		this.saveWikiUser(user, userInfo);
 	}
 
 	/**
@@ -618,18 +619,10 @@ public class FileHandler {
 					user.setCreateIpAddress(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_DISPLAY_NAME)) {
 					user.setDisplayName(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_WIKI_USER_EMAIL)) {
-					user.setEmail(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_WIKI_USER_ENCODED_PASSWORD)) {
-					user.setEncodedPassword(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_WIKI_USER_FIRST_NAME)) {
-					user.setFirstName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LAST_LOGIN_DATE)) {
 					user.setLastLoginDate(Timestamp.valueOf(XMLUtil.getTextContent(rootChild)));
 				} else if (childName.equals(XML_WIKI_USER_LAST_LOGIN_IP_ADDRESS)) {
 					user.setLastLoginIpAddress(XMLUtil.getTextContent(rootChild));
-				} else if (childName.equals(XML_WIKI_USER_LAST_NAME)) {
-					user.setLastName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LOGIN)) {
 					user.setLogin(XMLUtil.getTextContent(rootChild));
 				}
@@ -637,6 +630,43 @@ public class FileHandler {
 			return user;
 		} catch (Exception e) {
 			logger.severe("Failure while initializing user for file " + file.getAbsolutePath(), e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private WikiUserInfo initWikiUserInfo(File file) {
+		if (!file.exists()) return null;
+		try {
+			WikiUserInfo userInfo = new WikiUserInfo();
+			Document document = XMLUtil.parseXML(file, false);
+			// get root node
+			Node rootNode = document.getElementsByTagName(XML_WIKI_USER_ROOT).item(0);
+			NodeList rootChildren = rootNode.getChildNodes();
+			Node rootChild = null;
+			String childName = null;
+			for (int i=0; i < rootChildren.getLength(); i++) {
+				rootChild = rootChildren.item(i);
+				childName = rootChild.getNodeName();
+				if (childName.equals(XML_WIKI_USER_ID)) {
+					userInfo.setUserId(new Integer(XMLUtil.getTextContent(rootChild)).intValue());
+				} else if (childName.equals(XML_WIKI_USER_EMAIL)) {
+					userInfo.setEmail(XMLUtil.getTextContent(rootChild));
+				} else if (childName.equals(XML_WIKI_USER_ENCODED_PASSWORD)) {
+					userInfo.setEncodedPassword(XMLUtil.getTextContent(rootChild));
+				} else if (childName.equals(XML_WIKI_USER_FIRST_NAME)) {
+					userInfo.setFirstName(XMLUtil.getTextContent(rootChild));
+				} else if (childName.equals(XML_WIKI_USER_LAST_NAME)) {
+					userInfo.setLastName(XMLUtil.getTextContent(rootChild));
+				} else if (childName.equals(XML_WIKI_USER_LOGIN)) {
+					userInfo.setLogin(XMLUtil.getTextContent(rootChild));
+				}
+			}
+			return userInfo;
+		} catch (Exception e) {
+			logger.severe("Failure while initializing user info for file " + file.getAbsolutePath(), e);
 			return null;
 		}
 	}
@@ -688,11 +718,22 @@ public class FileHandler {
 	public WikiUser lookupWikiUser(String login, String password, boolean encrypted) throws Exception {
 		WikiUser user = lookupWikiUser(login);
 		if (user == null || password == null) return null;
+		WikiUserInfo userInfo = lookupWikiUserInfo(login);
 		String encryptedPassword = password;
 		if (!encrypted) {
 			encryptedPassword = Encryption.encrypt(password);
 		}
-		return (user.getEncodedPassword().equals(encryptedPassword) ? user : null);
+		return (userInfo.getEncodedPassword().equals(encryptedPassword) ? user : null);
+	}
+
+	/**
+	 *
+	 */
+	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
+		if (login == null) return null;
+		String filename = wikiUserFilename(login);
+		File file = getPathFor(null, WIKI_USER_DIR, filename);
+		return initWikiUserInfo(file);
 	}
 
 	/**
@@ -1082,7 +1123,7 @@ public class FileHandler {
 	/**
 	 *
 	 */
-	private void saveWikiUser(WikiUser user) throws Exception {
+	private void saveWikiUser(WikiUser user, WikiUserInfo userInfo) throws Exception {
 		if (user.getUserId() > NEXT_WIKI_USER_ID) {
 			NEXT_WIKI_USER_ID = user.getUserId();
 			nextFileWrite(NEXT_WIKI_USER_ID, getPathFor(null, null, NEXT_WIKI_USER_ID_FILE));
@@ -1102,17 +1143,17 @@ public class FileHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_USER_DISPLAY_NAME, user.getDisplayName(), true));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_EMAIL, user.getEmail(), true));
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_EMAIL, userInfo.getEmail(), true));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_ENCODED_PASSWORD, user.getEncodedPassword(), true));
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_ENCODED_PASSWORD, userInfo.getEncodedPassword(), true));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_FIRST_NAME, user.getFirstName(), true));
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_FIRST_NAME, userInfo.getFirstName(), true));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_LOGIN_DATE, user.getLastLoginDate()));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_LOGIN_IP_ADDRESS, user.getLastLoginIpAddress(), true));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_NAME, user.getLastName(), true));
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_NAME, userInfo.getLastName(), true));
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_USER_LOGIN, user.getLogin(), true));
 		content.append("\n");

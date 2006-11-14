@@ -21,7 +21,6 @@
         org.jamwiki.Environment,
         org.jamwiki.WikiBase,
         org.jamwiki.db.DatabaseHandler,
-        org.jamwiki.users.Usergroup,
         org.apache.commons.pool.impl.GenericObjectPool
     "
     errorPage="/WEB-INF/jsp/error.jsp"
@@ -52,34 +51,27 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false
 	}
 }
-<%--
-FIXME - LDAP not supported at the moment, comment this out
-function onUserGroupType() {
-	if (document.getElementById("<%= Environment.PROP_USERGROUP_TYPE %>").options[document.getElementById("<%= Environment.PROP_USERGROUP_TYPE %>").selectedIndex].value == "0") {
-		document.getElementById("<%= Environment.PROP_USERGROUP_FACTORY %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_URL %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_USERNAME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_PASSWORD %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_USERID_FIELD %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_MAIL_FIELD %>").disabled=true
-		document.getElementById("<%= Environment.PROP_USERGROUP_DETAILVIEW %>").disabled=true
+function onLdap() {
+	if (document.getElementById("<%= Environment.PROP_LDAP_HANDLER %>").options[document.getElementById("<%= Environment.PROP_LDAP_HANDLER %>").selectedIndex].value == "false") {
+		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LOGIN %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=true
 	} else {
-		document.getElementById("<%= Environment.PROP_USERGROUP_FACTORY %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_URL %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_USERNAME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_PASSWORD %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_USERID_FIELD %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_MAIL_FIELD %>").disabled=false
-		document.getElementById("<%= Environment.PROP_USERGROUP_DETAILVIEW %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LOGIN %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=false
 	}
 }
---%>
 </script>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
@@ -307,75 +299,55 @@ FIXME - Email not supported right now, comment this out
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
 
-<%--
-FIXME - LDAP not supported at the moment, comment this out
-
-<!-- BEGIN USERGROUP-TYPE -->
+<!-- BEGIN LDAP -->
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2"><h4><f:message key="admin.caption.dbcp.usergroupheader" /></h4></td></tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_TYPE %>"><f:message key="admin.caption.usergroup" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_HANDLER %>"><f:message key="admin.caption.usergroup" /></label></td>
 	<td class="formelement">
-		<select name="<%= Environment.PROP_USERGROUP_TYPE %>" id="<%= Environment.PROP_USERGROUP_TYPE %>" onchange="onUserGroupType()">
-		<option value="0"<%= Usergroup.getUsergroupType() == 0 ? " selected" : "" %>><f:message key="admin.usergrouptype.none" /></option>
-		<option value="<%=WikiBase.LDAP%>"<%= Usergroup.getUsergroupType() == WikiBase.LDAP ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /></option>
+		<select name="<%= Environment.PROP_LDAP_HANDLER %>" id="<%= Environment.PROP_LDAP_HANDLER %>" onchange="onLdap()">
+		<option value="false"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("false") ? " selected" : "" %>><f:message key="admin.usergrouptype.none" /></option>
+		<option value="true"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("true") ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /></option>
 		</select>
 	</td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_FACTORY %>"><f:message key="admin.caption.usergroup.factory" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_FACTORY %>" id="<%= Environment.PROP_USERGROUP_FACTORY %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_FACTORY) %>" size="50" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FACTORY_CLASS %>"><f:message key="admin.caption.usergroup.factory" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FACTORY_CLASS %>" id="<%= Environment.PROP_LDAP_FACTORY_CLASS %>" value="<%= props.getProperty(Environment.PROP_LDAP_FACTORY_CLASS) %>" size="50" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_URL %>"><f:message key="admin.caption.usergroup.url" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_URL %>" id="<%= Environment.PROP_USERGROUP_URL %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_URL) %>" size="50" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_URL %>"><f:message key="admin.caption.usergroup.url" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_URL %>" id="<%= Environment.PROP_LDAP_URL %>" value="<%= props.getProperty(Environment.PROP_LDAP_URL) %>" size="50" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_USERNAME %>"><f:message key="admin.caption.usergroup.username" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_USERNAME %>" id="<%= Environment.PROP_USERGROUP_USERNAME %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_USERNAME) %>" size="20" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.caption.usergroup.basicSearch" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_CONTEXT %>" id="<%= Environment.PROP_LDAP_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_CONTEXT) %>" size="50" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_PASSWORD %>"><f:message key="admin.caption.usergroup.password" /></label></td>
-	<td class="formelement"><input type="password" name="<%= Environment.PROP_USERGROUP_PASSWORD %>" id="<%= Environment.PROP_USERGROUP_PASSWORD %>" value="<c:out value="${userGroupPassword}" />" size="10" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.usergroup.securityauthentication" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" id="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" value="<%= props.getProperty(Environment.PROP_LDAP_SECURITY_AUTHENTICATION) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>"><f:message key="admin.caption.usergroup.basicSearch" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>" id="<%= Environment.PROP_USERGROUP_BASIC_SEARCH %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_BASIC_SEARCH) %>" size="50" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_LOGIN %>"><f:message key="admin.caption.usergroup.username" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_LOGIN %>" id="<%= Environment.PROP_LDAP_FIELD_LOGIN %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_LOGIN) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>"><f:message key="admin.caption.usergroup.searchRestrictions" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>" id="<%= Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_SEARCH_RESTRICTIONS) %>" size="50" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.usergroup.userfirstname" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>" id="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_FIRST_NAME) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_USERID_FIELD %>"><f:message key="admin.caption.usergroup.userfidield" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_USERID_FIELD %>" id="<%= Environment.PROP_USERGROUP_USERID_FIELD %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_USERID_FIELD) %>" size="20" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.usergroup.userlastname" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>" id="<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_LAST_NAME) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>"><f:message key="admin.caption.usergroup.fullnamefield" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>" id="<%= Environment.PROP_USERGROUP_FULLNAME_FIELD %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_FULLNAME_FIELD) %>" size="20" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.caption.usergroup.mailfield" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" id="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_EMAIL) %>" size="20" /></td>
 </tr>
-<tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_USERGROUP_MAIL_FIELD %>"><f:message key="admin.caption.usergroup.mailfield" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_USERGROUP_MAIL_FIELD %>" id="<%= Environment.PROP_USERGROUP_MAIL_FIELD %>" value="<%= props.getProperty(Environment.PROP_USERGROUP_MAIL_FIELD) %>" size="20" /></td>
-</tr>
-<tr>
-	<td class="formcaption" valign="top"><label for="<%= Environment.PROP_USERGROUP_DETAILVIEW %>"><f:message key="admin.caption.usergroup.detailview" /></label></td>
-	<td class="formelement"><textarea cols="30" rows="5" name="<%= Environment.PROP_USERGROUP_DETAILVIEW %>" id="<%= Environment.PROP_USERGROUP_DETAILVIEW %>"><%= props.getProperty(Environment.PROP_USERGROUP_DETAILVIEW) %></textarea></td>
-</tr>
-<!-- END USERGROUP-TYPE -->
-
---%>
+<!-- END LDAP -->
 
 <script>
 onPersistenceType()
-
-<%--
-FIXME - LDAP not supported at the moment, comment this out
-
-onUserGroupType()
-
---%>
-
+onLdap()
 </script>
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>

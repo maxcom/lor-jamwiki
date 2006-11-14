@@ -19,7 +19,9 @@ package org.jamwiki.parser.jflex;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
@@ -51,7 +53,8 @@ public class WikiSignatureTag implements ParserTag {
 					WikiUser user = parserInput.getWikiUser();
 					login = user.getLogin();
 					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
-					email = user.getEmail();
+					WikiUserInfo userInfo = WikiBase.getHandler().lookupWikiUserInfo(login);
+					email = userInfo.getEmail();
 					userId = new Integer(user.getUserId()).toString();
 				}
 				String text = parserInput.getUserIpAddress();

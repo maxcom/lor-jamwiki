@@ -86,7 +86,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			FileHandler handler = new FileHandler();
 			user = handler.lookupWikiUser(username, password, false);
 		} else {
-			user = WikiBase.getHandler().lookupWikiUser(username, password, false);
+			user = DatabaseUpgrades.login(username, password, false);
 		}
 		if (user != null) {
 			request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
@@ -124,6 +124,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 					}
 					if (oldVersion.before(0, 4, 2)) {
 						messages = DatabaseUpgrades.upgrade042(messages);
+					}
+					if (oldVersion.before(0, 5, 0)) {
+						messages = DatabaseUpgrades.upgrade050(messages);
 					}
 				} catch (Exception e) {
 					// FIXME - hard coding

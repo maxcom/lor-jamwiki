@@ -20,6 +20,8 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Vector;
 import org.jamwiki.Environment;
+import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -31,6 +33,35 @@ import org.jamwiki.utils.WikiLogger;
 public class DatabaseUpgrades {
 
 	private static WikiLogger logger = WikiLogger.getLogger(DatabaseUpgrades.class.getName());
+
+	public static WikiUser login(String login, String password, boolean encrypted) throws Exception {
+		// prior to JAMWiki 0.5.0 the remember_key column did not exist.  once
+		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
+		// replaced with the method (below) that has been commented out
+		String encryptedPassword = password;
+		if (!encrypted) {
+			encryptedPassword = Encryption.encrypt(password);
+		}
+		DefaultQueryHandler queryHandler = new DefaultQueryHandler();
+		WikiResultSet rs = queryHandler.lookupWikiUser(login, encryptedPassword);
+		if (rs.size() == 0) return null;
+		int userId = rs.getInt("wiki_user_id");
+		String sql = "select * from jam_wiki_user where wiki_user_id = ? ";
+		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+		stmt.setInt(1, userId);
+		rs = stmt.executeQuery();
+		WikiUser user = new WikiUser();
+		user.setUserId(rs.getInt("wiki_user_id"));
+		user.setLogin(rs.getString("login"));
+		user.setDisplayName(rs.getString("display_name"));
+		user.setCreateDate(rs.getTimestamp("create_date"));
+		user.setLastLoginDate(rs.getTimestamp("last_login_date"));
+		user.setCreateIpAddress(rs.getString("create_ip_address"));
+		user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
+		user.setAdmin(rs.getInt("is_admin") != 0);
+//		user = WikiBase.getHandler().lookupWikiUser(username, password, false);
+		return user;
+	}
 
 	/**
 	 *
@@ -170,6 +201,36 @@ public class DatabaseUpgrades {
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade050(Vector messages) throws Exception {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			// add remember_key to jam_wiki_user
+			String sql = "alter table jam_wiki_user add column remember_key VARCHAR(100) ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added remember_key column to jam_wiki_user");
+			// populate remember_key column
+			sql = "update jam_wiki_user set remember_key = (select encoded_password from jam_wiki_user_info where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Populated the remember_key column with data");
+			// update jam_topic records
+			sql = "alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("remember_key column set to NOT NULL");
+			conn.commit();
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(conn);

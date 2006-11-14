@@ -24,6 +24,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -404,12 +405,13 @@ public interface QueryHandler {
 	 * Add a new user information record to the database.  The user information
 	 * must not already exist in the database or else an error will be thrown.
 	 *
-	 * @param user The WikiUser record that is to be added to the database.
+	 * @param userInfo The WikiUserInfo record that is to be added to the
+	 *  database.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWikiUserInfo(WikiUser user, Connection conn) throws Exception;
+	public void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing the topic name and sort key for all
@@ -555,6 +557,17 @@ public interface QueryHandler {
 	public WikiResultSet lookupWikiUserCount() throws Exception;
 
 	/**
+	 * Retrieve a result set containing all user information for a given
+	 * WikiUserInfo.
+	 *
+	 * @param login The login of the user record being retrieved.
+	 * @return A WikiResultSet containing all information for the given user, or
+	 *  an empty result set if no matching user exists.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet lookupWikiUserInfo(String login) throws Exception;
+
+	/**
 	 * Retrieve the next available topic id from the topic table.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -670,10 +683,11 @@ public interface QueryHandler {
 	/**
 	 * Update a wiki user information record in the database.
 	 *
-	 * @param user The WikiUser record that is to be updated in the database.
+	 * @param userInfo The WikiUserInfo record that is to be updated in the
+	 *  database.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateWikiUserInfo(WikiUser user, Connection conn) throws Exception;
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
 }
