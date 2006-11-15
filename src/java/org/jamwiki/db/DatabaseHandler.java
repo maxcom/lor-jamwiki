@@ -152,15 +152,12 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user, WikiUserInfo userInfo, Connection conn) throws Exception {
+	protected void addWikiUser(WikiUser user, Connection conn) throws Exception {
 		if (user.getUserId() < 1) {
 			int nextUserId = WikiDatabase.getQueryHandler().nextWikiUserId(conn);
 			user.setUserId(nextUserId);
 		}
-		userInfo.setUserId(user.getUserId());
 		WikiDatabase.getQueryHandler().insertWikiUser(user, conn);
-		// FIXME - may be in LDAP
-		WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, conn);
 	}
 
 	/**
@@ -203,7 +200,9 @@ public class DatabaseHandler {
 				try {
 					WikiUser wikiUser = fromHandler.lookupWikiUser(userName);
 					WikiUserInfo wikiUserInfo = fromHandler.lookupWikiUserInfo(userName);
-					toHandler.addWikiUser(wikiUser, wikiUserInfo, conn);
+					toHandler.addWikiUser(wikiUser, conn);
+					wikiUserInfo.setUserId(wikiUser.getUserId());
+					WikiBase.getUserHandler().addWikiUserInfo(wikiUserInfo);
 					success++;
 				} catch (Exception e) {
 					String msg = "Unable to convert user: " + userName;
@@ -740,25 +739,6 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	private WikiUserInfo initWikiUserInfo(WikiResultSet rs) {
-		try {
-			WikiUserInfo userInfo = new WikiUserInfo();
-			userInfo.setUserId(rs.getInt("wiki_user_id"));
-			userInfo.setLogin(rs.getString("login"));
-			userInfo.setEmail(rs.getString("email"));
-			userInfo.setFirstName(rs.getString("first_name"));
-			userInfo.setLastName(rs.getString("last_name"));
-			userInfo.setEncodedPassword(rs.getString("encoded_password"));
-			return userInfo;
-		} catch (Exception e) {
-			logger.severe("Failure while initializing user info", e);
-			return null;
-		}
-	}
-
-	/**
-	 *
-	 */
 	private void loadVirtualWikiHashes() throws Exception {
 		Connection conn = null;
 		try {
@@ -996,34 +976,12 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 *
-	 */
-	public WikiUser lookupWikiUser(String login, String password) throws Exception {
-		// FIXME - handle LDAP
-		// password is stored encrypted, so encrypt password
-		String encryptedPassword = Encryption.encrypt(password);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUser(login, encryptedPassword);
-		if (rs.size() == 0) return null;
-		int userId = rs.getInt("wiki_user_id");
-		return lookupWikiUser(userId);
-	}
-
-	/**
 	 * Return a count of all wiki users.
 	 */
 	public int lookupWikiUserCount() throws Exception {
 		// FIXME - handle LDAP
 		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUserCount();
 		return rs.getInt("user_count");
-	}
-
-	/**
-	 *
-	 */
-	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUserInfo(login);
-		if (rs.size() == 0) return null;
-		return initWikiUserInfo(rs);
 	}
 
 	/**
@@ -1207,10 +1165,8 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	private void updateWikiUser(WikiUser user, WikiUserInfo userInfo, Connection conn) throws Exception {
+	private void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		WikiDatabase.getQueryHandler().updateWikiUser(user, conn);
-		// FIXME - may be in LDAP
-		WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, conn);
 	}
 
 	/**
@@ -1387,9 +1343,12 @@ public class DatabaseHandler {
 		try {
 			conn = WikiDatabase.getConnection();
 			if (user.getUserId() <= 0) {
-				this.addWikiUser(user, userInfo, conn);
+				this.addWikiUser(user, conn);
+				userInfo.setUserId(user.getUserId());
+				WikiBase.getUserHandler().addWikiUserInfo(userInfo);
 			} else {
-				this.updateWikiUser(user, userInfo, conn);
+				this.updateWikiUser(user, conn);
+				WikiBase.getUserHandler().updateWikiUserInfo(userInfo);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

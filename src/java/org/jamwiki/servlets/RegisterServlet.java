@@ -57,7 +57,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (Utilities.currentUser(request) != null) {
 			WikiUser user = Utilities.currentUser(request);
 			next.addObject("newuser", user);
-			WikiUserInfo userInfo = WikiBase.getHandler().lookupWikiUserInfo(user.getLogin());
+			WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getLogin());
 			next.addObject("newuserinfo", userInfo);
 		}
 		pageInfo.setSpecial(true);
@@ -80,7 +80,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
 				user = WikiBase.getHandler().lookupWikiUser(userId);
-				userInfo = WikiBase.getHandler().lookupWikiUserInfo(user.getLogin());
+				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getLogin());
 			}
 		}
 		user.setLogin(request.getParameter("login"));
@@ -125,7 +125,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add(e.getWikiMessage());
 		}
 		String oldPassword = request.getParameter("oldPassword");
-		if (user.getUserId() > 0 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), oldPassword) == null) {
+		if (user.getUserId() > 0 && !WikiBase.getUserHandler().authenticate(user.getLogin(), oldPassword)) {
 			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		String newPassword = request.getParameter("newPassword");

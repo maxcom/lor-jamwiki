@@ -53,7 +53,7 @@ public class WikiSignatureTag implements ParserTag {
 					WikiUser user = parserInput.getWikiUser();
 					login = user.getLogin();
 					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
-					WikiUserInfo userInfo = WikiBase.getHandler().lookupWikiUserInfo(login);
+					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
 					email = userInfo.getEmail();
 					userId = new Integer(user.getUserId()).toString();
 				}

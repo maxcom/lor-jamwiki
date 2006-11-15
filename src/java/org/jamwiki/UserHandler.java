@@ -16,6 +16,8 @@
  */
 package org.jamwiki;
 
+import org.jamwiki.model.WikiUserInfo;
+
 /**
  *
  */
@@ -24,10 +26,25 @@ public interface UserHandler {
 	/**
 	 *
 	 */
-	public boolean authenticate(String login, String password);
+	public void addWikiUserInfo(WikiUserInfo userInfo) throws Exception;
+
+	/**
+	 *
+	 */
+	public boolean authenticate(String login, String password) throws Exception;
 
 	/**
 	 *
 	 */
 	public boolean canUpdate();
+
+	/**
+	 *
+	 */
+	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception;
+
+	/**
+	 *
+	 */
+	public void updateWikiUserInfo(WikiUserInfo userInfo) throws Exception;
 }

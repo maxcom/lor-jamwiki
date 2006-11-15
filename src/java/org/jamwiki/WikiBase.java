@@ -18,6 +18,7 @@ package org.jamwiki;
 
 import java.util.Locale;
 import org.jamwiki.db.DatabaseHandler;
+import org.jamwiki.db.DatabaseUserHandler;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
@@ -39,6 +40,8 @@ public class WikiBase {
 	private static WikiBase instance = null;
 	/** The handler that looks after read/write operations for a persistence type. */
 	private static DatabaseHandler handler = null;
+	/** The handler for user login/authentication. */
+	private static UserHandler userHandler = null;
 	/** The search engine instance. */
 	private static SearchEngine searchEngine = null;
 
@@ -77,6 +80,7 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		WikiBase.handler = new DatabaseHandler();
+		WikiBase.userHandler = new DatabaseUserHandler();
 		this.searchEngine = new LuceneSearchEngine();
 	}
 
@@ -135,6 +139,13 @@ public class WikiBase {
 	 */
 	public static SearchEngine getSearchEngine() {
 		return WikiBase.searchEngine;
+	}
+
+	/**
+	 *
+	 */
+	public static UserHandler getUserHandler() {
+		return WikiBase.userHandler;
 	}
 
 	/**

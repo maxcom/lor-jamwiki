@@ -60,6 +60,8 @@ function onLdap() {
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LOGIN %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=true
 	} else {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false
@@ -69,6 +71,8 @@ function onLdap() {
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LOGIN %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=false
 	}
 }
@@ -326,6 +330,14 @@ FIXME - Email not supported right now, comment this out
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.usergroup.securityauthentication" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" id="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" value="<%= props.getProperty(Environment.PROP_LDAP_SECURITY_AUTHENTICATION) %>" size="20" /></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.caption.usergroup.login" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_LOGIN %>" id="<%= Environment.PROP_LDAP_LOGIN %>" value="<%= props.getProperty(Environment.PROP_LDAP_LOGIN) %>" size="30" /></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.caption.usergroup.password" /></label></td>
+	<td class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_LOGIN %>"><f:message key="admin.caption.usergroup.username" /></label></td>

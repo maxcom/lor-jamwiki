@@ -70,11 +70,13 @@ public class Environment {
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
 	public static final String PROP_LDAP_FACTORY_CLASS = "ldap-factory-class";
 	public static final String PROP_LDAP_CONTEXT = "ldap-context";
-	public static final String PROP_LDAP_FIELD_EMAIL = "ldap-email";
-	public static final String PROP_LDAP_FIELD_FIRST_NAME = "ldap-first-name";
-	public static final String PROP_LDAP_FIELD_LAST_NAME = "ldap-last-name";
-	public static final String PROP_LDAP_FIELD_LOGIN = "ldap-login";
+	public static final String PROP_LDAP_FIELD_EMAIL = "ldap-field-email";
+	public static final String PROP_LDAP_FIELD_FIRST_NAME = "ldap-field-first-name";
+	public static final String PROP_LDAP_FIELD_LAST_NAME = "ldap-field-last-name";
+	public static final String PROP_LDAP_FIELD_LOGIN = "ldap-field-login";
 	public static final String PROP_LDAP_HANDLER = "ldap-handler";
+	public static final String PROP_LDAP_LOGIN = "ldap-login";
+	public static final String PROP_LDAP_PASSWORD = "ldap-password";
 	public static final String PROP_LDAP_SECURITY_AUTHENTICATION = "ldap-security";
 	public static final String PROP_LDAP_URL = "ldap-url";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
@@ -184,6 +186,8 @@ public class Environment {
 		defaults.setProperty(PROP_LDAP_FIELD_LAST_NAME, "mail");
 		defaults.setProperty(PROP_LDAP_FIELD_LOGIN, "login");
 		defaults.setProperty(PROP_LDAP_HANDLER, "false");
+		defaults.setProperty(PROP_LDAP_LOGIN, "");
+		defaults.setProperty(PROP_LDAP_PASSWORD, "");
 		defaults.setProperty(PROP_LDAP_SECURITY_AUTHENTICATION, "DIGEST-MD5");
 		defaults.setProperty(PROP_LDAP_URL, "ldap://localhost:389");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");

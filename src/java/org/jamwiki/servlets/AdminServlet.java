@@ -169,6 +169,9 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_LAST_NAME);
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_LOGIN);
 			setProperty(props, request, Environment.PROP_LDAP_HANDLER);
+			setProperty(props, request, Environment.PROP_LDAP_LOGIN);
+			setEncryptedProperty(props, request, Environment.PROP_LDAP_PASSWORD);
+			next.addObject("ldapPassword", request.getParameter(Environment.PROP_LDAP_PASSWORD));
 			setProperty(props, request, Environment.PROP_LDAP_SECURITY_AUTHENTICATION);
 			setProperty(props, request, Environment.PROP_LDAP_URL);
 			Vector errors = Utilities.validateSystemSettings(props);

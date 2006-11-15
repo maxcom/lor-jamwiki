@@ -75,7 +75,10 @@ public class LoginServlet extends JAMWikiServlet {
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			redirect = virtualWiki.getDefaultTopicName();
 		}
-		WikiUser user = WikiBase.getHandler().lookupWikiUser(username, password);
+		WikiUser user = null;
+		if (WikiBase.getUserHandler().authenticate(username, password)) {
+			user = WikiBase.getHandler().lookupWikiUser(username);
+		}
 		if (user == null) {
 			next.addObject("errorMessage", new WikiMessage("error.login"));
 			next.addObject("redirect", redirect);
