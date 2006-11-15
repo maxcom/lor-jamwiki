@@ -10,6 +10,7 @@ JAMWiki Contributors
                             Robert Matyja (dlpa)
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
+                            Feilong Huang (hfl)
      Chinese (traditional): Jiading (ewen0930)
      Danish:                Anders Monrad (g9adm)
      French:                Henri Gomez (hgomez)
