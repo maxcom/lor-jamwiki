@@ -88,7 +88,7 @@ function onLdap() {
 <tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
 </c:if>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.generalsettingsheader" /></h4></td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.general" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><f:message key="admin.caption.defaulttopic" /></labe></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" value="<%= props.getProperty(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" id="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" /></td>
@@ -123,7 +123,7 @@ function onLdap() {
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.metadescriptionhelp" /></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.parserheader" /></h4></td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.parser" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_CLASS %>"><f:message key="admin.caption.parser" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= props.getProperty(Environment.PROP_PARSER_CLASS) %>" size="50" id="<%= Environment.PROP_PARSER_CLASS %>" /></td>
@@ -185,7 +185,7 @@ FIXME - Email not supported right now, comment this out
 --%>
 
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.persistenceheader" /></h4></td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.persistence" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_FILE_DIR %>"><f:message key="admin.caption.filedir" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= props.getProperty(Environment.PROP_BASE_FILE_DIR) %>" size="50" id="<%= Environment.PROP_BASE_FILE_DIR %>" /></td>
@@ -233,7 +233,7 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="30" /></td>
 </tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.dbcp.header" /></h4></td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.dbcp" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_ACTIVE %>"><f:message key="admin.caption.dbcp.maxactive" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" id="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" value="<%= props.getProperty(Environment.PROP_DBCP_MAX_ACTIVE) %>" size="5" maxlength="3" /></td>
@@ -305,54 +305,55 @@ FIXME - Email not supported right now, comment this out
 
 <!-- BEGIN LDAP -->
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.dbcp.usergroupheader" /></h4></td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.ldap" /></h4></td></tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_HANDLER %>"><f:message key="admin.caption.usergroup" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_HANDLER %>"><f:message key="admin.caption.ldap" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_LDAP_HANDLER %>" id="<%= Environment.PROP_LDAP_HANDLER %>" onchange="onLdap()">
-		<option value="false"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("false") ? " selected" : "" %>><f:message key="admin.usergrouptype.none" /></option>
+		<option value="false"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("false") ? " selected" : "" %>><f:message key="admin.usergrouptype.database" /></option>
 		<option value="true"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("true") ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /></option>
 		</select>
 	</td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FACTORY_CLASS %>"><f:message key="admin.caption.usergroup.factory" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FACTORY_CLASS %>"><f:message key="admin.caption.ldap.factory" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FACTORY_CLASS %>" id="<%= Environment.PROP_LDAP_FACTORY_CLASS %>" value="<%= props.getProperty(Environment.PROP_LDAP_FACTORY_CLASS) %>" size="50" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_URL %>"><f:message key="admin.caption.usergroup.url" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_URL %>"><f:message key="admin.caption.ldap.url" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_URL %>" id="<%= Environment.PROP_LDAP_URL %>" value="<%= props.getProperty(Environment.PROP_LDAP_URL) %>" size="50" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.caption.usergroup.basicSearch" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.caption.ldap.context" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_CONTEXT %>" id="<%= Environment.PROP_LDAP_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_CONTEXT) %>" size="50" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.usergroup.securityauthentication" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.ldap.security" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" id="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" value="<%= props.getProperty(Environment.PROP_LDAP_SECURITY_AUTHENTICATION) %>" size="20" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.securityhelp" /></td></tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.caption.usergroup.login" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.caption.ldap.login" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_LOGIN %>" id="<%= Environment.PROP_LDAP_LOGIN %>" value="<%= props.getProperty(Environment.PROP_LDAP_LOGIN) %>" size="30" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.caption.usergroup.password" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.caption.ldap.password" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_LOGIN %>"><f:message key="admin.caption.usergroup.username" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_LOGIN %>"><f:message key="admin.caption.ldap.field.login" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_LOGIN %>" id="<%= Environment.PROP_LDAP_FIELD_LOGIN %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_LOGIN) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.usergroup.userfirstname" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.ldap.field.firstname" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>" id="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_FIRST_NAME) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.usergroup.userlastname" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.ldap.field.lastname" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>" id="<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_LAST_NAME) %>" size="20" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.caption.usergroup.mailfield" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.caption.ldap.field.email" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" id="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_EMAIL) %>" size="20" /></td>
 </tr>
 <!-- END LDAP -->
