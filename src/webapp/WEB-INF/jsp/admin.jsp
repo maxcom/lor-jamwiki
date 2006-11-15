@@ -56,10 +56,11 @@ function onLdap() {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_USER_CONTEXT %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LOGIN %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=true
@@ -67,10 +68,11 @@ function onLdap() {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_USER_CONTEXT %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LOGIN %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=false
@@ -311,7 +313,7 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement">
 		<select name="<%= Environment.PROP_LDAP_HANDLER %>" id="<%= Environment.PROP_LDAP_HANDLER %>" onchange="onLdap()">
 		<option value="false"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("false") ? " selected" : "" %>><f:message key="admin.usergrouptype.database" /></option>
-		<option value="true"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("true") ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /></option>
+		<option value="true"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("true") ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /> (<f:message key="common.caption.experimental" />)</option>
 		</select>
 	</td>
 </tr>
@@ -328,6 +330,10 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_CONTEXT %>" id="<%= Environment.PROP_LDAP_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_CONTEXT) %>" size="50" /></td>
 </tr>
 <tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_USER_CONTEXT %>"><f:message key="admin.caption.ldap.usercontext" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_USER_CONTEXT %>" id="<%= Environment.PROP_LDAP_USER_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_USER_CONTEXT) %>" size="50" /></td>
+</tr>
+<tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.ldap.security" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" id="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" value="<%= props.getProperty(Environment.PROP_LDAP_SECURITY_AUTHENTICATION) %>" size="20" /></td>
 </tr>
@@ -341,8 +347,8 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_LOGIN %>"><f:message key="admin.caption.ldap.field.login" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_LOGIN %>" id="<%= Environment.PROP_LDAP_FIELD_LOGIN %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_LOGIN) %>" size="20" /></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_USERID %>"><f:message key="admin.caption.ldap.field.userid" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_USERID %>" id="<%= Environment.PROP_LDAP_FIELD_USERID %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_USERID) %>" size="20" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.ldap.field.firstname" /></label></td>
