@@ -8,6 +8,7 @@ JAMWiki Contributors
 
   Developers:               Ryan Holliday (wrh2)
                             Robert Matyja (dlpa)
+                            Scott Croco (scroco)
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
                             Feilong Huang (hfl)
@@ -19,7 +20,6 @@ JAMWiki Contributors
      Polish:                Robert Matyja (dlpa)
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
                             Oliver (okohll)
-  Other contributors:       Scott Croco (scroco)
 
 
 Very Quick Wiki Contributors
