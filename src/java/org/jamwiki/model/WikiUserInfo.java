@@ -16,6 +16,7 @@
  */
 package org.jamwiki.model;
 
+import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -105,6 +106,13 @@ public class WikiUserInfo {
 	 */
 	public void setLogin(String login) {
 		this.login = login;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isUpdateable() {
+		return WikiBase.getUserHandler().canUpdate();
 	}
 
 	/**

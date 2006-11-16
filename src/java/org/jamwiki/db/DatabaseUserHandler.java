@@ -58,6 +58,13 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
+	public boolean canCreate() {
+		return true;
+	}
+
+	/**
+	 *
+	 */
 	public boolean canUpdate() {
 		return true;
 	}

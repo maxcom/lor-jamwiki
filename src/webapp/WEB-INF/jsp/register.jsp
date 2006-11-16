@@ -29,8 +29,7 @@
 <p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></p>
 </c:if>
 <table>
-<%-- FIXME - handle LDAP --%>
-<c:if test="${empty newuser.userId || newuser.userId <= 0}">
+<c:if test="${newuser.userId < 1}">
 <tr>
 	<td><label for="registerLogin"><f:message key="common.login" /></label>:</td>
 	<td><input type="text" name="login" value="<c:out value="${newuser.login}" />" id="registerLogin" /></td>
@@ -47,14 +46,19 @@
 	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></td>
 </tr>
 </c:if>
+<c:if test="${newuserinfo.updateable || newuser.userId < 1}">
 <tr>
 	<td><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</td>
 	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></td>
 </tr>
+</c:if>
+<c:if test="${newuserinfo.updateable}">
 <tr>
 	<td><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</td>
 	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></td>
 </tr>
+</c:if>
+<c:if test="${newuserinfo.updateable}">
 <tr>
 	<td><label for="registerFirstName"><f:message key="register.caption.firstname" /></label>:</td>
 	<td><input type="text" name="firstName" value="<c:out value="${newuserinfo.firstName}" />" id="registerFirstName" /></td>
@@ -63,14 +67,33 @@
 	<td><label for="registerLastName"><f:message key="register.caption.lastname" /></label>:</td>
 	<td><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></td>
 </tr>
+</c:if>
+<c:if test="${!newuserinfo.updateable && newuser.userId > 0}">
+<tr>
+	<td><f:message key="register.caption.firstname" />:</td>
+	<td><c:out value="${newuserinfo.firstName}" /></td>
+</tr>
+<tr>
+	<td><f:message key="register.caption.lastname" />:</td>
+	<td><c:out value="${newuserinfo.lastName}" /></td>
+</tr>
+</c:if>
 <tr>
 	<td><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</td>
 	<td><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></td>
 </tr>
+<c:if test="${newuserinfo.updateable}">
 <tr>
 	<td><label for="registerEmail"><f:message key="register.caption.email" /></label>:</td>
 	<td><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></td>
 </tr>
+</c:if>
+<c:if test="${!newuserinfo.updateable && newuser.userId > 0}">
+<tr>
+	<td><f:message key="register.caption.email" />:</td>
+	<td><c:out value="${newuserinfo.email}" /></td>
+</tr>
+</c:if>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>
 </form>

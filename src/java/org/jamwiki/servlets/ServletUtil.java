@@ -268,7 +268,7 @@ public class ServletUtil {
 			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
 				String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 				if (WikiBase.getHandler().exists(virtualWiki, article)) {
-					pageInfo.setCanMove(true);
+					pageInfo.setMovable(true);
 				}
 			}
 			Watchlist watchlist = Utilities.currentWatchlist(request);

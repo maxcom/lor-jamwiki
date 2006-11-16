@@ -53,56 +53,20 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (Utilities.currentUser(request) != null) {
-			WikiUser user = Utilities.currentUser(request);
-			next.addObject("newuser", user);
-			WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getLogin());
-			next.addObject("newuserinfo", userInfo);
-		}
-		pageInfo.setSpecial(true);
-		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
-		pageInfo.setPageTitle(new WikiMessage("register.title"));
-	}
-
-	/**
-	 *
-	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
 		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
-		WikiUser user = new WikiUser();
-		WikiUserInfo userInfo = new WikiUserInfo();
-		String userIdString = request.getParameter("userId");
-		if (StringUtils.hasText(userIdString)) {
-			int userId = new Integer(userIdString).intValue();
-			if (userId > 0) {
-				user = WikiBase.getHandler().lookupWikiUser(userId);
-				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getLogin());
-			}
-		}
-		user.setLogin(request.getParameter("login"));
-		userInfo.setLogin(request.getParameter("login"));
-		user.setDisplayName(request.getParameter("displayName"));
-		userInfo.setEmail(request.getParameter("email"));
-		userInfo.setFirstName(request.getParameter("firstName"));
-		userInfo.setLastName(request.getParameter("lastName"));
-		String newPassword = request.getParameter("newPassword");
-		if (StringUtils.hasText(newPassword)) {
-			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
-			user.setRememberKey(Encryption.encrypt(newPassword));
-		}
-		// FIXME - need to distinguish between add & update
-		user.setCreateIpAddress(request.getRemoteAddr());
-		user.setLastLoginIpAddress(request.getRemoteAddr());
+		WikiUser user = this.setWikiUser(request);
+		WikiUserInfo userInfo = this.setWikiUserInfo(request);
 		next.addObject("newuser", user);
 		next.addObject("newuserinfo", userInfo);
 		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
 			next.addObject("errors", errors);
 			String oldPassword = request.getParameter("oldPassword");
+			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
 			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
 			if (newPassword != null) next.addObject("newPassword", newPassword);
@@ -114,6 +78,57 @@ public class RegisterServlet extends JAMWikiServlet {
 			String topic = virtualWiki.getDefaultTopicName();
 			ServletUtil.redirect(next, virtualWikiName, topic);
 		}
+	}
+
+	/**
+	 *
+	 */
+	private WikiUser setWikiUser(HttpServletRequest request) throws Exception {
+		WikiUser user = new WikiUser();
+		String userIdString = request.getParameter("userId");
+		if (StringUtils.hasText(userIdString)) {
+			int userId = new Integer(userIdString).intValue();
+			if (userId > 0) {
+				user = WikiBase.getHandler().lookupWikiUser(userId);
+			}
+		}
+		user.setLogin(request.getParameter("login"));
+		user.setDisplayName(request.getParameter("displayName"));
+		String newPassword = request.getParameter("newPassword");
+		if (StringUtils.hasText(newPassword)) {
+			user.setRememberKey(Encryption.encrypt(newPassword));
+		}
+		// FIXME - need to distinguish between add & update
+		user.setCreateIpAddress(request.getRemoteAddr());
+		user.setLastLoginIpAddress(request.getRemoteAddr());
+		return user;
+	}
+
+	/**
+	 *
+	 */
+	private WikiUserInfo setWikiUserInfo(HttpServletRequest request) throws Exception {
+		WikiUserInfo userInfo = new WikiUserInfo();
+		String login = request.getParameter("login");
+		String userIdString = request.getParameter("userId");
+		if (StringUtils.hasText(userIdString)) {
+			int userId = new Integer(userIdString).intValue();
+			if (userId > 0) {
+				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
+			}
+		}
+		if (!WikiBase.getUserHandler().canUpdate()) {
+			return userInfo;
+		}
+		userInfo.setLogin(login);
+		userInfo.setEmail(request.getParameter("email"));
+		userInfo.setFirstName(request.getParameter("firstName"));
+		userInfo.setLastName(request.getParameter("lastName"));
+		String newPassword = request.getParameter("newPassword");
+		if (StringUtils.hasText(newPassword)) {
+			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
+		}
+		return userInfo;
 	}
 
 	/**
@@ -135,12 +150,15 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (user.getUserId() < 1 && !StringUtils.hasText(newPassword)) {
 			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
+		if (!WikiBase.getUserHandler().canCreate() && !WikiBase.getUserHandler().authenticate(user.getLogin(), newPassword)) {
+			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
+		}
 		if (StringUtils.hasText(newPassword) || StringUtils.hasText(confirmPassword)) {
 			if (!StringUtils.hasText(newPassword)) {
 				errors.add(new WikiMessage("error.newpasswordempty"));
-			} else if (!StringUtils.hasText(confirmPassword)) {
+			} else if (WikiBase.getUserHandler().canCreate() && !StringUtils.hasText(confirmPassword)) {
 				errors.add(new WikiMessage("error.passwordconfirm"));
-			} else if (!newPassword.equals(confirmPassword)) {
+			} else if (WikiBase.getUserHandler().canCreate() && !newPassword.equals(confirmPassword)) {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
@@ -148,5 +166,22 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add(new WikiMessage("register.error.logininvalid", user.getLogin()));
 		}
 		return errors;
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		WikiUser user = new WikiUser();
+		WikiUserInfo userInfo = new WikiUserInfo();
+		if (Utilities.currentUser(request) != null) {
+			user = Utilities.currentUser(request);
+			userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getLogin());
+		}
+		next.addObject("newuser", user);
+		next.addObject("newuserinfo", userInfo);
+		pageInfo.setSpecial(true);
+		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
+		pageInfo.setPageTitle(new WikiMessage("register.title"));
 	}
 }

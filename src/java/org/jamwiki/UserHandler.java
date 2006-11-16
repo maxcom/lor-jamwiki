@@ -36,6 +36,11 @@ public interface UserHandler {
 	/**
 	 *
 	 */
+	public boolean canCreate();
+
+	/**
+	 *
+	 */
 	public boolean canUpdate();
 
 	/**

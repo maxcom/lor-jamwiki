@@ -17,7 +17,6 @@
 package org.jamwiki.ldap;
 
 import java.util.Hashtable;
-import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attributes;
@@ -64,7 +63,7 @@ public class LdapUserHandler implements UserHandler {
 			login = this.fullDirectoryPath(login);
 			ctx = getContext(login, password);
 			return true;
-		} catch (AuthenticationException e) {
+		} catch (Exception e) {
 			// could not authenticate, return false
 			return false;
 		} finally {
@@ -72,6 +71,13 @@ public class LdapUserHandler implements UserHandler {
 				ctx.close();
 			} catch (Exception e) {}
 		}
+	}
+
+	/**
+	 *
+	 */
+	public boolean canCreate() {
+		return false;
 	}
 
 	/**

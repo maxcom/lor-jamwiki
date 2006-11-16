@@ -201,8 +201,10 @@ public class DatabaseHandler {
 					WikiUser wikiUser = fromHandler.lookupWikiUser(userName);
 					WikiUserInfo wikiUserInfo = fromHandler.lookupWikiUserInfo(userName);
 					toHandler.addWikiUser(wikiUser, conn);
-					wikiUserInfo.setUserId(wikiUser.getUserId());
-					WikiBase.getUserHandler().addWikiUserInfo(wikiUserInfo);
+					if (WikiBase.getUserHandler().canUpdate()) {
+						wikiUserInfo.setUserId(wikiUser.getUserId());
+						WikiBase.getUserHandler().addWikiUserInfo(wikiUserInfo);
+					}
 					success++;
 				} catch (Exception e) {
 					String msg = "Unable to convert user: " + userName;
@@ -1344,11 +1346,15 @@ public class DatabaseHandler {
 			conn = WikiDatabase.getConnection();
 			if (user.getUserId() <= 0) {
 				this.addWikiUser(user, conn);
-				userInfo.setUserId(user.getUserId());
-				WikiBase.getUserHandler().addWikiUserInfo(userInfo);
+				if (WikiBase.getUserHandler().canUpdate()) {
+					userInfo.setUserId(user.getUserId());
+					WikiBase.getUserHandler().addWikiUserInfo(userInfo);
+				}
 			} else {
 				this.updateWikiUser(user, conn);
-				WikiBase.getUserHandler().updateWikiUserInfo(userInfo);
+				if (WikiBase.getUserHandler().canUpdate()) {
+					WikiBase.getUserHandler().updateWikiUserInfo(userInfo);
+				}
 			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

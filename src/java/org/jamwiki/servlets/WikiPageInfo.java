@@ -30,7 +30,7 @@ public class WikiPageInfo {
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiPageInfo.class.getName());
 	private boolean admin = false;
 	private int action = -1;
-	private boolean canMove = false;
+	private boolean movable = false;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
 	private String topicName = "";
@@ -78,7 +78,7 @@ public class WikiPageInfo {
 	protected void reset() {
 		this.admin = false;
 		this.action = -1;
-		this.canMove = false;
+		this.movable = false;
 		this.pageTitle = null;
 		this.redirectName = null;
 		this.topicName = "";
@@ -306,15 +306,15 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	public boolean getCanMove() {
-		return this.canMove;
+	public boolean getMovable() {
+		return this.movable;
 	}
 
 	/**
 	 *
 	 */
-	public void setCanMove(boolean canMove) {
-		this.canMove = canMove;
+	public void setMovable(boolean movable) {
+		this.movable = movable;
 	}
 
 	/**
