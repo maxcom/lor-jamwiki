@@ -126,12 +126,7 @@ public class AdminServlet extends JAMWikiServlet {
 				setProperty(props, request, Environment.PROP_DB_TYPE);
 				setProperty(props, request, Environment.PROP_DB_URL);
 				setProperty(props, request, Environment.PROP_DB_USERNAME);
-				if (StringUtils.hasText(request.getParameter(Environment.PROP_DB_PASSWORD))) {
-					setEncryptedProperty(props, request, Environment.PROP_DB_PASSWORD);
-					next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
-				} else {
-					props.setProperty(Environment.PROP_DB_PASSWORD, Environment.getValue(Environment.PROP_DB_PASSWORD));
-				}
+				setPassword(props, request, next, Environment.PROP_DB_PASSWORD, "dbPassword");
 			}
 			setProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE);
 			setProperty(props, request, Environment.PROP_DBCP_MAX_IDLE);
@@ -154,16 +149,10 @@ public class AdminServlet extends JAMWikiServlet {
 			/*
 			setProperty(props, request, Environment.PROP_EMAIL_SMTP_HOST);
 			setProperty(props, request, Environment.PROP_EMAIL_SMTP_USERNAME);
-			if (StringUtils.hasText(request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD))) {
-				setEncryptedProperty(props, request, Environment.PROP_EMAIL_SMTP_PASSWORD);
-				next.addObject("smtpPassword", request.getParameter(Environment.PROP_EMAIL_SMTP_PASSWORD));
-			} else {
-				props.setProperty(Environment.PROP_EMAIL_SMTP_PASSWORD, Environment.getValue(Environment.PROP_EMAIL_SMTP_PASSWORD));
-			}
+			setPassword(props, request, next, Environment.PROP_EMAIL_SMTP_PASSWORD, "smtpPassword");
 			setProperty(props, request, Environment.PROP_EMAIL_REPLY_ADDRESS);
 			*/
 			setProperty(props, request, Environment.PROP_LDAP_CONTEXT);
-			setProperty(props, request, Environment.PROP_LDAP_USER_CONTEXT);
 			setProperty(props, request, Environment.PROP_LDAP_FACTORY_CLASS);
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_EMAIL);
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_FIRST_NAME);
@@ -171,8 +160,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_USERID);
 			setProperty(props, request, Environment.PROP_LDAP_HANDLER);
 			setProperty(props, request, Environment.PROP_LDAP_LOGIN);
-			setEncryptedProperty(props, request, Environment.PROP_LDAP_PASSWORD);
-			next.addObject("ldapPassword", request.getParameter(Environment.PROP_LDAP_PASSWORD));
+			setPassword(props, request, next, Environment.PROP_LDAP_PASSWORD, "ldapPassword");
 			setProperty(props, request, Environment.PROP_LDAP_SECURITY_AUTHENTICATION);
 			setProperty(props, request, Environment.PROP_LDAP_URL);
 			Vector errors = Utilities.validateSystemSettings(props);
@@ -238,9 +226,14 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private static void setEncryptedProperty(Properties props, HttpServletRequest request, String parameter) throws Exception {
-		String value = request.getParameter(parameter);
-		Encryption.setEncryptedProperty(parameter, value, props);
+	private static void setPassword(Properties props, HttpServletRequest request, ModelAndView next, String parameter, String passwordParam) throws Exception {
+		if (StringUtils.hasText(request.getParameter(parameter))) {
+			String value = request.getParameter(parameter);
+			Encryption.setEncryptedProperty(parameter, value, props);
+			next.addObject(passwordParam, request.getParameter(parameter));
+		} else {
+			props.setProperty(parameter, Environment.getValue(parameter));
+		}
 	}
 
 	/**

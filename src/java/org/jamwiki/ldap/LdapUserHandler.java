@@ -17,7 +17,7 @@
 package org.jamwiki.ldap;
 
 import java.util.Hashtable;
-import java.util.StringTokenizer;
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attributes;
@@ -51,24 +51,6 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	private void addUserContext(BasicAttributes matchAttrs) {
-		String userContext = Environment.getValue(Environment.PROP_LDAP_USER_CONTEXT);
-		if (!StringUtils.hasText(userContext)) return;
-		StringTokenizer tokens = new StringTokenizer(userContext, ",");
-		while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken();
-			int pos = token.indexOf("=");
-			if (pos != -1 && (pos + 1) < token.length()) {
-				String key = token.substring(0, pos);
-				String value = token.substring(pos + 1);
-				matchAttrs.put(new BasicAttribute(key, value));
-			}
-		}
-	}
-
-	/**
-	 *
-	 */
 	public void addWikiUserInfo(WikiUserInfo userInfo) throws Exception {
 		throw new UnsupportedOperationException();
 	}
@@ -79,16 +61,10 @@ public class LdapUserHandler implements UserHandler {
 	public boolean authenticate(String login, String password) throws Exception {
 		InitialDirContext ctx = null;
 		try {
-			// convert login to full path
-			login = Environment.getValue(Environment.PROP_LDAP_FIELD_USERID) + "=" + login;
-			String context = Environment.getValue(Environment.PROP_LDAP_CONTEXT);
-			if (StringUtils.hasText(context)) {
-				// add context
-				login += "," + context;
-			}
+			login = this.fullDirectoryPath(login);
 			ctx = getContext(login, password);
 			return true;
-		} catch (Exception e) {
+		} catch (AuthenticationException e) {
 			// could not authenticate, return false
 			return false;
 		} finally {
@@ -103,6 +79,20 @@ public class LdapUserHandler implements UserHandler {
 	 */
 	public boolean canUpdate() {
 		return false;
+	}
+
+	/**
+	 *
+	 */
+	private String fullDirectoryPath(String value) {
+		// convert single user value to full path
+		value = Environment.getValue(Environment.PROP_LDAP_FIELD_USERID) + "=" + value;
+		String context = Environment.getValue(Environment.PROP_LDAP_CONTEXT);
+		if (StringUtils.hasText(context)) {
+			// add context
+			value += "," + context;
+		}
+		return value;
 	}
 
 	/**
@@ -147,9 +137,9 @@ public class LdapUserHandler implements UserHandler {
 		try {
 			ctx = getContext(Environment.getValue(Environment.PROP_LDAP_LOGIN), Encryption.getEncryptedProperty(Environment.PROP_LDAP_PASSWORD, null));
 			BasicAttributes matchAttrs = new BasicAttributes(true);
-			matchAttrs.put(new BasicAttribute(Environment.PROP_LDAP_FIELD_USERID, login));
-			this.addUserContext(matchAttrs);
-			NamingEnumeration answer = ctx.search(Environment.PROP_LDAP_CONTEXT, matchAttrs, SEARCH_ATTRIBUTES);
+			matchAttrs.put(new BasicAttribute(Environment.getValue(Environment.PROP_LDAP_FIELD_USERID), login));
+			NamingEnumeration answer = ctx.search(Environment.getValue(Environment.PROP_LDAP_CONTEXT), matchAttrs, SEARCH_ATTRIBUTES);
+			if (!answer.hasMore()) return null;
 			return this.initWikiUserInfo(answer);
 		} finally {
 			try {

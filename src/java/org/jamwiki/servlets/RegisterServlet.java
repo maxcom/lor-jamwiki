@@ -87,6 +87,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		userInfo.setLogin(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
 		userInfo.setEmail(request.getParameter("email"));
+		userInfo.setFirstName(request.getParameter("firstName"));
+		userInfo.setLastName(request.getParameter("lastName"));
 		String newPassword = request.getParameter("newPassword");
 		if (StringUtils.hasText(newPassword)) {
 			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));

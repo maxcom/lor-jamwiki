@@ -18,7 +18,6 @@ package org.jamwiki;
 
 import java.util.Locale;
 import org.jamwiki.db.DatabaseHandler;
-import org.jamwiki.db.DatabaseUserHandler;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
@@ -80,7 +79,11 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		WikiBase.handler = new DatabaseHandler();
-		WikiBase.userHandler = new DatabaseUserHandler();
+		if (Environment.getBooleanValue(Environment.PROP_LDAP_HANDLER)) {
+			WikiBase.userHandler = new org.jamwiki.ldap.LdapUserHandler();
+		} else {
+			WikiBase.userHandler = new org.jamwiki.db.DatabaseUserHandler();
+		}
 		this.searchEngine = new LuceneSearchEngine();
 	}
 

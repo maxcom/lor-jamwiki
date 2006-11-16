@@ -56,7 +56,6 @@ function onLdap() {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_USER_CONTEXT %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true
@@ -68,7 +67,6 @@ function onLdap() {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_USER_CONTEXT %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false
 		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false
@@ -328,10 +326,6 @@ FIXME - Email not supported right now, comment this out
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.caption.ldap.context" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_CONTEXT %>" id="<%= Environment.PROP_LDAP_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_CONTEXT) %>" size="50" /></td>
-</tr>
-<tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_USER_CONTEXT %>"><f:message key="admin.caption.ldap.usercontext" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_USER_CONTEXT %>" id="<%= Environment.PROP_LDAP_USER_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_USER_CONTEXT) %>" size="50" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.ldap.security" /></label></td>

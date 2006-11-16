@@ -79,7 +79,6 @@ public class Environment {
 	public static final String PROP_LDAP_PASSWORD = "ldap-password";
 	public static final String PROP_LDAP_SECURITY_AUTHENTICATION = "ldap-security";
 	public static final String PROP_LDAP_URL = "ldap-url";
-	public static final String PROP_LDAP_USER_CONTEXT = "ldap-user-context";
 	public static final String PROP_PARSER_ALLOW_HTML = "allowHTML";
 	public static final String PROP_PARSER_ALLOW_JAVASCRIPT = "allow-javascript";
 	public static final String PROP_PARSER_ALLOW_TEMPLATES = "allow-templates";
@@ -191,7 +190,6 @@ public class Environment {
 		defaults.setProperty(PROP_LDAP_PASSWORD, "");
 		defaults.setProperty(PROP_LDAP_SECURITY_AUTHENTICATION, "DIGEST-MD5");
 		defaults.setProperty(PROP_LDAP_URL, "ldap://localhost:389");
-		defaults.setProperty(PROP_LDAP_USER_CONTEXT, "objectClass=person");
 		defaults.setProperty(PROP_PARSER_ALLOW_HTML, "true");
 		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, "false");
 		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, "true");

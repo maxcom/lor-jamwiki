@@ -56,6 +56,14 @@
 	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></td>
 </tr>
 <tr>
+	<td><label for="registerFirstName"><f:message key="register.caption.firstname" /></label>:</td>
+	<td><input type="text" name="firstName" value="<c:out value="${newuserinfo.firstName}" />" id="registerFirstName" /></td>
+</tr>
+<tr>
+	<td><label for="registerLastName"><f:message key="register.caption.lastname" /></label>:</td>
+	<td><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></td>
+</tr>
+<tr>
 	<td><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</td>
 	<td><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></td>
 </tr>
