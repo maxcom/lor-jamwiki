@@ -7,6 +7,8 @@
 * BUG: "Login already exists" error when trying to update user account fixed.
 * FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
 * FEATURE: Updated Chinese translations from Feilong Huang (hfl).
+* FEATURE: Updated Polish translations from Robert Matyja (dlpa).
+* FEATURE: Updated German translations from Axel Kramer (axelclk).
 
 0.4.3
 =====
