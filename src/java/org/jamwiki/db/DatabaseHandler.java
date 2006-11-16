@@ -201,9 +201,9 @@ public class DatabaseHandler {
 					WikiUser wikiUser = fromHandler.lookupWikiUser(userName);
 					WikiUserInfo wikiUserInfo = fromHandler.lookupWikiUserInfo(userName);
 					toHandler.addWikiUser(wikiUser, conn);
-					if (WikiBase.getUserHandler().canUpdate()) {
+					if (WikiBase.getUserHandler().isWriteable()) {
 						wikiUserInfo.setUserId(wikiUser.getUserId());
-						WikiBase.getUserHandler().addWikiUserInfo(wikiUserInfo);
+						WikiBase.getUserHandler().addWikiUserInfo(wikiUserInfo, conn);
 					}
 					success++;
 				} catch (Exception e) {
@@ -1346,14 +1346,14 @@ public class DatabaseHandler {
 			conn = WikiDatabase.getConnection();
 			if (user.getUserId() <= 0) {
 				this.addWikiUser(user, conn);
-				if (WikiBase.getUserHandler().canUpdate()) {
+				if (WikiBase.getUserHandler().isWriteable()) {
 					userInfo.setUserId(user.getUserId());
-					WikiBase.getUserHandler().addWikiUserInfo(userInfo);
+					WikiBase.getUserHandler().addWikiUserInfo(userInfo, conn);
 				}
 			} else {
 				this.updateWikiUser(user, conn);
-				if (WikiBase.getUserHandler().canUpdate()) {
-					WikiBase.getUserHandler().updateWikiUserInfo(userInfo);
+				if (WikiBase.getUserHandler().isWriteable()) {
+					WikiBase.getUserHandler().updateWikiUserInfo(userInfo, conn);
 				}
 			}
 		} catch (Exception e) {

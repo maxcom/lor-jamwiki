@@ -111,13 +111,6 @@ public class WikiUserInfo {
 	/**
 	 *
 	 */
-	public boolean isUpdateable() {
-		return WikiBase.getUserHandler().canUpdate();
-	}
-
-	/**
-	 *
-	 */
 	public int getUserId() {
 		return this.userId;
 	}
@@ -127,5 +120,12 @@ public class WikiUserInfo {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 *
+	 */
+	public boolean isWriteable() {
+		return WikiBase.getUserHandler().isWriteable();
 	}
 }

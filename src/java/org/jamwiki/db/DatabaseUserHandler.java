@@ -32,11 +32,15 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public void addWikiUserInfo(WikiUserInfo userInfo) throws Exception {
+	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection();
-			WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, conn);
+			if (transactionObject instanceof Connection) {
+				WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, (Connection)transactionObject);
+			} else {
+				WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, conn);
+			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -58,20 +62,6 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public boolean canCreate() {
-		return true;
-	}
-
-	/**
-	 *
-	 */
-	public boolean canUpdate() {
-		return true;
-	}
-
-	/**
-	 *
-	 */
 	private WikiUserInfo initWikiUserInfo(WikiResultSet rs) throws Exception {
 		WikiUserInfo userInfo = new WikiUserInfo();
 		userInfo.setUserId(rs.getInt("wiki_user_id"));
@@ -86,6 +76,13 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
+	public boolean isWriteable() {
+		return true;
+	}
+
+	/**
+	 *
+	 */
 	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
 		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUserInfo(login);
 		if (rs.size() == 0) return null;
@@ -95,11 +92,15 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo) throws Exception {
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection();
-			WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, conn);
+			if (transactionObject instanceof Connection) {
+				WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, (Connection)transactionObject);
+			} else {
+				WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, conn);
+			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

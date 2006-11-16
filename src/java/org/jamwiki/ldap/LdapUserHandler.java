@@ -50,7 +50,7 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public void addWikiUserInfo(WikiUserInfo userInfo) throws Exception {
+	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -71,20 +71,6 @@ public class LdapUserHandler implements UserHandler {
 				ctx.close();
 			} catch (Exception e) {}
 		}
-	}
-
-	/**
-	 *
-	 */
-	public boolean canCreate() {
-		return false;
-	}
-
-	/**
-	 *
-	 */
-	public boolean canUpdate() {
-		return false;
 	}
 
 	/**
@@ -138,6 +124,13 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
+	public boolean isWriteable() {
+		return false;
+	}
+
+	/**
+	 *
+	 */
 	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
 		InitialDirContext ctx = null;
 		try {
@@ -157,7 +150,7 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo) throws Exception {
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

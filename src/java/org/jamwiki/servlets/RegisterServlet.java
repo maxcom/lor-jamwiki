@@ -117,7 +117,7 @@ public class RegisterServlet extends JAMWikiServlet {
 				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
 			}
 		}
-		if (!WikiBase.getUserHandler().canUpdate()) {
+		if (!WikiBase.getUserHandler().isWriteable()) {
 			return userInfo;
 		}
 		userInfo.setLogin(login);
@@ -150,15 +150,15 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (user.getUserId() < 1 && !StringUtils.hasText(newPassword)) {
 			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
-		if (!WikiBase.getUserHandler().canCreate() && !WikiBase.getUserHandler().authenticate(user.getLogin(), newPassword)) {
+		if (!WikiBase.getUserHandler().isWriteable() && !WikiBase.getUserHandler().authenticate(user.getLogin(), newPassword)) {
 			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		if (StringUtils.hasText(newPassword) || StringUtils.hasText(confirmPassword)) {
 			if (!StringUtils.hasText(newPassword)) {
 				errors.add(new WikiMessage("error.newpasswordempty"));
-			} else if (WikiBase.getUserHandler().canCreate() && !StringUtils.hasText(confirmPassword)) {
+			} else if (WikiBase.getUserHandler().isWriteable() && !StringUtils.hasText(confirmPassword)) {
 				errors.add(new WikiMessage("error.passwordconfirm"));
-			} else if (WikiBase.getUserHandler().canCreate() && !newPassword.equals(confirmPassword)) {
+			} else if (WikiBase.getUserHandler().isWriteable() && !newPassword.equals(confirmPassword)) {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}

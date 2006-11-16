@@ -26,7 +26,7 @@ public interface UserHandler {
 	/**
 	 *
 	 */
-	public void addWikiUserInfo(WikiUserInfo userInfo) throws Exception;
+	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 
 	/**
 	 *
@@ -36,12 +36,7 @@ public interface UserHandler {
 	/**
 	 *
 	 */
-	public boolean canCreate();
-
-	/**
-	 *
-	 */
-	public boolean canUpdate();
+	public boolean isWriteable();
 
 	/**
 	 *
@@ -51,5 +46,5 @@ public interface UserHandler {
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo) throws Exception;
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 }

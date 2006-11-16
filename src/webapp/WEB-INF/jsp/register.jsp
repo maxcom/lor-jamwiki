@@ -46,19 +46,17 @@
 	<td><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></td>
 </tr>
 </c:if>
-<c:if test="${newuserinfo.updateable || newuser.userId < 1}">
+<c:if test="${newuserinfo.writeable || newuser.userId < 1}">
 <tr>
 	<td><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</td>
 	<td><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></td>
 </tr>
 </c:if>
-<c:if test="${newuserinfo.updateable}">
+<c:if test="${newuserinfo.writeable}">
 <tr>
 	<td><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</td>
 	<td><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></td>
 </tr>
-</c:if>
-<c:if test="${newuserinfo.updateable}">
 <tr>
 	<td><label for="registerFirstName"><f:message key="register.caption.firstname" /></label>:</td>
 	<td><input type="text" name="firstName" value="<c:out value="${newuserinfo.firstName}" />" id="registerFirstName" /></td>
@@ -68,7 +66,7 @@
 	<td><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></td>
 </tr>
 </c:if>
-<c:if test="${!newuserinfo.updateable && newuser.userId > 0}">
+<c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
 <tr>
 	<td><f:message key="register.caption.firstname" />:</td>
 	<td><c:out value="${newuserinfo.firstName}" /></td>
@@ -82,13 +80,13 @@
 	<td><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</td>
 	<td><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></td>
 </tr>
-<c:if test="${newuserinfo.updateable}">
+<c:if test="${newuserinfo.writeable}">
 <tr>
 	<td><label for="registerEmail"><f:message key="register.caption.email" /></label>:</td>
 	<td><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></td>
 </tr>
 </c:if>
-<c:if test="${!newuserinfo.updateable && newuser.userId > 0}">
+<c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
 <tr>
 	<td><f:message key="register.caption.email" />:</td>
 	<td><c:out value="${newuserinfo.email}" /></td>

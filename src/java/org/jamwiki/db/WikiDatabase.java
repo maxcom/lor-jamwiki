@@ -183,12 +183,12 @@ public class WikiDatabase {
 			logger.warning("Admin user already exists");
 		}
 		WikiBase.getHandler().addWikiUser(user, conn);
-		if (WikiBase.getUserHandler().canUpdate()) {
+		if (WikiBase.getUserHandler().isWriteable()) {
 			WikiUserInfo userInfo = new WikiUserInfo();
 			userInfo.setEncodedPassword(user.getRememberKey());
 			userInfo.setLogin(user.getLogin());
 			userInfo.setUserId(user.getUserId());
-			WikiBase.getUserHandler().addWikiUserInfo(userInfo);
+			WikiBase.getUserHandler().addWikiUserInfo(userInfo, conn);
 		}
 	}
 
