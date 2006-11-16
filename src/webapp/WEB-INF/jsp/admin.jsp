@@ -327,6 +327,7 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.caption.ldap.context" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_CONTEXT %>" id="<%= Environment.PROP_LDAP_CONTEXT %>" value="<%= props.getProperty(Environment.PROP_LDAP_CONTEXT) %>" size="50" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.contexthelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.ldap.security" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" id="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>" value="<%= props.getProperty(Environment.PROP_LDAP_SECURITY_AUTHENTICATION) %>" size="20" /></td>
@@ -336,10 +337,12 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.caption.ldap.login" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_LOGIN %>" id="<%= Environment.PROP_LDAP_LOGIN %>" value="<%= props.getProperty(Environment.PROP_LDAP_LOGIN) %>" size="30" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.loginhelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.caption.ldap.password" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.passwordhelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_USERID %>"><f:message key="admin.caption.ldap.field.userid" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_USERID %>" id="<%= Environment.PROP_LDAP_FIELD_USERID %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_USERID) %>" size="20" /></td>
