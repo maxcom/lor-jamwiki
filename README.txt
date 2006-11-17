@@ -35,6 +35,11 @@ to support double-byte charaters the database should use UTF-8 encoding.
 INSTALLATION
 ============
 
+See http://jamwiki.org/wiki/en/Installation for the latest installation and
+upgrade instructions.  The instructions below provide a brief overview of
+the JAMWiki install process that should be sufficient for most sites to be
+set up.
+
 JAMWiki is distributed as a WAR file that can be installed onto any web
 application server that supports the JDK 1.4 and servlet 2.3 specifications.
 Refer to the web application server documentation for specific instructions on
@@ -47,47 +52,32 @@ The setup process begins with the first JAMWiki pageview after setup.  Setup
 requires the following:
 
   1. A directory into which JAMWiki files can be written.
-  2. A directory (accessible to the web server) into while images and other
-     files can be uploaded.
-  3. The relative path (with respect to the web server doc root) to the image
-     upload directory.
+  2. A directory (accessible to the web/application server) into which images
+     and other files can be uploaded.
+  3. The relative path (with respect to the web/application server doc root)
+     to the image upload directory.
   4. The name and login of an administrative user.
-  5. (Optional) If using a database for persistency then the database settings
-     must also be provided (see the "Database Settings" section below).
+  5. (Optional) If using an external database for persistency then the
+     database settings must also be provided (see the "Database Settings"
+     section below).
   6. (Optional) Once setup is complete, JAMWiki can be customized by using the
      Special:Admin page, accessible to admins by clicking on the "Admin" link
      on the top right portion of all JAMWiki pages.
 
-Once the settings have been verified JAMWiki will create the user account,
-database tables or file directories, base properties, and default topics.
-Once complete JAMWiki redirects to the starting page, ready for use.  That's
-all there is to it!
+Once the settings have been verified JAMWiki will create an admin user
+account, database tables or file directories, base properties, and default
+topics.  Once complete JAMWiki redirects to the starting page, ready for use.
+That's all there is to it!
 
 
 UPGRADES
 ========
 
-See the UPGRADE.txt document for detailed upgrade instructions.  In most cases
-the process for upgrading JAMWiki is:
-
-  1. Download the latest JAMWiki WAR file.
-  2. Back up all database and/or file data prior to upgrading.
-  3. Back up the jamwiki.properties file and the logging.properties file that
-     can be found in the /WEB-INF/classes directory.
-  4. If you have created any virtual wikis, back up the web.xml file that can
-     be found in the /WEB-INF directory.
-  5. Remove the old JAMWiki installation.
-  6. Install the new JAMWiki WAR file.  See your web application server's
-     documentation for instructions.
-  7. Copy the files backed up in steps three and four back into their old
-     locations, overwriting any new files.  Be sure that permissions are set
-     so that JAMWiki has read and write access to all files in the
-     installation.
-  8. View any page on the Wiki.  You will be redirected to the upgrade page
-     and any required upgrade steps will be automatically performed.
-
-If an upgrade fails please report the error on jamwiki.org, and then follow
-manual upgrade steps outlined in the UPGRADE.txt document.
+See the UPGRADE.txt document or http://jamwiki.org/wiki/en/Installation for
+detailed upgrade instructions.  In most cases the JAMWiki upgrade process can
+be handled using an automated process.  If an upgrade fails please report the
+error on jamwiki.org, and then follow the manual upgrade steps outlined in the
+UPGRADE.txt document.
 
 
 DATABASE SETTINGS
@@ -153,6 +143,10 @@ To create a new virtual wiki the following steps are required:
 
 BUILDING FROM SOURCE
 ====================
+
+See http://jamwiki.org/wiki/en/Building_from_Source for the latest
+instructions about building the JAMWiki source.  The instructions below
+provide a brief overview of the JAMWiki build process.
 
 The JAMWiki source is available from the Subversion source repository on
 Sourceforge.net.  To check out the code, first install Subversion and then

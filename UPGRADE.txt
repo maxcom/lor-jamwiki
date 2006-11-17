@@ -12,29 +12,33 @@ AUTOMATIC UPGRADES
 In most cases the JAMWiki upgrade process can be handled automatically by
 following these steps:
 
-  1. Download the latest JAMWiki WAR file.
+  1. Download the latest JAMWiki Download the latest JAMWiki release from
+     http://sourceforge.net/projects/jamwiki/.
   2. Back up all database and/or file data prior to upgrading.
-  3. Back up the jamwiki.properties file and the logging.properties file that
-     can be found in the /WEB-INF/classes directory.
-  4. If you have created any virtual wikis, back up the web.xml file that can
-     be found in the /WEB-INF directory.
+  3. Back up the jamwiki.properties file and any other properties files that
+     you have modified from the /WEB-INF/classes/ directory.  These files will
+     need to be restored after the new JAMWiki WAR file has been deployed.
+  4. If you have made any changes to the /WEB-INF/web.xml file make sure that
+     a back up is created.  This file will need to be restored after the new
+     JAMWiki WAR file has been deployed.
   5. Remove the old JAMWiki installation by deleting your existing JAMWiki
      web application. For some web application servers you may also want to
      clear the application server's cache.
   6. Install the new JAMWiki WAR file.  See your web application server's
      documentation for instructions.
-  7. Copy the files backed up in steps three and four back into their old
-     locations, overwriting any new files.  Be sure that permissions are set
-     so that JAMWiki has read and write access to all files in the
-     installation.
-  8. Restart the web application server and view any page on the Wiki. You
+  7. Restore the files that were backed up in steps three and four to their
+     previous locations under the /WEB-INF/ and /WEB-INF/classes/ directories,
+     overwriting any new files.
+  8. Verify that the web application server process has read and write access
+     to all files in the new JAMWiki installation.
+  9. Restart the web application server and view any page on the Wiki. You
      will be redirected to the upgrade page and any required upgrade steps
      will be automatically performed.
 
-Note that some users have reported upgrade failures, but the problem was
-actually due to old pages being cached by the application server.  This
-problem is particularly common with Tomcat, and can be resolved by clearing
-the application server's page cache.
+Note that some users have reported failures after upgrading, but the problem
+was actually caused by old JAMWiki files being cached by the application
+server.  This problem is particularly common with Tomcat, and can be resolved
+by clearing the application server's cache.
 
 
 MANUAL UPGRADES
