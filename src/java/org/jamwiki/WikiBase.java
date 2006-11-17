@@ -23,6 +23,7 @@ import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.PseudoTopicHandler;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -62,6 +63,10 @@ public class WikiBase {
 	public static final String SPECIAL_PAGE_SPECIAL_PAGES = "SpecialPages";
 	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
+	/** Database user handler class */
+	public static final String USER_HANDLER_DATABASE = "org.jamwiki.db.DatabaseUserHandler";
+	/** LDAP user handler class */
+	public static final String USER_HANDLER_LDAP = "org.jamwiki.ldap.LdapUserHandler";
 
 	static {
 		try {
@@ -79,11 +84,7 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		WikiBase.handler = new DatabaseHandler();
-		if (Environment.getBooleanValue(Environment.PROP_LDAP_HANDLER)) {
-			WikiBase.userHandler = new org.jamwiki.ldap.LdapUserHandler();
-		} else {
-			WikiBase.userHandler = new org.jamwiki.db.DatabaseUserHandler();
-		}
+		WikiBase.userHandler = Utilities.userHandlerInstance();
 		this.searchEngine = new LuceneSearchEngine();
 	}
 

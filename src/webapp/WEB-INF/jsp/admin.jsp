@@ -52,7 +52,7 @@ function onPersistenceType() {
 	}
 }
 function onLdap() {
-	if (document.getElementById("<%= Environment.PROP_LDAP_HANDLER %>").options[document.getElementById("<%= Environment.PROP_LDAP_HANDLER %>").selectedIndex].value == "false") {
+	if (document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").options[document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").selectedIndex].value != "<%= WikiBase.USER_HANDLER_LDAP %>") {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true
 		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true
@@ -307,11 +307,11 @@ FIXME - Email not supported right now, comment this out
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2"><h4><f:message key="admin.header.ldap" /></h4></td></tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_HANDLER %>"><f:message key="admin.caption.ldap" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_USER_HANDLER %>"><f:message key="admin.caption.ldap" /></label></td>
 	<td class="formelement">
-		<select name="<%= Environment.PROP_LDAP_HANDLER %>" id="<%= Environment.PROP_LDAP_HANDLER %>" onchange="onLdap()">
-		<option value="false"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("false") ? " selected" : "" %>><f:message key="admin.usergrouptype.database" /></option>
-		<option value="true"<%= props.getProperty(Environment.PROP_LDAP_HANDLER).equals("true") ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /> (<f:message key="common.caption.experimental" />)</option>
+		<select name="<%= Environment.PROP_BASE_USER_HANDLER %>" id="<%= Environment.PROP_BASE_USER_HANDLER %>" onchange="onLdap()">
+		<option value="<%= WikiBase.USER_HANDLER_DATABASE %>"<%= props.getProperty(Environment.PROP_BASE_USER_HANDLER).equals(WikiBase.USER_HANDLER_DATABASE) ? " selected" : "" %>><f:message key="admin.usergrouptype.database" /></option>
+		<option value="<%= WikiBase.USER_HANDLER_LDAP %>"<%= props.getProperty(Environment.PROP_BASE_USER_HANDLER).equals(WikiBase.USER_HANDLER_LDAP) ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /> (<f:message key="common.caption.experimental" />)</option>
 		</select>
 	</td>
 </tr>

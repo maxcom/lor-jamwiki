@@ -158,7 +158,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_FIRST_NAME);
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_LAST_NAME);
 			setProperty(props, request, Environment.PROP_LDAP_FIELD_USERID);
-			setProperty(props, request, Environment.PROP_LDAP_HANDLER);
+			setProperty(props, request, Environment.PROP_BASE_USER_HANDLER);
 			setProperty(props, request, Environment.PROP_LDAP_LOGIN);
 			setPassword(props, request, next, Environment.PROP_LDAP_PASSWORD, "ldapPassword");
 			setProperty(props, request, Environment.PROP_LDAP_SECURITY_AUTHENTICATION);

@@ -43,6 +43,7 @@ public class Environment {
 	public static final String PROP_BASE_LOGO_IMAGE = "logo-image";
 	public static final String PROP_BASE_META_DESCRIPTION = "meta-description";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
+	public static final String PROP_BASE_USER_HANDLER = "user-handler";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_DB_DRIVER= "driver";
 	public static final String PROP_DB_PASSWORD = "db-password";
@@ -74,7 +75,6 @@ public class Environment {
 	public static final String PROP_LDAP_FIELD_FIRST_NAME = "ldap-field-first-name";
 	public static final String PROP_LDAP_FIELD_LAST_NAME = "ldap-field-last-name";
 	public static final String PROP_LDAP_FIELD_USERID = "ldap-field-login";
-	public static final String PROP_LDAP_HANDLER = "ldap-handler";
 	public static final String PROP_LDAP_LOGIN = "ldap-login";
 	public static final String PROP_LDAP_PASSWORD = "ldap-password";
 	public static final String PROP_LDAP_SECURITY_AUTHENTICATION = "ldap-security";
@@ -153,6 +153,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
+		defaults.setProperty(PROP_BASE_USER_HANDLER, WikiBase.USER_HANDLER_DATABASE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
@@ -185,7 +186,6 @@ public class Environment {
 		defaults.setProperty(PROP_LDAP_FIELD_FIRST_NAME, "givenName");
 		defaults.setProperty(PROP_LDAP_FIELD_LAST_NAME, "sn");
 		defaults.setProperty(PROP_LDAP_FIELD_USERID, "uid");
-		defaults.setProperty(PROP_LDAP_HANDLER, "false");
 		defaults.setProperty(PROP_LDAP_LOGIN, "");
 		defaults.setProperty(PROP_LDAP_PASSWORD, "");
 		defaults.setProperty(PROP_LDAP_SECURITY_AUTHENTICATION, "DIGEST-MD5");

@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.UserHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -999,6 +1000,23 @@ public class Utilities {
 			i++;
 		}
 		return uri;
+	}
+
+	/**
+	 * Utility method to retrieve an instance of the current user handler.
+	 *
+	 * @return An instance of the current user handler.
+	 * @throws Exception Thrown if a user handler instance can not be
+	 *  instantiated.
+	 */
+	public static UserHandler userHandlerInstance() throws Exception {
+		String userHandlerClass = Environment.getValue(Environment.PROP_BASE_USER_HANDLER);
+		logger.fine("Using user handler: " + userHandlerClass);
+		Class clazz = Class.forName(userHandlerClass, true, Thread.currentThread().getContextClassLoader());
+		Class[] parameterTypes = new Class[0];
+		Constructor constructor = clazz.getConstructor(parameterTypes);
+		Object[] initArgs = new Object[0];
+		return (UserHandler)constructor.newInstance(initArgs);
 	}
 
 	/**
