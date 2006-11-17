@@ -50,6 +50,8 @@ public class TableOfContents {
 	/** Status indicating that the document being parsed does not allow a table of contents. */
 	public static final int STATUS_NO_TOC = 2;
 	private int currentLevel = 0;
+	/** Force a TOC to appear */
+	private boolean forceTOC = false;
 	/** It is possible for a user to include more than one "TOC" tag in a document, so keep count. */
 	private int insertTagCount = 0;
 	/** Keep track of how many times the parser attempts to insert the TOC (one per "TOC" tag) */
@@ -57,6 +59,8 @@ public class TableOfContents {
 	private int minLevel = 4;
 	private Vector entries = new Vector();
 	private int status = STATUS_TOC_UNINITIALIZED;
+	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
+	private static final int MINIMUM_HEADINGS = 4;
 
 	/**
 	 * Adds TOC at the beginning as a table on the right side of the page if the
@@ -133,17 +137,20 @@ public class TableOfContents {
 	 */
 	public String attemptTOCInsertion() {
 		this.insertionAttempt++;
-		// FIXME - do not hardcode minimum TOC size
-		if (this.size() <= 3) {
+		if (this.size() < MINIMUM_HEADINGS && !this.forceTOC) {
+			// too few headings
 			return "";
 		}
 		if (this.getStatus() == TableOfContents.STATUS_NO_TOC) {
+			// TOC never initialized (no entries)
 			return "";
 		}
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
+			// TOC turned off for the wiki
 			return "";
 		}
 		if (this.insertionAttempt < this.insertTagCount) {
+			// user specified a TOC location, only insert there
 			return "";
 		}
 		return this.toHTML();
@@ -184,6 +191,16 @@ public class TableOfContents {
 			text.append("<ol><li>");
 			currentLevel++;
 		}
+	}
+
+	/**
+	 * Force a TOC to appear, even if there are fewer than four headings.
+	 *
+	 * @param forceTOC Set to <code>true</code> if a TOC is being forced
+	 *  to appear, false otherwise.
+	 */
+	public void setForceTOC(boolean forceTOC) {
+		this.forceTOC = forceTOC;
 	}
 
 	/**

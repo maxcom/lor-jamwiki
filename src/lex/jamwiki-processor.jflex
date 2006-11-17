@@ -2,29 +2,6 @@
  * This class implements the MediaWiki syntax (http://meta.wikimedia.org/wiki/Help:Editing).
  * It will also escape any HTML tags that have not been specifically allowed to be
  * present.
- * 
- * Currently supported syntax includes:
- *
- *   Unordered lists: *
- *   Ordered lists: #
- *   Definition lists: ;:
- *   Indents: :
- *   Italics: ''
- *   Bold: '''
- *   h1 heading: =text=
- *   h2 heading: ==text==
- *   h3 level heading: ===text===
- *   h4 level heading: ====text====
- *   Breaking line: ----
- *   Tables: {| |- ! | |}
- *   <nowiki>
- *   __NOTOC__
- *   __TOC__
- *   Templates
- *
- * Not yet implemented:
- *
- *   <math>
  */
 package org.jamwiki.parser.jflex;
 
@@ -207,6 +184,7 @@ jsclose            = (<[ ]*\/[ ]*script[ ]*>)
 /* processing commands */
 notoc              = "__NOTOC__"
 toc                = "__TOC__"
+forcetoc           = "__FORCETOC__"
 
 /* comments */
 htmlcomment        = "<!--" ~"-->"
@@ -287,7 +265,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return  "</pre>\n";
 }
 
-/* ----- processing commands ----- */
+/* ----- table of contents ----- */
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{notoc} {
     logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
@@ -298,7 +276,14 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <NORMAL, LIST, TABLE, TD, TH, TC>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
+    this.parserInput.getTableOfContents().setForceTOC(true);
     return yytext();
+}
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{forcetoc} {
+    logger.finer("forcetoc: " + yytext() + " (" + yystate() + ")");
+    this.parserInput.getTableOfContents().setForceTOC(true);
+    return "";
 }
 
 /* ----- wiki links ----- */

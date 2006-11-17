@@ -1,5 +1,7 @@
 /*
- *
+ * The pre-processor performs initial parsing steps used to initialize
+ * metadata, replace syntax that should not be saved to the database,
+ * and prepare the document for the full parsing by the processor.
  */
 package org.jamwiki.parser.jflex;
 
