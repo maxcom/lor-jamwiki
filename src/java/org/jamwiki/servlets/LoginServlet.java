@@ -79,14 +79,15 @@ public class LoginServlet extends JAMWikiServlet {
 		if (WikiBase.getUserHandler().authenticate(username, password)) {
 			user = WikiBase.getHandler().lookupWikiUser(username);
 		}
+		boolean remember = (request.getParameter("remember") != null);
 		if (user == null) {
 			next.addObject("errorMessage", new WikiMessage("error.login"));
 			next.addObject("redirect", redirect);
+			if (remember) next.addObject("remember", "true");
 			pageInfo.setPageTitle(new WikiMessage("login.title"));
 			pageInfo.setSpecial(true);
 			pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
 		} else {
-			boolean remember = (request.getParameter("remember") != null);
 			Utilities.login(request, response, user, remember);
 			ServletUtil.redirect(next, virtualWikiName, redirect);
 		}
