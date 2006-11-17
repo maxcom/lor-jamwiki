@@ -137,12 +137,12 @@ public class TableOfContents {
 	 */
 	public String attemptTOCInsertion() {
 		this.insertionAttempt++;
-		if (this.size() < MINIMUM_HEADINGS && !this.forceTOC) {
+		if (this.size() == 0 || (this.size() < MINIMUM_HEADINGS && !this.forceTOC)) {
 			// too few headings
 			return "";
 		}
 		if (this.getStatus() == TableOfContents.STATUS_NO_TOC) {
-			// TOC never initialized (no entries)
+			// TOC disallowed
 			return "";
 		}
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_TOC)) {
