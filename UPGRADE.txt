@@ -9,8 +9,8 @@ below, but in the case of errors manual upgrade steps may need to be followed.
 AUTOMATIC UPGRADES
 ==================
 
-In most cases the JAMWiki process can be handled automatically by following
-these steps:
+In most cases the JAMWiki upgrade process can be handled automatically by
+following these steps:
 
   1. Download the latest JAMWiki WAR file.
   2. Back up all database and/or file data prior to upgrading.
@@ -18,15 +18,18 @@ these steps:
      can be found in the /WEB-INF/classes directory.
   4. If you have created any virtual wikis, back up the web.xml file that can
      be found in the /WEB-INF directory.
-  5. Remove the old JAMWiki installation.
+  5. Remove the old JAMWiki installation by deleting your existing JAMWiki
+     web application. For some web application servers you may also want to
+     clear the application server's cache.
   6. Install the new JAMWiki WAR file.  See your web application server's
      documentation for instructions.
   7. Copy the files backed up in steps three and four back into their old
      locations, overwriting any new files.  Be sure that permissions are set
      so that JAMWiki has read and write access to all files in the
      installation.
-  8. View any page on the Wiki.  You will be redirected to the upgrade page
-     and any required upgrade steps will be automatically performed.
+  8. Restart the web application server and view any page on the Wiki. You
+     will be redirected to the upgrade page and any required upgrade steps
+     will be automatically performed.
 
 Note that some users have reported upgrade failures, but the problem was
 actually due to old pages being cached by the application server.  This
@@ -58,7 +61,7 @@ followed by 0.3.3.
                    select encoded_password from jam_wiki_user_info
                    where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
               );
-              alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL;
+              alter table jam_wiki_user alter column remember_key set NOT NULL;
 
 
   JAMWiki 0.4.3

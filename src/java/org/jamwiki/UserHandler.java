@@ -19,32 +19,72 @@ package org.jamwiki;
 import org.jamwiki.model.WikiUserInfo;
 
 /**
- *
+ * This interface provides methods needed when authenticating and retrieving
+ * basic user information.
  */
 public interface UserHandler {
 
 	/**
+	 * Add new user information to the user information data store.  If the
+	 * data store is write-only then this method should throw an
+	 * OperationNotSupportedException.
 	 *
+	 * @param userInfo The WikiUserInfo object that is to be added to the
+	 *  data store.
+	 * @param transactionObject If the user information is being added to the
+	 *  data store as part of a transaction then this parameter should contain
+	 *  the transaction object, such as a database connection.  If no
+	 *  transaction is being used then this value should be <code>null</code>.
+	 * @throws Exception Thrown if an error occurs while adding the user
+	 *  information, or if the data store is read-only.
 	 */
 	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 
 	/**
+	 * Determine if a value matching the given login and password exists in
+	 * the data store.
 	 *
+	 * @param login The login that is being validated against.
+	 * @param password The password that is being validated against.
+	 * @return <code>true</code> if the login / password combination matches
+	 *  an existing record in the data store, <code>false</code> otherwise.
+	 * @throws Exception Thrown if an error occurs while accessing the data
+	 *  store.
 	 */
 	public boolean authenticate(String login, String password) throws Exception;
 
 	/**
+	 * This method returns <code>true</code> if the user information data
+	 * store is writeable, and <code>false</code> if it is read-only.
 	 *
+	 * @return <code>true</code> if the user information data store is
+	 *  writeable, and <code>false</code> if it is read-only.
 	 */
 	public boolean isWriteable();
 
 	/**
+	 * Given a user login, retrieving a WikiUserInfo containing values for
+	 * the specified user.
 	 *
+	 * @param login The login for the user information being retrieved.
+	 * @return A WikiUserInfo object containing user information matching the
+	 *  the login, or <code>null</code> if no record matching the login can
+	 *  be found.
+	 * @throws Exception Thrown if an error occurs while retrieving user
+	 *  information.
 	 */
 	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception;
 
 	/**
 	 *
+	 * @param userInfo The WikiUserInfo object that is to be updated in the
+	 *  data store.
+	 * @param transactionObject If the user information is being updated in
+	 *  the data store as part of a transaction then this parameter should
+	 *  contain the transaction object, such as a database connection.  If no
+	 *  transaction is being used then this value should be <code>null</code>.
+	 * @throws Exception Thrown if an error occurs while updating the user
+	 *  information, or if the data store is read-only.
 	 */
 	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 }

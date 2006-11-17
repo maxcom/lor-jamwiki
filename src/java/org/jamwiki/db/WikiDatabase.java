@@ -34,7 +34,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * This class contains general database utility methods that are useful for a
+ * variety of JAMWiki database functions, including setup and upgrades.
  */
 public class WikiDatabase {
 
