@@ -101,7 +101,7 @@ public class WikiConfiguration {
 			WikiConfiguration.pseudotopics = new Vector();
 			WikiConfiguration.userHandlers = new Vector();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
-			Document document = XMLUtil.parseXML(file, true);
+			Document document = XMLUtil.parseXML(file, false);
 			Node node = document.getElementsByTagName(XML_CONFIGURATION_ROOT).item(0);
 			NodeList children = node.getChildNodes();
 			Node child = null;
