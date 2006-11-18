@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
@@ -254,6 +255,10 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		Collection virtualWikiList = WikiBase.getHandler().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
+		Collection userHandlers = WikiConfiguration.getUserHandlers();
+		next.addObject("userHandlers", userHandlers);
+		Collection parsers = WikiConfiguration.getParsers();
+		next.addObject("parsers", parsers);
 		if (props == null) {
 			props = Environment.getInstance();
 		}

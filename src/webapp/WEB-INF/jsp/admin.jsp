@@ -126,7 +126,14 @@ function onLdap() {
 <tr><td colspan="2"><h4><f:message key="admin.header.parser" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_CLASS %>"><f:message key="admin.caption.parser" /></label></td>
-	<td class="formelement"><input type="text" name="<%= Environment.PROP_PARSER_CLASS %>" value="<%= props.getProperty(Environment.PROP_PARSER_CLASS) %>" size="50" id="<%= Environment.PROP_PARSER_CLASS %>" /></td>
+	<td class="formelement">
+		<select name="<%= Environment.PROP_PARSER_CLASS %>" id="<%= Environment.PROP_PARSER_CLASS %>">
+		<c:set var="selectedParser"><%= props.getProperty(Environment.PROP_PARSER_CLASS) %></c:set>
+		<c:forEach items="${parsers}" var="parser">
+		<option value="<c:out value="${parser.clazz}" />"<c:if test="${selectedParser == parser.clazz}"> selected</c:if>><c:if test="${!empty parser.key}"><f:message key="${parser.key}" /></c:if><c:if test="${empty parser.key}"><c:out value="${parser.name}" /></c:if></option>
+		</c:forEach>
+		</select>
+	</td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC %>"><f:message key="admin.caption.tableofcontents" /></label></td>
@@ -310,8 +317,10 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_USER_HANDLER %>"><f:message key="admin.caption.ldap" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_USER_HANDLER %>" id="<%= Environment.PROP_BASE_USER_HANDLER %>" onchange="onLdap()">
-		<option value="<%= WikiBase.USER_HANDLER_DATABASE %>"<%= props.getProperty(Environment.PROP_BASE_USER_HANDLER).equals(WikiBase.USER_HANDLER_DATABASE) ? " selected" : "" %>><f:message key="admin.usergrouptype.database" /></option>
-		<option value="<%= WikiBase.USER_HANDLER_LDAP %>"<%= props.getProperty(Environment.PROP_BASE_USER_HANDLER).equals(WikiBase.USER_HANDLER_LDAP) ? " selected" : "" %>><f:message key="admin.usergrouptype.ldap" /> (<f:message key="common.caption.experimental" />)</option>
+		<c:set var="selectedUserHandler"><%= props.getProperty(Environment.PROP_BASE_USER_HANDLER) %></c:set>
+		<c:forEach items="${userHandlers}" var="userHandler">
+		<option value="<c:out value="${userHandler.clazz}" />"<c:if test="${selectedUserHandler == userHandler.clazz}"> selected</c:if>><c:if test="${!empty userHandler.key}"><f:message key="${userHandler.key}" /></c:if><c:if test="${empty userHandler.key}"><c:out value="${userHandler.name}" /></c:if></option>
+		</c:forEach>
 		</select>
 	</td>
 </tr>

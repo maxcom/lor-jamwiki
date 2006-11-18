@@ -16,27 +16,19 @@
  */
 package org.jamwiki.utils;
 
-import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiConfiguration;
 
 /**
  * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to
  * an internal Wikk page, such as Special:RecentChanges and Special:Edit. The
  * mappings of topic names to redirect URLs are persisted in
- * WEB-INF/classes/pseudotopics.properties.
+ * WEB-INF/classes/jamwiki-configuration.xml.
  */
 public class PseudoTopicHandler {
 
 	/** Logger */
 	private static final WikiLogger logger = WikiLogger.getLogger(PseudoTopicHandler.class.getName());
-	/** Properties bundle to store mappings */
-	private static Properties mapping;
-	/** Name of resource to access the persisted bundle */
-	private static final String RESOURCE_NAME = "/pseudotopics.properties";
-
-	static {
-		PseudoTopicHandler.mapping = Environment.loadProperties(RESOURCE_NAME);
-	}
 
 	/**
 	 * Return true if there is a mapping for the given topic
@@ -45,6 +37,6 @@ public class PseudoTopicHandler {
 	 * @return true if mapping exists
 	 */
 	public static boolean isPseudoTopic(String pseudotopicName) {
-		return PseudoTopicHandler.mapping.containsKey(pseudotopicName);
+		return WikiConfiguration.getPseudotopics().contains(pseudotopicName);
 	}
 }
