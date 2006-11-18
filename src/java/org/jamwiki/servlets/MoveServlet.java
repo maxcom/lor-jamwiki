@@ -93,6 +93,11 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("errorMessage", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
+		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, Utilities.currentUser(request))) {
+			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
+			next.addObject("errorMessage", new WikiMessage("move.exception.permission", moveFrom));
+			return false;
+		}
 		Topic toTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
 		if (!WikiBase.getHandler().canMoveTopic(fromTopic, moveDestination)) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);

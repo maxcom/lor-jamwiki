@@ -179,6 +179,35 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Determine if a user has permission to move a topic.
+	 *
+	 * @param virtualWiki The virtual wiki name for the topic in question.
+	 * @param topicName The name of the topic in question.
+	 * @param user The current Wiki user, or <code>null</code> if there is
+	 *  no current user.
+	 * @return <code>true</code> if the user is allowed to move the topic,
+	 *  <code>false</code> otherwise.
+	 */
+	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUser user) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && (user == null || !user.getAdmin())) {
+			// non-admins not allowed to move pages
+			return false;
+		}
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		if (topic == null) {
+			// cannot move a topic that doesn't exist
+			return false;
+		}
+		if (topic.getReadOnly()) {
+			return false;
+		}
+		if (topic.getAdminOnly() && (user == null || !user.getAdmin())) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Examine the request object, and see if the requested topic or page
 	 * matches a given value.
 	 *
@@ -265,12 +294,8 @@ public class ServletUtil {
 				editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 			}
 			next.addObject("edit", editLink);
-			if (Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) || (user != null && user.getAdmin())) {
-				String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-				if (WikiBase.getHandler().exists(virtualWiki, article)) {
-					pageInfo.setMovable(true);
-				}
-			}
+			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+			pageInfo.setMoveable(ServletUtil.isMoveable(virtualWiki, article, user));
 			Watchlist watchlist = Utilities.currentWatchlist(request);
 			if (watchlist.containsTopic(pageInfo.getTopicName())) {
 				pageInfo.setWatched(true);

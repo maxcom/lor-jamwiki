@@ -29,7 +29,7 @@
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.history" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<c:if test="${pageInfo.movable}">
+	<c:if test="${pageInfo.moveable}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Move"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.move" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>

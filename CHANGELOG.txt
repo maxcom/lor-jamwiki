@@ -8,6 +8,8 @@
 * FEATURE: Add support for the __FORCETOC__ tag.
 * BUG: The __TOC__ should force a table of contents to appear, even with fewer
   than four headings.
+* BUG: Do not allow users without proper permissions to move read-only or
+  admin-only topics.
 * FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
 * FEATURE: Consolidate configuration values into jamwiki-configuration.xml.
 * FEATURE: Updated Chinese translations from Feilong Huang (hfl).
