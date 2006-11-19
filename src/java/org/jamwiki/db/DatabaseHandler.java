@@ -422,15 +422,15 @@ public class DatabaseHandler {
 		}
 		// first check a cache of recently looked-up topics for performance reasons
 		String key = virtualWiki + "/" + topicName;
-		if (WikiCache.isCached(WikiCache.CACHE_TOPIC_NAME, virtualWiki, topicName)) {
-			return (WikiCache.retrieveFromCache(WikiCache.CACHE_TOPIC_NAME, virtualWiki, topicName) != null);
+		if (WikiCache.isCached(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName)) {
+			return (WikiCache.retrieveFromCache(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName) != null);
 		}
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getDeleteDate() != null) {
-			WikiCache.addToCache(WikiCache.CACHE_TOPIC_NAME, virtualWiki, topicName, null);
+			WikiCache.addToCache(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName, null);
 			return false;
 		}
-		WikiCache.addToCache(WikiCache.CACHE_TOPIC_NAME, virtualWiki, topicName, topicName);
+		WikiCache.addToCache(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName, topicName);
 		return true;
 	}
 
@@ -1271,8 +1271,8 @@ public class DatabaseHandler {
 			WikiBase.getSearchEngine().deleteFromIndex(topic);
 			WikiBase.getSearchEngine().addToIndex(topic, parserDocument.getLinks());
 		}
-		WikiCache.removeFromCache(WikiCache.CACHE_TOPIC_CONTENT, topic.getVirtualWiki(), topic.getName());
-		WikiCache.removeFromCache(WikiCache.CACHE_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiCache.CACHE_TYPE_TOPIC_CONTENT, topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiCache.CACHE_TYPE_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
 	}
 
 	/**
