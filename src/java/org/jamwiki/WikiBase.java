@@ -45,6 +45,8 @@ public class WikiBase {
 	/** The search engine instance. */
 	private static SearchEngine searchEngine = null;
 
+	/** Cache name for the cache of parsed topic content. */
+	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
 	/** The topics are stored in a flat file */
 	public static final int PERSISTENCE_INTERNAL_DB = 0;
 	/** The topics are stored in a database */

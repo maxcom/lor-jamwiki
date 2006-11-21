@@ -56,8 +56,8 @@ import org.springframework.util.StringUtils;
  */
 public class DatabaseHandler {
 
-	private static Hashtable virtualWikiIdHash = null;
-	private static Hashtable virtualWikiNameHash = null;
+	private static final String CACHE_TOPIC_NAME = "org.jamwiki.db.DatabaseHandler.CACHE_TOPIC_NAME";
+	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.DatabaseHandler.CACHE_VIRTUAL_WIKI";
 	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 
 	/**
@@ -184,8 +184,7 @@ public class DatabaseHandler {
 		Connection conn = null;
 		try {
 			toHandler.setup(locale, user);
-			DatabaseHandler.virtualWikiNameHash = new Hashtable();
-			DatabaseHandler.virtualWikiIdHash = new Hashtable();
+			WikiCache.removeCache(CACHE_VIRTUAL_WIKI);
 			conn = WikiDatabase.getConnection();
 			// FIXME - hard coding of messages
 			Vector messages = new Vector();
@@ -227,8 +226,8 @@ public class DatabaseHandler {
 					logger.severe(msg, e);
 					messages.add(msg + ": " + e.getMessage());
 				}
-				DatabaseHandler.virtualWikiNameHash.put(virtualWiki.getName(), virtualWiki);
-				DatabaseHandler.virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
+				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName(), virtualWiki);
+				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
 				success = 0;
 				failed = 0;
 				// topics
@@ -319,6 +318,7 @@ public class DatabaseHandler {
 			}
 			// FIXME - since search index info is in the same directory it gets deleted
 			WikiBase.getSearchEngine().refreshIndex();
+			WikiCache.removeCache(CACHE_VIRTUAL_WIKI);
 			return messages;
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
@@ -422,15 +422,15 @@ public class DatabaseHandler {
 		}
 		// first check a cache of recently looked-up topics for performance reasons
 		String key = virtualWiki + "/" + topicName;
-		if (WikiCache.isCached(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName)) {
-			return (WikiCache.retrieveFromCache(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName) != null);
+		if (WikiCache.isCached(CACHE_TOPIC_NAME, virtualWiki, topicName)) {
+			return (WikiCache.retrieveFromCache(CACHE_TOPIC_NAME, virtualWiki, topicName) != null);
 		}
 		Topic topic = lookupTopic(virtualWiki, topicName);
 		if (topic == null || topic.getDeleteDate() != null) {
-			WikiCache.addToCache(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName, null);
+			WikiCache.addToCache(CACHE_TOPIC_NAME, virtualWiki, topicName, null);
 			return false;
 		}
-		WikiCache.addToCache(WikiCache.CACHE_TYPE_TOPIC_NAME, virtualWiki, topicName, topicName);
+		WikiCache.addToCache(CACHE_TOPIC_NAME, virtualWiki, topicName, topicName);
 		return true;
 	}
 
@@ -537,13 +537,25 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 *
+	 * Return a collection of all VirtualWiki objects that exist for the Wiki.
 	 */
 	public Collection getVirtualWikiList() throws Exception {
-		if (virtualWikiNameHash == null) {
-			loadVirtualWikiHashes();
+		Connection conn = null;
+		Vector results = new Vector();
+		try {
+			conn = WikiDatabase.getConnection();
+			WikiResultSet rs = WikiDatabase.getQueryHandler().getVirtualWikis(conn);
+			while (rs.next()) {
+				VirtualWiki virtualWiki = initVirtualWiki(rs);
+				results.add(virtualWiki);
+			}
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			WikiDatabase.releaseParams(conn);
 		}
-		return virtualWikiNameHash.values();
+		return results;
 	}
 
 	/**
@@ -741,45 +753,6 @@ public class DatabaseHandler {
 	/**
 	 *
 	 */
-	private void loadVirtualWikiHashes() throws Exception {
-		Connection conn = null;
-		try {
-			conn = WikiDatabase.getConnection();
-			this.loadVirtualWikiHashes(conn);
-		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
-			throw e;
-		} finally {
-			WikiDatabase.releaseParams(conn);
-		}
-	}
-
-	/**
-	 *
-	 */
-	private void loadVirtualWikiHashes(Connection conn) throws Exception {
-		DatabaseHandler.virtualWikiNameHash = new Hashtable();
-		DatabaseHandler.virtualWikiIdHash = new Hashtable();
-		try {
-			WikiResultSet rs = WikiDatabase.getQueryHandler().getVirtualWikis(conn);
-			while (rs.next()) {
-				VirtualWiki virtualWiki = initVirtualWiki(rs);
-				DatabaseHandler.virtualWikiNameHash.put(virtualWiki.getName(), virtualWiki);
-				DatabaseHandler.virtualWikiIdHash.put(new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
-			}
-		} catch (Exception e) {
-			logger.severe("Failure while loading virtual wiki hashtable ", e);
-			// if there is an error make sure the hashtable is reset since it wasn't
-			// properly initialized
-			DatabaseHandler.virtualWikiNameHash = null;
-			DatabaseHandler.virtualWikiIdHash = null;
-			throw e;
-		}
-	}
-
-	/**
-	 *
-	 */
 	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
@@ -896,20 +869,28 @@ public class DatabaseHandler {
 	 *
 	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception {
-		if (virtualWikiNameHash == null) {
-			loadVirtualWikiHashes();
+		VirtualWiki virtualWiki = (VirtualWiki)WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiName);
+		if (virtualWiki != null) {
+			return virtualWiki;
 		}
-		return (VirtualWiki)virtualWikiNameHash.get(virtualWikiName);
+		Collection virtualWikis = this.getVirtualWikiList();
+		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+			virtualWiki = (VirtualWiki)iterator.next();
+			if (virtualWiki.getName().equals(virtualWikiName)) {
+				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, virtualWiki);
+				return virtualWiki;
+			}
+		}
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, null);
+		return null;
 	}
 
 	/**
 	 *
 	 */
 	public int lookupVirtualWikiId(String virtualWikiName) throws Exception {
-		if (virtualWikiNameHash == null) {
-			this.loadVirtualWikiHashes();
-		}
-		VirtualWiki virtualWiki = (VirtualWiki)virtualWikiNameHash.get(virtualWikiName);
+		VirtualWiki virtualWiki = this.lookupVirtualWiki(virtualWikiName);
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, virtualWiki);
 		return (virtualWiki != null) ? virtualWiki.getVirtualWikiId() : -1;
 	}
 
@@ -917,11 +898,20 @@ public class DatabaseHandler {
 	 *
 	 */
 	public String lookupVirtualWikiName(int virtualWikiId) throws Exception {
-		if (virtualWikiIdHash == null) {
-			this.loadVirtualWikiHashes();
+		VirtualWiki virtualWiki = (VirtualWiki)WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiId);
+		if (virtualWiki != null) {
+			return virtualWiki.getName();
 		}
-		VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIdHash.get(new Integer(virtualWikiId));
-		return (virtualWiki != null) ? virtualWiki.getName() : null;
+		Collection virtualWikis = this.getVirtualWikiList();
+		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
+			virtualWiki = (VirtualWiki)iterator.next();
+			if (virtualWiki.getVirtualWikiId() == virtualWikiId) {
+				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiId, virtualWiki);
+				return virtualWiki.getName();
+			}
+		}
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiId, null);
+		return null;
 	}
 
 	/**
@@ -1047,14 +1037,6 @@ public class DatabaseHandler {
 		} finally {
 			WikiDatabase.releaseParams(conn);
 		}
-	}
-
-	/**
-	 *
-	 */
-	private void resetCache() {
-		DatabaseHandler.virtualWikiIdHash = null;
-		DatabaseHandler.virtualWikiNameHash = null;
 	}
 
 	/**
@@ -1271,8 +1253,8 @@ public class DatabaseHandler {
 			WikiBase.getSearchEngine().deleteFromIndex(topic);
 			WikiBase.getSearchEngine().addToIndex(topic, parserDocument.getLinks());
 		}
-		WikiCache.removeFromCache(WikiCache.CACHE_TYPE_TOPIC_CONTENT, topic.getVirtualWiki(), topic.getName());
-		WikiCache.removeFromCache(WikiCache.CACHE_TYPE_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(CACHE_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
 	}
 
 	/**
@@ -1301,8 +1283,11 @@ public class DatabaseHandler {
 		} else {
 			this.updateVirtualWiki(virtualWiki, conn);
 		}
-		// update the hashtable AFTER the commit
-		this.loadVirtualWikiHashes(conn);
+		// update the cache AFTER the commit
+		WikiCache.removeFromCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName());
+		WikiCache.removeFromCache(CACHE_VIRTUAL_WIKI, virtualWiki.getVirtualWikiId());
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName(), virtualWiki);
+		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getVirtualWikiId(), virtualWiki);
 	}
 
 	/**

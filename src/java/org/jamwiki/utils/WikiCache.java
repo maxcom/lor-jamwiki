@@ -26,9 +26,7 @@ import net.sf.ehcache.Element;
 public class WikiCache {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
-	private static WikiCacheMap[] caches = new WikiCacheMap[3];
 	private static CacheManager cacheManager = CacheManager.create();
-	private static Cache parserCache = null;
 
 	// FIXME - make configurable
 	/** Maximum number of objects that can be stored in each cache instance. */
@@ -37,11 +35,6 @@ public class WikiCache {
 	public static final int CACHE_MAX_AGE = 300;
 	/** Time to live (in seconds) since the last accessed time for cached objects. */
 	public static final int CACHE_IDLE_AGE = 300;
-	private static final String CACHE_PARSER = "cacheParser";
-	public static final int CACHE_TYPE_TOPIC_CONTENT = 0;
-	public static final int CACHE_TYPE_TOPIC_NAME = 1;
-	public static final int CACHE_TYPE_USER_LOGIN = 2;
-	public static final int CACHE_TYPE_PARSER = 3;
 
 	static {
 		WikiCache.reset();
@@ -50,41 +43,51 @@ public class WikiCache {
 	/**
 	 *
 	 */
-	public static void addToCache(int cacheType, Object key, Object value) {
-		if (cacheType == CACHE_TYPE_PARSER) {
-			WikiCache.parserCache.put(new Element(key, value));
-		} else {
-			WikiCacheMap cache = WikiCache.caches[cacheType];
-			cache.put(key, value);
-		}
+	public static void addToCache(String cacheName, Object key, Object value) {
+		Cache cache = WikiCache.getCache(cacheName);
+		cache.put(new Element(key, value));
 	}
 
 	/**
 	 *
 	 */
-	public static void addToCache(int cacheType, String virtualWiki, String topicName, String value) {
+	public static void addToCache(String cacheName, int key, Object value) {
+		WikiCache.addToCache(cacheName, new Integer(key), value);
+	}
+
+	/**
+	 *
+	 */
+	public static void addToCache(String cacheName, String virtualWiki, String topicName, String value) {
 		String key = key(virtualWiki, topicName);
-		WikiCache.addToCache(cacheType, key, value);
+		WikiCache.addToCache(cacheName, key, value);
 	}
 
 	/**
 	 *
 	 */
-	public static boolean isCached(int cacheType, Object key) {
-		if (cacheType == CACHE_TYPE_PARSER) {
-			return WikiCache.parserCache.isKeyInCache(key);
-		} else {
-			WikiCacheMap cache = WikiCache.caches[cacheType];
-			return cache.containsKey(key);
+	private static Cache getCache(String cacheName) {
+		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
+			Cache cache = new Cache(cacheName, CACHE_SIZE, true, false, CACHE_MAX_AGE, CACHE_IDLE_AGE);
+			WikiCache.cacheManager.addCache(cacheName);
 		}
+		return WikiCache.cacheManager.getCache(cacheName);
 	}
 
 	/**
 	 *
 	 */
-	public static boolean isCached(int cacheType, String virtualWiki, String topicName) {
+	public static boolean isCached(String cacheName, Object key) {
+		Cache cache = WikiCache.getCache(cacheName);
+		return cache.isKeyInCache(key);
+	}
+
+	/**
+	 *
+	 */
+	public static boolean isCached(String cacheName, String virtualWiki, String topicName) {
 		String key = key(virtualWiki, topicName);
-		return WikiCache.isCached(cacheType, key);
+		return WikiCache.isCached(cacheName, key);
 	}
 
 	/**
@@ -97,57 +100,61 @@ public class WikiCache {
 	/**
 	 *
 	 */
-	public static void removeFromCache(int cacheType, Object key) {
-		if (cacheType == CACHE_TYPE_PARSER) {
-			WikiCache.parserCache.remove(key);
-		} else {
-			WikiCacheMap cache = WikiCache.caches[cacheType];
-			cache.remove(key);
-		}
+	public static void removeCache(String cacheName) {
+		WikiCache.cacheManager.removeCache(cacheName);
 	}
 
 	/**
 	 *
 	 */
-	public static void removeFromCache(int cacheType, String virtualWiki, String topicName) {
+	public static void removeFromCache(String cacheName, Object key) {
+		Cache cache = WikiCache.getCache(cacheName);
+		cache.remove(key);
+	}
+
+	/**
+	 *
+	 */
+	public static void removeFromCache(String cacheName, int key) {
+		WikiCache.removeFromCache(cacheName, new Integer(key));
+	}
+
+	/**
+	 *
+	 */
+	public static void removeFromCache(String cacheName, String virtualWiki, String topicName) {
 		String key = key(virtualWiki, topicName);
-		WikiCache.removeFromCache(cacheType, key);
+		WikiCache.removeFromCache(cacheName, key);
 	}
 
 	/**
 	 *
 	 */
 	public static void reset() {
-		// FIXME - make the cache sizes configurable in some way
-		WikiCache.caches[CACHE_TYPE_TOPIC_CONTENT] = new WikiCacheMap(100);
-		WikiCache.caches[CACHE_TYPE_TOPIC_NAME] = new WikiCacheMap(2000);
-		WikiCache.caches[CACHE_TYPE_USER_LOGIN] = new WikiCacheMap(2000);
-		// FIXME - work in progress
-		if (WikiCache.cacheManager.cacheExists(CACHE_PARSER)) {
-			WikiCache.cacheManager.removeCache(CACHE_PARSER);
-		}
-		WikiCache.parserCache = new Cache(CACHE_PARSER, CACHE_SIZE, true, false, CACHE_MAX_AGE, CACHE_IDLE_AGE);
-		WikiCache.cacheManager.addCache(WikiCache.parserCache);
+		WikiCache.cacheManager.removalAll();
 	}
 
 	/**
 	 *
 	 */
-	public static Object retrieveFromCache(int cacheType, Object key) {
-		if (cacheType == CACHE_TYPE_PARSER) {
-			Element element = WikiCache.parserCache.get(key);
-			return (element == null) ? null : element.getObjectValue();
-		} else {
-			WikiCacheMap cache = WikiCache.caches[cacheType];
-			return cache.get(key);
-		}
+	public static Object retrieveFromCache(String cacheName, Object key) {
+		Cache cache = WikiCache.getCache(cacheName);
+		Element element = cache.get(key);
+		return (element == null) ? null : element.getObjectValue();
 	}
 
 	/**
 	 *
 	 */
-	public static Object retrieveFromCache(int cacheType, String virtualWiki, String topicName) {
+	public static Object retrieveFromCache(String cacheName, int key) {
+		return WikiCache.retrieveFromCache(cacheName, new Integer(key));
+	}
+
+	/**
+	 *
+	 */
+	public static Object retrieveFromCache(String cacheName, String virtualWiki, String topicName) {
 		String key = key(virtualWiki, topicName);
-		return WikiCache.retrieveFromCache(cacheType, key);
+		return WikiCache.retrieveFromCache(cacheName, key);
 	}
 }
