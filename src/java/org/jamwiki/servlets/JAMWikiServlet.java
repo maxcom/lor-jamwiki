@@ -33,6 +33,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	protected boolean layout = true;
 	/** The prefix of the JSP file used to display the servlet output. */
 	protected String displayJSP = "wiki";
+	/** Any page that take longer than this value (specified in milliseconds) will print a warning to the log. */
+	protected static final int SLOW_PAGE_LIMIT = 1000;
 
 	/**
 	 * Abstract method that must be implemented by all sub-classes to handle
@@ -61,6 +63,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 *  output, for example by writing directly to the output response.
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
+		long start = System.currentTimeMillis();
 		initParams();
 		ModelAndView next = new ModelAndView(this.displayJSP);
 		WikiPageInfo pageInfo = new WikiPageInfo();
@@ -72,6 +75,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 		} catch (Exception e) {
 			return ServletUtil.viewError(request, e);
 		}
+		long execution = System.currentTimeMillis() - start;
+		if (execution > JAMWikiServlet.SLOW_PAGE_LIMIT) {
+			logger.warning("Slow page loading time: " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
+		}
+		logger.info("Loaded page " + request.getRequestURI() + " (" + (execution / 1000.000) + " s.)");
 		return next;
 	}
 
