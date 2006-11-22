@@ -167,7 +167,7 @@ public class WikiBase {
 	public static void reset(Locale locale, WikiUser user) throws Exception {
 		WikiMail.init();
 		WikiBase.instance = new WikiBase();
-		WikiCache.reset();
+		WikiCache.initialize();
 		WikiBase.handler.setup(locale, user);
 		WikiBase.searchEngine.refreshIndex();
 	}
