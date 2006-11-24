@@ -33,6 +33,7 @@ import org.jamwiki.model.WikiFile;
 public class ImageUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ImageUtil.class.getName());
+	private static final String CACHE_IMAGES = "org.jamwiki.utils.ImageUtils.CACHE_IMAGES";
 
 	/**
 	 *
@@ -91,10 +92,15 @@ public class ImageUtil {
 	 * BufferedImage object.
 	 */
 	private static BufferedImage loadImage(File file) throws Exception {
+		String key = file.getPath();
+		BufferedImage image = (BufferedImage)WikiCache.retrieveFromCache(CACHE_IMAGES, key);
+		if (image != null) return image;
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
-			return ImageIO.read(fis);
+			image = ImageIO.read(fis);
+			WikiCache.addToCache(CACHE_IMAGES, key, image);
+			return image;
 		} finally {
 			if (fis != null) {
 				try {
