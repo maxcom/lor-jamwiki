@@ -4,6 +4,7 @@
 	
 	<!-- build a list all jar files needed for compiling -->
 	<path id="jamwiki.lib.classpath">
+		<pathelement path="${dir.lib}/bliki.jar" />
 		<pathelement path="${dir.lib}/commons-codec.jar" />
 		<pathelement path="${dir.lib}/commons-dbcp-1.2.1.jar" />
 		<pathelement path="${dir.lib}/commons-fileupload-1.1.1.jar" />
