@@ -102,9 +102,7 @@ public class UploadServlet extends JAMWikiServlet {
 	private static String sanitizeFilename(String filename) {
 		if (!StringUtils.hasText(filename)) return null;
 		// some browsers set the full path, so strip to just the file name
-		if (filename != null) {
-			filename = FilenameUtils.getName(filename);
-		}
+		filename = FilenameUtils.getName(filename);
 		filename = StringUtils.replace(filename.trim(), " ", "_");
 		return filename;
 	}
@@ -139,6 +137,7 @@ public class UploadServlet extends JAMWikiServlet {
 				if (fileName == null) {
 					throw new WikiException(new WikiMessage("upload.error.filename"));
 				}
+				fileName = UploadServlet.sanitizeFilename(fileName);
 				url = UploadServlet.buildUniqueFileName(fileName);
 				String subdirectory = UploadServlet.buildFileSubdirectory();
 				fileSize = item.getSize();

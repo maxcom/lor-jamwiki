@@ -7,6 +7,8 @@
 * FEATURE: Consolidate configuration values into jamwiki-configuration.xml.
 * BUG: Fixes for MS SQL issues, provided by Scott Croco (scroco).
 * BUG: "Login already exists" error when trying to update user account fixed.
+* BUG: Fix upload error with IE that could cause file upload to incorrectly
+  set the file name.
 * FEATURE: Add support for the __FORCETOC__ tag.
 * BUG: The __TOC__ should force a table of contents to appear, even with fewer
   than four headings.
