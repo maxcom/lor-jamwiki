@@ -23,6 +23,11 @@
 		<class>org.jamwiki.parser.jflex.JFlexParser</class>
 		<key>admin.parsertype.default</key>
 	</parser>
+    <parser>
+		<name>Bliki hand-written Parser</name>
+		<class>org.jamwiki.parser.bliki.BlikiParser</class>
+		<key>admin.parsertype.bliki</key>
+	</parser>
 </parsers>
 
 <!--
