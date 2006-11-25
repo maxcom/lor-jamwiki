@@ -18,7 +18,7 @@ public class BlikiParser extends JFlexParser {
 		ParserDocument doc = new ParserDocument();
 
 		String titlePrefix = "/jamwiki/" + parserInput.getVirtualWiki() + '/';
-		JAMWikiModel wikiModel = new JAMWikiModel(parserInput, doc, "/jamwiki/en/${image}", titlePrefix + "${title}");
+		JAMWikiModel wikiModel = new JAMWikiModel(parserInput, doc, titlePrefix + "${image}", titlePrefix + "${title}");
 		String htmlStr = wikiModel.render(raw);
 		htmlStr = htmlStr == null ? "" : htmlStr;
 		doc.setContent(htmlStr);

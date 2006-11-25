@@ -10,6 +10,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.jflex.WikiHeadingTag;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
@@ -34,7 +35,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		super();
 		fParserInput = parserInput;
 		fDocument = document;
-		fExternalImageBaseURL = imageBaseURL;
+		fExternalImageBaseURL = imageBaseURL; 
 		fExternalWikiBaseURL = linkBaseURL;
 	}
 
@@ -53,7 +54,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 			}
 			try {
 				writer
-						.append(LinkUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), getImageNamespace() + ':'
+						.append(LinkUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), getImageNamespace() + NamespaceHandler.NAMESPACE_SEPARATOR
 								+ imageName, frame, thumb, imageFormat.getLocation(), imageFormat.getCaption(), maxDimension, false, null, false));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -69,7 +70,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 	}
 
 	public void addCategory(String categoryName, String sortKey) {
-		fDocument.addCategory(categoryName, sortKey);
+		fDocument.addCategory(getCategoryNamespace()+NamespaceHandler.NAMESPACE_SEPARATOR+categoryName, sortKey);
 	}
 
 	public void addLink(String topic) {
@@ -129,6 +130,18 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	public boolean replaceColon() {
 		return false;
+	}
+
+	public String getCategoryNamespace() {
+		return NamespaceHandler.NAMESPACE_CATEGORY;
+	}
+
+	public String getImageNamespace() {
+		return NamespaceHandler.NAMESPACE_IMAGE;
+	}
+
+	public String getTemplateNamespace() {
+		return NamespaceHandler.NAMESPACE_TEMPLATE;
 	}
 
 }
