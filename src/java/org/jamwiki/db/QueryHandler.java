@@ -405,8 +405,6 @@ public interface QueryHandler {
 	 * @param topicName The name of the topic being retrieved.
 	 * @param caseSensitive Set to <code>true</code> if the topic name should be
 	 *  searched for in a case-sensitive manner.
-	 * @param deleteOK Set to <code>true</code> if deleted topics should be searched,
-	 *  otherwise deleted topics will not be included in the result set.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A WikiResultSet containing all topic information for the given topic
@@ -414,7 +412,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, boolean deleteOK, Connection conn) throws Exception;
+	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set of all topics of a given type within a virtual wiki.

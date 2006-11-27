@@ -118,7 +118,8 @@ public class ServletUtil {
 	 *  parameter) topic content.
 	 */
 	protected static String cachedContent(String context, Locale locale, String virtualWiki, String topicName, boolean cook) {
-		String content = (String)WikiCache.retrieveFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, virtualWiki, topicName);
+		String key = WikiCache.key(virtualWiki, topicName);
+		String content = (String)WikiCache.retrieveFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 		if (content != null) {
 			return content;
 		}
@@ -134,7 +135,7 @@ public class ServletUtil {
 				ParserDocument parserDocument = Utilities.parse(parserInput, content);
 				content = parserDocument.getContent();
 			}
-			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, virtualWiki, topicName, content);
+			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
 			logger.warning("error getting cached page " + virtualWiki + " / " + topicName, e);
 			return null;

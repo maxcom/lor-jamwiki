@@ -60,6 +60,22 @@ public class Topic {
 	/**
 	 *
 	 */
+	public Topic(Topic topic) {
+		this.adminOnly = topic.adminOnly;
+		this.currentVersionId = topic.currentVersionId;
+		this.deleteDate = topic.deleteDate;
+		this.name = topic.name;
+		this.readOnly = topic.readOnly;
+		this.redirectTo = topic.redirectTo;
+		this.topicContent = topic.topicContent;
+		this.topicId = topic.topicId;
+		this.topicType = topic.topicType;
+		this.virtualWiki = topic.virtualWiki;
+	}
+
+	/**
+	 *
+	 */
 	public boolean getAdminOnly() {
 		return this.adminOnly;
 	}

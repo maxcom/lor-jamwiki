@@ -56,7 +56,7 @@ import org.springframework.util.StringUtils;
  */
 public class DatabaseHandler {
 
-	private static final String CACHE_TOPIC_NAME = "org.jamwiki.db.DatabaseHandler.CACHE_TOPIC_NAME";
+	private static final String CACHE_TOPICS = "org.jamwiki.db.DatabaseHandler.CACHE_TOPICS";
 	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.DatabaseHandler.CACHE_VIRTUAL_WIKI";
 	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
 
@@ -164,7 +164,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public boolean canMoveTopic(Topic fromTopic, String destination) throws Exception {
-		Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination);
+		Topic toTopic = this.lookupTopic(fromTopic.getVirtualWiki(), destination);
 		if (toTopic == null || toTopic.getDeleteDate() != null) {
 			// destination doesn't exist or is deleted, so move is OK
 			return true;
@@ -420,18 +420,8 @@ public class DatabaseHandler {
 		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
 			return false;
 		}
-		// first check a cache of recently looked-up topics for performance reasons
-		String key = virtualWiki + "/" + topicName;
-		if (WikiCache.isCached(CACHE_TOPIC_NAME, virtualWiki, topicName)) {
-			return (WikiCache.retrieveFromCache(CACHE_TOPIC_NAME, virtualWiki, topicName) != null);
-		}
-		Topic topic = lookupTopic(virtualWiki, topicName);
-		if (topic == null || topic.getDeleteDate() != null) {
-			WikiCache.addToCache(CACHE_TOPIC_NAME, virtualWiki, topicName, null);
-			return false;
-		}
-		WikiCache.addToCache(CACHE_TOPIC_NAME, virtualWiki, topicName, topicName);
-		return true;
+		Topic topic = this.lookupTopic(virtualWiki, topicName);
+		return (topic != null && topic.getDeleteDate() == null);
 	}
 
 	/**
@@ -499,7 +489,7 @@ public class DatabaseHandler {
 	 */
 	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
-		Topic topic = lookupTopic(virtualWiki, topicName, true);
+		Topic topic = this.lookupTopic(virtualWiki, topicName, true);
 		if (topic == null) return all;
 		WikiResultSet rs = WikiDatabase.getQueryHandler().getRecentChanges(topic.getTopicId(), pagination, descending);
 		while (rs.next()) {
@@ -772,7 +762,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName) throws Exception {
-		return lookupTopic(virtualWiki, topicName, false);
+		return this.lookupTopic(virtualWiki, topicName, false);
 	}
 
 	/**
@@ -795,6 +785,11 @@ public class DatabaseHandler {
 	 *
 	 */
 	private Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Connection conn) throws Exception {
+		String key = WikiCache.key(virtualWiki, topicName);
+		if (WikiCache.isCached(CACHE_TOPICS, key)) {
+			Topic cacheTopic = (Topic)WikiCache.retrieveFromCache(CACHE_TOPICS, key);
+			return (cacheTopic == null) ? null : new Topic(cacheTopic);
+		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 		String namespace = wikiLink.getNamespace();
 		boolean caseSensitive = true;
@@ -809,9 +804,14 @@ public class DatabaseHandler {
 			}
 		}
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupTopic(virtualWikiId, topicName, caseSensitive, deleteOK, conn);
-		if (rs.size() == 0) return null;
-		return initTopic(rs);
+		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupTopic(virtualWikiId, topicName, caseSensitive, conn);
+		Topic topic = null;
+		if (rs.size() != 0) {
+			topic = initTopic(rs);
+		}
+		Topic cacheTopic = (topic == null) ? null : new Topic(topic);
+		WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
+		return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
 	}
 
 	/**
@@ -918,7 +918,7 @@ public class DatabaseHandler {
 	 *
 	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception {
-		Topic topic = lookupTopic(virtualWiki, topicName);
+		Topic topic = this.lookupTopic(virtualWiki, topicName);
 		if (topic == null) return null;
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiFile(virtualWikiId, topic.getTopicId());
@@ -986,7 +986,7 @@ public class DatabaseHandler {
 			if (!this.canMoveTopic(fromTopic, destination)) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
-			Topic toTopic = WikiBase.getHandler().lookupTopic(fromTopic.getVirtualWiki(), destination);
+			Topic toTopic = this.lookupTopic(fromTopic.getVirtualWiki(), destination);
 			boolean detinationExistsFlag = (toTopic != null && toTopic.getDeleteDate() == null);
 			if (detinationExistsFlag) {
 				// if the target topic is a redirect to the source topic then the
@@ -1253,8 +1253,9 @@ public class DatabaseHandler {
 			WikiBase.getSearchEngine().deleteFromIndex(topic);
 			WikiBase.getSearchEngine().addToIndex(topic, parserDocument.getLinks());
 		}
-		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, topic.getVirtualWiki(), topic.getName());
-		WikiCache.removeFromCache(CACHE_TOPIC_NAME, topic.getVirtualWiki(), topic.getName());
+		String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
+		WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
+		WikiCache.removeFromCache(CACHE_TOPICS, key);
 	}
 
 	/**

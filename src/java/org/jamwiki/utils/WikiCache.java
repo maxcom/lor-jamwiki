@@ -67,14 +67,6 @@ public class WikiCache {
 	/**
 	 *
 	 */
-	public static void addToCache(String cacheName, String virtualWiki, String topicName, String value) {
-		String key = key(virtualWiki, topicName);
-		WikiCache.addToCache(cacheName, key, value);
-	}
-
-	/**
-	 *
-	 */
 	private static Cache getCache(String cacheName) {
 		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
 			Cache cache = new Cache(cacheName, CACHE_SIZE, true, false, CACHE_MAX_AGE, CACHE_IDLE_AGE);
@@ -125,16 +117,8 @@ public class WikiCache {
 	/**
 	 *
 	 */
-	public static boolean isCached(String cacheName, String virtualWiki, String topicName) {
-		String key = key(virtualWiki, topicName);
-		return WikiCache.isCached(cacheName, key);
-	}
-
-	/**
-	 *
-	 */
-	private static String key(String virtualWiki, String topicName) {
-		return virtualWiki + "-" + topicName;
+	public static String key(String virtualWiki, String topicName) {
+		return virtualWiki + "/" + topicName;
 	}
 
 	/**
@@ -162,14 +146,6 @@ public class WikiCache {
 	/**
 	 *
 	 */
-	public static void removeFromCache(String cacheName, String virtualWiki, String topicName) {
-		String key = key(virtualWiki, topicName);
-		WikiCache.removeFromCache(cacheName, key);
-	}
-
-	/**
-	 *
-	 */
 	public static Object retrieveFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
 		Element element = cache.get(key);
@@ -181,13 +157,5 @@ public class WikiCache {
 	 */
 	public static Object retrieveFromCache(String cacheName, int key) {
 		return WikiCache.retrieveFromCache(cacheName, new Integer(key));
-	}
-
-	/**
-	 *
-	 */
-	public static Object retrieveFromCache(String cacheName, String virtualWiki, String topicName) {
-		String key = key(virtualWiki, topicName);
-		return WikiCache.retrieveFromCache(cacheName, key);
 	}
 }
