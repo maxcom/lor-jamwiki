@@ -164,6 +164,10 @@ public class AdminServlet extends JAMWikiServlet {
 			setPassword(props, request, next, Environment.PROP_LDAP_PASSWORD, "ldapPassword");
 			setProperty(props, request, Environment.PROP_LDAP_SECURITY_AUTHENTICATION);
 			setProperty(props, request, Environment.PROP_LDAP_URL);
+			setProperty(props, request, Environment.PROP_CACHE_INDIVIDUAL_SIZE);
+			setProperty(props, request, Environment.PROP_CACHE_MAX_AGE);
+			setProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE);
+			setProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE);
 			Vector errors = Utilities.validateSystemSettings(props);
 			if (errors.size() > 0) {
 				next.addObject("errors", errors);

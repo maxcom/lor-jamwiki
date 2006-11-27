@@ -33,17 +33,8 @@ public class WikiCache {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
 	private static CacheManager cacheManager = null;
 
-	// FIXME - make configurable
 	/** Directory for cache files. */
 	private static final String CACHE_DIR = "cache";
-	/** Maximum number of objects that can be stored in each cache instance. */
-	public static final int CACHE_SIZE = 5000;
-	/** Maximum number of objects that can be stored in memory. */
-	public static final int CACHE_MEMORY_SIZE = 1000;
-	/** Time to live (in seconds) for cached objects. */
-	public static final int CACHE_MAX_AGE = 300;
-	/** Time to live (in seconds) since the last accessed time for cached objects. */
-	public static final int CACHE_IDLE_AGE = 300;
 
 	static {
 		WikiCache.initialize();
@@ -69,7 +60,10 @@ public class WikiCache {
 	 */
 	private static Cache getCache(String cacheName) {
 		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
-			Cache cache = new Cache(cacheName, CACHE_SIZE, true, false, CACHE_MAX_AGE, CACHE_IDLE_AGE);
+			int maxSize = Environment.getIntValue(Environment.PROP_CACHE_INDIVIDUAL_SIZE);
+			int maxAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_AGE);
+			int maxIdleAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_IDLE_AGE);
+			Cache cache = new Cache(cacheName, maxSize, true, false, maxAge, maxIdleAge);
 			WikiCache.cacheManager.addCache(cacheName);
 		}
 		return WikiCache.cacheManager.getCache(cacheName);
@@ -90,10 +84,11 @@ public class WikiCache {
 			}
 			Configuration configuration = new Configuration();
 			CacheConfiguration defaultCacheConfiguration = new CacheConfiguration();
+			defaultCacheConfiguration.setDiskPersistent(false);
 			defaultCacheConfiguration.setEternal(false);
 			defaultCacheConfiguration.setOverflowToDisk(true);
+			defaultCacheConfiguration.setMaxElementsInMemory(Environment.getIntValue(Environment.PROP_CACHE_TOTAL_SIZE));
 			defaultCacheConfiguration.setName("defaultCache");
-			defaultCacheConfiguration.setMaxElementsInMemory(CACHE_MEMORY_SIZE);
 			configuration.addDefaultCache(defaultCacheConfiguration);
 			DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
 //			diskStoreConfiguration.addExpiryThreadPool(new ThreadPoolConfiguration("", new Integer(5), new Integer(5)));

@@ -45,6 +45,10 @@ public class Environment {
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_USER_HANDLER = "user-handler";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
+	public static final String PROP_CACHE_INDIVIDUAL_SIZE = "cache-individual-size";
+	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
+	public static final String PROP_CACHE_MAX_IDLE_AGE = "cache-max-idle-age";
+	public static final String PROP_CACHE_TOTAL_SIZE = "cache-total-size";
 	public static final String PROP_DB_DRIVER= "driver";
 	public static final String PROP_DB_PASSWORD = "db-password";
 	public static final String PROP_DB_TYPE = "database-type";
@@ -155,6 +159,10 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
 		defaults.setProperty(PROP_BASE_USER_HANDLER, WikiBase.USER_HANDLER_DATABASE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
+		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "500");
+		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");
+		defaults.setProperty(PROP_CACHE_MAX_IDLE_AGE, "150");
+		defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "1000");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
 		defaults.setProperty(PROP_DB_TYPE, WikiDatabase.DB_TYPE_POSTGRES);

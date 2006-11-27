@@ -122,6 +122,8 @@ function onLdap() {
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><%= props.getProperty(Environment.PROP_BASE_META_DESCRIPTION) %></textarea></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.metadescriptionhelp" /></td></tr>
+
+<!-- BEGIN PARSER -->
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2"><h4><f:message key="admin.header.parser" /></h4></td></tr>
 <tr>
@@ -166,10 +168,12 @@ function onLdap() {
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>" value="<%= props.getProperty(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN) %>" size="50" id="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.signaturedatehelp" /></td></tr>
+<!-- END PARSER -->
 
 <%--
 FIXME - Email not supported right now, comment this out
 
+<!-- BEGIN SMTP -->
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2"><h4><f:message key="admin.caption.smtp" /></h4></td></tr>
 <tr>
@@ -188,9 +192,11 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>"><f:message key="admin.caption.reply" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>" value="<%= props.getProperty(Environment.PROP_EMAIL_REPLY_ADDRESS) %>" size="50" id="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>" /></td>
 </tr>
+<!-- END SMTP -->
 
 --%>
 
+<!-- BEGIN DATABASE PERSISTENCE -->
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2"><h4><f:message key="admin.header.persistence" /></h4></td></tr>
 <tr>
@@ -207,7 +213,6 @@ FIXME - Email not supported right now, comment this out
 		</select>
 	</td>
 </tr>
-<!-- BEGIN DATABASE-PERSISTENCE -->
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.caption.databasedriver" /></labe></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= (request.getParameter("dbDriver") != null) ? request.getParameter("dbDriver") : props.getProperty(Environment.PROP_DB_DRIVER) %>" size="50" /></td>
@@ -291,10 +296,11 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>"><f:message key="admin.caption.dbcp.removeabandonedtimeout" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>" value="<%= props.getProperty(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT) %>" size="5" /></td>
 </tr>
-<!-- END DATABASE-PERSISTENCE -->
+<!-- END DATABASE PERSISTENCE -->
 
+<!-- BEGIN FILE UPLOAD -->
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.uploadheader" /></h4></td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.upload" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>"><f:message key="admin.caption.maxfilesize" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" value="<%= maximumFileSize %>" size="10" id="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" /></td>
@@ -309,6 +315,7 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= props.getProperty(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
+<!-- END FILE UPLOAD -->
 
 <!-- BEGIN LDAP -->
 <tr><td colspan="2">&nbsp;</td></tr>
@@ -368,12 +375,35 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.caption.ldap.field.email" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" id="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_EMAIL) %>" size="20" /></td>
 </tr>
-<!-- END LDAP -->
-
 <script>
 onPersistenceType()
 onLdap()
 </script>
+<!-- END LDAP -->
+
+<!-- BEGIN CACHE -->
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.cache" /></h4></td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_TOTAL_SIZE %>"><f:message key="admin.caption.cache.totalsize" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_TOTAL_SIZE %>" id="<%= Environment.PROP_CACHE_TOTAL_SIZE %>" value="<%= props.getProperty(Environment.PROP_CACHE_TOTAL_SIZE) %>" size="10" /></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.cache.totalsizehelp" /></td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %>"><f:message key="admin.caption.cache.individualsize" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %>" id="<%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %>" value="<%= props.getProperty(Environment.PROP_CACHE_INDIVIDUAL_SIZE) %>" size="10" /></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.cache.individualsizehelp" /></td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_AGE %>"><f:message key="admin.caption.cache.maxage" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_MAX_AGE %>" id="<%= Environment.PROP_CACHE_MAX_AGE %>" value="<%= props.getProperty(Environment.PROP_CACHE_MAX_AGE) %>" size="10" /></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>"><f:message key="admin.caption.cache.idleage" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>" id="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>" value="<%= props.getProperty(Environment.PROP_CACHE_MAX_IDLE_AGE) %>" size="10" /></td>
+</tr>
+<!-- END CACHE -->
+
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
 	<td class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="admin.action.save" />"></td>
