@@ -17,6 +17,7 @@
 * FEATURE: Handle category names case-insensitive, thus "Category:Test" and
   "Category:test" are treated as the same category.
 * FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
+* FEATURE: Include the Bliki parser as an alternative to the default parser.
 * FEATURE: Updated Chinese translations from Feilong Huang (hfl).
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
 * FEATURE: Updated German translations from Axel Kramer (axelclk).
