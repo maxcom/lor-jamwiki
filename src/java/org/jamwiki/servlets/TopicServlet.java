@@ -60,7 +60,7 @@ public class TopicServlet extends JAMWikiServlet {
 	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection topics = WikiBase.getHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
+		Collection topics = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
 		next.addObject("topics", topics);
 		next.addObject("topicCount", new Integer(topics.size()));
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
@@ -75,7 +75,7 @@ public class TopicServlet extends JAMWikiServlet {
 		String topic = Utilities.getTopicFromURI(request);
 		if (!StringUtils.hasText(topic)) {
 			String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
-			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			topic = virtualWiki.getDefaultTopicName();
 		}
 		ServletUtil.viewTopic(request, next, pageInfo, topic);

@@ -154,7 +154,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setVirtualWiki(virtualWiki);
@@ -179,7 +179,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
-		WikiFile wikiFile = WikiBase.getHandler().lookupWikiFile(virtualWiki, topicName);
+		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (wikiFile == null) {
 			wikiFile = new WikiFile();
 			wikiFile.setVirtualWiki(virtualWiki);
@@ -191,9 +191,9 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setMimeType(contentType);
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
 		wikiFile.setTopicId(topic.getTopicId());
-		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion, null);
+		WikiBase.getDataHandler().writeFile(topicName, wikiFile, wikiFileVersion, null);
 		ServletUtil.redirect(next, virtualWiki, topicName);
 	}
 

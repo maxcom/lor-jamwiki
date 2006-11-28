@@ -283,7 +283,7 @@ public class TemplateTag implements ParserTag {
 			inclusion = true;
 		}
 		// get the parsed template body
-		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
+		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
@@ -525,22 +525,22 @@ public class TemplateTag implements ParserTag {
 		} else if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
 		*/
 		} else if (name.equals(MAGIC_NUMBER_PAGES)) {
-			int results = WikiBase.getHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
 			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_PAGES_R)) {
-			int results = WikiBase.getHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
 			return new Integer(results).toString();
 		} else if (name.equals(MAGIC_NUMBER_FILES)) {
-			int results = WikiBase.getHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
+			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
 			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_FILES_R)) {
-			int results = WikiBase.getHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
+			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
 			return new Integer(results).toString();
 		} else if (name.equals(MAGIC_NUMBER_USERS)) {
-			int results = WikiBase.getHandler().lookupWikiUserCount();
+			int results = WikiBase.getDataHandler().lookupWikiUserCount();
 			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_USERS_R)) {
-			int results = WikiBase.getHandler().lookupWikiUserCount();
+			int results = WikiBase.getDataHandler().lookupWikiUserCount();
 			return new Integer(results).toString();
 		/*
 		} else if (name.equals(MAGIC_NUMBER_ADMINS)) {
@@ -613,8 +613,8 @@ public class TemplateTag implements ParserTag {
 		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(Utilities.extractTopicLink(parserInput.getTopicName()));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
-		TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(parserInput.getTopicName(), topic.getCurrentVersionId().intValue());
+		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
+		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(parserInput.getTopicName(), topic.getCurrentVersionId().intValue());
 		Date revision = topicVersion.getEditDate();
 		formatter.setTimeZone(utc);
 		if (name.equals(MAGIC_REVISION_DAY)) {

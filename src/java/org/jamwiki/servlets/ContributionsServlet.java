@@ -48,7 +48,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String userString = request.getParameter("contributor");
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection contributions = WikiBase.getHandler().getUserContributions(virtualWiki, userString, pagination, true);
+		Collection contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
 		next.addObject("numContributions", new Integer(contributions.size()));
 		next.addObject("contributor", userString);

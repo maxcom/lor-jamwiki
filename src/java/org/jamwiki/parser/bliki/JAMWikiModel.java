@@ -88,7 +88,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		}
 		try {
 			topicName = topicName.replaceAll("_", " ");
-			Topic topic = WikiBase.getHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false, null);
+			Topic topic = WikiBase.getDataHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false, null);
 			return topic.getTopicContent();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

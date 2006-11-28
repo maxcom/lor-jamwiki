@@ -81,7 +81,7 @@ public class ServletUtil {
 		VirtualWiki virtualWiki = null;
 		String defaultTopic = null;
 		try {
-			virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			defaultTopic = virtualWiki.getDefaultTopicName();
 		} catch (Exception e) {}
 		if (virtualWiki == null) {
@@ -124,7 +124,7 @@ public class ServletUtil {
 			return content;
 		}
 		try {
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
+			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 			content = topic.getTopicContent();
 			if (cook) {
 				ParserInput parserInput = new ParserInput();
@@ -161,7 +161,7 @@ public class ServletUtil {
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws Exception {
 		Utilities.validateTopicName(topicName);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setName(topicName);
@@ -194,7 +194,7 @@ public class ServletUtil {
 			// non-admins not allowed to move pages
 			return false;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			// cannot move a topic that doesn't exist
 			return false;
@@ -244,13 +244,13 @@ public class ServletUtil {
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		String categoryName = topicName.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
-		Collection categoryTopics = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
+		Collection categoryTopics = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
 		next.addObject("categoryTopics", categoryTopics);
 		next.addObject("numCategoryTopics", new Integer(categoryTopics.size()));
-		Collection categoryImages = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_IMAGE);
+		Collection categoryImages = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_IMAGE);
 		next.addObject("categoryImages", categoryImages);
 		next.addObject("numCategoryImages", new Integer(categoryImages.size()));
-		Collection tempSubcategories = WikiBase.getHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
+		Collection tempSubcategories = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
 		LinkedHashMap subCategories = new LinkedHashMap();
 		for (Iterator iterator = tempSubcategories.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();
@@ -396,7 +396,7 @@ public class ServletUtil {
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
 			if (!StringUtils.hasText(topic)) {
-				VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
 			redirect = topic;
@@ -495,7 +495,7 @@ public class ServletUtil {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}
 		if (topic.getTopicType() == Topic.TYPE_IMAGE || topic.getTopicType() == Topic.TYPE_FILE) {
-			Collection fileVersions = WikiBase.getHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
+			Collection fileVersions = WikiBase.getDataHandler().getAllWikiFileVersions(virtualWiki, topicName, true);
 			for (Iterator iterator = fileVersions.iterator(); iterator.hasNext();) {
 				// update version urls to include web root path
 				WikiFileVersion fileVersion = (WikiFileVersion)iterator.next();

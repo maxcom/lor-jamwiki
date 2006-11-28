@@ -59,7 +59,7 @@ public class DatabaseUpgrades {
 		user.setCreateIpAddress(rs.getString("create_ip_address"));
 		user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
 		user.setAdmin(rs.getInt("is_admin") != 0);
-//		user = WikiBase.getHandler().lookupWikiUser(username, password, false);
+//		user = WikiBase.getDataHandler().lookupWikiUser(username, password, false);
 		return user;
 	}
 

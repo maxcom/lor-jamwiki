@@ -77,7 +77,7 @@ public class WikiLinkTag implements ParserTag {
 				return LinkUtil.interWiki(wikiLink);
 			}
 			if (wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace())) {
-				if (WikiBase.getHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
 					virtualWiki = wikiLink.getNamespace();
 					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 				}

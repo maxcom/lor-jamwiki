@@ -52,7 +52,7 @@ public class TopicsAdminServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection topicsAdmin = WikiBase.getHandler().getTopicsAdmin(virtualWiki, pagination);
+		Collection topicsAdmin = WikiBase.getDataHandler().getTopicsAdmin(virtualWiki, pagination);
 		next.addObject("topicsAdmin", topicsAdmin);
 		next.addObject("numTopicsAdmin", new Integer(topicsAdmin.size()));
 		pageInfo.setPageTitle(new WikiMessage("topicsadmin.title"));

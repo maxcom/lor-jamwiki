@@ -173,7 +173,7 @@ public class Utilities {
 		String login = tokens.nextToken();
 		String rememberKey = tokens.nextToken();
 		try {
-			user = WikiBase.getHandler().lookupWikiUser(login, null);
+			user = WikiBase.getDataHandler().lookupWikiUser(login, null);
 		} catch (Exception e) {
 			// FIXME - safe to ignore?
 		}
@@ -204,7 +204,7 @@ public class Utilities {
 			return watchlist;
 		}
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
+		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
         return watchlist;
 	}
@@ -399,7 +399,7 @@ public class Utilities {
 			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
 		}
 		// get the topic that is being redirected to
-		Topic child = WikiBase.getHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), false, null);
+		Topic child = WikiBase.getDataHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), false, null);
 		if (child == null) {
 			// child being redirected to doesn't exist, return parent
 			return parent;
@@ -408,7 +408,7 @@ public class Utilities {
 			// found a topic that is not a redirect, return
 			return child;
 		}
-		if (WikiBase.getHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), false, null) == null) {
+		if (WikiBase.getDataHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), false, null) == null) {
 			// child is a redirect, but its target does not exist
 			return child;
 		}
@@ -699,7 +699,7 @@ public class Utilities {
 		request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
 		// add user's watchlist to session
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Watchlist watchlist = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId());
+		Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 		if (setCookie) {
 			if (response == null) {
@@ -838,7 +838,7 @@ public class Utilities {
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserDocument parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
@@ -866,7 +866,7 @@ public class Utilities {
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
 	public static ParserDocument parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}

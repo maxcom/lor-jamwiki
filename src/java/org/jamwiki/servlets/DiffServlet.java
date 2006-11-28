@@ -68,7 +68,7 @@ public class DiffServlet extends JAMWikiServlet {
 			if (firstVersion == -1 || secondVersion == -1) {
 				next.addObject("badinput", "true");
 			} else {
-				Collection diffs = WikiBase.getHandler().diff(topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
+				Collection diffs = WikiBase.getDataHandler().diff(topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
 				next.addObject("diffs", diffs);
 			}
 		} else {
@@ -80,7 +80,7 @@ public class DiffServlet extends JAMWikiServlet {
 			if (StringUtils.hasText(request.getParameter("version2"))) {
 				topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
 			}
-			Collection diffs = WikiBase.getHandler().diff(topicName, topicVersionId1, topicVersionId2);
+			Collection diffs = WikiBase.getDataHandler().diff(topicName, topicVersionId1, topicVersionId2);
 			next.addObject("diffs", diffs);
 		}
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));

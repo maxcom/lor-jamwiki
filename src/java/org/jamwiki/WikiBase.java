@@ -119,7 +119,7 @@ public class WikiBase {
 	 * @return The current data handler instance, or <code>null</code>
 	 *  if the handler has not yet been initialized.
 	 */
-	public static DataHandler getHandler() {
+	public static DataHandler getDataHandler() {
 		return WikiBase.dataHandler;
 	}
 

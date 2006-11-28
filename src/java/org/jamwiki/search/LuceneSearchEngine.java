@@ -307,7 +307,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
 	public synchronized void refreshIndex() throws Exception {
-		Collection allWikis = WikiBase.getHandler().getVirtualWikiList();
+		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Topic topic;
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
 			long start = System.currentTimeMillis();
@@ -319,10 +319,10 @@ public class LuceneSearchEngine implements SearchEngine {
 			IndexWriter writer = null;
 			try {
 				writer = new IndexWriter(directory, analyzer, true);
-				Collection topicNames = WikiBase.getHandler().getAllTopicNames(virtualWiki.getName());
+				Collection topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
 				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
 					String topicName = (String)iter.next();
-					topic = WikiBase.getHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
+					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
 					if (standardDocument != null) writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a

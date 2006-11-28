@@ -200,7 +200,7 @@ public class WikiDatabase {
 		if (user == null) {
 			throw new Exception("Admin user not specified");
 		}
-		if (WikiBase.getHandler().lookupWikiUser(user.getUserId(), conn) != null) {
+		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {
 			logger.warning("Admin user already exists");
 		}
 		WikiUserInfo userInfo = null;
@@ -210,7 +210,7 @@ public class WikiDatabase {
 			userInfo.setLogin(user.getLogin());
 			userInfo.setUserId(user.getUserId());
 		}
-		WikiBase.getHandler().writeWikiUser(user, userInfo, conn);
+		WikiBase.getDataHandler().writeWikiUser(user, userInfo, conn);
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class WikiDatabase {
 		VirtualWiki virtualWiki = new VirtualWiki();
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-		WikiBase.getHandler().writeVirtualWiki(virtualWiki, conn);
+		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, conn);
 	}
 
 	/**
@@ -253,14 +253,14 @@ public class WikiDatabase {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 	}
 
 	/**
 	 *
 	 */
 	private static void setupSpecialPages(Locale locale, WikiUser user, Connection conn) throws Exception {
-		Collection all = WikiBase.getHandler().getVirtualWikiList();
+		Collection all = WikiBase.getDataHandler().getVirtualWikiList();
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			// create the default topics

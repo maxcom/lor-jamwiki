@@ -63,7 +63,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		String topicName = Utilities.getTopicFromRequest(request);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Watchlist watchlist = Utilities.currentWatchlist(request);
-		WikiBase.getHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
+		WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
 		String article = Utilities.extractTopicLink(topicName);
 		if (watchlist.containsTopic(topicName)) {
 			// added to watchlist
@@ -85,7 +85,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		if (user == null) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
-		Collection changes = WikiBase.getHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
+		Collection changes = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId(), pagination);
 		next.addObject("numChanges", new Integer(changes.size()));
 		next.addObject("changes", changes);
 		pageInfo.setPageTitle(new WikiMessage("watchlist.title"));

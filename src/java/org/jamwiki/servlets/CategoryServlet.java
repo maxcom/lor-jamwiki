@@ -52,7 +52,7 @@ public class CategoryServlet extends JAMWikiServlet {
 	private void viewCategories(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection categoryObjects = WikiBase.getHandler().getAllCategories(virtualWiki, pagination);
+		Collection categoryObjects = WikiBase.getDataHandler().getAllCategories(virtualWiki, pagination);
 		LinkedHashMap categories = new LinkedHashMap();
 		for (Iterator iterator = categoryObjects.iterator(); iterator.hasNext();) {
 			Category category = (Category)iterator.next();

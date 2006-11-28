@@ -57,7 +57,7 @@ public class LoginServlet extends JAMWikiServlet {
 		Utilities.logout(request, response);
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
-			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			redirect = virtualWiki.getDefaultTopicName();
 		}
 		ServletUtil.redirect(next, virtualWikiName, redirect);
@@ -72,12 +72,12 @@ public class LoginServlet extends JAMWikiServlet {
 		String username = request.getParameter("username");
 		String redirect = request.getParameter("redirect");
 		if (!StringUtils.hasText(redirect)) {
-			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			redirect = virtualWiki.getDefaultTopicName();
 		}
 		WikiUser user = null;
 		if (WikiBase.getUserHandler().authenticate(username, password)) {
-			user = WikiBase.getHandler().lookupWikiUser(username, null);
+			user = WikiBase.getDataHandler().lookupWikiUser(username, null);
 		}
 		boolean remember = (request.getParameter("remember") != null);
 		if (user == null) {
