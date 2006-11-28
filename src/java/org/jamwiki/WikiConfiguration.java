@@ -36,6 +36,7 @@ public class WikiConfiguration {
 	/** Standard logger. */
 	private static WikiLogger logger = WikiLogger.getLogger(WikiConfiguration.class.getName());
 
+	private static Vector dataHandlers = null;
 	private static Hashtable namespaces = null;
 	private static Vector parsers = null;
 	private static Vector pseudotopics = null;
@@ -44,6 +45,8 @@ public class WikiConfiguration {
 	/** Name of the configuration file. */
 	public static final String JAMWIKI_CONFIGURATION_FILE = "jamwiki-configuration.xml";
 	private static final String XML_CONFIGURATION_ROOT = "configuration";
+	private static final String XML_DATA_HANDLER = "data-handler";
+	private static final String XML_DATA_HANDLER_ROOT = "data-handlers";
 	private static final String XML_NAMESPACE = "namespace";
 	private static final String XML_NAMESPACE_COMMENTS = "comments";
 	private static final String XML_NAMESPACE_MAIN = "main";
@@ -61,6 +64,13 @@ public class WikiConfiguration {
 
 	static {
 		WikiConfiguration.initialize();
+	}
+
+	/**
+	 *
+	 */
+	public static Collection getDataHandlers() {
+		return WikiConfiguration.dataHandlers;
 	}
 
 	/**
@@ -96,6 +106,7 @@ public class WikiConfiguration {
 	 */
 	private static void initialize() {
 		try {
+			WikiConfiguration.dataHandlers = new Vector();
 			WikiConfiguration.namespaces = new Hashtable();
 			WikiConfiguration.parsers = new Vector();
 			WikiConfiguration.pseudotopics = new Vector();
@@ -109,6 +120,8 @@ public class WikiConfiguration {
 				child = children.item(i);
 				if (child.getNodeName().equals(XML_PARSER_ROOT)) {
 					WikiConfiguration.parsers = WikiConfiguration.parseConfigurationObjects(child, XML_PARSER);
+				} else if (child.getNodeName().equals(XML_DATA_HANDLER_ROOT)) {
+					WikiConfiguration.dataHandlers = WikiConfiguration.parseConfigurationObjects(child, XML_DATA_HANDLER);
 				} else if (child.getNodeName().equals(XML_USER_HANDLER_ROOT)) {
 					WikiConfiguration.userHandlers = WikiConfiguration.parseConfigurationObjects(child, XML_USER_HANDLER);
 				} else if (child.getNodeName().equals(XML_NAMESPACE_ROOT)) {

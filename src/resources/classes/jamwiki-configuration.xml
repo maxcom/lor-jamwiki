@@ -62,6 +62,58 @@
 
 <!--
    ====================================================================
+
+   Data handlers that can be used with JAMWiki:
+   
+   name  - A human-readable name for the data handler.
+   class - The fully qualified class name for the data handler.
+   key   - The ApplicationResources translation key for the data handler
+           name.  If this value is not specified then the "name" value is
+           used when displaying the data handler name.
+   state - An optional parameter that can be set to "experimental" to warn
+           site administrators that a data handler is a work-in-progress.
+
+   ======================================================================
+-->
+<data-handlers>
+	<data-handler>
+		<name>ansi</name>
+		<class>ansi</class>
+	</data-handler>
+	<data-handler>
+		<name>hsql</name>
+		<class>hsql</class>
+	</data-handler>
+	<data-handler>
+		<name>mssql</name>
+		<class>mssql</class>
+	</data-handler>
+	<data-handler>
+		<name>mysql</name>
+		<class>mysql</class>
+	</data-handler>
+	<data-handler>
+		<name>oracle</name>
+		<class>oracle</class>
+	</data-handler>
+	<data-handler>
+		<name>postgres</name>
+		<class>postgres</class>
+	</data-handler>
+	<data-handler>
+		<name>db2</name>
+		<class>db2</class>
+		<state>experimental</state>
+	</data-handler>
+	<data-handler>
+		<name>db2/400</name>
+		<class>db2/400</class>
+		<state>experimental</state>
+	</data-handler>
+</data-handlers>
+
+<!--
+   ====================================================================
    
    Namespaces that can be used with JAMWiki:
    

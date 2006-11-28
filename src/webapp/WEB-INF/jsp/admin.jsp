@@ -221,14 +221,10 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
-		<option value="<%= WikiDatabase.DB_TYPE_ANSI %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ANSI) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_ANSI %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_HSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_HSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_HSQL %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_MSSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_MSSQL %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_MYSQL %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_MYSQL %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_ORACLE %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_ORACLE %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_POSTGRES %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_POSTGRES %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_DB2 %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_DB2 %> (<f:message key="common.caption.experimental" />)</option>
-		<option value="<%= WikiDatabase.DB_TYPE_DB2_400 %>"<%= props.getProperty(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2_400) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_DB2_400 %> (<f:message key="common.caption.experimental" />)</option>
+		<c:set var="selectedDataHandler"><%= props.getProperty(Environment.PROP_DB_TYPE) %></c:set>
+		<c:forEach items="${dataHandlers}" var="dataHandler">
+		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><f:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		</c:forEach>
 		</select>
 	</td>
 </tr>
@@ -326,7 +322,7 @@ FIXME - Email not supported right now, comment this out
 		<select name="<%= Environment.PROP_BASE_USER_HANDLER %>" id="<%= Environment.PROP_BASE_USER_HANDLER %>" onchange="onLdap()">
 		<c:set var="selectedUserHandler"><%= props.getProperty(Environment.PROP_BASE_USER_HANDLER) %></c:set>
 		<c:forEach items="${userHandlers}" var="userHandler">
-		<option value="<c:out value="${userHandler.clazz}" />"<c:if test="${selectedUserHandler == userHandler.clazz}"> selected</c:if>><c:if test="${!empty userHandler.key}"><f:message key="${userHandler.key}" /></c:if><c:if test="${empty userHandler.key}"><c:out value="${userHandler.name}" /></c:if></option>
+		<option value="<c:out value="${userHandler.clazz}" />"<c:if test="${selectedUserHandler == userHandler.clazz}"> selected</c:if>><c:if test="${!empty userHandler.key}"><f:message key="${userHandler.key}" /></c:if><c:if test="${empty userHandler.key}"><c:out value="${userHandler.name}" /></c:if><c:if test="${userHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
 		</c:forEach>
 		</select>
 	</td>

@@ -261,6 +261,8 @@ public class AdminServlet extends JAMWikiServlet {
 		next.addObject("wikis", virtualWikiList);
 		Collection userHandlers = WikiConfiguration.getUserHandlers();
 		next.addObject("userHandlers", userHandlers);
+		Collection dataHandlers = WikiConfiguration.getDataHandlers();
+		next.addObject("dataHandlers", dataHandlers);
 		Collection parsers = WikiConfiguration.getParsers();
 		next.addObject("parsers", parsers);
 		if (props == null) {

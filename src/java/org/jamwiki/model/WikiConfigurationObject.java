@@ -48,6 +48,13 @@ public class WikiConfigurationObject {
 	/**
 	 *
 	 */
+	public boolean isExperimental() {
+		return (this.state != null && this.state.equalsIgnoreCase("experimental"));
+	}
+
+	/**
+	 *
+	 */
 	public String getKey() {
 		return this.key;
 	}
