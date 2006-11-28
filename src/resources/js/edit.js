@@ -137,21 +137,3 @@ function insertTags(tagOpen, tagClose, sampleText) {
 	if (txtarea.createTextRange) txtarea.caretPos = document.selection.createRange().duplicate();
 }
 
-
-
-document.writeln("<div id='toolbar'>");
-addButton('../images/button_bold.png','Bold text','\'\'\'','\'\'\'','Bold text');
-addButton('../images/button_italic.png','Italic text','\'\'','\'\'','Italic text');
-addButton('../images/button_underline.png','Underlined text','<u>','</u>','Underlined text');
-addButton('../images/button_link.png','Internal link','[[',']]','Link-text');
-//addButton('/style/images/button_extlink.png','Externer Link (http:// beachten)','[',']','http://www.beispiel.de Link-Text');
-addButton('../images/button_headline.png','Headline level 2','\n== ',' ==\n','Headline level 2');
-//addButton('/style/images/button_image.png','Bild-Verweis','[[Bild:',']]','Beispiel.jpg');
-//addButton('/style/images/button_media.png','Mediendatei-Verweis','[[Media:',']]','Beispiel.mp3');
-//addButton('../images/button_code.png','Small code block','{{{','}}}','Enter code here');
-//addButton('../images/button_java.png','Big Java code block','[<java>]','[</java>]','public void foo()\n{\n   ;\n}');
-addButton('../images/button_nowiki.png','Unformatted text','<nowiki>','</nowiki>','Enter unformatted text here');
-//addButton('../images/button_sig.png','Ihre Signatur mit Zeitstempel','--~~~~','','');
-addButton('../images/button_hr.png','Horizontal line','\n----\n','','');
-addInfobox('Click a button to get the example text.','Please enter the text that you want formatted.\\nIt will then be showed in the infobox for copying.\\nExample:\\n$1\\nwill become\\n$2');
-document.writeln("</div>");
