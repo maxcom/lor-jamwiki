@@ -16,7 +16,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /**
  * Standard model implementation
- * 
+ *
  */
 public class JAMWikiModel extends AbstractWikiModel {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
@@ -35,7 +35,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		super();
 		fParserInput = parserInput;
 		fDocument = document;
-		fExternalImageBaseURL = imageBaseURL; 
+		fExternalImageBaseURL = imageBaseURL;
 		fExternalWikiBaseURL = linkBaseURL;
 	}
 
@@ -88,7 +88,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 		}
 		try {
 			topicName = topicName.replaceAll("_", " ");
-			Topic topic = WikiBase.getHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false);
+			Topic topic = WikiBase.getHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false, null);
 			return topic.getTopicContent();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

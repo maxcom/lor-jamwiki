@@ -706,15 +706,6 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(int userId) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER);
-		stmt.setInt(1, userId);
-		return stmt.executeQuery();
-	}
-
-	/**
-	 *
-	 */
 	public WikiResultSet lookupWikiUser(int userId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER);
 		stmt.setInt(1, userId);
@@ -724,10 +715,10 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login) throws Exception {
+	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
 		stmt.setString(1, login);
-		return stmt.executeQuery();
+		return stmt.executeQuery(conn);
 	}
 
 	/**

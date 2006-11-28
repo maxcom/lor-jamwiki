@@ -477,16 +477,6 @@ public interface QueryHandler {
 	 * Retrieve a result set containing all user information for a given WikiUser.
 	 *
 	 * @param userId The id of the user record being retrieved.
-	 * @return A WikiResultSet containing all information for the given user, or
-	 *  an empty result set if no matching user exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet lookupWikiUser(int userId) throws Exception;
-
-	/**
-	 * Retrieve a result set containing all user information for a given WikiUser.
-	 *
-	 * @param userId The id of the user record being retrieved.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @return A WikiResultSet containing all information for the given user, or
@@ -499,11 +489,13 @@ public interface QueryHandler {
 	 * Retrieve a result set containing all user information for a given WikiUser.
 	 *
 	 * @param login The login of the user record being retrieved.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
 	 * @return A WikiResultSet containing all information for the given user, or
 	 *  an empty result set if no matching user exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiUser(String login) throws Exception;
+	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing all user information for a given WikiUser.

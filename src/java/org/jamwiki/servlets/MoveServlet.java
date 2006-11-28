@@ -84,7 +84,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	private boolean movePage(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String moveFrom, String moveDestination) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Topic fromTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveFrom);
+		Topic fromTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveFrom, false, null);
 		if (fromTopic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
@@ -98,7 +98,7 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("errorMessage", new WikiMessage("move.exception.permission", moveFrom));
 			return false;
 		}
-		Topic toTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination);
+		Topic toTopic = WikiBase.getHandler().lookupTopic(virtualWiki, moveDestination, false, null);
 		if (!WikiBase.getHandler().canMoveTopic(fromTopic, moveDestination)) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
 			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
@@ -125,7 +125,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

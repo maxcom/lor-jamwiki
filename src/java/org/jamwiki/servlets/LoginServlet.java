@@ -77,7 +77,7 @@ public class LoginServlet extends JAMWikiServlet {
 		}
 		WikiUser user = null;
 		if (WikiBase.getUserHandler().authenticate(username, password)) {
-			user = WikiBase.getHandler().lookupWikiUser(username);
+			user = WikiBase.getHandler().lookupWikiUser(username, null);
 		}
 		boolean remember = (request.getParameter("remember") != null);
 		if (user == null) {

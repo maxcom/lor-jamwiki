@@ -84,7 +84,7 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			virtualWiki.setName(request.getParameter("name"));
 			virtualWiki.setDefaultTopicName(request.getParameter("defaultTopicName"));
-			WikiBase.getHandler().writeVirtualWiki(virtualWiki);
+			WikiBase.getHandler().writeVirtualWiki(virtualWiki, null);
 			WikiBase.getHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
 			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
 		} catch (Exception e) {

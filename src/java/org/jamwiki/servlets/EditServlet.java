@@ -166,7 +166,7 @@ public class EditServlet extends JAMWikiServlet {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.login");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
 			WikiMessage errorMessage = new WikiMessage("edit.exception.loginadmin", topicName);
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
@@ -196,7 +196,7 @@ public class EditServlet extends JAMWikiServlet {
 	private void resolve(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = Utilities.getTopicFromRequest(request);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		String contents1 = lastTopic.getTopicContent();
 		String contents2 = request.getParameter("contents");
 		next.addObject("lastTopicVersionId", lastTopic.getCurrentVersionId());
@@ -222,7 +222,7 @@ public class EditServlet extends JAMWikiServlet {
 		String topicName = Utilities.getTopicFromRequest(request);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Topic topic = loadTopic(virtualWiki, topicName);
-		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic lastTopic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (lastTopic != null && !lastTopic.getCurrentVersionId().equals(retrieveLastTopicVersionId(request, topic))) {
 			// someone else has edited the topic more recently
 			resolve(request, next, pageInfo);
@@ -271,13 +271,13 @@ public class EditServlet extends JAMWikiServlet {
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
-		WikiBase.getHandler().writeTopic(topic, topicVersion, parserDocument);
+		WikiBase.getHandler().writeTopic(topic, topicVersion, parserDocument, true, null);
 		// update watchlist
 		if (user != null) {
 			Watchlist watchlist = Utilities.currentWatchlist(request);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {
-				WikiBase.getHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId());
+				WikiBase.getHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
 			}
 		}
 		// redirect to prevent user from refreshing and re-submitting

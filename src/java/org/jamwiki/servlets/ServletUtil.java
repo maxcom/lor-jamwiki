@@ -124,7 +124,7 @@ public class ServletUtil {
 			return content;
 		}
 		try {
-			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+			Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 			content = topic.getTopicContent();
 			if (cook) {
 				ParserInput parserInput = new ParserInput();
@@ -161,7 +161,7 @@ public class ServletUtil {
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws Exception {
 		Utilities.validateTopicName(topicName);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setName(topicName);
@@ -194,7 +194,7 @@ public class ServletUtil {
 			// non-admins not allowed to move pages
 			return false;
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			// cannot move a topic that doesn't exist
 			return false;

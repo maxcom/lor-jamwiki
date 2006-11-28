@@ -16,8 +16,8 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
@@ -68,7 +68,7 @@ public class DiffServlet extends JAMWikiServlet {
 			if (firstVersion == -1 || secondVersion == -1) {
 				next.addObject("badinput", "true");
 			} else {
-				Vector diffs = WikiBase.getHandler().diff(topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
+				Collection diffs = WikiBase.getHandler().diff(topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
 				next.addObject("diffs", diffs);
 			}
 		} else {
@@ -80,7 +80,7 @@ public class DiffServlet extends JAMWikiServlet {
 			if (StringUtils.hasText(request.getParameter("version2"))) {
 				topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
 			}
-			Vector diffs = WikiBase.getHandler().diff(topicName, topicVersionId1, topicVersionId2);
+			Collection diffs = WikiBase.getHandler().diff(topicName, topicVersionId1, topicVersionId2);
 			next.addObject("diffs", diffs);
 		}
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));

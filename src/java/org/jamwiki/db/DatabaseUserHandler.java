@@ -35,17 +35,13 @@ public class DatabaseUserHandler implements UserHandler {
 	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
-			conn = WikiDatabase.getConnection();
-			if (transactionObject instanceof Connection) {
-				WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, (Connection)transactionObject);
-			} else {
-				WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, conn);
-			}
+			conn = WikiDatabase.getConnection(transactionObject);
+			WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
-			WikiDatabase.releaseParams(conn);
+			WikiDatabase.releaseConnection(conn, transactionObject);
 		}
 	}
 
@@ -95,17 +91,13 @@ public class DatabaseUserHandler implements UserHandler {
 	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
-			conn = WikiDatabase.getConnection();
-			if (transactionObject instanceof Connection) {
-				WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, (Connection)transactionObject);
-			} else {
-				WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, conn);
-			}
+			conn = WikiDatabase.getConnection(transactionObject);
+			WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
-			WikiDatabase.releaseParams(conn);
+			WikiDatabase.releaseConnection(conn, transactionObject);
 		}
 	}
 }

@@ -200,7 +200,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
 				FileHandler fromHandler = new FileHandler();
-				messages.addAll(DatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, WikiBase.getHandler()));
+				if (WikiBase.getHandler() instanceof DatabaseHandler) {
+					DatabaseHandler toHandler = (DatabaseHandler)WikiBase.getHandler();
+					messages.addAll(DatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler));
+				}
 			}
 			if (Environment.getValue(Environment.PROP_PARSER_CLASS) != null && Environment.getValue(Environment.PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
 				Environment.setValue(Environment.PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");

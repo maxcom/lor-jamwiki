@@ -17,7 +17,6 @@
 package org.jamwiki;
 
 import java.util.Locale;
-import org.jamwiki.db.DatabaseHandler;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
@@ -30,7 +29,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * This class should be used for retrieving core JAMWiki elements, such as the
- * current persitency handler (database, file, etc).
+ * current data handler (database, file, etc).
  */
 public class WikiBase {
 
@@ -38,8 +37,8 @@ public class WikiBase {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiBase.class.getName());
 	/** The singleton instance of this class. */
 	private static WikiBase instance = null;
-	/** The handler that looks after read/write operations for a persistence type. */
-	private static DatabaseHandler handler = null;
+	/** The data handler that looks after read/write operations. */
+	private static DataHandler dataHandler = null;
 	/** The handler for user login/authentication. */
 	private static UserHandler userHandler = null;
 	/** The search engine instance. */
@@ -80,12 +79,12 @@ public class WikiBase {
 
 	/**
 	 * Creates an instance of <code>WikiBase</code>, initializing the default
-	 * database handler instance and search engine instance.
+	 * data handler instance and search engine instance.
 	 *
 	 * @throws Exception If the instance cannot be instantiated.
 	 */
 	private WikiBase() throws Exception {
-		WikiBase.handler = new DatabaseHandler();
+		WikiBase.dataHandler = Utilities.dataHandlerInstance();
 		WikiBase.userHandler = Utilities.userHandlerInstance();
 		this.searchEngine = new LuceneSearchEngine();
 	}
@@ -111,17 +110,17 @@ public class WikiBase {
 			// not initialized yet
 			return false;
 		}
-		return WikiBase.handler.exists(virtualWiki, topicName);
+		return WikiBase.dataHandler.exists(virtualWiki, topicName);
 	}
 
 	/**
-	 * Get an instance of the current database handler.
+	 * Get an instance of the current data handler.
 	 *
-	 * @return The current database handler instance, or <code>null</code>
+	 * @return The current data handler instance, or <code>null</code>
 	 *  if the handler has not yet been initialized.
 	 */
-	public static DatabaseHandler getHandler() {
-		return WikiBase.handler;
+	public static DataHandler getHandler() {
+		return WikiBase.dataHandler;
 	}
 
 	/**
@@ -155,7 +154,7 @@ public class WikiBase {
 	}
 
 	/**
-	 * Reset the WikiBase object, re-initializing the database handler and
+	 * Reset the WikiBase object, re-initializing the data handler and
 	 * other values.
 	 *
 	 * @param locale The locale to be used if any system pages need to be set up
@@ -168,7 +167,7 @@ public class WikiBase {
 		WikiMail.init();
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
-		WikiBase.handler.setup(locale, user);
+		WikiBase.dataHandler.setup(locale, user);
 		WikiBase.searchEngine.refreshIndex();
 	}
 }

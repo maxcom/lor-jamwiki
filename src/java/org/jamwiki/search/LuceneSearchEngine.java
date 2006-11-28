@@ -322,7 +322,7 @@ public class LuceneSearchEngine implements SearchEngine {
 				Collection topicNames = WikiBase.getHandler().getAllTopicNames(virtualWiki.getName());
 				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
 					String topicName = (String)iter.next();
-					topic = WikiBase.getHandler().lookupTopic(virtualWiki.getName(), topicName);
+					topic = WikiBase.getHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
 					if (standardDocument != null) writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a

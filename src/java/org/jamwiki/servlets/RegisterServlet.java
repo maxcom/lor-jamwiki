@@ -72,7 +72,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (newPassword != null) next.addObject("newPassword", newPassword);
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
 		} else {
-			WikiBase.getHandler().writeWikiUser(user, userInfo);
+			WikiBase.getHandler().writeWikiUser(user, userInfo, null);
 			Utilities.login(request, null, user, false);
 			VirtualWiki virtualWiki = WikiBase.getHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();
@@ -89,7 +89,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				user = WikiBase.getHandler().lookupWikiUser(userId);
+				user = WikiBase.getHandler().lookupWikiUser(userId, null);
 			}
 		}
 		user.setLogin(request.getParameter("login"));
@@ -162,7 +162,7 @@ public class RegisterServlet extends JAMWikiServlet {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
 			}
 		}
-		if (user.getUserId() < 1 && WikiBase.getHandler().lookupWikiUser(user.getLogin()) != null) {
+		if (user.getUserId() < 1 && WikiBase.getHandler().lookupWikiUser(user.getLogin(), null) != null) {
 			errors.add(new WikiMessage("register.error.logininvalid", user.getLogin()));
 		}
 		return errors;

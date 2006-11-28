@@ -283,7 +283,7 @@ public class TemplateTag implements ParserTag {
 			inclusion = true;
 		}
 		// get the parsed template body
-		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name);
+		Topic templateTopic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
@@ -613,7 +613,7 @@ public class TemplateTag implements ParserTag {
 		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(Utilities.extractTopicLink(parserInput.getTopicName()));
 		}
-		Topic topic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName());
+		Topic topic = WikiBase.getHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
 		TopicVersion topicVersion = WikiBase.getHandler().lookupTopicVersion(parserInput.getTopicName(), topic.getCurrentVersionId().intValue());
 		Date revision = topicVersion.getEditDate();
 		formatter.setTimeZone(utc);

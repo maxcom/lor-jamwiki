@@ -69,6 +69,16 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
+	protected static Connection getConnection(Object transactionObject) throws Exception {
+		if (transactionObject != null && transactionObject instanceof Connection) {
+			return (Connection)transactionObject;
+		}
+		return WikiDatabase.getConnection();
+	}
+
+	/**
+	 *
+	 */
 	protected static String getConnectionValidationQuery() {
 		return (StringUtils.hasText(CONNECTION_VALIDATION_QUERY)) ? CONNECTION_VALIDATION_QUERY : null;
 	}
@@ -135,7 +145,17 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void releaseParams(Connection conn) throws Exception {
+	protected static void releaseConnection(Connection conn, Object transactionObject) throws Exception {
+		if (transactionObject != null && transactionObject instanceof Connection) {
+			return;
+		}
+		WikiDatabase.releaseConnection(conn);
+	}
+
+	/**
+	 *
+	 */
+	protected static void releaseConnection(Connection conn) throws Exception {
 		if (conn == null) return;
 		try {
 			conn.commit();
@@ -169,7 +189,7 @@ public class WikiDatabase {
 				throw e;
 			}
 		} finally {
-			WikiDatabase.releaseParams(conn);
+			WikiDatabase.releaseConnection(conn);
 		}
 	}
 
@@ -183,14 +203,14 @@ public class WikiDatabase {
 		if (WikiBase.getHandler().lookupWikiUser(user.getUserId(), conn) != null) {
 			logger.warning("Admin user already exists");
 		}
-		WikiBase.getHandler().addWikiUser(user, conn);
+		WikiUserInfo userInfo = null;
 		if (WikiBase.getUserHandler().isWriteable()) {
-			WikiUserInfo userInfo = new WikiUserInfo();
+			userInfo = new WikiUserInfo();
 			userInfo.setEncodedPassword(user.getRememberKey());
 			userInfo.setLogin(user.getLogin());
 			userInfo.setUserId(user.getUserId());
-			WikiBase.getUserHandler().addWikiUserInfo(userInfo, conn);
 		}
+		WikiBase.getHandler().writeWikiUser(user, userInfo, conn);
 	}
 
 	/**
@@ -233,7 +253,7 @@ public class WikiDatabase {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), conn, true);
+		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 	}
 
 	/**

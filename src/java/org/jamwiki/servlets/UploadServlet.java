@@ -154,7 +154,7 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName);
-		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName);
+		Topic topic = WikiBase.getHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();
 			topic.setVirtualWiki(virtualWiki);
@@ -191,9 +191,9 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setMimeType(contentType);
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
-		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName));
+		WikiBase.getHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
 		wikiFile.setTopicId(topic.getTopicId());
-		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion);
+		WikiBase.getHandler().writeFile(topicName, wikiFile, wikiFileVersion, null);
 		ServletUtil.redirect(next, virtualWiki, topicName);
 	}
 
