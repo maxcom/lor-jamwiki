@@ -91,9 +91,10 @@ public class Environment {
 	public static final String PROP_PARSER_TOC = "allow-toc";
 	public static final String PROP_PARSER_TOC_DEPTH = "toc-depth";
 	public static final String PROP_RECENT_CHANGES_NUM = "recent-changes-days";
-	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
+	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
 	public static final String PROP_TOPIC_USE_PREVIEW = "use-preview";
+	public static final String PROP_TOPIC_WYSIWYG = "wysiwyg-editor";
 	private static final String PROPERTY_FILE_NAME = "jamwiki.properties";
 
 	private static Properties defaults = null;
@@ -206,9 +207,10 @@ public class Environment {
 		defaults.setProperty(PROP_PARSER_TOC, "true");
 		defaults.setProperty(PROP_PARSER_TOC_DEPTH, "5");
 		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
-		defaults.setProperty(PROP_TOPIC_NON_ADMIN_TOPIC_MOVE, "true");
 		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, "false");
+		defaults.setProperty(PROP_TOPIC_NON_ADMIN_TOPIC_MOVE, "true");
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, "true");
+		defaults.setProperty(PROP_TOPIC_WYSIWYG, "true");
 	}
 
 	/**

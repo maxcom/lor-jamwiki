@@ -118,6 +118,10 @@ function onLdap() {
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_USE_PREVIEW).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" /></td>
 </tr>
 <tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_WYSIWYG %>"><f:message key="admin.caption.wysiwyg" /></label></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_WYSIWYG %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_WYSIWYG).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_WYSIWYG %>" /></td>
+</tr>
+<tr>
 	<td class="formcaption" valign="top"><label for="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><f:message key="admin.caption.metadescription" /></label></td>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><%= props.getProperty(Environment.PROP_BASE_META_DESCRIPTION) %></textarea></td>
 </tr>

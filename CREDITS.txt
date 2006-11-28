@@ -7,8 +7,9 @@ JAMWiki Contributors
 ====================
 
   Developers:               Ryan Holliday (wrh2)
-                            Robert Matyja (dlpa)
                             Scott Croco (scroco)
+                            Axel Kramer (axelclk)
+                            Robert Matyja (dlpa)
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
                             Feilong Huang (hfl)

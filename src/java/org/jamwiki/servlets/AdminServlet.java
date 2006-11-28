@@ -106,6 +106,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_BASE_META_DESCRIPTION);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_FORCE_USERNAME);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_WYSIWYG);
 			setProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT);
 			setProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
