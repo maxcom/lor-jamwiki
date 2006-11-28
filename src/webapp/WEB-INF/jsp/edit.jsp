@@ -59,10 +59,29 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
 <input type="hidden" name="section" value="<c:out value="${section}"/>" />
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
-<%--
-FIXME - restore the Javascript edit buttons
+
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
---%>
+
+<script type='text/javascript'>
+/*<![CDATA[*/
+document.writeln("<div id='toolbar'>");
+addButton('../images/button_bold.png','<f:message key="button.bold"/>','\'\'\'','\'\'\'','<f:message key="button.bold.text"/>');
+addButton('../images/button_italic.png','<f:message key="button.italic"/>','\'\'','\'\'','<f:message key="button.italic.text"/>');
+addButton('../images/button_underline.png','<f:message key="button.underline"/>','<u>','</u>','<f:message key="button.underline.text"/>');
+addButton('../images/button_link.png','<f:message key="button.internal.link"/>','[[',']]','<f:message key="button.internal.link.text"/>');
+addButton('../images/button_extlink.png','<f:message key="button.external.link"/>','[',']','<f:message key="button.external.link.text"/>');
+addButton('../images/button_headline.png','<f:message key="button.head2"/>','\n== ',' ==\n','<f:message key="button.head2.text"/>');
+addButton('../images/button_image.png','<f:message key="button.image"/>','[[Image:',']]','<f:message key="button.image.text"/>');
+//addButton('/style/images/button_media.png','Mediendatei-Verweis','[[Media:',']]','Beispiel.mp3');
+//addButton('../images/button_code.png','Small code block','{{{','}}}','Enter code here');
+//addButton('../images/button_java.png','Big Java code block','[<java>]','[</java>]','public void foo()\n{\n   ;\n}');
+addButton('../images/button_nowiki.png','<f:message key="button.nowiki"/>','<nowiki>','</nowiki>','<f:message key="button.nowiki.text"/>');
+addButton('../images/button_sig.png','<f:message key="button.signature"/>','--~~~~','','');
+addButton('../images/button_hr.png','<f:message key="button.line"/>','\n----\n','','');
+document.writeln("</div>");
+/*]]>*/ 
+</script>
+
 <p>
 <textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
