@@ -94,6 +94,7 @@
 		<copy todir="${dir.build}/war/WEB-INF/classes" overwrite="yes">
 			<fileset dir="${dir.local}">
 				<include name="*.properties" />
+				<include name="*.xml" />
 			</fileset>
 		</copy>
 		<copy todir="${dir.build}/war/WEB-INF/lib" overwrite="yes">

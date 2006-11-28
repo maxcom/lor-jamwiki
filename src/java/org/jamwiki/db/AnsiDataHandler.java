@@ -379,8 +379,8 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Collection diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
-		TopicVersion version1 = lookupTopicVersion(topicName, topicVersionId1, null);
-		TopicVersion version2 = lookupTopicVersion(topicName, topicVersionId2, null);
+		TopicVersion version1 = this.lookupTopicVersion(topicName, topicVersionId1, null);
+		TopicVersion version2 = this.lookupTopicVersion(topicName, topicVersionId2, null);
 		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
 			logger.severe(msg);
@@ -827,22 +827,15 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			return this.lookupTopicVersion(topicName, topicVersionId, conn);
+			WikiResultSet rs = this.queryHandler().lookupTopicVersion(topicVersionId, conn);
+			if (rs.size() == 0) return null;
+			return this.initTopicVersion(rs);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			WikiDatabase.releaseConnection(conn, transactionObject);
 		}
-	}
-
-	/**
-	 *
-	 */
-	private TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Connection conn) throws Exception {
-		WikiResultSet rs = this.queryHandler().lookupTopicVersion(topicVersionId, conn);
-		if (rs.size() == 0) return null;
-		return initTopicVersion(rs);
 	}
 
 	/**
@@ -1076,24 +1069,17 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			this.undeleteTopic(topic, topicVersion, userVisible, conn);
+			// update topic to indicate deleted, add delete topic version.  parser output
+			// should be empty since nothing to add to search engine.
+			ParserDocument parserDocument = new ParserDocument();
+			topic.setDeleteDate(null);
+			this.writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			WikiDatabase.releaseConnection(conn, transactionObject);
 		}
-	}
-
-	/**
-	 *
-	 */
-	private void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Connection conn) throws Exception {
-		// update topic to indicate deleted, add delete topic version.  parser output
-		// should be empty since nothing to add to search engine.
-		ParserDocument parserDocument = new ParserDocument();
-		topic.setDeleteDate(null);
-		writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
 	}
 
 	/**
