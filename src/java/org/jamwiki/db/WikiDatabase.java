@@ -116,7 +116,7 @@ public class WikiDatabase {
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
 			WikiDatabase.queryHandler = new PostgresQueryHandler();
 		} else {
-			WikiDatabase.queryHandler = new DefaultQueryHandler();
+			WikiDatabase.queryHandler = new AnsiQueryHandler();
 		}
 		WikiDatabase.CONNECTION_VALIDATION_QUERY = WikiDatabase.queryHandler.connectionValidationQuery();
 		WikiDatabase.EXISTENCE_VALIDATION_QUERY = WikiDatabase.queryHandler.existenceValidationQuery();

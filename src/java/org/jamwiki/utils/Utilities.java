@@ -218,7 +218,7 @@ public class Utilities {
 	 */
 	public static DataHandler dataHandlerInstance() throws Exception {
 		// FIXME - implement
-		return new org.jamwiki.db.DatabaseHandler();
+		return new org.jamwiki.db.AnsiDatabaseHandler();
 /*
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		logger.fine("Using data handler: " + dataHandlerClass);

@@ -28,7 +28,7 @@ import org.jamwiki.utils.WikiLogger;
  * DB2/400-specific methods for instances where DB2/400 does not support the default
  * ASCII SQL syntax.
  */
-public class DB2400QueryHandler extends DefaultQueryHandler {
+public class DB2400QueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(DB2400QueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.db2400.properties";
@@ -39,7 +39,7 @@ public class DB2400QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected DB2400QueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

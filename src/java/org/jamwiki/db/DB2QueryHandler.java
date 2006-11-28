@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
  * DB/2-specific methods for instances where DB/2 does not support the default
  * ASCII SQL syntax.
  */
-public class DB2QueryHandler extends DefaultQueryHandler {
+public class DB2QueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(DB2QueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.db2.properties";
@@ -38,7 +38,7 @@ public class DB2QueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected DB2QueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

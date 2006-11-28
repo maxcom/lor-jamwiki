@@ -38,9 +38,9 @@ import org.jamwiki.utils.WikiLogger;
  * and updating data in the database.  This method uses ANSI SQL and should therefore
  * work with any fully ANSI-compliant database.
  */
-public class DefaultQueryHandler implements QueryHandler {
+public class AnsiQueryHandler implements QueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(DefaultQueryHandler.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(AnsiQueryHandler.class.getName());
 	protected static final String SQL_PROPERTY_FILE_NAME = "sql.ansi.properties";
 
 	protected static String STATEMENT_CONNECTION_VALIDATION_QUERY = null;
@@ -125,7 +125,7 @@ public class DefaultQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected DefaultQueryHandler() {
+	protected AnsiQueryHandler() {
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME);
 		this.init(props);
 	}

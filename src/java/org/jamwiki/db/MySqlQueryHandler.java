@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
  * MySQL-specific methods for instances where MySQL does not support the default
  * ASCII SQL syntax.
  */
-public class MySqlQueryHandler extends DefaultQueryHandler {
+public class MySqlQueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(MySqlQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.mysql.properties";
@@ -36,7 +36,7 @@ public class MySqlQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected MySqlQueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

@@ -20,7 +20,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.db.DatabaseHandler;
+import org.jamwiki.db.AnsiDatabaseHandler;
 import org.jamwiki.file.FileHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -60,8 +60,8 @@ public class PersistencyServlet extends JAMWikiServlet {
 	private void convertToDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
 			FileHandler fromHandler = new FileHandler();
-			DatabaseHandler toHandler = new DatabaseHandler();
-			Vector messages = DatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
+			AnsiDatabaseHandler toHandler = new AnsiDatabaseHandler();
+			Vector messages = AnsiDatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
 			next.addObject("message", new WikiMessage("convert.database.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {

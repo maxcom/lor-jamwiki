@@ -18,6 +18,8 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import org.jamwiki.UserHandler;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
@@ -48,11 +50,11 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public boolean authenticate(String login, String password) throws Exception{
+	public boolean authenticate(String login, String password) throws Exception {
 		// password is stored encrypted, so encrypt password
 		String encryptedPassword = Encryption.encrypt(password);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUser(login, encryptedPassword);
-		return (rs.size() > 0);
+		WikiUser user = WikiBase.getDataHandler().lookupWikiUser(login, encryptedPassword);
+		return (user != null);
 	}
 
 	/**

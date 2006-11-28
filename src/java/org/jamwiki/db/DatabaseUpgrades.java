@@ -42,7 +42,7 @@ public class DatabaseUpgrades {
 		if (!encrypted) {
 			encryptedPassword = Encryption.encrypt(password);
 		}
-		DefaultQueryHandler queryHandler = new DefaultQueryHandler();
+		AnsiQueryHandler queryHandler = new AnsiQueryHandler();
 		WikiResultSet rs = queryHandler.lookupWikiUser(login, encryptedPassword);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
@@ -75,13 +75,13 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			// FIXME - hard coding
 			messages.add("Dropped jam_image table");
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_CATEGORY_TABLE, conn);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_CATEGORY_TABLE, conn);
 			// FIXME - hard coding
 			messages.add("Added jam_category table");
 			conn.commit();
 		} catch (Exception e) {
 			try {
-				DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_CATEGORY_TABLE, conn);
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_CATEGORY_TABLE, conn);
 			} catch (Exception ex) {}
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -160,7 +160,7 @@ public class DatabaseUpgrades {
 				sql = "alter table jam_wiki_user drop index jam_unique_wiki_user_login ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
 			messages.add("Updated unique wiki user login constraint");
 			conn.commit();
 		} catch (Exception e) {
@@ -189,18 +189,18 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added current_version_id column to jam_topic");
 			// add current_version_id constraint
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
 			messages.add("Added jam_fk_topic_topic_ver constraint to jam_topic");
 			// update jam_topic records
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS, conn);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS, conn);
 			messages.add("Added current_version_id values for jam_topic records");
 			// create the jam_watchlist table
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE, conn);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WATCHLIST_TABLE, conn);
 			messages.add("Created watchlist table");
 			conn.commit();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
-			DatabaseConnection.executeUpdate(DefaultQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_WATCHLIST_TABLE);
 			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(conn);

@@ -26,7 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.db.DatabaseHandler;
+import org.jamwiki.db.AnsiDatabaseHandler;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.file.FileHandler;
@@ -200,9 +200,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
 				FileHandler fromHandler = new FileHandler();
-				if (WikiBase.getDataHandler() instanceof DatabaseHandler) {
-					DatabaseHandler toHandler = (DatabaseHandler)WikiBase.getDataHandler();
-					messages.addAll(DatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler));
+				if (WikiBase.getDataHandler() instanceof AnsiDatabaseHandler) {
+					AnsiDatabaseHandler toHandler = (AnsiDatabaseHandler)WikiBase.getDataHandler();
+					messages.addAll(AnsiDatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler));
 				}
 			}
 			if (Environment.getValue(Environment.PROP_PARSER_CLASS) != null && Environment.getValue(Environment.PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {

@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
  * Postgres-specific methods for instances where Postgres does not support the default
  * ASCII SQL syntax.
  */
-public class PostgresQueryHandler extends DefaultQueryHandler {
+public class PostgresQueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(PostgresQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.postgres.properties";
@@ -36,7 +36,7 @@ public class PostgresQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected PostgresQueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
  * HSQL-specific methods for instances where Postgres does not support the default
  * ASCII SQL syntax.
  */
-public class HSQLQueryHandler extends DefaultQueryHandler {
+public class HSQLQueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(HSQLQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.hsql.properties";
@@ -36,7 +36,7 @@ public class HSQLQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected HSQLQueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

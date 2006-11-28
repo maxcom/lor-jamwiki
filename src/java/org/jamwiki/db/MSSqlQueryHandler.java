@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
  * This class implements SQL Server-specific methods for instances where SQL Server
  * does not support the default ASCII SQL syntax.
  */
-public class MSSqlQueryHandler extends DefaultQueryHandler {
+public class MSSqlQueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(MSSqlQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.mssql.properties";
@@ -36,7 +36,7 @@ public class MSSqlQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected MSSqlQueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

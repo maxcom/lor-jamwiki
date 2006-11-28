@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
  * Oracle-specific methods for instances where Oracle does not support the default
  * ASCII SQL syntax.
  */
-public class OracleQueryHandler extends DefaultQueryHandler {
+public class OracleQueryHandler extends AnsiQueryHandler {
 
 	private static WikiLogger logger = WikiLogger.getLogger(OracleQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.oracle.properties";
@@ -38,7 +38,7 @@ public class OracleQueryHandler extends DefaultQueryHandler {
 	 *
 	 */
 	protected OracleQueryHandler() {
-		defaults = Environment.loadProperties(DefaultQueryHandler.SQL_PROPERTY_FILE_NAME);
+		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
 		super.init(props);
 	}

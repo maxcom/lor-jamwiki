@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.TreeMap;
 import java.util.Vector;
 import org.jamwiki.DataHandler;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -55,11 +56,11 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class DatabaseHandler implements DataHandler {
+public class AnsiDatabaseHandler implements DataHandler {
 
-	private static final String CACHE_TOPICS = "org.jamwiki.db.DatabaseHandler.CACHE_TOPICS";
-	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.DatabaseHandler.CACHE_VIRTUAL_WIKI";
-	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseHandler.class.getName());
+	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDatabaseHandler.CACHE_TOPICS";
+	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDatabaseHandler.CACHE_VIRTUAL_WIKI";
+	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDatabaseHandler.class.getName());
 
 	/**
 	 *
@@ -67,7 +68,7 @@ public class DatabaseHandler implements DataHandler {
 	private void addCategory(Category category, Connection conn) throws Exception {
 		Topic childTopic = lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), false, conn);
 		int childTopicId = childTopic.getTopicId();
-		WikiDatabase.getQueryHandler().insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
+		this.queryHandler().insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void addRecentChange(RecentChange change, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(change.getVirtualWiki());
-		WikiDatabase.getQueryHandler().insertRecentChange(change, virtualWikiId, conn);
+		this.queryHandler().insertRecentChange(change, virtualWikiId, conn);
 	}
 
 	/**
@@ -84,10 +85,10 @@ public class DatabaseHandler implements DataHandler {
 	private void addTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		if (topic.getTopicId() < 1) {
-			int topicId = WikiDatabase.getQueryHandler().nextTopicId(conn);
+			int topicId = this.queryHandler().nextTopicId(conn);
 			topic.setTopicId(topicId);
 		}
-		WikiDatabase.getQueryHandler().insertTopic(topic, virtualWikiId, conn);
+		this.queryHandler().insertTopic(topic, virtualWikiId, conn);
 	}
 
 	/**
@@ -95,14 +96,14 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void addTopicVersion(String topicName, TopicVersion topicVersion, Connection conn) throws Exception {
 		if (topicVersion.getTopicVersionId() < 1) {
-			int topicVersionId = WikiDatabase.getQueryHandler().nextTopicVersionId(conn);
+			int topicVersionId = this.queryHandler().nextTopicVersionId(conn);
 			topicVersion.setTopicVersionId(topicVersionId);
 		}
 		if (topicVersion.getEditDate() == null) {
 			Timestamp editDate = new Timestamp(System.currentTimeMillis());
 			topicVersion.setEditDate(editDate);
 		}
-		WikiDatabase.getQueryHandler().insertTopicVersion(topicVersion, conn);
+		this.queryHandler().insertTopicVersion(topicVersion, conn);
 	}
 
 	/**
@@ -110,17 +111,17 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void addVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		if (virtualWiki.getVirtualWikiId() < 1) {
-			int virtualWikiId = WikiDatabase.getQueryHandler().nextVirtualWikiId(conn);
+			int virtualWikiId = this.queryHandler().nextVirtualWikiId(conn);
 			virtualWiki.setVirtualWikiId(virtualWikiId);
 		}
-		WikiDatabase.getQueryHandler().insertVirtualWiki(virtualWiki, conn);
+		this.queryHandler().insertVirtualWiki(virtualWiki, conn);
 	}
 
 	/**
 	 *
 	 */
 	private void addWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
-		WikiDatabase.getQueryHandler().insertWatchlistEntry(virtualWikiId, topicName, userId, conn);
+		this.queryHandler().insertWatchlistEntry(virtualWikiId, topicName, userId, conn);
 	}
 
 	/**
@@ -128,11 +129,11 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void addWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
 		if (wikiFile.getFileId() < 1) {
-			int fileId = WikiDatabase.getQueryHandler().nextWikiFileId(conn);
+			int fileId = this.queryHandler().nextWikiFileId(conn);
 			wikiFile.setFileId(fileId);
 		}
 		int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
-		WikiDatabase.getQueryHandler().insertWikiFile(wikiFile, virtualWikiId, conn);
+		this.queryHandler().insertWikiFile(wikiFile, virtualWikiId, conn);
 	}
 
 	/**
@@ -140,14 +141,14 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void addWikiFileVersion(String topicName, WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
 		if (wikiFileVersion.getFileVersionId() < 1) {
-			int fileVersionId = WikiDatabase.getQueryHandler().nextWikiFileVersionId(conn);
+			int fileVersionId = this.queryHandler().nextWikiFileVersionId(conn);
 			wikiFileVersion.setFileVersionId(fileVersionId);
 		}
 		if (wikiFileVersion.getUploadDate() == null) {
 			Timestamp uploadDate = new Timestamp(System.currentTimeMillis());
 			wikiFileVersion.setUploadDate(uploadDate);
 		}
-		WikiDatabase.getQueryHandler().insertWikiFileVersion(wikiFileVersion, conn);
+		this.queryHandler().insertWikiFileVersion(wikiFileVersion, conn);
 	}
 
 	/**
@@ -155,10 +156,10 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	protected void addWikiUser(WikiUser user, Connection conn) throws Exception {
 		if (user.getUserId() < 1) {
-			int nextUserId = WikiDatabase.getQueryHandler().nextWikiUserId(conn);
+			int nextUserId = this.queryHandler().nextWikiUserId(conn);
 			user.setUserId(nextUserId);
 		}
-		WikiDatabase.getQueryHandler().insertWikiUser(user, conn);
+		this.queryHandler().insertWikiUser(user, conn);
 	}
 
 	/**
@@ -181,7 +182,7 @@ public class DatabaseHandler implements DataHandler {
 	 * @deprecated This method exists solely to allow upgrades to JAMWiki 0.4.0 or
 	 *  greater and will be replaced during the JAMWiki 0.6.x series.
 	 */
-	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, DatabaseHandler toHandler) throws Exception {
+	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, AnsiDatabaseHandler toHandler) throws Exception {
 		Connection conn = null;
 		try {
 			toHandler.setup(locale, user);
@@ -334,7 +335,7 @@ public class DatabaseHandler implements DataHandler {
 	 *
 	 */
 	private void deleteRecentChanges(Topic topic, Connection conn) throws Exception {
-		WikiDatabase.getQueryHandler().deleteRecentChanges(topic.getTopicId(), conn);
+		this.queryHandler().deleteRecentChanges(topic.getTopicId(), conn);
 	}
 
 	/**
@@ -365,14 +366,14 @@ public class DatabaseHandler implements DataHandler {
 	 *
 	 */
 	private void deleteTopicCategories(Topic topic, Connection conn) throws Exception {
-		WikiDatabase.getQueryHandler().deleteTopicCategories(topic.getTopicId(), conn);
+		this.queryHandler().deleteTopicCategories(topic.getTopicId(), conn);
 	}
 
 	/**
 	 *
 	 */
 	private void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
-		WikiDatabase.getQueryHandler().deleteWatchlistEntry(virtualWikiId, topicName, userId, conn);
+		this.queryHandler().deleteWatchlistEntry(virtualWikiId, topicName, userId, conn);
 	}
 
 	/**
@@ -424,7 +425,7 @@ public class DatabaseHandler implements DataHandler {
 	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
 		Collection results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getCategories(virtualWikiId, pagination);
+		WikiResultSet rs = this.queryHandler().getCategories(virtualWikiId, pagination);
 		while (rs.next()) {
 			Category category = new Category();
 			category.setName(rs.getString("category_name"));
@@ -442,7 +443,7 @@ public class DatabaseHandler implements DataHandler {
 	public Collection getAllTopicNames(String virtualWiki) throws Exception {
 		Vector all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getAllTopicNames(virtualWikiId);
+		WikiResultSet rs = this.queryHandler().getAllTopicNames(virtualWikiId);
 		while (rs.next()) {
 			all.add(rs.getString("topic_name"));
 		}
@@ -458,7 +459,7 @@ public class DatabaseHandler implements DataHandler {
 		if (wikiFile == null) {
 			throw new Exception("No topic exists for " + virtualWiki + " / " + topicName);
 		}
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getAllWikiFileVersions(wikiFile, descending);
+		WikiResultSet rs = this.queryHandler().getAllWikiFileVersions(wikiFile, descending);
 		while (rs.next()) {
 			all.add(initWikiFileVersion(rs));
 		}
@@ -470,7 +471,7 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		Vector all = new Vector();
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getRecentChanges(virtualWiki, pagination, descending);
+		WikiResultSet rs = this.queryHandler().getRecentChanges(virtualWiki, pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -485,7 +486,7 @@ public class DatabaseHandler implements DataHandler {
 		Vector all = new Vector();
 		Topic topic = this.lookupTopic(virtualWiki, topicName, true, null);
 		if (topic == null) return all;
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getRecentChanges(topic.getTopicId(), pagination, descending);
+		WikiResultSet rs = this.queryHandler().getRecentChanges(topic.getTopicId(), pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -499,7 +500,7 @@ public class DatabaseHandler implements DataHandler {
 	public Collection getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
 		Collection all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getTopicsAdmin(virtualWikiId, pagination);
+		WikiResultSet rs = this.queryHandler().getTopicsAdmin(virtualWikiId, pagination);
 		while (rs.next()) {
 			String topicName = rs.getString("topic_name");
 			all.add(topicName);
@@ -512,7 +513,7 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		Collection all = new Vector();
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getUserContributions(virtualWiki, userString, pagination, descending);
+		WikiResultSet rs = this.queryHandler().getUserContributions(virtualWiki, userString, pagination, descending);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -528,7 +529,7 @@ public class DatabaseHandler implements DataHandler {
 		Vector results = new Vector();
 		try {
 			conn = WikiDatabase.getConnection();
-			WikiResultSet rs = WikiDatabase.getQueryHandler().getVirtualWikis(conn);
+			WikiResultSet rs = this.queryHandler().getVirtualWikis(conn);
 			while (rs.next()) {
 				VirtualWiki virtualWiki = initVirtualWiki(rs);
 				results.add(virtualWiki);
@@ -550,7 +551,7 @@ public class DatabaseHandler implements DataHandler {
 	public Watchlist getWatchlist(String virtualWiki, int userId) throws Exception {
 		Collection all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getWatchlist(virtualWikiId, userId);
+		WikiResultSet rs = this.queryHandler().getWatchlist(virtualWikiId, userId);
 		while (rs.next()) {
 			String topicName = rs.getString("topic_name");
 			all.add(topicName);
@@ -565,7 +566,7 @@ public class DatabaseHandler implements DataHandler {
 	public Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
 		Collection all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().getWatchlist(virtualWikiId, userId, pagination);
+		WikiResultSet rs = this.queryHandler().getWatchlist(virtualWikiId, userId, pagination);
 		while (rs.next()) {
 			RecentChange change = initRecentChange(rs);
 			all.add(change);
@@ -740,7 +741,7 @@ public class DatabaseHandler implements DataHandler {
 	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupCategoryTopics(virtualWikiId, categoryName, topicType);
+		WikiResultSet rs = this.queryHandler().lookupCategoryTopics(virtualWikiId, categoryName, topicType);
 		while (rs.next()) {
 			Category category = new Category();
 			category.setName(categoryName);
@@ -778,7 +779,7 @@ public class DatabaseHandler implements DataHandler {
 				}
 			}
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			WikiResultSet rs = WikiDatabase.getQueryHandler().lookupTopic(virtualWikiId, topicName, caseSensitive, conn);
+			WikiResultSet rs = this.queryHandler().lookupTopic(virtualWikiId, topicName, caseSensitive, conn);
 			Topic topic = null;
 			if (rs.size() != 0) {
 				topic = initTopic(rs);
@@ -803,7 +804,7 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	public int lookupTopicCount(String virtualWiki) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupTopicCount(virtualWikiId);
+		WikiResultSet rs = this.queryHandler().lookupTopicCount(virtualWikiId);
 		return rs.getInt("topic_count");
 	}
 
@@ -813,7 +814,7 @@ public class DatabaseHandler implements DataHandler {
 	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
+		WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
 		while (rs.next()) {
 			results.add(rs.getString("topic_name"));
 		}
@@ -840,7 +841,7 @@ public class DatabaseHandler implements DataHandler {
 	 *
 	 */
 	private TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Connection conn) throws Exception {
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupTopicVersion(topicVersionId, conn);
+		WikiResultSet rs = this.queryHandler().lookupTopicVersion(topicVersionId, conn);
 		if (rs.size() == 0) return null;
 		return initTopicVersion(rs);
 	}
@@ -901,7 +902,7 @@ public class DatabaseHandler implements DataHandler {
 		Topic topic = this.lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) return null;
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiFile(virtualWikiId, topic.getTopicId());
+		WikiResultSet rs = this.queryHandler().lookupWikiFile(virtualWikiId, topic.getTopicId());
 		if (rs.size() == 0) return null;
 		return initWikiFile(rs);
 	}
@@ -914,7 +915,7 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	public int lookupWikiFileCount(String virtualWiki) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiFileCount(virtualWikiId);
+		WikiResultSet rs = this.queryHandler().lookupWikiFileCount(virtualWikiId);
 		return rs.getInt("file_count");
 	}
 
@@ -925,7 +926,7 @@ public class DatabaseHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUser(userId, conn);
+			WikiResultSet rs = this.queryHandler().lookupWikiUser(userId, conn);
 			if (rs.size() == 0) return null;
 			return initWikiUser(rs);
 		} catch (Exception e) {
@@ -943,7 +944,7 @@ public class DatabaseHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUser(login, conn);
+			WikiResultSet rs = this.queryHandler().lookupWikiUser(login, conn);
 			if (rs.size() == 0) return null;
 			int userId = rs.getInt("wiki_user_id");
 			return lookupWikiUser(userId, conn);
@@ -960,7 +961,7 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	public int lookupWikiUserCount() throws Exception {
 		// FIXME - handle LDAP
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUserCount();
+		WikiResultSet rs = this.queryHandler().lookupWikiUserCount();
 		return rs.getInt("user_count");
 	}
 
@@ -1014,11 +1015,34 @@ public class DatabaseHandler implements DataHandler {
 	/**
 	 *
 	 */
+	protected QueryHandler queryHandler() {
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2)) {
+			return new DB2QueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2_400)) {
+			return new DB2400QueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL)) {
+			return new MSSqlQueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_HSQL)) {
+			return new HSQLQueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
+			return new MySqlQueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE)) {
+			return new OracleQueryHandler();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_POSTGRES)) {
+			return new PostgresQueryHandler();
+		} else {
+			return new AnsiQueryHandler();
+		}
+	}
+
+	/**
+	 *
+	 */
 	public void reloadRecentChanges() throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection();
-			WikiDatabase.getQueryHandler().reloadRecentChanges(conn);
+			this.queryHandler().reloadRecentChanges(conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1116,14 +1140,14 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void updateTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
-		WikiDatabase.getQueryHandler().updateTopic(topic, virtualWikiId, conn);
+		this.queryHandler().updateTopic(topic, virtualWikiId, conn);
 	}
 
 	/**
 	 *
 	 */
 	private void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
-		WikiDatabase.getQueryHandler().updateVirtualWiki(virtualWiki, conn);
+		this.queryHandler().updateVirtualWiki(virtualWiki, conn);
 	}
 
 	/**
@@ -1131,14 +1155,14 @@ public class DatabaseHandler implements DataHandler {
 	 */
 	private void updateWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
-		WikiDatabase.getQueryHandler().updateWikiFile(wikiFile, virtualWikiId, conn);
+		this.queryHandler().updateWikiFile(wikiFile, virtualWikiId, conn);
 	}
 
 	/**
 	 *
 	 */
 	private void updateWikiUser(WikiUser user, Connection conn) throws Exception {
-		WikiDatabase.getQueryHandler().updateWikiUser(user, conn);
+		this.queryHandler().updateWikiUser(user, conn);
 	}
 
 	/**
