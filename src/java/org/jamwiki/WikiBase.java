@@ -50,6 +50,8 @@ public class WikiBase {
 	public static final int PERSISTENCE_INTERNAL_DB = 0;
 	/** The topics are stored in a database */
 	public static final int PERSISTENCE_EXTERNAL_DB = 1;
+	/** Ansi data handler class */
+	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
 	/** Root directory within the WAR distribution that contains the default topic pages. */

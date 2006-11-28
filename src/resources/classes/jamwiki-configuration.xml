@@ -78,36 +78,36 @@
 <data-handlers>
 	<data-handler>
 		<name>ansi</name>
-		<class>ansi</class>
+		<class>org.jamwiki.db.AnsiDataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>hsql</name>
-		<class>hsql</class>
+		<class>org.jamwiki.db.HSqlDataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>mssql</name>
-		<class>mssql</class>
+		<class>org.jamwiki.db.MSSqlDataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>mysql</name>
-		<class>mysql</class>
+		<class>org.jamwiki.db.MySqlDataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>oracle</name>
-		<class>oracle</class>
+		<class>org.jamwiki.db.OracleDataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>postgres</name>
-		<class>postgres</class>
+		<class>org.jamwiki.db.PostgresDataHandler</class>
 	</data-handler>
 	<data-handler>
 		<name>db2</name>
-		<class>db2</class>
+		<class>org.jamwiki.db.DB2DataHandler</class>
 		<state>experimental</state>
 	</data-handler>
 	<data-handler>
 		<name>db2/400</name>
-		<class>db2/400</class>
+		<class>org.jamwiki.db.DB2400DataHandler</class>
 		<state>experimental</state>
 	</data-handler>
 </data-handlers>

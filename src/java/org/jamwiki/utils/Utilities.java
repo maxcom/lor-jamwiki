@@ -217,9 +217,6 @@ public class Utilities {
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws Exception {
-		// FIXME - implement
-		return new org.jamwiki.db.AnsiDatabaseHandler();
-/*
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		logger.fine("Using data handler: " + dataHandlerClass);
 		Class clazz = Class.forName(dataHandlerClass, true, Thread.currentThread().getContextClassLoader());
@@ -227,7 +224,6 @@ public class Utilities {
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];
 		return (DataHandler)constructor.newInstance(initArgs);
-*/
 	}
 
 	/**

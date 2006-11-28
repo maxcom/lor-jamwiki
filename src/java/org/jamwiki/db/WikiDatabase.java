@@ -108,7 +108,7 @@ public class WikiDatabase {
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
 			WikiDatabase.queryHandler = new MSSqlQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_HSQL)) {
-			WikiDatabase.queryHandler = new HSQLQueryHandler();
+			WikiDatabase.queryHandler = new HSqlQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
 			WikiDatabase.queryHandler = new MySqlQueryHandler();
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {

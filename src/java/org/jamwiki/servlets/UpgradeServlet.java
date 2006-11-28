@@ -26,7 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.db.AnsiDatabaseHandler;
+import org.jamwiki.db.AnsiDataHandler;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.file.FileHandler;
@@ -114,6 +114,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.2.0"));
 			success = false;
 		} else {
+			// database initialization changed for 0.5.0
+			if (oldVersion.before(0, 5, 0)) {
+				if (!upgrade050(request, messages)) success = false;
+			}
 			// first perform database upgrades
 			if (!Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
 				try {
@@ -127,7 +131,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 						messages = DatabaseUpgrades.upgrade042(messages);
 					}
 					if (oldVersion.before(0, 5, 0)) {
-						messages = DatabaseUpgrades.upgrade050(messages);
+//						messages = DatabaseUpgrades.upgrade050(messages);
 					}
 				} catch (Exception e) {
 					// FIXME - hard coding
@@ -200,13 +204,55 @@ public class UpgradeServlet extends JAMWikiServlet {
 				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
 				Environment.saveProperties();
 				FileHandler fromHandler = new FileHandler();
-				if (WikiBase.getDataHandler() instanceof AnsiDatabaseHandler) {
-					AnsiDatabaseHandler toHandler = (AnsiDatabaseHandler)WikiBase.getDataHandler();
-					messages.addAll(AnsiDatabaseHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler));
+				if (WikiBase.getDataHandler() instanceof AnsiDataHandler) {
+					AnsiDataHandler toHandler = (AnsiDataHandler)WikiBase.getDataHandler();
+					messages.addAll(AnsiDataHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler));
 				}
 			}
 			if (Environment.getValue(Environment.PROP_PARSER_CLASS) != null && Environment.getValue(Environment.PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
 				Environment.setValue(Environment.PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
+				Environment.saveProperties();
+			}
+			return true;
+		} catch (Exception e) {
+			// FIXME - hard coding
+			String msg = "Unable to complete upgrade to new JAMWiki version.";
+			logger.severe(msg, e);
+			messages.add(msg + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private boolean upgrade050(HttpServletRequest request, Vector messages) {
+		try {
+			if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
+				// this is a problem, but it should never occur
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.AnsiDabaseHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("hsql")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.HSqlDataHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mssql")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.MSSqlDataHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.MySqlDataHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("oracle")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.OracleDataHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("postgres")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.PostgresDataHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.DB2DataHandler");
+				Environment.saveProperties();
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2/400")) {
+				Environment.setValue(Environment.PROP_DB_TYPE, "org.jamwiki.db.DB2400DataHandler");
 				Environment.saveProperties();
 			}
 			return true;

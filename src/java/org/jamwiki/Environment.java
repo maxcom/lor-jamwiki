@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Properties;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -165,7 +164,7 @@ public class Environment {
 		defaults.setProperty(PROP_CACHE_TOTAL_SIZE, "1000");
 		defaults.setProperty(PROP_DB_DRIVER, "org.postgresql.Driver");
 		defaults.setProperty(PROP_DB_PASSWORD, "");
-		defaults.setProperty(PROP_DB_TYPE, WikiDatabase.DB_TYPE_POSTGRES);
+		defaults.setProperty(PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
 		defaults.setProperty(PROP_DB_URL, "jdbc:postgresql://localhost:5432/database");
 		defaults.setProperty(PROP_DB_USERNAME, "");
 		defaults.setProperty(PROP_DBCP_MAX_ACTIVE, "10");

@@ -16,28 +16,20 @@
  */
 package org.jamwiki.db;
 
-import java.util.Properties;
-import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * HSQL-specific implementation of the QueryHandler interface.  This class implements
- * HSQL-specific methods for instances where Postgres does not support the default
- * ASCII SQL syntax.
+ *
  */
-public class HSQLQueryHandler extends AnsiQueryHandler {
+public class OracleDataHandler extends AnsiDataHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HSQLQueryHandler.class.getName());
-	private static final String SQL_PROPERTY_FILE_NAME = "sql.hsql.properties";
-	private static Properties props = null;
-	private static Properties defaults = null;
+	private static final WikiLogger logger = WikiLogger.getLogger(OracleDataHandler.class.getName());
+	private QueryHandler queryHandler = new OracleQueryHandler();
 
 	/**
 	 *
 	 */
-	protected HSQLQueryHandler() {
-		defaults = Environment.loadProperties(AnsiQueryHandler.SQL_PROPERTY_FILE_NAME);
-		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME, defaults);
-		super.init(props);
+	protected QueryHandler queryHandler() {
+		return this.queryHandler;
 	}
 }

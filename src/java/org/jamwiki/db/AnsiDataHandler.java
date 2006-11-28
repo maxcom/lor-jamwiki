@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.TreeMap;
 import java.util.Vector;
 import org.jamwiki.DataHandler;
-import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -43,7 +42,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.DiffUtil;
-import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
@@ -56,11 +54,12 @@ import org.springframework.util.StringUtils;
 /**
  *
  */
-public class AnsiDatabaseHandler implements DataHandler {
+public class AnsiDataHandler implements DataHandler {
 
-	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDatabaseHandler.CACHE_TOPICS";
-	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDatabaseHandler.CACHE_VIRTUAL_WIKI";
-	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDatabaseHandler.class.getName());
+	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
+	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI";
+	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
+	private QueryHandler queryHandler = new AnsiQueryHandler();
 
 	/**
 	 *
@@ -182,7 +181,7 @@ public class AnsiDatabaseHandler implements DataHandler {
 	 * @deprecated This method exists solely to allow upgrades to JAMWiki 0.4.0 or
 	 *  greater and will be replaced during the JAMWiki 0.6.x series.
 	 */
-	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, AnsiDatabaseHandler toHandler) throws Exception {
+	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, AnsiDataHandler toHandler) throws Exception {
 		Connection conn = null;
 		try {
 			toHandler.setup(locale, user);
@@ -1016,23 +1015,7 @@ public class AnsiDatabaseHandler implements DataHandler {
 	 *
 	 */
 	protected QueryHandler queryHandler() {
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2)) {
-			return new DB2QueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2_400)) {
-			return new DB2400QueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL)) {
-			return new MSSqlQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_HSQL)) {
-			return new HSQLQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
-			return new MySqlQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE)) {
-			return new OracleQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_POSTGRES)) {
-			return new PostgresQueryHandler();
-		} else {
-			return new AnsiQueryHandler();
-		}
+		return this.queryHandler;
 	}
 
 	/**
