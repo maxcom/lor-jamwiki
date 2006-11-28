@@ -798,8 +798,8 @@ public class DatabaseHandler {
 				// invalid namespace
 				return null;
 			}
-			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE) || namespace.equals(NamespaceHandler.NAMESPACE_USER)) {
-				// user/template namespaces are case-insensitive
+			if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE) || namespace.equals(NamespaceHandler.NAMESPACE_USER) || namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+				// user/template/category namespaces are case-insensitive
 				caseSensitive = false;
 			}
 		}

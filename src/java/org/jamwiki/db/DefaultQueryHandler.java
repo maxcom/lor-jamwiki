@@ -622,6 +622,8 @@ public class DefaultQueryHandler implements QueryHandler {
 	 */
 	public WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName, int topicType) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_CATEGORY_TOPICS);
+		// category name must be lowercase since search is case-insensitive
+		categoryName = categoryName.toLowerCase();
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, categoryName);
 		stmt.setInt(3, topicType);

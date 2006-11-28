@@ -14,6 +14,8 @@
   than four headings.
 * BUG: Do not allow users without proper permissions to move read-only or
   admin-only topics.
+* FEATURE: Handle category names case-insensitive, thus "Category:Test" and
+  "Category:test" are treated as the same category.
 * FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
 * FEATURE: Updated Chinese translations from Feilong Huang (hfl).
 * FEATURE: Updated Polish translations from Robert Matyja (dlpa).
