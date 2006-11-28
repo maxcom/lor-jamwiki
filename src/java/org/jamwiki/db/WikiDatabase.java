@@ -59,7 +59,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static Connection getConnection() throws Exception {
+	private static Connection getConnection() throws Exception {
 		// add a connection to the conn array.  BE SURE TO RELEASE IT!
 		Connection conn = DatabaseConnection.getConnection();
 		conn.setAutoCommit(false);
@@ -147,6 +147,7 @@ public class WikiDatabase {
 	 */
 	protected static void releaseConnection(Connection conn, Object transactionObject) throws Exception {
 		if (transactionObject != null && transactionObject instanceof Connection) {
+			// transaction objects will be released elsewhere
 			return;
 		}
 		WikiDatabase.releaseConnection(conn);
@@ -155,7 +156,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void releaseConnection(Connection conn) throws Exception {
+	private static void releaseConnection(Connection conn) throws Exception {
 		if (conn == null) return;
 		try {
 			conn.commit();
@@ -260,7 +261,7 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupSpecialPages(Locale locale, WikiUser user, Connection conn) throws Exception {
-		Collection all = WikiBase.getDataHandler().getVirtualWikiList();
+		Collection all = WikiBase.getDataHandler().getVirtualWikiList(conn);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			// create the default topics

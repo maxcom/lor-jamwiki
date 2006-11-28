@@ -76,7 +76,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		String topicName = Utilities.getTopicFromRequest(request);
 		int topicVersionId = Integer.parseInt(request.getParameter("topicVersionId"));
-		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicName, topicVersionId);
+		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicName, topicVersionId, null);
 		if (topicVersion == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}

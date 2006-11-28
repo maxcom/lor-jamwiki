@@ -98,7 +98,7 @@ public interface DataHandler {
 	/**
 	 * Return a collection of all VirtualWiki objects that exist for the Wiki.
 	 */
-	public Collection getVirtualWikiList() throws Exception;
+	public Collection getVirtualWikiList(Object transactionObject) throws Exception;
 
 	/**
 	 * Retrieve a watchlist containing a Collection of topic ids and topic
@@ -140,7 +140,7 @@ public interface DataHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId) throws Exception;
+	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Object transactionObject) throws Exception;
 
 	/**
 	 *
@@ -188,12 +188,12 @@ public interface DataHandler {
 	/**
 	 *
 	 */
-	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws Exception;
+	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception;
 
 	/**
 	 *
 	 */
-	public void reloadRecentChanges() throws Exception;
+	public void reloadRecentChanges(Object transactionObject) throws Exception;
 
 	/**
 	 *
@@ -203,17 +203,17 @@ public interface DataHandler {
 	/**
 	 *
 	 */
-	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki) throws Exception;
+	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception;
 
 	/**
 	 *
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception;
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
 	 *
 	 */
-	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress) throws Exception;
+	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception;
 
 	/**
 	 *

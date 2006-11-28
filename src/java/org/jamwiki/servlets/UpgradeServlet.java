@@ -206,7 +206,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				FileHandler fromHandler = new FileHandler();
 				if (WikiBase.getDataHandler() instanceof AnsiDataHandler) {
 					AnsiDataHandler toHandler = (AnsiDataHandler)WikiBase.getDataHandler();
-					messages.addAll(AnsiDataHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler));
+					messages.addAll(AnsiDataHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler, null));
 				}
 			}
 			if (Environment.getValue(Environment.PROP_PARSER_CLASS) != null && Environment.getValue(Environment.PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
@@ -270,10 +270,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
-			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
+			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
 			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
 				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, Utilities.currentUser(request), request.getRemoteAddr());
+				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, Utilities.currentUser(request), request.getRemoteAddr(), null);
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
 			return true;

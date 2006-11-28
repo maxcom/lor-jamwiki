@@ -61,7 +61,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 		try {
 			FileHandler fromHandler = new FileHandler();
 			AnsiDataHandler toHandler = new AnsiDataHandler();
-			Vector messages = AnsiDataHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler);
+			Vector messages = AnsiDataHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler, null);
 			next.addObject("message", new WikiMessage("convert.database.success"));
 			next.addObject("messages", messages);
 		} catch (Exception e) {
