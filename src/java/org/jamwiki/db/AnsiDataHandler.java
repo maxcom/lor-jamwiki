@@ -403,22 +403,6 @@ public class AnsiDataHandler implements DataHandler {
 	}
 
 	/**
-	 * See if a topic exists and if it has not been deleted.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic being checked.
-	 * @param topicName The name of the topic that is being checked.
-	 * @return <code>true</code> if the topic exists.
-	 * @throws Exception Thrown if any error occurs during lookup.
-	 */
-	public boolean exists(String virtualWiki, String topicName) throws Exception {
-		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
-			return false;
-		}
-		Topic topic = this.lookupTopic(virtualWiki, topicName, false, null);
-		return (topic != null && topic.getDeleteDate() == null);
-	}
-
-	/**
 	 *
 	 */
 	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
@@ -756,6 +740,9 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception {
+		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
+			return null;
+		}
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
@@ -861,7 +848,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public int lookupVirtualWikiId(String virtualWikiName) throws Exception {
+	private int lookupVirtualWikiId(String virtualWikiName) throws Exception {
 		VirtualWiki virtualWiki = this.lookupVirtualWiki(virtualWikiName);
 		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, virtualWiki);
 		return (virtualWiki != null) ? virtualWiki.getVirtualWikiId() : -1;
@@ -870,7 +857,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public String lookupVirtualWikiName(int virtualWikiId) throws Exception {
+	private String lookupVirtualWikiName(int virtualWikiId) throws Exception {
 		VirtualWiki virtualWiki = (VirtualWiki)WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiId);
 		if (virtualWiki != null) {
 			return virtualWiki.getName();

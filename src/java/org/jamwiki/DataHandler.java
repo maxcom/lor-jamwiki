@@ -51,16 +51,6 @@ public interface DataHandler {
 	public Collection diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception;
 
 	/**
-	 * See if a topic exists and if it has not been deleted.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic being checked.
-	 * @param topicName The name of the topic that is being checked.
-	 * @return <code>true</code> if the topic exists.
-	 * @throws Exception Thrown if any error occurs during lookup.
-	 */
-	public boolean exists(String virtualWiki, String topicName) throws Exception;
-
-	/**
 	 *
 	 */
 	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
@@ -150,16 +140,6 @@ public interface DataHandler {
 	/**
 	 *
 	 */
-	public int lookupVirtualWikiId(String virtualWikiName) throws Exception;
-
-	/**
-	 *
-	 */
-	public String lookupVirtualWikiName(int virtualWikiId) throws Exception;
-
-	/**
-	 *
-	 */
 	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception;
 
 	/**
@@ -203,6 +183,7 @@ public interface DataHandler {
 	/**
 	 *
 	 */
+	// FIXME - move this to another location
 	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception;
 
 	/**
@@ -213,6 +194,7 @@ public interface DataHandler {
 	/**
 	 *
 	 */
+	// FIXME - move this to another location
 	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception;
 
 	/**
@@ -223,6 +205,7 @@ public interface DataHandler {
 	/**
 	 *
 	 */
+	// FIXME - should not need ParserDocument here
 	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**

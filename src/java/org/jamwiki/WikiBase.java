@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Locale;
+import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
@@ -116,6 +117,9 @@ public class WikiBase {
 	 * @throws Exception Thrown if any error occurs during lookup.
 	 */
 	public static boolean exists(String virtualWiki, String topicName) throws Exception {
+		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
+			return false;
+		}
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
 			return true;
 		}
@@ -126,7 +130,8 @@ public class WikiBase {
 			// not initialized yet
 			return false;
 		}
-		return WikiBase.dataHandler.exists(virtualWiki, topicName);
+		Topic topic = WikiBase.dataHandler.lookupTopic(virtualWiki, topicName, false, null);
+		return (topic != null);
 	}
 
 	/**

@@ -130,7 +130,8 @@ public class MoveServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		String commentsPage = Utilities.extractCommentsLink(topicName);
-		if (commentsPage != null && !topicName.equals(commentsPage) && WikiBase.getDataHandler().exists(virtualWiki, commentsPage)) {
+		Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, false, null);
+		if (commentsTopic != null) {
 			// add option to also move comments page
 			next.addObject("moveCommentsPage", commentsPage);
 		}
