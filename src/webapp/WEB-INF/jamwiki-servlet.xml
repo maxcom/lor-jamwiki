@@ -14,6 +14,7 @@
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Edit">Edit</prop>
 				<prop key="/**/Special:Export">Export</prop>
+				<prop key="/**/Special:Filelist">Files</prop>
 				<prop key="/**/Special:History">History</prop>
 				<prop key="/**/Special:Import">Import</prop>
 				<prop key="/**/Special:Imagelist">Images</prop>
@@ -45,6 +46,7 @@
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
 	<bean id="Export" class="org.jamwiki.servlets.ExportServlet" />
+	<bean id="Files" class="org.jamwiki.servlets.FilesServlet" />
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
 	<bean id="Images" class="org.jamwiki.servlets.ImagesServlet" />
 	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />

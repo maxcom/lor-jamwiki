@@ -8,6 +8,7 @@
 * FEATURE: Add option to use WYSIWYG edit buttons, provided by Axel Kramer
   (axelclk).
 * FEATURE: Add Special:Imagelist page to display a list of all images.
+* FEATURE: Add Special:Filelist page to display a list of all non-image files.
 * BUG: Fixes for MS SQL issues, provided by Scott Croco (scroco).
 * BUG: "Login already exists" error when trying to update user account fixed.
 * BUG: Fix upload error with IE that could cause file upload to incorrectly

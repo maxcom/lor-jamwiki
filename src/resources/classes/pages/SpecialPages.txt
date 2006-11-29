@@ -3,7 +3,8 @@
 
 * [[Special:TopicsAdmin|Admin-only topics]]
 * [[Special:Categories|All categories]]
-* [[Special:Imagelist|All files]]
+* [[Special:Filelist|All files]]
+* [[Special:Imagelist|All images]]
 * [[Special:Allpages|All topics]]
 * [[Special:RecentChanges|Recent changes]]
 * [[Special:Search|Search]]
