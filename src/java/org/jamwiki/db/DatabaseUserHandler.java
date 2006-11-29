@@ -38,7 +38,7 @@ public class DatabaseUserHandler implements UserHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			WikiDatabase.getQueryHandler().insertWikiUserInfo(userInfo, conn);
+			WikiDatabase.queryHandler().insertWikiUserInfo(userInfo, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -82,7 +82,7 @@ public class DatabaseUserHandler implements UserHandler {
 	 *
 	 */
 	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
-		WikiResultSet rs = WikiDatabase.getQueryHandler().lookupWikiUserInfo(login);
+		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUserInfo(login);
 		if (rs.size() == 0) return null;
 		return initWikiUserInfo(rs);
 	}
@@ -94,7 +94,7 @@ public class DatabaseUserHandler implements UserHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			WikiDatabase.getQueryHandler().updateWikiUserInfo(userInfo, conn);
+			WikiDatabase.queryHandler().updateWikiUserInfo(userInfo, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

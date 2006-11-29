@@ -29,6 +29,7 @@ import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDriver;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Encryption;
 import org.springframework.util.StringUtils;
@@ -291,7 +292,7 @@ public class DatabaseConnection {
 		Properties properties = new Properties();
 		properties.setProperty("user", userName);
 		properties.setProperty("password", password);
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE)) {
+		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
 			// handle clobs as strings, Oracle 10g and higher drivers (ojdbc14.jar)
 			properties.setProperty("SetBigStringTryClob", "true");
 		}

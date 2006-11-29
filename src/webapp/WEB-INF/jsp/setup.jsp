@@ -18,8 +18,7 @@
 --%>
 <%@ page import="
         org.jamwiki.Environment,
-        org.jamwiki.WikiBase,
-        org.jamwiki.db.WikiDatabase
+        org.jamwiki.WikiBase
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
@@ -113,14 +112,10 @@ function onPersistenceType() {
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label>:</td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
-		<option value="<%= WikiDatabase.DB_TYPE_ANSI %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ANSI) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_ANSI %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_HSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_HSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_HSQL %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_MSSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_MSSQL %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_MYSQL %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_MYSQL %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_ORACLE %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_ORACLE) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_ORACLE %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_POSTGRES %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_POSTGRES) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_POSTGRES %></option>
-		<option value="<%= WikiDatabase.DB_TYPE_DB2 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_DB2 %> (<f:message key="common.caption.experimental" />)</option>
-		<option value="<%= WikiDatabase.DB_TYPE_DB2_400 %>"<%= Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_DB2_400) ? " selected" : "" %>><%= WikiDatabase.DB_TYPE_DB2_400 %> (<f:message key="common.caption.experimental" />)</option>
+		<c:set var="selectedDataHandler"><%= Environment.getValue(Environment.PROP_DB_TYPE) %></c:set>
+		<c:forEach items="${dataHandlers}" var="dataHandler">
+		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><f:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		</c:forEach>
 		</select>
 	</td>
 </tr>

@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Vector;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
@@ -34,6 +35,9 @@ public class DatabaseUpgrades {
 
 	private static WikiLogger logger = WikiLogger.getLogger(DatabaseUpgrades.class.getName());
 
+	/**
+	 *
+	 */
 	public static WikiUser login(String login, String password, boolean encrypted) throws Exception {
 		// prior to JAMWiki 0.5.0 the remember_key column did not exist.  once
 		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
@@ -105,22 +109,22 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added redirect_to column to table jam_topic");
 			// convert topic_deleted (int) to delete_date (timestamp)
-			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_topic add column delete_date DATETIME ";
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL)) {
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MSSQL)) {
 				sql = "alter table jam_topic add column delete_date DATETIME ";
 			} else {
 				sql = "alter table jam_topic add column delete_date TIMESTAMP ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added delete_date column to table jam_topic");
-			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
+			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_topic drop constraint jam_unique_topic_name_vwiki ";
 			} else {
 				sql = "alter table jam_topic drop index jam_unique_topic_name_vwiki ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
-			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
+			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_topic add constraint jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id, delete_date) ";
 			} else {
 				sql = "create unique index jam_unique_topic_name_vwiki on jam_topic(topic_name, virtual_wiki_id, delete_date) ";
@@ -136,9 +140,9 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped column topic_deleted from table jam_topic");
 			// convert file_deleted (int) to file_deleted (timestamp)
-			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_file add column delete_date DATETIME ";
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MSSQL)) {
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MSSQL)) {
 				sql = "alter table jam_file add column delete_date DATETIME ";
 			} else {
 				sql = "alter table jam_file add column delete_date TIMESTAMP ";
@@ -154,7 +158,7 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped column file_deleted from table jam_file");
 			// make user login constraint "lower(login)"
-			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiDatabase.DB_TYPE_MYSQL)) {
+			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_wiki_user drop constraint jam_unique_wiki_user_login ";
 			} else {
 				sql = "alter table jam_wiki_user drop index jam_unique_wiki_user_login ";

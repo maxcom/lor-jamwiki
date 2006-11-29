@@ -17,11 +17,13 @@
 package org.jamwiki.servlets;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
@@ -57,7 +59,7 @@ public class SetupServlet extends JAMWikiServlet {
 		if (function == null) function = "";
 		try {
 			if (!StringUtils.hasText(function)) {
-				setup(request, next, pageInfo);
+				view(request, next, pageInfo);
 			} else if (initialize(request, next, pageInfo)) {
 				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 			}
@@ -76,9 +78,11 @@ public class SetupServlet extends JAMWikiServlet {
 		if (!(e instanceof WikiException)) {
 			logger.severe("Setup error", e);
 		}
-		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
-		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		try {
+			this.view(request, next, pageInfo);
+		} catch (Exception ex) {
+			logger.severe("Unable to set up page view object for setup.jsp", ex);
+		}
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
 			next.addObject("errorMessage", we.getWikiMessage());
@@ -104,9 +108,7 @@ public class SetupServlet extends JAMWikiServlet {
 		setAdminUser(request, user);
 		Vector errors = validate(request, user);
 		if (errors.size() > 0) {
-			pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
-			pageInfo.setSpecial(true);
-			pageInfo.setPageTitle(new WikiMessage("setup.title"));
+			this.view(request, next, pageInfo);
 			next.addObject("errors", errors);
 			next.addObject("login", user.getLogin());
 			next.addObject("newPassword", request.getParameter("newPassword"));
@@ -181,10 +183,12 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void setup(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		Collection dataHandlers = WikiConfiguration.getDataHandlers();
+		next.addObject("dataHandlers", dataHandlers);
 	}
 
 	/**

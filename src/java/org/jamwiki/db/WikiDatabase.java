@@ -39,18 +39,9 @@ import org.springframework.util.StringUtils;
  */
 public class WikiDatabase {
 
-	public static final String DB_TYPE_ANSI = "ansi";
-	public static final String DB_TYPE_DB2 = "db2";
-	public static final String DB_TYPE_DB2_400 = "db2/400";
-	public static final String DB_TYPE_HSQL = "hsql";
-	public static final String DB_TYPE_MSSQL = "mssql";
-	public static final String DB_TYPE_MYSQL = "mysql";
-	public static final String DB_TYPE_ORACLE = "oracle";
-	public static final String DB_TYPE_POSTGRES = "postgres";
 	private static String CONNECTION_VALIDATION_QUERY = null;
 	private static String EXISTENCE_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiDatabase.class.getName());
-	private static QueryHandler queryHandler = null;
 
 	static {
 		WikiDatabase.initialize();
@@ -93,36 +84,16 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static QueryHandler getQueryHandler() {
-		return WikiDatabase.queryHandler;
-	}
-
-	/**
-	 *
-	 */
 	protected static void initialize() {
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2)) {
-			WikiDatabase.queryHandler = new DB2QueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_DB2_400)) {
-			WikiDatabase.queryHandler = new DB2400QueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MSSQL)) {
-			WikiDatabase.queryHandler = new MSSqlQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_HSQL)) {
-			WikiDatabase.queryHandler = new HSqlQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_MYSQL)) {
-			WikiDatabase.queryHandler = new MySqlQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_ORACLE)) {
-			WikiDatabase.queryHandler = new OracleQueryHandler();
-		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(DB_TYPE_POSTGRES)) {
-			WikiDatabase.queryHandler = new PostgresQueryHandler();
-		} else {
-			WikiDatabase.queryHandler = new AnsiQueryHandler();
+		try {
+			WikiDatabase.CONNECTION_VALIDATION_QUERY = WikiDatabase.queryHandler().connectionValidationQuery();
+			WikiDatabase.EXISTENCE_VALIDATION_QUERY = WikiDatabase.queryHandler().existenceValidationQuery();
+			// initialize connection pool in its own try-catch to avoid an error
+			// causing property values not to be saved.
+			DatabaseConnection.setPoolInitialized(false);
+		} catch (Exception e) {
+			logger.severe("Unable to initialize database", e);
 		}
-		WikiDatabase.CONNECTION_VALIDATION_QUERY = WikiDatabase.queryHandler.connectionValidationQuery();
-		WikiDatabase.EXISTENCE_VALIDATION_QUERY = WikiDatabase.queryHandler.existenceValidationQuery();
-		// initialize connection pool in its own try-catch to avoid an error
-		// causing property values not to be saved.
-		DatabaseConnection.setPoolInitialized(false);
 	}
 
 	/**
@@ -132,14 +103,26 @@ public class WikiDatabase {
 	 */
 	protected static void purgeData(Connection conn) throws Exception {
 		// BOOM!  Everything gone...
-		WikiDatabase.queryHandler.dropTables(conn);
+		WikiDatabase.queryHandler().dropTables(conn);
 		try {
 			// re-create empty tables
-			WikiDatabase.queryHandler.createTables(conn);
+			WikiDatabase.queryHandler().createTables(conn);
 		} catch (Exception e) {
 			// creation failure, don't leave tables half-committed
-			WikiDatabase.queryHandler.dropTables(conn);
+			WikiDatabase.queryHandler().dropTables(conn);
 		}
+	}
+
+	/**
+	 *
+	 */
+	protected static QueryHandler queryHandler() throws Exception {
+		// FIXME - this is ugly
+		if (WikiBase.getDataHandler() instanceof AnsiDataHandler) {
+			AnsiDataHandler dataHandler = (AnsiDataHandler)WikiBase.getDataHandler();
+			return dataHandler.queryHandler();
+		}
+		throw new Exception("Unable to determine query handler");
 	}
 
 	/**
@@ -174,11 +157,11 @@ public class WikiDatabase {
 			try {
 				conn = WikiDatabase.getConnection();
 				// set up tables
-				WikiDatabase.queryHandler.createTables(conn);
+				WikiDatabase.queryHandler().createTables(conn);
 			} catch (Exception e) {
 				logger.severe("Unable to set up database tables", e);
 				// clean up anything that might have been created
-				WikiDatabase.queryHandler.dropTables(conn);
+				WikiDatabase.queryHandler().dropTables(conn);
 				throw e;
 			}
 			try {
@@ -220,7 +203,7 @@ public class WikiDatabase {
 	public static void setupDefaultDatabase(Properties props) {
 		props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
 		props.setProperty(Environment.PROP_DB_DRIVER, "org.hsqldb.jdbcDriver");
-		props.setProperty(Environment.PROP_DB_TYPE, WikiDatabase.DB_TYPE_HSQL);
+		props.setProperty(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_HSQL);
 		props.setProperty(Environment.PROP_DB_USERNAME, "sa");
 		props.setProperty(Environment.PROP_DB_PASSWORD, "");
 		File file = new File(props.getProperty(Environment.PROP_BASE_FILE_DIR), "database");
