@@ -22,6 +22,10 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${!empty error}">
+<p class="red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></p>
+</c:if>
+
 <form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">
 <table border="0">
 <tr>

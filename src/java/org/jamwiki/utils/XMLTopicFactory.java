@@ -35,46 +35,45 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XMLTopicFactory extends DefaultHandler {
 
+	/** Amount to indent */
+	private static final String XML_INDENT = "    ";
+
 	private WikiUser user;
 	private String authorIpAddress;
-	private String indentString = "    "; // Amount to indent
 	private int indentLevel = 0;
 	String virtualWiki = "en";
-	Hashtable htCat = new Hashtable();
-	Hashtable htNamespace = new Hashtable();
+	Hashtable namespaces = new Hashtable();
 	String ns14 = "Category";
 	String ns6 = "Image";
 	Integer nsKey = null;
 	String nsVal = null;
 	String lastStr = null;
-	String sPageName = null;
-	String sPageText = null;
-	private boolean bInText = false;
-	private boolean bFirstPartOfText = false;
+	String pageName = null;
+	String pageText = null;
+	private String processedTopicName = null;
+	private boolean inText = false;
+	private boolean firstPartOfText = false;
 	private static String lineEnd =  System.getProperty("line.separator");
 	private static final WikiLogger logger = WikiLogger.getLogger(XMLTopicFactory.class.getName());
 
 	/**
 	 *
 	 */
-	public XMLTopicFactory() {
+	public XMLTopicFactory(String virtualWiki, WikiUser user, String authorIpAddress) {
+		this.virtualWiki = virtualWiki;
+		this.authorIpAddress = authorIpAddress;
+		this.user = user;
 	}
 
 	/**
 	 *
 	 */
-	public void importWikiXml(File file, String virtualWiki, WikiUser user, String authorIpAddress) throws Exception{
-
-		this.virtualWiki = virtualWiki;
-		this.authorIpAddress = authorIpAddress;
-		this.user = user;
+	public String importWikiXml(File file) throws Exception{
 		//read ini params from file
 		// TODO read all params from JAMWiki properties
 		//importProps = Environment.loadProperties(PROPERTY_FILE_NAME);
-
 		//For big file parsing
 		System.setProperty("entityExpansionLimit", "1000000");
-
 		// Use an instance of ourselves as the SAX event handler
 		// DefaultHandler handler = new XMLPageFactory();
 		// Use the default (non-validating) parser
@@ -84,9 +83,10 @@ public class XMLTopicFactory extends DefaultHandler {
 			SAXParser saxParser = factory.newSAXParser();
 			saxParser.parse(file, this);
 		} catch (Throwable t) {
-			logger.severe("Error by impoting "+((XMLTopicFactory)this).sPageName, t);
-			throw new Exception("Error by impot: "+t.getMessage(), t);
+			logger.severe("Error by importing "+((XMLTopicFactory)this).pageName, t);
+			throw new Exception("Error by import: "+t.getMessage(), t);
 		}
+		return this.processedTopicName;
 	}
 
 	//===========================================================
@@ -108,7 +108,8 @@ public class XMLTopicFactory extends DefaultHandler {
 	 *
 	 */
 	public void endDocument() throws SAXException {
-		nl(); emit("END DOCUMENT");
+		nl();
+		emit("END DOCUMENT");
 		nl();
 	}
 
@@ -120,7 +121,8 @@ public class XMLTopicFactory extends DefaultHandler {
 	 */
 	public void startElement(String namespaceURI, String lName, String qName, Attributes attrs) throws SAXException {
 		indentLevel++;
-		nl(); emit("ELEMENT: ");
+		nl();
+		emit("ELEMENT: ");
 		String eName = lName; // element name
 		if ("".equals(eName)) eName = qName; // namespaceAware = false
 		emit("<"+eName);
@@ -142,16 +144,16 @@ public class XMLTopicFactory extends DefaultHandler {
 			nsKey = new Integer(attrs.getValue("key"));
 		}
 		if ("page".equals(eName)) {
-			sPageName = "";
-			sPageText = "";
+			pageName = "";
+			pageText = "";
 		}
 		if ("title".equals(qName)) {
-			bInText = true;
-			bFirstPartOfText = true;
+			inText = true;
+			firstPartOfText = true;
 		}
 		if ("text".equals(qName)) {
-			bInText = true;
-			bFirstPartOfText = true;
+			inText = true;
+			firstPartOfText = true;
 		}
 	}
 
@@ -166,7 +168,7 @@ public class XMLTopicFactory extends DefaultHandler {
 		emit("END_ELM: ");
 		emit("</"+sName+">");
 		if ("namespace".equals(qName)) { // mapping of namespaces from imported file
-			htNamespace.put(lastStr.trim(), nsKey);
+			namespaces.put(lastStr.trim(), nsKey);
 			//Prepare locale namespaces
 			//WikiArticle.addNamespace(nsKey.intValue(), lastStr.trim());
 			if (nsKey.intValue() == 14) {
@@ -177,44 +179,44 @@ public class XMLTopicFactory extends DefaultHandler {
 			}
 		}
 		if ("title".equals(qName)) {
-			bInText = false;
-			bFirstPartOfText = false;
-			sPageName = lastStr.trim();
+			inText = false;
+			firstPartOfText = false;
+			pageName = lastStr.trim();
 		}
 		if ("text".equals(qName)) {
-			bInText = false;
-			bFirstPartOfText = false;
-			sPageText = lastStr.trim();
+			inText = false;
+			firstPartOfText = false;
+			pageText = lastStr.trim();
 		}
 		if ("page".equals(qName)) {
 			//Create Topic
 			String sNamespace = "";
 			int namespace = 0;
 			// get wiki namespace
-			int pos = sPageName.indexOf(":");
+			int pos = pageName.indexOf(":");
 			if (pos > -1) {
-				sNamespace = sPageName.substring(0, pos);
-				if (htNamespace.containsKey(sNamespace)) {
-					namespace = ((Integer)htNamespace.get(sNamespace)).intValue();
+				sNamespace = pageName.substring(0, pos);
+				if (namespaces.containsKey(sNamespace)) {
+					namespace = ((Integer)namespaces.get(sNamespace)).intValue();
 				} else { // unknown namespace
 					namespace = -1;
 				}
 			} else { // main namespace
 				namespace = 0;
 			}
-			// preprocess text of article to fit JAMWiki
-			sPageText = preprocessText(sPageText);
-			Topic article = new Topic();
-			article.setName(convertArticleNameFromWikipediaToJAMWiki(sPageName));
-			article.setVirtualWiki(virtualWiki);
-			article.setTopicContent(sPageText);
-			TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", sPageText);
+			// preprocess text of topic to fit JAMWiki
+			pageText = preprocessText(pageText);
+			Topic topic = new Topic();
+			topic.setName(convertArticleNameFromWikipediaToJAMWiki(pageName));
+			topic.setVirtualWiki(virtualWiki);
+			topic.setTopicContent(pageText);
+			TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", pageText);
 			// manage mapping bitween MediaWiki and JAMWiki namespaces
-			article.setTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
-			// Store article in database
+			topic.setTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
+			// Store topic in database
 			try {
-				//TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("editComment"), contents);
-				WikiBase.getDataHandler().writeTopic(article, topicVersion, Utilities.parserDocument(sPageText, virtualWiki, sPageName), true, null);
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(pageText, virtualWiki, pageName), true, null);
+				this.processedTopicName = topic.getName();
 			} catch (Exception e) {
 				throw new SAXException(e);
 			}
@@ -229,9 +231,9 @@ public class XMLTopicFactory extends DefaultHandler {
 		nl(); emit("CHARS:   ");
 		String s = new String(buf, offset, len);
 		if (!s.trim().equals("")) emit(s);
-		if (bInText) {
-			if (bFirstPartOfText) {
-				bFirstPartOfText = false;
+		if (inText) {
+			if (firstPartOfText) {
+				firstPartOfText = false;
 				lastStr = s;
 			} else {
 				lastStr += s;
@@ -253,7 +255,7 @@ public class XMLTopicFactory extends DefaultHandler {
 	 */
 	private void nl() throws SAXException {
 		logger.fine(lineEnd);
-		for (int i=0; i < indentLevel; i++) logger.fine(indentString);
+		for (int i=0; i < indentLevel; i++) logger.fine(XML_INDENT);
 	}
 
 	/**
@@ -302,13 +304,13 @@ public class XMLTopicFactory extends DefaultHandler {
 		String ret = fullName;
 		String sNamespace = "";
 		String sJAMNamespace = "";
-		String sTitle = sPageName;
-		int pos = sPageName.indexOf(":");
+		String sTitle = pageName;
+		int pos = pageName.indexOf(":");
 		if (pos > -1) {
-			sNamespace = sPageName.substring(0, pos);
-			if (htNamespace.containsKey(sNamespace)) {
-				int namespace = ((Integer)htNamespace.get(sNamespace)).intValue();
-				sTitle = sPageName.substring(pos+1);
+			sNamespace = pageName.substring(0, pos);
+			if (namespaces.containsKey(sNamespace)) {
+				int namespace = ((Integer)namespaces.get(sNamespace)).intValue();
+				sTitle = pageName.substring(pos+1);
 				sJAMNamespace = getJAMWikiNamespaceById(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 				if (sJAMNamespace.length() > 0) {
 					ret = sJAMNamespace + ":" + sTitle;
@@ -316,16 +318,16 @@ public class XMLTopicFactory extends DefaultHandler {
 					ret = sNamespace + ":" + sTitle;
 				}
 			} else { //namespace not found
-				ret = sPageName;
+				ret = pageName;
 			}
 		} else { //main namespace
-			ret = sPageName;
+			ret = pageName;
 		}
 		return ret;
 	}
 
 	/**
-	 * preprocess the text of article
+	 * preprocess the text of topic
 	 * convert all namespaces names from MediaWiki to JAMWiki local representation
 	 * and so on...
 	 */

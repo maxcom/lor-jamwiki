@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -28,6 +29,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLTopicFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -49,7 +51,7 @@ public class ImportServlet extends JAMWikiServlet {
 		if (contentType.indexOf("multipart") != -1) {
 			importFile(request, next, pageInfo);
 		} else {
-			importView(request, next, pageInfo);
+			view(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -61,24 +63,30 @@ public class ImportServlet extends JAMWikiServlet {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Iterator iterator = ServletUtil.processMultipartRequest(request);
 		WikiUser user = Utilities.currentUser(request);
-		XMLTopicFactory importer = new XMLTopicFactory();
+		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, request.getRemoteAddr());
+		String topicName = null;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();
 			if (item.isFormField()) {
 				continue;
 			}
 			File xmlFile = saveFileItem(item);
-			importer.importWikiXml(xmlFile, virtualWiki, user, request.getRemoteAddr());
+			// FIXME - breaks if more than one topic imported
+			topicName = importer.importWikiXml(xmlFile);
 			xmlFile.delete();
 		}
-		// FIXME - redirect where?
-		importView(request, next, pageInfo);
+		if (!StringUtils.hasText(topicName)) {
+			next.addObject("error", new WikiMessage("import.caption.failure"));
+			view(request, next, pageInfo);
+		} else {
+			ServletUtil.redirect(next, virtualWiki, topicName);
+		}
 	}
 
 	/**
 	 *
 	 */
-	private void importView(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setAction(WikiPageInfo.ACTION_IMPORT);
 		pageInfo.setPageTitle(new WikiMessage("import.title"));
 		pageInfo.setSpecial(true);
