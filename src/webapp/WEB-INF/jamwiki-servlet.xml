@@ -16,6 +16,7 @@
 				<prop key="/**/Special:Export">Export</prop>
 				<prop key="/**/Special:History">History</prop>
 				<prop key="/**/Special:Import">Import</prop>
+				<prop key="/**/Special:Imagelist">Images</prop>
 				<prop key="/**/Special:LinkTo">LinkTo</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
@@ -45,6 +46,7 @@
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
 	<bean id="Export" class="org.jamwiki.servlets.ExportServlet" />
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
+	<bean id="Images" class="org.jamwiki.servlets.ImagesServlet" />
 	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
 	<bean id="LinkTo" class="org.jamwiki.servlets.LinkToServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />

@@ -2,8 +2,9 @@
 ===Special pages for all users===
 
 * [[Special:TopicsAdmin|Admin-only topics]]
-* [[Special:Allpages|All pages]]
-* [[Special:Categories|Categories]]
+* [[Special:Categories|All categories]]
+* [[Special:Imagelist|All files]]
+* [[Special:Allpages|All topics]]
 * [[Special:RecentChanges|Recent changes]]
 * [[Special:Search|Search]]
 * [[Special:Upload|Upload]]

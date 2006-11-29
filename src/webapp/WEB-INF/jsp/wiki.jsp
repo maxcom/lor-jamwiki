@@ -89,6 +89,9 @@
 	<c:when test="${pageInfo.actionHistory}">
 		<jsp:include page="history.jsp" flush="true" />
 	</c:when>
+	<c:when test="${pageInfo.actionImages}">
+		<jsp:include page="images.jsp" flush="true" />
+	</c:when>
 	<c:when test="${pageInfo.actionImport}">
 		<jsp:include page="import.jsp" flush="true" />
 	</c:when>

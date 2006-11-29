@@ -51,20 +51,21 @@ public class WikiPageInfo {
 	public static final int ACTION_ERROR = 12;
 	public static final int ACTION_EXPORT = 13;
 	public static final int ACTION_HISTORY = 14;
-	public static final int ACTION_IMPORT = 15;
-	public static final int ACTION_LINK_TO = 16;
-	public static final int ACTION_LOGIN = 17;
-	public static final int ACTION_MOVE = 18;
-	public static final int ACTION_RECENT_CHANGES = 19;
-	public static final int ACTION_REGISTER = 20;
-	public static final int ACTION_SEARCH = 21;
-	public static final int ACTION_SEARCH_RESULTS = 22;
-	public static final int ACTION_SETUP = 23;
-	public static final int ACTION_SPECIAL_PAGES = 24;
-	public static final int ACTION_TOPICS_ADMIN = 25;
-	public static final int ACTION_UPGRADE = 26;
-	public static final int ACTION_UPLOAD = 27;
-	public static final int ACTION_WATCHLIST = 28;
+	public static final int ACTION_IMAGES = 15;
+	public static final int ACTION_IMPORT = 16;
+	public static final int ACTION_LINK_TO = 17;
+	public static final int ACTION_LOGIN = 18;
+	public static final int ACTION_MOVE = 19;
+	public static final int ACTION_RECENT_CHANGES = 20;
+	public static final int ACTION_REGISTER = 21;
+	public static final int ACTION_SEARCH = 22;
+	public static final int ACTION_SEARCH_RESULTS = 23;
+	public static final int ACTION_SETUP = 24;
+	public static final int ACTION_SPECIAL_PAGES = 25;
+	public static final int ACTION_TOPICS_ADMIN = 26;
+	public static final int ACTION_UPGRADE = 27;
+	public static final int ACTION_UPLOAD = 28;
+	public static final int ACTION_WATCHLIST = 29;
 
 	/**
 	 *
@@ -182,6 +183,13 @@ public class WikiPageInfo {
 	 */
 	public boolean getActionHistory() {
 		return (this.action == ACTION_HISTORY);
+	}
+
+	/**
+	 *
+	 */
+	public boolean getActionImages() {
+		return (this.action == ACTION_IMAGES);
 	}
 
 	/**
