@@ -98,7 +98,7 @@ public class ImportServlet extends JAMWikiServlet {
 	private File saveFileItem(FileItem item) throws Exception {
     	// upload user file to the server
 		String subdirectory = "tmp";
-		File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
+		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
 		if (!directory.exists() && !directory.mkdirs()) {
 			throw new WikiException(new WikiMessage("upload.error.directorycreate",  directory.getAbsolutePath()));
 		}
