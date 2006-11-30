@@ -22,6 +22,7 @@
 * BUG: Properly log messages from Utilities and with configured log levels.
 * FEATURE: Handle category names case-insensitive, thus "Category:Test" and
   "Category:test" are treated as the same category.
+* FEATURE: Display current date & time on Special:RecentChanges page.
 * FEATURE: Upgrade to Spring Framework 2.0.1.
 * FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
 * FEATURE: Include the Bliki parser as an alternative to the default parser.

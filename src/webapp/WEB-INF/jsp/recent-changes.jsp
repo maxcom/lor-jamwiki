@@ -26,9 +26,11 @@
 
 <p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" /></p>
 
+<%-- FIXME: do not hardcode date patterns --%>
+<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message></p>
+
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 
-<%-- FIXME: do not hardcode date pattern --%>
 <c:set var="previousDate"><f:formatDate value="${changes[0].editDate}" type="both" pattern="dd MMMM yyyy" /></c:set>
 <h4><c:out value="${previousDate}" /></h4>
 <ul>
