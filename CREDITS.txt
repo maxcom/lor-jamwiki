@@ -10,6 +10,7 @@ JAMWiki Contributors
                             Scott Croco (scroco)
                             Axel Kramer (axelclk)
                             Robert Matyja (dlpa)
+                            Volodymyr Vlad (gutsul)
   Translations:
      Chinese (simplified):  Jiading (ewen0930)
                             Feilong Huang (hfl)
