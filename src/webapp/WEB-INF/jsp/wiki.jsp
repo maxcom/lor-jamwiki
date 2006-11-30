@@ -69,7 +69,7 @@
 		<jsp:include page="admin-translation.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionAllPages}">
-		<jsp:include page="all-pages.jsp" flush="true" />
+		<jsp:include page="items.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionCategories}">
 		<jsp:include page="categories.jsp" flush="true" />
@@ -87,13 +87,13 @@
 		<jsp:include page="error-display.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionFiles}">
-		<jsp:include page="files.jsp" flush="true" />
+		<jsp:include page="items.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionHistory}">
 		<jsp:include page="history.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionImages}">
-		<jsp:include page="images.jsp" flush="true" />
+		<jsp:include page="items.jsp" flush="true" />
 	</c:when>
 	<c:when test="${pageInfo.actionImport}">
 		<jsp:include page="import.jsp" flush="true" />

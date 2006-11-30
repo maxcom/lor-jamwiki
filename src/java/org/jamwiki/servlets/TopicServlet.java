@@ -60,9 +60,10 @@ public class TopicServlet extends JAMWikiServlet {
 	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection topics = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
-		next.addObject("topics", topics);
-		next.addObject("topicCount", new Integer(topics.size()));
+		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:Allpages");
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_ALL_PAGES);
 		pageInfo.setSpecial(true);

@@ -53,9 +53,10 @@ public class ImagesServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection images = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
-		next.addObject("imageCount", new Integer(images.size()));
-		next.addObject("images", images);
+		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:Imagelist");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_IMAGES);
 		pageInfo.setSpecial(true);

@@ -53,9 +53,10 @@ public class FilesServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection files = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
-		next.addObject("fileCount", new Integer(files.size()));
-		next.addObject("files", files);
+		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_FILES);
 		pageInfo.setSpecial(true);

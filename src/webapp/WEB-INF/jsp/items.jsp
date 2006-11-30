@@ -23,10 +23,10 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${fileCount}" rootUrl="Special:Filelist" /></p>
+<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${itemCount}" rootUrl="${rootUrl}" /></p>
 
 <ol start="<c:out value="${offset + 1}" />">
-<c:forEach items="${files}" var="file">
-<li><jamwiki:link value="${file}" text="${file}" /></li>
+<c:forEach items="${items}" var="item">
+<li><jamwiki:link value="${item}" text="${item}" /></li>
 </c:forEach>
 </ol>
