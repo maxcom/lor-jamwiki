@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
@@ -24,7 +23,6 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,27 +44,8 @@ public class TopicServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (ServletUtil.isTopic(request, "Special:Allpages")) {
-			allTopics(request, next, pageInfo);
-		} else {
-			view(request, next, pageInfo);
-		}
+		view(request, next, pageInfo);
 		return next;
-	}
-
-	/**
-	 *
-	 */
-	private void allTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Pagination pagination = Utilities.buildPagination(request, next);
-		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
-		next.addObject("itemCount", new Integer(items.size()));
-		next.addObject("items", items);
-		next.addObject("rootUrl", "Special:Allpages");
-		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_ALL_PAGES);
-		pageInfo.setSpecial(true);
 	}
 
 	/**

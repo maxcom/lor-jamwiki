@@ -7,17 +7,17 @@
 			<props>
 				<prop key="/**/Special:Account">Register</prop>
 				<prop key="/**/Special:Admin">Admin</prop>
-				<prop key="/**/Special:Allpages">Topic</prop>
+				<prop key="/**/Special:Allpages">Items</prop>
 				<prop key="/**/Special:Categories">Category</prop>
 				<prop key="/**/Special:Contributions">Contributions</prop>
 				<prop key="/**/Special:Convert">Persistency</prop>
 				<prop key="/**/Special:Diff">Diff</prop>
 				<prop key="/**/Special:Edit">Edit</prop>
 				<prop key="/**/Special:Export">Export</prop>
-				<prop key="/**/Special:Filelist">Files</prop>
+				<prop key="/**/Special:Filelist">Items</prop>
 				<prop key="/**/Special:History">History</prop>
 				<prop key="/**/Special:Import">Import</prop>
-				<prop key="/**/Special:Imagelist">Images</prop>
+				<prop key="/**/Special:Imagelist">Items</prop>
 				<prop key="/**/Special:LinkTo">LinkTo</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
@@ -46,10 +46,9 @@
 	<bean id="Diff" class="org.jamwiki.servlets.DiffServlet" />
 	<bean id="Edit" class="org.jamwiki.servlets.EditServlet" />
 	<bean id="Export" class="org.jamwiki.servlets.ExportServlet" />
-	<bean id="Files" class="org.jamwiki.servlets.FilesServlet" />
 	<bean id="History" class="org.jamwiki.servlets.HistoryServlet" />
-	<bean id="Images" class="org.jamwiki.servlets.ImagesServlet" />
 	<bean id="Import" class="org.jamwiki.servlets.ImportServlet" />
+	<bean id="Items" class="org.jamwiki.servlets.ItemsServlet" />
 	<bean id="LinkTo" class="org.jamwiki.servlets.LinkToServlet" />
 	<bean id="Login" class="org.jamwiki.servlets.LoginServlet" />
 	<bean id="Manage" class="org.jamwiki.servlets.ManageServlet" />

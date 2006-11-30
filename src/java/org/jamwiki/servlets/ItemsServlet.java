@@ -28,29 +28,51 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * This servlet provides the ability to generate a list of admin-only topics
- * for display.
+ *
  */
-public class ImagesServlet extends JAMWikiServlet {
+public class ItemsServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(ImagesServlet.class.getName());
+	/** Logger for this class and subclasses. */
+	private static WikiLogger logger = WikiLogger.getLogger(ItemsServlet.class.getName());
 
 	/**
-	 * This method handles the request after its parent class receives control.
+	 * This method handles the request after its parent class receives control. It gets the topic's name and the
+	 * virtual wiki name from the uri, loads the topic and returns a view to the end user.
 	 *
 	 * @param request - Standard HttpServletRequest object.
 	 * @param response - Standard HttpServletResponse object.
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		this.view(request, next, pageInfo);
+		if (ServletUtil.isTopic(request, "Special:Imagelist")) {
+			viewImages(request, next, pageInfo);
+		} else if (ServletUtil.isTopic(request, "Special:Filelist")) {
+			viewFiles(request, next, pageInfo);
+		} else {
+			viewTopics(request, next, pageInfo);
+		}
 		return next;
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void viewFiles(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
+		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_FILE, pagination);
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:Filelist");
+		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
+		pageInfo.setAction(WikiPageInfo.ACTION_FILES);
+		pageInfo.setSpecial(true);
+	}
+
+	/**
+	 *
+	 */
+	private void viewImages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
 		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_IMAGE, pagination);
@@ -59,6 +81,21 @@ public class ImagesServlet extends JAMWikiServlet {
 		next.addObject("rootUrl", "Special:Imagelist");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_IMAGES);
+		pageInfo.setSpecial(true);
+	}
+
+	/**
+	 *
+	 */
+	private void viewTopics(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
+		Collection items = WikiBase.getDataHandler().lookupTopicByType(virtualWiki, Topic.TYPE_ARTICLE, pagination);
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:Allpages");
+		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
+		pageInfo.setAction(WikiPageInfo.ACTION_ALL_PAGES);
 		pageInfo.setSpecial(true);
 	}
 }
