@@ -614,7 +614,7 @@ public class TemplateTag implements ParserTag {
 			return Utilities.encodeForURL(Utilities.extractTopicLink(parserInput.getTopicName()));
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
-		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(parserInput.getTopicName(), topic.getCurrentVersionId().intValue(), null);
+		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);
 		Date revision = topicVersion.getEditDate();
 		formatter.setTimeZone(utc);
 		if (name.equals(MAGIC_REVISION_DAY)) {

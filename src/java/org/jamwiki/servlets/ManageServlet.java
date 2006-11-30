@@ -143,10 +143,10 @@ public class ManageServlet extends JAMWikiServlet {
 			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
-		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topicName, topic.getCurrentVersionId().intValue(), null);
+		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			// loop back to find the last non-delete edit
-			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topicName, previousVersion.getPreviousTopicVersionId().intValue(), null);
+			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue(), null);
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);

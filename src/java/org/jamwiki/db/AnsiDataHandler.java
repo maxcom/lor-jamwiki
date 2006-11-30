@@ -126,7 +126,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
+	private void addWikiFile(WikiFile wikiFile, Connection conn) throws Exception {
 		if (wikiFile.getFileId() < 1) {
 			int fileId = this.queryHandler().nextWikiFileId(conn);
 			wikiFile.setFileId(fileId);
@@ -138,7 +138,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addWikiFileVersion(String topicName, WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
+	private void addWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
 		if (wikiFileVersion.getFileVersionId() < 1) {
 			int fileVersionId = this.queryHandler().nextWikiFileVersionId(conn);
 			wikiFileVersion.setFileVersionId(fileVersionId);
@@ -285,7 +285,7 @@ public class AnsiDataHandler implements DataHandler {
 					String topicName = (String)wikiFileIterator.next();
 					try {
 						WikiFile wikiFile = fromHandler.lookupWikiFile(virtualWiki.getName(), topicName);
-						toHandler.addWikiFile(topicName, wikiFile, conn);
+						toHandler.addWikiFile(wikiFile, conn);
 						success++;
 					} catch (Exception e) {
 						String msg = "Unable to convert wiki file: " + virtualWiki.getName() + " / " + topicName;
@@ -304,7 +304,7 @@ public class AnsiDataHandler implements DataHandler {
 					for (Iterator wikiFileVersionIterator = versions.iterator(); wikiFileVersionIterator.hasNext();) {
 						WikiFileVersion wikiFileVersion = (WikiFileVersion)wikiFileVersionIterator.next();
 						try {
-							toHandler.addWikiFileVersion(topicName, wikiFileVersion, conn);
+							toHandler.addWikiFileVersion(wikiFileVersion, conn);
 							success++;
 						} catch (Exception e) {
 							String msg = "Unable to convert wiki file version: " + virtualWiki.getName() + " / " + topicName;
@@ -379,8 +379,8 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Collection diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
-		TopicVersion version1 = this.lookupTopicVersion(topicName, topicVersionId1, null);
-		TopicVersion version2 = this.lookupTopicVersion(topicName, topicVersionId2, null);
+		TopicVersion version1 = this.lookupTopicVersion(topicVersionId1, null);
+		TopicVersion version2 = this.lookupTopicVersion(topicVersionId2, null);
 		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
 			logger.severe(msg);
@@ -810,7 +810,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(String topicName, int topicVersionId, Object transactionObject) throws Exception {
+	public TopicVersion lookupTopicVersion(int topicVersionId, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
@@ -1109,7 +1109,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void updateWikiFile(String topicName, WikiFile wikiFile, Connection conn) throws Exception {
+	private void updateWikiFile(WikiFile wikiFile, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(wikiFile.getVirtualWiki());
 		this.queryHandler().updateWikiFile(wikiFile, virtualWikiId, conn);
 	}
@@ -1124,18 +1124,18 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeFile(String topicName, WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception {
+	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
 			if (wikiFile.getFileId() <= 0) {
-				addWikiFile(topicName, wikiFile, conn);
+				addWikiFile(wikiFile, conn);
 			} else {
-				updateWikiFile(topicName, wikiFile, conn);
+				updateWikiFile(wikiFile, conn);
 			}
 			wikiFileVersion.setFileId(wikiFile.getFileId());
 			// write version
-			addWikiFileVersion(topicName, wikiFileVersion, conn);
+			addWikiFileVersion(wikiFileVersion, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

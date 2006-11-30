@@ -82,7 +82,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
-			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicName, topicVersionId.intValue(), null);
+			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId.intValue(), null);
 			if (topicVersion == null) {
 				throw new WikiException(new WikiMessage("common.exception.notopic"));
 			}
