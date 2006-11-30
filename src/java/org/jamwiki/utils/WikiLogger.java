@@ -18,12 +18,13 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import org.jamwiki.utils.Utilities;
 
 /**
  * This class provides a wrapper around the java.util.logging.Logger class,
@@ -60,6 +61,7 @@ public class WikiLogger {
 		Logger logger = Logger.getLogger(name);
 		if (WikiLogger.DEFAULT_LOG_HANDLER != null) {
 			logger.addHandler(WikiLogger.DEFAULT_LOG_HANDLER);
+			logger.setLevel(DEFAULT_LOG_LEVEL);
 		}
 		return new WikiLogger(logger);
 	}
@@ -70,7 +72,7 @@ public class WikiLogger {
 	private static void initializeLogParams() {
 		FileInputStream stream = null;
 		try {
-			File propertyFile = Utilities.getClassLoaderFile(LOG_PROPERTIES_FILENAME);
+			File propertyFile = WikiLogger.loadProperties();
 			stream = new FileInputStream(propertyFile);
 			Properties properties = new Properties();
 			properties.load(stream);
@@ -86,7 +88,8 @@ public class WikiLogger {
 			// test the logger to verify permissions are OK
 			Logger logger = Logger.getLogger(WikiLogger.class.getName());
 			logger.addHandler(WikiLogger.DEFAULT_LOG_HANDLER);
-			logger.severe("JAMWiki log initialized with pattern " + pattern);
+			logger.setLevel(DEFAULT_LOG_LEVEL);
+			logger.config("JAMWiki log initialized with pattern " + pattern);
 		} catch (Exception e) {
 			System.out.println("WARNING: Unable to load custom JAMWiki logging configuration, using system default " + e.getMessage());
 			WikiLogger.DEFAULT_LOG_HANDLER = null;
@@ -97,6 +100,33 @@ public class WikiLogger {
 				} catch (Exception ex) {}
 			}
 		}
+	}
+
+	/**
+	 *
+	 */
+	private static File loadProperties() throws Exception {
+		URL url = WikiLogger.getClassLoader().getResource(LOG_PROPERTIES_FILENAME);
+		if (url == null) {
+			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
+		}
+		File propertyFile = new File(URLDecoder.decode(url.getFile()));
+		if (!propertyFile.exists()) {
+			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
+		}
+		return propertyFile;
+	}
+
+	/**
+	 *
+	 */
+	private static ClassLoader getClassLoader() {
+		try {
+			return Thread.currentThread().getContextClassLoader();
+		} catch (Throwable ex) {
+			// ignore
+		}
+		return WikiLogger.class.getClassLoader();
 	}
 
 	/**
