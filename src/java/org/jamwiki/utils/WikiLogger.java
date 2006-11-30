@@ -89,7 +89,7 @@ public class WikiLogger {
 			Logger logger = Logger.getLogger(WikiLogger.class.getName());
 			logger.addHandler(WikiLogger.DEFAULT_LOG_HANDLER);
 			logger.setLevel(DEFAULT_LOG_LEVEL);
-			logger.config("JAMWiki log initialized with pattern " + pattern);
+			logger.config("JAMWiki log initialized from " + propertyFile.getPath() + " with pattern " + pattern);
 		} catch (Exception e) {
 			System.out.println("WARNING: Unable to load custom JAMWiki logging configuration, using system default " + e.getMessage());
 			WikiLogger.DEFAULT_LOG_HANDLER = null;

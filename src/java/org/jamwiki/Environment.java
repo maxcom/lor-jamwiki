@@ -112,13 +112,13 @@ public class Environment {
 	private Environment() {
 		try {
 			initDefaultProperties();
-			logger.config("Default properties initialized: " + defaults.toString());
+			logger.fine("Default properties initialized: " + defaults.toString());
 			props = loadProperties(PROPERTY_FILE_NAME, defaults);
 			// FIXME - remove this code after upgrading to 0.4.0 is removed
 			if (props.getProperty(PROP_PARSER_CLASS) != null && props.getProperty(PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
 				props.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
 			}
-			logger.fine("Property file loaded: " + props.toString());
+			logger.fine("JAMWiki properties initialized: " + props.toString());
 		} catch (Exception e) {
 			logger.severe("Failure while initializing property values", e);
 		}
@@ -314,13 +314,13 @@ public class Environment {
 			if (file == null) {
 				logger.warning("Property file " + propertyFile + " does not exist");
 			} else if (!file.exists()) {
-				logger.warning("Property file " + file.toString() + " does not exist");
+				logger.warning("Property file " + file.getPath() + " does not exist");
 			} else {
-				logger.config("Loading properties from " + file.toString());
+				logger.config("Loading properties from " + file.getPath());
 				properties.load(new FileInputStream(file));
 			}
 		} catch (Exception e) {
-			logger.severe("Failure while trying to load properties file " + file.toString(), e);
+			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
 		}
 		return properties;
 	}

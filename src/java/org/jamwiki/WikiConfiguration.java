@@ -132,6 +132,7 @@ public class WikiConfiguration {
 					logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 				}
 			}
+			logger.config("Configuration values loaded from " + file.getPath());
 		} catch (Exception e) {
 			logger.severe("Failure while parsing configuration file " + JAMWIKI_CONFIGURATION_FILE, e);
 		}
