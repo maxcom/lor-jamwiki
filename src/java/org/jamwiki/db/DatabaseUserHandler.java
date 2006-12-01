@@ -53,8 +53,8 @@ public class DatabaseUserHandler implements UserHandler {
 	public boolean authenticate(String login, String password) throws Exception {
 		// password is stored encrypted, so encrypt password
 		String encryptedPassword = Encryption.encrypt(password);
-		WikiUser user = WikiBase.getDataHandler().lookupWikiUser(login, encryptedPassword);
-		return (user != null);
+		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(login, encryptedPassword);
+		return (rs.size() == 0) ? false : true;
 	}
 
 	/**
