@@ -85,23 +85,23 @@ document.writeln("</div>");
 }
 %>
 
-<p>
-<textarea name="contents" rows="25" cols="80" style="width:100%"><c:out value="${contents}" escapeXml="true" /></textarea>
+<p> 
+<textarea name="contents" rows="25" cols="80" style="width:100%" accesskey=","><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
 <p><label for="editComment"><f:message key="edit.caption.comment" /></label>: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" id="editComment" /></p>
 <p>
-<input type="submit" name="save" value="<f:message key="common.save"/>"/>
+<input type="submit" name="save" value="<f:message key="common.save"/>"  accesskey="s"/>
 
 <%
 if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 %>
-<input type="submit" name="preview" value="<f:message key="edit.action.preview"/>"/>
+<input type="submit" name="preview" value="<f:message key="edit.action.preview"/>" accesskey="p"/>
 <%
 }
 %>
-
+ 
 &nbsp;&nbsp;&nbsp;
-<input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" />
+<input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" accesskey='i' />
 <label for="minorEdit"><f:message key="edit.caption.minor" /></label>
 <c:if test="${!empty user}">
 &nbsp;&nbsp;&nbsp;
