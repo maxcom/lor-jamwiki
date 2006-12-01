@@ -5,12 +5,11 @@
 * FEATURE: Add ehcache library for caching of parsed topics and images.
 * FEATURE: Add experimental support for LDAP.
 * FEATURE: Consolidate configuration values into jamwiki-configuration.xml.
-* FEATURE: Add option to use WYSIWYG edit buttons, provided by Axel Kramer
-  (axelclk).
+* FEATURE: Add option to use WYSIWYG edit buttons (axelclk).
 * FEATURE: Add Special:Imagelist page to display a list of all images.
 * FEATURE: Add Special:Filelist page to display a list of all non-image files.
-* FEATURE: Experimental Special:Import XML import from Volodymyr Vlad (gutsul).
-* BUG: Fixes for MS SQL issues, provided by Scott Croco (scroco).
+* FEATURE: Experimental Special:Import XML import (gutsul).
+* BUG: Fixes for MS SQL issues (scroco).
 * BUG: "Login already exists" error when trying to update user account fixed.
 * BUG: Fix upload error with IE that could cause file upload to incorrectly
   set the file name.
@@ -25,10 +24,12 @@
 * FEATURE: Display current date & time on Special:RecentChanges page.
 * FEATURE: Upgrade to Spring Framework 2.0.1.
 * FEATURE: Remove (now unused) convert-to-file option from Special:Convert.
-* FEATURE: Include the Bliki parser as an alternative to the default parser.
-* FEATURE: Updated Chinese translations from Feilong Huang (hfl).
-* FEATURE: Updated Polish translations from Robert Matyja (dlpa).
-* FEATURE: Updated German translations from Axel Kramer (axelclk).
+* FEATURE: Include the Bliki parser as an alternative to the default parser
+  (axelclk).
+* FEATURE: Add access keys for edit page fields (axelclk).
+* FEATURE: Updated Chinese translations (hfl).
+* FEATURE: Updated Polish translations (dlpa).
+* FEATURE: Updated German translations (axelclk).
 
 0.4.3
 =====
