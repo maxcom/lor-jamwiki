@@ -20,7 +20,8 @@ import java.util.Collection;
 import org.jamwiki.model.Topic;
 
 /*
- *
+ * This interface provides all methods needed for interacting with a search
+ * engine.
  */
 public interface SearchEngine {
 

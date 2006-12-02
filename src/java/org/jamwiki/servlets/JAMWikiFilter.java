@@ -31,8 +31,9 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
 
 /**
- * Make sure character encoding is properly set to UTF-8.  See
- * http://wiki.apache.org/tomcat/Tomcat/UTF-8 for a further discussion.
+ * Perform filtering of all Wiki page requests, including setting the
+ * character encoding to UTF-8 and verifying that no setup or upgrade is
+ * required.
  */
 public class JAMWikiFilter implements Filter {
 
@@ -47,7 +48,8 @@ public class JAMWikiFilter implements Filter {
 	}
 
 	/**
-	 * Set request encoding to UTF-8.
+	 * Set request encoding to UTF-8.  See
+	 * http://wiki.apache.org/tomcat/Tomcat/UTF-8 for a further discussion.
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");

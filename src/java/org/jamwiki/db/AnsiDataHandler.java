@@ -1145,20 +1145,24 @@ public class AnsiDataHandler implements DataHandler {
 	}
 
 	/**
-	 * Commit changes to a topic (and its version) to the database or filesystem.
+	 * Commit changes to a topic (and its version) to the database or
+	 * filesystem.
 	 *
-	 * @param topic The topic object that is to be committed.  If the topic id is
-	 *  empty or less than zero then the topic is added, otherwise an update is performed.
-	 * @param topicVersion The version associated with the topic that is being added.
-	 *  This parameter should never be null UNLESS the change is not user visible, such as
-	 *  when deleting a topic temporarily during page moves.
-	 * @param parserDocument The parserDocument object that contains a list of links in the
-	 *  topic content, categories, etc.  This parameter may be set with the
-	 *  Utilities.getParserDocument() method.
-	 * @param conn Database connection or other parameters required for updates.
-	 * @param userVisible A flag indicating whether or not this change should be visible
-	 *  to Wiki users.  This flag should be true except in rare cases, such as when
-	 *  temporarily deleting a topic during page moves.
+	 * @param topic The topic object that is to be committed.  If the topic
+	 *  id is empty or less than zero then the topic is added, otherwise an
+	 *  update is performed.
+	 * @param topicVersion The version associated with the topic that is
+	 *  being added.  This parameter should never be null UNLESS the change is
+	 *  not user visible, such as when deleting a topic temporarily during
+	 *  page moves.
+	 * @param parserDocument The parserDocument object that contains a list of
+	 *  links in the topic content, categories, etc.  This parameter may be
+	 *  set with the Utilities.getParserDocument() method.
+	 * @param transactionObject Database connection or other parameters
+	 *  required for updates.
+	 * @param userVisible A flag indicating whether or not this change should
+	 *  be visible to Wiki users.  This flag should be true except in rare
+	 *  cases, such as when temporarily deleting a topic during page moves.
 	 */
 	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception {
 		Connection conn = null;

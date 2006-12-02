@@ -31,7 +31,11 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.Pagination;
 
 /**
- *
+ * This interface provides all methods needed when retrieving or modifying
+ * Wiki data.  Any database or other persistency class must implement
+ * this interface, and there should also be a corresponding
+ * &lt;data-handler&gt; entry for the class in the jamwiki-configuration.xml
+ * file.
  */
 public interface DataHandler {
 
@@ -385,8 +389,8 @@ public interface DataHandler {
 	 * topic location.  An exception will be thrown if the topic cannot be
 	 * moved for any reason.
 	 *
-	 * @param topic The Topic object that is being moved.
-	 * @param topicVersion A TopicVersion object that indicates the move
+	 * @param fromTopic The Topic object that is being moved.
+	 * @param fromVersion A TopicVersion object that indicates the move
 	 *  date, author, and other parameters for the topic.
 	 * @param destination The new name for the topic.
 	 * @param transactionObject If this method is being called as part of a
