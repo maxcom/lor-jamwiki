@@ -22,6 +22,8 @@
 
 <%@ include file="page-init.jsp" %>
 
+<div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><f:message key="common.warning.experimental" /></div>
+
 <c:if test="${!empty error}">
 <p class="red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></p>
 </c:if>

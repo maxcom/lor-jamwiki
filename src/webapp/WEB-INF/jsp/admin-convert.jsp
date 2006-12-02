@@ -30,7 +30,7 @@ function confirmSubmit() {
 // -->
 </script>
 
-<div align="center" width="90%" style="border:1px dashed red;padding:3px;margin:10px 75px 5px 75px;"><font color="red"><f:message key="convert.warning.beta" /></font></div>
+<div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><f:message key="common.warning.experimental" /></div>
 
 <form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Convert" />">
 
