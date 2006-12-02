@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class SetupServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(SetupServlet.class.getName());
+	private static final int MINIMUM_JDK_MAJOR_VERSION = 1;
+	private static final int MINIMUM_JDK_MINOR_VERSION = 4;
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -58,6 +61,10 @@ public class SetupServlet extends JAMWikiServlet {
 		String function = (request.getParameter("function") != null) ? request.getParameter("function") : request.getParameter("override");
 		if (function == null) function = "";
 		try {
+			if (!this.verifyJDK()) {
+				String minimumVersion = MINIMUM_JDK_MAJOR_VERSION + "." + MINIMUM_JDK_MINOR_VERSION;
+				throw new WikiException(new WikiMessage("setup.error.jdk", minimumVersion, System.getProperty("java.version")));
+			}
 			if (!StringUtils.hasText(function)) {
 				view(request, next, pageInfo);
 			} else if (initialize(request, next, pageInfo)) {
@@ -184,17 +191,6 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
-		pageInfo.setSpecial(true);
-		pageInfo.setPageTitle(new WikiMessage("setup.title"));
-		Collection dataHandlers = WikiConfiguration.getDataHandlers();
-		next.addObject("dataHandlers", dataHandlers);
-	}
-
-	/**
-	 *
-	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 		if (!StringUtils.hasText(user.getLogin())) {
@@ -214,5 +210,35 @@ public class SetupServlet extends JAMWikiServlet {
 			}
 		}
 		return errors;
+	}
+
+	/**
+	 *
+	 */
+	private boolean verifyJDK() {
+		try {
+			String jdk = System.getProperty("java.version");
+			StringTokenizer tokens = new StringTokenizer(jdk, ".");
+			int major = new Integer(tokens.nextToken()).intValue();
+			int minor = new Integer(tokens.nextToken()).intValue();
+			if (major < MINIMUM_JDK_MAJOR_VERSION) return false;
+			if (major == MINIMUM_JDK_MAJOR_VERSION && minor < MINIMUM_JDK_MINOR_VERSION) return false;
+			return true;
+		} catch (Exception e) {
+			logger.warning("Failure determining JDK version", e);
+			// allow setup to continue if JDK version not found
+			return true;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
+		pageInfo.setSpecial(true);
+		pageInfo.setPageTitle(new WikiMessage("setup.title"));
+		Collection dataHandlers = WikiConfiguration.getDataHandlers();
+		next.addObject("dataHandlers", dataHandlers);
 	}
 }

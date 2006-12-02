@@ -73,9 +73,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-            // The user can not be logged in automatically here because we do not have access to the
-            // authentication provider configured in Acegi Security.
-            // Redirect to the login page instead.
+			// The user can not be logged in automatically here because we do not have access to the
+			// authentication provider configured in Acegi Security.
+			// Redirect to the login page instead.
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = "Special:Login";
 			ServletUtil.redirect(next, virtualWikiName, topic);

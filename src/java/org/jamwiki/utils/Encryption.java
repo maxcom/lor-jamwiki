@@ -100,7 +100,7 @@ public class Encryption {
 		}
 		byte raw[] = md.digest();
 		return encrypt64(raw);
-    }
+	}
 
 	/**
 	 * Unencrypt a String value using the DES encryption algorithm.

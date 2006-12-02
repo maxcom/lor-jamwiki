@@ -157,7 +157,7 @@ public class Utilities {
 	}
 
 	/**
-     * Retrieve the current logged-in user from Acegi SecurityContextHolder.  If there is
+	 * Retrieve the current logged-in user from Acegi SecurityContextHolder.  If there is
 	 * no user return <code>null</code>.
 	 *
 	 * @param request The servlet request object.
@@ -165,13 +165,13 @@ public class Utilities {
 	 *  user currently logged in.
 	 */
 	public static WikiUser currentUser(HttpServletRequest request) throws Exception {
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        if (ctx != null) {
-            Authentication auth = ctx.getAuthentication();
-            return ((auth == null) || "anonymousUser".equals(auth.getPrincipal())) ? null : (WikiUser)auth.getPrincipal();
+		SecurityContext ctx = SecurityContextHolder.getContext();
+		if (ctx != null) {
+			Authentication auth = ctx.getAuthentication();
+			return ((auth == null) || "anonymousUser".equals(auth.getPrincipal())) ? null : (WikiUser)auth.getPrincipal();
 		}
-        return null;
-		}
+		return null;
+	}
 
 	/**
 	 * Retrieve the current logged-in user's watchlist from the session.  If
@@ -196,7 +196,7 @@ public class Utilities {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
-        return watchlist;
+		return watchlist;
 	}
 
 	/**
@@ -677,7 +677,7 @@ public class Utilities {
 	 * @param user The WikiUser being logged in.
 	 * @param setCookie Set to <code>true</code> if a cookie should be set to
 	 *  automatically remember the user during future visits.
-     * @deprecated handled by Acegi Security
+	 * @deprecated handled by Acegi Security
 	 */
 	public static void login(HttpServletRequest request, HttpServletResponse response, WikiUser user, boolean setCookie) throws Exception {
 		if (user == null) {

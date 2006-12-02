@@ -42,10 +42,10 @@ public class WikiListTag implements ParserTag {
 		listOpenHash.put("#", "<ol>");
 		listOpenHash.put(":", "<dl>");
 		listOpenHash.put(";", "<dl>");
-        listItemOpenHash.put("*", "<li>");
-        listItemOpenHash.put("#", "<li>");
-        listItemOpenHash.put(":", "<dd>");
-        listItemOpenHash.put(";", "<dt>");
+		listItemOpenHash.put("*", "<li>");
+		listItemOpenHash.put("#", "<li>");
+		listItemOpenHash.put(":", "<dd>");
+		listItemOpenHash.put(";", "<dt>");
 		listCloseHash.put("<ul>", "</ul>");
 		listCloseHash.put("<ol>", "</ol>");
 		listCloseHash.put("<dl>", "</dl>");

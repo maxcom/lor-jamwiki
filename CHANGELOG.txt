@@ -3,6 +3,7 @@
 =====
 
 * FEATURE: Add ehcache library for caching of parsed topics and images.
+* FEATURE: Integrate the Acegi security framework (swift).
 * FEATURE: Add experimental support for LDAP.
 * FEATURE: Consolidate configuration values into jamwiki-configuration.xml.
 * FEATURE: Add option to use WYSIWYG edit buttons (axelclk).

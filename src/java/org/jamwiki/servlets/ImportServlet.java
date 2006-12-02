@@ -96,7 +96,7 @@ public class ImportServlet extends JAMWikiServlet {
 	 *
 	 */
 	private File saveFileItem(FileItem item) throws Exception {
-    	// upload user file to the server
+		// upload user file to the server
 		String subdirectory = "tmp";
 		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
 		if (!directory.exists() && !directory.mkdirs()) {
