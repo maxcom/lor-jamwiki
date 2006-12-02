@@ -145,7 +145,7 @@ function onPersistenceType() {
 <tr><td colspan="2">&#160;</td></tr>
 <tr>
 	<td class="formcaption"><label for="setupLogin"><f:message key="setup.caption.adminlogin"/></label>:</td>
-	<td class="formelement"><input type="text" name="login" value="<c:out value="${login}" />" id="setupLogin" /></td>
+	<td class="formelement"><input type="text" name="username" value="<c:out value="${username}" />" id="setupLogin" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="setupNewPassword"><f:message key="register.caption.newpassword" /></label>:</td>

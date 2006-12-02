@@ -693,7 +693,7 @@ public class Utilities {
 				logger.warning("Attempt to set user cookie without specifying servlet response");
 				return;
 			}
-			String cookieValue = user.getLogin() + ServletUtil.USER_COOKIE_DELIMITER + user.getRememberKey();
+			String cookieValue = user.getUsername() + ServletUtil.USER_COOKIE_DELIMITER + user.getRememberKey();
 			Utilities.addCookie(response, ServletUtil.USER_COOKIE, cookieValue, ServletUtil.USER_COOKIE_EXPIRES);
 		}
 	}
@@ -1148,10 +1148,10 @@ public class Utilities {
 	}
 
 	/**
-	 * Utility method for determining if a user login is valid for use on the Wiki,
+	 * Utility method for determining if a username is valid for use on the Wiki,
 	 * meaning that it is not empty and does not contain any invalid characters.
 	 *
-	 * @param name The user login to validate.
+	 * @param name The username to validate.
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateUserName(String name) throws WikiException {

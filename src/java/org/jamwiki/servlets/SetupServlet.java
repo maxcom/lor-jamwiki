@@ -117,14 +117,14 @@ public class SetupServlet extends JAMWikiServlet {
 		if (errors.size() > 0) {
 			this.view(request, next, pageInfo);
 			next.addObject("errors", errors);
-			next.addObject("login", user.getLogin());
+			next.addObject("username", user.getUsername());
 			next.addObject("newPassword", request.getParameter("newPassword"));
 			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
 			return false;
 		} else if (previousInstall() && request.getParameter("override") == null) {
 			// user is trying to do a new install when a previous installation exists
 			next.addObject("upgrade", "true");
-			next.addObject("login", user.getLogin());
+			next.addObject("username", user.getUsername());
 			next.addObject("newPassword", request.getParameter("newPassword"));
 			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
 			return false;
@@ -132,7 +132,8 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			WikiBase.reset(request.getLocale(), user);
-			// FIXME - diabled automatic login because it's not possible(?) with Acegi Security
+			// FIXME - disabled automatic login because it's not possible(?)
+			// with Acegi Security
 			// Utilities.login(request, null, user, false);
 			Environment.saveProperties();
 			return true;
@@ -160,7 +161,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void setAdminUser(HttpServletRequest request, WikiUser user) throws Exception {
-		user.setLogin(request.getParameter("login"));
+		user.setUsername(request.getParameter("username"));
 		user.setRememberKey(Encryption.encrypt(request.getParameter("newPassword")));
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
@@ -193,8 +194,8 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
-		if (!StringUtils.hasText(user.getLogin())) {
-			user.setLogin("");
+		if (!StringUtils.hasText(user.getUsername())) {
+			user.setUsername("");
 			errors.add(new WikiMessage("error.loginempty"));
 		}
 		String oldPassword = request.getParameter("oldPassword");

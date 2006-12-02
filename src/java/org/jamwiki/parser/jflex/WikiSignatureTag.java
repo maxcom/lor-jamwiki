@@ -51,8 +51,8 @@ public class WikiSignatureTag implements ParserTag {
 				String userId = "-1";
 				if (parserInput.getWikiUser() != null) {
 					WikiUser user = parserInput.getWikiUser();
-					login = user.getLogin();
-					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getLogin();
+					login = user.getUsername();
+					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getUsername();
 					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
 					email = userInfo.getEmail();
 					userId = new Integer(user.getUserId()).toString();

@@ -57,11 +57,11 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public boolean authenticate(String login, String password) throws Exception {
+	public boolean authenticate(String username, String password) throws Exception {
 		InitialDirContext ctx = null;
 		try {
-			login = this.fullDirectoryPath(login);
-			ctx = getContext(login, password);
+			username = this.fullDirectoryPath(username);
+			ctx = getContext(username, password);
 			return true;
 		} catch (Exception e) {
 			// could not authenticate, return false
@@ -131,12 +131,12 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
+	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
 		InitialDirContext ctx = null;
 		try {
 			ctx = getContext(Environment.getValue(Environment.PROP_LDAP_LOGIN), Encryption.getEncryptedProperty(Environment.PROP_LDAP_PASSWORD, null));
 			BasicAttributes matchAttrs = new BasicAttributes(true);
-			matchAttrs.put(new BasicAttribute(Environment.getValue(Environment.PROP_LDAP_FIELD_USERID), login));
+			matchAttrs.put(new BasicAttribute(Environment.getValue(Environment.PROP_LDAP_FIELD_USERID), username));
 			NamingEnumeration answer = ctx.search(Environment.getValue(Environment.PROP_LDAP_CONTEXT), matchAttrs, SEARCH_ATTRIBUTES);
 			if (!answer.hasMore()) return null;
 			return this.initWikiUserInfo(answer);

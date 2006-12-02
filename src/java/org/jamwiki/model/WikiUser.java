@@ -151,20 +151,6 @@ public class WikiUser implements UserDetails {
 	}
 
 	/**
-	 * @deprecated use getUsername() instead.
-	 */
-	public String getLogin() {
-		return getUsername();
-	}
-
-	/**
-	 * @deprecated use setUsername(login) instead
-	 */
-	public void setLogin(String login) {
-		setUsername(login);
-	}
-
-	/**
 	 * @deprecated use getPassword() instead.
 	 */
 	public String getRememberKey() {

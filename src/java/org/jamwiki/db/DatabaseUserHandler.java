@@ -50,10 +50,10 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public boolean authenticate(String login, String password) throws Exception {
+	public boolean authenticate(String username, String password) throws Exception {
 		// password is stored encrypted, so encrypt password
 		String encryptedPassword = Encryption.encrypt(password);
-		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(login, encryptedPassword);
+		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword);
 		return (rs.size() == 0) ? false : true;
 	}
 
@@ -63,7 +63,7 @@ public class DatabaseUserHandler implements UserHandler {
 	private WikiUserInfo initWikiUserInfo(WikiResultSet rs) throws Exception {
 		WikiUserInfo userInfo = new WikiUserInfo();
 		userInfo.setUserId(rs.getInt("wiki_user_id"));
-		userInfo.setLogin(rs.getString("login"));
+		userInfo.setUsername(rs.getString("login"));
 		userInfo.setEmail(rs.getString("email"));
 		userInfo.setFirstName(rs.getString("first_name"));
 		userInfo.setLastName(rs.getString("last_name"));
@@ -81,8 +81,8 @@ public class DatabaseUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception {
-		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUserInfo(login);
+	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
+		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUserInfo(username);
 		if (rs.size() == 0) return null;
 		return initWikiUserInfo(rs);
 	}

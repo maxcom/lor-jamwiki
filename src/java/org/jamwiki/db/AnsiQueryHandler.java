@@ -592,7 +592,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	public void insertWikiUser(WikiUser user, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
 		stmt.setInt(1, user.getUserId());
-		stmt.setString(2, user.getLogin());
+		stmt.setString(2, user.getUsername());
 		stmt.setString(3, user.getDisplayName());
 		stmt.setTimestamp(4, user.getCreateDate());
 		stmt.setTimestamp(5, user.getLastLoginDate());
@@ -609,7 +609,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	public void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
 		stmt.setInt(1, userInfo.getUserId());
-		stmt.setString(2, userInfo.getLogin());
+		stmt.setString(2, userInfo.getUsername());
 		stmt.setString(3, userInfo.getEmail());
 		stmt.setString(4, userInfo.getFirstName());
 		stmt.setString(5, userInfo.getLastName());
@@ -715,18 +715,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception {
+	public WikiResultSet lookupWikiUser(String username, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
-		stmt.setString(1, login);
+		stmt.setString(1, username);
 		return stmt.executeQuery(conn);
 	}
 
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String login, String encryptedPassword) throws Exception {
+	public WikiResultSet lookupWikiUser(String username, String encryptedPassword) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
-		stmt.setString(1, login);
+		stmt.setString(1, username);
 		stmt.setString(2, encryptedPassword);
 		return stmt.executeQuery();
 	}
@@ -741,9 +741,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUserInfo(String login) throws Exception {
+	public WikiResultSet lookupWikiUserInfo(String username) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_INFO);
-		stmt.setString(1, login);
+		stmt.setString(1, username);
 		return stmt.executeQuery();
 	}
 
@@ -875,7 +875,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER);
-		stmt.setString(1, user.getLogin());
+		stmt.setString(1, user.getUsername());
 		stmt.setString(2, user.getDisplayName());
 		stmt.setTimestamp(3, user.getLastLoginDate());
 		stmt.setString(4, user.getLastLoginIpAddress());
@@ -889,7 +889,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
-		stmt.setString(1, userInfo.getLogin());
+		stmt.setString(1, userInfo.getUsername());
 		stmt.setString(2, userInfo.getEmail());
 		stmt.setString(3, userInfo.getFirstName());
 		stmt.setString(4, userInfo.getLastName());

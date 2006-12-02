@@ -363,18 +363,18 @@ public interface DataHandler {
 	public WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception;
 
 	/**
-	 * Retrieve a WikiUser object matching a given user login.
+	 * Retrieve a WikiUser object matching a given username.
 	 *
-	 * @param login The login of the WikiUser being retrieved.
+	 * @param username The username of the WikiUser being retrieved.
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
 	 *  such as a database connection.  If this method is not part of a
 	 *  transaction then this value should be <code>null</code>.
-	 * @return The WikiUser object matching the given user login, or
+	 * @return The WikiUser object matching the given username, or
 	 *  <code>null</code> if no matching WikiUser exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiUser lookupWikiUser(String login, Object transactionObject) throws Exception;
+	public WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception;
 
 	/**
 	 * Return a count of all wiki users.

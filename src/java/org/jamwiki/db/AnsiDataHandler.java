@@ -703,7 +703,7 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			WikiUser user = new WikiUser();
 			user.setUserId(rs.getInt("wiki_user_id"));
-			user.setLogin(rs.getString("login"));
+			user.setUsername(rs.getString("login"));
 			user.setDisplayName(rs.getString("display_name"));
 			user.setCreateDate(rs.getTimestamp("create_date"));
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
@@ -919,11 +919,11 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String login, Object transactionObject) throws Exception {
+	public WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			WikiResultSet rs = this.queryHandler().lookupWikiUser(login, conn);
+			WikiResultSet rs = this.queryHandler().lookupWikiUser(username, conn);
 			if (rs.size() == 0) return null;
 			int userId = rs.getInt("wiki_user_id");
 			return lookupWikiUser(userId, conn);
@@ -1188,7 +1188,7 @@ public class AnsiDataHandler implements DataHandler {
 				Integer authorId = topicVersion.getAuthorId();
 				if (authorId != null) {
 					WikiUser user = this.lookupWikiUser(topicVersion.getAuthorId().intValue(), conn);
-					authorName = user.getLogin();
+					authorName = user.getUsername();
 				}
 				RecentChange change = new RecentChange(topic, topicVersion, authorName);
 				this.addRecentChange(change, conn);
@@ -1280,7 +1280,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception {
-		Utilities.validateUserName(user.getLogin());
+		Utilities.validateUserName(user.getUsername());
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);

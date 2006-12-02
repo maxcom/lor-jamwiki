@@ -264,7 +264,7 @@ public class ServletUtil {
 	/**
 	 * This method ensures that values required for rendering a JSP page have
 	 * been loaded into the ModelAndView object.  Examples of values that
-	 * may be handled by this method include topic name, user login, etc.
+	 * may be handled by this method include topic name, username, etc.
 	 *
 	 * @param request The current servlet request object.
 	 * @param next The current ModelAndView object.
@@ -283,8 +283,8 @@ public class ServletUtil {
 		if (user != null) {
 			//add user object to model since it is not in session anymore
 			next.addObject(PARAMETER_USER, user);
-			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
-			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
+			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
+			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
 			next.addObject("adminUser", new Boolean(user.getAdmin()));
 		}
 		if (StringUtils.hasText(pageInfo.getTopicName())) {

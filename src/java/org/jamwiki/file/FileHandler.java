@@ -624,7 +624,7 @@ public class FileHandler {
 				} else if (childName.equals(XML_WIKI_USER_LAST_LOGIN_IP_ADDRESS)) {
 					user.setLastLoginIpAddress(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LOGIN)) {
-					user.setLogin(XMLUtil.getTextContent(rootChild));
+					user.setUsername(XMLUtil.getTextContent(rootChild));
 				}
 			}
 			return user;
@@ -661,7 +661,7 @@ public class FileHandler {
 				} else if (childName.equals(XML_WIKI_USER_LAST_NAME)) {
 					userInfo.setLastName(XMLUtil.getTextContent(rootChild));
 				} else if (childName.equals(XML_WIKI_USER_LOGIN)) {
-					userInfo.setLogin(XMLUtil.getTextContent(rootChild));
+					userInfo.setUsername(XMLUtil.getTextContent(rootChild));
 				}
 			}
 			return userInfo;
@@ -1155,12 +1155,12 @@ public class FileHandler {
 		content.append("\n");
 		content.append(XMLUtil.buildTag(XML_WIKI_USER_LAST_NAME, userInfo.getLastName(), true));
 		content.append("\n");
-		content.append(XMLUtil.buildTag(XML_WIKI_USER_LOGIN, user.getLogin(), true));
+		content.append(XMLUtil.buildTag(XML_WIKI_USER_LOGIN, user.getUsername(), true));
 		content.append("\n");
 		content.append("</").append(XML_WIKI_USER_ROOT).append(">");
 		content.append("\n");
 		content.append("</mediawiki>");
-		String filename = wikiUserFilename(user.getLogin());
+		String filename = wikiUserFilename(user.getUsername());
 		File userFile = FileHandler.getPathFor(null, FileHandler.WIKI_USER_DIR, filename);
 		FileUtils.writeStringToFile(userFile, content.toString(), "UTF-8");
 		File userIdHashFile = getPathFor(null, null, WIKI_USER_ID_HASH_FILE);
@@ -1176,7 +1176,7 @@ public class FileHandler {
 				}
 			}
 		}
-		WIKI_USER_ID_HASH.setProperty(new Integer(user.getUserId()).toString(), user.getLogin());
+		WIKI_USER_ID_HASH.setProperty(new Integer(user.getUserId()).toString(), user.getUsername());
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(userIdHashFile);

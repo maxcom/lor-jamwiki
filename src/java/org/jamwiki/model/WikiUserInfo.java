@@ -28,8 +28,8 @@ public class WikiUserInfo {
 	private String encodedPassword = null;
 	private String firstName = null;
 	private String lastName = null;
-	private String login = null;
 	private int userId = -1;
+	private String username = null;
 	private static WikiLogger logger = WikiLogger.getLogger(WikiUserInfo.class.getName());
 
 	/**
@@ -97,20 +97,6 @@ public class WikiUserInfo {
 	/**
 	 *
 	 */
-	public String getLogin() {
-		return this.login;
-	}
-
-	/**
-	 *
-	 */
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	/**
-	 *
-	 */
 	public int getUserId() {
 		return this.userId;
 	}
@@ -120,6 +106,20 @@ public class WikiUserInfo {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 *
+	 */
+	public String getUsername() {
+		return this.username;
+	}
+
+	/**
+	 *
+	 */
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**

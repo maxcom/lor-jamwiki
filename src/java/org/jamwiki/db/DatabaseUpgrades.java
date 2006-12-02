@@ -38,7 +38,7 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static WikiUser login(String login, String password, boolean encrypted) throws Exception {
+	public static WikiUser login(String username, String password, boolean encrypted) throws Exception {
 		// prior to JAMWiki 0.5.0 the remember_key column did not exist.  once
 		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
 		// replaced with the method (below) that has been commented out
@@ -47,7 +47,7 @@ public class DatabaseUpgrades {
 			encryptedPassword = Encryption.encrypt(password);
 		}
 		AnsiQueryHandler queryHandler = new AnsiQueryHandler();
-		WikiResultSet rs = queryHandler.lookupWikiUser(login, encryptedPassword);
+		WikiResultSet rs = queryHandler.lookupWikiUser(username, encryptedPassword);
 		if (rs.size() == 0) return null;
 		int userId = rs.getInt("wiki_user_id");
 		String sql = "select * from jam_wiki_user where wiki_user_id = ? ";
@@ -56,7 +56,7 @@ public class DatabaseUpgrades {
 		rs = stmt.executeQuery();
 		WikiUser user = new WikiUser();
 		user.setUserId(rs.getInt("wiki_user_id"));
-		user.setLogin(rs.getString("login"));
+		user.setUsername(rs.getString("login"));
 		user.setDisplayName(rs.getString("display_name"));
 		user.setCreateDate(rs.getTimestamp("create_date"));
 		user.setLastLoginDate(rs.getTimestamp("last_login_date"));

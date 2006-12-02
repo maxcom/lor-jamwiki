@@ -41,17 +41,17 @@ public interface UserHandler {
 	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 
 	/**
-	 * Determine if a value matching the given login and password exists in
+	 * Determine if a value matching the given username and password exists in
 	 * the data store.
 	 *
-	 * @param login The login that is being validated against.
+	 * @param username The username that is being validated against.
 	 * @param password The password that is being validated against.
-	 * @return <code>true</code> if the login / password combination matches
+	 * @return <code>true</code> if the username / password combination matches
 	 *  an existing record in the data store, <code>false</code> otherwise.
 	 * @throws Exception Thrown if an error occurs while accessing the data
 	 *  store.
 	 */
-	public boolean authenticate(String login, String password) throws Exception;
+	public boolean authenticate(String username, String password) throws Exception;
 
 	/**
 	 * This method returns <code>true</code> if the user information data
@@ -63,17 +63,17 @@ public interface UserHandler {
 	public boolean isWriteable();
 
 	/**
-	 * Given a user login, retrieving a WikiUserInfo containing values for
+	 * Given a username, retrieving a WikiUserInfo containing values for
 	 * the specified user.
 	 *
-	 * @param login The login for the user information being retrieved.
+	 * @param username The username for the user information being retrieved.
 	 * @return A WikiUserInfo object containing user information matching the
-	 *  the login, or <code>null</code> if no record matching the login can
-	 *  be found.
+	 *  the username, or <code>null</code> if no record matching the username
+	 *  can be found.
 	 * @throws Exception Thrown if an error occurs while retrieving user
 	 *  information.
 	 */
-	public WikiUserInfo lookupWikiUserInfo(String login) throws Exception;
+	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception;
 
 	/**
 	 *

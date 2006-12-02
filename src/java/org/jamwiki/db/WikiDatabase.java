@@ -191,7 +191,7 @@ public class WikiDatabase {
 		if (WikiBase.getUserHandler().isWriteable()) {
 			userInfo = new WikiUserInfo();
 			userInfo.setEncodedPassword(user.getRememberKey());
-			userInfo.setLogin(user.getLogin());
+			userInfo.setUsername(user.getUsername());
 			userInfo.setUserId(user.getUserId());
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, userInfo, conn);

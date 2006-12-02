@@ -32,14 +32,14 @@
 <c:if test="${newuser.userId < 1}">
 <tr>
 	<td><label for="registerLogin"><f:message key="common.login" /></label>:</td>
-	<td><input type="text" name="login" value="<c:out value="${newuser.login}" />" id="registerLogin" /></td>
+	<td><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" /></td>
 </tr>
 </c:if>
 <c:if test="${newuser.userId > 0}">
 <tr>
-	<input type="hidden" name="login" value="<c:out value="${newuser.login}" />" />
+	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
 	<td><f:message key="common.login" />:</td>
-	<td><c:out value="${newuser.login}" /></td>
+	<td><c:out value="${newuser.username}" /></td>
 </tr>
 <tr>
 	<td><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</td>
