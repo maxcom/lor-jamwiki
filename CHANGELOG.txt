@@ -27,6 +27,7 @@
 * FEATURE: Include the Bliki parser as an alternative to the default parser
   (axelclk).
 * FEATURE: Add access keys for edit page fields (axelclk).
+* FEATURE: Add a check to verify a supported JDK version during setup.
 * FEATURE: Updated Chinese translations (hfl).
 * FEATURE: Updated Polish translations (dlpa).
 * FEATURE: Updated German translations (axelclk).
