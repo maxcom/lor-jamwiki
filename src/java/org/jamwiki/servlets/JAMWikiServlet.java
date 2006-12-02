@@ -49,7 +49,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @return A ModelAndView object corresponding to the information to be
 	 *  rendered, or <code>null</code> if the method directly handles its own
 	 *  output, for example by writing directly to the output response.
-	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	protected abstract ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception;
 

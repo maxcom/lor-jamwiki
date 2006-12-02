@@ -64,7 +64,7 @@ public class LoginServlet extends JAMWikiServlet {
 	}
 
 	/**
-	 *
+	 * @deprecated handled by Acegi Security
 	 */
 	private void login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);

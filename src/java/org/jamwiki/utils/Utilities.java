@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -36,6 +35,10 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.acegisecurity.Authentication;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
@@ -154,7 +157,7 @@ public class Utilities {
 	}
 
 	/**
-	 * Retrieve the current logged-in user from the session.  If there is
+     * Retrieve the current logged-in user from Acegi SecurityContextHolder.  If there is
 	 * no user return <code>null</code>.
 	 *
 	 * @param request The servlet request object.
@@ -162,26 +165,13 @@ public class Utilities {
 	 *  user currently logged in.
 	 */
 	public static WikiUser currentUser(HttpServletRequest request) throws Exception {
-		// first look for user in the session
-		WikiUser user = (WikiUser)request.getSession().getAttribute(ServletUtil.PARAMETER_USER);
-		if (user != null) return user;
-		// look for user cookie
-		String userInfo = Utilities.retrieveCookieValue(request, ServletUtil.USER_COOKIE);
-		if (!StringUtils.hasText(userInfo)) return null;
-		StringTokenizer tokens = new StringTokenizer(userInfo, ServletUtil.USER_COOKIE_DELIMITER);
-		if (tokens.countTokens() != 2) return null;
-		String login = tokens.nextToken();
-		String rememberKey = tokens.nextToken();
-		try {
-			user = WikiBase.getDataHandler().lookupWikiUser(login, null);
-		} catch (Exception e) {
-			// FIXME - safe to ignore?
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        if (ctx != null) {
+            Authentication auth = ctx.getAuthentication();
+            return ((auth == null) || "anonymousUser".equals(auth.getPrincipal())) ? null : (WikiUser)auth.getPrincipal();
 		}
-		if (user != null && user.getRememberKey().equals(rememberKey)) {
-			Utilities.login(request, null, user, false);
+        return null;
 		}
-		return user;
-	}
 
 	/**
 	 * Retrieve the current logged-in user's watchlist from the session.  If
@@ -687,6 +677,7 @@ public class Utilities {
 	 * @param user The WikiUser being logged in.
 	 * @param setCookie Set to <code>true</code> if a cookie should be set to
 	 *  automatically remember the user during future visits.
+     * @deprecated handled by Acegi Security
 	 */
 	public static void login(HttpServletRequest request, HttpServletResponse response, WikiUser user, boolean setCookie) throws Exception {
 		if (user == null) {

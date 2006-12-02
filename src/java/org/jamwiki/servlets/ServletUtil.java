@@ -281,6 +281,8 @@ public class ServletUtil {
 		// add link to user page and comments page
 		WikiUser user = Utilities.currentUser(request);
 		if (user != null) {
+            //add user object to model since it is not in session anymore
+			next.addObject(PARAMETER_USER, user);
 			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
 			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getLogin());
 			next.addObject("adminUser", new Boolean(user.getAdmin()));

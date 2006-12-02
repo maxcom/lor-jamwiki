@@ -17,24 +17,42 @@
 package org.jamwiki.model;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
+
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.userdetails.UserDetails;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  *
  */
-public class WikiUser {
+public class WikiUser implements UserDetails {
 
-	// FIXME - consider making this an ACL (more flexible)
-	private boolean admin = false;
+    private static final long serialVersionUID = 8081925283274124743L;
+
+    private final GrantedAuthority ROLE_USER = new GrantedAuthorityImpl("ROLE_USER");
+    private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
+
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = null;
 	private String displayName = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = null;
-	private String login = null;
-	private String rememberKey = null;
+	private String username = null;
 	private int userId = -1;
-	private static WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
+
+    // FIXME - consider making this an ACL (more flexible)
+    // GrantedAuthority is used by Acegi Security to support several authorities (roles).
+    // For backward compatibility admin is a wrapper for grantedAuthorities.
+    //private boolean admin = false;
+    /**
+     * A logged user always has ROLE_USER and may have ROLE_ADMIN.
+     */
+    private GrantedAuthority[] grantedAuthorities;
+    private String password = null;
+
+    private static WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
 
 	/**
 	 *
@@ -46,14 +64,20 @@ public class WikiUser {
 	 *
 	 */
 	public boolean getAdmin() {
-		return this.admin;
+        return (grantedAuthorities != null) && (Arrays.asList(grantedAuthorities).contains(ROLE_ADMIN));
 	}
 
 	/**
 	 *
 	 */
 	public void setAdmin(boolean admin) {
-		this.admin = admin;
+        // A user's roles are fixed so far, so it's safe to create or destroy grantedAuthorities as required.
+        // If more roles are to be supported this method must be refactored.
+        if (admin) {
+            grantedAuthorities = new GrantedAuthority[] {ROLE_USER, ROLE_ADMIN};
+        } else {
+            grantedAuthorities = new GrantedAuthority[] {ROLE_USER};
+        }
 	}
 
 	/**
@@ -127,31 +151,31 @@ public class WikiUser {
 	}
 
 	/**
-	 *
+	 * @deprecated use getUsername() instead.
 	 */
 	public String getLogin() {
-		return this.login;
+        return getUsername();
 	}
 
 	/**
-	 *
+	 * @deprecated use setUsername(login) instead
 	 */
 	public void setLogin(String login) {
-		this.login = login;
+        setUsername(login);
 	}
 
 	/**
-	 *
+	 * @deprecated use getPassword() instead.
 	 */
 	public String getRememberKey() {
-		return this.rememberKey;
+		return getPassword();
 	}
 
 	/**
-	 *
+	 * @deprecated use setPassword(rememberKey) instead.
 	 */
 	public void setRememberKey(String rememberKey) {
-		this.rememberKey = rememberKey;
+        setPassword(rememberKey);
 	}
 
 	/**
@@ -167,4 +191,46 @@ public class WikiUser {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
+
+    // Acegi Security: UserDetails contract
+
+    public GrantedAuthority[] getAuthorities() {
+        return grantedAuthorities;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isAccountNonExpired() {
+        // TODO Not yet implemented
+        return true;
+    }
+
+    public boolean isAccountNonLocked() {
+        // TODO Not yet implemented
+        return true;
+    }
+
+    public boolean isCredentialsNonExpired() {
+        // TODO Not yet implemented
+        return true;
+    }
+
+    public boolean isEnabled() {
+        // TODO Not yet implemented
+        return true;
+    }
 }
