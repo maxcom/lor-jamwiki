@@ -439,6 +439,7 @@ onLdap()
 <form action="<jamwiki:link value="Special:Admin" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki">
 <input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
+<input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
 <tr>
 	<%-- FIXME: need label element --%>
 	<td class="formcaption"><c:out value="${wiki.name}" /></td>
