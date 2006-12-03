@@ -20,8 +20,12 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  * This class is a hack implemented to work around the fact that the default
@@ -61,7 +65,22 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	 * @throws IOException in the event of any failure
 	 */
 	protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
-		if (!url.startsWith("http://") && !url.startsWith("https://")) {
+		if (url.equals("/DEFAULT_VIRTUAL_WIKI")) {
+			// ugly, but a hard-coded constant seems to be the only way to
+			// allow a dynamic url value
+			String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
+			if (!StringUtils.hasText(virtualWikiName)) {
+				virtualWikiName = WikiBase.DEFAULT_VWIKI;
+			}
+			String topicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+			try {
+				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+				topicName = virtualWiki.getDefaultTopicName();
+			} catch (Exception e) {
+				logger.warning("Unable to retrieve default topic for virtual wiki", e);
+			}
+			url = request.getContextPath() + "/" + virtualWikiName + "/" + topicName;
+		} else if (!url.startsWith("http://") && !url.startsWith("https://")) {
 			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 			url = request.getContextPath() + "/" + virtualWiki + url;
 		}

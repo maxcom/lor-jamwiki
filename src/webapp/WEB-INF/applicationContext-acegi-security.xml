@@ -36,8 +36,8 @@
 			<value>/Special:Login?errorMessage=error.login</value>
 		</property>
 		<property name="defaultTargetUrl">
-			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
-			<value>/StartingPoints</value>
+			<!-- special hard-coded constant indicating default for virtual wiki -->
+			<value>/DEFAULT_VIRTUAL_WIKI</value>
 		</property>
 		<property name="filterProcessesUrl">
 			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
@@ -128,8 +128,8 @@
 	</bean>
 
 	<bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
-		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
-		<constructor-arg value="/StartingPoints" />
+		<!-- special hard-coded constant indicating default for virtual wiki -->
+		<constructor-arg value="/DEFAULT_VIRTUAL_WIKI" />
 		<constructor-arg>
 			<list>
 				<ref bean="rememberMeServices" />
