@@ -98,7 +98,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		user.setDisplayName(request.getParameter("displayName"));
 		String newPassword = request.getParameter("newPassword");
 		if (StringUtils.hasText(newPassword)) {
-			user.setRememberKey(Encryption.encrypt(newPassword));
+			user.setPassword(Encryption.encrypt(newPassword));
 		}
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(request.getRemoteAddr());

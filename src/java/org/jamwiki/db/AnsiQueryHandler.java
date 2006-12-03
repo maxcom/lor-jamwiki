@@ -599,7 +599,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(6, user.getCreateIpAddress());
 		stmt.setString(7, user.getLastLoginIpAddress());
 		stmt.setInt(8, (user.getAdmin() ? 1 : 0));
-		stmt.setString(9, user.getRememberKey());
+		stmt.setString(9, user.getPassword());
 		stmt.executeUpdate(conn);
 	}
 

@@ -693,7 +693,7 @@ public class Utilities {
 				logger.warning("Attempt to set user cookie without specifying servlet response");
 				return;
 			}
-			String cookieValue = user.getUsername() + ServletUtil.USER_COOKIE_DELIMITER + user.getRememberKey();
+			String cookieValue = user.getUsername() + ServletUtil.USER_COOKIE_DELIMITER + user.getPassword();
 			Utilities.addCookie(response, ServletUtil.USER_COOKIE, cookieValue, ServletUtil.USER_COOKIE_EXPIRES);
 		}
 	}
