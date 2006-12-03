@@ -201,6 +201,8 @@
 			<value>
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
+				/**/Special:Translation=ROLE_ADMIN
+				/**/Special:Convert=ROLE_ADMIN
 			</value>
 		</property>
 	</bean>

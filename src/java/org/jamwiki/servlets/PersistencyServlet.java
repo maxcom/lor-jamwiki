@@ -42,10 +42,6 @@ public class PersistencyServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (!Utilities.isAdmin(request)) {
-			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, pageInfo, "Special:Convert", errorMessage);
-		}
 		if (StringUtils.hasText(request.getParameter("todatabase"))) {
 			convertToDatabase(request, next, pageInfo);
 		} else {

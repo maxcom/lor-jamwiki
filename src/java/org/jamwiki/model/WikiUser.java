@@ -18,7 +18,6 @@ package org.jamwiki.model;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.userdetails.UserDetails;
@@ -42,13 +41,7 @@ public class WikiUser implements UserDetails {
 	private String username = null;
 	private int userId = -1;
 
-	// FIXME - consider making this an ACL (more flexible)
-	// GrantedAuthority is used by Acegi Security to support several authorities (roles).
-	// For backward compatibility admin is a wrapper for grantedAuthorities.
-	//private boolean admin = false;
-	/**
-	 * A logged user always has ROLE_USER and may have ROLE_ADMIN.
-	 */
+	/** GrantedAuthority is used by Acegi Security to support several authorities (roles).  A logged user always has ROLE_USER and may have ROLE_ADMIN. */
 	private GrantedAuthority[] grantedAuthorities;
 	private String password = null;
 

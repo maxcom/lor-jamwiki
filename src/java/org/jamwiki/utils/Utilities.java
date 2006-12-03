@@ -699,19 +699,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Logout the current user, removing any cookies and session objects that
-	 * need to be removed.
-	 *
-	 * @param request The servlet request object.
-	 * @param response The servlet response object.  May not be
-	 *  <code>null</code>.
-	 */
-	public static void logout(HttpServletRequest request, HttpServletResponse response) {
-		request.getSession().invalidate();
-		Utilities.removeCookie(response, ServletUtil.USER_COOKIE);
-	}
-
-	/**
 	 * Using the system parser, parse system content.
 	 *
 	 * @param parserInput A ParserInput object that contains parser configuration
@@ -941,25 +928,6 @@ public class Utilities {
 			}
 		}
 		return contents;
-	}
-
-	/**
-	 * Utility method used to delete a cookie by setting its expiration time to the
-	 * current time.
-	 *
-	 * @param response The servlet response object.
-	 * @param cookieName The name of the cookie that is to be deleted.
-	 */
-	public static final void removeCookie(HttpServletResponse response, String cookieName) {
-		if (response == null) {
-			logger.warning("Attempt to remove cookie using null response object");
-			return;
-		}
-		Cookie cookie = new Cookie(cookieName, null);
-		cookie.setMaxAge(0);
-		// FIXME - need path to be the server base
-		//cookie.setPath("/");
-		response.addCookie(cookie);
 	}
 
 	/**

@@ -39,57 +39,6 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (ServletUtil.isTopic(request, "Special:Logout")) {
-			logout(request, response, next, pageInfo);
-		} else if (request.getParameter("function") != null) {
-			login(request, response, next, pageInfo);
-		} else {
-			return ServletUtil.viewLogin(request, pageInfo, null, null);
-		}
-		return next;
-	}
-
-	/**
-	 *
-	 */
-	private void logout(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
-		Utilities.logout(request, response);
-		String redirect = request.getParameter("redirect");
-		if (!StringUtils.hasText(redirect)) {
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			redirect = virtualWiki.getDefaultTopicName();
-		}
-		ServletUtil.redirect(next, virtualWikiName, redirect);
-	}
-
-	/**
-	 * @deprecated handled by Acegi Security
-	 */
-	private void login(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
-		String password = request.getParameter("password");
-		String username = request.getParameter("username");
-		String redirect = request.getParameter("redirect");
-		if (!StringUtils.hasText(redirect)) {
-			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			redirect = virtualWiki.getDefaultTopicName();
-		}
-		WikiUser user = null;
-		if (WikiBase.getUserHandler().authenticate(username, password)) {
-			user = WikiBase.getDataHandler().lookupWikiUser(username, null);
-		}
-		boolean remember = (request.getParameter("remember") != null);
-		if (user == null) {
-			next.addObject("errorMessage", new WikiMessage("error.login"));
-			next.addObject("redirect", redirect);
-			if (remember) next.addObject("remember", "true");
-			pageInfo.setPageTitle(new WikiMessage("login.title"));
-			pageInfo.setSpecial(true);
-			pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
-		} else {
-			Utilities.login(request, response, user, remember);
-			ServletUtil.redirect(next, virtualWikiName, redirect);
-		}
+		return ServletUtil.viewLogin(request, pageInfo, null, null);
 	}
 }
