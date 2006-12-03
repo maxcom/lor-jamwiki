@@ -27,18 +27,21 @@
 
 	<!-- +++++++++ Filter to process authentication +++++++++ -->
 
-	<bean id="authenticationProcessingFilter" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilter">
+	<bean id="authenticationProcessingFilter" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilter">
 		<property name="authenticationManager">
 			<ref bean="authenticationManager" />
 		</property>
 		<property name="authenticationFailureUrl">
-			<value>/en/Special:Login?errorMessage=error.login</value>
+			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+			<value>/Special:Login?errorMessage=error.login</value>
 		</property>
 		<property name="defaultTargetUrl">
-			<value>/en/StartingPoints</value>
+			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+			<value>/StartingPoints</value>
 		</property>
 		<property name="filterProcessesUrl">
-			<value>/en/j_acegi_security_check</value>
+			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+			<value>/j_acegi_security_check</value>
 		</property>
 		<property name="rememberMeServices">
 			<ref local="rememberMeServices" />
@@ -124,15 +127,17 @@
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
-	<bean id="logoutFilter" class="org.acegisecurity.ui.logout.LogoutFilter">
-		<constructor-arg value="/en/StartingPoints" /><!-- URL redirected to after logout -->
+	<bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
+		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
+		<constructor-arg value="/StartingPoints" />
 		<constructor-arg>
 			<list>
 				<ref bean="rememberMeServices" />
 				<bean class="org.acegisecurity.ui.logout.SecurityContextLogoutHandler" />
 			</list>
 		</constructor-arg>
-		<property name="filterProcessesUrl" value="/en/Special:Logout" />
+		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
+		<property name="filterProcessesUrl" value="/Special:Logout" />
 	</bean>
 
 	<!-- ======================== Authorization ======================== -->

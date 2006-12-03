@@ -25,7 +25,7 @@
 <c:set var="errorMessage" value="${param['errorMessage']}"/>
 <c:if test="${!empty errorMessage}"><p class="red"><f:message key='${errorMessage}'>/></f:message></p></c:if>
 
-<form method="post" action='<c:url value="/en/j_acegi_security_check"/>'>
+<form method="post" action="<c:url value="/${virtualWiki}/j_acegi_security_check" />">
 <input type="hidden" name="redirect" value="<c:out value="${redirect}"/>" />
 <table>
 <tr>
