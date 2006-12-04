@@ -17,18 +17,30 @@
 package org.jamwiki.servlets;
 
 import java.util.Vector;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.acegisecurity.AuthenticationException;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.ProviderManager;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.acegisecurity.ui.WebAuthenticationDetails;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
+import org.springframework.beans.BeansException;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -73,11 +85,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-			// The user can not be logged in automatically here because we do not have access to the
-			// authentication provider configured in Acegi Security.
-			// Redirect to the login page instead.
+            Utilities.login(request, user);
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			String topic = "Special:Login";
+            String topic = virtualWiki.getDefaultTopicName();
 			ServletUtil.redirect(next, virtualWikiName, topic);
 		}
 	}

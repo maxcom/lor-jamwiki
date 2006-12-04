@@ -16,11 +16,11 @@
  */
 package org.jamwiki.utils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -32,13 +32,18 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.acegisecurity.Authentication;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.acegisecurity.ui.WebAuthenticationDetails;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
@@ -52,8 +57,8 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
-import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserInput;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -668,46 +673,40 @@ public class Utilities {
 	}
 
 	/**
-	 * Login the current user, setting a cookie if needed and adding any
-	 * required objects to the session.
+	 * Login the current user.
+     *
+     * Useful the user should be logged in automatically, e.g. after registration.
 	 *
 	 * @param request The servlet request object.
-	 * @param response The servlet response object.  May be <code>null</code>
-	 *  if setCookie is <code>false</code>.
 	 * @param user The WikiUser being logged in.
-	 * @param setCookie Set to <code>true</code> if a cookie should be set to
-	 *  automatically remember the user during future visits.
-	 * @deprecated handled by Acegi Security
 	 */
-	public static void login(HttpServletRequest request, HttpServletResponse response, WikiUser user, boolean setCookie) throws Exception {
+	public static void login(HttpServletRequest request, WikiUser user) throws Exception {
 		if (user == null) {
 			return;
 		}
-		request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
-		// add user's watchlist to session
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
-		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
-		if (setCookie) {
-			if (response == null) {
-				logger.warning("Attempt to set user cookie without specifying servlet response");
-				return;
-			}
-			String cookieValue = user.getUsername() + ServletUtil.USER_COOKIE_DELIMITER + user.getPassword();
-			Utilities.addCookie(response, ServletUtil.USER_COOKIE, cookieValue, ServletUtil.USER_COOKIE_EXPIRES);
-		}
+        GrantedAuthority[] grantedAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(user, user.getPassword(), grantedAuthorities);
+        authentication.setDetails(new WebAuthenticationDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+        Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
+        request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 	}
 
 	/**
-	 * Using the system parser, parse system content.
-	 *
-	 * @param parserInput A ParserInput object that contains parser configuration
-	 *  information.
-	 * @param content The raw topic content that is to be parsed.
-	 * @return A ParserDocument object with parsed topic content and other parser
-	 *  output fields set.
-	 * @throws Exception Thrown if there are any parsing errors.
-	 */
+     * Using the system parser, parse system content.
+     *
+     * @param parserInput
+     *            A ParserInput object that contains parser configuration
+     *            information.
+     * @param content
+     *            The raw topic content that is to be parsed.
+     * @return A ParserDocument object with parsed topic content and other
+     *         parser output fields set.
+     * @throws Exception
+     *             Thrown if there are any parsing errors.
+     */
 	public static ParserDocument parse(ParserInput parserInput, String content) throws Exception {
 		if (content == null) {
 			return null;
