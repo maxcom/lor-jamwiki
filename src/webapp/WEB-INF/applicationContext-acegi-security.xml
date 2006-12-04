@@ -181,10 +181,6 @@
 		Change URL to role mapping to change authentication rules.
 		Examples:
 		Add
-			/**/Special:Login=ROLE_ANONYMOUS,ROLE_USER
-			/**/Special:Account=ROLE_ANONYMOUS,ROLE_USER
-			/**/jamwiki.css=ROLE_ANONYMOUS,ROLE_USER
-			/images/*.gif=ROLE_ANONYMOUS,ROLE_USER
 			/**/Special:Edit=ROLE_USER
 		to require login to edit pages
 		Add
