@@ -22,6 +22,7 @@ import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.userdetails.UserDetails;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.Assert;
 
 /**
  *
@@ -42,7 +43,7 @@ public class WikiUser implements UserDetails {
 	private int userId = -1;
 
 	/** GrantedAuthority is used by Acegi Security to support several authorities (roles).  A logged user always has ROLE_USER and may have ROLE_ADMIN. */
-	private GrantedAuthority[] grantedAuthorities;
+	private GrantedAuthority[] authorities;
 	private String password = null;
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
@@ -53,11 +54,50 @@ public class WikiUser implements UserDetails {
 	public WikiUser() {
 	}
 
+    /**
+     * Construct the <code>User</code> with the details required by {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}.
+     *
+     * @param username the username presented to the
+     *        <code>DaoAuthenticationProvider</code>
+     * @param password the password that should be presented to the
+     *        <code>DaoAuthenticationProvider</code>
+     * @param enabled set to <code>true</code> if the user is enabled
+     * @param accountNonExpired set to <code>true</code> if the account has not
+     *        expired
+     * @param credentialsNonExpired set to <code>true</code> if the credentials
+     *        have not expired
+     * @param accountNonLocked set to <code>true</code> if the account is not
+     *        locked
+     * @param authorities the authorities that should be granted to the caller
+     *        if they presented the correct username and password and the user
+     *        is enabled
+     *
+     * @throws IllegalArgumentException if a <code>null</code> value was passed
+     *         either as a parameter or as an element in the
+     *         <code>GrantedAuthority[]</code> array
+     */
+    public WikiUser(String username, String password, boolean enabled, boolean accountNonExpired,
+        boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities)
+        throws IllegalArgumentException {
+        if (((username == null) || "".equals(username)) || (password == null)) {
+            throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
+        }
+
+        this.username = username;
+        this.password = password;
+//        this.enabled = enabled;
+//        this.accountNonExpired = accountNonExpired;
+//        this.credentialsNonExpired = credentialsNonExpired;
+//        this.accountNonLocked = accountNonLocked;
+        setAuthorities(authorities);
+    }
+
+
 	/**
 	 *
 	 */
 	public boolean getAdmin() {
-		return (grantedAuthorities != null) && (Arrays.asList(grantedAuthorities).contains(ROLE_ADMIN));
+		return (authorities != null) && (Arrays.asList(authorities).contains(ROLE_ADMIN));
 	}
 
 	/**
@@ -67,9 +107,9 @@ public class WikiUser implements UserDetails {
 		// A user's roles are fixed so far, so it's safe to create or destroy grantedAuthorities as required.
 		// If more roles are to be supported this method must be refactored.
 		if (admin) {
-			grantedAuthorities = new GrantedAuthority[] {ROLE_USER, ROLE_ADMIN};
+            setAuthorities(new GrantedAuthority[] {ROLE_USER, ROLE_ADMIN});
 		} else {
-			grantedAuthorities = new GrantedAuthority[] {ROLE_USER};
+		    setAuthorities(new GrantedAuthority[] {ROLE_USER});
 		}
 	}
 
@@ -163,8 +203,17 @@ public class WikiUser implements UserDetails {
 	 *
 	 */
 	public GrantedAuthority[] getAuthorities() {
-		return grantedAuthorities;
+		return authorities;
 	}
+
+    protected void setAuthorities(GrantedAuthority[] authorities) {
+        Assert.notNull(authorities, "Cannot pass a null GrantedAuthority array");
+        for (int i = 0; i < authorities.length; i++) {
+            Assert.notNull(authorities[i],
+                "Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
+        }
+        this.authorities = authorities;
+    }
 
 	/**
 	 *
