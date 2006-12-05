@@ -31,6 +31,7 @@
 * FEATURE: Add a check to verify a supported JDK version during setup.
 * BUG: Fix failure when changing default topic for virtual wiki from
   Special:Admin.
+* FEATURE: Added Dutch translations (Angel)
 * FEATURE: Updated Chinese translations (hfl).
 * FEATURE: Updated Polish translations (dlpa).
 * FEATURE: Updated German translations (axelclk).
