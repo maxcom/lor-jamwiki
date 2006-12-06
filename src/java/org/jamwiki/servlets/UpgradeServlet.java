@@ -116,10 +116,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.2.0"));
 			success = false;
 		} else {
-			// database initialization changed for 0.5.0
-			if (oldVersion.before(0, 5, 0)) {
-				if (!upgrade050(request, messages)) success = false;
-			}
 			// first perform database upgrades
 			if (!Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
 				try {
@@ -214,48 +210,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			if (Environment.getValue(Environment.PROP_PARSER_CLASS) != null && Environment.getValue(Environment.PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
 				Environment.setValue(Environment.PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
-				Environment.saveProperties();
-			}
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-	 *
-	 */
-	private boolean upgrade050(HttpServletRequest request, Vector messages) {
-		try {
-			if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
-				// this is a problem, but it should never occur
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("hsql")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_HSQL);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mssql")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_MSSQL);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_MYSQL);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("oracle")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ORACLE);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("postgres")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_POSTGRES);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2);
-				Environment.saveProperties();
-			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2/400")) {
-				Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2400);
 				Environment.saveProperties();
 			}
 			return true;

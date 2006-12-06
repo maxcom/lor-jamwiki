@@ -212,6 +212,35 @@ public class Utilities {
 	 *  instantiated.
 	 */
 	public static DataHandler dataHandlerInstance() throws Exception {
+		// FIXME - remove this conditional after the ability to upgrade to
+		// 0.5.0 is removed.
+		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
+			// this is a problem, but it should never occur
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("hsql")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_HSQL);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mssql")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_MSSQL);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("mysql")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_MYSQL);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("oracle")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ORACLE);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("postgres")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_POSTGRES);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2);
+			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2/400")) {
+			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2400);
+			Environment.saveProperties();
+		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		logger.fine("Using data handler: " + dataHandlerClass);
 		Class clazz = Class.forName(dataHandlerClass, true, Thread.currentThread().getContextClassLoader());
