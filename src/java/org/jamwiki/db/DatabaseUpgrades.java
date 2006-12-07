@@ -228,7 +228,7 @@ public class DatabaseUpgrades {
 			sql = "update jam_wiki_user set remember_key = (select encoded_password from jam_wiki_user_info where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id) ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Populated the remember_key column with data");
-			// update jam_topic records
+			// set column not null
 			sql = "alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("remember_key column set to NOT NULL");

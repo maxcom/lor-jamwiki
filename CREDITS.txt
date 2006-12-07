@@ -17,7 +17,7 @@ JAMWiki Contributors
                             Feilong Huang (hfl)
      Chinese (traditional): Jiading (ewen0930)
      Danish:                Anders Monrad (g9adm)
-     Dutch:                 Tarik Menbhi (Angel)
+     Dutch:                 Tarik Menbhi & Wim Borghs (Angel)
      French:                Henri Gomez (hgomez)
      German:                Axel Kramer (axelclk)
      Hungarian:             Daniel Tar (bDaneE)
