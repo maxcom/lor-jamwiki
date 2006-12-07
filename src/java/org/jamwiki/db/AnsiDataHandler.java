@@ -93,7 +93,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addTopicVersion(String topicName, TopicVersion topicVersion, Connection conn) throws Exception {
+	private void addTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception {
 		if (topicVersion.getTopicVersionId() < 1) {
 			int topicVersionId = this.queryHandler().nextTopicVersionId(conn);
 			topicVersion.setTopicVersionId(topicVersionId);
@@ -267,7 +267,7 @@ public class AnsiDataHandler implements DataHandler {
 					TopicVersion topicVersion = (TopicVersion)versionsMap.get(key);
 					String topicName = (String)topicNameMap.get(key);
 					try {
-						toHandler.addTopicVersion(topicName, topicVersion, conn);
+						toHandler.addTopicVersion(topicVersion, conn);
 						success++;
 					} catch (Exception e) {
 						String msg = "Unable to convert topic version: " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId();
@@ -1183,7 +1183,7 @@ public class AnsiDataHandler implements DataHandler {
 				}
 				topicVersion.setTopicId(topic.getTopicId());
 				// write version
-				addTopicVersion(topic.getName(), topicVersion, conn);
+				addTopicVersion(topicVersion, conn);
 				String authorName = topicVersion.getAuthorIpAddress();
 				Integer authorId = topicVersion.getAuthorId();
 				if (authorId != null) {

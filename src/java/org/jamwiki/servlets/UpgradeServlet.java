@@ -129,7 +129,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 						messages = DatabaseUpgrades.upgrade042(messages);
 					}
 					if (oldVersion.before(0, 5, 0)) {
-//						messages = DatabaseUpgrades.upgrade050(messages);
+						messages = DatabaseUpgrades.upgrade050(messages);
 					}
 				} catch (Exception e) {
 					// FIXME - hard coding

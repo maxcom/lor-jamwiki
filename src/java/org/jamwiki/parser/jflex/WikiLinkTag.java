@@ -55,7 +55,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String buildInternalLinkUrl(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) {
+	private String buildInternalLinkUrl(ParserInput parserInput, int mode, String raw) {
 		String context = parserInput.getContext();
 		String virtualWiki = parserInput.getVirtualWiki();
 		try {
@@ -105,7 +105,7 @@ public class WikiLinkTag implements ParserTag {
 	 * resulting HTML output.
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		this.processLinkMetadata(parserInput, parserDocument, raw);
+		this.processLinkMetadata(parserDocument, raw);
 		if (mode <= JFlexParser.MODE_PREPROCESS) {
 			// do not parse to HTML when in preprocess mode
 			return raw;
@@ -200,13 +200,13 @@ public class WikiLinkTag implements ParserTag {
 			// category tag, but not a category link
 			return "";
 		}
-		return this.buildInternalLinkUrl(parserInput, parserDocument, mode, raw);
+		return this.buildInternalLinkUrl(parserInput, mode, raw);
 	}
 
 	/**
 	 *
 	 */
-	private void processLinkMetadata(ParserInput parserInput, ParserDocument parserDocument, String raw) {
+	private void processLinkMetadata(ParserDocument parserDocument, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
 			return;

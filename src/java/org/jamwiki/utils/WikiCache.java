@@ -64,7 +64,7 @@ public class WikiCache {
 			int maxAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_AGE);
 			int maxIdleAge = Environment.getIntValue(Environment.PROP_CACHE_MAX_IDLE_AGE);
 			Cache cache = new Cache(cacheName, maxSize, true, false, maxAge, maxIdleAge);
-			WikiCache.cacheManager.addCache(cacheName);
+			WikiCache.cacheManager.addCache(cache);
 		}
 		return WikiCache.cacheManager.getCache(cacheName);
 	}

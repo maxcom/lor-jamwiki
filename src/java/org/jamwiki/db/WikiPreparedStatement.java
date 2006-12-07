@@ -17,7 +17,6 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -155,7 +154,7 @@ public class WikiPreparedStatement {
 	 * @throws Exception If a parameter is invalid.
 	 */
 	public void setChar(int parameterIndex, char x) throws Exception {
-		this.verifyParams(parameterIndex, new Character(x));
+		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.CHAR;
 		this.params[parameterIndex - 1] = new Character(x);
 	}
@@ -169,7 +168,7 @@ public class WikiPreparedStatement {
 	 * @throws Exception If a parameter is invalid.
 	 */
 	public void setInt(int parameterIndex, int x) throws Exception {
-		this.verifyParams(parameterIndex, new Integer(x));
+		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
 		this.params[parameterIndex - 1] = new Integer(x);
 	}
@@ -184,7 +183,7 @@ public class WikiPreparedStatement {
 	 */
 	public void setInt(int parameterIndex, long x) throws Exception {
 		// this is a bit kludgy - cast the long to an int.  problem for very big values.
-		this.verifyParams(parameterIndex, new Integer((int)x));
+		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.INTEGER;
 		this.params[parameterIndex - 1] = new Integer((int)x);
 	}
@@ -199,7 +198,7 @@ public class WikiPreparedStatement {
 	 * @throws Exception If a parameter is invalid.
 	 */
 	public void setNull(int parameterIndex, int sqlType) throws Exception {
-		this.verifyParams(parameterIndex, null);
+		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = sqlType;
 		this.params[parameterIndex - 1] = null;
 	}
@@ -215,7 +214,7 @@ public class WikiPreparedStatement {
 	 * @throws Exception If a parameter is invalid.
 	 */
 	public void setString(int parameterIndex, String x) throws Exception {
-		this.verifyParams(parameterIndex, x);
+		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.VARCHAR;
 		this.params[parameterIndex - 1] = x;
 	}
@@ -229,7 +228,7 @@ public class WikiPreparedStatement {
 	 * @throws Exception If a parameter is invalid.
 	 */
 	public void setTimestamp(int parameterIndex, Timestamp x) throws Exception {
-		this.verifyParams(parameterIndex, x);
+		this.verifyParams(parameterIndex);
 		this.paramTypes[parameterIndex - 1] = Types.TIMESTAMP;
 		this.params[parameterIndex - 1] = x;
 	}
@@ -237,7 +236,7 @@ public class WikiPreparedStatement {
 	/**
 	 *
 	 */
-	private void verifyParams(int pos, Object value) throws Exception {
+	private void verifyParams(int pos) throws Exception {
 		if (pos <= 0) {
 			throw new Exception("Invalid PreparedStatement index " + pos);
 		}

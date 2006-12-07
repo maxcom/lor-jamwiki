@@ -26,7 +26,6 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.NamespaceHandler;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -43,8 +42,6 @@ public class WikiSignatureTag implements ParserTag {
 		try {
 			String signature = "";
 			if (includeUser) {
-				String context = parserInput.getContext();
-				String virtualWiki = parserInput.getVirtualWiki();
 				String login = parserInput.getUserIpAddress();
 				String email = parserInput.getUserIpAddress();
 				String displayName = parserInput.getUserIpAddress();
@@ -57,7 +54,6 @@ public class WikiSignatureTag implements ParserTag {
 					email = userInfo.getEmail();
 					userId = new Integer(user.getUserId()).toString();
 				}
-				String text = parserInput.getUserIpAddress();
 				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
 				Object params[] = new Object[7];
 				params[0] = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + login;

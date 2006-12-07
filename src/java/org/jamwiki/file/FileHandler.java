@@ -65,7 +65,6 @@ public class FileHandler {
 	private static int NEXT_WIKI_FILE_VERSION_ID = 0;
 	private static final String NEXT_WIKI_FILE_VERSION_ID_FILE = "wiki_file_version.id";
 	private static final String NEXT_WIKI_USER_ID_FILE = "wiki_user.id";
-	private static final String RECENT_CHANGE_DIR = "changes";
 	private static final String TOPIC_DIR = "topics";
 	private static final String TOPIC_VERSION_DIR = "versions";
 	private static final String VIRTUAL_WIKI_DIR = "virtualwiki";

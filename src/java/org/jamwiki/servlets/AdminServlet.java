@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -27,7 +26,6 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -87,7 +85,6 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
 		} catch (Exception e) {
 			logger.severe("Failure while adding virtual wiki", e);
-			String message = "Failure while adding virtual wiki: " + e.getMessage();
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
 		view(request, next, pageInfo, null);

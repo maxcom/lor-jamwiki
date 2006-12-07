@@ -18,8 +18,6 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import org.jamwiki.UserHandler;
-import org.jamwiki.WikiBase;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;

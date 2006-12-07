@@ -17,7 +17,6 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Properties;
 import org.jamwiki.Environment;
@@ -141,7 +140,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void createTables(Connection conn) throws Exception {
-		WikiPreparedStatement stmt = null;
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE, conn);

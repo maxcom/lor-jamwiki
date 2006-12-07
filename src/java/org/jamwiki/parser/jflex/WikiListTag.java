@@ -153,21 +153,6 @@ public class WikiListTag implements ParserTag {
 	}
 
 	/**
-	 *
-	 */
-	private int listTagCount(String raw) {
-		int count = 0;
-		for (int i=0; i < raw.length(); i++) {
-			if (isListTag(raw.charAt(i))) {
-				count++;
-			} else {
-				break;
-			}
-		}
-		return count;
-	}
-
-	/**
 	 * Parse a Mediawiki list tag of the form "#*" and return the resulting
 	 * HTML output.
 	 */

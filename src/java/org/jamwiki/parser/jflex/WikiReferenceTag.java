@@ -109,7 +109,6 @@ public class WikiReferenceTag implements ParserTag {
 	private String tagAttribute(String raw, String name) {
 		int pos = raw.indexOf(">");
 		if (pos == -1) return null;
-		String openTag = raw.substring(0, pos);
 		pos = raw.toLowerCase().indexOf(name.toLowerCase());
 		if (pos == -1) return null;
 		int start = raw.indexOf("\"", pos);

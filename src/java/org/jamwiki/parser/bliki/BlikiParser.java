@@ -1,7 +1,5 @@
 package org.jamwiki.parser.bliki;
 
-import info.bliki.wiki.filter.WikiModel;
-
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.jflex.JFlexParser;

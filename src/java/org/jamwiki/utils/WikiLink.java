@@ -16,8 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import org.jamwiki.utils.WikiLogger;
-
 /**
  * Utility method used in processing Wiki links.
  */

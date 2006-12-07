@@ -37,9 +37,6 @@ public class Encryption {
 	private static WikiLogger logger = WikiLogger.getLogger(Encryption.class.getName());
 	public static final String DES_ALGORITHM = "DES";
 	public static final String ENCRYPTION_KEY = "JAMWiki Key 12345";
-	private static final char[] hexDigits = {
-		'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
-	};
 
 	/**
 	 * Hide the constructor by making it private.

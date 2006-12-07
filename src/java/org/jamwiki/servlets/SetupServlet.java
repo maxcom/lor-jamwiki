@@ -16,7 +16,6 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -30,7 +29,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
@@ -198,7 +196,6 @@ public class SetupServlet extends JAMWikiServlet {
 			user.setUsername("");
 			errors.add(new WikiMessage("error.loginempty"));
 		}
-		String oldPassword = request.getParameter("oldPassword");
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
 		if (newPassword != null || confirmPassword != null) {

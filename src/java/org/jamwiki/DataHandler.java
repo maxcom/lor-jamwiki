@@ -18,7 +18,6 @@ package org.jamwiki;
 
 import java.util.Collection;
 import java.util.Locale;
-import org.jamwiki.model.Category;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;

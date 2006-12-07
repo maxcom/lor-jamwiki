@@ -18,7 +18,6 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Enumeration;
-import java.util.Properties;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;

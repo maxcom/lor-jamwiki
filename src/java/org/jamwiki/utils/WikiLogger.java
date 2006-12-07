@@ -24,7 +24,6 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.LogRecord;
 
 /**
  * This class provides a wrapper around the java.util.logging.Logger class,

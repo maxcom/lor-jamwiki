@@ -16,7 +16,6 @@
  */
 package org.jamwiki.utils;
 
-import org.jamwiki.Environment;
 import org.jamwiki.WikiConfiguration;
 
 /**

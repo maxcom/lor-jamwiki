@@ -61,7 +61,7 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static Connection getConnection(Object transactionObject) throws Exception {
-		if (transactionObject != null && transactionObject instanceof Connection) {
+		if (transactionObject instanceof Connection) {
 			return (Connection)transactionObject;
 		}
 		return WikiDatabase.getConnection();

@@ -18,7 +18,6 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;

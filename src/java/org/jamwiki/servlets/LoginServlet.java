@@ -18,13 +18,7 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.WikiMessage;
-import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Utilities;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**

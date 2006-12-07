@@ -21,7 +21,6 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
-import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -81,7 +80,6 @@ public class LuceneSearchEngine implements SearchEngine {
 	public synchronized void addToIndex(Topic topic, Collection links) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		String contents = topic.getTopicContent();
 		IndexWriter writer = null;
 		try {
 			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false);
@@ -186,7 +184,6 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *  link to the topic.
 	 */
 	public Collection findLinkedTo(String virtualWiki, String topicName) {
-		KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 		Collection results = new Vector();
 		IndexSearcher searcher = null;
 		try {

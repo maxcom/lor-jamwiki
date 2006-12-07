@@ -247,7 +247,6 @@ public class WikiResultSet {
 	 */
 	public int getInt(String columnName) throws SQLException {
 		this.verifyColumn(columnName);
-		Object object = this.currentRow.get(columnName.toLowerCase());
 		Integer value = null;
 		try {
 			value = (Integer)this.currentRow.get(columnName.toLowerCase());

@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -93,6 +92,5 @@ public class JAMWikiFilter implements Filter {
 	 */
 	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
 		response.sendRedirect(url);
-		return;
 	}
 }
