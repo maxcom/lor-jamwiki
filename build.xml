@@ -215,9 +215,9 @@ clean     - Removes any build artifacts from the tree.
 source    - Build a zip file of the application source.
 javadiff  - Generate the javadiff.jar file.
 help      - Displays this text.
-javadoc   - Build Javadoc documentation.</echo>
+javadoc   - Build Javadoc documentation.
 junit     - Run a series of JUnit tests on the current code.
 pmd       - Run a series of static code analysis tests using pmd.  The pmd
-            tool can be downloaded from http://pmd.sourceforge.net/.
+            tool can be downloaded from http://pmd.sourceforge.net/.</echo>
 	</target>
 </project>
