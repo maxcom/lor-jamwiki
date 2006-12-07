@@ -137,6 +137,42 @@
 			</classpath>
 		</junit>
 	</target>
+	
+	<target name="pmd">
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" />
+		<pmd shortFilenames="false" targetjdk="1.4">
+			<ruleset>basic</ruleset>
+			<!--
+			FIXME:
+			  - get the JSP tests working
+			  - the naming rules for short & long variable names
+			    produce too many false positives
+			  - the optimization rules produce too many false
+			    positivies for assignments prefixed with "this."
+			<ruleset>basic-jsp</ruleset>
+			<ruleset>naming</ruleset>
+			<ruleset>optimizations</ruleset>
+			-->
+			<ruleset>braces</ruleset>
+			<ruleset>clone</ruleset>
+			<ruleset>codesize</ruleset>
+			<ruleset>design</ruleset>
+			<ruleset>imports</ruleset>
+			<ruleset>j2ee</ruleset>
+			<ruleset>strings</ruleset>
+			<ruleset>unusedcode</ruleset>
+			<formatter type="html" toFile="jamwiki-pmd-report.html" linkPrefix="file://${dir.src.java}/" />
+			<fileset dir="${dir.src.java}">
+				<include name="org/jamwiki/**/*.java" />
+			</fileset>
+			<!--
+			FIXME: get JSP tests working
+			<fileset dir="${dir.src.jsp}">
+				<include name="**/*.jsp" />
+			</fileset>
+			-->
+		</pmd>
+	</target>
 
 	<target name="source" description="Build a zip file of the application source">
 		<delete file="${dir.build}/${war.name}-${app.version}-src.zip" />
@@ -170,16 +206,18 @@
 	<target name="help" description="Displays a list of possible targets for the project.">
 		<echo>Available targets.  Most users will want the "war" target:
 
-war       - Generates a war file suitable for deployment to a web
-            application server.
-war-local - Generates a war file suitable for deployment to a web
-            application server, replacing jar and property files
-            using any files found in the local-files directory.
-junit     - Run a series of JUnit tests on the current code.
+war       - Generates a war file suitable for deployment to a web application
+            server.
+war-local - Generates a war file suitable for deployment to a web application
+            server, replacing jar and property files using any files found in
+            the local-files directory.
 clean     - Removes any build artifacts from the tree.
 source    - Build a zip file of the application source.
 javadiff  - Generate the javadiff.jar file.
 help      - Displays this text.
 javadoc   - Build Javadoc documentation.</echo>
+junit     - Run a series of JUnit tests on the current code.
+pmd       - Run a series of static code analysis tests using pmd.  The pmd
+            tool can be downloaded from http://pmd.sourceforge.net/.
 	</target>
 </project>
