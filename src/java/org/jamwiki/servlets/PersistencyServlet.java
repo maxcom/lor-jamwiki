@@ -42,6 +42,10 @@ public class PersistencyServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		if (!Utilities.isAdmin(request)) {
+			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, pageInfo, "Special:Convert", errorMessage);
+		}
 		if (StringUtils.hasText(request.getParameter("todatabase"))) {
 			convertToDatabase(request, next, pageInfo);
 		} else {
@@ -62,7 +66,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 			next.addObject("messages", messages);
 		} catch (Exception e) {
 			logger.severe("Failure while executing database-to-file conversion", e);
-			next.addObject("errorMessage", new WikiMessage("convert.database.failure", e.getMessage()));
+			next.addObject("messageObject", new WikiMessage("convert.database.failure", e.getMessage()));
 		}
 		view(request, next, pageInfo);
 	}

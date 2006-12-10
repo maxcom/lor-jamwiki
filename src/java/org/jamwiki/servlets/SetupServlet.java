@@ -90,9 +90,9 @@ public class SetupServlet extends JAMWikiServlet {
 		}
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
-			next.addObject("errorMessage", we.getWikiMessage());
+			next.addObject("messageObject", we.getWikiMessage());
 		} else {
-			next.addObject("errorMessage", new WikiMessage("error.unknown", e.getMessage()));
+			next.addObject("messageObject", new WikiMessage("error.unknown", e.getMessage()));
 		}
 	}
 

@@ -163,13 +163,13 @@ public class EditServlet extends JAMWikiServlet {
 			return null;
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
-			WikiMessage errorMessage = new WikiMessage("edit.exception.login");
-			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
+			WikiMessage messageObject = new WikiMessage("edit.exception.login");
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
-			WikiMessage errorMessage = new WikiMessage("edit.exception.loginadmin", topicName);
-			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
+			WikiMessage messageObject = new WikiMessage("edit.exception.loginadmin", topicName);
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		return null;
 	}
@@ -281,10 +281,10 @@ public class EditServlet extends JAMWikiServlet {
 			}
 		}
 		// redirect to prevent user from refreshing and re-submitting
-		String redirect = topic.getName();
+		String target = topic.getName();
 		if (StringUtils.hasText(sectionName)) {
-			redirect += "#" + sectionName;
+			target += "#" + sectionName;
 		}
-		ServletUtil.redirect(next, virtualWiki, redirect);
+		ServletUtil.redirect(next, virtualWiki, target);
 	}
 }

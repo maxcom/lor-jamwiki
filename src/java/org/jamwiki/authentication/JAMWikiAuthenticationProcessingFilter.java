@@ -65,6 +65,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	 * @throws IOException in the event of any failure
 	 */
 	protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+		String target = request.getParameter("target");
 		if (url.equals("/DEFAULT_VIRTUAL_WIKI")) {
 			// ugly, but a hard-coded constant seems to be the only way to
 			// allow a dynamic url value
@@ -72,17 +73,23 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 			if (!StringUtils.hasText(virtualWikiName)) {
 				virtualWikiName = WikiBase.DEFAULT_VWIKI;
 			}
-			String topicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-			try {
-				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-				topicName = virtualWiki.getDefaultTopicName();
-			} catch (Exception e) {
-				logger.warning("Unable to retrieve default topic for virtual wiki", e);
+			if (!StringUtils.hasText(target)) {
+				target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+				try {
+					VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+					target = virtualWiki.getDefaultTopicName();
+				} catch (Exception e) {
+					logger.warning("Unable to retrieve default topic for virtual wiki", e);
+				}
 			}
-			url = request.getContextPath() + "/" + virtualWikiName + "/" + topicName;
+			url = request.getContextPath() + "/" + virtualWikiName + "/" + target;
 		} else if (!url.startsWith("http://") && !url.startsWith("https://")) {
 			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 			url = request.getContextPath() + "/" + virtualWiki + url;
+			if (StringUtils.hasText(target)) {
+				url += (url.indexOf("?") == -1) ? "?" : "&";
+				url += "target=" + target;
+			}
 		}
 		response.sendRedirect(response.encodeRedirectURL(url));
 	}

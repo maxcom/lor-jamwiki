@@ -366,9 +366,9 @@ public class ServletUtil {
 		pageInfo.setSpecial(true);
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
-			next.addObject("errorMessage", we.getWikiMessage());
+			next.addObject("messageObject", we.getWikiMessage());
 		} else {
-			next.addObject("errorMessage", new WikiMessage("error.unknown", e.toString()));
+			next.addObject("messageObject", new WikiMessage("error.unknown", e.toString()));
 		}
 		try {
 			ServletUtil.loadDefaults(request, next, pageInfo);
@@ -386,33 +386,33 @@ public class ServletUtil {
 	 *  information needed for rendering the final JSP page.
 	 * @param topic The topic to be redirected to.  Valid examples are
 	 *  "Special:Admin", "StartingPoints", etc.
-	 * @param errorMessage A WikiMessage object to be displayed on the login
+	 * @param messageObject A WikiMessage object to be displayed on the login
 	 *  page.
 	 * @return Returns a ModelAndView object corresponding to the login page
 	 *  display.
 	 * @throws Exception Thrown if any error occurs during processing.
 	 */
-	protected static ModelAndView viewLogin(HttpServletRequest request, WikiPageInfo pageInfo, String topic, WikiMessage errorMessage) throws Exception {
+	protected static ModelAndView viewLogin(HttpServletRequest request, WikiPageInfo pageInfo, String topic, WikiMessage messageObject) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		pageInfo.reset();
 		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
-		String redirect = request.getParameter("redirect");
-		if (!StringUtils.hasText(redirect)) {
+		String target = request.getParameter("target");
+		if (!StringUtils.hasText(target)) {
 			if (!StringUtils.hasText(topic)) {
 				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
-			redirect = topic;
+			target = topic;
 			if (StringUtils.hasText(request.getQueryString())) {
-				redirect += "?" + request.getQueryString();
+				target += "?" + request.getQueryString();
 			}
 		}
-		next.addObject("redirect", redirect);
+		next.addObject("target", target);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
 		pageInfo.setSpecial(true);
-		if (errorMessage != null) {
-			next.addObject("errorMessage", errorMessage);
+		if (messageObject != null) {
+			next.addObject("messageObject", messageObject);
 		}
 		return next;
 	}

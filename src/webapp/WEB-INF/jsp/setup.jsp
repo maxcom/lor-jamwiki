@@ -75,7 +75,7 @@ function onPersistenceType() {
 }
 </script>
 
-<c:if test="${!empty errorMessage}"><p class="red"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /><f:param value="${errorMessage.params[1]}" /></f:message></p></c:if>
+<c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /><f:param value="${messageObject.params[1]}" /></f:message></p></c:if>
 
 <form name="setup" method="post">
 <input type="hidden" value="<c:out value="${upgrade}" />" />

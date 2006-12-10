@@ -22,11 +22,11 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:set var="errorMessage" value="${param['errorMessage']}"/>
-<c:if test="${!empty errorMessage}"><p class="red"><f:message key='${errorMessage}'>/></f:message></p></c:if>
+<c:if test="${!empty param['message']}"><p class="red"><f:message key="${param['message']}" /></p></c:if>
+<c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></p></c:if>
 
 <form method="post" action="<c:url value="/${virtualWiki}/j_acegi_security_check" />">
-<input type="hidden" name="redirect" value="<c:out value="${redirect}"/>" />
+<input type="hidden" name="target" value="<c:out value="${target}"/>" />
 <table>
 <tr>
 	<td><label for="loginUsername"><f:message key="login.username"/></label></td>
@@ -42,7 +42,7 @@
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td><input type="submit" name="function" value='<f:message key="common.login" />'/></td>
+	<td><input type="submit" name="function" value="<f:message key="common.login" />" /></td>
 </tr>
 </table>
 </form>

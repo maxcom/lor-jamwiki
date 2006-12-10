@@ -41,8 +41,8 @@ public class MoveServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && !Utilities.isAdmin(request)) {
-			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), errorMessage);
+			WikiMessage messageObject = new WikiMessage("admin.message.loginrequired");
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		if (request.getParameter("move") != null) {
 			move(request, next, pageInfo);
@@ -90,17 +90,17 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		if (!StringUtils.hasText(moveDestination)) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
-			next.addObject("errorMessage", new WikiMessage("move.exception.nodestination"));
+			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, Utilities.currentUser(request))) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
-			next.addObject("errorMessage", new WikiMessage("move.exception.permission", moveFrom));
+			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
 			return false;
 		}
 		if (!WikiBase.getDataHandler().canMoveTopic(fromTopic, moveDestination)) {
 			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
-			next.addObject("errorMessage", new WikiMessage("move.exception.destinationexists", moveDestination));
+			next.addObject("messageObject", new WikiMessage("move.exception.destinationexists", moveDestination));
 			next.addObject("moveDestination", moveDestination);
 			next.addObject("moveComment", request.getParameter("moveComment"));
 			return false;

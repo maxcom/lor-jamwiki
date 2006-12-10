@@ -38,7 +38,7 @@
 		</property>
 		<property name="authenticationFailureUrl">
 			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
-			<value>/Special:Login?errorMessage=error.login</value>
+			<value>/Special:Login?message=error.login</value>
 		</property>
 		<property name="defaultTargetUrl">
 			<!-- special hard-coded constant indicating default for virtual wiki -->
@@ -196,6 +196,7 @@
 			/**=ROLE_USER
 		to require login to view or edit pages (menus are still visible)
 	-->
+	
 	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
 		<property name="authenticationManager">
 			<ref local="authenticationManager" />
@@ -205,10 +206,16 @@
 		</property>
 		<property name="objectDefinitionSource">
 			<value>
+	<!--
+	
+	FIXME - disabled for now, these pages will just check their own security.  We need some
+	way to be able to pass a message to the login page with Acegi before re-implementing.
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
 				/**/Special:Translation=ROLE_ADMIN
 				/**/Special:Convert=ROLE_ADMIN
+	
+	-->
 			</value>
 		</property>
 	</bean>

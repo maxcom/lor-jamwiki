@@ -25,7 +25,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty errorMessage}"><p class="red"><f:message key="${errorMessage.key}"><f:param value="${errorMessage.params[0]}" /></f:message></p></c:if>
+<c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></p></c:if>
 
 <table border="0" class="contents">
 <form name="delete" method="get" action="<jamwiki:link value="Special:Move" />">
