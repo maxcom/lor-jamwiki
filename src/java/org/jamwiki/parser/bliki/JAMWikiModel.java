@@ -14,6 +14,8 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
+import org.springframework.util.StringUtils;
+
 /**
  * Standard model implementation
  *
@@ -65,7 +67,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 	public void appendInternalLink(StringBuffer writer, String link, String hashSection, String linkText) {
 		String hrefLink = fExternalWikiBaseURL;
 		String encodedtopic = Encoder.encodeTitleUrl(link);
-		hrefLink = hrefLink.replace("${title}", encodedtopic);
+		hrefLink = StringUtils.replace(hrefLink, "${title}", encodedtopic);
 		super.appendInternalLink(writer, hrefLink, hashSection, linkText);
 	}
 
