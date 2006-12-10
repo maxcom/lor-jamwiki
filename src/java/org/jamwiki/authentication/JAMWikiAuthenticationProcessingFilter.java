@@ -17,6 +17,7 @@
 package org.jamwiki.authentication;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
@@ -88,7 +89,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 			url = request.getContextPath() + "/" + virtualWiki + url;
 			if (StringUtils.hasText(target)) {
 				url += (url.indexOf("?") == -1) ? "?" : "&";
-				url += "target=" + target;
+				url += "target=" + URLEncoder.encode(target, "UTF-8");
 			}
 		}
 		response.sendRedirect(response.encodeRedirectURL(url));
