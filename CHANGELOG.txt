@@ -32,7 +32,7 @@
 * BUG: Fix failure when changing default topic for virtual wiki from
   Special:Admin.
 * FEATURE: Add pmd static code analysis target to the ANT build.xml file.
-* FEATURE: Added Dutch translations (Angel)
+* FEATURE: Added Dutch translations (Angel).
 * FEATURE: Updated Chinese translations (hfl).
 * FEATURE: Updated Polish translations (dlpa).
 * FEATURE: Updated German translations (axelclk).
