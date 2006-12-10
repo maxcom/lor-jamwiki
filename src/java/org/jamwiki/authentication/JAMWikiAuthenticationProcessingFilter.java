@@ -67,6 +67,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	 */
 	protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
 		String target = request.getParameter("target");
+		String targetUrl = url;
 		if (url.equals("/DEFAULT_VIRTUAL_WIKI")) {
 			// ugly, but a hard-coded constant seems to be the only way to
 			// allow a dynamic url value
@@ -83,15 +84,15 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 					logger.warning("Unable to retrieve default topic for virtual wiki", e);
 				}
 			}
-			url = request.getContextPath() + "/" + virtualWikiName + "/" + target;
+			targetUrl = request.getContextPath() + "/" + virtualWikiName + "/" + target;
 		} else if (!url.startsWith("http://") && !url.startsWith("https://")) {
 			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-			url = request.getContextPath() + "/" + virtualWiki + url;
+			targetUrl = request.getContextPath() + "/" + virtualWiki + url;
 			if (StringUtils.hasText(target)) {
-				url += (url.indexOf("?") == -1) ? "?" : "&";
-				url += "target=" + URLEncoder.encode(target, "UTF-8");
+				targetUrl += (url.indexOf('?') == -1) ? "?" : "&";
+				targetUrl += "target=" + URLEncoder.encode(target, "UTF-8");
 			}
 		}
-		response.sendRedirect(response.encodeRedirectURL(url));
+		response.sendRedirect(response.encodeRedirectURL(targetUrl));
 	}
 }

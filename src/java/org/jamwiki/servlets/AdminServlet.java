@@ -259,11 +259,11 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
 		next.addObject("wikis", virtualWikiList);
-		Collection userHandlers = WikiConfiguration.getUserHandlers();
+		Collection userHandlers = WikiConfiguration.getInstance().getUserHandlers();
 		next.addObject("userHandlers", userHandlers);
-		Collection dataHandlers = WikiConfiguration.getDataHandlers();
+		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
-		Collection parsers = WikiConfiguration.getParsers();
+		Collection parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
 		if (props == null) {
 			props = Environment.getInstance();

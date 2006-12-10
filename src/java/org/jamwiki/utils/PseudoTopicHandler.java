@@ -36,6 +36,6 @@ public class PseudoTopicHandler {
 	 * @return true if mapping exists
 	 */
 	public static boolean isPseudoTopic(String pseudotopicName) {
-		return WikiConfiguration.getPseudotopics().contains(pseudotopicName);
+		return WikiConfiguration.getInstance().getPseudotopics().contains(pseudotopicName);
 	}
 }

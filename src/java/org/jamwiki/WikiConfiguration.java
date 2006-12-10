@@ -36,11 +36,13 @@ public class WikiConfiguration {
 	/** Standard logger. */
 	private static WikiLogger logger = WikiLogger.getLogger(WikiConfiguration.class.getName());
 
-	private static Vector dataHandlers = null;
-	private static Hashtable namespaces = null;
-	private static Vector parsers = null;
-	private static Vector pseudotopics = null;
-	private static Vector userHandlers = null;
+	private static WikiConfiguration instance = null;
+
+	private Vector dataHandlers = null;
+	private Hashtable namespaces = null;
+	private Vector parsers = null;
+	private Vector pseudotopics = null;
+	private Vector userHandlers = null;
 
 	/** Name of the configuration file. */
 	public static final String JAMWIKI_CONFIGURATION_FILE = "jamwiki-configuration.xml";
@@ -62,55 +64,68 @@ public class WikiConfiguration {
 	private static final String XML_USER_HANDLER = "user-handler";
 	private static final String XML_USER_HANDLER_ROOT = "user-handlers";
 
-	static {
-		WikiConfiguration.initialize();
+	/**
+	 *
+	 */
+	private WikiConfiguration() {
+		this.initialize();
 	}
 
 	/**
 	 *
 	 */
-	public static Collection getDataHandlers() {
-		return WikiConfiguration.dataHandlers;
+	public static WikiConfiguration getInstance() {
+		if (WikiConfiguration.instance == null) {
+			WikiConfiguration.instance = new WikiConfiguration();
+		}
+		return WikiConfiguration.instance;
 	}
 
 	/**
 	 *
 	 */
-	public static Hashtable getNamespaces() {
-		return WikiConfiguration.namespaces;
+	public Collection getDataHandlers() {
+		return this.dataHandlers;
 	}
 
 	/**
 	 *
 	 */
-	public static Collection getParsers() {
-		return WikiConfiguration.parsers;
+	public Hashtable getNamespaces() {
+		return this.namespaces;
 	}
 
 	/**
 	 *
 	 */
-	public static Collection getPseudotopics() {
-		return WikiConfiguration.pseudotopics;
+	public Collection getParsers() {
+		return this.parsers;
 	}
 
 	/**
 	 *
 	 */
-	public static Collection getUserHandlers() {
-		return WikiConfiguration.userHandlers;
+	public Collection getPseudotopics() {
+		return this.pseudotopics;
 	}
 
 	/**
 	 *
 	 */
-	private static void initialize() {
+	public Collection getUserHandlers() {
+		return this.userHandlers;
+	}
+
+	/**
+	 *
+	 */
+	private void initialize() {
 		try {
-			WikiConfiguration.dataHandlers = new Vector();
-			WikiConfiguration.namespaces = new Hashtable();
-			WikiConfiguration.parsers = new Vector();
-			WikiConfiguration.pseudotopics = new Vector();
-			WikiConfiguration.userHandlers = new Vector();
+			this.dataHandlers = new Vector();
+			this.namespaces = new Hashtable();
+			this.parsers = new Vector();
+			this.pseudotopics = new Vector();
+			this.userHandlers = new Vector();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
 			Node node = document.getElementsByTagName(XML_CONFIGURATION_ROOT).item(0);
@@ -119,15 +134,15 @@ public class WikiConfiguration {
 			for (int i=0; i < children.getLength(); i++) {
 				child = children.item(i);
 				if (child.getNodeName().equals(XML_PARSER_ROOT)) {
-					WikiConfiguration.parsers = WikiConfiguration.parseConfigurationObjects(child, XML_PARSER);
+					this.parsers = this.parseConfigurationObjects(child, XML_PARSER);
 				} else if (child.getNodeName().equals(XML_DATA_HANDLER_ROOT)) {
-					WikiConfiguration.dataHandlers = WikiConfiguration.parseConfigurationObjects(child, XML_DATA_HANDLER);
+					this.dataHandlers = this.parseConfigurationObjects(child, XML_DATA_HANDLER);
 				} else if (child.getNodeName().equals(XML_USER_HANDLER_ROOT)) {
-					WikiConfiguration.userHandlers = WikiConfiguration.parseConfigurationObjects(child, XML_USER_HANDLER);
+					this.userHandlers = this.parseConfigurationObjects(child, XML_USER_HANDLER);
 				} else if (child.getNodeName().equals(XML_NAMESPACE_ROOT)) {
-					WikiConfiguration.parseNamespaces(child);
+					this.parseNamespaces(child);
 				} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {
-					WikiConfiguration.parsePseudotopics(child);
+					this.parsePseudotopics(child);
 				} else {
 					logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 				}
@@ -141,7 +156,7 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private static WikiConfigurationObject parseConfigurationObject(Node node) throws Exception {
+	private WikiConfigurationObject parseConfigurationObject(Node node) throws Exception {
 		WikiConfigurationObject configurationObject = new WikiConfigurationObject();
 		NodeList children = node.getChildNodes();
 		for (int j=0; j < children.getLength(); j++) {
@@ -164,13 +179,13 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private static Vector parseConfigurationObjects(Node node, String name) throws Exception {
+	private Vector parseConfigurationObjects(Node node, String name) throws Exception {
 		Vector results = new Vector();
 		NodeList children = node.getChildNodes();
 		for (int j=0; j < children.getLength(); j++) {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(name)) {
-				results.add(WikiConfiguration.parseConfigurationObject(child));
+				results.add(this.parseConfigurationObject(child));
 			} else {
 				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 			}
@@ -181,7 +196,7 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private static void parseNamespace(Node node) throws Exception {
+	private void parseNamespace(Node node) throws Exception {
 		NodeList children = node.getChildNodes();
 		String name = "";
 		String main = "";
@@ -198,18 +213,18 @@ public class WikiConfiguration {
 				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 			}
 		}
-		WikiConfiguration.namespaces.put(name, new String[]{main, comments});
+		this.namespaces.put(name, new String[]{main, comments});
 	}
 
 	/**
 	 *
 	 */
-	private static void parseNamespaces(Node node) throws Exception {
+	private void parseNamespaces(Node node) throws Exception {
 		NodeList children = node.getChildNodes();
 		for (int j=0; j < children.getLength(); j++) {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(XML_NAMESPACE)) {
-				WikiConfiguration.parseNamespace(child);
+				this.parseNamespace(child);
 			} else {
 				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 			}
@@ -219,12 +234,12 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private static void parsePseudotopic(Node node) throws Exception {
+	private void parsePseudotopic(Node node) throws Exception {
 		NodeList children = node.getChildNodes();
 		for (int j=0; j < children.getLength(); j++) {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(XML_PARAM_NAME)) {
-				WikiConfiguration.pseudotopics.add(XMLUtil.getTextContent(child));
+				this.pseudotopics.add(XMLUtil.getTextContent(child));
 			} else {
 				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 			}
@@ -234,12 +249,12 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private static void parsePseudotopics(Node node) throws Exception {
+	private void parsePseudotopics(Node node) throws Exception {
 		NodeList children = node.getChildNodes();
 		for (int j=0; j < children.getLength(); j++) {
 			Node child = children.item(j);
 			if (child.getNodeName().equals(XML_PSEUDOTOPIC)) {
-				WikiConfiguration.parsePseudotopic(child);
+				this.parsePseudotopic(child);
 			} else {
 				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 			}

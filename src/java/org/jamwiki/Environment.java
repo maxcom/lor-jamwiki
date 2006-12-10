@@ -395,7 +395,7 @@ public class Environment {
 	 * @param value The value of the property being set.
 	 */
 	public static void setBooleanValue(String name, boolean value) {
-		props.setProperty(name, new Boolean(value).toString());
+		props.setProperty(name, Boolean.toString(value));
 	}
 
 	/**
@@ -405,7 +405,7 @@ public class Environment {
 	 * @param value The value of the property being set.
 	 */
 	public static void setIntValue(String name, int value) {
-		props.setProperty(name, new Integer(value).toString());
+		props.setProperty(name, Integer.toString(value));
 	}
 
 	/**

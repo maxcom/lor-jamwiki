@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiMessage {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiMessage.class.getName());
-	private String key = null;
+	private final String key;
 	private String[] params = null;
 
 	/**

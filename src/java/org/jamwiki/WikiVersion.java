@@ -27,9 +27,9 @@ import org.springframework.util.StringUtils;
 public class WikiVersion {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiVersion.class.getName());
-	private int major = 0;
-	private int minor = 0;
-	private int patch = 0;
+	private final int major;
+	private final int minor;
+	private final int patch;
 
 	/** Current software version.  If this differs from the version in the properties an upgrade is performed. */
 	public final static String CURRENT_WIKI_VERSION = "0.5.0";
@@ -40,17 +40,13 @@ public class WikiVersion {
 	 *
 	 * @param version A version string of the form "0.3.5".
 	 */
-	public WikiVersion(String version) {
+	public WikiVersion(String version) throws Exception {
 		if (!StringUtils.hasText(version)) {
-			// FIXME - should throw an exception
-			logger.severe("Invalid Wiki version: " + version);
-			return;
+			throw new Exception("Invalid Wiki version: " + version);
 		}
 		StringTokenizer tokens = new StringTokenizer(version, ".");
 		if (tokens.countTokens() != 3) {
-			// FIXME - should throw an exception
-			logger.severe("Invalid Wiki version: " + version);
-			return;
+			throw new Exception("Invalid Wiki version: " + version);
 		}
 		this.major = new Integer(tokens.nextToken()).intValue();
 		this.minor = new Integer(tokens.nextToken()).intValue();

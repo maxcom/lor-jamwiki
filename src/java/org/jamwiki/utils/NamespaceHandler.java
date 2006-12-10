@@ -53,7 +53,7 @@ public class NamespaceHandler {
 			// main namespace
 			return NAMESPACE_COMMENTS;
 		}
-		Hashtable namespaces = WikiConfiguration.getNamespaces();
+		Hashtable namespaces = WikiConfiguration.getInstance().getNamespaces();
 		Enumeration keys = namespaces.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String)keys.nextElement();
@@ -78,7 +78,7 @@ public class NamespaceHandler {
 			// main namespace
 			return "";
 		}
-		Hashtable namespaces = WikiConfiguration.getNamespaces();
+		Hashtable namespaces = WikiConfiguration.getInstance().getNamespaces();
 		Enumeration keys = namespaces.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String)keys.nextElement();
@@ -97,7 +97,7 @@ public class NamespaceHandler {
 	 *
 	 */
 	private static final String initializeNamespace(String name, boolean isComments) {
-		Hashtable namespaces = WikiConfiguration.getNamespaces();
+		Hashtable namespaces = WikiConfiguration.getInstance().getNamespaces();
 		Enumeration keys = namespaces.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String)keys.nextElement();

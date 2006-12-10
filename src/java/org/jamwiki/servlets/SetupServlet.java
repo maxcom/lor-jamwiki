@@ -236,7 +236,7 @@ public class SetupServlet extends JAMWikiServlet {
 		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("setup.title"));
-		Collection dataHandlers = WikiConfiguration.getDataHandlers();
+		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
 	}
 }

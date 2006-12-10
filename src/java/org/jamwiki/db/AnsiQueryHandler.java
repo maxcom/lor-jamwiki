@@ -452,19 +452,19 @@ public class AnsiQueryHandler implements QueryHandler {
 	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
 		stmt.setInt(1, change.getTopicVersionId());
-		if (change.getPreviousTopicVersionId() != null) {
-			stmt.setInt(2, change.getPreviousTopicVersionId().intValue());
-		} else {
+		if (change.getPreviousTopicVersionId() == null) {
 			stmt.setNull(2, Types.INTEGER);
+		} else {
+			stmt.setInt(2, change.getPreviousTopicVersionId().intValue());
 		}
 		stmt.setInt(3, change.getTopicId());
 		stmt.setString(4, change.getTopicName());
 		stmt.setTimestamp(5, change.getEditDate());
 		stmt.setString(6, change.getEditComment());
-		if (change.getAuthorId() != null) {
-			stmt.setInt(7, change.getAuthorId().intValue());
-		} else {
+		if (change.getAuthorId() == null) {
 			stmt.setNull(7, Types.INTEGER);
+		} else {
+			stmt.setInt(7, change.getAuthorId().intValue());
 		}
 		stmt.setString(8, change.getAuthorName());
 		stmt.setInt(9, change.getEditType());
@@ -483,10 +483,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(3, topic.getName());
 		stmt.setInt(4, topic.getTopicType());
 		stmt.setInt(5, (topic.getReadOnly() ? 1 : 0));
-		if (topic.getCurrentVersionId() != null) {
-			stmt.setInt(6, topic.getCurrentVersionId().intValue());
-		} else {
+		if (topic.getCurrentVersionId() == null) {
 			stmt.setNull(6, Types.INTEGER);
+		} else {
+			stmt.setInt(6, topic.getCurrentVersionId().intValue());
 		}
 		stmt.setTimestamp(7, topic.getDeleteDate());
 		stmt.setInt(8, (topic.getAdminOnly() ? 1 : 0));
@@ -503,18 +503,18 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setInt(2, topicVersion.getTopicId());
 		stmt.setString(3, topicVersion.getEditComment());
 		stmt.setString(4, topicVersion.getVersionContent());
-		if (topicVersion.getAuthorId() != null) {
-			stmt.setInt(5, topicVersion.getAuthorId().intValue());
-		} else {
+		if (topicVersion.getAuthorId() == null) {
 			stmt.setNull(5, Types.INTEGER);
+		} else {
+			stmt.setInt(5, topicVersion.getAuthorId().intValue());
 		}
 		stmt.setInt(6, topicVersion.getEditType());
 		stmt.setString(7, topicVersion.getAuthorIpAddress());
 		stmt.setTimestamp(8, topicVersion.getEditDate());
-		if (topicVersion.getPreviousTopicVersionId() != null) {
-			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
-		} else {
+		if (topicVersion.getPreviousTopicVersionId() == null) {
 			stmt.setNull(9, Types.INTEGER);
+		} else {
+			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
 		}
 		stmt.executeUpdate(conn);
 		stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
@@ -572,10 +572,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setInt(2, wikiFileVersion.getFileId());
 		stmt.setString(3, wikiFileVersion.getUploadComment());
 		stmt.setString(4, wikiFileVersion.getUrl());
-		if (wikiFileVersion.getAuthorId() != null) {
-			stmt.setInt(5, wikiFileVersion.getAuthorId().intValue());
-		} else {
+		if (wikiFileVersion.getAuthorId() == null) {
 			stmt.setNull(5, Types.INTEGER);
+		} else {
+			stmt.setInt(5, wikiFileVersion.getAuthorId().intValue());
 		}
 		stmt.setString(6, wikiFileVersion.getAuthorIpAddress());
 		stmt.setTimestamp(7, wikiFileVersion.getUploadDate());
@@ -633,11 +633,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = null;
-		if (!caseSensitive) {
+		if (caseSensitive) {
+			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
+		} else {
 			topicName = topicName.toLowerCase();
 			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC_LOWER);
-		} else {
-			stmt = new WikiPreparedStatement(STATEMENT_SELECT_TOPIC);
 		}
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
@@ -828,10 +828,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(2, topic.getName());
 		stmt.setInt(3, topic.getTopicType());
 		stmt.setInt(4, (topic.getReadOnly() ? 1 : 0));
-		if (topic.getCurrentVersionId() != null) {
-			stmt.setInt(5, topic.getCurrentVersionId().intValue());
-		} else {
+		if (topic.getCurrentVersionId() == null) {
 			stmt.setNull(5, Types.INTEGER);
+		} else {
+			stmt.setInt(5, topic.getCurrentVersionId().intValue());
 		}
 		stmt.setTimestamp(6, topic.getDeleteDate());
 		stmt.setInt(7, (topic.getAdminOnly() ? 1 : 0));

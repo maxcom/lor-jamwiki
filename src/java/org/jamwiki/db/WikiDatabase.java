@@ -129,7 +129,7 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static void releaseConnection(Connection conn, Object transactionObject) throws Exception {
-		if (transactionObject != null && transactionObject instanceof Connection) {
+		if (transactionObject instanceof Connection) {
 			// transaction objects will be released elsewhere
 			return;
 		}

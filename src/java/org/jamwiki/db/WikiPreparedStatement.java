@@ -37,9 +37,9 @@ public class WikiPreparedStatement {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiPreparedStatement.class.getName());
 	private Object[] params = null;
 	private int[] paramTypes = null;
-	private String sql = null;
+	private final String sql;
 	private PreparedStatement statement = null;
-	private int numElements = -1;
+	private final int numElements;
 
 	/**
 	 *

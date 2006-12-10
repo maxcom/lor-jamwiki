@@ -24,7 +24,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiException extends Exception {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiException.class.getName());
-	private WikiMessage wikiMessage = null;
+	private final WikiMessage wikiMessage;
 
 	/**
 	 * Constructor for a WikiException containing a Wiki message value.

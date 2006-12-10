@@ -71,20 +71,24 @@ public class JAMWikiFilter implements Filter {
 		if (!(servletRequest instanceof HttpServletRequest) || !(servletResponse instanceof HttpServletResponse)) {
 			return false;
 		}
-		HttpServletRequest request = (HttpServletRequest)servletRequest;
-		HttpServletResponse response = (HttpServletResponse)servletResponse;
-		if (Utilities.isFirstUse() && !ServletUtil.isTopic(request, "Special:Setup") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
-			// redirect to setup page
-			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
-			redirect(request, response, url);
-			return true;
-		} else if (Utilities.isUpgrade() && !ServletUtil.isTopic(request, "Special:Upgrade") && !ServletUtil.isTopic(request, "Special:Login") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
-			// redirect to upgrade page
-			String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
-			redirect(request, response, url);
-			return true;
+		try {
+			HttpServletRequest request = (HttpServletRequest)servletRequest;
+			HttpServletResponse response = (HttpServletResponse)servletResponse;
+			if (Utilities.isFirstUse() && !ServletUtil.isTopic(request, "Special:Setup") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
+				// redirect to setup page
+				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
+				redirect(request, response, url);
+				return true;
+			} else if (Utilities.isUpgrade() && !ServletUtil.isTopic(request, "Special:Upgrade") && !ServletUtil.isTopic(request, "Special:Login") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
+				// redirect to upgrade page
+				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
+				redirect(request, response, url);
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			throw new ServletException(e);
 		}
-		return false;
 	}
 
 	/**

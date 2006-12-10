@@ -657,7 +657,7 @@ public class Utilities {
 	 * @return <code>true</code> if the system has been upgraded, <code>false</code>
 	 *  otherwise.
 	 */
-	public static boolean isUpgrade() {
+	public static boolean isUpgrade() throws Exception {
 		if (Utilities.isFirstUse()) return false;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		WikiVersion currentVersion = new WikiVersion(WikiVersion.CURRENT_WIKI_VERSION);

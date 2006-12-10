@@ -851,7 +851,7 @@ public class AnsiDataHandler implements DataHandler {
 	private int lookupVirtualWikiId(String virtualWikiName) throws Exception {
 		VirtualWiki virtualWiki = this.lookupVirtualWiki(virtualWikiName);
 		WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, virtualWiki);
-		return (virtualWiki != null) ? virtualWiki.getVirtualWikiId() : -1;
+		return (virtualWiki == null) ? -1 : virtualWiki.getVirtualWikiId();
 	}
 
 	/**
@@ -1178,8 +1178,8 @@ public class AnsiDataHandler implements DataHandler {
 				updateTopic(topic, conn);
 			}
 			if (userVisible) {
-				if (topicVersion.getPreviousTopicVersionId() == null) {
-					if (topic.getCurrentVersionId() != null) topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
+				if (topicVersion.getPreviousTopicVersionId() == null && topic.getCurrentVersionId() != null) {
+					topicVersion.setPreviousTopicVersionId(topic.getCurrentVersionId());
 				}
 				topicVersion.setTopicId(topic.getTopicId());
 				// write version

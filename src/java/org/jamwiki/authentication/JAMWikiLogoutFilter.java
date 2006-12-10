@@ -76,6 +76,7 @@ public class JAMWikiLogoutFilter extends LogoutFilter {
 	 * @throws IOException in the event of any failure
 	 */
 	protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+		String targetUrl = url;
 		if (url.equals("/DEFAULT_VIRTUAL_WIKI")) {
 			// ugly, but a hard-coded constant seems to be the only way to
 			// allow a dynamic url value
@@ -90,12 +91,12 @@ public class JAMWikiLogoutFilter extends LogoutFilter {
 			} catch (Exception e) {
 				logger.warning("Unable to retrieve default topic for virtual wiki", e);
 			}
-			url = request.getContextPath() + "/" + virtualWikiName + "/" + topicName;
+			targetUrl = request.getContextPath() + "/" + virtualWikiName + "/" + topicName;
 		} else if (!url.startsWith("http://") && !url.startsWith("https://")) {
 			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-			url = request.getContextPath() + "/" + virtualWiki + url;
+			targetUrl = request.getContextPath() + "/" + virtualWiki + url;
 		}
-		response.sendRedirect(response.encodeRedirectURL(url));
+		response.sendRedirect(response.encodeRedirectURL(targetUrl));
 	}
 
 	/**

@@ -27,10 +27,10 @@ public class WikiReference {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiReference.class.getName());
 
-	private int citation = 1;
-	private String content = null;
-	private int count = 0;
-	private String name = null;
+	private final int citation;
+	private final String content;
+	private final int count;
+	private final String name;
 
 	/**
 	 *

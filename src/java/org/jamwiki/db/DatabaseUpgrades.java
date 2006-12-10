@@ -118,16 +118,16 @@ public class DatabaseUpgrades {
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added delete_date column to table jam_topic");
-			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
-				sql = "alter table jam_topic drop constraint jam_unique_topic_name_vwiki ";
-			} else {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_topic drop index jam_unique_topic_name_vwiki ";
+			} else {
+				sql = "alter table jam_topic drop constraint jam_unique_topic_name_vwiki ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
-			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
-				sql = "alter table jam_topic add constraint jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id, delete_date) ";
-			} else {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "create unique index jam_unique_topic_name_vwiki on jam_topic(topic_name, virtual_wiki_id, delete_date) ";
+			} else {
+				sql = "alter table jam_topic add constraint jam_unique_topic_name_vwiki UNIQUE (topic_name, virtual_wiki_id, delete_date) ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Updated unique topic name constraint");
@@ -158,10 +158,10 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped column file_deleted from table jam_file");
 			// make user login constraint "lower(login)"
-			if (!Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
-				sql = "alter table jam_wiki_user drop constraint jam_unique_wiki_user_login ";
-			} else {
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
 				sql = "alter table jam_wiki_user drop index jam_unique_wiki_user_login ";
+			} else {
+				sql = "alter table jam_wiki_user drop constraint jam_unique_wiki_user_login ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
