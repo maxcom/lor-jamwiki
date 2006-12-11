@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.TreeMap;
 import java.util.Vector;
+import net.sf.ehcache.Element;
 import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -747,9 +748,10 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
 			String key = WikiCache.key(virtualWiki, topicName);
-			if (WikiCache.isCached(CACHE_TOPICS, key)) {
-				Topic cacheTopic = (Topic)WikiCache.retrieveFromCache(CACHE_TOPICS, key);
-				return (cacheTopic == null) ? null : new Topic(cacheTopic);
+			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
+			if (cacheElement != null) {
+				Topic cacheTopic = (Topic)cacheElement.getObjectValue();
+				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 			WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 			String namespace = wikiLink.getNamespace();
@@ -829,13 +831,13 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception {
-		VirtualWiki virtualWiki = (VirtualWiki)WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiName);
-		if (virtualWiki != null) {
-			return virtualWiki;
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiName);
+		if (cacheElement != null) {
+			return (VirtualWiki)cacheElement.getObjectValue();
 		}
 		Collection virtualWikis = this.getVirtualWikiList(null);
 		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
-			virtualWiki = (VirtualWiki)iterator.next();
+			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			if (virtualWiki.getName().equals(virtualWikiName)) {
 				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWikiName, virtualWiki);
 				return virtualWiki;
@@ -858,9 +860,11 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	private String lookupVirtualWikiName(int virtualWikiId) throws Exception {
-		VirtualWiki virtualWiki = (VirtualWiki)WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiId);
-		if (virtualWiki != null) {
-			return virtualWiki.getName();
+		VirtualWiki virtualWiki = null;
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_VIRTUAL_WIKI, virtualWikiId);
+		if (cacheElement != null) {
+			virtualWiki = (VirtualWiki)cacheElement.getObjectValue();
+			return (virtualWiki == null) ? null : virtualWiki.getName();
 		}
 		Collection virtualWikis = this.getVirtualWikiList(null);
 		for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {

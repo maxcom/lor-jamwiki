@@ -104,14 +104,6 @@ public class WikiCache {
 	/**
 	 *
 	 */
-	public static boolean isCached(String cacheName, Object key) {
-		Cache cache = WikiCache.getCache(cacheName);
-		return cache.isKeyInCache(key);
-	}
-
-	/**
-	 *
-	 */
 	public static String key(String virtualWiki, String topicName) {
 		return virtualWiki + "/" + topicName;
 	}
@@ -139,18 +131,20 @@ public class WikiCache {
 	}
 
 	/**
-	 *
+	 * Retrieve a cached element from the cache.  This method will return
+	 * <code>null</code> if no matching element is cached, an element with
+	 * no value if a <code>null</code> value is cached, or an element with a
+	 * valid object value if such an element is cached.
 	 */
-	public static Object retrieveFromCache(String cacheName, Object key) {
+	public static Element retrieveFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
-		Element element = cache.get(key);
-		return (element == null) ? null : element.getObjectValue();
+		return cache.get(key);
 	}
 
 	/**
 	 *
 	 */
-	public static Object retrieveFromCache(String cacheName, int key) {
+	public static Element retrieveFromCache(String cacheName, int key) {
 		return WikiCache.retrieveFromCache(cacheName, new Integer(key));
 	}
 }

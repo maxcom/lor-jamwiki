@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.imageio.ImageIO;
+import net.sf.ehcache.Element;
 import org.jamwiki.Environment;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
@@ -92,9 +93,12 @@ public class ImageUtil {
 	 * BufferedImage object.
 	 */
 	private static BufferedImage loadImage(File file) throws Exception {
+		BufferedImage image = null;
 		String key = file.getPath();
-		BufferedImage image = (BufferedImage)WikiCache.retrieveFromCache(CACHE_IMAGES, key);
-		if (image != null) return image;
+		Element cacheElement = WikiCache.retrieveFromCache(CACHE_IMAGES, key);
+		if (cacheElement != null) {
+			return (BufferedImage)cacheElement.getObjectValue();
+		}
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);

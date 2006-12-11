@@ -16,13 +16,14 @@
  */
 package org.jamwiki.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  *
  */
-public class Topic {
+public class Topic implements Serializable {
 
 	/* Standard topic type. */
 	public static final int TYPE_ARTICLE = 1;

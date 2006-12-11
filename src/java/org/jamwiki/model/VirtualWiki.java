@@ -16,12 +16,13 @@
  */
 package org.jamwiki.model;
 
+import java.io.Serializable;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  *
  */
-public class VirtualWiki {
+public class VirtualWiki implements Serializable {
 
 	private static WikiLogger logger = WikiLogger.getLogger(VirtualWiki.class.getName());
 	private String name = null;
