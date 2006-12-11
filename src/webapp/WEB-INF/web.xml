@@ -83,5 +83,11 @@
 		<taglib-uri>http://jamwiki.org/taglib</taglib-uri>
 		<taglib-location>/WEB-INF/jamwiki.tld</taglib-location>
 	</taglib>
+	<taglib>
+		<taglib-uri>http://acegisecurity.org/authz</taglib-uri>
+		<taglib-location>/WEB-INF/authz.tld</taglib-location>
+	</taglib>
+
+
 
 </web-app>

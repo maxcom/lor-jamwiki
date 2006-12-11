@@ -130,11 +130,14 @@
 				<bean class="org.acegisecurity.GrantedAuthorityImpl">
 					<constructor-arg value="ROLE_USER"/>
 				</bean>
+				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+					<constructor-arg value="ROLE_NO_ACCOUNT"/>
+				</bean>
 			</list>
 		</property>
 		<property name="userMap">
 			<value>
-				rs=ignoredPassword,ROLE_USER,ROLE_ADMIN
+				rs=ignoredPassword,ROLE_USER,ROLE_ADMIN,ROLE_NO_ACCOUNT
 			</value>
 		</property>
 	</bean>

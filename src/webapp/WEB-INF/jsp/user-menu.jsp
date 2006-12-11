@@ -17,20 +17,26 @@
 
 --%>
 
+<%@ taglib uri="/WEB-INF/authz.tld" prefix="authz" %>
+
 <table class="menu-user-table">
 <tr>
-<c:choose>
-<c:when test="${empty user}">
-	<td class="menu-user"><jamwiki:link value="Special:Login"><f:message key="common.login" /></jamwiki:link> / <jamwiki:link value="Special:Account"><f:message key="usermenu.register" /></jamwiki:link></td>
-</c:when>
-<c:otherwise>
-	<td class="menu-user"><jamwiki:link value="${userpage}"><c:if test="${!empty user.displayName}"><c:out value="${user.displayName}" /></c:if><c:if test="${empty user.displayName}"><c:out value="${user.username}" /></c:if></jamwiki:link></td>
-	<td class="menu-user"><jamwiki:link value="${usercomments}"><f:message key="usermenu.usercomments" /></jamwiki:link></td>
-	<td class="menu-user"><jamwiki:link value="Special:Watchlist"><f:message key="usermenu.watchlist" /></jamwiki:link></td>
-	<td class="menu-user"><jamwiki:link value="Special:Account"><f:message key="usermenu.account" /></jamwiki:link></td>
-	<td class="menu-user"><jamwiki:link value="Special:Logout"><f:message key="common.logout" /></jamwiki:link></td>
-	<c:if test="${adminUser}"><td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="usermenu.admin" /></jamwiki:link></c:if>
-</c:otherwise>
-</c:choose>
+	<authz:authorize ifAllGranted="ROLE_ANONYMOUS" ifNotGranted="ROLE_EMBEDDED">
+		<td class="menu-user"><jamwiki:link value="Special:Login"><f:message key="common.login" /></jamwiki:link> / <jamwiki:link value="Special:Account"><f:message key="usermenu.register" /></jamwiki:link></td>
+	</authz:authorize>
+	<authz:authorize ifAllGranted="ROLE_USER">
+		<td class="menu-user"><jamwiki:link value="${userpage}"><c:if test="${!empty user.displayName}"><c:out value="${user.displayName}" /></c:if><c:if test="${empty user.displayName}"><c:out value="${user.username}" /></c:if></jamwiki:link></td>
+		<td class="menu-user"><jamwiki:link value="${usercomments}"><f:message key="usermenu.usercomments" /></jamwiki:link></td>
+		<td class="menu-user"><jamwiki:link value="Special:Watchlist"><f:message key="usermenu.watchlist" /></jamwiki:link></td>
+		<authz:authorize ifNotGranted="ROLE_NO_ACCOUNT">
+			<td class="menu-user"><jamwiki:link value="Special:Account"><f:message key="usermenu.account" /></jamwiki:link></td>
+		</authz:authorize>
+		<authz:authorize ifNotGranted="ROLE_EMBEDDED">
+			<td class="menu-user"><jamwiki:link value="Special:Logout"><f:message key="common.logout" /></jamwiki:link></td>
+		</authz:authorize>
+		<authz:authorize ifAllGranted="ROLE_ADMIN">
+			<td class="menu-user"><jamwiki:link value="Special:Admin"><f:message key="usermenu.admin" /></jamwiki:link></td>
+		</authz:authorize>
+	</authz:authorize>
 </tr>
 </table>
