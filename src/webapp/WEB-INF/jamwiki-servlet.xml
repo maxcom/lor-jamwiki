@@ -2,7 +2,13 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
+
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+			</list>
+		</property>
 		<property name="mappings">
 			<props>
 				<prop key="/**/Special:Account">Register</prop>
@@ -73,4 +79,7 @@
 		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
 		<property name="suffix"><value>.jsp</value></property>
 	</bean>
+
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"/>
+
 </beans>
