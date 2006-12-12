@@ -18,10 +18,12 @@ package org.jamwiki.model;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.userdetails.UserDetails;
-import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.Assert;
 
 /**
@@ -29,10 +31,9 @@ import org.springframework.util.Assert;
  */
 public class WikiUser implements UserDetails {
 
-	private static final long serialVersionUID = 8081925283274124743L;
+    private static final long serialVersionUID = -2818435399240684581L;
 
-	private final GrantedAuthority ROLE_USER = new GrantedAuthorityImpl("ROLE_USER");
-	private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
+    private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = "0.0.0.0";
@@ -42,11 +43,13 @@ public class WikiUser implements UserDetails {
 	private String username = null;
 	private int userId = -1;
 
-	/** GrantedAuthority is used by Acegi Security to support several authorities (roles).  A logged user always has ROLE_USER and may have ROLE_ADMIN. */
-	private GrantedAuthority[] authorities;
+	/**
+     * GrantedAuthority is used by Acegi Security to support several authorities
+     * (roles). A logged user always has ROLE_USER and may have other roles,
+     * e.g. ROLE_ADMIN.
+     */
+    private GrantedAuthority[] authorities = new GrantedAuthority[0];
 	private String password = null;
-
-	private static WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
 
 	/**
 	 *
@@ -97,20 +100,20 @@ public class WikiUser implements UserDetails {
 	 *
 	 */
 	public boolean getAdmin() {
-		return (authorities != null) && (Arrays.asList(authorities).contains(ROLE_ADMIN));
+		return Arrays.asList(authorities).contains(ROLE_ADMIN);
 	}
 
 	/**
 	 *
 	 */
-	public void setAdmin(boolean admin) {
-		// A user's roles are fixed so far, so it's safe to create or destroy grantedAuthorities as required.
-		// If more roles are to be supported this method must be refactored.
+    public void setAdmin(boolean admin) {
+        Set authoritiesSet = new HashSet(Arrays.asList(authorities));
 		if (admin) {
-            setAuthorities(new GrantedAuthority[] {ROLE_USER, ROLE_ADMIN});
+            authoritiesSet.add(ROLE_ADMIN);
 		} else {
-		    setAuthorities(new GrantedAuthority[] {ROLE_USER});
+		    authoritiesSet.remove(ROLE_ADMIN);
 		}
+        setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
 	}
 
 	/**
@@ -200,7 +203,9 @@ public class WikiUser implements UserDetails {
 	// Acegi Security: UserDetails contract
 
 	/**
-	 *
+	 * Returns granted authorites.
+     *
+     * @return authorites, never null.
 	 */
 	public GrantedAuthority[] getAuthorities() {
 		return authorities;
