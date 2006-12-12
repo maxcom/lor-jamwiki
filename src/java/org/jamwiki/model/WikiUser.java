@@ -35,10 +35,10 @@ public class WikiUser implements UserDetails {
 	private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
-	private String createIpAddress = null;
+	private String createIpAddress = "0.0.0.0";
 	private String displayName = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
-	private String lastLoginIpAddress = null;
+	private String lastLoginIpAddress = "0.0.0.0";
 	private String username = null;
 	private int userId = -1;
 
