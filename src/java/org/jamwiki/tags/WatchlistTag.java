@@ -39,7 +39,8 @@ public class WatchlistTag extends BodyTagSupport {
 		try {
 			String tagValue = evaluateTag();
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-			Watchlist watchlist = Utilities.currentWatchlist(request);
+			String virtualWiki = Utilities.getVirtualWikiFromRequest(request);
+			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 			if (watchlist.containsTopic(tagValue)) {
 				this.pageContext.getOut().print("<strong>");
 			}
@@ -57,7 +58,8 @@ public class WatchlistTag extends BodyTagSupport {
 		try {
 			String tagValue = evaluateTag();
 			HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-			Watchlist watchlist = Utilities.currentWatchlist(request);
+			String virtualWiki = Utilities.getVirtualWikiFromRequest(request);
+			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 			if (watchlist.containsTopic(tagValue)) {
 				this.pageContext.getOut().print("</strong>");
 			}

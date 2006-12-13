@@ -183,10 +183,11 @@ public class Utilities {
 	 * there is no watchlist return an empty watchlist.
 	 *
 	 * @param request The servlet request object.
+	 * @param virtualWiki The virtual wiki for the watchlist being parsed.
 	 * @return The current logged-in user's watchlist, or an empty watchlist
 	 *  if there is no watchlist in the session.
 	 */
-	public static Watchlist currentWatchlist(HttpServletRequest request) throws Exception {
+	public static Watchlist currentWatchlist(HttpServletRequest request, String virtualWiki) throws Exception {
 		// get watchlist stored in session
 		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(ServletUtil.PARAMETER_WATCHLIST);
 		if (watchlist != null) {
@@ -198,7 +199,6 @@ public class Utilities {
 		if (user == null) {
 			return watchlist;
 		}
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 		return watchlist;

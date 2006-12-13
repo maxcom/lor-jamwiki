@@ -303,7 +303,7 @@ public class ServletUtil {
 			next.addObject("edit", editLink);
 			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 			pageInfo.setMoveable(ServletUtil.isMoveable(virtualWiki, article, user));
-			Watchlist watchlist = Utilities.currentWatchlist(request);
+			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 			if (watchlist.containsTopic(pageInfo.getTopicName())) {
 				pageInfo.setWatched(true);
 			}

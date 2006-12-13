@@ -134,7 +134,7 @@ public class EditServlet extends JAMWikiServlet {
 			next.addObject("section", request.getParameter("section"));
 		}
 		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
-		Watchlist watchlist = Utilities.currentWatchlist(request);
+		Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 		if (request.getParameter("watchTopic") != null || (watchlist.containsTopic(topicName) && !isPreview(request))) {
 			next.addObject("watchTopic", new Boolean(true));
 		}
@@ -274,7 +274,7 @@ public class EditServlet extends JAMWikiServlet {
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserDocument, true, null);
 		// update watchlist
 		if (user != null) {
-			Watchlist watchlist = Utilities.currentWatchlist(request);
+			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {
 				WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
