@@ -19,6 +19,7 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import org.apache.taglibs.standard.lang.support.ExpressionEvaluatorManager;
 import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
@@ -33,6 +34,7 @@ public class LinkTag extends BodyTagSupport {
 
 	private static WikiLogger logger = WikiLogger.getLogger(LinkTag.class.getName());
 	private String style = null;
+	private String target = null;
 	private String text = null;
 	private String value = null;
 	private String queryParams = "";
@@ -42,8 +44,12 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		String tagValue = null;
+		String tagTarget = null;
 		try {
 			tagValue = ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext).toString();
+			if (StringUtils.hasText(this.target)) {
+				tagTarget = ExpressionEvaluatorManager.evaluate("target", this.target, Object.class, this, pageContext).toString();
+			}
 		} catch (JspException e) {
 			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
 			throw e;
@@ -59,7 +65,7 @@ public class LinkTag extends BodyTagSupport {
 		try {
 			if (StringUtils.hasText(tagText)) {
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
-				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, true);
+				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, tagTarget, true);
 			} else {
 				// return raw link of the form "/wiki/en/Special:Edit"
 				url = LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink);
@@ -116,6 +122,20 @@ public class LinkTag extends BodyTagSupport {
 	 */
 	public void setStyle(String style) {
 		this.style = style;
+	}
+
+	/**
+	 *
+	 */
+	public String getTarget() {
+		return this.target;
+	}
+
+	/**
+	 *
+	 */
+	public void setTarget(String target) {
+		this.target = target;
 	}
 
 	/**

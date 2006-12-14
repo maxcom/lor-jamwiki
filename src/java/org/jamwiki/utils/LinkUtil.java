@@ -90,7 +90,7 @@ public class LinkUtil {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			WikiLink uploadLink = LinkUtil.parseWikiLink("Special:Upload");
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", true);
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
@@ -156,7 +156,7 @@ public class LinkUtil {
 	/**
 	 *
 	 */
-	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, boolean escapeHtml) throws Exception {
+	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
 		if (!StringUtils.hasText(text)) text = topic;
@@ -172,7 +172,12 @@ public class LinkUtil {
 		} else {
 			style = "";
 		}
-		String html = "<a title=\"" + Utilities.escapeHTML(text) + "\" href=\"" + url + "\"" + style + ">";
+		if (StringUtils.hasText(target)) {
+			target = " target=\"" + target + "\"";
+		} else {
+			target = "";
+		}
+		String html = "<a title=\"" + Utilities.escapeHTML(text) + "\" href=\"" + url + "\"" + style + target + ">";
 		if (escapeHtml) {
 			html += Utilities.escapeHTML(text);
 		} else {

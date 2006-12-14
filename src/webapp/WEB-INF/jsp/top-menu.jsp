@@ -43,7 +43,7 @@
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Manage"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.manage" /></jamwiki:link></td>
 	</c:if>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Print"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.print" /></jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Print" target="${pageInfo.printTarget}"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="menu.print" /></jamwiki:link></td>
 </c:if>
 <c:if test="${pageInfo.special}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${pageInfo.topicName}"><f:message key="menu.special" /></jamwiki:link></td>

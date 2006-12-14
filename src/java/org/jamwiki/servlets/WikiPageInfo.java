@@ -369,6 +369,13 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
+	public String getPrintTarget() {
+		return (Environment.getBooleanValue(Environment.PROP_PRINT_NEW_WINDOW)) ? "_blank" : "";
+	}
+
+	/**
+	 *
+	 */
 	public String getRedirectName() {
 		return this.redirectName;
 	}

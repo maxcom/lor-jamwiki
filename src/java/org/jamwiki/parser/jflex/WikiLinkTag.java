@@ -93,7 +93,7 @@ public class WikiLinkTag implements ParserTag {
 				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
 			// do not escape text html - already done by parser
-			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, false);
+			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
 		} catch (Exception e) {
 			logger.severe("Failure while parsing link " + raw, e);
 			return "";

@@ -251,7 +251,7 @@ public class JFlexParser extends AbstractParser {
 		}
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setDestination(redirect);
-		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, false);
+		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
 		parserDocument.setContent(content);
 		return parserDocument;
 	}

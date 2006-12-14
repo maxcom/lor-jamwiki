@@ -28,6 +28,7 @@
 * FEATURE: Include the Bliki parser as an alternative to the default parser
   (axelclk).
 * FEATURE: Add access keys for edit page fields (axelclk).
+* FEATURE: Add option to open "printable page" links in a new window.
 * FEATURE: Add a check to verify a supported JDK version during setup.
 * BUG: Fix failure when changing default topic for virtual wiki from
   Special:Admin.
