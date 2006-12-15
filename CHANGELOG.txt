@@ -5,6 +5,7 @@
 * FEATURE: Add ehcache library for caching of parsed topics and images.
 * FEATURE: Integrate the Acegi security framework (swift).
 * FEATURE: Add experimental support for LDAP.
+* FEATURE: Allow users to select a default locale.
 * FEATURE: Consolidate configuration values into jamwiki-configuration.xml.
 * FEATURE: Add option to use WYSIWYG edit buttons (axelclk).
 * FEATURE: Add Special:Imagelist page to display a list of all images.

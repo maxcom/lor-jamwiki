@@ -66,6 +66,8 @@ followed by 0.3.3.
                    where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
               );
               alter table jam_wiki_user alter column remember_key set NOT NULL;
+       b) Add the default_locale column to the jam_wiki_user table.
+              alter table jam_wiki_user add column default_locale VARCHAR(8);
 
 
   JAMWiki 0.4.3

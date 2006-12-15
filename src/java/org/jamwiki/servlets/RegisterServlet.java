@@ -16,6 +16,8 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.Locale;
+import java.util.TreeSet;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,10 +55,27 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+	private void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiUser user, WikiUserInfo userInfo) throws Exception {
+		if (!StringUtils.hasText(user.getDefaultLocale()) && request.getLocale() != null) {
+			user.setDefaultLocale(request.getLocale().toString());
+		}
+		TreeSet locales = new TreeSet();
+		Locale[] localeArray = Locale.getAvailableLocales();
+		for (int i=0; i < localeArray.length; i++) {
+			locales.add(localeArray[i].toString());
+		}
+		next.addObject("locales", locales);
+		next.addObject("newuser", user);
+		next.addObject("newuserinfo", userInfo);
 		pageInfo.setSpecial(true);
 		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
+	}
+
+	/**
+	 *
+	 */
+	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		WikiUser user = this.setWikiUser(request);
 		WikiUserInfo userInfo = this.setWikiUserInfo(request);
@@ -71,6 +90,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
 			if (newPassword != null) next.addObject("newPassword", newPassword);
 			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
+			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
             Utilities.login(request, user);
@@ -98,6 +118,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(newPassword)) {
 			user.setPassword(Encryption.encrypt(newPassword));
 		}
+		user.setDefaultLocale(request.getParameter("defaultLocale"));
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
@@ -178,10 +199,6 @@ public class RegisterServlet extends JAMWikiServlet {
 			user = Utilities.currentUser(request);
 			userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getUsername());
 		}
-		next.addObject("newuser", user);
-		next.addObject("newuserinfo", userInfo);
-		pageInfo.setSpecial(true);
-		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
-		pageInfo.setPageTitle(new WikiMessage("register.title"));
+		this.loadDefaults(request, next, pageInfo, user, userInfo);
 	}
 }

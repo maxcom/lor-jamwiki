@@ -232,6 +232,9 @@ public class DatabaseUpgrades {
 			sql = "alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("remember_key column set to NOT NULL");
+			sql = "alter table jam_wiki_user add column default_locale VARCHAR(8) ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added default_locale column to jam_wiki_user");
 			conn.commit();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

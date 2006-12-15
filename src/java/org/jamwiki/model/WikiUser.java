@@ -37,6 +37,7 @@ public class WikiUser implements UserDetails {
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = "0.0.0.0";
+	private String defaultLocale = null;
 	private String displayName = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = "0.0.0.0";
@@ -142,6 +143,20 @@ public class WikiUser implements UserDetails {
 	 */
 	public void setCreateIpAddress(String createIpAddress) {
 		this.createIpAddress = createIpAddress;
+	}
+
+	/**
+	 *
+	 */
+	public String getDefaultLocale() {
+		return this.defaultLocale;
+	}
+
+	/**
+	 *
+	 */
+	public void setDefaultLocale(String defaultLocale) {
+		this.defaultLocale = defaultLocale;
 	}
 
 	/**

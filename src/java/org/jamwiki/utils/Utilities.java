@@ -702,9 +702,8 @@ public class Utilities {
 	}
 
 	/**
-	 * Login the current user.
-     *
-     * Useful the user should be logged in automatically, e.g. after registration.
+	 * Login the current user.  Used when the should be logged in
+	 * automatically, e.g. after registration.
 	 *
 	 * @param request The servlet request object.
 	 * @param user The WikiUser being logged in.
@@ -713,29 +712,25 @@ public class Utilities {
 		if (user == null) {
 			return;
 		}
-        GrantedAuthority[] grantedAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
-        UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(user, user.getPassword(), grantedAuthorities);
-        authentication.setDetails(new WebAuthenticationDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-        Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
-        request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
+		GrantedAuthority[] grantedAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), grantedAuthorities);
+		authentication.setDetails(new WebAuthenticationDetails(request));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
+		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 	}
 
 	/**
-     * Using the system parser, parse system content.
-     *
-     * @param parserInput
-     *            A ParserInput object that contains parser configuration
-     *            information.
-     * @param content
-     *            The raw topic content that is to be parsed.
-     * @return A ParserDocument object with parsed topic content and other
-     *         parser output fields set.
-     * @throws Exception
-     *             Thrown if there are any parsing errors.
-     */
+	 * Using the system parser, parse system content.
+	 *
+	 * @param parserInput A ParserInput object that contains parser
+	 *  configuration information.
+	 * @param content The raw topic content that is to be parsed.
+	 * @return A ParserDocument object with parsed topic content and other
+	 *  parser output fields set.
+	 * @throws Exception Thrown if there are any parsing errors.
+	 */
 	public static ParserDocument parse(ParserInput parserInput, String content) throws Exception {
 		if (content == null) {
 			return null;

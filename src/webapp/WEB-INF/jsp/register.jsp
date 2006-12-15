@@ -92,6 +92,16 @@
 	<td><c:out value="${newuserinfo.email}" /></td>
 </tr>
 </c:if>
+<tr>
+	<td><f:message key="register.caption.locale" />:</td>
+	<td>
+		<select name="defaultLocale" id="registerDefaultLocale">
+		<c:forEach items="${locales}" var="defaultLocale">
+		<option value="<c:out value="${defaultLocale}" />"<c:if test="${newuser.defaultLocale == defaultLocale}"> selected</c:if>><c:out value="${defaultLocale}" /></option>
+		</c:forEach>
+		</select>
+	</td>
+</tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>
 </form>
