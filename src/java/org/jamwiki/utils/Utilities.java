@@ -32,11 +32,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.acegisecurity.Authentication;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
@@ -60,8 +58,10 @@ import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.servlets.ServletUtil;
+import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -98,6 +98,26 @@ public class Utilities {
 		cookie = new Cookie(cookieName, cookieValue);
 		cookie.setMaxAge(cookieAge);
 		response.addCookie(cookie);
+	}
+
+	/**
+	 * Given a string of the form "en_US" or "en_us", build an appropriate
+	 * Locale object.  Note that the Java constructor apparently has some
+	 * problems that cause breakage with Spring request handling.
+	 *
+	 * @param localeString The name of the locale for which an object is being
+	 *  created.
+	 * @return A Locale object matching the given string, or <code>null</code>
+	 *  if a Locale object cannot be created.
+	 */
+	public static Locale buildLocale(String localeString) {
+		if (!StringUtils.hasText(localeString)) {
+			return null;
+		}
+		// use spring voodoo to avoid some weird locale initialization issues
+		LocaleEditor localeEditor = new LocaleEditor();
+		localeEditor.setAsText(localeString);
+		return (Locale)localeEditor.getValue();
 	}
 
 	/**
@@ -719,6 +739,10 @@ public class Utilities {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
+		if (StringUtils.hasText(user.getDefaultLocale())) {
+			Locale locale = Utilities.buildLocale(user.getDefaultLocale());
+			request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
+		}
 	}
 
 	/**

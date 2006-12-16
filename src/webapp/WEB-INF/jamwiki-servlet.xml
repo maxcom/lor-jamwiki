@@ -6,7 +6,7 @@
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="interceptors">
 			<list>
-				<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+				<bean class="org.jamwiki.servlets.JAMWikiLocaleInterceptor" />
 			</list>
 		</property>
 		<property name="mappings">

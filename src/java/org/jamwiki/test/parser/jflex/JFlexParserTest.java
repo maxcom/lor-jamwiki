@@ -44,7 +44,7 @@ public class JFlexParserTest extends TestCase {
 		String topicName = "DUMMY";
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext("/wiki");
-		parserInput.setLocale(new Locale("en-US"));
+		parserInput.setLocale(Utilities.buildLocale("en_US"));
 		parserInput.setWikiUser(null);
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress("0.0.0.0");
