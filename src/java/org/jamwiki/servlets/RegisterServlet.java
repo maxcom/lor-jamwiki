@@ -17,7 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.util.Locale;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,10 +59,12 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(user.getDefaultLocale()) && request.getLocale() != null) {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
-		TreeSet locales = new TreeSet();
+		TreeMap locales = new TreeMap();
 		Locale[] localeArray = Locale.getAvailableLocales();
 		for (int i=0; i < localeArray.length; i++) {
-			locales.add(localeArray[i].toString());
+			String key = localeArray[i].toString();
+			String value = key + " - " + localeArray[i].getDisplayName(localeArray[i]);
+			locales.put(value, key);
 		}
 		next.addObject("locales", locales);
 		next.addObject("newuser", user);

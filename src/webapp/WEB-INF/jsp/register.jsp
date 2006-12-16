@@ -97,7 +97,7 @@
 	<td>
 		<select name="defaultLocale" id="registerDefaultLocale">
 		<c:forEach items="${locales}" var="defaultLocale">
-		<option value="<c:out value="${defaultLocale}" />"<c:if test="${newuser.defaultLocale == defaultLocale}"> selected</c:if>><c:out value="${defaultLocale}" /></option>
+		<option value="<c:out value="${defaultLocale.value}" />"<c:if test="${newuser.defaultLocale == defaultLocale.value}"> selected</c:if>><c:out value="${defaultLocale.key}" /></option>
 		</c:forEach>
 		</select>
 	</td>
