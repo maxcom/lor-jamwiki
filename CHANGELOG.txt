@@ -35,6 +35,7 @@
   Special:Admin.
 * FEATURE: Add pmd static code analysis target to the ANT build.xml file.
 * FEATURE: Added Dutch translations (Angel).
+* FEATURE: Added Ukranian translations (gutsul).
 * FEATURE: Updated Chinese translations (hfl).
 * FEATURE: Updated Polish translations (dlpa).
 * FEATURE: Updated German translations (axelclk).
