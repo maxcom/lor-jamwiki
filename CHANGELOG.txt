@@ -39,6 +39,7 @@
 * FEATURE: Updated Chinese translations (hfl).
 * FEATURE: Updated Polish translations (dlpa).
 * FEATURE: Updated German translations (axelclk).
+* FEATURE: Updated Hungarian translations (bDaneE).
 
 0.4.3
 =====
