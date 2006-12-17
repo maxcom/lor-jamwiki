@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.jflex.JFlexParser;
+import org.jamwiki.utils.Utilities;
 
 /**
  *
