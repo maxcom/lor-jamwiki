@@ -40,6 +40,7 @@
 * FEATURE: Updated Polish translations (dlpa).
 * FEATURE: Updated German translations (axelclk).
 * FEATURE: Updated Hungarian translations (bDaneE).
+* FEATURE: Updated French translations (hgomez).
 
 0.4.3
 =====
