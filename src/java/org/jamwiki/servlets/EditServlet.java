@@ -212,7 +212,7 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Integer retrieveLastTopicVersionId(HttpServletRequest request, Topic topic) throws Exception {
-		return (!StringUtils.hasText(request.getParameter("lastTopicVersionId"))) ? topic.getCurrentVersionId() : new Integer(request.getParameter("lastTopicVersionId"));
+		return (StringUtils.hasText(request.getParameter("lastTopicVersionId"))) ? new Integer(request.getParameter("lastTopicVersionId")) : topic.getCurrentVersionId();
 	}
 
 	/**

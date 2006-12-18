@@ -52,10 +52,10 @@ public class UploadServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
-		if (contentType.indexOf("multipart") != -1) {
-			upload(request, next, pageInfo);
-		} else {
+		if (contentType.indexOf("multipart") == -1) {
 			view(request, next, pageInfo);
+		} else {
+			upload(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -87,7 +87,7 @@ public class UploadServlet extends JAMWikiServlet {
 		String second = new Integer(cal.get(Calendar.SECOND)).toString();
 		if (second.length() == 1) second = "0" + second;
 		String suffix = "-" + day + hour + minute + second;
-		int pos = fileName.lastIndexOf(".");
+		int pos = fileName.lastIndexOf('.');
 		if (pos == -1) {
 			fileName = fileName + suffix;
 		} else {

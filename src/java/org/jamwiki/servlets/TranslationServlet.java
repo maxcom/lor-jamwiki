@@ -55,10 +55,10 @@ public class TranslationServlet extends JAMWikiServlet {
 			return ServletUtil.viewLogin(request, pageInfo, "Special:Translation", errorMessage);
 		}
 		String function = request.getParameter("function");
-		if (!StringUtils.hasText(function)) {
-			view(request, next, pageInfo);
-		} else {
+		if (StringUtils.hasText(function)) {
 			translate(request, next, pageInfo);
+		} else {
+			view(request, next, pageInfo);
 		}
 		next.addObject("translations", new TreeMap(this.translations));
 		next.addObject("codes", this.retrieveTranslationCodes());

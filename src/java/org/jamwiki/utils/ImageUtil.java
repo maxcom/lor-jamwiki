@@ -129,7 +129,7 @@ public class ImageUtil {
 			return original;
 		}
 		String newUrl = wikiImage.getUrl();
-		int pos = newUrl.lastIndexOf(".");
+		int pos = newUrl.lastIndexOf('.');
 		if (pos > -1) {
 			newUrl = newUrl.substring(0, pos) + "-" + maxDimension + "px" + newUrl.substring(pos);
 		} else {
@@ -163,7 +163,7 @@ public class ImageUtil {
 	 */
 	private static void saveImage(BufferedImage image, File file) throws Exception {
 		String filename = file.getName();
-		int pos = filename.lastIndexOf(".");
+		int pos = filename.lastIndexOf('.');
 		if (pos == -1 || (pos + 1) >= filename.length()) {
 			throw new Exception("Unknown image type " + filename);
 		}

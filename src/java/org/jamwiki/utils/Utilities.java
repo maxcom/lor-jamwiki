@@ -520,13 +520,13 @@ public class Utilities {
 			throw new Exception("Unable to find class loader");
 		}
 		url = loader.getResource(filename);
-		if (url != null) {
-			file = FileUtils.toFile(url);
-		} else {
+		if (url == null) {
 			url = ClassLoader.getSystemResource(filename);
 			if (url == null) {
 				throw new Exception("Unable to find " + filename);
 			}
+			file = FileUtils.toFile(url);
+		} else {
 			file = FileUtils.toFile(url);
 		}
 		if (file == null | !file.exists()) {

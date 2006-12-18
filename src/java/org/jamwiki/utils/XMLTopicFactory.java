@@ -305,7 +305,7 @@ public class XMLTopicFactory extends DefaultHandler {
 		String sNamespace = "";
 		String sJAMNamespace = "";
 		String sTitle = pageName;
-		int pos = pageName.indexOf(":");
+		int pos = pageName.indexOf(':');
 		if (pos > -1) {
 			sNamespace = pageName.substring(0, pos);
 			if (namespaces.containsKey(sNamespace)) {

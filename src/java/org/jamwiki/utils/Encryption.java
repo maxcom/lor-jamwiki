@@ -172,10 +172,10 @@ public class Encryption {
 	public static void setEncryptedProperty(String name, String value, Properties props) throws Exception {
 		value = Encryption.encrypt64(value);
 		if (value == null) value = "";
-		if (props != null) {
-			props.setProperty(name, value);
-		} else {
+		if (props == null) {
 			Environment.setValue(name, value);
+		} else {
+			props.setProperty(name, value);
 		}
 	}
 }

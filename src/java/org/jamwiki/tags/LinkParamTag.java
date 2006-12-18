@@ -42,9 +42,9 @@ public class LinkParamTag extends BodyTagSupport {
 		}
 		try {
 			if (!StringUtils.hasText(this.value)) {
-				tagValue = this.getBodyContent().getString();
-			} else {
 				tagValue = ExpressionUtil.evalNotNull("linkParam", "value", this.value, Object.class, this, pageContext).toString();
+			} else {
+				tagValue = this.getBodyContent().getString();
 			}
 			parent.addQueryParam(this.key, tagValue);
 		} catch (JspException e) {

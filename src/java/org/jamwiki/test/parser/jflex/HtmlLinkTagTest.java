@@ -76,6 +76,7 @@ public class HtmlLinkTagTest extends JFlexParserTest {
 		String output = "";
 		input = "[httpp://www.google.com]";
 		output = "<p>[httpp://www.google.com]\n</p>";
+		assertEquals(output, this.parse(input));
 	}
 
 	/**

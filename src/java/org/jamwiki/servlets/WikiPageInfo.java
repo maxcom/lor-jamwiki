@@ -355,7 +355,7 @@ public class WikiPageInfo {
 		if (!StringUtils.hasText(pattern)) return "";
 		MessageFormat formatter = new MessageFormat(pattern);
 		Object params[] = new Object[1];
-		params[0] = (this.topicName != null) ? this.topicName : "";
+		params[0] = (this.topicName == null) ? "" : this.topicName;
 		return formatter.format(params);
 	}
 

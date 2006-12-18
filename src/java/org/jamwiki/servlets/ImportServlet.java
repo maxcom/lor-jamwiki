@@ -46,11 +46,11 @@ public class ImportServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String contentType = ((request.getContentType() != null) ? request.getContentType().toLowerCase() : "" );
-		if (contentType.indexOf("multipart") != -1) {
-			importFile(request, next, pageInfo);
-		} else {
+		String contentType = ((request.getContentType() == null) ? "" : request.getContentType().toLowerCase());
+		if (contentType.indexOf("multipart") == -1) {
 			view(request, next, pageInfo);
+		} else {
+			importFile(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -74,11 +74,11 @@ public class ImportServlet extends JAMWikiServlet {
 			topicName = importer.importWikiXml(xmlFile);
 			xmlFile.delete();
 		}
-		if (!StringUtils.hasText(topicName)) {
+		if (StringUtils.hasText(topicName)) {
+			ServletUtil.redirect(next, virtualWiki, topicName);
+		} else {
 			next.addObject("error", new WikiMessage("import.caption.failure"));
 			view(request, next, pageInfo);
-		} else {
-			ServletUtil.redirect(next, virtualWiki, topicName);
 		}
 	}
 

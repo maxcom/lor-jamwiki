@@ -56,7 +56,7 @@ public class DiffServlet extends JAMWikiServlet {
 			while (e.hasMoreElements()) {
 				String name = (String) e.nextElement();
 				if (name.startsWith("diff:")) {
-					int version = Integer.parseInt(name.substring(name.indexOf(":") + 1));
+					int version = Integer.parseInt(name.substring(name.indexOf(':') + 1));
 					if (firstVersion >= 0) {
 						secondVersion = version;
 					} else {

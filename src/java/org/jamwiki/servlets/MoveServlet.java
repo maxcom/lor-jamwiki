@@ -44,10 +44,10 @@ public class MoveServlet extends JAMWikiServlet {
 			WikiMessage messageObject = new WikiMessage("admin.message.loginrequired");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
-		if (request.getParameter("move") != null) {
-			move(request, next, pageInfo);
-		} else {
+		if (request.getParameter("move") == null) {
 			view(request, next, pageInfo);
+		} else {
+			move(request, next, pageInfo);
 		}
 		return next;
 	}

@@ -56,17 +56,17 @@ public class SetupServlet extends JAMWikiServlet {
 		if (!Utilities.isFirstUse()) {
 			throw new WikiException(new WikiMessage("setup.error.notrequired"));
 		}
-		String function = (request.getParameter("function") != null) ? request.getParameter("function") : request.getParameter("override");
+		String function = (request.getParameter("function") == null) ? request.getParameter("override") : request.getParameter("function");
 		if (function == null) function = "";
 		try {
 			if (!this.verifyJDK()) {
 				String minimumVersion = MINIMUM_JDK_MAJOR_VERSION + "." + MINIMUM_JDK_MINOR_VERSION;
 				throw new WikiException(new WikiMessage("setup.error.jdk", minimumVersion, System.getProperty("java.version")));
 			}
-			if (!StringUtils.hasText(function)) {
-				view(request, next, pageInfo);
-			} else if (initialize(request, next, pageInfo)) {
+			if (StringUtils.hasText(function)) {
 				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+			} else if (initialize(request, next, pageInfo)) {
+				view(request, next, pageInfo);
 			}
 		} catch (Exception e) {
 			handleSetupError(request, next, pageInfo, e);

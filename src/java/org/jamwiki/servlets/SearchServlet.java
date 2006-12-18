@@ -37,10 +37,10 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (request.getParameter("jumpto") != null) {
-			jumpTo(request, next, pageInfo);
-		} else {
+		if (request.getParameter("jumpto") == null) {
 			search(request, next, pageInfo);
+		} else {
+			jumpTo(request, next, pageInfo);
 		}
 		return next;
 	}

@@ -16,10 +16,7 @@
  */
 package org.jamwiki.test.parser.jflex;
 
-import java.util.Locale;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.jflex.JFlexParser;

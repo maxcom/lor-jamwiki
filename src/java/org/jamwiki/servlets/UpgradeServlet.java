@@ -59,10 +59,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
 		}
 		String function = request.getParameter("function");
-		if (!StringUtils.hasText(function)) {
-			view(request, next, pageInfo);
-		} else if (function.equals("upgrade")) {
+		if (StringUtils.hasText(function)) {
 			upgrade(request, next, pageInfo);
+		} else if (function.equals("upgrade")) {
+			view(request, next, pageInfo);
 		}
 		return next;
 	}

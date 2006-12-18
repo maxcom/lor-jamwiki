@@ -44,10 +44,10 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (request.getParameter("function") != null) {
-			register(request, next, pageInfo);
-		} else {
+		if (request.getParameter("function") == null) {
 			view(request, next, pageInfo);
+		} else {
+			register(request, next, pageInfo);
 		}
 		return next;
 	}

@@ -42,10 +42,10 @@ public class HistoryServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (!StringUtils.hasText(request.getParameter("topicVersionId"))) {
-			history(request, next, pageInfo);
-		} else {
+		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
 			viewVersion(request, next, pageInfo);
+		} else {
+			history(request, next, pageInfo);
 		}
 		return next;
 	}
