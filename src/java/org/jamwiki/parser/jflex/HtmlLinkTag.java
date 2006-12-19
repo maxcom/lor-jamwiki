@@ -71,7 +71,7 @@ public class HtmlLinkTag implements ParserTag {
 			link = link.substring(0, link.length() - punctuation.length()).trim();
 		}
 		String html = this.linkHtml(link, text, punctuation);
-		return (html != null) ? html : raw;
+		return (html == null) ? raw : html;
 	}
 
 	/**

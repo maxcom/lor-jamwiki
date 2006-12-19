@@ -144,7 +144,7 @@ public class AdminServlet extends JAMWikiServlet {
 			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
 			props.setProperty(
 				Environment.PROP_FILE_MAX_FILE_SIZE,
-				new Integer(maxFileSizeInKB * 1000).toString()
+				Integer.toString(maxFileSizeInKB * 1000)
 			);
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
@@ -226,7 +226,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	private static void setBooleanProperty(Properties props, HttpServletRequest request, String parameter) {
 		boolean value = (request.getParameter(parameter) != null);
-		props.setProperty(parameter, new Boolean(value).toString());
+		props.setProperty(parameter, Boolean.toString(value));
 	}
 
 	/**

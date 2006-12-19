@@ -67,7 +67,7 @@ public class PaginationTag extends BodyTagSupport {
 			output.append("<a href=\"");
 			String virtualWiki = Utilities.getVirtualWikiFromRequest(request);
 			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
-			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", new Integer(num).toString());
+			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(num));
 			query += "&amp;offset=0";
 			wikiLink.setQuery(query);
 			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
@@ -119,7 +119,7 @@ public class PaginationTag extends BodyTagSupport {
 				offset = pagination.getOffset() - pagination.getNumResults();
 				if (offset < 0) offset = 0;
 			}
-			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", new Integer(pagination.getNumResults()).toString());
+			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(pagination.getNumResults()));
 			query += "&amp;offset=" + offset;
 			wikiLink.setQuery(query);
 			output.append(LinkUtil.buildInternalLinkUrl(request.getContextPath(), virtualWiki, wikiLink));
@@ -169,7 +169,7 @@ public class PaginationTag extends BodyTagSupport {
 		output.append(this.nextPage(pagination, baseUrl, count, false));
 		output.append("&#160;&#160;(");
 		output.append(this.numResults(pagination, baseUrl));
-		output.append(")");
+		output.append(')');
 		return output.toString();
 	}
 

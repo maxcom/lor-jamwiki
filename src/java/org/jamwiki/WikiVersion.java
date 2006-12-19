@@ -76,9 +76,15 @@ public class WikiVersion {
 	 *  the version being compared against.
 	 */
 	public boolean before(int major, int minor, int patch) {
-		if (this.major < major ) return true;
-		if (this.major == major && this.minor < minor) return true;
-		if (this.major == major && this.minor == minor && this.patch < patch) return true;
+		if (this.major < major) {
+			return true;
+		}
+		if (this.major == major && this.minor < minor) {
+			return true;
+		}
+		if (this.major == major && this.minor == minor && this.patch < patch) {
+			return true;
+		}
 		return false;
 	}
 }

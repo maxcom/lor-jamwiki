@@ -42,14 +42,16 @@ public class XMLUtil {
 	 *  apostrophe or ampersands in tagValue will be XML-escaped.
 	 */
 	public static String buildTag(String tagName, String tagValue, boolean escape) {
-		if (tagValue == null) return "";
+		if (tagValue == null) {
+			return "";
+		}
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<").append(tagName).append(">");
+		buffer.append('<').append(tagName).append('>');
 		if (escape) {
 			tagValue = Utilities.escapeHTML(tagValue);
 		}
 		buffer.append(tagValue);
-		buffer.append("</").append(tagName).append(">");
+		buffer.append("</").append(tagName).append('>');
 		return buffer.toString();
 	}
 
@@ -57,37 +59,35 @@ public class XMLUtil {
 	 *
 	 */
 	public static String buildTag(String tagName, int tagValue) {
-		return XMLUtil.buildTag(tagName, new Integer(tagValue).toString(), false);
+		return XMLUtil.buildTag(tagName, Integer.toString(tagValue), false);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildTag(String tagName, Integer tagValue) {
-		if (tagValue == null) return "";
-		return XMLUtil.buildTag(tagName, tagValue.toString(), false);
+		return (tagValue == null) ? "" : XMLUtil.buildTag(tagName, tagValue.toString(), false);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildTag(String tagName, boolean tagValue) {
-		return XMLUtil.buildTag(tagName, new Boolean(tagValue).toString(), false);
+		return XMLUtil.buildTag(tagName, Boolean.toString(tagValue), false);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildTag(String tagName, Timestamp tagValue) {
-		if (tagValue == null) return "";
-		return XMLUtil.buildTag(tagName, tagValue.toString(), false);
+		return (tagValue == null) ? "" : XMLUtil.buildTag(tagName, tagValue.toString(), false);
 	}
 
 	/**
 	 *
 	 */
 	public static String buildTag(String tagName, long tagValue) {
-		return XMLUtil.buildTag(tagName, new Long(tagValue).toString(), false);
+		return XMLUtil.buildTag(tagName, Long.toString(tagValue), false);
 	}
 
 	/**
@@ -125,7 +125,9 @@ public class XMLUtil {
 				throw new Exception("The file " + file.getAbsolutePath() + " contains invalid XML: " + e.getMessage());
 			}
 		} finally {
-			if (stream != null) stream.close();
+			if (stream != null) {
+				stream.close();
+			}
 		}
 	}
 
@@ -137,7 +139,6 @@ public class XMLUtil {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(validating);
 		// Create the builder and parse the file
-		Document doc = factory.newDocumentBuilder().parse(source);
-		return doc;
+		return factory.newDocumentBuilder().parse(source);
 	}
 }

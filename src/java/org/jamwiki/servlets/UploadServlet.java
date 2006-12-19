@@ -66,8 +66,8 @@ public class UploadServlet extends JAMWikiServlet {
 	private static String buildFileSubdirectory() {
 		// subdirectory is composed of year/month
 		GregorianCalendar cal = new GregorianCalendar();
-		String year = new Integer(cal.get(Calendar.YEAR)).toString();
-		String month = new Integer(cal.get(Calendar.MONTH) + 1).toString();
+		String year = Integer.toString(cal.get(Calendar.YEAR));
+		String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
 		return "/" + year + "/" + month;
 	}
 
@@ -78,13 +78,13 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(fileName)) return null;
 		// file is appended with a timestamp of DDHHMMSS
 		GregorianCalendar cal = new GregorianCalendar();
-		String day = new Integer(cal.get(Calendar.DAY_OF_MONTH)).toString();
+		String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
 		if (day.length() == 1) day = "0" + day;
-		String hour = new Integer(cal.get(Calendar.HOUR_OF_DAY)).toString();
+		String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
 		if (hour.length() == 1) hour = "0" + hour;
-		String minute = new Integer(cal.get(Calendar.MINUTE)).toString();
+		String minute = Integer.toString(cal.get(Calendar.MINUTE));
 		if (minute.length() == 1) minute = "0" + minute;
-		String second = new Integer(cal.get(Calendar.SECOND)).toString();
+		String second = Integer.toString(cal.get(Calendar.SECOND));
 		if (second.length() == 1) second = "0" + second;
 		String suffix = "-" + day + hour + minute + second;
 		int pos = fileName.lastIndexOf('.');

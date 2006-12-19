@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
@@ -85,8 +84,8 @@ public class ParserUtil {
 	 * @return The content for the tag being analyzed.
 	 */
 	protected static String tagContent(String raw) {
-		int start = raw.indexOf(">") + 1;
-		int end = raw.lastIndexOf("<");
+		int start = raw.indexOf('>') + 1;
+		int end = raw.lastIndexOf('<');
 		if (start == 0) {
 			// no tags
 			return raw;
@@ -112,7 +111,7 @@ public class ParserUtil {
 		String attributes = m.group(3);
 		String tagClose = m.group(5);
 		tag = "<";
-		if (tagOpen.indexOf("/") != -1) {
+		if (tagOpen.indexOf('/') != -1) {
 			tag += "/";
 		}
 		tag += tagKeyword.toLowerCase().trim();
@@ -120,7 +119,7 @@ public class ParserUtil {
 			attributes = ParserUtil.validateHtmlTagAttributes(attributes);
 			tag += " " + attributes.trim();
 		}
-		if (tagClose.indexOf("/") != -1) {
+		if (tagClose.indexOf('/') != -1) {
 			tagClose = " />";
 		}
 		tag += tagClose.trim();

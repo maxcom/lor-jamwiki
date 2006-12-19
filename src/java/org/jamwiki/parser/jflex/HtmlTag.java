@@ -34,10 +34,10 @@ public class HtmlTag implements ParserTag {
 	 *
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
-			return Utilities.escapeHTML(raw);
-		} else {
+		if (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
 			return ParserUtil.validateHtmlTag(raw);
+		} else {
+			return Utilities.escapeHTML(raw);
 		}
 	}
 }

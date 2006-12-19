@@ -52,7 +52,7 @@ public class WikiSignatureTag implements ParserTag {
 					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getUsername();
 					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
 					email = userInfo.getEmail();
-					userId = new Integer(user.getUserId()).toString();
+					userId = Integer.toString(user.getUserId());
 				}
 				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
 				Object params[] = new Object[7];

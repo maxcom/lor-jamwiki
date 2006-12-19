@@ -46,7 +46,7 @@ public class WikiLogFormatter extends Formatter {
 		StringBuffer buffer = new StringBuffer();
 		SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
 		buffer.append(formatter.format(new Date(record.getMillis())));
-		buffer.append(" ");
+		buffer.append(' ');
 		buffer.append(record.getLevel().getName());
 		buffer.append(": ");
 		buffer.append(record.getLoggerName());

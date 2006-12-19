@@ -324,7 +324,7 @@ public class TemplateTag implements ParserTag {
 	 * return the parameter name.
 	 */
 	private String parseParamName(String raw) throws Exception {
-		int pos = raw.indexOf("|");
+		int pos = raw.indexOf('|');
 		String name = null;
 		if (pos != -1) {
 			name = raw.substring(0, pos);
@@ -376,7 +376,7 @@ public class TemplateTag implements ParserTag {
 		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
 			throw new Exception ("Invalid template text: " + raw);
 		}
-		int pos = raw.indexOf("|");
+		int pos = raw.indexOf('|');
 		String name = null;
 		if (pos != -1) {
 			name = raw.substring("{{".length(), pos);
@@ -423,7 +423,7 @@ public class TemplateTag implements ParserTag {
 			String[] nameValue = this.tokenizeNameValue(token);
 			String name = nameValue[0];
 			if (name == null) {
-				name = new Integer(count).toString();
+				name = Integer.toString(count);
 			}
 			String value = (nameValue[1] == null) ? null : ParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_TEMPLATE);
 			this.parameterValues.put(name, value);
@@ -529,19 +529,19 @@ public class TemplateTag implements ParserTag {
 			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_PAGES_R)) {
 			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
-			return new Integer(results).toString();
+			return Integer.toString(results);
 		} else if (name.equals(MAGIC_NUMBER_FILES)) {
 			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
 			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_FILES_R)) {
 			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
-			return new Integer(results).toString();
+			return Integer.toString(results);
 		} else if (name.equals(MAGIC_NUMBER_USERS)) {
 			int results = WikiBase.getDataHandler().lookupWikiUserCount();
 			return numFormatter.format(results);
 		} else if (name.equals(MAGIC_NUMBER_USERS_R)) {
 			int results = WikiBase.getDataHandler().lookupWikiUserCount();
-			return new Integer(results).toString();
+			return Integer.toString(results);
 		/*
 		} else if (name.equals(MAGIC_NUMBER_ADMINS)) {
 		} else if (name.equals(MAGIC_NUMBER_ADMINS_R)) {
@@ -562,28 +562,28 @@ public class TemplateTag implements ParserTag {
 			return Utilities.encodeForURL(wikiLink.getArticle());
 		} else if (name.equals(MAGIC_SUB_PAGE_NAME)) {
 			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf("/");
+			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(pos + 1);
 			}
 			return topic;
 		} else if (name.equals(MAGIC_SUB_PAGE_NAME_E)) {
 			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf("/");
+			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(pos + 1);
 			}
 			return Utilities.encodeForURL(topic);
 		} else if (name.equals(MAGIC_BASE_PAGE_NAME)) {
 			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf("/");
+			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(0, pos);
 			}
 			return topic;
 		} else if (name.equals(MAGIC_BASE_PAGE_NAME_E)) {
 			String topic = wikiLink.getArticle();
-			int pos = topic.lastIndexOf("/");
+			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(0, pos);
 			}

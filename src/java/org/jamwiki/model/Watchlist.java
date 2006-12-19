@@ -56,8 +56,7 @@ public class Watchlist {
 	 *
 	 */
 	public boolean containsTopic(String topicName) {
-		if (topicName == null) return false;
-		return this.topics.contains(topicName);
+		return (topicName == null) ? false : this.topics.contains(topicName);
 	}
 
 	/**

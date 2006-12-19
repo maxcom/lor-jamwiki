@@ -193,7 +193,7 @@ public class XMLTopicFactory extends DefaultHandler {
 			String sNamespace = "";
 			int namespace = 0;
 			// get wiki namespace
-			int pos = pageName.indexOf(":");
+			int pos = pageName.indexOf(':');
 			if (pos > -1) {
 				sNamespace = pageName.substring(0, pos);
 				if (namespaces.containsKey(sNamespace)) {
@@ -255,7 +255,9 @@ public class XMLTopicFactory extends DefaultHandler {
 	 */
 	private void nl() throws SAXException {
 		logger.fine(lineEnd);
-		for (int i=0; i < indentLevel; i++) logger.fine(XML_INDENT);
+		for (int i=0; i < indentLevel; i++) {
+			logger.fine(XML_INDENT);
+		}
 	}
 
 	/**
