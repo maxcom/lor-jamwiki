@@ -31,6 +31,7 @@
 				<prop key="/**/Special:Move">Move</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
+				<prop key="/**/Special:RecentChangesFeed">RecentChangesFeed</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:Specialpages">SpecialPages</prop>
@@ -62,6 +63,10 @@
 	<bean id="Persistency" class="org.jamwiki.servlets.PersistencyServlet" />
 	<bean id="Printable" class="org.jamwiki.servlets.PrintableServlet" />
 	<bean id="RecentChanges" class="org.jamwiki.servlets.RecentChangesServlet" />
+	<bean id="RecentChangesFeed" class="org.jamwiki.servlets.RecentChangesFeedServlet">
+		<property name="defaultFeedType" value="rss_2.0"/>
+		<property name="defaultIncludeMinorEdits" value="false"/>
+	</bean>
 	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />

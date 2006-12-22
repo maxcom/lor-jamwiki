@@ -64,6 +64,7 @@ public class Environment {
 	public static final String PROP_DBCP_TEST_WHILE_IDLE = "dbcp-test-while-idle";
 	public static final String PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS = "dbcp-time-between-eviction-runs";
 	public static final String PROP_DBCP_WHEN_EXHAUSTED_ACTION = "dbcp-when-exhausted-action";
+	public static final String PROP_FEED_TITLE = "feed-title";
 	public static final String PROP_EMAIL_REPLY_ADDRESS = "reply-address";
 	public static final String PROP_EMAIL_SMTP_HOST = "smtp-host";
 	public static final String PROP_EMAIL_SMTP_PASSWORD = "smtp-password";

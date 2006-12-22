@@ -6,7 +6,7 @@
    ====================================================================
 
    Parsers that can be used with JAMWiki:
-   
+
    name  - A human-readable name for the parser.
    class - The fully qualified class name for the parser class.
    key   - The ApplicationResources translation key for the parser name.  If
@@ -34,7 +34,7 @@
    ====================================================================
 
    User authentication mechanisms that can be used with JAMWiki:
-   
+
    name  - A human-readable name for the authentication mechanism.
    class - The fully qualified class name for the authentication class.
    key   - The ApplicationResources translation key for the authentication
@@ -64,7 +64,7 @@
    ====================================================================
 
    Data handlers that can be used with JAMWiki:
-   
+
    name  - A human-readable name for the data handler.
    class - The fully qualified class name for the data handler.
    key   - The ApplicationResources translation key for the data handler
@@ -114,9 +114,9 @@
 
 <!--
    ====================================================================
-   
+
    Namespaces that can be used with JAMWiki:
-   
+
    name     - The internal-use-only name for the namespace.  WARNING: Do not
               change existing namespace name values as there are hard-coded
               dependencies for them!
@@ -176,10 +176,10 @@
 
 <!--
    ====================================================================
-   
+
    JAMWiki reserved topic names.  These topics are handled specially and
    treated differently from normal topics.
-   
+
    name - The name used for the special topic.
 
    ======================================================================
@@ -247,6 +247,9 @@
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:RecentChanges</name>
+	</pseudotopic>
+	<pseudotopic>
+		<name>Special:RecentChangesFeed</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Search</name>
