@@ -50,7 +50,6 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		Collection changes = WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);
 		next.addObject("changes", changes);
 		next.addObject("numChanges", new Integer(changes.size()));
-		next.addObject("virtualWiki", virtualWiki);
 		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
 		pageInfo.setAction(WikiPageInfo.ACTION_RECENT_CHANGES);
 		pageInfo.setSpecial(true);

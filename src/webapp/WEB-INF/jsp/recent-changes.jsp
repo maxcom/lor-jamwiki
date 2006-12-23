@@ -24,12 +24,10 @@
 
 <div id="change">
 
-<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" />
-<a href="/wiki/<c:out value="${virtualWiki}"/>/Special:RecentChangesFeed"><img border="0" src="../images/rss.gif" alt="RSS" />
-</p>
+<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" /></p>
 
 <%-- FIXME: do not hardcode date patterns --%>
-<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message></p>
+<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message> (<jamwiki:link value="Special:RecentChangesFeed"><f:message key="recentchanges.caption.rss" /></jamwiki:link>)</p>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 
