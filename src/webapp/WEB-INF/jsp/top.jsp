@@ -30,6 +30,9 @@
 	<link rel="start" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
 	<link rel="home" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
 </c:if>
+	<%-- This RSS link is automatically recognized by (some) browsers --%>
+	<link rel="alternate" type="application/rss+xml" title="<f:message key="recentchanges.caption.rss" />" href="<jamwiki:link value="Special:RecentChangesFeed"/>" />
+	<link rel="alternate" type="application/rss+xml" title="<f:message key="recentchanges.caption.rss" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true"/>" />
 	<link href="<jamwiki:link value="jamwiki.css" />" type="text/css" rel="stylesheet" />
 </head>
 <body>
