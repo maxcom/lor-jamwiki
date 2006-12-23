@@ -22,6 +22,10 @@
 
 <%@ include file="page-init.jsp" %>
 
+<%-- This RSS link is automatically recognized by (some) browsers --%>
+<link rel="alternate" type="application/rss+xml" title="<f:message key="recentchanges.caption.rss" />" href="<jamwiki:link value="Special:RecentChangesFeed"/>">
+<link rel="alternate" type="application/rss+xml" title="<f:message key="recentchanges.caption.rss" />" href="<jamwiki:link value="Special:RecentChangesFeed?minorEdits=true"/>">
+
 <div id="change">
 
 <p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" /></p>
