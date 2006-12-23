@@ -27,7 +27,7 @@
 <p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" /></p>
 
 <%-- FIXME: do not hardcode date patterns --%>
-<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message> (<jamwiki:link value="Special:RecentChangesFeed"><f:message key="recentchanges.caption.rss" /></jamwiki:link>)</p>
+<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message> <a href="<jamwiki:link value="Special:RecentChangesFeed"/>"><img border="0" src="../images/feed-icon-16x16.png" title="<f:message key="recentchanges.caption.rss" />" alt="<f:message key="recentchanges.caption.rss" />"/></a></p>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 
