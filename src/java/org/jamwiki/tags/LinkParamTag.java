@@ -41,7 +41,7 @@ public class LinkParamTag extends BodyTagSupport {
 			throw new JspException("linkParam tag not nested within a link tag");
 		}
 		try {
-			if (!StringUtils.hasText(this.value)) {
+			if (StringUtils.hasText(this.value)) {
 				tagValue = ExpressionUtil.evalNotNull("linkParam", "value", this.value, Object.class, this, pageContext).toString();
 			} else {
 				tagValue = this.getBodyContent().getString();
