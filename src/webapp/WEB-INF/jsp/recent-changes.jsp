@@ -16,7 +16,10 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page errorPage="/WEB-INF/jsp/error.jsp"
+<%@ page import="
+        org.jamwiki.Environment
+    "
+    errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
 
@@ -27,7 +30,15 @@
 <p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:RecentChanges" /></p>
 
 <%-- FIXME: do not hardcode date patterns --%>
-<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message> (<jamwiki:link value="Special:RecentChangesFeed"><f:message key="recentchanges.caption.rss" /></jamwiki:link>)</p>
+<p><f:message key="recentchanges.caption.time"><f:param><jsp:useBean id="now" class="java.util.Date" /><f:formatDate value="${now}" type="both" pattern="dd MMMM yyyy HH:mm" /></f:param></f:message>
+<%
+if (Environment.getBooleanValue(Environment.PROP_RSS_ALLOWED)) {
+%>
+(<jamwiki:link value="Special:RecentChangesFeed"><f:message key="recentchanges.caption.rss" /></jamwiki:link>)
+<%
+}
+%>
+</p>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:RecentChanges" />">
 

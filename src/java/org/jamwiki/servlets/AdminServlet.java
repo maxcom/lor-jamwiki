@@ -169,6 +169,8 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_CACHE_MAX_AGE);
 			setProperty(props, request, Environment.PROP_CACHE_MAX_IDLE_AGE);
 			setProperty(props, request, Environment.PROP_CACHE_TOTAL_SIZE);
+			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
+			setProperty(props, request, Environment.PROP_RSS_TITLE);
 			Vector errors = Utilities.validateSystemSettings(props);
 			if (errors.size() > 0) {
 				next.addObject("errors", errors);

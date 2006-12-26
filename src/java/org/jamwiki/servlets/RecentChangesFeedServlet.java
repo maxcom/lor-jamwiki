@@ -62,7 +62,6 @@ public class RecentChangesFeedServlet extends AbstractController {
 	private static final WikiLogger logger = WikiLogger.getLogger(RecentChangesFeedServlet.class.getName());
 	private static final String MIME_TYPE = "application/xml; charset=UTF-8";
 	private static final String FEED_ENCODING = "UTF-8";
-	private static final String DEFAULT_FEED_TITLE = "Wiki Recent Changes";
 	private static final String DEFAULT_FEED_TYPE = "rss_2.0";
 
 	private String defaultFeedType = DEFAULT_FEED_TYPE;
@@ -127,8 +126,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 		Collection changes = getChanges(request);
 		SyndFeed feed = new SyndFeedImpl();
 		feed.setEncoding(FEED_ENCODING);
-		String feedTitle = Environment.getValue(Environment.PROP_FEED_TITLE);
-		feed.setTitle(feedTitle == null ? DEFAULT_FEED_TITLE : feedTitle);
+		feed.setTitle(Environment.getValue(Environment.PROP_RSS_TITLE));
 		StringBuffer requestURL = request.getRequestURL();
 		String feedURL = requestURL.substring(0, requestURL.length() - Utilities.getTopicFromURI(request).length());
 		feed.setLink(feedURL);

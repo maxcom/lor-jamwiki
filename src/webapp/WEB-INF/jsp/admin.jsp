@@ -38,42 +38,49 @@ int maximumFileSize = (int)((float)(new Integer(props.getProperty(Environment.PR
 <script type="text/javascript">
 function onPersistenceType() {
 	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL_DB %>") {
-		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true;
 	} else {
-		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false;
 	}
 }
 function onLdap() {
 	if (document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").options[document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").selectedIndex].value != "<%= WikiBase.USER_HANDLER_LDAP %>") {
-		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=true
-		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=true
+		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=true;
 	} else {
-		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=false
-		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=false
+		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=false;
+	}
+}
+function onRSS() {
+	if (document.getElementById("<%= Environment.PROP_RSS_ALLOWED %>").checked) {
+		document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled=false;
+	} else {
+		document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled=true;
 	}
 }
 </script>
@@ -407,6 +414,19 @@ onLdap()
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>" id="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>" value="<%= props.getProperty(Environment.PROP_CACHE_MAX_IDLE_AGE) %>" size="10" /></td>
 </tr>
 <!-- END CACHE -->
+
+<!-- BEGIN RSS -->
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.header.rss" /> (<f:message key="common.caption.experimental" />)</h4></td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_RSS_ALLOWED %>"><f:message key="admin.caption.rss.allowed" /></label></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_RSS_ALLOWED %>" value="true"<%= props.getProperty(Environment.PROP_RSS_ALLOWED).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_RSS_ALLOWED %>" onclick="onRSS()" /></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_RSS_TITLE %>"><f:message key="admin.caption.rss.title" /></label></td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_RSS_TITLE %>" id="<%= Environment.PROP_RSS_TITLE %>" value="<%= props.getProperty(Environment.PROP_RSS_TITLE) %>" size="50" /></td>
+</tr>
+<!-- END RSS -->
 
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr>
