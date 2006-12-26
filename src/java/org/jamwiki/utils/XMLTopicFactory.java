@@ -47,12 +47,10 @@ public class XMLTopicFactory extends DefaultHandler {
 	String ns6 = "Image";
 	Integer nsKey = null;
 	String nsVal = null;
-	String lastStr = null;
+	StringBuffer lastStr = null;
 	String pageName = null;
 	String pageText = null;
 	private String processedTopicName = null;
-	private boolean inText = false;
-	private boolean firstPartOfText = false;
 	private static String lineEnd =  System.getProperty("line.separator");
 	private static final WikiLogger logger = WikiLogger.getLogger(XMLTopicFactory.class.getName());
 
@@ -126,6 +124,7 @@ public class XMLTopicFactory extends DefaultHandler {
 		String eName = lName; // element name
 		if ("".equals(eName)) eName = qName; // namespaceAware = false
 		emit("<"+eName);
+		lastStr = new StringBuffer();
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String aName = attrs.getLocalName(i); // Attr name
@@ -147,14 +146,6 @@ public class XMLTopicFactory extends DefaultHandler {
 			pageName = "";
 			pageText = "";
 		}
-		if ("title".equals(qName)) {
-			inText = true;
-			firstPartOfText = true;
-		}
-		if ("text".equals(qName)) {
-			inText = true;
-			firstPartOfText = true;
-		}
 	}
 
 	/**
@@ -168,25 +159,21 @@ public class XMLTopicFactory extends DefaultHandler {
 		emit("END_ELM: ");
 		emit("</"+sName+">");
 		if ("namespace".equals(qName)) { // mapping of namespaces from imported file
-			namespaces.put(lastStr.trim(), nsKey);
+			namespaces.put(lastStr.toString().trim(), nsKey);
 			//Prepare locale namespaces
 			//WikiArticle.addNamespace(nsKey.intValue(), lastStr.trim());
 			if (nsKey.intValue() == 14) {
-				ns14 = lastStr.trim();
+				ns14 = lastStr.toString().trim();
 			}
 			if (nsKey.intValue() == 6) {
-				ns6 = lastStr.trim();
+				ns6 = lastStr.toString().trim();
 			}
 		}
 		if ("title".equals(qName)) {
-			inText = false;
-			firstPartOfText = false;
-			pageName = lastStr.trim();
+			pageName = lastStr.toString().trim();
 		}
 		if ("text".equals(qName)) {
-			inText = false;
-			firstPartOfText = false;
-			pageText = lastStr.trim();
+			pageText = lastStr.toString().trim();
 		}
 		if ("page".equals(qName)) {
 			//Create Topic
@@ -228,19 +215,7 @@ public class XMLTopicFactory extends DefaultHandler {
 	 *
 	 */
 	public void characters(char buf[], int offset, int len) throws SAXException {
-		nl(); emit("CHARS:   ");
-		String s = new String(buf, offset, len);
-		if (!s.trim().equals("")) emit(s);
-		if (inText) {
-			if (firstPartOfText) {
-				firstPartOfText = false;
-				lastStr = s;
-			} else {
-				lastStr += s;
-			}
-		} else {
-			lastStr = s;
-		}
+    	lastStr.append(buf, offset, len);
 	}
 
 	/**
