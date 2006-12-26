@@ -38,19 +38,22 @@ import org.jamwiki.WikiBase;
  */
 public class JAMWikiDaoAuthenticationProvider extends DaoAuthenticationProvider {
 
-    protected void additionalAuthenticationChecks(UserDetails userDetails,
-            UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+	/**
+	 *
+	 */
+	protected void additionalAuthenticationChecks(UserDetails userDetails,
+			UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
-        try {
-            if (!WikiBase.getUserHandler().authenticate(userDetails.getUsername(),
-                    authentication.getCredentials().toString())) {
-                throw new BadCredentialsException(messages.getMessage(
-                        "AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"),
-                        isIncludeDetailsObject() ? userDetails : null);
-            }
-        } catch (Exception e) {
-            throw new AuthenticationServiceException(e.getMessage(), e);
-        }
-    }
+		try {
+			if (!WikiBase.getUserHandler().authenticate(userDetails.getUsername(),
+					authentication.getCredentials().toString())) {
+				throw new BadCredentialsException(messages.getMessage(
+						"AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"),
+						isIncludeDetailsObject() ? userDetails : null);
+			}
+		} catch (Exception e) {
+			throw new AuthenticationServiceException(e.getMessage(), e);
+		}
+	}
 
 }

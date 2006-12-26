@@ -140,8 +140,7 @@ public class WikiListTag implements ParserTag {
 			stack2Tag = (String)stack2.get(pos);
 			if (!stack1Tag.equals(stack2Tag)) {
 				// definition lists are sneaky - <dd> and <dt> must be considered equal
-				if ((stack1Tag.equals("<dt>") || stack1Tag.equals("<dd>")) &&
-				    (stack2Tag.equals("<dd>") || stack2Tag.equals("<dt>"))) {
+				if ((stack1Tag.equals("<dt>") || stack1Tag.equals("<dd>")) && (stack2Tag.equals("<dd>") || stack2Tag.equals("<dt>"))) {
 					pos++;
 					continue;
 				}

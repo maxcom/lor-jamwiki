@@ -31,9 +31,9 @@ import org.springframework.util.Assert;
  */
 public class WikiUser implements UserDetails {
 
-    private static final long serialVersionUID = -2818435399240684581L;
+	private static final long serialVersionUID = -2818435399240684581L;
 
-    private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
+	private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = "0.0.0.0";
@@ -45,11 +45,11 @@ public class WikiUser implements UserDetails {
 	private int userId = -1;
 
 	/**
-     * GrantedAuthority is used by Acegi Security to support several authorities
-     * (roles). A logged user always has ROLE_USER and may have other roles,
-     * e.g. ROLE_ADMIN.
-     */
-    private GrantedAuthority[] authorities = new GrantedAuthority[0];
+	 * GrantedAuthority is used by Acegi Security to support several authorities
+	 * (roles). A logged user always has ROLE_USER and may have other roles,
+	 * e.g. ROLE_ADMIN.
+	 */
+	private GrantedAuthority[] authorities = new GrantedAuthority[0];
 	private String password = null;
 
 	/**
@@ -58,44 +58,42 @@ public class WikiUser implements UserDetails {
 	public WikiUser() {
 	}
 
-    /**
-     * Construct the <code>User</code> with the details required by {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}.
-     *
-     * @param username the username presented to the
-     *        <code>DaoAuthenticationProvider</code>
-     * @param password the password that should be presented to the
-     *        <code>DaoAuthenticationProvider</code>
-     * @param enabled set to <code>true</code> if the user is enabled
-     * @param accountNonExpired set to <code>true</code> if the account has not
-     *        expired
-     * @param credentialsNonExpired set to <code>true</code> if the credentials
-     *        have not expired
-     * @param accountNonLocked set to <code>true</code> if the account is not
-     *        locked
-     * @param authorities the authorities that should be granted to the caller
-     *        if they presented the correct username and password and the user
-     *        is enabled
-     *
-     * @throws IllegalArgumentException if a <code>null</code> value was passed
-     *         either as a parameter or as an element in the
-     *         <code>GrantedAuthority[]</code> array
-     */
-    public WikiUser(String username, String password, boolean enabled, boolean accountNonExpired,
-        boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities)
-        throws IllegalArgumentException {
-        if (((username == null) || "".equals(username)) || (password == null)) {
-            throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
-        }
+	/**
+	 * Construct the <code>User</code> with the details required by {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}.
+	 *
+	 * @param username the username presented to the
+	 *  <code>DaoAuthenticationProvider</code>
+	 * @param password the password that should be presented to the
+	 *  <code>DaoAuthenticationProvider</code>
+	 * @param enabled set to <code>true</code> if the user is enabled
+	 * @param accountNonExpired set to <code>true</code> if the account has not
+	 *  expired
+	 * @param credentialsNonExpired set to <code>true</code> if the credentials
+	 *  have not expired
+	 * @param accountNonLocked set to <code>true</code> if the account is not
+	 *  locked
+	 * @param authorities the authorities that should be granted to the caller
+	 *  if they presented the correct username and password and the user
+	 *  is enabled
+	 * @throws IllegalArgumentException if a <code>null</code> value was passed
+	 *  either as a parameter or as an element in the
+	 *  <code>GrantedAuthority[]</code> array.
+	 */
+	public WikiUser(String username, String password, boolean enabled, boolean accountNonExpired,
+		boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities)
+		throws IllegalArgumentException {
+		if (((username == null) || "".equals(username)) || (password == null)) {
+			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
+		}
 
-        this.username = username;
-        this.password = password;
-//        this.enabled = enabled;
-//        this.accountNonExpired = accountNonExpired;
-//        this.credentialsNonExpired = credentialsNonExpired;
-//        this.accountNonLocked = accountNonLocked;
-        setAuthorities(authorities);
-    }
-
+		this.username = username;
+		this.password = password;
+//		this.enabled = enabled;
+//		this.accountNonExpired = accountNonExpired;
+//		this.credentialsNonExpired = credentialsNonExpired;
+//		this.accountNonLocked = accountNonLocked;
+		setAuthorities(authorities);
+	}
 
 	/**
 	 *
@@ -107,14 +105,14 @@ public class WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-    public void setAdmin(boolean admin) {
-        Set authoritiesSet = new HashSet(Arrays.asList(authorities));
+	public void setAdmin(boolean admin) {
+		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
 		if (admin) {
-            authoritiesSet.add(ROLE_ADMIN);
+			authoritiesSet.add(ROLE_ADMIN);
 		} else {
-		    authoritiesSet.remove(ROLE_ADMIN);
+			authoritiesSet.remove(ROLE_ADMIN);
 		}
-        setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
+		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
 	}
 
 	/**
@@ -219,21 +217,21 @@ public class WikiUser implements UserDetails {
 
 	/**
 	 * Returns granted authorites.
-     *
-     * @return authorites, never null.
+	 *
+	 * @return authorites, never null.
 	 */
 	public GrantedAuthority[] getAuthorities() {
 		return authorities;
 	}
 
-    protected void setAuthorities(GrantedAuthority[] authorities) {
-        Assert.notNull(authorities, "Cannot pass a null GrantedAuthority array");
-        for (int i = 0; i < authorities.length; i++) {
-            Assert.notNull(authorities[i],
-                "Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
-        }
-        this.authorities = authorities;
-    }
+	protected void setAuthorities(GrantedAuthority[] authorities) {
+		Assert.notNull(authorities, "Cannot pass a null GrantedAuthority array");
+		for (int i = 0; i < authorities.length; i++) {
+			Assert.notNull(authorities[i],
+				"Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
+		}
+		this.authorities = authorities;
+	}
 
 	/**
 	 *

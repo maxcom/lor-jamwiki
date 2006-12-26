@@ -39,92 +39,105 @@ import org.springframework.util.Assert;
  */
 public class InMemoryDaoWithDefaultRoles implements UserDetailsService {
 
-    private UserMap userMap;
-    private GrantedAuthority[] defaultAuthorities;
+	private UserMap userMap;
+	private GrantedAuthority[] defaultAuthorities;
 
-    public void setUserMap(UserMap userMap) {
-        this.userMap = userMap;
-    }
+	/**
+	 *
+	 */
+	public void setUserMap(UserMap userMap) {
+		this.userMap = userMap;
+	}
 
-    public UserMap getUserMap() {
-        return userMap;
-    }
+	/**
+	 *
+	 */
+	public UserMap getUserMap() {
+		return userMap;
+	}
 
-    /**
-     * Modifies the internal <code>UserMap</code> to reflect the
-     * <code>Properties</code> instance passed. This helps externalise user
-     * information to another file etc.
-     *
-     * @param props
-     *            the account information in a <code>Properties</code> object
-     *            format
-     */
-    public void setUserProperties(Properties props) {
-        this.userMap = UserMapEditor.addUsersFromProperties(new UserMap(), props);
-    }
+	/**
+	 * Modifies the internal <code>UserMap</code> to reflect the
+	 * <code>Properties</code> instance passed. This helps externalise user
+	 * information to another file etc.
+	 *
+	 * @param props The account information in a <code>Properties</code> object
+	 *  format.
+	 */
+	public void setUserProperties(Properties props) {
+		this.userMap = UserMapEditor.addUsersFromProperties(new UserMap(), props);
+	}
 
-    /**
-     * Default authorities provided to all users not mentioned in userMap.
-     *
-     * @param defaultAuthorities
-     *            to set.
-     */
-    public void setDefaultAuthorities(GrantedAuthority[] defaultAuthorities) {
-        Assert.notNull(defaultAuthorities, "Cannot pass a null GrantedAuthority array");
-        for (int i = 0; i < defaultAuthorities.length; i++) {
-            Assert.notNull(defaultAuthorities[i], "Granted authority element " + i
-                    + " is null - GrantedAuthority[] cannot contain any null elements");
-        }
-        this.defaultAuthorities = defaultAuthorities;
-    }
+	/**
+	 * Default authorities provided to all users not mentioned in userMap.
+	 *
+	 * @param defaultAuthorities To set.
+	 */
+	public void setDefaultAuthorities(GrantedAuthority[] defaultAuthorities) {
+		Assert.notNull(defaultAuthorities, "Cannot pass a null GrantedAuthority array");
+		for (int i = 0; i < defaultAuthorities.length; i++) {
+			Assert.notNull(defaultAuthorities[i], "Granted authority element " + i
+					+ " is null - GrantedAuthority[] cannot contain any null elements");
+		}
+		this.defaultAuthorities = defaultAuthorities;
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.acegisecurity.providers.dao.memory.InMemoryDaoImpl#loadUserByUsername(java.lang.String)
-     */
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        WikiUser wikiUser = createWikiUserObject(username);
-        syncWikiUserWithJamWikiDB(username, wikiUser);
-        return wikiUser;
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.acegisecurity.providers.dao.memory.InMemoryDaoImpl#loadUserByUsername(java.lang.String)
+	 */
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+		WikiUser wikiUser = createWikiUserObject(username);
+		syncWikiUserWithJamWikiDB(username, wikiUser);
+		return wikiUser;
+	}
 
-    private WikiUser createWikiUserObject(String username) {
-        WikiUser wikiUser;
-        if (userMap == null) {
-            wikiUser = newUserWithDefaultAuthorities(username);
-        } else {
-            try {
-                UserDetails userDetails = userMap.getUser(username);
-                wikiUser = new WikiUser(userDetails.getUsername(), userDetails.getPassword(), true, true, true, true,
-                        userDetails.getAuthorities());
-            } catch (UsernameNotFoundException e) {
-                wikiUser = newUserWithDefaultAuthorities(username);
-            }
-        }
-        return wikiUser;
-    }
+	/**
+	 *
+	 */
+	private WikiUser createWikiUserObject(String username) {
+		WikiUser wikiUser;
+		if (userMap == null) {
+			wikiUser = newUserWithDefaultAuthorities(username);
+		} else {
+			try {
+				UserDetails userDetails = userMap.getUser(username);
+				wikiUser = new WikiUser(userDetails.getUsername(), userDetails.getPassword(), true, true, true, true,
+						userDetails.getAuthorities());
+			} catch (UsernameNotFoundException e) {
+				wikiUser = newUserWithDefaultAuthorities(username);
+			}
+		}
+		return wikiUser;
+	}
 
-    private WikiUser newUserWithDefaultAuthorities(String username) {
-        return new WikiUser(username, "ignored", true, true, true, true, defaultAuthorities);
-    }
+	/**
+	 *
+	 */
+	private WikiUser newUserWithDefaultAuthorities(String username) {
+		return new WikiUser(username, "ignored", true, true, true, true, defaultAuthorities);
+	}
 
-    private void syncWikiUserWithJamWikiDB(String username, WikiUser wikiUser) {
-        try {
-            WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
-            if (userInfo == null) {
-                // add user to JAMWiki database
-                userInfo = new WikiUserInfo();
-                userInfo.setUsername(username);
-                // password will never be used
-                userInfo.setEncodedPassword("kd4%6/tzZh§FGER");
-                WikiBase.getDataHandler().writeWikiUser(wikiUser, userInfo, null);
-                userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
-            }
-            wikiUser.setUserId(userInfo.getUserId());
-        } catch (Exception e) {
-            throw new DataRetrievalFailureException(e.getMessage(), e);
-        }
-    }
+	/**
+	 *
+	 */
+	private void syncWikiUserWithJamWikiDB(String username, WikiUser wikiUser) {
+		try {
+			WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
+			if (userInfo == null) {
+				// add user to JAMWiki database
+				userInfo = new WikiUserInfo();
+				userInfo.setUsername(username);
+				// password will never be used
+				userInfo.setEncodedPassword("kd4%6/tzZh§FGER");
+				WikiBase.getDataHandler().writeWikiUser(wikiUser, userInfo, null);
+				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
+			}
+			wikiUser.setUserId(userInfo.getUserId());
+		} catch (Exception e) {
+			throw new DataRetrievalFailureException(e.getMessage(), e);
+		}
+	}
 
 }

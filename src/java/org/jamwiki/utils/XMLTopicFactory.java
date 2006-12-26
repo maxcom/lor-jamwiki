@@ -215,7 +215,7 @@ public class XMLTopicFactory extends DefaultHandler {
 	 *
 	 */
 	public void characters(char buf[], int offset, int len) throws SAXException {
-    	lastStr.append(buf, offset, len);
+		lastStr.append(buf, offset, len);
 	}
 
 	/**

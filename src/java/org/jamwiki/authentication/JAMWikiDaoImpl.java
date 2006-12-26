@@ -32,22 +32,22 @@ import org.springframework.dao.DataAccessResourceFailureException;
  */
 public class JAMWikiDaoImpl implements UserDetailsService {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.acegisecurity.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
-     */
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        UserDetails loadedUser;
-        try {
-            loadedUser = WikiBase.getDataHandler().lookupWikiUser(username, null);
-        } catch (Exception e) {
-            throw new DataAccessResourceFailureException(e.getMessage(), e);
-        }
-        if (loadedUser == null) {
-            throw new UsernameNotFoundException("User with name '" + username + "' not found in JAMWiki database.");
-        }
-        return loadedUser;
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.acegisecurity.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
+	 */
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+		UserDetails loadedUser;
+		try {
+			loadedUser = WikiBase.getDataHandler().lookupWikiUser(username, null);
+		} catch (Exception e) {
+			throw new DataAccessResourceFailureException(e.getMessage(), e);
+		}
+		if (loadedUser == null) {
+			throw new UsernameNotFoundException("User with name '" + username + "' not found in JAMWiki database.");
+		}
+		return loadedUser;
+	}
 
 }

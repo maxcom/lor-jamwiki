@@ -95,9 +95,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-            Utilities.login(request, user);
+			Utilities.login(request, user);
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-            String topic = virtualWiki.getDefaultTopicName();
+			String topic = virtualWiki.getDefaultTopicName();
 			ServletUtil.redirect(next, virtualWikiName, topic);
 		}
 	}
