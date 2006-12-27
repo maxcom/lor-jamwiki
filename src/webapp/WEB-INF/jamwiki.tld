@@ -10,9 +10,17 @@
 	<description>JAMWiki Tag Library</description>
 	
 	<tag>
-		<name>wiki-version</name>
-		<tag-class>org.jamwiki.tags.WikiVersionTag</tag-class>
-		<body-content>empty</body-content>
+		<name>enabled</name>
+		<tag-class>org.jamwiki.tags.EnabledTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>
+			Do not display content within the tag body unless the
+			specified JAMWiki is set to true.
+		</description>
+		<attribute>
+			<name>property</name>
+			<required>true</required>
+		</attribute>
 	</tag>
 	<tag>
 		<name>image</name>
@@ -86,6 +94,12 @@
 			<name>topic</name>
 			<required>true</required>
 		</attribute>
+	</tag>
+	<tag>
+		<name>wiki-version</name>
+		<tag-class>org.jamwiki.tags.WikiVersionTag</tag-class>
+		<body-content>empty</body-content>
+		<description>Display the current JAMWiki software version.</description>
 	</tag>
 
 </taglib>

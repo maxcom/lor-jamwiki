@@ -16,10 +16,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page import="
-        org.jamwiki.Environment
-    "
-    errorPage="/WEB-INF/jsp/error.jsp"
+<%@ page errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
 
@@ -31,27 +28,19 @@
 
 <c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
 
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
-%>
+<jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${pageInfo.actionEditPreview}">
 <blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
 </c:if>
-<%
-}
-%>
+</jamwiki:enabled>
 
 <%@ include file="category-include.jsp" %>
 
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
-%>
+<jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${pageInfo.actionEditPreview}">
 <%@ include file="view-topic-include.jsp" %>
 </c:if>
-<%
-}
-%>
+</jamwiki:enabled>
 
 <form name="form" method="post" name="editform" action="<jamwiki:link value="Special:Edit" />">
 <p>
@@ -60,9 +49,7 @@ if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
 <input type="hidden" name="section" value="<c:out value="${section}"/>" />
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
 
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_WYSIWYG)) {
-%>
+<jamwiki:enabled property="PROP_TOPIC_WYSIWYG">
 <script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
 
 <script type='text/javascript'>
@@ -81,9 +68,7 @@ addButton('../images/button_hr.png','<f:message key="edit.button.line"/>','\n---
 document.writeln("</div>");
 /*]]>*/ 
 </script>
-<%
-}
-%>
+</jamwiki:enabled>
 
 <p>
 <textarea name="contents" rows="25" cols="80" style="width:100%" accesskey=","><c:out value="${contents}" escapeXml="true" /></textarea>
@@ -92,13 +77,7 @@ document.writeln("</div>");
 <p>
 <input type="submit" name="save" value="<f:message key="common.save"/>"  accesskey="s"/>
 
-<%
-if (Environment.getBooleanValue(Environment.PROP_TOPIC_USE_PREVIEW)) {
-%>
-<input type="submit" name="preview" value="<f:message key="edit.action.preview"/>" accesskey="p"/>
-<%
-}
-%>
+<jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW"><input type="submit" name="preview" value="<f:message key="edit.action.preview"/>" accesskey="p"/></jamwiki:enabled>
 
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" accesskey="i" />

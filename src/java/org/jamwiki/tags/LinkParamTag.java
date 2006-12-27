@@ -48,10 +48,10 @@ public class LinkParamTag extends BodyTagSupport {
 			}
 			parent.addQueryParam(this.key, tagValue);
 		} catch (JspException e) {
-			logger.severe("Failure in link tag for " + this.value, e);
+			logger.severe("Failure in link param tag for " + this.value, e);
 			throw e;
 		}
-		return SKIP_BODY;
+		return EVAL_PAGE;
 	}
 
 	/**
