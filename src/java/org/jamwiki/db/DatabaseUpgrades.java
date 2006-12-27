@@ -229,9 +229,16 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Populated the remember_key column with data");
 			// set column not null
-			sql = "alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL ";
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MYSQL)) {
+				sql = "alter table jam_wiki_user MODIFY COLUMN remember_key VARCHAR(100) NOT NULL ";
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MSSQL)) {
+				sql = "alter table jam_wiki_user ALTER COLUMN remember_key VARCHAR(100) NOT NULL ";
+			} else {
+				sql = "alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("remember_key column set to NOT NULL");
+			// add default_locale column
 			sql = "alter table jam_wiki_user add column default_locale VARCHAR(8) ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added default_locale column to jam_wiki_user");

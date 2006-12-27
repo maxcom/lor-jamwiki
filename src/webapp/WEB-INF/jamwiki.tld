@@ -15,7 +15,7 @@
 		<body-content>JSP</body-content>
 		<description>
 			Do not display content within the tag body unless the
-			specified JAMWiki is set to true.
+			specified JAMWiki property is set to true.
 		</description>
 		<attribute>
 			<name>property</name>
@@ -43,6 +43,12 @@
 		<name>link</name>
 		<tag-class>org.jamwiki.tags.LinkTag</tag-class>
 		<body-content>JSP</body-content>
+		<description>
+			Generate an HTML link to a specified JAMWiki topic.
+			This tag can generate full HTML links or simply URLs,
+			depending on whether link text is supplied via the the
+			tag body or text attribute.
+		</description>
 		<attribute>
 			<name>value</name>
 			<required>true</required>

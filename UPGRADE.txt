@@ -60,12 +60,27 @@ followed by 0.3.3.
   2. Update the database schema by executing the following SQL statements:
        a) Add the column remember_key to jam_wiki_user to hold an encrypted
           value to use with "Remember Me" login functionality.
+            Postgres:
               alter table jam_wiki_user add column remember_key VARCHAR(100);
               update jam_wiki_user set remember_key = (
                    select encoded_password from jam_wiki_user_info
                    where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
               );
               alter table jam_wiki_user alter column remember_key set NOT NULL;
+            MySql:
+              alter table jam_wiki_user add column remember_key VARCHAR(100);
+              update jam_wiki_user set remember_key = (
+                   select encoded_password from jam_wiki_user_info
+                   where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+              );
+              alter table jam_wiki_user modify column remember_key VARCHAR(100) NOT NULL;
+            MS Sql:
+              alter table jam_wiki_user add column remember_key VARCHAR(100);
+              update jam_wiki_user set remember_key = (
+                   select encoded_password from jam_wiki_user_info
+                   where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+              );
+              alter table jam_wiki_user alter column remember_key VARCHAR(100) NOT NULL;
        b) Add the default_locale column to the jam_wiki_user table.
               alter table jam_wiki_user add column default_locale VARCHAR(8);
 
