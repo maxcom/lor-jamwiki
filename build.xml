@@ -204,7 +204,7 @@
 	</target>
 
 	<target name="javadoc" depends="jflex" description="Create Javadoc documentation">
-		<javadoc destdir="${dir.build.javadoc}">
+		<javadoc destdir="${dir.build.javadoc}" windowtitle="JAMWiki ${app.version}">
 			<packageset dir="${dir.src.java}" defaultexcludes="yes">
 				<include name="org/jamwiki/**" />
 			</packageset>
