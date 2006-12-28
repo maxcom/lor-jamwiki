@@ -80,6 +80,7 @@
 			<src path="${dir.src.java}" />
 			<include name="org/jamwiki/**" />
 			<exclude name="org/jamwiki/test/**" />
+			<exclude name="**/*.html" />
 			<classpath refid="jamwiki.lib.classpath" />
 		</javac>
 	</target>
@@ -126,6 +127,7 @@
 		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}">
 			<src path="${dir.src.java}" />
 			<include name="org/jamwiki/test/**" />
+			<exclude name="**/*.html" />
 			<classpath refid="jamwiki.lib.classpath" />
 		</javac>
 	</target>
