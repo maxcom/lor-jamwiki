@@ -42,7 +42,10 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		try {
 			loadedUser = WikiBase.getDataHandler().lookupWikiUser(username, null);
 		} catch (Exception e) {
-			throw new DataAccessResourceFailureException(e.getMessage(), e);
+			// FIXME - for now throw an exception that Acegi can handle, but
+			// this should be handled with the Acegi ExceptionTranslationFilter
+//			throw new DataAccessResourceFailureException(e.getMessage(), e);
+			throw new UsernameNotFoundException("Failure retrieving user information for " + username, e);
 		}
 		if (loadedUser == null) {
 			throw new UsernameNotFoundException("User with name '" + username + "' not found in JAMWiki database.");
