@@ -14,10 +14,11 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki;
+package org.jamwiki.mail;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
+import org.jamwiki.Environment;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 

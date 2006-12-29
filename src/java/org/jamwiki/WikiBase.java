@@ -185,7 +185,6 @@ public class WikiBase {
 	 * @throws Exception Thrown if an error occurs during re-initialization.
 	 */
 	public static void reset(Locale locale, WikiUser user) throws Exception {
-		WikiMail.init();
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
 		WikiBase.dataHandler.setup(locale, user);
