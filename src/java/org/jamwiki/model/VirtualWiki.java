@@ -20,7 +20,7 @@ import java.io.Serializable;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing a virtual wiki.
  */
 public class VirtualWiki implements Serializable {
 

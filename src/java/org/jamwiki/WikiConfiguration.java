@@ -29,7 +29,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *
+ * The <code>WikiConfiguration</code> class provides the infrastructure for
+ * retrieving configuration values.  Note that with JAMWiki configuration
+ * values differ from site properties by being generally less site-specific
+ * and falling into specific categories, such as pseudo-topics and parser
+ * values.
  */
 public class WikiConfiguration {
 

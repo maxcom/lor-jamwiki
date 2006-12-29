@@ -32,7 +32,9 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * Implementation of the {@link org.jamwiki.UserHandler} interface that uses
+ * an LDAP database for storing user login, password and other basic user
+ * information.
  */
 public class LdapUserHandler implements UserHandler {
 

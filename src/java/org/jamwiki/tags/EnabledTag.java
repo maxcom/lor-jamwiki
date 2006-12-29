@@ -22,7 +22,8 @@ import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * JSP tag that executes its tag content only if the specified property has
+ * a value of <code>true</code>.
  */
 public class EnabledTag extends BodyTagSupport {
 

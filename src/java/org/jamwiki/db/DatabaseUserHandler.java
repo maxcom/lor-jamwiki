@@ -23,7 +23,8 @@ import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Implementation of the {@link org.jamwiki.UserHandler} interface that uses a
+ * database for storing user login, password and other basic user information.
  */
 public class DatabaseUserHandler implements UserHandler {
 

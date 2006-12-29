@@ -21,7 +21,8 @@ import java.util.Vector;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing a watchlist object consisting of a virtual
+ * wiki and a collection of topics being watched.
  */
 public class Watchlist {
 

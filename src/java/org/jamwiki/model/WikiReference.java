@@ -21,7 +21,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- * Utility class for handling reference objects.
+ * Provides an object representing a Wiki reference, which is a citation
+ * appearing within a Wiki topic.
  */
 public class WikiReference {
 

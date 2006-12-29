@@ -19,7 +19,9 @@ package org.jamwiki.db;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Implementation of the {@link org.jamwiki.DataHandler} interface that is
+ * appropriate for use with the HSQL database.  This class is also used when
+ * JAMWiki is used with an internal database.
  */
 public class HSqlDataHandler extends AnsiDataHandler {
 

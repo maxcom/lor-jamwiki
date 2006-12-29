@@ -20,7 +20,8 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing basic information about a user that is not
+ * Wiki-specific.
  */
 public class WikiUserInfo {
 

@@ -27,7 +27,8 @@ import org.acegisecurity.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
 /**
- *
+ * Provides an object representing Wiki-specific information about a user of
+ * the Wiki.
  */
 public class WikiUser implements UserDetails {
 

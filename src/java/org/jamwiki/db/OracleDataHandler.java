@@ -19,7 +19,8 @@ package org.jamwiki.db;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Implementation of the {@link org.jamwiki.DataHandler} interface that is
+ * appropriate for use with the Oracle database.
  */
 public class OracleDataHandler extends AnsiDataHandler {
 

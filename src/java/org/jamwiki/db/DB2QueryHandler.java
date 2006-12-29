@@ -23,8 +23,8 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * DB/2-specific implementation of the QueryHandler interface.  This class implements
- * DB/2-specific methods for instances where DB/2 does not support the default
+ * DB2-specific implementation of the QueryHandler interface.  This class implements
+ * DB2-specific methods for instances where DB2 does not support the default
  * ASCII SQL syntax.
  */
 public class DB2QueryHandler extends AnsiQueryHandler {

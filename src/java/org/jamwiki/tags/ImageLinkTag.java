@@ -25,7 +25,8 @@ import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.LinkUtil;
 
 /**
- *
+ * JSP tag used to build an HTML image link for a specified topic that
+ * corresponds to an image that has been uploaded to the Wiki.
  */
 public class ImageLinkTag extends TagSupport {
 

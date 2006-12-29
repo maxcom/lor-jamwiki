@@ -50,8 +50,10 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 
-/*
- *
+/**
+ * An implementation of {@link org.jamwiki.search.SearchEngine} that uses
+ * <a href="http://lucene.apache.org/java/">Lucene</a> to perform searches of
+ * Wiki content.
  */
 public class LuceneSearchEngine implements SearchEngine {
 

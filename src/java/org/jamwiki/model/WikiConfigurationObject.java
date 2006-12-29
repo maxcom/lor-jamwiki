@@ -19,7 +19,8 @@ package org.jamwiki.model;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing a configuration value as used by
+ * {@link org.jamwiki.WikiConfiguration}.
  */
 public class WikiConfigurationObject {
 

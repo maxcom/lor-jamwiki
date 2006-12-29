@@ -19,7 +19,8 @@ package org.jamwiki.db;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Implementation of the {@link org.jamwiki.DataHandler} interface that is
+ * appropriate for use with the MySQL database.
  */
 public class MySqlDataHandler extends AnsiDataHandler {
 

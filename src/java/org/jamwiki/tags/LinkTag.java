@@ -28,7 +28,9 @@ import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * JSP tag that creates an HTML link to a Wiki topic, generating the servlet
+ * context and virtual wiki in the link and also properly encoding the topic
+ * for use in the URL.
  */
 public class LinkTag extends BodyTagSupport {
 

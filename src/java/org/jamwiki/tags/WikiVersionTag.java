@@ -22,7 +22,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiVersion;
 
 /**
- *
+ * JSP tag that displays the current Wiki version as specified by
+ * {@link org.jamwiki.WikiVersion#CURRENT_WIKI_VERSION}.
  */
 public class WikiVersionTag extends TagSupport {
 

@@ -40,8 +40,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * The <code>AdminServlet</code> servlet is the servlet which allows the administrator
- * to perform administrative actions on the wiki.
+ *
  */
 public class UpgradeServlet extends JAMWikiServlet {
 

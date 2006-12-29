@@ -27,7 +27,7 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 
 /**
- *
+ * JSP tag used to generate a pagination object.
  */
 public class PaginationTag extends BodyTagSupport {
 

@@ -19,7 +19,8 @@ package org.jamwiki.model;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing the difference between two topic versions,
+ * as created by {@link org.jamwiki.utils.DiffUtil}.
  */
 public class WikiDiff {
 

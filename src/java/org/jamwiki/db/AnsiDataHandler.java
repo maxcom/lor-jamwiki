@@ -53,7 +53,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * Default implementation of the {@link org.jamwiki.DataHandler} interface for
+ * ANSI SQL compatible databases.
  */
 public class AnsiDataHandler implements DataHandler {
 

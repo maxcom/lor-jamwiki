@@ -29,7 +29,7 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Provides environmental information to the JAMWiki system.
+ * Provides access to JAMWiki property values.
  */
 public class Environment {
 

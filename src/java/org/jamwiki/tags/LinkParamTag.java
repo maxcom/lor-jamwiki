@@ -23,7 +23,9 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * JSP tag used within {@link org.jamwiki.tags.LinkTag} tags to add query
+ * parameters to the generated URL, performing any required encoding of the
+ * query parameters.
  */
 public class LinkParamTag extends BodyTagSupport {
 

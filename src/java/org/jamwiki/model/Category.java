@@ -19,7 +19,7 @@ package org.jamwiki.model;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing a Wiki category.
  */
 public class Category {
 

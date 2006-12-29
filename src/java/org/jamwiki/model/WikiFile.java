@@ -20,7 +20,7 @@ import java.sql.Timestamp;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Provides an object representing a file uploaded to the Wiki.
  */
 public class WikiFile {
 

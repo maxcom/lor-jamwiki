@@ -30,7 +30,9 @@ import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 
 /**
- * Parser used to implement MediaWiki syntax.
+ * Implementation of {@link org.jamwiki.parser.AbstractParser} that uses
+ * <a href="http://jflex.de/">JFlex</a> as a lexer to convert Wiki syntax into
+ * HTML or other formats.
  */
 public class JFlexParser extends AbstractParser {
 

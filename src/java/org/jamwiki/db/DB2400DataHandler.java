@@ -19,7 +19,8 @@ package org.jamwiki.db;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * Implementation of the {@link org.jamwiki.DataHandler} interface that is
+ * appropriate for use with the DB2/400 database.
  */
 public class DB2400DataHandler extends AnsiDataHandler {
 

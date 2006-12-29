@@ -25,7 +25,8 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.utils.Utilities;
 
 /**
- *
+ * JSP tag used to highlight the tag content if the specified topic is in the
+ * current users's watchlist.
  */
 public class WatchlistTag extends BodyTagSupport {
 
