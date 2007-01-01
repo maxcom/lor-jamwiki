@@ -36,7 +36,6 @@ public class EnabledTag extends BodyTagSupport {
 	public int doStartTag() throws JspException {
 		try {
 			String propertyName = (String)Environment.class.getField(this.property).get(null);
-			logger.info("RYAN: propertyName is " + propertyName + " / value is " + Environment.getBooleanValue(propertyName));
 			if (Environment.getBooleanValue(propertyName)) {
 				return EVAL_BODY_INCLUDE;
 			} else {
