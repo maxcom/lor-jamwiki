@@ -76,7 +76,8 @@ public class MoveServlet extends JAMWikiServlet {
 				}
 			}
 		}
-		ServletUtil.viewTopic(request, next, pageInfo, moveDestination);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		ServletUtil.redirect(next, virtualWiki, moveDestination);
 	}
 
 	/**
