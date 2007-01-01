@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.Types;
 import java.util.Properties;
 import org.jamwiki.Environment;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -438,11 +439,23 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertCategory(int childTopicId, String categoryName, String sortKey, Connection conn) throws Exception {
+	public void insertCategory(Category category, int virtualWikiId, Connection conn) throws Exception {
+		// FIXME - clean this code up
+		WikiResultSet rs = this.lookupTopic(virtualWikiId, category.getChildTopicName(), false, conn);
+		int topicId = -1;
+		while (rs.next()) {
+			if (rs.getTimestamp("delete_date") == null) {
+				topicId = rs.getInt("topic_id");
+				break;
+			}
+		}
+		if (topicId == -1) {
+			throw new Exception("Unable to find child topic " + category.getChildTopicName() + " for category " + category.getName());
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_CATEGORY);
-		stmt.setInt(1, childTopicId);
-		stmt.setString(2, categoryName);
-		stmt.setString(3, sortKey);
+		stmt.setInt(1, rs.getInt("topic_id"));
+		stmt.setString(2, category.getName());
+		stmt.setString(3, category.getSortKey());
 		stmt.executeUpdate(conn);
 	}
 

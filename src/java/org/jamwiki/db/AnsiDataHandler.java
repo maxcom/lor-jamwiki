@@ -67,9 +67,8 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	private void addCategory(Category category, Connection conn) throws Exception {
-		Topic childTopic = this.lookupTopic(category.getVirtualWiki(), category.getChildTopicName(), false, conn);
-		int childTopicId = childTopic.getTopicId();
-		this.queryHandler().insertCategory(childTopicId, category.getName(), category.getSortKey(), conn);
+		int virtualWikiId = this.lookupVirtualWikiId(category.getVirtualWiki());
+		this.queryHandler().insertCategory(category, virtualWikiId, conn);
 	}
 
 	/**
@@ -960,16 +959,21 @@ public class AnsiDataHandler implements DataHandler {
 			if (!this.canMoveTopic(fromTopic, destination)) {
 				throw new WikiException(new WikiMessage("move.exception.destinationexists", destination));
 			}
-			Topic toTopic = this.lookupTopic(fromTopic.getVirtualWiki(), destination, false, null);
+			Topic toTopic = this.lookupTopic(fromTopic.getVirtualWiki(), destination, false, conn);
 			boolean detinationExistsFlag = (toTopic != null && toTopic.getDeleteDate() == null);
 			if (detinationExistsFlag) {
 				// if the target topic is a redirect to the source topic then the
 				// target must first be deleted.
 				this.deleteTopic(toTopic, null, false, conn);
 			}
+			// first rename the source topic with the new destination name
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
-			writeTopic(fromTopic, fromVersion, Utilities.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopicName), true, conn);
+			ParserDocument fromParserDocument = Utilities.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
+			writeTopic(fromTopic, fromVersion, fromParserDocument, true, conn);
+			// now either create a new topic that is a redirect with the
+			// source topic's old name, or else undelete the new topic and
+			// rename.
 			if (detinationExistsFlag) {
 				// target topic was deleted, so rename and undelete
 				toTopic.setName(fromTopicName);
@@ -988,7 +992,8 @@ public class AnsiDataHandler implements DataHandler {
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
-			writeTopic(toTopic, toVersion, Utilities.parserDocument(content, toTopic.getVirtualWiki(), toTopic.getName()), true, conn);
+			ParserDocument toParserDocument = Utilities.parserDocument(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
+			writeTopic(toTopic, toVersion, toParserDocument, true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1062,9 +1067,10 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			// update topic to indicate deleted, add delete topic version.  parser output
-			// should be empty since nothing to add to search engine.
-			ParserDocument parserDocument = new ParserDocument();
+			// update topic to indicate deleted, add delete topic version.  if
+			// topic has categories or other metadata then parser document is
+			// also needed.
+			ParserDocument parserDocument = Utilities.parserDocument(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
 			topic.setDeleteDate(null);
 			this.writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
 		} catch (Exception e) {

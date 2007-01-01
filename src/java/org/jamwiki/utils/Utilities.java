@@ -780,6 +780,23 @@ public class Utilities {
 	}
 
 	/**
+	 * Retrieve a default ParserDocument object for a given topic name.  Note that
+	 * the content has almost no parsing performed on it other than to generate
+	 * parser output metadata.
+	 *
+	 * @param content The raw topic content.
+	 * @return Returns a minimal ParserDocument object initialized primarily with
+	 *  parser metadata such as links.
+	 * @throws Exception Thrown if a parser error occurs.
+	 */
+	public static ParserDocument parserDocument(String content, String virtualWiki, String topicName) throws Exception {
+		ParserInput parserInput = new ParserInput();
+		parserInput.setVirtualWiki(virtualWiki);
+		parserInput.setTopicName(topicName);
+		return Utilities.parseMetadata(parserInput, content);
+	}
+
+	/**
 	 * Utility method to retrieve an instance of the current system parser.
 	 *
 	 * @param parserInput A ParserInput object that contains parser configuration
@@ -811,23 +828,6 @@ public class Utilities {
 	public static String parserRedirectContent(String topicName) throws Exception {
 		AbstractParser parser = parserInstance(null);
 		return parser.buildRedirectContent(topicName);
-	}
-
-	/**
-	 * Retrieve a default ParserDocument object for a given topic name.  Note that
-	 * the content has almost no parsing performed on it other than to generate
-	 * parser output metadata.
-	 *
-	 * @param content The raw topic content.
-	 * @return Returns a minimal ParserDocument object initialized primarily with
-	 *  parser metadata such as links.
-	 * @throws Exception Thrown if a parser error occurs.
-	 */
-	public static ParserDocument parserDocument(String content, String virtualWiki, String topicName) throws Exception {
-		ParserInput parserInput = new ParserInput();
-		parserInput.setVirtualWiki(virtualWiki);
-		parserInput.setTopicName(topicName);
-		return Utilities.parseMetadata(parserInput, content);
 	}
 
 	/**

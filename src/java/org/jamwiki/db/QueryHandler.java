@@ -17,6 +17,7 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
+import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -261,16 +262,13 @@ public interface QueryHandler {
 	 * if an existing category of the same name is already associated with the
 	 * topic.
 	 *
-	 * @param childTopicId The topic id for the topic which this category is
-	 *  associated with.
-	 * @param categoryName The name of the category being inserted.
-	 * @param sortKey The sorting value to use with the category, or <code>null</code>
-	 *  if no sorting value is specified.
+	 * @param category The category record that is being created.
+	 * @param virtualWikiId The virtual wiki id for the record that is being added.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertCategory(int childTopicId, String categoryName, String sortKey, Connection conn) throws Exception;
+	public void insertCategory(Category category, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new recent change record to the database.

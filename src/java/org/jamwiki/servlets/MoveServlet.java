@@ -76,7 +76,7 @@ public class MoveServlet extends JAMWikiServlet {
 				}
 			}
 		}
-		ServletUtil.viewTopic(request, next, pageInfo, topicName);
+		ServletUtil.viewTopic(request, next, pageInfo, moveDestination);
 	}
 
 	/**
