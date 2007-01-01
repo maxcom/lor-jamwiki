@@ -113,6 +113,8 @@ public class DatabaseUpgrades {
 				sql = "alter table jam_topic add column delete_date DATETIME ";
 			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MSSQL)) {
 				sql = "alter table jam_topic add column delete_date DATETIME ";
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_topic add (delete_date TIMESTAMP) ";
 			} else {
 				sql = "alter table jam_topic add column delete_date TIMESTAMP ";
 			}
@@ -144,6 +146,8 @@ public class DatabaseUpgrades {
 				sql = "alter table jam_file add column delete_date DATETIME ";
 			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MSSQL)) {
 				sql = "alter table jam_file add column delete_date DATETIME ";
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_file add (delete_date DATETIME) ";
 			} else {
 				sql = "alter table jam_file add column delete_date TIMESTAMP ";
 			}
@@ -189,7 +193,11 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped topic_content column from jam_topic");
 			// add current_version_id column
-			sql = "alter table jam_topic add column current_version_id INTEGER ";
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_topic add (current_version_id INTEGER) ";
+			} else {
+				sql = "alter table jam_topic add column current_version_id INTEGER ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added current_version_id column to jam_topic");
 			// add current_version_id constraint
@@ -221,7 +229,12 @@ public class DatabaseUpgrades {
 			conn = DatabaseConnection.getConnection();
 			conn.setAutoCommit(false);
 			// add remember_key to jam_wiki_user
-			String sql = "alter table jam_wiki_user add column remember_key VARCHAR(100) ";
+			String sql = "";
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_wiki_user add (remember_key VARCHAR(100)) ";
+			} else {
+				sql = "alter table jam_wiki_user add column remember_key VARCHAR(100) ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added remember_key column to jam_wiki_user");
 			// populate remember_key column
@@ -233,13 +246,19 @@ public class DatabaseUpgrades {
 				sql = "alter table jam_wiki_user MODIFY COLUMN remember_key VARCHAR(100) NOT NULL ";
 			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_MSSQL)) {
 				sql = "alter table jam_wiki_user ALTER COLUMN remember_key VARCHAR(100) NOT NULL ";
+			} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_wiki_user modify (remember_key VARCHAR(100) NOT NULL) ";
 			} else {
 				sql = "alter table jam_wiki_user ALTER COLUMN remember_key SET NOT NULL ";
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("remember_key column set to NOT NULL");
 			// add default_locale column
-			sql = "alter table jam_wiki_user add column default_locale VARCHAR(8) ";
+			if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_wiki_user add (default_locale VARCHAR(8)) ";
+			} else {
+				sql = "alter table jam_wiki_user add column default_locale VARCHAR(8) ";
+			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added default_locale column to jam_wiki_user");
 			conn.commit();
