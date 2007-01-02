@@ -30,6 +30,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -153,7 +154,9 @@ public class RecentChangesFeedServlet extends AbstractController {
 				description = new SyndContentImpl();
 				description.setType("text/plain");
 				StringBuffer descr = new StringBuffer();
-				descr.append(change.getEditComment());
+				if (StringUtils.hasText(change.getEditComment())) {
+					descr.append(change.getEditComment());
+				}
 				if (change.getDelete()) {
 					descr.append(" (deleted)");
 				} else {
