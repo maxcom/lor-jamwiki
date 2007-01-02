@@ -588,6 +588,14 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private Topic initTopic(WikiResultSet rs) {
 		try {
+			// if a topic by this name has been deleted then there will be
+			// multiple results.  the first will be a non-deleted topic (if
+			// one exists), otherwise the last is the most recently deleted
+			// topic.
+			if (rs.size() > 1 && rs.getTimestamp("delete_date") != null) {
+				// go to the last result
+				rs.last();
+			}
 			int virtualWikiId = rs.getInt("virtual_wiki_id");
 			String virtualWiki = this.lookupVirtualWikiName(virtualWikiId);
 			Topic topic = new Topic();
@@ -749,10 +757,13 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
 			String key = WikiCache.key(virtualWiki, topicName);
-			Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
-			if (cacheElement != null) {
-				Topic cacheTopic = (Topic)cacheElement.getObjectValue();
-				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
+			if (transactionObject != null) {
+				// do not use cache if part of a transaction
+				Element cacheElement = WikiCache.retrieveFromCache(CACHE_TOPICS, key);
+				if (cacheElement != null) {
+					Topic cacheTopic = (Topic)cacheElement.getObjectValue();
+					return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
+				}
 			}
 			WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 			String namespace = wikiLink.getNamespace();
@@ -773,8 +784,11 @@ public class AnsiDataHandler implements DataHandler {
 			if (rs.size() != 0) {
 				topic = initTopic(rs);
 			}
-			Topic cacheTopic = (topic == null) ? null : new Topic(topic);
-			WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
+			if (transactionObject != null) {
+				// do not use cache if part of a transaction
+				Topic cacheTopic = (topic == null) ? null : new Topic(topic);
+				WikiCache.addToCache(CACHE_TOPICS, key, cacheTopic);
+			}
 			return (topic == null || (!deleteOK && topic.getDeleteDate() != null)) ? null : topic;
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

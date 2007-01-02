@@ -22,6 +22,7 @@
 * BUG: Do not allow users without proper permissions to move read-only or
   admin-only topics.
 * BUG: Properly log messages from Utilities and with configured log levels.
+* BUG: Resolve problems with unreliability in deletion/undeletion.
 * FEATURE: Handle category names case-insensitive, thus "Category:Test" and
   "Category:test" are treated as the same category.
 * FEATURE: Display current date & time on Special:RecentChanges page.
