@@ -20,6 +20,7 @@ JAMWiki Contributors
      Dutch:                 Tarik Menbhi & Wim Borghs (Angel)
      French:                Henri Gomez (hgomez)
      German:                Axel Kramer (axelclk)
+                            Rainer Schmitz (swift)
      Hungarian:             Daniel Tar (bDaneE)
      Polish:                Robert Matyja (dlpa)
      Ukranian:              Volodymyr Vlad (gutsul)
