@@ -7,8 +7,8 @@ running on your web application server.  In addition, instructions are
 provided for those interested in building JAMWiki from source.
 
 
-SUPPORTED CONFIGURATIONS
-========================
+PREREQUISITES
+=============
 
 JAMWiki requires a web application server (such as Tomcat or Websphere) that
 supports the following specifications:
@@ -16,11 +16,12 @@ supports the following specifications:
   JDK 1.4 or later
   Servlet 2.3 or later
 
-In addition, JAMWiki can be run using an embedded database or using an
-external database.  When running with an embedded database no additional
-software or configuration is required; when using an external database
-JAMWiki requires a database user with permission to create tables and
-sequences.  JAMWiki has been tested with the following databases:
+JAMWiki can be configured to store its data either in an external database or
+using an embedded version of the HSQL database that is included in the
+distribution.  When running with an embedded database no additional software
+or configuration is required; when using an external database JAMWiki requires
+a database user with permission to create tables and sequences.  JAMWiki has
+tested with the following databases:
 
   Postgres 8.0
   Postgres 7.4
@@ -35,56 +36,57 @@ to support double-byte charaters the database should use UTF-8 encoding.
 INSTALLATION
 ============
 
-See http://jamwiki.org/wiki/en/Installation for the latest installation and
-upgrade instructions.  The instructions below provide a brief overview of
-the JAMWiki install process that should be sufficient for most sites to be
-set up.
+See http://jamwiki.org/wiki/en/Installation for the complete installation
+instructions; see the UPGRADE.txt for the complete upgrade instructions - DO
+NOT attempt to upgrade JAMWiki using the new installation process!
 
-The basic steps for performing a NEW JAMWiki install (NOT an upgrade) are:
+The basic steps for performing a new JAMWiki install are:
 
   1. Download the latest JAMWiki release from
      http://sourceforge.net/projects/jamwiki/.
-  2. Deploy the JAMWiki WAR file.  See your web application server
+  2. Deploy the JAMWiki WAR file.  See your web application server's
      documentation for specific deployment instructions.
-  3. If using an external database instead of JAMWiki's embedded database,
-     create a new database instance that can be used by JAMWiki, or verify
-     that there is an existing database instance in which JAMWiki can create
-     its tables.
-  4. If using an external database instead of JAMWiki's embedded database,
-     verify that your JDBC driver is in the web application server's classpath.
-  5. Update the logging.properties file that can be found in the
-     /WEB-INF/classes/ directory.  The org.jamwiki.pattern property points to
-     the location that logs will be written to, and the web application server
-     must be able to write to this location.
+  3. (Optional) If using an external database create a new database instance
+     that can be used by JAMWiki, or verify that a database user is available
+     with permission to create tables and sequences.  If support is needed for
+     double-byte character sets be sure that the database uses UTF-8 encoding.
+  4. (Optional) If using an external database verify that your JDBC driver is
+     in the web application server's classpath.
+  5. Update the org.jamwiki.pattern value in the logging.properties file with
+     the location where log files should be written.  The logging.properties
+     file can be found in the /WEB-INF/classes/ directory of your installation.
+     Note that the web application server must have permission to write to the
+     specified log location.
   6. Once the JAMWiki WAR file has been deployed and the web application
      server started, view the http://<server>/<context>/ page, where <server>
      is the application server URL, and <context> is the application server
      context.  The JAMWiki configuration process will begin automatically.
 
 The configuration process begins automatically with the first JAMWiki pageview
-after setup.  Configuration requires the following information:
+after setup.  Configuration will request the following information:
 
-  1. A directory into which JAMWiki files can be written.
+  1. A directory (accessible to the application server) into which JAMWiki
+     files can be written.
   2. A directory (accessible to the web/application server) into which images
      and other files can be uploaded.
   3. The relative path (with respect to the web/application server doc root)
      to the image upload directory.
-  4. The name and login of an administrative user.
+  4. The login and password of an administrative user.
   5. (Optional) If using an external database for persistency then the
-     database settings must also be provided (see the "Database Settings"
-     section below).
+     database settings must be provided (see the "Database Settings" section
+     below).
   6. (Optional) Once setup is complete, JAMWiki can be customized by using the
      Special:Admin page, accessible to admins by clicking on the "Admin" link
      on the top right portion of all JAMWiki pages.
 
-Once the settings have been verified JAMWiki will create an admin user
-account, database tables or file directories, base properties, and default
-topics.  Once complete JAMWiki redirects to the starting page, ready for use.
-If any problems occur during installation please review the detailed
-installation instructions on http://jamwiki.org/wiki/en/Installation.  If your
-problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports
-and include any relevant information from your log files with the problem
-report.
+Once the configuration settings have been verified JAMWiki will create the
+admin user account, database tables (if using an external database), base
+properties, and default topics.  Once configuration is complete JAMWiki
+redirects to the starting page, ready for use.  If any problems occur during
+installation please review the detailed installation instructions on
+http://jamwiki.org/wiki/en/Installation.  If your problem persists please
+report it on http://jamwiki.org/wiki/en/Bug_Reports and include any relevant
+information from your log files with the problem report.
 
 
 UPGRADES
@@ -100,21 +102,25 @@ UPGRADE.txt document.
 DATABASE SETTINGS
 =================
 
-JAMWiki can operate using files for storage, or using a database.  For larger
-implementations a database is highly recommended.  To utilize a database the
-following steps are required during initial setup:
+JAMWiki can operate using a pre-configured, embedded database for storage, or
+using an external database.  For larger implementations an external database
+is highly recommended.  To utilize an external database the following steps
+are required:
 
-  1. Install an appropriate JDBC driver in the WEB-INF/lib directory.  JDBC
+  1. Install an appropriate JDBC driver in your web application server's
+     classpath.  A typical location is the WEB-INF/lib directory.  JDBC
      driver packages can normally be obtained from the database vendor.
   2. Create the JAMWiki database.  JAMWiki can also use an existing database.
-  3. Create a user login for JAMWiki.  The user must have permission to create
-     tables and sequences.
-  4. During setup choose "Database" from the persistency-type dropdown menu.
-     For Oracle, MySql and Postgres choose the appropriate database type; for
-     all other database types choose Ansi.  Fill out the driver, url, username
-     and password fields.  Check with your database vendor to determine the
-     appropriate values for each of these fields.  Some example values are
-     below:
+     Note that sites which support double-byte character sets must use a
+     database with UTF-8 support.
+  3. Create a database user for JAMWiki.  The user must have permission to
+     create tables and sequences.
+  4. During the configuration process select your database type from the
+     dropdown menu.  If your database is not listed select the "ANSI" option,
+     which will use ANSI SQL for all queries.
+  5. Enter the driver, url, username and password information.  Consult your
+     database documentation to determine the appropriate values for each of
+     these fields.  Some example values are below:
 
        JDBC driver class: org.postgresql.Driver
        JDBC driver class: com.mysql.jdbc.Driver
@@ -126,8 +132,10 @@ following steps are required during initial setup:
        Database Username: as appropriate
        Database Password: as appropriate
 
-  5. JAMWiki will verify that a connection can be established with the
-     database and will then create all required tables.
+  6. Once all configuration information has been entered JAMWiki will verify
+     that a connection can be established with the database and will then
+     create all required tables.  If any failures are reported check the logs
+     for information about the specific failure type.
 
 
 VIRTUAL WIKIS
