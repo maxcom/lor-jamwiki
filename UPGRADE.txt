@@ -12,29 +12,34 @@ AUTOMATIC UPGRADES
 In most cases the JAMWiki upgrade process can be handled automatically by
 following these steps:
 
-  1. Download the latest JAMWiki Download the latest JAMWiki release from
-     http://sourceforge.net/projects/jamwiki/.
-  2. Back up all database and/or file data prior to upgrading.
-  3. Back up the jamwiki.properties file and any other properties files that
-     you have modified from the /WEB-INF/classes/ directory.  These files will
-     need to be restored after the new JAMWiki WAR file has been deployed.
-  4. If you have made any changes to the /WEB-INF/web.xml file make sure that
-     a back up is created.  This file will need to be restored after the new
-     JAMWiki WAR file has been deployed.
-  5. Remove the old JAMWiki installation by deleting your existing JAMWiki
-     web application. For some web application servers you may also want to
-     clear the application server's cache.
-  6. Install the new JAMWiki WAR file.  See your web application server's
-     documentation for instructions.
-  7. Restore the files that were backed up in steps three and four to their
-     previous locations under the /WEB-INF/ and /WEB-INF/classes/ directories,
-     overwriting any new files.
-  8. Verify that the web application server process has read and write access
-     to all files in the new JAMWiki installation.
-  9. Restart the web application server and view any page on the Wiki. You
-     will be redirected to the upgrade page and any required upgrade steps
-     will be automatically performed.
+  1.  Download the latest JAMWiki release from
+      http://sourceforge.net/projects/jamwiki/.
+  2.  Back up all database and/or file data prior to upgrading.
+  3.  Back up the jamwiki.properties file and the logging.properties from the
+      the /WEB-INF/classes/ directory.  These files will need to be restored
+      after the new JAMWiki WAR file has been deployed.
+  4.  If you have made any changes to the /WEB-INF/web.xml file make sure that
+      a back up is created.  This file will need to be restored after the new
+      JAMWiki WAR file has been deployed.
+  5.  Remove the old JAMWiki installation by deleting your existing JAMWiki
+      web application. For some web application servers you may also want to
+      clear the application server's cache.
+  6.  Install the new JAMWiki WAR file.  See your web application server's
+      documentation for instructions.
+  7.  Restore the files that were backed up in steps three and four to their
+      previous locations under the /WEB-INF/ and /WEB-INF/classes/ directories,
+      overwriting any new files.
+  8.  If using an external database, make sure that your JDBC driver is
+      available in the web application server's classpath.
+  9.  Verify that the web application server process has read and write access
+      to all files in the new JAMWiki installation.
+  10. Restart the web application server and view any page on the Wiki. You
+      will be redirected to the upgrade page and any required upgrade steps
+      will be automatically performed.
 
+If the upgrade fails see the steps below for details on performing a manual
+upgrade.  If your problem persists please report it on http://jamwiki.org/ and
+include any relevant information from your log files with the problem report.
 Note that some users have reported failures after upgrading, but the problem
 was actually caused by old JAMWiki files being cached by the application
 server.  This problem is particularly common with Tomcat, and can be resolved
@@ -60,13 +65,6 @@ followed by 0.3.3.
   2. Update the database schema by executing the following SQL statements:
        a) Add the column remember_key to jam_wiki_user to hold an encrypted
           value to use with "Remember Me" login functionality.
-            Postgres:
-              alter table jam_wiki_user add column remember_key VARCHAR(100);
-              update jam_wiki_user set remember_key = (
-                   select encoded_password from jam_wiki_user_info
-                   where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
-              );
-              alter table jam_wiki_user alter column remember_key set NOT NULL;
             MySql:
               alter table jam_wiki_user add column remember_key VARCHAR(100);
               update jam_wiki_user set remember_key = (
@@ -81,7 +79,24 @@ followed by 0.3.3.
                    where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
               );
               alter table jam_wiki_user alter column remember_key VARCHAR(100) NOT NULL;
+            Oracle:
+              alter table jam_wiki_user add (remember_key VARCHAR(100));
+              update jam_wiki_user set remember_key = (
+                   select encoded_password from jam_wiki_user_info
+                   where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+              );
+              alter table jam_wiki_user modify (remember_key VARCHAR(100) NOT NULL);
+            Other Databases:
+              alter table jam_wiki_user add column remember_key VARCHAR(100);
+              update jam_wiki_user set remember_key = (
+                   select encoded_password from jam_wiki_user_info
+                   where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+              );
+              alter table jam_wiki_user alter column remember_key set NOT NULL;
        b) Add the default_locale column to the jam_wiki_user table.
+            Oracle:
+              alter table jam_wiki_user add (default_locale VARCHAR(8));
+            Other Databases:
               alter table jam_wiki_user add column default_locale VARCHAR(8);
 
 
@@ -113,6 +128,13 @@ followed by 0.3.3.
                         REFERENCES jam_virtual_wiki(virtual_wiki_id) 
               );
        b) Update the jam_topic table.
+            Oracle:
+              alter table jam_topic drop column topic_content;
+              alter table jam_topic add (current_version_id INTEGER);
+              alter table jam_topic add constraint jam_fk_topic_topic_ver
+                   FOREIGN KEY (current_version_id)
+                   REFERENCES jam_topic_version(topic_version_id);
+            Other Databases:
               alter table jam_topic drop column topic_content;
               alter table jam_topic add column current_version_id INTEGER;
               alter table jam_topic add constraint jam_fk_topic_topic_ver

@@ -40,16 +40,29 @@ upgrade instructions.  The instructions below provide a brief overview of
 the JAMWiki install process that should be sufficient for most sites to be
 set up.
 
-JAMWiki is distributed as a WAR file that can be installed onto any web
-application server that supports the JDK 1.4 and servlet 2.3 specifications.
-Refer to the web application server documentation for specific instructions on
-how to deploy a WAR file.  Once the WAR file has been installed, restart the
-web application server and view the page http://<server>/<context>/ to begin
-the configuration process (<server> is the URL for your server, and <context>
-is the web application server context under which JAMWiki was installed).
+The basic steps for performing a NEW JAMWiki install (NOT an upgrade) are:
 
-The setup process begins with the first JAMWiki pageview after setup.  Setup
-requires the following:
+  1. Download the latest JAMWiki release from
+     http://sourceforge.net/projects/jamwiki/.
+  2. Deploy the JAMWiki WAR file.  See your web application server
+     documentation for specific deployment instructions.
+  3. If using an external database instead of JAMWiki's embedded database,
+     create a new database instance that can be used by JAMWiki, or verify
+     that there is an existing database instance in which JAMWiki can create
+     its tables.
+  4. If using an external database instead of JAMWiki's embedded database,
+     verify that your JDBC driver is in the web application server's classpath.
+  5. Update the logging.properties file that can be found in the
+     /WEB-INF/classes/ directory.  The org.jamwiki.pattern property points to
+     the location that logs will be written to, and the web application server
+     must be able to write to this location.
+  6. Once the JAMWiki WAR file has been deployed and the web application
+     server started, view the http://<server>/<context>/ page, where <server>
+     is the application server URL, and <context> is the application server
+     context.  The JAMWiki configuration process will begin automatically.
+
+The configuration process begins automatically with the first JAMWiki pageview
+after setup.  Configuration requires the following information:
 
   1. A directory into which JAMWiki files can be written.
   2. A directory (accessible to the web/application server) into which images
@@ -67,7 +80,11 @@ requires the following:
 Once the settings have been verified JAMWiki will create an admin user
 account, database tables or file directories, base properties, and default
 topics.  Once complete JAMWiki redirects to the starting page, ready for use.
-That's all there is to it!
+If any problems occur during installation please review the detailed
+installation instructions on http://jamwiki.org/wiki/en/Installation.  If your
+problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports
+and include any relevant information from your log files with the problem
+report.
 
 
 UPGRADES
