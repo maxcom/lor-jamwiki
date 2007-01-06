@@ -12,7 +12,7 @@ Bugfixes:
 
 Translation Updates:
 
-  * None
+  * Updated Chinese translations (ewen0930).
 
 0.5.0
 =====
