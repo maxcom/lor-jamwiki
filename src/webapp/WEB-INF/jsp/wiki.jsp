@@ -55,86 +55,12 @@
 		<c:set var="redirectUrl"><jamwiki:link value="${pageInfo.redirectName}"><jamwiki:linkParam key="redirect" value="no" /><c:out value="${pageInfo.redirectName}" /></jamwiki:link></c:set>
 		<div id="contents-subheader"><f:message key="topic.redirect.from"><f:param value="${redirectUrl}" /></f:message></div>
 		</c:if>
-<c:choose>
-	<c:when test="${pageInfo.actionAdmin}">
-		<jsp:include page="admin.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionAdminConvert}">
-		<jsp:include page="admin-convert.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionAdminManage}">
-		<jsp:include page="admin-manage.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionAdminTranslation}">
-		<jsp:include page="admin-translation.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionAllPages}">
-		<jsp:include page="items.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionCategories}">
-		<jsp:include page="categories.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionContributions}">
-		<jsp:include page="contributions.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionDiff}">
-		<jsp:include page="diff.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionEdit || pageInfo.actionEditPreview || pageInfo.actionEditResolve}">
-		<jsp:include page="edit.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionError}">
-		<jsp:include page="error-display.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionFiles}">
-		<jsp:include page="items.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionHistory}">
-		<jsp:include page="history.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionImages}">
-		<jsp:include page="items.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionImport}">
-		<jsp:include page="import.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionLinkTo}">
-		<jsp:include page="linkto.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionLogin}">
-		<jsp:include page="login.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionMove}">
-		<jsp:include page="move.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionRecentChanges}">
-		<jsp:include page="recent-changes.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionRegister}">
-		<jsp:include page="register.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionSearch}">
-		<jsp:include page="search.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionSearchResults}">
-		<jsp:include page="search-results.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionSpecialPages}">
-		<jsp:include page="all-special-pages.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionTopicsAdmin}">
-		<jsp:include page="topics-admin.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionUpload}">
-		<jsp:include page="upload.jsp" flush="true" />
-	</c:when>
-	<c:when test="${pageInfo.actionWatchlist}">
-		<jsp:include page="watchlist.jsp" flush="true" />
-	</c:when>
-	<c:otherwise>
-		<jsp:include page="topic.jsp" flush="true" />
-	</c:otherwise>
-</c:choose>
+<c:set var="contentJsp" scope="page" value="${pageInfo.contentJsp}" />
+<%
+// Servlet 2.3 doesn't understand the EL language, so a scriptlet has to be used...
+String contentJsp = (String)pageContext.getAttribute("contentJsp");
+%>
+		<jsp:include page="<%= contentJsp %>" flush="true" />
 		<br />
 		</div>
 	</td>

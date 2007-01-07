@@ -91,62 +91,6 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	public boolean getActionAdmin() {
-		return (this.action == ACTION_ADMIN);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionAdminConvert() {
-		return (this.action == ACTION_ADMIN_CONVERT);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionAdminManage() {
-		return (this.action == ACTION_ADMIN_MANAGE);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionAdminTranslation() {
-		return (this.action == ACTION_ADMIN_TRANSLATION);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionAllPages() {
-		return (this.action == ACTION_ALL_PAGES);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionCategories() {
-		return (this.action == ACTION_CATEGORIES);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionContributions() {
-		return (this.action == ACTION_CONTRIBUTIONS);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionDiff() {
-		return (this.action == ACTION_DIFF);
-	}
-
-	/**
-	 *
-	 */
 	public boolean getActionEdit() {
 		return (this.action == ACTION_EDIT);
 	}
@@ -163,139 +107,6 @@ public class WikiPageInfo {
 	 */
 	public boolean getActionEditResolve() {
 		return (this.action == ACTION_EDIT_RESOLVE);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionError() {
-		return (this.action == ACTION_ERROR);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionExport() {
-		return (this.action == ACTION_EXPORT);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionFiles() {
-		return (this.action == ACTION_FILES);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionHistory() {
-		return (this.action == ACTION_HISTORY);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionImages() {
-		return (this.action == ACTION_IMAGES);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionImport() {
-		return (this.action == ACTION_IMPORT);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionLinkTo() {
-		return (this.action == ACTION_LINK_TO);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionLogin() {
-		return (this.action == ACTION_LOGIN);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionMove() {
-		return (this.action == ACTION_MOVE);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionRecentChanges() {
-		return (this.action == ACTION_RECENT_CHANGES);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionRegister() {
-		return (this.action == ACTION_REGISTER);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionSearch() {
-		return (this.action == ACTION_SEARCH);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionSearchResults() {
-		return (this.action == ACTION_SEARCH_RESULTS);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionSetup() {
-		return (this.action == ACTION_SETUP);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionSpecialPages() {
-		return (this.action == ACTION_SPECIAL_PAGES);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionTopicsAdmin() {
-		return (this.action == ACTION_TOPICS_ADMIN);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionUpgrade() {
-		return (this.action == ACTION_UPGRADE);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionUpload() {
-		return (this.action == ACTION_UPLOAD);
-	}
-
-	/**
-	 *
-	 */
-	public boolean getActionWatchlist() {
-		return (this.action == ACTION_WATCHLIST);
 	}
 
 	/**
@@ -322,6 +133,74 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
+	public String getContentJsp() {
+		switch (action) {
+		case ACTION_ADMIN:
+			return "admin.jsp";
+		case ACTION_ADMIN_CONVERT:
+			return "admin-convert.jsp";
+		case ACTION_ADMIN_MANAGE:
+			return "admin-manage.jsp";
+		case ACTION_ADMIN_TRANSLATION:
+			return "admin-translation.jsp";
+		case ACTION_ALL_PAGES:
+			return "items.jsp";
+		case ACTION_CATEGORIES:
+			return "categories.jsp";
+		case ACTION_CONTRIBUTIONS:
+			return "contributions.jsp";
+		case ACTION_DIFF:
+			return "diff.jsp";
+		case ACTION_EDIT:
+		case ACTION_EDIT_PREVIEW:
+		case ACTION_EDIT_RESOLVE:
+			return "edit.jsp";
+		case ACTION_ERROR:
+			return "error-display.jsp";
+		case ACTION_FILES:
+		case ACTION_IMAGES:
+			return "items.jsp";
+		case ACTION_HISTORY:
+			return "history.jsp";
+		case ACTION_IMPORT:
+			return "import.jsp";
+		case ACTION_LINK_TO:
+			return "linkto.jsp";
+		case ACTION_LOGIN:
+			return "login.jsp";
+		case ACTION_MOVE:
+			return "move.jsp";
+		case ACTION_RECENT_CHANGES:
+			return "recent-changes.jsp";
+		case ACTION_REGISTER:
+			return "register.jsp";
+		case ACTION_SEARCH:
+			return "search.jsp";
+		case ACTION_SEARCH_RESULTS:
+			return "search-results.jsp";
+		case ACTION_SPECIAL_PAGES:
+			return "all-special-pages.jsp";
+		case ACTION_TOPICS_ADMIN:
+			return "topics-admin.jsp";
+		case ACTION_UPLOAD:
+			return "upload.jsp";
+		case ACTION_WATCHLIST:
+			return "watchlist.jsp";
+		default:
+			return "topic.jsp";
+		}
+	}
+
+	/**
+	 *
+	 */
+	public String getDefaultTopic() {
+		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+	}
+
+	/**
+	 *
+	 */
 	public boolean getMoveable() {
 		return this.moveable;
 	}
@@ -336,20 +215,6 @@ public class WikiPageInfo {
 	/**
 	 *
 	 */
-	public String getDefaultTopic() {
-		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-	}
-
-	/**
-	 *
-	 */
-	public WikiMessage getPageTitle() {
-		return this.pageTitle;
-	}
-
-	/**
-	 *
-	 */
 	public String getMetaDescription() {
 		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
 		if (!StringUtils.hasText(pattern)) return "";
@@ -357,6 +222,13 @@ public class WikiPageInfo {
 		Object params[] = new Object[1];
 		params[0] = (this.topicName == null) ? "" : this.topicName;
 		return formatter.format(params);
+	}
+
+	/**
+	 *
+	 */
+	public WikiMessage getPageTitle() {
+		return this.pageTitle;
 	}
 
 	/**
