@@ -37,9 +37,6 @@ public class WikiPageInfo {
 	private String topicName = "";
 	private boolean special = false;
 	private boolean watched = false;
-	// FIXME - these two constants need to go away
-	public static final int ACTION_EDIT_PREVIEW = 10;
-	public static final int ACTION_EDIT_RESOLVE = 11;
 
 	/**
 	 *
