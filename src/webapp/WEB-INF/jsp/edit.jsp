@@ -22,14 +22,14 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${pageInfo.actionEditResolve}">
+<c:if test="${!empty editResolve}">
 <p><f:message key="edit.exception.conflict" /></p>
 </c:if>
 
 <c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
 
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
-<c:if test="${pageInfo.actionEditPreview}">
+<c:if test="${!empty editPreview}">
 <blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
 </c:if>
 </jamwiki:enabled>
@@ -37,7 +37,7 @@
 <%@ include file="category-include.jsp" %>
 
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
-<c:if test="${pageInfo.actionEditPreview}">
+<c:if test="${!empty editPreview}">
 <%@ include file="view-topic-include.jsp" %>
 </c:if>
 </jamwiki:enabled>
@@ -89,7 +89,7 @@ document.writeln("</div>");
 </c:if>
 </p>
 
-<c:if test="${pageInfo.actionEditResolve}">
+<c:if test="${!empty editResolve}">
 <%@ include file="diff-include.jsp" %>
 <p>
 <textarea name="contentsResolve" rows="25" cols="80" style="width:100%"><c:out value="${contentsResolve}" escapeXml="true" /></textarea>

@@ -186,7 +186,7 @@ public class EditServlet extends JAMWikiServlet {
 		previewTopic.setName(topicName);
 		previewTopic.setTopicContent(contents);
 		previewTopic.setVirtualWiki(virtualWiki);
-		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_PREVIEW);
+		next.addObject("editPreview", "true");
 		pageInfo.setContentJsp(JSP_EDIT);
 		next.addObject("contents", contents);
 		ServletUtil.viewTopic(request, next, pageInfo, null, previewTopic, false);
@@ -207,7 +207,7 @@ public class EditServlet extends JAMWikiServlet {
 		Vector diffs = DiffUtil.diff(contents1, contents2);
 		next.addObject("diffs", diffs);
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
-		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_RESOLVE);
+		next.addObject("editResolve", "true");
 		pageInfo.setContentJsp(JSP_EDIT);
 	}
 

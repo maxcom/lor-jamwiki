@@ -30,8 +30,6 @@ public class WikiPageInfo {
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiPageInfo.class.getName());
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
-	// FIXME - remove this field
-	private int action = -1;
 	private String contentJsp = JSP_TOPIC;
 	private boolean moveable = false;
 	private WikiMessage pageTitle = null;
@@ -54,7 +52,7 @@ public class WikiPageInfo {
 	 */
 	protected void reset() {
 		this.admin = false;
-		this.action = -1;
+		this.contentJsp = JSP_TOPIC;
 		this.moveable = false;
 		this.pageTitle = null;
 		this.redirectName = null;
@@ -64,35 +62,22 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * @deprecated
-	 */
-	public boolean getActionEditPreview() {
-		return (this.action == ACTION_EDIT_PREVIEW);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public boolean getActionEditResolve() {
-		return (this.action == ACTION_EDIT_RESOLVE);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public void setAction(int action) {
-		this.action = action;
-	}
-
-	/**
+	 * If a page is a part of the admin tool then this method will return
+	 * <code>true</code>.
 	 *
+	 * @return <code>true</code> if a page is part of the admin tool,
+	 *  <code>false</code> otherwise.
 	 */
 	public boolean getAdmin() {
 		return this.admin;
 	}
 
 	/**
+	 * Set a flag indicating whether or not the page being displayed is a part
+	 * of the admin tool.
 	 *
+	 * @param admin <code>true</code> if a page is part of the admin tool,
+	 *  <code>false</code> otherwise.
 	 */
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
