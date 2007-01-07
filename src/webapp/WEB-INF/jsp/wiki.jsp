@@ -29,7 +29,7 @@
 	<td class="navigation">
 		<div id="logo">
 		<%-- FIXME - need image width and height --%>
-		<a class="logo" href="<jamwiki:link value="${defaultTopic}" />"><img border="0" src="../images/<c:out value="${logo}" />" alt="" /></a>
+		<a class="logo" href="<jamwiki:link value="${defaultTopic}" />"><img border="0" src="<c:url value="/images/${logo}" />" alt="" /></a>
 		</div>
 		<br />
 		<c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">

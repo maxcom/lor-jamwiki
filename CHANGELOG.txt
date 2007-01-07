@@ -8,7 +8,7 @@ New Features:
   
 Bugfixes:
 
-  * None
+  * Logo image not appearing on sub-pages (such as "Topic/Sub-Topic").
 
 Translation Updates:
 
