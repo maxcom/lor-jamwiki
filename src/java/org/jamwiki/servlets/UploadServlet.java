@@ -46,6 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class UploadServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(UploadServlet.class.getName());
+	protected static final String JSP_UPLOAD = "upload.jsp";
 
 	/**
 	 *
@@ -202,7 +203,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setPageTitle(new WikiMessage("upload.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_UPLOAD);
+		pageInfo.setContentJsp(JSP_UPLOAD);
 		pageInfo.setSpecial(true);
 	}
 }

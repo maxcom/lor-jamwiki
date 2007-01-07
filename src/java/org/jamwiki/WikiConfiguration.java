@@ -18,7 +18,7 @@ package org.jamwiki;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Vector;
 import org.jamwiki.model.WikiConfigurationObject;
 import org.jamwiki.utils.Utilities;
@@ -43,7 +43,7 @@ public class WikiConfiguration {
 	private static WikiConfiguration instance = null;
 
 	private Vector dataHandlers = null;
-	private Hashtable namespaces = null;
+	private HashMap namespaces = null;
 	private Vector parsers = null;
 	private Vector pseudotopics = null;
 	private Vector userHandlers = null;
@@ -95,7 +95,7 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Hashtable getNamespaces() {
+	public HashMap getNamespaces() {
 		return this.namespaces;
 	}
 
@@ -126,7 +126,7 @@ public class WikiConfiguration {
 	private void initialize() {
 		try {
 			this.dataHandlers = new Vector();
-			this.namespaces = new Hashtable();
+			this.namespaces = new HashMap();
 			this.parsers = new Vector();
 			this.pseudotopics = new Vector();
 			this.userHandlers = new Vector();

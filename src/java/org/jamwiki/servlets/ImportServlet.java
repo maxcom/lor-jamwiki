@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ImportServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(ImportServlet.class.getName());
+	protected static final String JSP_IMPORT = "import.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -86,7 +87,7 @@ public class ImportServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_IMPORT);
+		pageInfo.setContentJsp(JSP_IMPORT);
 		pageInfo.setPageTitle(new WikiMessage("import.title"));
 		pageInfo.setSpecial(true);
 	}

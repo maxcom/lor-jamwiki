@@ -16,8 +16,8 @@
  */
 package org.jamwiki.utils;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import org.jamwiki.WikiConfiguration;
 import org.springframework.util.StringUtils;
 
@@ -53,10 +53,10 @@ public class NamespaceHandler {
 			// main namespace
 			return NAMESPACE_COMMENTS;
 		}
-		Hashtable namespaces = WikiConfiguration.getInstance().getNamespaces();
-		Enumeration keys = namespaces.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String)keys.nextElement();
+		HashMap namespaces = WikiConfiguration.getInstance().getNamespaces();
+		Iterator iterator = namespaces.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String)iterator.next();
 			String[] values = (String[])namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];
@@ -78,10 +78,10 @@ public class NamespaceHandler {
 			// main namespace
 			return "";
 		}
-		Hashtable namespaces = WikiConfiguration.getInstance().getNamespaces();
-		Enumeration keys = namespaces.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String)keys.nextElement();
+		HashMap namespaces = WikiConfiguration.getInstance().getNamespaces();
+		Iterator iterator = namespaces.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String)iterator.next();
 			String[] values = (String[])namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];
@@ -97,10 +97,10 @@ public class NamespaceHandler {
 	 *
 	 */
 	private static final String initializeNamespace(String name, boolean isComments) {
-		Hashtable namespaces = WikiConfiguration.getInstance().getNamespaces();
-		Enumeration keys = namespaces.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String)keys.nextElement();
+		HashMap namespaces = WikiConfiguration.getInstance().getNamespaces();
+		Iterator iterator = namespaces.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String)iterator.next();
 			String[] values = (String[])namespaces.get(key);
 			String main = values[0];
 			String comments = values[1];

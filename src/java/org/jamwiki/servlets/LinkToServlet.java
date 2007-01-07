@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LinkToServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LinkToServlet.class.getName());
+	protected static final String JSP_LINKTO = "linkto.jsp";
 
 	/**
 	 *
@@ -57,7 +58,7 @@ public class LinkToServlet extends JAMWikiServlet {
 		Collection results = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
 		next.addObject("results", results);
 		next.addObject("link", topicName);
-		pageInfo.setAction(WikiPageInfo.ACTION_LINK_TO);
+		pageInfo.setContentJsp(JSP_LINKTO);
 		pageInfo.setTopicName(topicName);
 	}
 }

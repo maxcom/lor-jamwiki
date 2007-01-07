@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class PersistencyServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(PersistencyServlet.class.getName());
+	protected static final String JSP_ADMIN_CONVERT = "admin-convert.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -75,7 +76,7 @@ public class PersistencyServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_CONVERT);
+		pageInfo.setContentJsp(JSP_ADMIN_CONVERT);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("convert.title"));
 	}

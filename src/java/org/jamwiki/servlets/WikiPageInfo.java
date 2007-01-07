@@ -28,45 +28,20 @@ import org.springframework.util.StringUtils;
 public class WikiPageInfo {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiPageInfo.class.getName());
+	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
+	// FIXME - remove this field
 	private int action = -1;
+	private String contentJsp = JSP_TOPIC;
 	private boolean moveable = false;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
 	private String topicName = "";
 	private boolean special = false;
 	private boolean watched = false;
-	// constants used as the action parameter in calls to this servlet
-	public static final int ACTION_ADMIN = 1;
-	public static final int ACTION_ADMIN_CONVERT = 2;
-	public static final int ACTION_ADMIN_MANAGE = 3;
-	public static final int ACTION_ADMIN_TRANSLATION = 4;
-	public static final int ACTION_ALL_PAGES = 5;
-	public static final int ACTION_CATEGORIES = 6;
-	public static final int ACTION_CONTRIBUTIONS = 7;
-	public static final int ACTION_DIFF = 8;
-	public static final int ACTION_EDIT = 9;
+	// FIXME - these two constants need to go away
 	public static final int ACTION_EDIT_PREVIEW = 10;
 	public static final int ACTION_EDIT_RESOLVE = 11;
-	public static final int ACTION_ERROR = 12;
-	public static final int ACTION_EXPORT = 13;
-	public static final int ACTION_FILES = 14;
-	public static final int ACTION_HISTORY = 15;
-	public static final int ACTION_IMAGES = 16;
-	public static final int ACTION_IMPORT = 17;
-	public static final int ACTION_LINK_TO = 18;
-	public static final int ACTION_LOGIN = 19;
-	public static final int ACTION_MOVE = 20;
-	public static final int ACTION_RECENT_CHANGES = 21;
-	public static final int ACTION_REGISTER = 22;
-	public static final int ACTION_SEARCH = 23;
-	public static final int ACTION_SEARCH_RESULTS = 24;
-	public static final int ACTION_SETUP = 25;
-	public static final int ACTION_SPECIAL_PAGES = 26;
-	public static final int ACTION_TOPICS_ADMIN = 27;
-	public static final int ACTION_UPGRADE = 28;
-	public static final int ACTION_UPLOAD = 29;
-	public static final int ACTION_WATCHLIST = 30;
 
 	/**
 	 *
@@ -89,28 +64,21 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 *
-	 */
-	public boolean getActionEdit() {
-		return (this.action == ACTION_EDIT);
-	}
-
-	/**
-	 *
+	 * @deprecated
 	 */
 	public boolean getActionEditPreview() {
 		return (this.action == ACTION_EDIT_PREVIEW);
 	}
 
 	/**
-	 *
+	 * @deprecated
 	 */
 	public boolean getActionEditResolve() {
 		return (this.action == ACTION_EDIT_RESOLVE);
 	}
 
 	/**
-	 *
+	 * @deprecated
 	 */
 	public void setAction(int action) {
 		this.action = action;
@@ -131,64 +99,26 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Retrieve the name of the JSP page that will be used to display the
+	 * results of this page request.
 	 *
+	 * @return The name of the JSP page that will be used to display the
+	 *  results of the page request.
 	 */
 	public String getContentJsp() {
-		switch (action) {
-		case ACTION_ADMIN:
-			return "admin.jsp";
-		case ACTION_ADMIN_CONVERT:
-			return "admin-convert.jsp";
-		case ACTION_ADMIN_MANAGE:
-			return "admin-manage.jsp";
-		case ACTION_ADMIN_TRANSLATION:
-			return "admin-translation.jsp";
-		case ACTION_ALL_PAGES:
-			return "items.jsp";
-		case ACTION_CATEGORIES:
-			return "categories.jsp";
-		case ACTION_CONTRIBUTIONS:
-			return "contributions.jsp";
-		case ACTION_DIFF:
-			return "diff.jsp";
-		case ACTION_EDIT:
-		case ACTION_EDIT_PREVIEW:
-		case ACTION_EDIT_RESOLVE:
-			return "edit.jsp";
-		case ACTION_ERROR:
-			return "error-display.jsp";
-		case ACTION_FILES:
-		case ACTION_IMAGES:
-			return "items.jsp";
-		case ACTION_HISTORY:
-			return "history.jsp";
-		case ACTION_IMPORT:
-			return "import.jsp";
-		case ACTION_LINK_TO:
-			return "linkto.jsp";
-		case ACTION_LOGIN:
-			return "login.jsp";
-		case ACTION_MOVE:
-			return "move.jsp";
-		case ACTION_RECENT_CHANGES:
-			return "recent-changes.jsp";
-		case ACTION_REGISTER:
-			return "register.jsp";
-		case ACTION_SEARCH:
-			return "search.jsp";
-		case ACTION_SEARCH_RESULTS:
-			return "search-results.jsp";
-		case ACTION_SPECIAL_PAGES:
-			return "all-special-pages.jsp";
-		case ACTION_TOPICS_ADMIN:
-			return "topics-admin.jsp";
-		case ACTION_UPLOAD:
-			return "upload.jsp";
-		case ACTION_WATCHLIST:
-			return "watchlist.jsp";
-		default:
-			return "topic.jsp";
-		}
+		return this.contentJsp;
+	}
+
+	/**
+	 * Set the JSP page that will display the results of this page request.
+	 * If no value is specified then the default is to display the request
+	 * using the topic display JSP.
+	 *
+	 * @param contentJsp The JSP page that should be used to display the
+	 *  results of the page request.
+	 */
+	public void setContentJsp(String contentJsp) {
+		this.contentJsp = contentJsp;
 	}
 
 	/**

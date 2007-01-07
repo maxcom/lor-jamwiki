@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class HistoryServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(HistoryServlet.class.getName());
+	protected static final String JSP_HISTORY = "history.jsp";
 
 	/**
 	 *
@@ -59,7 +60,7 @@ public class HistoryServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		pageInfo.setAction(WikiPageInfo.ACTION_HISTORY);
+		pageInfo.setContentJsp(JSP_HISTORY);
 		pageInfo.setTopicName(topicName);
 		pageInfo.setPageTitle(new WikiMessage("history.title", topicName));
 		Pagination pagination = Utilities.buildPagination(request, next);

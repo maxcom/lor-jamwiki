@@ -37,6 +37,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
 	private static WikiLogger logger = WikiLogger.getLogger(WatchlistServlet.class.getName());
+	protected static final String JSP_WATCHLIST = "watchlist.jsp";
 
 	/**
 	 *
@@ -88,7 +89,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		next.addObject("numChanges", new Integer(changes.size()));
 		next.addObject("changes", changes);
 		pageInfo.setPageTitle(new WikiMessage("watchlist.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_WATCHLIST);
+		pageInfo.setContentJsp(JSP_WATCHLIST);
 		pageInfo.setSpecial(true);
 	}
 }

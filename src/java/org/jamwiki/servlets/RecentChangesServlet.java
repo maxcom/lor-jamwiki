@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RecentChangesServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RecentChangesServlet.class.getName());
+	protected static final String JSP_RECENT_CHANGES = "recent-changes.jsp";
 
 	/**
 	 *
@@ -51,7 +52,7 @@ public class RecentChangesServlet extends JAMWikiServlet {
 		next.addObject("changes", changes);
 		next.addObject("numChanges", new Integer(changes.size()));
 		pageInfo.setPageTitle(new WikiMessage("recentchanges.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_RECENT_CHANGES);
+		pageInfo.setContentJsp(JSP_RECENT_CHANGES);
 		pageInfo.setSpecial(true);
 	}
 }

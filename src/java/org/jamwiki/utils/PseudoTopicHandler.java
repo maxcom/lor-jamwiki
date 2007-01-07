@@ -32,8 +32,10 @@ public class PseudoTopicHandler {
 	/**
 	 * Return true if there is a mapping for the given topic
 	 *
-	 * @param pseudotopicName topic
-	 * @return true if mapping exists
+	 * @param pseudotopicName The name of the pseudo-topic that is being tested
+	 *  for existence.
+	 * @return <code>true</code> if a pseudo-topic with the specified name
+	 *  exists, <code>false</code> otherwise.
 	 */
 	public static boolean isPseudoTopic(String pseudotopicName) {
 		return WikiConfiguration.getInstance().getPseudotopics().contains(pseudotopicName);

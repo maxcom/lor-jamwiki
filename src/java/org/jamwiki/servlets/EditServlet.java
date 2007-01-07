@@ -44,6 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class EditServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(EditServlet.class.getName());
+	protected static final String JSP_EDIT = "edit.jsp";
 
 	/**
 	 *
@@ -78,7 +79,7 @@ public class EditServlet extends JAMWikiServlet {
 			preview(request, next, pageInfo);
 			return;
 		}
-		pageInfo.setAction(WikiPageInfo.ACTION_EDIT);
+		pageInfo.setContentJsp(JSP_EDIT);
 		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
@@ -186,6 +187,7 @@ public class EditServlet extends JAMWikiServlet {
 		previewTopic.setTopicContent(contents);
 		previewTopic.setVirtualWiki(virtualWiki);
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_PREVIEW);
+		pageInfo.setContentJsp(JSP_EDIT);
 		next.addObject("contents", contents);
 		ServletUtil.viewTopic(request, next, pageInfo, null, previewTopic, false);
 	}
@@ -206,6 +208,7 @@ public class EditServlet extends JAMWikiServlet {
 		next.addObject("diffs", diffs);
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
 		pageInfo.setAction(WikiPageInfo.ACTION_EDIT_RESOLVE);
+		pageInfo.setContentJsp(JSP_EDIT);
 	}
 
 	/**

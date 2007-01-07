@@ -34,6 +34,7 @@ public class ItemsServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
 	private static WikiLogger logger = WikiLogger.getLogger(ItemsServlet.class.getName());
+	protected static final String JSP_ITEMS = "items.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control. It gets the topic's name and the
@@ -65,7 +66,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_FILES);
+		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
 	}
 
@@ -80,7 +81,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Imagelist");
 		pageInfo.setPageTitle(new WikiMessage("allimages.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_IMAGES);
+		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
 	}
 
@@ -95,7 +96,7 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Allpages");
 		pageInfo.setPageTitle(new WikiMessage("alltopics.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_ALL_PAGES);
+		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
 	}
 }

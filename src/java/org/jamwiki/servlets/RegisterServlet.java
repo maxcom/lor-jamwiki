@@ -39,6 +39,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class RegisterServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RegisterServlet.class.getName());
+	protected static final String JSP_REGISTER = "register.jsp";
 
 	/**
 	 *
@@ -70,7 +71,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		next.addObject("newuser", user);
 		next.addObject("newuserinfo", userInfo);
 		pageInfo.setSpecial(true);
-		pageInfo.setAction(WikiPageInfo.ACTION_REGISTER);
+		pageInfo.setContentJsp(JSP_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
 	}
 

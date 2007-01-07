@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TopicsAdminServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(TopicsAdminServlet.class.getName());
+	protected static final String JSP_TOPICS_ADMIN = "topics-admin.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -56,7 +57,7 @@ public class TopicsAdminServlet extends JAMWikiServlet {
 		next.addObject("topicsAdmin", topicsAdmin);
 		next.addObject("numTopicsAdmin", new Integer(topicsAdmin.size()));
 		pageInfo.setPageTitle(new WikiMessage("topicsadmin.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_TOPICS_ADMIN);
+		pageInfo.setContentJsp(JSP_TOPICS_ADMIN);
 		pageInfo.setSpecial(true);
 	}
 }

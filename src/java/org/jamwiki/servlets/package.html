@@ -14,9 +14,7 @@ Provides classes that work with the <a href="http://springframework.org/" target
 </li>
 <li>Make sure JAMWiki recognizes the page as an existing special page by adding a pseudotopic entry to <code>/WEB-INF/classes/jamwiki-configuration.xml</code>.</li>
 <li>Create the servlet specified in the <code>jamwiki-servlet.xml</code> file (<code>org.jamwiki.servlets.MyServlet</code>).  The servlet should extend {@link org.jamwiki.servlets.JAMWikiServlet}.</li>
-<li>Add an action for the servlet to <code>org.jamwiki.servlets.WikiPageInfo</code>.  Note that eventually this step should become unnecessary.</li>
-<li>Create a JSP for the page display.</li>
-<li>Process the action for the servlet and display the page by modifying <code>wiki.jsp</code> appropriately. Note that this step should eventually become unnecessary.</li>
+<li>Create a JSP for the page display.  Within your servlet the {@link org.jamwiki.servlets.WikiPageInfo#setContentJsp} method should be called to link the new JSP page with your servlet.</li>
 </ul>
 
 </body>

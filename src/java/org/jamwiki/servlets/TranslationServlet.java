@@ -40,6 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TranslationServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
+	protected static final String JSP_ADMIN_TRANSLATION = "admin-translation.jsp";
 	private SortedProperties translations = new SortedProperties();
 
 	/**
@@ -104,7 +105,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void translate(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_TRANSLATION);
+		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("translation.title"));
 		Enumeration names = request.getParameterNames();
@@ -133,7 +134,7 @@ public class TranslationServlet extends JAMWikiServlet {
 			filename = filename(request);
 			this.translations.putAll(Environment.loadProperties(filename));
 		}
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_TRANSLATION);
+		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("translation.title"));
 	}

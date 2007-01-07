@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MoveServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(MoveServlet.class.getName());
+	protected static final String JSP_MOVE = "move.jsp";
 
 	/**
 	 *
@@ -90,17 +91,17 @@ public class MoveServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (!StringUtils.hasText(moveDestination)) {
-			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
+			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, Utilities.currentUser(request))) {
-			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
+			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
 			return false;
 		}
 		if (!WikiBase.getDataHandler().canMoveTopic(fromTopic, moveDestination)) {
-			pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
+			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.destinationexists", moveDestination));
 			next.addObject("moveDestination", moveDestination);
 			next.addObject("moveComment", request.getParameter("moveComment"));
@@ -137,7 +138,7 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		WikiMessage pageTitle = new WikiMessage("move.title", topicName);
 		pageInfo.setPageTitle(pageTitle);
-		pageInfo.setAction(WikiPageInfo.ACTION_MOVE);
+		pageInfo.setContentJsp(JSP_MOVE);
 		pageInfo.setTopicName(topicName);
 	}
 }

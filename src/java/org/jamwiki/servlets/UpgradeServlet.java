@@ -45,6 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class UpgradeServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(UpgradeServlet.class.getName());
+	protected static final String JSP_UPGRADE = "upgrade.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -103,7 +104,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private void upgrade(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		if (!this.login(request)) {
 			next.addObject("error", new WikiMessage("error.login"));
-			pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
+			pageInfo.setContentJsp(JSP_UPGRADE);
 			pageInfo.setSpecial(true);
 			pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 			return;
@@ -186,7 +187,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			next.addObject("failure", "true");
 		}
 		next.addObject("messages", messages);
-		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
+		pageInfo.setContentJsp(JSP_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}
@@ -252,7 +253,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.1.0"));
 			next.addObject("errors", errors);
 		}
-		pageInfo.setAction(WikiPageInfo.ACTION_UPGRADE);
+		pageInfo.setContentJsp(JSP_UPGRADE);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("upgrade.title"));
 	}

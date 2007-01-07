@@ -32,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ContributionsServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ContributionsServlet.class.getName());
+	protected static final String JSP_CONTRIBUTIONS = "contributions.jsp";
 
 	/**
 	 *
@@ -53,7 +54,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("numContributions", new Integer(contributions.size()));
 		next.addObject("contributor", userString);
 		pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
-		pageInfo.setAction(WikiPageInfo.ACTION_CONTRIBUTIONS);
+		pageInfo.setContentJsp(JSP_CONTRIBUTIONS);
 		pageInfo.setSpecial(true);
 	}
 }

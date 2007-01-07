@@ -34,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ManageServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(ManageServlet.class.getName());
+	protected static final String JSP_ADMIN_MANAGE = "admin-manage.jsp";
 
 	/**
 	 *
@@ -176,7 +177,7 @@ public class ManageServlet extends JAMWikiServlet {
 		next.addObject("adminOnly", new Boolean(topic.getAdminOnly()));
 		next.addObject("deleted", new Boolean(topic.getDeleteDate() != null));
 		pageInfo.setTopicName(topicName);
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN_MANAGE);
+		pageInfo.setContentJsp(JSP_ADMIN_MANAGE);
 		pageInfo.setPageTitle(new WikiMessage("manage.title", topicName));
 	}
 }

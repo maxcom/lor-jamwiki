@@ -53,6 +53,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServletUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ServletUtil.class.getName());
+	protected static final String JSP_ERROR = "error-display.jsp";
+	protected static final String JSP_LOGIN = "login.jsp";
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
@@ -365,7 +367,7 @@ public class ServletUtil {
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		pageInfo.setPageTitle(new WikiMessage("error.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_ERROR);
+		pageInfo.setContentJsp(JSP_ERROR);
 		pageInfo.setSpecial(true);
 		if (e instanceof WikiException) {
 			WikiException we = (WikiException)e;
@@ -412,7 +414,7 @@ public class ServletUtil {
 		}
 		next.addObject("target", target);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_LOGIN);
+		pageInfo.setContentJsp(JSP_LOGIN);
 		pageInfo.setSpecial(true);
 		if (messageObject != null) {
 			next.addObject("messageObject", messageObject);

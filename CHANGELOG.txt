@@ -4,7 +4,8 @@
 
 New Features:
 
-  * None
+  * Simplify the process for creating a new Wiki "Special:" pages to hopefully
+    make it easier for development of custom pages.
   
 Bugfixes:
 

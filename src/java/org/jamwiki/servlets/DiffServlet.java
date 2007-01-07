@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class DiffServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(DiffServlet.class.getName());
+	protected static final String JSP_DIFF = "diff.jsp";
 
 	/**
 	 *
@@ -84,6 +85,6 @@ public class DiffServlet extends JAMWikiServlet {
 		}
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);
-		pageInfo.setAction(WikiPageInfo.ACTION_DIFF);
+		pageInfo.setContentJsp(JSP_DIFF);
 	}
 }

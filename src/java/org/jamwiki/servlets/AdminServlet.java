@@ -42,6 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(AdminServlet.class.getName());
+	protected static final String JSP_ADMIN = "admin.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -257,7 +258,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_ADMIN);
+		pageInfo.setContentJsp(JSP_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
 		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);

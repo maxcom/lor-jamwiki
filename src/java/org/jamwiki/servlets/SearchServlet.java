@@ -32,6 +32,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class SearchServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(SearchServlet.class.getName());
+	protected static final String JSP_SEARCH = "search.jsp";
+	protected static final String JSP_SEARCH_RESULTS = "search-results.jsp";
 
 	/**
 	 *
@@ -71,7 +73,7 @@ public class SearchServlet extends JAMWikiServlet {
 		}
 		// forward back to the search page if the request is blank or null
 		if (!StringUtils.hasText(searchField)) {
-			pageInfo.setAction(WikiPageInfo.ACTION_SEARCH);
+			pageInfo.setContentJsp(JSP_SEARCH);
 			pageInfo.setSpecial(true);
 			return;
 		}
@@ -79,7 +81,7 @@ public class SearchServlet extends JAMWikiServlet {
 		Collection results = WikiBase.getSearchEngine().findResults(virtualWiki, searchField);
 		next.addObject("searchField", searchField);
 		next.addObject("results", results);
-		pageInfo.setAction(WikiPageInfo.ACTION_SEARCH_RESULTS);
+		pageInfo.setContentJsp(JSP_SEARCH_RESULTS);
 		pageInfo.setSpecial(true);
 	}
 }

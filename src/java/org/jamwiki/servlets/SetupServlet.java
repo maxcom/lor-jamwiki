@@ -42,6 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class SetupServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(SetupServlet.class.getName());
+	protected static final String JSP_SETUP = "setup.jsp";
 	private static final int MINIMUM_JDK_MAJOR_VERSION = 1;
 	private static final int MINIMUM_JDK_MINOR_VERSION = 4;
 
@@ -233,7 +234,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setAction(WikiPageInfo.ACTION_SETUP);
+		pageInfo.setContentJsp(JSP_SETUP);
 		pageInfo.setSpecial(true);
 		pageInfo.setPageTitle(new WikiMessage("setup.title"));
 		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();

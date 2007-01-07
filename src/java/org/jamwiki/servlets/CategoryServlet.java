@@ -37,6 +37,7 @@ public class CategoryServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
 	private static WikiLogger logger = WikiLogger.getLogger(CategoryServlet.class.getName());
+	protected static final String JSP_CATEGORIES = "categories.jsp";
 
 	/**
 	 *
@@ -63,7 +64,7 @@ public class CategoryServlet extends JAMWikiServlet {
 		next.addObject("categoryCount", new Integer(categories.size()));
 		next.addObject("categories", categories);
 		pageInfo.setPageTitle(new WikiMessage("allcategories.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_CATEGORIES);
+		pageInfo.setContentJsp(JSP_CATEGORIES);
 		pageInfo.setSpecial(true);
 	}
 }

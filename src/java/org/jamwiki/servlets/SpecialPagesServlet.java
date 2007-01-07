@@ -33,6 +33,7 @@ public class SpecialPagesServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
 	private static WikiLogger logger = WikiLogger.getLogger(SpecialPagesServlet.class.getName());
+	protected static final String JSP_SPECIAL_PAGES = "all-special-pages.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control. It gets the topic's name and the
@@ -63,7 +64,7 @@ public class SpecialPagesServlet extends JAMWikiServlet {
 		ParserDocument parserDocument = Utilities.parse(parserInput, contents);
 		next.addObject("pageContent", parserDocument.getContent());
 		pageInfo.setPageTitle(new WikiMessage("specialpages.title"));
-		pageInfo.setAction(WikiPageInfo.ACTION_SPECIAL_PAGES);
+		pageInfo.setContentJsp(JSP_SPECIAL_PAGES);
 		pageInfo.setSpecial(true);
 	}
 }
