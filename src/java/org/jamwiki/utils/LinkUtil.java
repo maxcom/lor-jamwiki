@@ -126,7 +126,7 @@ public class LinkUtil {
 		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		if (!StringUtils.hasText(style)) style = "wikiimg";
 		html += "<img class=\"" + style + "\" src=\"";
-		String url = new File(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH), wikiFile.getUrl()).getPath();
+		String url = new File(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH), wikiImage.getUrl()).getPath();
 		url = FilenameUtils.separatorsToUnix(url);
 		html += url;
 		html += "\"";

@@ -10,6 +10,7 @@ New Features:
 Bugfixes:
 
   * Logo image not appearing on sub-pages (such as "Topic/Sub-Topic").
+  * Fix problem with images not being properly resized.
 
 Translation Updates:
 
