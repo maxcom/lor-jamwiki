@@ -22,7 +22,13 @@ import org.jamwiki.WikiConfiguration;
 import org.springframework.util.StringUtils;
 
 /**
+ * Class for controlling "namespace". Namespaces allow the organization of
+ * wiki topics by dividing topics into groups.  A namespace will precede the
+ * topic, such as "Namespace:Topic".  Namespaces can be customized by
+ * modifying the configuration values in
+ * <code>/WEB-INF/classes/jamwiki-configuration.xml</code>.
  *
+ * @see org.jamwiki.WikiConfiguration
  */
 public class NamespaceHandler {
 

@@ -34,6 +34,9 @@ import org.w3c.dom.NodeList;
  * values differ from site properties by being generally less site-specific
  * and falling into specific categories, such as pseudo-topics and parser
  * values.
+ *
+ * @see org.jamwiki.utils.PseudoTopicHandler
+ * @see org.jamwiki.utils.NamespaceHandler
  */
 public class WikiConfiguration {
 

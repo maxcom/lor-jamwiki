@@ -22,7 +22,9 @@ import org.jamwiki.WikiConfiguration;
  * Class for controlling "pseudotopics". A pseudotopic is a topic name that maps to
  * an internal Wikk page, such as Special:RecentChanges and Special:Edit. The
  * mappings of topic names to redirect URLs are persisted in
- * WEB-INF/classes/jamwiki-configuration.xml.
+ * <code>/WEB-INF/classes/jamwiki-configuration.xml</code>.
+ *
+ * @see org.jamwiki.WikiConfiguration
  */
 public class PseudoTopicHandler {
 

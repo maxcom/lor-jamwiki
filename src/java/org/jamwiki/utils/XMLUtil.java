@@ -26,7 +26,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * Provides utility methods useful for parsing and processing XML data.
  */
 public class XMLUtil {
 
@@ -40,6 +40,7 @@ public class XMLUtil {
 	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
 	 * @param escape If <code>true</code> then any less than, greater than, quotation mark,
 	 *  apostrophe or ampersands in tagValue will be XML-escaped.
+	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, String tagValue, boolean escape) {
 		if (tagValue == null) {
@@ -56,46 +57,66 @@ public class XMLUtil {
 	}
 
 	/**
+	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, int tagValue) {
 		return XMLUtil.buildTag(tagName, Integer.toString(tagValue), false);
 	}
 
 	/**
+	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, Integer tagValue) {
 		return (tagValue == null) ? "" : XMLUtil.buildTag(tagName, tagValue.toString(), false);
 	}
 
 	/**
+	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, boolean tagValue) {
 		return XMLUtil.buildTag(tagName, Boolean.toString(tagValue), false);
 	}
 
 	/**
+	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, Timestamp tagValue) {
 		return (tagValue == null) ? "" : XMLUtil.buildTag(tagName, tagValue.toString(), false);
 	}
 
 	/**
+	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
+	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @param tagValue The value of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.
+	 * @return An XML representations of the tagName and tagValue parameters.
 	 */
 	public static String buildTag(String tagName, long tagValue) {
 		return XMLUtil.buildTag(tagName, Long.toString(tagValue), false);
 	}
 
 	/**
-	 * Get Node text content.  This method duplicates the Node.getTextContent()
-	 * method from JDK 1.5.
+	 * Get XML <code>Node</code> text content.  This method duplicates the
+	 * org.w3c.dom.Node.getTextContent() method in JDK 1.5.
 	 *
-	 * @param baseNode The node.
-	 * @return The text content of the node.
+	 * @param baseNode The XML node from which the content is being retrieved.
+	 * @return The text content of the XML node.
 	 */
 	public static String getTextContent(Node baseNode) throws Exception {
 		// if element, first child will be a text element with content
@@ -107,7 +128,13 @@ public class XMLUtil {
 	}
 
 	/**
+	 * Given a <code>File</code> object that points to an XML file, parse the
+	 * XML and return a parsed <code>Document</code> object.
 	 *
+	 * @param file The File object that points to the XML file.
+	 * @param validating Set to <code>true</code> if the parser should
+	 *  validate against a DTD.
+	 * @return A parsed Document object.
 	 */
 	public static Document parseXML(File file, boolean validating) throws Exception {
 		if (!file.exists()) {
@@ -132,7 +159,13 @@ public class XMLUtil {
 	}
 
 	/**
+	 * Given an <code>InputSource</code> object that points to XML data, parse
+	 * the XML and return a parsed <code>Document</code> object.
 	 *
+	 * @param source The InputSource object that points to XML data.
+	 * @param validating Set to <code>true</code> if the parser should
+	 *  validate against a DTD.
+	 * @return A parsed Document object.
 	 */
 	public static Document parseXML(InputSource source, boolean validating) throws Exception {
 		// Create a builder factory

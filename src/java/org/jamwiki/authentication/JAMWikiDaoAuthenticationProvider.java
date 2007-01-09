@@ -28,9 +28,9 @@ import org.jamwiki.WikiBase;
  * AuthenticationProvider to use with JAMWiki database.
  *
  * Extends DaoAuthenticationProvider to use JAMWiki password authentication.
- * It's not possible to use {@link DaoAuthenticationProvider} with a
- * {@link PasswordEncoder} because JAMWiki stores passwords encoded and not only
- * hashed.
+ * It's not possible to use {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}
+ * with a {@link org.acegisecurity.providers.encoding.PasswordEncoder} because
+ * JAMWiki stores passwords encoded and not only hashed.
  *
  * @author Rainer Schmitz
  * @version $Id: $

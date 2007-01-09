@@ -26,12 +26,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class provides a wrapper around the java.util.logging.Logger class,
- * allowing additional utility methods to be included such as allowing a log
- * message to include a Throwable object.  From an implementation standpoint
- * it would have been much easier to simply sub-class the Logger class, but
- * that class is implemented in such a way to make sub-classes exceedingly
- * difficult to create.
+ * This class provides a wrapper around the {@link java.util.logging.Logger}
+ * class, allowing additional utility methods to be included such as allowing
+ * a log message to include a Throwable object.  From an implementation
+ * standpoint it would have been much easier to simply sub-class the Logger
+ * class, but that class is implemented in such a way to make sub-classes
+ * exceedingly difficult to create.
+ *
+ * @see org.jamwiki.utils.WikiLogFormatter
  */
 public class WikiLogger {
 
@@ -54,7 +56,10 @@ public class WikiLogger {
 	}
 
 	/**
+	 * Retrieve a named <code>WikiLogger</code> object.
 	 *
+	 * @param name The name of the log object to retrieve or create.
+	 * @return A logger instance for the given name.
 	 */
 	public static WikiLogger getLogger(String name) {
 		Logger logger = Logger.getLogger(name);
@@ -129,98 +134,161 @@ public class WikiLogger {
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#CONFIG} level,
+	 * provided that the current log level is {@link java.util.logging.Level#CONFIG}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void config(String msg) {
 		this.logger.config(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#CONFIG}
+	 * level, provided that the current log level is {@link java.util.logging.Level#CONFIG}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void config(String msg, Throwable thrown) {
 		this.logger.log(Level.CONFIG, msg, thrown);
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#FINE} level,
+	 * provided that the current log level is {@link java.util.logging.Level#FINE}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void fine(String msg) {
 		this.logger.fine(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#FINE}
+	 * level, provided that the current log level is {@link java.util.logging.Level#FINE}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void fine(String msg, Throwable thrown) {
 		this.logger.log(Level.FINE, msg, thrown);
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#FINER} level,
+	 * provided that the current log level is {@link java.util.logging.Level#FINER}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void finer(String msg) {
 		this.logger.finer(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#FINER}
+	 * level, provided that the current log level is {@link java.util.logging.Level#FINER}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void finer(String msg, Throwable thrown) {
 		this.logger.log(Level.FINER, msg, thrown);
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#FINEST} level,
+	 * provided that the current log level is {@link java.util.logging.Level#FINEST}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void finest(String msg) {
 		this.logger.finest(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#FINEST}
+	 * level, provided that the current log level is {@link java.util.logging.Level#FINEST}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void finest(String msg, Throwable thrown) {
 		this.logger.log(Level.FINEST, msg, thrown);
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#INFO} level,
+	 * provided that the current log level is {@link java.util.logging.Level#INFO}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void info(String msg) {
 		this.logger.info(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#INFO}
+	 * level, provided that the current log level is {@link java.util.logging.Level#INFO}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void info(String msg, Throwable thrown) {
 		this.logger.log(Level.INFO, msg, thrown);
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#SEVERE} level,
+	 * provided that the current log level is {@link java.util.logging.Level#SEVERE}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void severe(String msg) {
 		this.logger.severe(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#SEVERE}
+	 * level, provided that the current log level is {@link java.util.logging.Level#SEVERE}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void severe(String msg, Throwable thrown) {
 		this.logger.log(Level.SEVERE, msg, thrown);
 	}
 
 	/**
+	 * Log a message at the {@link java.util.logging.Level#WARNING} level,
+	 * provided that the current log level is {@link java.util.logging.Level#WARNING}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
 	 */
 	public void warning(String msg) {
 		this.logger.warning(msg);
 	}
 
 	/**
+	 * Log a message and an exception at the {@link java.util.logging.Level#WARNING}
+	 * level, provided that the current log level is {@link java.util.logging.Level#WARNING}
+	 * or greater.
 	 *
+	 * @param msg The message to be written to the log.
+	 * @param thrown An exception to be written to the log.
 	 */
 	public void warning(String msg, Throwable thrown) {
 		this.logger.log(Level.WARNING, msg, thrown);
