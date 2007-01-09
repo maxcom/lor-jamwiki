@@ -26,7 +26,8 @@ import net.sf.ehcache.config.DiskStoreConfiguration;
 import org.jamwiki.Environment;
 
 /**
- *
+ * Implement utility functions that interact with the cache and provide the
+ * infrastructure for storing and retrieving items from the cache.
  */
 public class WikiCache {
 
@@ -41,7 +42,13 @@ public class WikiCache {
 	}
 
 	/**
+	 * Add an object to the cache.
 	 *
+	 * @param cacheName The name of the cache that the object is being added
+	 *  to.
+	 * @param key A String, Integer, or other object to use as the key for
+	 *  storing and retrieving this object from the cache.
+	 * @param value The object that is being stored in the cache.
 	 */
 	public static void addToCache(String cacheName, Object key, Object value) {
 		Cache cache = WikiCache.getCache(cacheName);
@@ -49,14 +56,25 @@ public class WikiCache {
 	}
 
 	/**
+	 * Add an object to the cache.
 	 *
+	 * @param cacheName The name of the cache that the object is being added
+	 *  to.
+	 * @param key An int value to use as the key for storing and retrieving
+	 *  this object from the cache.
+	 * @param value The object that is being stored in the cache.
 	 */
 	public static void addToCache(String cacheName, int key, Object value) {
 		WikiCache.addToCache(cacheName, new Integer(key), value);
 	}
 
 	/**
+	 * Internal method used to retrieve a cache given the cache name.  If no
+	 * cache exists with the given name then a new cache will be created.
 	 *
+	 * @param cacheName The name of the cache to retrieve.
+	 * @return The existing cache with the given name, or a new cache if no
+	 *  existing cache exists.
 	 */
 	private static Cache getCache(String cacheName) {
 		if (!WikiCache.cacheManager.cacheExists(cacheName)) {
@@ -70,7 +88,8 @@ public class WikiCache {
 	}
 
 	/**
-	 *
+	 * Initialize the cache, clearing any existing cache instances and loading
+	 * a new cache instance.
 	 */
 	public static void initialize() {
 		try {
@@ -102,21 +121,34 @@ public class WikiCache {
 	}
 
 	/**
+	 * Given a virtual wiki name and a topic name, generate a unique key value
+	 * that can be used to store and retrieve cache objects.
 	 *
+	 * @param virtualWiki The virtual wiki name for the key value being
+	 *  created.
+	 * @param topicName The name of the topic for the key value being created.
+	 * @return The generated key value.
 	 */
 	public static String key(String virtualWiki, String topicName) {
 		return virtualWiki + "/" + topicName;
 	}
 
 	/**
+	 * Remove a cache with the given name from the system, freeing any
+	 * resources used by that cache.
 	 *
+	 * @param cacheName The name of the cache being removed.
 	 */
 	public static void removeCache(String cacheName) {
 		WikiCache.cacheManager.removeCache(cacheName);
 	}
 
 	/**
+	 * Remove a value from the cache with the given key and name.
 	 *
+	 * @param cacheName The name of the cache from which the object is being
+	 *  removed.
+	 * @param key The key for the record that is being removed from the cache.
 	 */
 	public static void removeFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
@@ -124,7 +156,11 @@ public class WikiCache {
 	}
 
 	/**
+	 * Remove a value from the cache with the given key and name.
 	 *
+	 * @param cacheName The name of the cache from which the object is being
+	 *  removed.
+	 * @param key The key for the record that is being removed from the cache.
 	 */
 	public static void removeFromCache(String cacheName, int key) {
 		WikiCache.removeFromCache(cacheName, new Integer(key));
@@ -135,6 +171,13 @@ public class WikiCache {
 	 * <code>null</code> if no matching element is cached, an element with
 	 * no value if a <code>null</code> value is cached, or an element with a
 	 * valid object value if such an element is cached.
+	 *
+	 * @param cacheName The name of the cache from which the object is being
+	 *  retrieved.
+	 * @param key The key for the record that is being retrieved from the
+	 *  cache.
+	 * @return A new <code>Element</code> object containing the key and cached
+	 *  object value.
 	 */
 	public static Element retrieveFromCache(String cacheName, Object key) {
 		Cache cache = WikiCache.getCache(cacheName);
@@ -142,7 +185,17 @@ public class WikiCache {
 	}
 
 	/**
+	 * Retrieve a cached element from the cache.  This method will return
+	 * <code>null</code> if no matching element is cached, an element with
+	 * no value if a <code>null</code> value is cached, or an element with a
+	 * valid object value if such an element is cached.
 	 *
+	 * @param cacheName The name of the cache from which the object is being
+	 *  retrieved.
+	 * @param key The key for the record that is being retrieved from the
+	 *  cache.
+	 * @return A new <code>Element</code> object containing the key and cached
+	 *  object value.
 	 */
 	public static Element retrieveFromCache(String cacheName, int key) {
 		return WikiCache.retrieveFromCache(cacheName, new Integer(key));

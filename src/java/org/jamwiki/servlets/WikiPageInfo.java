@@ -23,7 +23,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * The <code>WikiPageInfo</code> class provides an object containing common
+ * data used for generating wiki page display.
  */
 public class WikiPageInfo {
 
@@ -45,7 +46,8 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 *
+	 * Reset all parameters of the current <code>WikiPageInfo</code> object
+	 * to default values.
 	 */
 	protected void reset() {
 		this.admin = false;
@@ -104,28 +106,43 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Every virtual wiki has a default topic, and this method returns the
+	 * default topic for the current virtual wiki.
 	 *
+	 * @return The default topic for the current virtual wiki.
 	 */
 	public String getDefaultTopic() {
 		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 	}
 
 	/**
+	 * Return a flag indicating whether or not the current user can move the
+	 * current topic.
 	 *
+	 * @return <code>true</code> if the current user can move the current
+	 *  page, <code>false</code> otherwise.
 	 */
 	public boolean getMoveable() {
 		return this.moveable;
 	}
 
 	/**
+	 * Set a flag indicating whether or not the current user can move the
+	 * current topic.
 	 *
+	 * @param moveable Set to <code>true</code> if the current user can move
+	 *  the current page, <code>false</code> otherwise.
 	 */
 	public void setMoveable(boolean moveable) {
 		this.moveable = moveable;
 	}
 
 	/**
+	 * Return a description for the current page that can be used in an HTML
+	 * meta tag.
 	 *
+	 * @return A description for the current page that can be used in an HTML
+	 *  meta tag.
 	 */
 	public String getMetaDescription() {
 		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
@@ -137,77 +154,118 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Return the title for the current page.
 	 *
+	 * @return The title for the current page.
 	 */
 	public WikiMessage getPageTitle() {
 		return this.pageTitle;
 	}
 
 	/**
+	 * Set the title for the current page.
 	 *
+	 * @param pageTitle A <code>WikiMessage</code> object that contains a
+	 *  translatable page title value.
 	 */
 	public void setPageTitle(WikiMessage pageTitle) {
 		this.pageTitle = pageTitle;
 	}
 
 	/**
+	 * If printable pages should open in a new window then this method will
+	 * return the HTML target "_blank", otherwise this method returns an
+	 * empty String.
 	 *
+	 * @return The HTML target "_blank" if printable pages should open in a
+	 *  new window, otherwise an empty String.
 	 */
 	public String getPrintTarget() {
 		return (Environment.getBooleanValue(Environment.PROP_PRINT_NEW_WINDOW)) ? "_blank" : "";
 	}
 
 	/**
+	 * If the topic currently being displayed is the result of a redirect from
+	 * another topic, return the name of the topic that is being redirected
+	 * from.
 	 *
+	 * @return The name of the topic being redirected from, or
+	 *  <code>null</code> if the current page is not the result of a redirect.
 	 */
 	public String getRedirectName() {
 		return this.redirectName;
 	}
 
 	/**
+	 * If the topic currently being displayed is the result of a redirect from
+	 * another topic, set the name of the topic that is being redirected
+	 * from.
 	 *
+	 * @param redirectName The name of the topic being redirected from, or
+	 *  <code>null</code> if the current page is not the result of a redirect.
 	 */
 	public void setRedirectName(String redirectName) {
 		this.redirectName = redirectName;
 	}
 
 	/**
+	 * Return a flag indicating whether or not the current page is a "Special:"
+	 * page, as opposed to a standard topic.
 	 *
+	 * @return <code>true</code> if the current page is a "Special:" page,
+	 *  <code>false</code> otherwise.
 	 */
 	public boolean getSpecial() {
 		return this.special;
 	}
 
 	/**
+	 * Set a flag indicating whether or not the current page is a "Special:"
+	 * page, as opposed to a standard topic.
 	 *
+	 * @param special Set to <code>true</code> if the current page is a
+	 *  "Special:" page, <code>false</code> otherwise.
 	 */
 	public void setSpecial(boolean special) {
 		this.special = special;
 	}
 
 	/**
+	 * Return the name of the topic being displayed by the current page.
 	 *
+	 * @return The name of the topic being displayed by the current page.
 	 */
 	public String getTopicName() {
 		return this.topicName;
 	}
 
 	/**
+	 * Set the name of the topic being displayed by the current page.
 	 *
+	 * @param topicName The name of the topic being displayed by the current
+	 *  page.
 	 */
 	public void setTopicName(String topicName) {
 		this.topicName = topicName;
 	}
 
 	/**
+	 * Return a flag indicating whether or not the current page is in the
+	 * current user's watchlist.
 	 *
+	 * @return <code>true</code> if the current page is in the current user's
+	 *  watchlist, <code>false</code> otherwise.
 	 */
 	public boolean getWatched() {
 		return this.watched;
 	}
 
 	/**
+	 * Set a flag indicating whether or not the current page is in the
+	 * current user's watchlist.
 	 *
+	 * @param watched Set to <code>true</code> if the current page is in the
+	 *  current user's watchlist, <code>false</code> otherwise.
 	 */
 	public void setWatched(boolean watched) {
 		this.watched = watched;
