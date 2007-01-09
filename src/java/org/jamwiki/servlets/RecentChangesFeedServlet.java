@@ -170,6 +170,8 @@ public class RecentChangesFeedServlet extends AbstractController {
 				}
 				description.setValue(descr.toString());
 				entry.setDescription(description);
+				// URI is used as GUID in RSS 2.0 and should therefore contain the version id
+				entry.setUri(feedURL + Utilities.encodeForURL(change.getTopicName()) + "#" + change.getTopicVersionId());
 				entries.add(entry);
 			}
 		}
