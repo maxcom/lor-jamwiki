@@ -115,6 +115,12 @@ pre {
 	padding: 1em;
 }
 
+code {
+	background-color: #FBFBFD;
+	color: black;
+	font-size: 120%;
+}
+
 dt {
 	font-weight: bold;
 	margin-bottom: .1em;
@@ -157,10 +163,10 @@ div.clear {
 }
 
 .clearblock:after {
-	content: "."; 
-	display: block; 
-	height: 0; 
-	clear: both; 
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
 	visibility: hidden;
 }
 /* Hides from IE-mac \*/
@@ -233,7 +239,7 @@ td.navigation {
 	padding-bottom: 4px;
 }
 
-#nav-search {	
+#nav-search {
 	background: white;
 	margin: 18px 0px 8px 0px;
 	padding: 8px;
@@ -301,7 +307,7 @@ td.diff-line {
 
 table.toc {
 	border: 1px solid #D8D8E7;
-	margin: 0.2em 0em 0.2em 0em;	
+	margin: 0.2em 0em 0.2em 0em;
 }
 
 table.toc td {
