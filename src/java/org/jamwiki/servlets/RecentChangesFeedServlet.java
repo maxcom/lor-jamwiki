@@ -70,6 +70,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	private String defaultFeedType = DEFAULT_FEED_TYPE;
 	private boolean defaultIncludeMinorEdits = false;
 	private boolean defaultLinkToVersion = false;
+	private String feedUrlPrefix = "";
 
 	/**
 	 * Sets the default feed type.
@@ -106,6 +107,18 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 *
 	 * This value can be overriden by the request parameter 'linkToVersion'.
 	 * Default is false.
+	 *
+	 * @param feedUrlPrefix feed URL prefix to set; may not be null.
+	 */
+	public void setFeedUrlPrefix(String feedUrlPrefix) {
+		assert feedUrlPrefix != null : "Feed URL prefix may not be null";
+		this.feedUrlPrefix = feedUrlPrefix;
+	}
+
+	/**
+	 * Prefix to use in feed and feed entry links.
+	 *
+	 * This is useful in portal environments to prefix the feed URL with the portal URL.
 	 *
 	 * @param linkToVersion
 	 *            <code>true</code> if link should point to edited version.
@@ -149,7 +162,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 		feed.setEncoding(FEED_ENCODING);
 		feed.setTitle(Environment.getValue(Environment.PROP_RSS_TITLE));
 		StringBuffer requestURL = request.getRequestURL();
-		String feedURL = requestURL.substring(0, requestURL.length() - Utilities.getTopicFromURI(request).length());
+		String feedURL = feedUrlPrefix + requestURL.substring(0, requestURL.length() - Utilities.getTopicFromURI(request).length());
 		feed.setLink(feedURL);
 		feed.setDescription("List of the last " + changes.size() + " changed wiki pages.");
 		boolean includeMinorEdits = ServletRequestUtils.getBooleanParameter(request, MINOR_EDITS,
