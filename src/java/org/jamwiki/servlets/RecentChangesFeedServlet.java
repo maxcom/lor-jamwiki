@@ -64,9 +64,12 @@ public class RecentChangesFeedServlet extends AbstractController {
 	private static final String MIME_TYPE = "application/xml; charset=UTF-8";
 	private static final String FEED_ENCODING = "UTF-8";
 	private static final String DEFAULT_FEED_TYPE = "rss_2.0";
-
+	private static final String FEED_TYPE = "feedType";
+	private static final String MINOR_EDITS = "minorEdits";
+	private static final String LINK_TO_VERSION = "linkToVersion";
 	private String defaultFeedType = DEFAULT_FEED_TYPE;
 	private boolean defaultIncludeMinorEdits = false;
+	private boolean defaultLinkToVersion = false;
 
 	/**
 	 * Sets the default feed type.
@@ -77,34 +80,50 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 * This value is used if no feed type is given in the request (parameter
 	 * 'feedType'). Default is rss_2.0.
 	 *
-	 * @param defaultFeedType The defaultFeedType to set.
+	 * @param defaultFeedType
+	 *            The defaultFeedType to set.
 	 */
 	public void setDefaultFeedType(String defaultFeedType) {
 		this.defaultFeedType = defaultFeedType;
 	}
 
 	/**
-	 * Sets wether minor edits are included in generated feed.
+	 * Sets whether minor edits are included in generated feed.
 	 *
 	 * This value can be overriden by the request parameter 'minorEdits'.
 	 * Default is false.
 	 *
-	 * @param includeMinorEdits <code>true</code> if minor edits shall be
-	 *  included in feed.
+	 * @param includeMinorEdits
+	 *            <code>true</code> if minor edits shall be included in feed.
 	 */
 	public void setDefaultIncludeMinorEdits(boolean includeMinorEdits) {
 		this.defaultIncludeMinorEdits = includeMinorEdits;
+	}
+
+	/**
+	 * Sets whether feed entry link should link to the changed or to the current
+	 * version of the changed entry.
+	 *
+	 * This value can be overriden by the request parameter 'linkToVersion'.
+	 * Default is false.
+	 *
+	 * @param linkToVersion
+	 *            <code>true</code> if link should point to edited version.
+	 */
+	public void setDefaultLinkToVersion(boolean linkToVersion) {
+		this.defaultLinkToVersion = linkToVersion;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
-	 *	  javax.servlet.http.HttpServletResponse)
+	 *      javax.servlet.http.HttpServletResponse)
 	 */
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		try {
-			String feedType = ServletRequestUtils.getStringParameter(request, "feedType", defaultFeedType);
+			String feedType = ServletRequestUtils.getStringParameter(request, FEED_TYPE, defaultFeedType);
 			logger.fine("Serving xml feed of type " + feedType);
 			SyndFeed feed = getFeed(request);
 			feed.setFeedType(feedType);
@@ -113,7 +132,8 @@ public class RecentChangesFeedServlet extends AbstractController {
 			output.output(feed, response.getWriter());
 		} catch (Exception e) {
 			logger.severe("Could not generate feed: " + e.getMessage(), e);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not generate feed: " + e.getMessage());
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Could not generate feed: "
+					+ e.getMessage());
 		}
 		return null;
 	}
@@ -132,50 +152,64 @@ public class RecentChangesFeedServlet extends AbstractController {
 		String feedURL = requestURL.substring(0, requestURL.length() - Utilities.getTopicFromURI(request).length());
 		feed.setLink(feedURL);
 		feed.setDescription("List of the last " + changes.size() + " changed wiki pages.");
-		boolean includeMinorEdits = ServletRequestUtils.getBooleanParameter(request, "minorEdits", defaultIncludeMinorEdits);
-		feed.setEntries(getFeedEntries(changes, includeMinorEdits, feedURL));
+		boolean includeMinorEdits = ServletRequestUtils.getBooleanParameter(request, MINOR_EDITS,
+				defaultIncludeMinorEdits);
+		boolean linkToVersion = ServletRequestUtils.getBooleanParameter(request, LINK_TO_VERSION, defaultLinkToVersion);
+		feed.setEntries(getFeedEntries(changes, includeMinorEdits, linkToVersion, feedURL));
 		return feed;
 	}
 
 	/**
 	 *
 	 */
-	private List getFeedEntries(Collection changes, boolean includeMinorEdits, String feedURL) {
+	private List getFeedEntries(Collection changes, boolean includeMinorEdits, boolean linkToVersion, String feedURL) {
 		List entries = new ArrayList();
-		SyndEntry entry;
-		SyndContent description;
 		for (Iterator iter = changes.iterator(); iter.hasNext();) {
 			RecentChange change = (RecentChange)iter.next();
 			if (includeMinorEdits || (!change.getMinor())) {
-				entry = new SyndEntryImpl();
-				entry.setTitle(change.getTopicName());
-				entry.setAuthor(change.getAuthorName());
-				entry.setPublishedDate(change.getEditDate());
-				description = new SyndContentImpl();
-				description.setType("text/plain");
-				StringBuffer descr = new StringBuffer();
-				if (StringUtils.hasText(change.getEditComment())) {
-					descr.append(change.getEditComment());
-				}
-				if (change.getDelete()) {
-					descr.append(" (deleted)");
-				} else {
-					entry.setLink(feedURL + Utilities.encodeForURL(change.getTopicName()));
-				}
-				if (change.getUndelete()) {
-					descr.append(" (undeleted)");
-				}
-				if (change.getMinor()) {
-					descr.append(" (minor)");
-				}
-				description.setValue(descr.toString());
-				entry.setDescription(description);
-				// URI is used as GUID in RSS 2.0 and should therefore contain the version id
-				entry.setUri(feedURL + Utilities.encodeForURL(change.getTopicName()) + "#" + change.getTopicVersionId());
-				entries.add(entry);
+				entries.add(getFeedEntry(change, linkToVersion, feedURL));
 			}
 		}
 		return entries;
+	}
+
+	/**
+	 *
+	 */
+	private SyndEntry getFeedEntry(RecentChange change, boolean linkToVersion, String feedURL) {
+		SyndContent description;
+		SyndEntry entry = new SyndEntryImpl();
+		entry.setTitle(change.getTopicName());
+		entry.setAuthor(change.getAuthorName());
+		entry.setPublishedDate(change.getEditDate());
+		description = new SyndContentImpl();
+		description.setType("text/plain");
+		StringBuffer descr = new StringBuffer();
+		if (StringUtils.hasText(change.getEditComment())) {
+			descr.append(change.getEditComment());
+		}
+		if (change.getDelete()) {
+			descr.append(" (deleted)");
+		} else {
+			if (linkToVersion) {
+				entry.setLink(feedURL + "Special:History?topicVersionId=" + change.getTopicVersionId() + "&topic="
+						+ Utilities.encodeForURL(change.getTopicName()));
+			} else {
+				entry.setLink(feedURL + Utilities.encodeForURL(change.getTopicName()));
+			}
+		}
+		if (change.getUndelete()) {
+			descr.append(" (undeleted)");
+		}
+		if (change.getMinor()) {
+			descr.append(" (minor)");
+		}
+		description.setValue(descr.toString());
+		entry.setDescription(description);
+		// URI is used as GUID in RSS 2.0 and should therefore contain the
+		// version id
+		entry.setUri(feedURL + Utilities.encodeForURL(change.getTopicName()) + "#" + change.getTopicVersionId());
+		return entry;
 	}
 
 	/**
