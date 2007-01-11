@@ -16,6 +16,8 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -205,8 +207,14 @@ public class RecentChangesFeedServlet extends AbstractController {
 			descr.append(" (deleted)");
 		} else {
 			if (linkToVersion) {
-				entry.setLink(feedURL + "Special:History?topicVersionId=" + change.getTopicVersionId() + "&topic="
-						+ Utilities.encodeForURL(change.getTopicName()));
+				try {
+				String url = feedURL + URLEncoder.encode("Special:History?topicVersionId=" + change.getTopicVersionId() + "&topic="
+						+ Utilities.encodeForURL(change.getTopicName()), "UTF-8");
+					entry.setLink(url);
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
 				entry.setLink(feedURL + Utilities.encodeForURL(change.getTopicName()));
 			}
