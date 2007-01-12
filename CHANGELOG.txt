@@ -6,11 +6,14 @@ New Features:
 
   * Simplify the process for creating a new Wiki "Special:" pages to hopefully
     make it easier for development of custom pages.
+  * RSS updates (swift).
   
 Bugfixes:
 
   * Logo image not appearing on sub-pages (such as "Topic/Sub-Topic").
   * Fix problem with images not being properly resized.
+  * Fix webAppRootKey error when multiple JAMWiki instances installed on the
+    same server (swift).
 
 Translation Updates:
 
