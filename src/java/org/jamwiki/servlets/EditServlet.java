@@ -240,6 +240,8 @@ public class EditServlet extends JAMWikiServlet {
 			contents = parserDocument.getContent();
 			sectionName = parserDocument.getSectionName();
 		}
+		String result = org.jamwiki.utils.SpamFilter.containsSpam(contents);
+		logger.info("RYAN: Spam: " + result);
 		if (contents == null) {
 			logger.warning("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
