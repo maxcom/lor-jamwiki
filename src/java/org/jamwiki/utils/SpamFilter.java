@@ -66,7 +66,7 @@ public class SpamFilter {
 				if (tokens.hasMoreTokens()) regex += "|";
 			}
 			spamRegexPattern = Pattern.compile(regex);
-			logger.info("RYAN: Spam text: " + regex);
+			logger.info("Loading spam filter regular expression:" + regex);
 		} catch (Exception e) {
 			logger.severe("Unable to initialize spam blacklist", e);
 			throw e;

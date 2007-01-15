@@ -106,6 +106,30 @@ public class EditServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private boolean handleSpam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName, String contents) throws Exception {
+		String result = org.jamwiki.utils.SpamFilter.containsSpam(contents);
+		if (!StringUtils.hasText(result)) {
+			return false;
+		}
+		String message = "SPAM found in topic " + topicName + " (";
+		WikiUser user = Utilities.currentUser(request);
+		if (user != null) {
+			message += user.getUsername() + " / ";
+		}
+		message += request.getRemoteAddr() + "): " + result;
+		logger.info(message);
+		next.addObject("spam", result);
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		next.addObject("contents", contents);
+		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
+		next.addObject("editSpam", "true");
+		pageInfo.setContentJsp(JSP_EDIT);
+		return true;
+	}
+
+	/**
+	 *
+	 */
 	private boolean isPreview(HttpServletRequest request) {
 		return StringUtils.hasText(request.getParameter("preview"));
 	}
@@ -240,8 +264,6 @@ public class EditServlet extends JAMWikiServlet {
 			contents = parserDocument.getContent();
 			sectionName = parserDocument.getSectionName();
 		}
-		String result = org.jamwiki.utils.SpamFilter.containsSpam(contents);
-		logger.info("RYAN: Spam: " + result);
 		if (contents == null) {
 			logger.warning("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
@@ -249,6 +271,9 @@ public class EditServlet extends JAMWikiServlet {
 		if (lastTopic != null && lastTopic.getTopicContent().equals(contents)) {
 			// topic hasn't changed. redirect to prevent user from refreshing and re-submitting
 			ServletUtil.redirect(next, virtualWiki, topic.getName());
+			return;
+		}
+		if (handleSpam(request, next, pageInfo, topicName, contents)) {
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
