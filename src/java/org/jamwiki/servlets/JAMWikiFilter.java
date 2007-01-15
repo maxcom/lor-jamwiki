@@ -67,6 +67,13 @@ public class JAMWikiFilter implements Filter {
 	/**
 	 *
 	 */
+	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
+		response.sendRedirect(url);
+	}
+
+	/**
+	 *
+	 */
 	private boolean redirectNeeded(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
 		if (!(servletRequest instanceof HttpServletRequest) || !(servletResponse instanceof HttpServletResponse)) {
 			return false;
@@ -74,12 +81,12 @@ public class JAMWikiFilter implements Filter {
 		try {
 			HttpServletRequest request = (HttpServletRequest)servletRequest;
 			HttpServletResponse response = (HttpServletResponse)servletResponse;
-			if (Utilities.isFirstUse() && !ServletUtil.isTopic(request, "Special:Setup") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
+			if (redirectSetup(request)) {
 				// redirect to setup page
 				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
 				redirect(request, response, url);
 				return true;
-			} else if (Utilities.isUpgrade() && !ServletUtil.isTopic(request, "Special:Upgrade") && !ServletUtil.isTopic(request, "Special:Login") && !request.getRequestURI().toLowerCase().endsWith(".css")) {
+			} else if (redirectUpgrade(request)) {
 				// redirect to upgrade page
 				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
 				redirect(request, response, url);
@@ -92,9 +99,25 @@ public class JAMWikiFilter implements Filter {
 	}
 
 	/**
-	 *
+	 * Determine whether or not to redirect to the setup page.
 	 */
-	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
-		response.sendRedirect(url);
+	private boolean redirectSetup(HttpServletRequest request) throws Exception {
+		if (!Utilities.isFirstUse()) return false;
+		if (request.getRequestURI().toLowerCase().endsWith(".css")) return false;
+		if (ServletUtil.isTopic(request, "Special:Setup")) return false;
+		if (ServletUtil.isTopic(request, "jsp/setup.jsp")) return false;
+		return true;
+	}
+
+	/**
+	 * Determine whether or not to redirect to the upgrade page.
+	 */
+	private boolean redirectUpgrade(HttpServletRequest request) throws Exception {
+		if (!Utilities.isUpgrade()) return false;
+		if (request.getRequestURI().toLowerCase().endsWith(".css")) return false;
+		if (ServletUtil.isTopic(request, "Special:Upgrade")) return false;
+		if (ServletUtil.isTopic(request, "Special:Login")) return false;
+		if (ServletUtil.isTopic(request, "jsp/upgrade.jsp")) return false;
+		return true;
 	}
 }

@@ -529,7 +529,7 @@ public class Utilities {
 		} else {
 			file = FileUtils.toFile(url);
 		}
-		if (file == null | !file.exists()) {
+		if (file == null || !file.exists()) {
 			throw new Exception("Found invalid class loader root " + file);
 		}
 		return file;

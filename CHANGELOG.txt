@@ -12,6 +12,7 @@ New Features:
   
 Bugfixes:
 
+  * Fix infinite redirect problem when installing with BEA WebLogic.
   * Logo image not appearing on sub-pages (such as "Topic/Sub-Topic").
   * Fix problem with images not being properly resized.
   * Fix webAppRootKey error when multiple JAMWiki instances installed on the
