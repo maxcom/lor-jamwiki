@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
+import org.jamwiki.Environment;
 
 /**
  * Provide the capability for filtering content based on a predefined list of
@@ -38,6 +39,7 @@ public class SpamFilter {
 	 *
 	 */
 	public static String containsSpam(String content) throws Exception {
+		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_SPAM_FILTER)) return null;
 		long start = System.currentTimeMillis();
 		if (spamRegexPattern == null) {
 			SpamFilter.initialize();

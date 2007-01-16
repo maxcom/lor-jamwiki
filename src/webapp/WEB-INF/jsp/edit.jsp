@@ -29,7 +29,7 @@
 <c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
 
 <c:if test="${!empty editSpam}">
-<blockquote><font color="red"><f:message key="edit.exception.spam"><f:param value="${spam}" /></f:message></font></blockquote>
+<p><font color="red"><f:message key="edit.exception.spam"><f:param value="${spam}" /></f:message></font></p>
 </c:if>
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${!empty editPreview}">

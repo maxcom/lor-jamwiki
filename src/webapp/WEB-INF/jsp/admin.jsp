@@ -121,6 +121,10 @@ function onRSS() {
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_RECENT_CHANGES_NUM %>" size="5" maxlength="4" value="<%= props.getProperty(Environment.PROP_RECENT_CHANGES_NUM) %>" id="<%= Environment.PROP_RECENT_CHANGES_NUM %>" /></td>
 </tr>
 <tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_SPAM_FILTER %>"><f:message key="admin.caption.usespamfilter" /></label></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_SPAM_FILTER %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_SPAM_FILTER).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_SPAM_FILTER %>" /></td>
+</tr>
+<tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>
 	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_USE_PREVIEW).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" /></td>
 </tr>

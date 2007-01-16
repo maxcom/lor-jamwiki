@@ -109,6 +109,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_WYSIWYG);
 			setProperty(props, request, Environment.PROP_IMAGE_RESIZE_INCREMENT);
 			setProperty(props, request, Environment.PROP_RECENT_CHANGES_NUM);
+			setBooleanProperty(props, request, Environment.PROP_TOPIC_SPAM_FILTER);
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
 			setBooleanProperty(props, request, Environment.PROP_PRINT_NEW_WINDOW);
 			setProperty(props, request, Environment.PROP_PARSER_CLASS);
