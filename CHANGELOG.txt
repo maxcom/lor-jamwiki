@@ -21,6 +21,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (ewen0930).
+  * Updated Danish translations (g9adm).
 
 0.5.0
 =====
