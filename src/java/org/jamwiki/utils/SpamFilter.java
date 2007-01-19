@@ -61,13 +61,13 @@ public class SpamFilter {
 		try {
 			File file = Utilities.getClassLoaderFile(SPAM_BLACKLIST_FILE);
 			String regexText = FileUtils.readFileToString(file, "UTF-8");
-			StringTokenizer tokens = new StringTokenizer(regexText);
+			StringTokenizer tokens = new StringTokenizer(regexText, "\n\r");
 			String regex = "";
 			while (tokens.hasMoreTokens()) {
 				regex += tokens.nextToken();
 				if (tokens.hasMoreTokens()) regex += "|";
 			}
-			spamRegexPattern = Pattern.compile(regex);
+			spamRegexPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			logger.info("Loading spam filter regular expression:" + regex);
 		} catch (Exception e) {
 			logger.severe("Unable to initialize spam blacklist", e);
