@@ -36,7 +36,18 @@ public class SpamFilter {
 	private static Pattern spamRegexPattern = null;
 
 	/**
+	 * Attempt to match the local spam blacklist patterns against a content
+	 * string.  If any matches are found this method returns the matched
+	 * text, otherwise <code>null</code> is returned.  Note that if the wiki
+	 * is not configured to use the spam filter then this method will always
+	 * return <code>null</code>.
 	 *
+	 * @param content The content that will be searched for values matching
+	 *  those found in the spam blacklist.
+	 * @return If any matches are found this method returns the matched text,
+	 *  otherwise <code>null</code> is returned.
+	 * @throw Exception Thrown if any error occurs while reading, compiling,
+	 *  or matching against the spam filter regular expressions.
 	 */
 	public static String containsSpam(String content) throws Exception {
 		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_SPAM_FILTER)) return null;
@@ -73,5 +84,16 @@ public class SpamFilter {
 			logger.severe("Unable to initialize spam blacklist", e);
 			throw e;
 		}
+	}
+
+	/**
+	 * Reload the spam-blacklist.txt file, updating the current spam regular
+	 * expression patterns.
+	 *
+	 * @throw Exception Thrown if any error occurs while reading or compiling
+	 *  the spam filter regular expressions.
+	 */
+	public static void reload() throws Exception {
+		SpamFilter.initialize();
 	}
 }

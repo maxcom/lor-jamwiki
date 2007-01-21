@@ -518,3 +518,23 @@ onLdap()
 </table>
 <input type="hidden" name="function" value="recentChanges" />
 </form>
+
+<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">
+
+<hr width="90%" />
+
+<!-- Spam Filter -->
+<form action="<jamwiki:link value="Special:Admin" />" method="post">
+<table border="0" class="contents">
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><h4><f:message key="admin.title.spamfilter" /></h4></td></tr>
+<tr>
+	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
+	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
+</tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+</table>
+<input type="hidden" name="function" value="spamFilter" />
+</form>
+
+</jamwiki:enabled>

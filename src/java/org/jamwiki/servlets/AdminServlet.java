@@ -30,6 +30,7 @@ import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
+import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -67,6 +68,8 @@ public class AdminServlet extends JAMWikiServlet {
 			addVirtualWiki(request, next, pageInfo);
 		} else if (function.equals("recentChanges")) {
 			recentChanges(request, next, pageInfo);
+		} else if (function.equals("spamFilter")) {
+			spamFilter(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -253,6 +256,20 @@ public class AdminServlet extends JAMWikiServlet {
 		String value = request.getParameter(parameter);
 		if (value == null) value = "";
 		props.setProperty(parameter, value);
+	}
+
+	/**
+	 *
+	 */
+	private void spamFilter(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			SpamFilter.reload();
+			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
+		} catch (Exception e) {
+			logger.severe("Failure while loading recent changes", e);
+			next.addObject("messageObject", new WikiMessage("admin.caption.spamfilterfail", e.getMessage()));
+		}
+		view(request, next, pageInfo, null);
 	}
 
 	/**
