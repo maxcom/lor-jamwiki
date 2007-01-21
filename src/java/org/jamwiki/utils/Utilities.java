@@ -62,7 +62,6 @@ import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.springframework.web.util.WebUtils;
 
 /**
  * This class provides a variety of utility methods.
@@ -975,21 +974,6 @@ public class Utilities {
 			}
 		}
 		return contents;
-	}
-
-	/**
-	 * Utility method used to retrieve the value of a specific cookie from the request.
-	 *
-	 * @param request The servlet request object.
-	 * @param cookieName The name of the cookie whose value is being retrieved from
-	 *  the request.
-	 * @return Returns the content of the cookie value, or <code>null</code> if the
-	 *  cookie cannot be found in the request.
-	 */
-	public static String retrieveCookieValue(HttpServletRequest request, String cookieName) {
-		Cookie cookie = WebUtils.getCookie(request, cookieName);
-		if (cookie == null) return null;
-		return cookie.getValue();
 	}
 
 	/**
