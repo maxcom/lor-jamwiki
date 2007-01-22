@@ -124,11 +124,10 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_USER_PATTERN);
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
-			int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
-			if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
+			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
+			if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("INTERNAL")) {
 				WikiDatabase.setupDefaultDatabase(props);
-			} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
-				props.setProperty(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
+			} else if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 				setProperty(props, request, Environment.PROP_DB_DRIVER);
 				setProperty(props, request, Environment.PROP_DB_TYPE);
 				setProperty(props, request, Environment.PROP_DB_URL);
@@ -147,10 +146,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_DBCP_REMOVE_ABANDONED);
 			setProperty(props, request, Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT);
 			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
-			props.setProperty(
-				Environment.PROP_FILE_MAX_FILE_SIZE,
-				Integer.toString(maxFileSizeInKB * 1000)
-			);
+			props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
 			/*

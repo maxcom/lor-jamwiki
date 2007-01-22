@@ -174,11 +174,10 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_BASE_FILE_DIR, request.getParameter(Environment.PROP_BASE_FILE_DIR));
 		Environment.setValue(Environment.PROP_FILE_DIR_FULL_PATH, request.getParameter(Environment.PROP_FILE_DIR_FULL_PATH));
 		Environment.setValue(Environment.PROP_FILE_DIR_RELATIVE_PATH, request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH));
-		int persistenceType = Integer.parseInt(request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
-		if (persistenceType == WikiBase.PERSISTENCE_INTERNAL_DB) {
+		Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
+		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("INTERNAL")) {
 			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
-		} else if (persistenceType == WikiBase.PERSISTENCE_EXTERNAL_DB) {
-			Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, "DATABASE");
+		} else if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));
 			Environment.setValue(Environment.PROP_DB_TYPE, request.getParameter(Environment.PROP_DB_TYPE));
 			Environment.setValue(Environment.PROP_DB_URL, request.getParameter(Environment.PROP_DB_URL));

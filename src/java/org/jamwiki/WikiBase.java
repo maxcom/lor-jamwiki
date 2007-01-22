@@ -47,10 +47,6 @@ public class WikiBase {
 
 	/** Cache name for the cache of parsed topic content. */
 	public static final String CACHE_PARSED_TOPIC_CONTENT = "org.jamwiki.WikiBase.CACHE_PARSED_TOPIC_CONTENT";
-	/** The topics are stored in a flat file */
-	public static final int PERSISTENCE_INTERNAL_DB = 0;
-	/** The topics are stored in a database */
-	public static final int PERSISTENCE_EXTERNAL_DB = 1;
 	/** Ansi data handler class */
 	public static final String DATA_HANDLER_ANSI = "org.jamwiki.db.AnsiDataHandler";
 	/** DB2 data handler class */
@@ -142,20 +138,6 @@ public class WikiBase {
 	 */
 	public static DataHandler getDataHandler() {
 		return WikiBase.dataHandler;
-	}
-
-	/**
-	 * Return an instance of the current persistency type, either internal
-	 * or external.
-	 *
-	 * @return The current persistency type.
-	 */
-	public static int getPersistenceType() {
-		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
-			return WikiBase.PERSISTENCE_EXTERNAL_DB;
-		} else {
-			return WikiBase.PERSISTENCE_INTERNAL_DB;
-		}
 	}
 
 	/**

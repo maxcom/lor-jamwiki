@@ -37,7 +37,7 @@ int maximumFileSize = (int)((float)(new Integer(props.getProperty(Environment.PR
 
 <script type="text/javascript">
 function onPersistenceType() {
-	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL_DB %>") {
+	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "INTERNAL") {
 		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true;
 		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true;
 		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true;
@@ -227,8 +227,9 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
-		<option value="<%=WikiBase.PERSISTENCE_INTERNAL_DB%>"<%= WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_INTERNAL_DB ? " selected" : "" %>><f:message key="admin.persistencetype.internal" /></option>
-		<option value="<%=WikiBase.PERSISTENCE_EXTERNAL_DB%>"<%= WikiBase.getPersistenceType() == WikiBase.PERSISTENCE_EXTERNAL_DB ? " selected" : "" %>><f:message key="admin.persistencetype.database" /></option>
+		<c:set var="persistenceType"><%= props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE) %></c:set>
+		<option value="INTERNAL"<c:if test="${persistenceType == 'INTERNAL'}"> selected</c:if>><f:message key="admin.persistencetype.internal" /></option>
+		<option value="DATABASE"<c:if test="${persistenceType == 'DATABASE'}"> selected</c:if>><f:message key="admin.persistencetype.database" /></option>
 		</select>
 	</td>
 </tr>
