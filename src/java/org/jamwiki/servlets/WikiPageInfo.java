@@ -209,6 +209,15 @@ public class WikiPageInfo {
 	}
 
 	/**
+	 * Return the base title used with RSS feeds.
+	 *
+	 * @return The base title used with RSS feeds.
+	 */
+	public String getRSSTitle() {
+		return Environment.getValue("rss-title");
+	}
+
+	/**
 	 * Return a flag indicating whether or not the current page is a "Special:"
 	 * page, as opposed to a standard topic.
 	 *
