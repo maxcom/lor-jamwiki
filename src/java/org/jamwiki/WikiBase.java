@@ -65,6 +65,10 @@ public class WikiBase {
 	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
 	/** Name of the default wiki */
 	public static final String DEFAULT_VWIKI = "en";
+	/** Data stored using an external database */
+	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
+	/** Data stored using an internal copy of the HSQL database */
+	public static final String PERSISTENCE_INTERNAL = "INTERNAL";
 	/** Root directory within the WAR distribution that contains the default topic pages. */
 	public static final String SPECIAL_PAGE_DIR = "pages";
 	/** Name of the default starting points topic. */

@@ -160,7 +160,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_INITIALIZED, "false");
 		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
-		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, "INTERNAL");
+		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
 		defaults.setProperty(PROP_BASE_USER_HANDLER, WikiBase.USER_HANDLER_DATABASE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "500");

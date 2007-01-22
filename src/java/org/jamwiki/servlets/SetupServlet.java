@@ -175,15 +175,15 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setValue(Environment.PROP_FILE_DIR_FULL_PATH, request.getParameter(Environment.PROP_FILE_DIR_FULL_PATH));
 		Environment.setValue(Environment.PROP_FILE_DIR_RELATIVE_PATH, request.getParameter(Environment.PROP_FILE_DIR_RELATIVE_PATH));
 		Environment.setValue(Environment.PROP_BASE_PERSISTENCE_TYPE, request.getParameter(Environment.PROP_BASE_PERSISTENCE_TYPE));
-		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("INTERNAL")) {
-			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
-		} else if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
+		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_EXTERNAL)) {
 			Environment.setValue(Environment.PROP_DB_DRIVER, request.getParameter(Environment.PROP_DB_DRIVER));
 			Environment.setValue(Environment.PROP_DB_TYPE, request.getParameter(Environment.PROP_DB_TYPE));
 			Environment.setValue(Environment.PROP_DB_URL, request.getParameter(Environment.PROP_DB_URL));
 			Environment.setValue(Environment.PROP_DB_USERNAME, request.getParameter(Environment.PROP_DB_USERNAME));
 			Encryption.setEncryptedProperty(Environment.PROP_DB_PASSWORD, request.getParameter(Environment.PROP_DB_PASSWORD), null);
 			next.addObject("dbPassword", request.getParameter(Environment.PROP_DB_PASSWORD));
+		} else {
+			WikiDatabase.setupDefaultDatabase(Environment.getInstance());
 		}
 	}
 

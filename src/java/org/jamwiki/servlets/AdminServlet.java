@@ -125,14 +125,14 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN);
 			setProperty(props, request, Environment.PROP_BASE_FILE_DIR);
 			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
-			if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("INTERNAL")) {
-				WikiDatabase.setupDefaultDatabase(props);
-			} else if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("DATABASE")) {
+			if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_EXTERNAL)) {
 				setProperty(props, request, Environment.PROP_DB_DRIVER);
 				setProperty(props, request, Environment.PROP_DB_TYPE);
 				setProperty(props, request, Environment.PROP_DB_URL);
 				setProperty(props, request, Environment.PROP_DB_USERNAME);
 				setPassword(props, request, next, Environment.PROP_DB_PASSWORD, "dbPassword");
+			} else {
+				WikiDatabase.setupDefaultDatabase(props);
 			}
 			setProperty(props, request, Environment.PROP_DBCP_MAX_ACTIVE);
 			setProperty(props, request, Environment.PROP_DBCP_MAX_IDLE);
