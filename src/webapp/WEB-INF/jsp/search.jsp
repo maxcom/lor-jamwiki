@@ -32,4 +32,4 @@
 
 <p><font size="-1"><i><f:message key="search.poweredby" /></i></font> <a href="http://lucene.apache.org/java/"><img src="../images/lucene_green_100.gif" alt="Lucene" border="0" /></a></p>
 
-<script language="JavaScript">document.searchForm.text.focus();</script>
+<script type="text/javascript">document.searchForm.text.focus();</script>

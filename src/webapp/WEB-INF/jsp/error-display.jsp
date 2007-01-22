@@ -27,7 +27,7 @@ Note: This page is not a JSP error page, it merely displays errors that were
 caught by a servlet.
 --%>
 
-<script language="JavaScript">
+<script type="text/javascript">
 function cancel() {
 	history.go(-1);
 }

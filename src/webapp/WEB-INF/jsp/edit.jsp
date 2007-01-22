@@ -53,9 +53,9 @@
 <input type="hidden" name="topicVersionId" value="<c:out value="${topicVersionId}"/>" />
 
 <jamwiki:enabled property="PROP_TOPIC_WYSIWYG">
-<script type="text/javascript" src="../js/edit.js" language="JavaScript1.3"></script>
+<script type="text/javascript" src="../js/edit.js"></script>
 
-<script type='text/javascript'>
+<script type="text/javascript">
 /*<![CDATA[*/
 document.writeln("<div id='toolbar'>");
 addButton('../images/button_bold.png','<f:message key="edit.button.bold"/>','\'\'\'','\'\'\'','<f:message key="edit.button.bold.text"/>');

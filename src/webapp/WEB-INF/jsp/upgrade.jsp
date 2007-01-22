@@ -50,7 +50,7 @@ body, input, select {
 </head>
 <body>
 
-<script type="text/javascript" language="JavaScript">
+<script type="text/javascript">
 <!--
 function confirmSubmit() {
 	return confirm("<f:message key="common.confirm" />");
