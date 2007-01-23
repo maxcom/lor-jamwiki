@@ -228,8 +228,10 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
 		<c:set var="persistenceType"><%= props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE) %></c:set>
-		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == '<%= WikiBase.PERSISTENCE_INTERNAL %>'}"> selected</c:if>><f:message key="admin.persistencetype.internal" /></option>
-		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == '<%= WikiBase.PERSISTENCE_EXTERNAL %>'}"> selected</c:if>><f:message key="admin.persistencetype.database" /></option>
+		<c:set var="persistenceTypeInternal"><%= WikiBase.PERSISTENCE_INTERNAL %></c:set>
+		<c:set var="persistenceTypeExternal"><%= WikiBase.PERSISTENCE_EXTERNAL %></c:set>
+		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == persistenceTypeInternal}"> selected</c:if>><f:message key="admin.persistencetype.internal" /></option>
+		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == persistenceTypeExternal}"> selected</c:if>><f:message key="admin.persistencetype.database" /></option>
 		</select>
 	</td>
 </tr>
