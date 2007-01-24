@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -59,6 +58,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.beans.propertyeditors.LocaleEditor;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -262,7 +262,7 @@ public class Utilities {
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		logger.fine("Using data handler: " + dataHandlerClass);
-		Class clazz = Class.forName(dataHandlerClass, true, Thread.currentThread().getContextClassLoader());
+		Class clazz = ClassUtils.forName(dataHandlerClass);
 		Class[] parameterTypes = new Class[0];
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];
@@ -500,25 +500,9 @@ public class Utilities {
 	public static File getClassLoaderFile(String filename) throws Exception {
 		// note that this method is used when initializing logging, so it must
 		// not attempt to log anything.
-		Method method = null;
-		ClassLoader loader = null;
-		URL url = null;
 		File file = null;
-		try {
-			// first try to use the standard class loader path
-			method = Thread.class.getMethod("getContextClassLoader", null);
-			loader = (ClassLoader)method.invoke(Thread.currentThread(), null);
-		} catch (Exception e) {
-			// that didn't work... try something else
-		}
-		if (loader == null) {
-			// attempt the the class loader that loaded this class
-			loader = Utilities.class.getClassLoader();
-		}
-		if (loader == null) {
-			throw new Exception("Unable to find class loader");
-		}
-		url = loader.getResource(filename);
+		ClassLoader loader = ClassUtils.getDefaultClassLoader();
+		URL url = loader.getResource(filename);
 		if (url == null) {
 			url = ClassLoader.getSystemResource(filename);
 			if (url == null) {
@@ -806,9 +790,9 @@ public class Utilities {
 	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
-		Class clazz = Class.forName(parserClass, true, Thread.currentThread().getContextClassLoader());
+		Class clazz = ClassUtils.forName(parserClass);
 		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = Class.forName("org.jamwiki.parser.ParserInput", true, Thread.currentThread().getContextClassLoader());
+		parameterTypes[0] = ClassUtils.forName("org.jamwiki.parser.ParserInput");
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInput;
@@ -916,10 +900,7 @@ public class Utilities {
 			return FileUtils.readFileToString(file, "UTF-8");
 		}
 		// look for file in resource directories
-		Class[] parameterTypes = null;
-		Method method = Thread.class.getMethod("getContextClassLoader", parameterTypes);
-		Object[] args = null;
-		ClassLoader loader = (ClassLoader)method.invoke(Thread.currentThread(), args);
+		ClassLoader loader = ClassUtils.getDefaultClassLoader();
 		URL url = loader.getResource(filename);
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
@@ -1020,7 +1001,7 @@ public class Utilities {
 	public static UserHandler userHandlerInstance() throws Exception {
 		String userHandlerClass = Environment.getValue(Environment.PROP_BASE_USER_HANDLER);
 		logger.fine("Using user handler: " + userHandlerClass);
-		Class clazz = Class.forName(userHandlerClass, true, Thread.currentThread().getContextClassLoader());
+		Class clazz = ClassUtils.forName(userHandlerClass);
 		Class[] parameterTypes = new Class[0];
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];
@@ -1111,8 +1092,8 @@ public class Utilities {
 		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
 		if (parserClass == null || parserClass.equals(abstractParserClass)) validParser = false;
 		try {
-			Class parent = Class.forName(parserClass, true, Thread.currentThread().getContextClassLoader());
-			Class child = Class.forName(abstractParserClass, true, Thread.currentThread().getContextClassLoader());
+			Class parent = ClassUtils.forName(parserClass);
+			Class child = ClassUtils.forName(abstractParserClass);
 			if (!child.isAssignableFrom(parent)) validParser = false;
 		} catch (Exception e) {
 			validParser = false;

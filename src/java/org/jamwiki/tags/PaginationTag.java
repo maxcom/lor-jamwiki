@@ -19,12 +19,12 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to generate a pagination object.
@@ -43,8 +43,8 @@ public class PaginationTag extends BodyTagSupport {
 		String baseUrl = null;
 		int count = 0;
 		try {
-			baseUrl = ExpressionUtil.evalNotNull("pagination", "rootUrl", this.rootUrl, Object.class, this, pageContext).toString();
-			count = new Integer(ExpressionUtil.evalNotNull("pagination", "total", this.total, Object.class, this, pageContext).toString()).intValue();
+			baseUrl = ExpressionEvaluationUtils.evaluateString("rootUrl", this.rootUrl, pageContext);
+			count = ExpressionEvaluationUtils.evaluateInteger("total", this.total, pageContext);
 			this.pageContext.getOut().print(pagination(baseUrl, count));
 		} catch (Exception e) {
 			logger.severe("Failure while building pagination object", e);

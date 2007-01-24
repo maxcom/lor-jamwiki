@@ -19,10 +19,10 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.LinkUtil;
+import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to build an HTML image link for a specified topic that
@@ -41,7 +41,7 @@ public class ImageLinkTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		String linkValue = null;
 		try {
-			linkValue = ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext).toString();
+			linkValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
 		} catch (JspException e) {
 			logger.severe("Image link tag evaluated empty for value " + this.value, e);
 			throw e;
@@ -49,7 +49,7 @@ public class ImageLinkTag extends TagSupport {
 		int linkDimension = -1;
 		if (this.maxDimension != null) {
 			try {
-				linkDimension = new Integer(ExpressionUtil.evalNotNull("link", "maxDimension", this.maxDimension, Object.class, this, pageContext).toString()).intValue();
+				linkDimension = ExpressionEvaluationUtils.evaluateInteger("maxDimension", this.maxDimension, pageContext);
 			} catch (JspException e) {
 				logger.severe("Image link tag evaluated empty for maxDimension " + this.maxDimension, e);
 				throw e;

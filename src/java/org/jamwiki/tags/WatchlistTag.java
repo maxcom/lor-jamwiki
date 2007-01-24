@@ -19,10 +19,10 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.utils.Utilities;
+import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used to highlight the tag content if the specified topic is in the
@@ -77,7 +77,7 @@ public class WatchlistTag extends BodyTagSupport {
 	private String evaluateTag() throws JspException {
 		String tagValue = null;
 		try {
-			tagValue = ExpressionUtil.evalNotNull("watchlist", "topic", this.topic, Object.class, this, pageContext).toString();
+			tagValue = ExpressionEvaluationUtils.evaluateString("topic", this.topic, pageContext);
 		} catch (JspException e) {
 			logger.severe("Failure in watchlist tag for " + this.topic, e);
 			throw e;

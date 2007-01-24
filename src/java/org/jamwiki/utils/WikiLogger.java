@@ -24,6 +24,7 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.util.ClassUtils;
 
 /**
  * This class provides a wrapper around the {@link java.util.logging.Logger}
@@ -110,7 +111,8 @@ public class WikiLogger {
 	 *
 	 */
 	private static File loadProperties() throws Exception {
-		URL url = WikiLogger.getClassLoader().getResource(LOG_PROPERTIES_FILENAME);
+		ClassLoader loader = ClassUtils.getDefaultClassLoader();
+		URL url = loader.getResource(LOG_PROPERTIES_FILENAME);
 		if (url == null) {
 			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
 		}
@@ -119,18 +121,6 @@ public class WikiLogger {
 			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
 		}
 		return propertyFile;
-	}
-
-	/**
-	 *
-	 */
-	private static ClassLoader getClassLoader() {
-		try {
-			return Thread.currentThread().getContextClassLoader();
-		} catch (Throwable ex) {
-			// ignore
-		}
-		return WikiLogger.class.getClassLoader();
 	}
 
 	/**

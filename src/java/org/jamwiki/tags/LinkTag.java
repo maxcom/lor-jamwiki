@@ -19,13 +19,12 @@ package org.jamwiki.tags;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.apache.taglibs.standard.lang.support.ExpressionEvaluatorManager;
-import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag that creates an HTML link to a Wiki topic, generating the servlet
@@ -48,9 +47,9 @@ public class LinkTag extends BodyTagSupport {
 		String tagValue = null;
 		String tagTarget = null;
 		try {
-			tagValue = ExpressionUtil.evalNotNull("link", "value", this.value, Object.class, this, pageContext).toString();
+			tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
 			if (StringUtils.hasText(this.target)) {
-				tagTarget = ExpressionEvaluatorManager.evaluate("target", this.target, Object.class, this, pageContext).toString();
+				tagTarget = ExpressionEvaluationUtils.evaluateString("target", this.target, pageContext);
 			}
 		} catch (JspException e) {
 			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
@@ -105,7 +104,7 @@ public class LinkTag extends BodyTagSupport {
 			throw new JspException("Attribute 'text' and body content may not both be specified for link tag");
 		}
 		if (StringUtils.hasText(this.text)) {
-			tagText = ExpressionUtil.evalNotNull("link", "text", this.text, Object.class, this, pageContext).toString();
+			tagText = ExpressionEvaluationUtils.evaluateString("text", this.text, pageContext);
 		} else if (StringUtils.hasText(body)) {
 			tagText = body;
 		}

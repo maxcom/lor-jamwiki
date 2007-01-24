@@ -18,9 +18,9 @@ package org.jamwiki.tags;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.apache.taglibs.standard.tag.el.core.ExpressionUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
  * JSP tag used within {@link org.jamwiki.tags.LinkTag} tags to add query
@@ -44,7 +44,7 @@ public class LinkParamTag extends BodyTagSupport {
 		}
 		try {
 			if (StringUtils.hasText(this.value)) {
-				tagValue = ExpressionUtil.evalNotNull("linkParam", "value", this.value, Object.class, this, pageContext).toString();
+				tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
 			} else {
 				tagValue = this.getBodyContent().getString();
 			}
