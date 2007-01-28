@@ -27,7 +27,7 @@ import org.jamwiki.WikiMessage;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to display a summary of edits made, ordered chronologically.
  */
 public class RecentChangesServlet extends JAMWikiServlet {
 

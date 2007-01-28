@@ -27,7 +27,7 @@ import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to generate an index of all Special: pages on the wiki.
  */
 public class SpecialPagesServlet extends JAMWikiServlet {
 

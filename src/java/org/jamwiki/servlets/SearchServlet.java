@@ -27,7 +27,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
+ * Used to display search results.
  *
+ * @see org.jamwiki.search.SearchEngine
  */
 public class SearchServlet extends JAMWikiServlet {
 

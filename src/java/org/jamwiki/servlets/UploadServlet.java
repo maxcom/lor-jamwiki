@@ -41,7 +41,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to handle file uploads.
  */
 public class UploadServlet extends JAMWikiServlet {
 

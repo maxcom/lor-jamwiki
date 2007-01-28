@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to display a JAMWiki topic.
  */
 public class TopicServlet extends JAMWikiServlet {
 

@@ -37,8 +37,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * The <code>AdminServlet</code> servlet is the servlet which allows the administrator
- * to perform administrative actions on the wiki.
+ * Used to provide administrative functions including changing Wiki
+ * configuration settings and refreshing internal Wiki objects.
  */
 public class AdminServlet extends JAMWikiServlet {
 

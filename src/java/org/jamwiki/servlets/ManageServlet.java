@@ -29,7 +29,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to provide capability for deleting, undeleting, and protecting topics.
  */
 public class ManageServlet extends JAMWikiServlet {
 

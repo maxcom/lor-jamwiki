@@ -40,7 +40,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
+ * Used to automatically handle JAMWiki upgrades, including configuration and
+ * data modifications.
  *
+ * @see org.jamwiki.servlets.SetupServlet
  */
 public class UpgradeServlet extends JAMWikiServlet {
 

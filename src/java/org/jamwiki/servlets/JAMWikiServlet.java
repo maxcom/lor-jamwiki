@@ -23,7 +23,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * JAMWikiServlet is the base servlet which all other JAMWiki servlets extend.
+ * Provides the infrastructure that is common to all JAMWiki servlets.  Unless
+ * special handling is required all JAMWiki servlets should extend this
+ * servlet.
  */
 public abstract class JAMWikiServlet extends AbstractController {
 

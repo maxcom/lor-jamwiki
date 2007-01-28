@@ -27,7 +27,7 @@ import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to generate a list of all edits made by a user.
  */
 public class ContributionsServlet extends JAMWikiServlet {
 

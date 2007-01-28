@@ -39,7 +39,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to process topic edits including saving an edit, preview, resolving
+ * conflicts and dealing with spam.
  */
 public class EditServlet extends JAMWikiServlet {
 

@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to generate the jamwiki.css stylesheet.
  */
 public class StylesheetServlet extends JAMWikiServlet {
 

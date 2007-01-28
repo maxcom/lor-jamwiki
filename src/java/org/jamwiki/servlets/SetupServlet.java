@@ -37,7 +37,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
+ * Used to handle JAMWiki setup, including setting and validating JAMWiki
+ * configuration values.
  *
+ * @see org.jamwiki.servlets.UpgradeServlet
  */
 public class SetupServlet extends JAMWikiServlet {
 

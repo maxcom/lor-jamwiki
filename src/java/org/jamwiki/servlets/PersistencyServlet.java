@@ -28,7 +28,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
+ * Used to allow site administrators to convert from one persistency type to
+ * another, such as when changing databases.
  *
+ * @deprecated Changing persistency types is not well supported and this class
+ *  will likely be removed in a future release.
  */
 public class PersistencyServlet extends JAMWikiServlet {
 

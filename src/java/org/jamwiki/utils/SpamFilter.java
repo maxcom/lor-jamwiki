@@ -46,7 +46,7 @@ public class SpamFilter {
 	 *  those found in the spam blacklist.
 	 * @return If any matches are found this method returns the matched text,
 	 *  otherwise <code>null</code> is returned.
-	 * @throw Exception Thrown if any error occurs while reading, compiling,
+	 * @throws Exception Thrown if any error occurs while reading, compiling,
 	 *  or matching against the spam filter regular expressions.
 	 */
 	public static String containsSpam(String content) throws Exception {
@@ -90,7 +90,7 @@ public class SpamFilter {
 	 * Reload the spam-blacklist.txt file, updating the current spam regular
 	 * expression patterns.
 	 *
-	 * @throw Exception Thrown if any error occurs while reading or compiling
+	 * @throws Exception Thrown if any error occurs while reading or compiling
 	 *  the spam filter regular expressions.
 	 */
 	public static void reload() throws Exception {

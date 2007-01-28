@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to handle updating and viewing a user's watchlist.
  */
 public class WatchlistServlet extends JAMWikiServlet {
 

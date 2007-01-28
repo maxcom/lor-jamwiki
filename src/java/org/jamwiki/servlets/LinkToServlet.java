@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to display all topics that contain links to the current topic.
  */
 public class LinkToServlet extends JAMWikiServlet {
 

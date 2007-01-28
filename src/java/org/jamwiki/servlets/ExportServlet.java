@@ -24,7 +24,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * This servlet is not currently functional, but is meant to provide
+ * capability for exporting topic information in XML format.
  */
 public class ExportServlet extends JAMWikiServlet {
 

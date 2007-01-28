@@ -27,8 +27,9 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * This servlet provides the ability to generate a list of admin-only topics
- * for display.
+ * Used to generate a list of admin-only topics for display.
+ *
+ * @deprecated This functionality should be handled by ItemsServlet.
  */
 public class TopicsAdminServlet extends JAMWikiServlet {
 

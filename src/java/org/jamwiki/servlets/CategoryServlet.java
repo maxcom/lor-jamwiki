@@ -31,7 +31,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used for display a list of all categories that are currently in use for a
+ * virtual wiki.
  */
 public class CategoryServlet extends JAMWikiServlet {
 

@@ -28,7 +28,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to build Special: pages that display lists of topics on the Wiki, such
+ * as when displaying lists of all existing images or topics.
  */
 public class ItemsServlet extends JAMWikiServlet {
 

@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to display the edit history information for a topic.
  */
 public class HistoryServlet extends JAMWikiServlet {
 

@@ -35,7 +35,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to provide admins with the ability to create and edit JAMWiki message
+ * keys.  Note that the application server must be restarted for any
+ * translation changes to be visible on the site.
  */
 public class TranslationServlet extends JAMWikiServlet {
 

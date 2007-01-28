@@ -6,7 +6,7 @@ New Features:
 
   * Initial spam filter support.
   * Upgrade to Spring 2.0.2.
-  * Simplify the process for creating a new Wiki "Special:" pages to hopefully
+  * Simplify the process for creating new Wiki "Special:" pages to hopefully
     make it easier for development of custom pages.
   * RSS updates (swift).
   

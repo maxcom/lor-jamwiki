@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to display a diff between two versions of a topic.
  */
 public class DiffServlet extends JAMWikiServlet {
 

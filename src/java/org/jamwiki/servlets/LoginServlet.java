@@ -22,7 +22,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to handle requests or redirects to the login page.
  */
 public class LoginServlet extends JAMWikiServlet {
 

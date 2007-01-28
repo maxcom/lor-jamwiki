@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to handle moving a topic to a new name.
  */
 public class MoveServlet extends JAMWikiServlet {
 

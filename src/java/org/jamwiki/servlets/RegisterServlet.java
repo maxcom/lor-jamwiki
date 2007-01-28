@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * Used to process new user account setup.
  */
 public class RegisterServlet extends JAMWikiServlet {
 

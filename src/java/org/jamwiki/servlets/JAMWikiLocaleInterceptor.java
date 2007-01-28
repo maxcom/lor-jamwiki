@@ -29,7 +29,9 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
- *
+ * This method extends the Spring <code>LocaleChangeInterceptor</code> to
+ * search for and use a locale key in either the session or the request if one
+ * can be found.
  */
 public class JAMWikiLocaleInterceptor extends LocaleChangeInterceptor {
 
