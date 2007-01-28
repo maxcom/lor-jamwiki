@@ -118,7 +118,8 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		message += request.getRemoteAddr() + "): " + result;
 		logger.info(message);
-		next.addObject("spam", result);
+		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
+		next.addObject("spam", spam);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		next.addObject("contents", contents);
 		loadEdit(request, next, pageInfo, virtualWiki, topicName, false);
