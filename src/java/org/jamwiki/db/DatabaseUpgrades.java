@@ -38,33 +38,38 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
-	public static WikiUser login(String username, String password, boolean encrypted) throws Exception {
+	public static WikiUser getWikiUser(String username) throws Exception {
 		// prior to JAMWiki 0.5.0 the remember_key column did not exist.  once
 		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
 		// replaced with the method (below) that has been commented out
-		String encryptedPassword = password;
-		if (!encrypted) {
-			encryptedPassword = Encryption.encrypt(password);
-		}
-		AnsiQueryHandler queryHandler = new AnsiQueryHandler();
-		WikiResultSet rs = queryHandler.lookupWikiUser(username, encryptedPassword);
-		if (rs.size() == 0) return null;
-		int userId = rs.getInt("wiki_user_id");
-		String sql = "select * from jam_wiki_user where wiki_user_id = ? ";
-		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
-		stmt.setInt(1, userId);
-		rs = stmt.executeQuery();
-		WikiUser user = new WikiUser();
-		user.setUserId(rs.getInt("wiki_user_id"));
-		user.setUsername(rs.getString("login"));
-		user.setDisplayName(rs.getString("display_name"));
-		user.setCreateDate(rs.getTimestamp("create_date"));
-		user.setLastLoginDate(rs.getTimestamp("last_login_date"));
-		user.setCreateIpAddress(rs.getString("create_ip_address"));
-		user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-		user.setAdmin(rs.getInt("is_admin") != 0);
 //		user = WikiBase.getDataHandler().lookupWikiUser(username, password, false);
-		return user;
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			AnsiQueryHandler queryHandler = new AnsiQueryHandler();
+			WikiResultSet rs = queryHandler.lookupWikiUser(username, conn);
+			if (rs.size() == 0) return null;
+			int userId = rs.getInt("wiki_user_id");
+			String sql = "select * from jam_wiki_user where wiki_user_id = ? ";
+			WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+			stmt.setInt(1, userId);
+			rs = stmt.executeQuery();
+			WikiUser user = new WikiUser();
+			user.setUserId(rs.getInt("wiki_user_id"));
+			user.setUsername(rs.getString("login"));
+			user.setDisplayName(rs.getString("display_name"));
+			user.setCreateDate(rs.getTimestamp("create_date"));
+			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
+			user.setCreateIpAddress(rs.getString("create_ip_address"));
+			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
+			user.setAdmin(rs.getInt("is_admin") != 0);
+			return user;
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
 	}
 
 	/**

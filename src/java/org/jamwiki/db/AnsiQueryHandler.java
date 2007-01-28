@@ -736,11 +736,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUser(String username, String encryptedPassword) throws Exception {
+	public WikiResultSet lookupWikiUser(String username, String encryptedPassword, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
 		stmt.setString(1, username);
 		stmt.setString(2, encryptedPassword);
-		return stmt.executeQuery();
+		return stmt.executeQuery(conn);
 	}
 
 	/**

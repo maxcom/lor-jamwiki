@@ -50,10 +50,19 @@ public class DatabaseUserHandler implements UserHandler {
 	 *
 	 */
 	public boolean authenticate(String username, String password) throws Exception {
-		// password is stored encrypted, so encrypt password
-		String encryptedPassword = Encryption.encrypt(password);
-		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword);
-		return (rs.size() == 0) ? false : true;
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			// password is stored encrypted, so encrypt password
+			String encryptedPassword = Encryption.encrypt(password);
+			WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
+			return (rs.size() == 0) ? false : true;
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
 	}
 
 	/**

@@ -87,8 +87,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 			FileHandler handler = new FileHandler();
 			user = handler.lookupWikiUser(username, password, false);
 		} else {
-			// FIXME - handle LDAP
-			user = DatabaseUpgrades.login(username, password, false);
+			if (!WikiBase.getUserHandler().authenticate(username, password)) {
+				return false;
+			}
+			user = DatabaseUpgrades.getWikiUser(username);
 		}
 		if (user != null) {
 			//FIXME - login via Acegi Security
