@@ -57,6 +57,13 @@ otherwise noted.  For example, if upgrading from version 0.3.0 to version
 followed by 0.3.3.
 
 
+  JAMWiki 0.5.2
+  =============
+
+  1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
+     "wiki-version" property to "0.5.2".
+
+
   JAMWiki 0.5.1
   =============
 
