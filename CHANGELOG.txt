@@ -2,6 +2,9 @@
 0.5.2
 =====
 
+New Features:
+
+  * Upgrade to commons-io-1.3.jar.
 
 0.5.1
 =====
