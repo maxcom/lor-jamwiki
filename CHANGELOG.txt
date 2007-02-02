@@ -6,6 +6,10 @@ New Features:
 
   * Upgrade to commons-io-1.3.jar.
 
+Translation Updates:
+
+  * Updated Chinese translations (hfl).
+
 0.5.1
 =====
 
