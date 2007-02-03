@@ -9,6 +9,7 @@ New Features:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Updated Polish translations (dlpa).
 
 0.5.1
 =====
