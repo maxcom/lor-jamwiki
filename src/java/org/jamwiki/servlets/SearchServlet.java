@@ -58,6 +58,7 @@ public class SearchServlet extends JAMWikiServlet {
 		if (WikiBase.exists(virtualWiki, topic)) {
 			ServletUtil.redirect(next, virtualWiki, topic);
 		} else {
+			next.addObject("notopic", new WikiMessage("topic.notcreated", topic));
 			this.search(request, next, pageInfo);
 		}
 	}

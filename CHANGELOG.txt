@@ -5,6 +5,8 @@
 New Features:
 
   * Upgrade to commons-io-1.3.jar.
+  * When displaying a "topic does not exist" message, also include a link to
+    create the topic.
 
 Translation Updates:
 

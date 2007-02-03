@@ -22,6 +22,9 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${!empty notopic}">
+<p><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /><f:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></f:param></f:message></p>
+</c:if>
 <br />
 <c:forEach items="${results}" var="result">
 <div class="searchresult"><jamwiki:link value="${result.topic}" text="${result.topic}" /></div>
