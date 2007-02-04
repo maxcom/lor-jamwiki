@@ -49,11 +49,11 @@
 	<td class="menu-tab-nonselected"><jamwiki:link value="${pageInfo.topicName}"><f:message key="menu.special" /></jamwiki:link></td>
 </c:if>
 <c:if test="${pageInfo.admin}">
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Admin">Special:Admin</jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Admin"><f:message key="menu.adminconfiguration" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:System">Special:System</jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:System"><f:message key="menu.adminmaintenance" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Translation">Special:Translation</jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Translation"><f:message key="menu.admintranslations" /></jamwiki:link></td>
 </c:if>
 	<td class="menu-tab-close">&#160;</td>
 </tr>
