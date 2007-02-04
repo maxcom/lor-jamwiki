@@ -7,6 +7,9 @@ New Features:
   * Upgrade to commons-io-1.3.jar.
   * When displaying a "topic does not exist" message, also include a link to
     create the topic.
+  * Update look & feel.
+  * Split the main admin page into Special:Admin and Special:System.
+  * Hide the Special:Convert admin page.
 
 Translation Updates:
 

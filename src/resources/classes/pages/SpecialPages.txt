@@ -16,6 +16,7 @@
 ===Administrative Pages===
 
 * [[Special:Admin|Admin]]
+* [[Special:System|System Options]]
 * [[Special:Translation|Translations]]
 * [[Special:Setup|Wiki setup]]
 * [[Special:Upgrade|Wiki upgrade]]

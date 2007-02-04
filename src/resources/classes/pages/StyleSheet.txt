@@ -158,6 +158,17 @@ textarea {
 	padding: .1em;
 }
 
+fieldset {
+	margin: 1em 0 1em 0;
+	padding: 0 1em 1em;
+	border: 1px solid #D8D8E7;
+}
+
+legend {
+	padding: .5em;
+	font-weight: bold;
+}
+
 div.clear {
 	clear: both;
 }

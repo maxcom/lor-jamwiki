@@ -16,6 +16,7 @@
 ===Adminisztratív lapok===
 
 * [[Special:Admin|Adminisztráció]]
+* [[Special:System|System Options]]
 * [[Special:Translation|Fordítás]]
 * [[Special:Setup|Wiki telepítése]]
 * [[Special:Upgrade|Wiki frissítése]]

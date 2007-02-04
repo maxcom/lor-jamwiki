@@ -87,17 +87,24 @@ function onRSS() {
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Admin" />">
 
-<table border="0" class="contents">
 <c:if test="${!empty message}">
+<table border="0" class="contents">
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr><td class="red" colspan="2" align="center"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></td></tr></c:if>
-<c:if test="${!empty errors}">
-<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
+<tr><td class="red" colspan="2" align="center"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></td></tr>
+</table>
 </c:if>
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.general" /></h4></td></tr>
+<c:if test="${!empty errors}">
+<table border="0" class="contents">
+<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></td></tr>
+</table>
+</c:if>
+
+<!-- BEGIN GENERAL SETTINGS -->
+<fieldset>
+<legend><f:message key="admin.header.general" /></legend>
+<table border="0" class="contents">
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><f:message key="admin.caption.defaulttopic" /></labe></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>"><f:message key="admin.caption.defaulttopic" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" value="<%= props.getProperty(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" id="<%= Environment.PROP_BASE_DEFAULT_TOPIC %>" /></td>
 </tr>
 <tr>
@@ -106,11 +113,11 @@ function onRSS() {
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>"><f:message key="admin.caption.nonadminmove" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>"><f:message key="admin.caption.forceusername" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_FORCE_USERNAME).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_FORCE_USERNAME).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
@@ -122,43 +129,47 @@ function onRSS() {
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_SPAM_FILTER %>"><f:message key="admin.caption.usespamfilter" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_SPAM_FILTER %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_SPAM_FILTER).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_SPAM_FILTER %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_SPAM_FILTER %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_SPAM_FILTER).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_TOPIC_SPAM_FILTER %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_USE_PREVIEW).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_USE_PREVIEW).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_TOPIC_USE_PREVIEW %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_WYSIWYG %>"><f:message key="admin.caption.wysiwyg" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_WYSIWYG %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_WYSIWYG).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_TOPIC_WYSIWYG %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_TOPIC_WYSIWYG %>" value="true"<%= props.getProperty(Environment.PROP_TOPIC_WYSIWYG).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_TOPIC_WYSIWYG %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><f:message key="admin.caption.printnewwindow" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PRINT_NEW_WINDOW %>" value="true"<%= props.getProperty(Environment.PROP_PRINT_NEW_WINDOW).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PRINT_NEW_WINDOW %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PRINT_NEW_WINDOW %>" value="true"<%= props.getProperty(Environment.PROP_PRINT_NEW_WINDOW).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_PRINT_NEW_WINDOW %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption" valign="top"><label for="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><f:message key="admin.caption.metadescription" /></label></td>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><%= props.getProperty(Environment.PROP_BASE_META_DESCRIPTION) %></textarea></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.metadescriptionhelp" /></td></tr>
+</table>
+</fieldset>
+<!-- END GENERAL SETTINGS -->
 
 <!-- BEGIN PARSER -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.parser" /></h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.header.parser" /></legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_CLASS %>"><f:message key="admin.caption.parser" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_PARSER_CLASS %>" id="<%= Environment.PROP_PARSER_CLASS %>">
 		<c:set var="selectedParser"><%= props.getProperty(Environment.PROP_PARSER_CLASS) %></c:set>
 		<c:forEach items="${parsers}" var="parser">
-		<option value="<c:out value="${parser.clazz}" />"<c:if test="${selectedParser == parser.clazz}"> selected</c:if>><c:if test="${!empty parser.key}"><f:message key="${parser.key}" /></c:if><c:if test="${empty parser.key}"><c:out value="${parser.name}" /></c:if></option>
+		<option value="<c:out value="${parser.clazz}" />"<c:if test="${selectedParser == parser.clazz}"> selected="selected"</c:if>><c:if test="${!empty parser.key}"><f:message key="${parser.key}" /></c:if><c:if test="${empty parser.key}"><c:out value="${parser.name}" /></c:if></option>
 		</c:forEach>
 		</select>
 	</td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC %>"><f:message key="admin.caption.tableofcontents" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_TOC %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_TOC).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_TOC %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_TOC %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_TOC).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_PARSER_TOC %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><f:message key="admin.caption.tableofcontentsdepth" /></label></td>
@@ -167,15 +178,15 @@ function onRSS() {
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.tableofcontentsdepthhelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><f:message key="admin.caption.allowhtml" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_HTML).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_HTML %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_HTML %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_HTML).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_HTML %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>"><f:message key="admin.caption.allowjavascript" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_JAVASCRIPT).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_JAVASCRIPT).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>"><f:message key="admin.caption.allowtemplates" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_TEMPLATES).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>" value="true"<%= props.getProperty(Environment.PROP_PARSER_ALLOW_TEMPLATES).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><f:message key="admin.caption.signatureuser" /></label></td>
@@ -187,14 +198,17 @@ function onRSS() {
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>" value="<%= props.getProperty(Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN) %>" size="50" id="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.signaturedatehelp" /></td></tr>
+</table>
+</fieldset>
 <!-- END PARSER -->
 
 <%--
 FIXME - Email not supported right now, comment this out
 
 <!-- BEGIN SMTP -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.caption.smtp" /></h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.caption.smtp" /></legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_HOST %>"><f:message key="admin.caption.smtp.host" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_EMAIL_SMTP_HOST %>" value="<%= props.getProperty(Environment.PROP_EMAIL_SMTP_HOST) %>" size="30" id="<%= Environment.PROP_EMAIL_SMTP_HOST %>" /></td>
@@ -211,13 +225,16 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>"><f:message key="admin.caption.reply" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>" value="<%= props.getProperty(Environment.PROP_EMAIL_REPLY_ADDRESS) %>" size="50" id="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>" /></td>
 </tr>
+</table>
+</fieldset>
 <!-- END SMTP -->
 
 --%>
 
 <!-- BEGIN DATABASE PERSISTENCE -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.persistence" /></h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.header.persistence" /></legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_FILE_DIR %>"><f:message key="admin.caption.filedir" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_BASE_FILE_DIR %>" value="<%= props.getProperty(Environment.PROP_BASE_FILE_DIR) %>" size="50" id="<%= Environment.PROP_BASE_FILE_DIR %>" /></td>
@@ -230,13 +247,13 @@ FIXME - Email not supported right now, comment this out
 		<c:set var="persistenceType"><%= props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE) %></c:set>
 		<c:set var="persistenceTypeInternal"><%= WikiBase.PERSISTENCE_INTERNAL %></c:set>
 		<c:set var="persistenceTypeExternal"><%= WikiBase.PERSISTENCE_EXTERNAL %></c:set>
-		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == persistenceTypeInternal}"> selected</c:if>><f:message key="admin.persistencetype.internal" /></option>
-		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == persistenceTypeExternal}"> selected</c:if>><f:message key="admin.persistencetype.database" /></option>
+		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == persistenceTypeInternal}"> selected="selected"</c:if>><f:message key="admin.persistencetype.internal" /></option>
+		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == persistenceTypeExternal}"> selected="selected"</c:if>><f:message key="admin.persistencetype.database" /></option>
 		</select>
 	</td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.caption.databasedriver" /></labe></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.caption.databasedriver" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= (request.getParameter("dbDriver") != null) ? request.getParameter("dbDriver") : props.getProperty(Environment.PROP_DB_DRIVER) %>" size="50" /></td>
 </tr>
 <tr>
@@ -245,7 +262,7 @@ FIXME - Email not supported right now, comment this out
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<c:set var="selectedDataHandler"><%= props.getProperty(Environment.PROP_DB_TYPE) %></c:set>
 		<c:forEach items="${dataHandlers}" var="dataHandler">
-		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><f:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected="selected"</c:if>><c:if test="${!empty dataHandler.key}"><f:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
 		</c:forEach>
 		</select>
 	</td>
@@ -262,8 +279,6 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.caption.databasepass" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="30" /></td>
 </tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.dbcp" /></h4></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_ACTIVE %>"><f:message key="admin.caption.dbcp.maxactive" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" id="<%= Environment.PROP_DBCP_MAX_ACTIVE %>" value="<%= props.getProperty(Environment.PROP_DBCP_MAX_ACTIVE) %>" size="5" maxlength="3" /></td>
@@ -274,15 +289,15 @@ FIXME - Email not supported right now, comment this out
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>"><f:message key="admin.caption.dbcp.testonborrow" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>" id="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_TEST_ON_BORROW).equals("true") ? " checked" : "" %> /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>" id="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_TEST_ON_BORROW).equals("true") ? " checked=\"checked\"" : "" %> /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>"><f:message key="admin.caption.dbcp.testonreturn" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>" id="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_TEST_ON_RETURN).equals("true") ? " checked" : "" %> /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>" id="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_TEST_ON_RETURN).equals("true") ? " checked=\"checked\"" : "" %> /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>"><f:message key="admin.caption.dbcp.testwhileidle" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>" id="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_TEST_WHILE_IDLE).equals("true") ? " checked" : "" %> /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>" id="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_TEST_WHILE_IDLE).equals("true") ? " checked=\"checked\"" : "" %> /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>"><f:message key="admin.caption.dbcp.minevictableidletime" /></label></td>
@@ -300,25 +315,28 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>"><f:message key="admin.caption.dbcp.whenexhaustedaction" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>" id="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>">
-		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_FAIL%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_FAIL ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.fail" /></option>
-		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_BLOCK%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_BLOCK ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.block" /></option>
-		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_GROW%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_GROW ? " selected" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.grow" /></option>
+		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_FAIL%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_FAIL ? " selected=\"selected\"" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.fail" /></option>
+		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_BLOCK%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_BLOCK ? " selected=\"selected\"" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.block" /></option>
+		<option value="<%=GenericObjectPool.WHEN_EXHAUSTED_GROW%>"<%= new Integer(props.getProperty(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION)).intValue() == GenericObjectPool.WHEN_EXHAUSTED_GROW ? " selected=\"selected\"" : "" %>><f:message key="admin.caption.dbcp.whenexhaustedaction.grow" /></option>
 		</select>
 	</td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>"><f:message key="admin.caption.dbcp.removeabandoned" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_REMOVE_ABANDONED).equals("true") ? " checked" : "" %> /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>" value="true"<%= props.getProperty(Environment.PROP_DBCP_REMOVE_ABANDONED).equals("true") ? " checked=\"checked\"" : "" %> /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>"><f:message key="admin.caption.dbcp.removeabandonedtimeout" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>" id="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>" value="<%= props.getProperty(Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT) %>" size="5" /></td>
 </tr>
+</table>
+</fieldset>
 <!-- END DATABASE PERSISTENCE -->
 
 <!-- BEGIN FILE UPLOAD -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.upload" /></h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.header.upload" /></legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>"><f:message key="admin.caption.maxfilesize" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" value="<%= maximumFileSize %>" size="10" id="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" /></td>
@@ -333,18 +351,21 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" value="<%= props.getProperty(Environment.PROP_FILE_DIR_RELATIVE_PATH) %>" size="50" id="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
+</table>
+</fieldset>
 <!-- END FILE UPLOAD -->
 
 <!-- BEGIN LDAP -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.ldap" /></h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.header.ldap" /></legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_USER_HANDLER %>"><f:message key="admin.caption.ldap" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_USER_HANDLER %>" id="<%= Environment.PROP_BASE_USER_HANDLER %>" onchange="onLdap()">
 		<c:set var="selectedUserHandler"><%= props.getProperty(Environment.PROP_BASE_USER_HANDLER) %></c:set>
 		<c:forEach items="${userHandlers}" var="userHandler">
-		<option value="<c:out value="${userHandler.clazz}" />"<c:if test="${selectedUserHandler == userHandler.clazz}"> selected</c:if>><c:if test="${!empty userHandler.key}"><f:message key="${userHandler.key}" /></c:if><c:if test="${empty userHandler.key}"><c:out value="${userHandler.name}" /></c:if><c:if test="${userHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		<option value="<c:out value="${userHandler.clazz}" />"<c:if test="${selectedUserHandler == userHandler.clazz}"> selected="selected"</c:if>><c:if test="${!empty userHandler.key}"><f:message key="${userHandler.key}" /></c:if><c:if test="${empty userHandler.key}"><c:out value="${userHandler.name}" /></c:if><c:if test="${userHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
 		</c:forEach>
 		</select>
 	</td>
@@ -393,15 +414,18 @@ FIXME - Email not supported right now, comment this out
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.caption.ldap.field.email" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" id="<%= Environment.PROP_LDAP_FIELD_EMAIL %>" value="<%= props.getProperty(Environment.PROP_LDAP_FIELD_EMAIL) %>" size="20" /></td>
 </tr>
-<script>
+<script type="text/javascript">
 onPersistenceType()
 onLdap()
 </script>
+</table>
+</fieldset>
 <!-- END LDAP -->
 
 <!-- BEGIN CACHE -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.cache" /></h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.header.cache" /></legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_TOTAL_SIZE %>"><f:message key="admin.caption.cache.totalsize" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_TOTAL_SIZE %>" id="<%= Environment.PROP_CACHE_TOTAL_SIZE %>" value="<%= props.getProperty(Environment.PROP_CACHE_TOTAL_SIZE) %>" size="10" /></td>
@@ -420,30 +444,33 @@ onLdap()
 	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>"><f:message key="admin.caption.cache.idleage" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>" id="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>" value="<%= props.getProperty(Environment.PROP_CACHE_MAX_IDLE_AGE) %>" size="10" /></td>
 </tr>
+</table>
+</fieldset>
 <!-- END CACHE -->
 
 <!-- BEGIN RSS -->
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.header.rss" /> (<f:message key="common.caption.experimental" />)</h4></td></tr>
+<fieldset>
+<legend><f:message key="admin.header.rss" /> (<f:message key="common.caption.experimental" />)</legend>
+<table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_RSS_ALLOWED %>"><f:message key="admin.caption.rss.allowed" /></label></td>
-	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_RSS_ALLOWED %>" value="true"<%= props.getProperty(Environment.PROP_RSS_ALLOWED).equals("true") ? " checked" : "" %> id="<%= Environment.PROP_RSS_ALLOWED %>" onclick="onRSS()" /></td>
+	<td class="formelement"><input type="checkbox" name="<%= Environment.PROP_RSS_ALLOWED %>" value="true"<%= props.getProperty(Environment.PROP_RSS_ALLOWED).equals("true") ? " checked=\"checked\"" : "" %> id="<%= Environment.PROP_RSS_ALLOWED %>" onclick="onRSS()" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_RSS_TITLE %>"><f:message key="admin.caption.rss.title" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_RSS_TITLE %>" id="<%= Environment.PROP_RSS_TITLE %>" value="<%= props.getProperty(Environment.PROP_RSS_TITLE) %>" size="50" /></td>
 </tr>
+</table>
+</fieldset>
 <!-- END RSS -->
 
+<table border="0" class="contents" width="100%">
 <tr><td colspan="2">&nbsp;</td></tr>
-<tr>
-	<td class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="admin.action.save" />"></td>
-	<td>&#160;</td>
-</tr>
+<tr><td colspan="2" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="admin.action.save" />" /></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
 </table>
 
-<input type="hidden" name="function" value="properties">
+<input type="hidden" name="function" value="properties" />
 
 <%--
   Include a hidden (display:none) password field to prevent Firefox from trying to change the
@@ -454,90 +481,3 @@ onLdap()
 
 <input type="password" name="fakePassword" value="" style="display:none" />
 </form>
-
-<hr width="90%" />
-
-<!-- Virtual Wikis -->
-<table border="0" class="contents">
-<tr><td colspan="3">&nbsp;</td></tr>
-<tr><td colspan="3"><h4><f:message key="admin.title.virtualwiki" /></h4></td></tr>
-<tr>
-	<th><f:message key="common.name" /></th>
-	<th><f:message key="admin.caption.defaulttopic" /></th>
-	<th>&#160;</th>
-</tr>
-<c:forEach items="${wikis}" var="wiki">
-<form action="<jamwiki:link value="Special:Admin" />" method="post">
-<input type="hidden" name="function" value="addVirtualWiki">
-<input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
-<input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
-<tr>
-	<%-- FIXME: need label element --%>
-	<td class="formcaption"><c:out value="${wiki.name}" /></td>
-	<td class="formelement"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="common.update" />" /></td>
-</tr>
-</form>
-</c:forEach>
-<form action="<jamwiki:link value="Special:Admin" />" method="post">
-<input type="hidden" name="function" value="addVirtualWiki">
-<tr>
-	<td class="formelement"><input type="text" name="name" /></td>
-	<td class="formelement"><input type="text" name="defaultTopicName" value="<%= props.getProperty(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="common.add" />" /></td>
-</tr>
-</form>
-<tr><td colspan="3">&nbsp;</td></tr>
-</table>
-
-<hr width="90%" />
-
-<!-- Refresh Search Index -->
-<form name="refreshform" method="post" action="<jamwiki:link value="Special:Admin" />">
-<table border="0" class="contents">
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.title.refresh" /></h4></td></tr>
-<tr>
-	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
-	<td class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
-</tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-</table>
-<input type="hidden" name="function" value="refreshIndex" />
-</form>
-
-<hr width="90%" />
-
-<!-- Recent Changes -->
-<form action="<jamwiki:link value="Special:Admin" />" method="post">
-<table border="0" class="contents">
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.title.recentchanges" /></h4></td></tr>
-<tr>
-	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
-</tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-</table>
-<input type="hidden" name="function" value="recentChanges" />
-</form>
-
-<jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">
-
-<hr width="90%" />
-
-<!-- Spam Filter -->
-<form action="<jamwiki:link value="Special:Admin" />" method="post">
-<table border="0" class="contents">
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2"><h4><f:message key="admin.title.spamfilter" /></h4></td></tr>
-<tr>
-	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
-</tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-</table>
-<input type="hidden" name="function" value="spamFilter" />
-</form>
-
-</jamwiki:enabled>

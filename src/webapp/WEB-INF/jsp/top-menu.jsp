@@ -51,9 +51,9 @@
 <c:if test="${pageInfo.admin}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Admin">Special:Admin</jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Translation">Special:Translation</jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:System">Special:System</jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
-	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Convert">Special:Convert</jamwiki:link></td>
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Translation">Special:Translation</jamwiki:link></td>
 </c:if>
 	<td class="menu-tab-close">&#160;</td>
 </tr>

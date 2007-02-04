@@ -44,6 +44,7 @@ public class AdminServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(AdminServlet.class.getName());
 	protected static final String JSP_ADMIN = "admin.jsp";
+	protected static final String JSP_ADMIN_SYSTEM = "admin-system.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -58,8 +59,10 @@ public class AdminServlet extends JAMWikiServlet {
 			return ServletUtil.viewLogin(request, pageInfo, "Special:Admin", errorMessage);
 		}
 		String function = request.getParameter("function");
-		if (!StringUtils.hasText(function)) {
-			view(request, next, pageInfo, null);
+		if (!StringUtils.hasText(function) && ServletUtil.isTopic(request, "Special:System")) {
+			viewAdminSystem(request, next, pageInfo, null);
+		} else if (!StringUtils.hasText(function)) {
+			viewAdmin(request, next, pageInfo, null);
 		} else if (function.equals("refreshIndex")) {
 			refreshIndex(request, next, pageInfo);
 		} else if (function.equals("properties")) {
@@ -95,7 +98,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while adding virtual wiki", e);
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
-		view(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo, null);
 	}
 
 	/**
@@ -193,7 +196,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while processing property values", e);
 			next.addObject("message", new WikiMessage("admin.message.propertyfailure", e.getMessage()));
 		}
-		view(request, next, pageInfo, props);
+		viewAdmin(request, next, pageInfo, props);
 	}
 
 	/**
@@ -207,7 +210,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while loading recent changes", e);
 			next.addObject("messageObject", new WikiMessage("admin.caption.recentchangesfail", e.getMessage()));
 		}
-		view(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo, null);
 	}
 
 	/**
@@ -221,7 +224,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while refreshing search index", e);
 			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
-		view(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo, null);
 	}
 
 	/**
@@ -265,18 +268,16 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while loading recent changes", e);
 			next.addObject("messageObject", new WikiMessage("admin.caption.spamfilterfail", e.getMessage()));
 		}
-		view(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo, null);
 	}
 
 	/**
 	 *
 	 */
-	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
+	private void viewAdmin(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
 		pageInfo.setContentJsp(JSP_ADMIN);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.title"));
-		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
-		next.addObject("wikis", virtualWikiList);
 		Collection userHandlers = WikiConfiguration.getInstance().getUserHandlers();
 		next.addObject("userHandlers", userHandlers);
 		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
@@ -287,5 +288,16 @@ public class AdminServlet extends JAMWikiServlet {
 			props = Environment.getInstance();
 		}
 		next.addObject("props", props);
+	}
+
+	/**
+	 *
+	 */
+	private void viewAdminSystem(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
+		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
+		pageInfo.setAdmin(true);
+		pageInfo.setPageTitle(new WikiMessage("admin.title"));
+		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
+		next.addObject("wikis", virtualWikiList);
 	}
 }

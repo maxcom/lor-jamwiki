@@ -45,6 +45,9 @@
 </c:if>
 </jamwiki:enabled>
 
+<fieldset>
+<legend><f:message key="topic.caption.editlegend" /></legend>
+
 <form name="form" method="post" name="editform" action="<jamwiki:link value="Special:Edit" />">
 <p>
 <input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}"/>" />
@@ -100,3 +103,5 @@ document.writeln("</div>");
 </c:if>
 
 </form>
+
+</fieldset>

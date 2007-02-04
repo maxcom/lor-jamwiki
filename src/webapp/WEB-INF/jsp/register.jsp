@@ -23,6 +23,10 @@
 <%@ include file="page-init.jsp" %>
 
 <p><f:message key="register.form.info" /></p>
+
+<fieldset>
+<legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
+
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
 <c:if test="${!empty errors}">
@@ -105,3 +109,5 @@
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>
 </form>
+
+</fieldset>

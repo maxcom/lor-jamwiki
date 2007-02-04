@@ -35,6 +35,7 @@
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:Specialpages">SpecialPages</prop>
+				<prop key="/**/Special:System">Admin</prop>
 				<prop key="/**/Special:TopicsAdmin">Items</prop>
 				<prop key="/**/Special:Translation">Translation</prop>
 				<prop key="/**/Special:Upgrade">Upgrade</prop>

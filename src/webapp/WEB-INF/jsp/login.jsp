@@ -22,6 +22,9 @@
 
 <%@ include file="page-init.jsp" %>
 
+<fieldset>
+<legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
+
 <c:if test="${!empty param['message']}"><p class="red"><f:message key="${param['message']}" /></p></c:if>
 <c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></p></c:if>
 
@@ -46,3 +49,5 @@
 </tr>
 </table>
 </form>
+
+</fieldset>
