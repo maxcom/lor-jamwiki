@@ -25,12 +25,14 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></p></c:if>
+<c:if test="${!empty messageObject}"><div class="message red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></div></c:if>
 
+<div class="message"><f:message key="move.overview" /></div>
+
+<%-- FIXME: change from table to divs --%>
 <table border="0" class="contents">
 <form name="delete" method="get" action="<jamwiki:link value="Special:Move" />">
 <input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
-<tr><td colspan="2"><p><f:message key="move.overview" /></p></td></tr>
 <tr>
 	<td class="formcaption" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </td>
 	<td class="formelement" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></td>

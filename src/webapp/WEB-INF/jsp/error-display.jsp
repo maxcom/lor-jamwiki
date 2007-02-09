@@ -34,8 +34,8 @@ function cancel() {
 </script>
 
 <div class="contents">
-	<p><f:message key="error.caption" /></p>
-	<p><font style="color: red;font-weight:bold"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></font></p>
+	<div class="message"><f:message key="error.caption" /></div>
+	<div class="message red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></div>
 	<form><input type="button" onClick="cancel();" value="<f:message key="common.back" />" /></form>
 </div>
 

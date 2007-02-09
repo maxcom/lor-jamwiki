@@ -23,17 +23,17 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty editResolve}">
-<p><f:message key="edit.exception.conflict" /></p>
+<div class="message red"><f:message key="edit.exception.conflict" /></div>
 </c:if>
 
-<c:if test="${!empty topicVersionId}"><p><f:message key="edit.warning.oldversion" /></p></c:if>
+<c:if test="${!empty topicVersionId}"><div class="message red"><f:message key="edit.warning.oldversion" /></div></c:if>
 
 <c:if test="${!empty editSpam}">
-<p><font color="red"><f:message key="${spam.key}"><f:param value="${spam.params[0]}" /></f:message></font></p>
+<div class="message red"><f:message key="${spam.key}"><f:param value="${spam.params[0]}" /></f:message></div>
 </c:if>
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${!empty editPreview}">
-<blockquote><hr /><font color="red"><f:message key="edit.warning.preview" /></font><hr /></blockquote>
+<div id="editpreview"><f:message key="edit.warning.preview" /></div>
 </c:if>
 </jamwiki:enabled>
 
@@ -49,7 +49,6 @@
 <legend><f:message key="topic.caption.editlegend" /></legend>
 
 <form name="form" method="post" name="editform" action="<jamwiki:link value="Special:Edit" />">
-<p>
 <input type="hidden" name="topic" value="<c:out value="${pageInfo.topicName}"/>" />
 <input type="hidden" name="lastTopicVersionId" value="<c:out value="${lastTopicVersionId}"/>" />
 <input type="hidden" name="section" value="<c:out value="${section}"/>" />

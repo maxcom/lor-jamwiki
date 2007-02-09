@@ -25,7 +25,7 @@
 <div style="margin:10px 30px 10px 30px;padding:10px;color:red;text-align:center;border:1px dashed red;"><f:message key="common.warning.experimental" /></div>
 
 <c:if test="${!empty error}">
-<p class="red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></p>
+<div class="message red"><f:message key="${error.key}"><f:param value="${error.params[0]}" /></f:message></div>
 </c:if>
 
 <form name="form1" method="post" action="<jamwiki:link value="Special:Import" />" enctype="multipart/form-data">

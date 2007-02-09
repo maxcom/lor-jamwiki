@@ -24,7 +24,7 @@
 
 <div id="change">
 
-<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="Special:Contributions?contributor=${contributor}" /></p>
+<div class="message"><f:message key="common.caption.view" />: <jamwiki:pagination total="${numContributions}" rootUrl="Special:Contributions?contributor=${contributor}" /></div>
 
 <form name="num-changes" method="get" action="<jamwiki:link value="Special:Contributions" />">
 <input type="hidden" name="contributor" value="<c:out value="${contributor}" />" />

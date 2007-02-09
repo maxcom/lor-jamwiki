@@ -46,5 +46,5 @@
 	</c:if>
 </c:if>
 <c:if test="${!empty notopic}">
-<p><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /><f:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></f:param></f:message></p>
+<div class="message"><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /><f:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></f:param></f:message></div>
 </c:if>

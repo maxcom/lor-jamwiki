@@ -22,7 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="register.form.info" /></p>
+<div class="message"><f:message key="register.form.info" /></div>
 
 <fieldset>
 <legend><f:message key="${pageInfo.pageTitle.key}" /></legend>

@@ -23,6 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <script type="text/javascript">
+<!--
 // enable/disable checkboxes before or after the current element
 <%-- FIXME: might be better moved to a jamwiki.js file --%>
 function inactive(element) {
@@ -64,11 +65,12 @@ function inactive(element) {
     }
   }
 }
+// -->
 </script>
 
 <div id="change">
 
-<p><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></p>
+<div class="message"><f:message key="common.caption.view" />: <jamwiki:pagination total="${numChanges}" rootUrl="Special:History?topic=${pageInfo.topicName}" /></div>
 
 <form action="<jamwiki:link value="Special:History" />" method="get" name="historyForm">
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}"/>'/>

@@ -17,7 +17,7 @@
 
 --%>
 <c:if test="${!badinput}">
-	<c:if test="${empty diffs}"><p><f:message key="diff.nochange" /></p></c:if>
+	<c:if test="${empty diffs}"><div class="message"><f:message key="diff.nochange" /></div></c:if>
 	<c:if test="${!empty diffs}">
 <table class="diff">
 		<c:set var="previousLineNumber" value="-10" />

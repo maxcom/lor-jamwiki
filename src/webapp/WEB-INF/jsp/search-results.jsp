@@ -23,15 +23,14 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty notopic}">
-<p><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /><f:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></f:param></f:message></p>
+<div class="message"><f:message key="${notopic.key}"><f:param value="${notopic.params[0]}" /><f:param><jamwiki:link value="${notopic.params[0]}" text="${notopic.params[0]}" /></f:param></f:message></div>
 </c:if>
-<br />
 <c:forEach items="${results}" var="result">
 <div class="searchresult"><jamwiki:link value="${result.topic}" text="${result.topic}" /></div>
-<p><c:out value="${result.summary}" escapeXml="false" /></p>
+<div class="searchsummary"><c:out value="${result.summary}" escapeXml="false" /></div>
 </c:forEach>
 <c:if test="${empty results}">
-<p><f:message key="searchresult.notfound"><f:param value="${searchField}" /></f:message></p>
+<div class="message"><f:message key="searchresult.notfound"><f:param value="${searchField}" /></f:message></div>
 </c:if>
 <br /><br /><br />
 <font size="-1"><i><f:message key="search.poweredby" /></i></font>

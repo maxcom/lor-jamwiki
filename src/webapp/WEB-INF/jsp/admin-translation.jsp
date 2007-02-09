@@ -22,7 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<p><f:message key="translation.message.instructions" /></p>
+<div class="message"><f:message key="translation.message.instructions" /></div>
 <table>
 <tr>
 <td>

@@ -22,11 +22,11 @@
 
 <%@ include file="page-init.jsp" %>
 
+<c:if test="${!empty param['message']}"><div class="message red"><f:message key="${param['message']}" /></div></c:if>
+<c:if test="${!empty messageObject}"><div class="message red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></div></c:if>
+
 <fieldset>
 <legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
-
-<c:if test="${!empty param['message']}"><p class="red"><f:message key="${param['message']}" /></p></c:if>
-<c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></p></c:if>
 
 <form method="post" action="<c:url value="/${virtualWiki}/j_acegi_security_check" />">
 <input type="hidden" name="target" value="<c:out value="${target}"/>" />
