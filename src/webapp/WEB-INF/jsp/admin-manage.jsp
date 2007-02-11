@@ -26,7 +26,7 @@
 <%@ include file="page-init.jsp" %>
 
 <c:if test="${!empty message}">
-<p align="center" style="color:green;font-size:110%;"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p>
+<div class="message green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
 </c:if>
 
 <table border="0" class="contents">
@@ -50,7 +50,7 @@
 <form name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><h4><f:message key="manage.caption.delete"><f:param value="${pageInfo.topicName}" /></f:message></h4></td></tr>
-<tr><td colspan="2"><p><f:message key="manage.delete.warning" /></p></td></tr>
+<tr><td colspan="2"><div class="message"><f:message key="manage.delete.warning" /></div></td></tr>
 <tr>
 	<td class="formcaption" nowrap><label for="deleteComment"><f:message key="manage.delete.reason" /></label>: </td>
 	<td class="formelement" width="90%"><input type="text" name="deleteComment" value="" id="deleteComment" size="60" /></td>

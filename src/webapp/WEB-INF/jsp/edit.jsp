@@ -33,7 +33,7 @@
 </c:if>
 <jamwiki:enabled property="PROP_TOPIC_USE_PREVIEW">
 <c:if test="${!empty editPreview}">
-<div id="editpreview"><f:message key="edit.warning.preview" /></div>
+<div class="message red"><f:message key="edit.warning.preview" /></div>
 </c:if>
 </jamwiki:enabled>
 

@@ -34,8 +34,8 @@ function confirmSubmit() {
 
 <form name="adminUpgrade" method="get" action="<jamwiki:link value="Special:Convert" />">
 
-<c:if test="${!empty messageObject}"><p class="red"><f:message key="${messageObject.key}" /></p></c:if>
-<c:if test="${!empty message}"><p align="center" style="color:green;size=110%;"><f:message key="${message.key}" /></p></c:if>
+<c:if test="${!empty messageObject}"><div class="message red"><f:message key="${messageObject.key}" /></div></c:if>
+<c:if test="${!empty message}"><div class="message green"><f:message key="${message.key}" /></div></c:if>
 
 <table border="0" class="contents">
 <tr><td colspan="2">&#160;</td></tr>

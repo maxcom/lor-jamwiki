@@ -30,7 +30,7 @@
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
 <c:if test="${!empty errors}">
-<p class="red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></p>
+<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
 </c:if>
 <table>
 <c:if test="${newuser.userId < 1}">

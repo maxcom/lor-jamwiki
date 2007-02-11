@@ -159,6 +159,10 @@ div.clear {
 	font-weight: bold;
 	color: #ff0000;
 }
+.green {
+	font-weight: bold;
+	color: #009900;
+}
 div.message {
 	margin: 1.5em 0 1.5em 0;
 }
@@ -303,13 +307,6 @@ table.toc td {
 	padding: 10px 5px 10px 5px;
 	margin-top: 1em;
 	clear: both;
-}
-#editpreview {
-	color: #ff0000;
-	font-weight: bold;
-	margin: 1em 0em 1em 0em;
-	padding: 0.7em;
-	border: 1px dashed #ff0000;
 }
 
 /* tab menu */

@@ -23,6 +23,10 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="message"><f:message key="translation.message.instructions" /></div>
+
+<fieldset>
+<legend><f:message key="translation.title" /></legend>
+
 <table>
 <tr>
 <td>
@@ -56,3 +60,5 @@
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />" /></td></tr>
 </table>
 </form>
+
+</fieldset>

@@ -43,7 +43,7 @@ body, input, select {
 .green {
 	font: verdana, helvetica, sans-serif;
 	font-size: 110%;
-	color: #ff0000;
+	color: #009900;
 	text-align: center;
 }
 </style>
