@@ -37,6 +37,24 @@ public class JAMWikiTestSuite extends TestCase {
 	 */
 	public static Test suite() {
 		TestSuite s = new TestSuite();
+		s.addTestSuite(org.jamwiki.test.WikiMessageTest.class);
+		s.addTestSuite(org.jamwiki.test.WikiVersionTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.DiffUtilTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.EncryptionTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.ImageUtilTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.InterWikiHandlerTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.LinkUtilTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.NamespaceHandlerTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.PaginationTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.PseudoTopicHandlerTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.SortedPropertiesTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.UtilitiesTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.WikiCacheTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.WikiLinkTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.WikiLogFormatterTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.WikiLoggerTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.XMLTopicFactoryTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.XMLUtilTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.CharacterTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlLinkTagTest.class);

@@ -10,6 +10,7 @@ New Features:
   * Update look & feel.
   * Split the main admin page into Special:Admin and Special:System.
   * Hide the Special:Convert admin page.
+  * Added automatically generated JUnit tests from junitfactory.com.
 
 Translation Updates:
 
