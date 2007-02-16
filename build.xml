@@ -170,7 +170,7 @@
 			<ruleset>j2ee</ruleset>
 			<ruleset>strings</ruleset>
 			<ruleset>unusedcode</ruleset>
-			<formatter type="html" toFile="jamwiki-pmd-report.html" linkPrefix="file://${dir.src.java}/" />
+			<formatter type="html" toFile="${pmd.output.file}" linkPrefix="file://${dir.src.java}/" />
 			<fileset dir="${dir.src.java}">
 				<include name="org/jamwiki/**/*.java" />
 			</fileset>
@@ -186,7 +186,7 @@
 	<target name="source" description="Build a zip file of the application source">
 		<delete file="${dir.build}/${war.name}-${app.version}-src.zip" />
 		<zip destfile="${dir.build}/${war.name}-${app.version}-src.zip">
-			<zipfileset dir="." includes="*" />
+			<zipfileset dir="." includes="*" excludes="${pmd.output.file}" />
 			<zipfileset dir="${dir.lib}" prefix="lib" />
 			<zipfileset dir="${dir.src}" prefix="src" />
 		</zip>
