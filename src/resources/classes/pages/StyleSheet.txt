@@ -12,12 +12,11 @@ body, input, select {
 	font: 95% sans-serif, tahoma;
 }
 a {
-	border-bottom: 1px dotted #778CD7;
 	text-decoration: none;
 	color: #5555bb;
 }
 a:hover {
-	border-bottom: 1px solid #5555bb;
+	border-bottom: 1px dotted #5555bb;
 }
 a.logo {
 	border: 0;
@@ -30,7 +29,7 @@ a.edit {
 	border-color: #aa1111;
 }
 a.edit:hover {
-	border-bottom: 1px solid #aa1111;
+	border-bottom: 1px dotted #aa1111;
 }
 a.redirect {
 	font-size: 150%;
@@ -315,9 +314,6 @@ table.toc td {
 
 /* tab menu */
 
-#menu-tab a {
-	border: 0;
-}
 #menu-tab {
 	padding-right: 10px;
 }
@@ -375,8 +371,6 @@ td.footer hr, td.footer br {
 
 /* recent changes, user contributions, history */
 
-#change a {
-}
 li.minorchange {
 	color: #777777;
 }
@@ -409,9 +403,7 @@ img.wikiimg {
 	border: 0px;
 }
 a.wikiimg {
-	text-decoration: none;
-	color: inherit;
-	font-weight: inherit;
+	border: 0px;
 }
 div.imgcaption {
 	padding: 0.3em 0em 0.2em 0em;
