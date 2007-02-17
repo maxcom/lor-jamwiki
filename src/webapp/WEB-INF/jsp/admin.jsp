@@ -99,7 +99,13 @@ function onRSS() {
 </table>
 </c:if>
 
+<div class="submenu">
+<a href="#general"><f:message key="admin.header.general" /></a> | <a href="#parser"><f:message key="admin.header.parser" /></a> | <a href="#database"><f:message key="admin.header.persistence" /></a> | <a href="#upload"><f:message key="admin.header.upload" /></a><br />
+<a href="#authentication"><f:message key="admin.header.ldap" /></a> | <a href="#cache"><f:message key="admin.header.cache" /></a> | <a href="#rss"><f:message key="admin.header.rss" /></a> | <a href="#save"><f:message key="admin.action.save" /></a>
+</div>
+
 <!-- BEGIN GENERAL SETTINGS -->
+<a name="general"></a>
 <fieldset>
 <legend><f:message key="admin.header.general" /></legend>
 <table border="0" class="contents">
@@ -153,6 +159,7 @@ function onRSS() {
 <!-- END GENERAL SETTINGS -->
 
 <!-- BEGIN PARSER -->
+<a name="parser"></a>
 <fieldset>
 <legend><f:message key="admin.header.parser" /></legend>
 <table border="0" class="contents">
@@ -205,7 +212,8 @@ function onRSS() {
 <%--
 FIXME - Email not supported right now, comment this out
 
-<!-- BEGIN SMTP -->
+<!-- BEGIN EMAIL -->
+<a name="email"></a>
 <fieldset>
 <legend><f:message key="admin.caption.smtp" /></legend>
 <table border="0" class="contents">
@@ -227,11 +235,12 @@ FIXME - Email not supported right now, comment this out
 </tr>
 </table>
 </fieldset>
-<!-- END SMTP -->
+<!-- END EMAIL -->
 
 --%>
 
 <!-- BEGIN DATABASE PERSISTENCE -->
+<a name="database"></a>
 <fieldset>
 <legend><f:message key="admin.header.persistence" /></legend>
 <table border="0" class="contents">
@@ -334,6 +343,7 @@ FIXME - Email not supported right now, comment this out
 <!-- END DATABASE PERSISTENCE -->
 
 <!-- BEGIN FILE UPLOAD -->
+<a name="upload"></a>
 <fieldset>
 <legend><f:message key="admin.header.upload" /></legend>
 <table border="0" class="contents">
@@ -355,7 +365,8 @@ FIXME - Email not supported right now, comment this out
 </fieldset>
 <!-- END FILE UPLOAD -->
 
-<!-- BEGIN LDAP -->
+<!-- BEGIN AUTHENTICATION -->
+<a name="authentication"></a>
 <fieldset>
 <legend><f:message key="admin.header.ldap" /></legend>
 <table border="0" class="contents">
@@ -420,9 +431,10 @@ onLdap()
 </script>
 </table>
 </fieldset>
-<!-- END LDAP -->
+<!-- END AUTHENTICATION -->
 
 <!-- BEGIN CACHE -->
+<a name="cache"></a>
 <fieldset>
 <legend><f:message key="admin.header.cache" /></legend>
 <table border="0" class="contents">
@@ -449,6 +461,7 @@ onLdap()
 <!-- END CACHE -->
 
 <!-- BEGIN RSS -->
+<a name="rss"></a>
 <fieldset>
 <legend><f:message key="admin.header.rss" /> (<f:message key="common.caption.experimental" />)</legend>
 <table border="0" class="contents">
@@ -464,6 +477,7 @@ onLdap()
 </fieldset>
 <!-- END RSS -->
 
+<a name="save"></a>
 <table border="0" class="contents" width="100%">
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="admin.action.save" />" /></td></tr>

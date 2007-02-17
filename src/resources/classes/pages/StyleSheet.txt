@@ -166,6 +166,10 @@ div.clear {
 div.message {
 	margin: 1.5em 0 1.5em 0;
 }
+div.submenu {
+	margin: 0.8em 6em 0.8em 6em;
+	text-align: center;
+}
 
 /* main content area */
 
