@@ -17,11 +17,13 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
@@ -284,9 +286,16 @@ public class AdminServlet extends JAMWikiServlet {
 		next.addObject("dataHandlers", dataHandlers);
 		Collection parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
+		HashMap poolExhaustedMap = new HashMap();
+		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.caption.dbcp.whenexhaustedaction.fail");
+		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.caption.dbcp.whenexhaustedaction.block");
+		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.caption.dbcp.whenexhaustedaction.grow");
+		next.addObject("poolExhaustedMap", poolExhaustedMap);
 		if (props == null) {
 			props = Environment.getInstance();
 		}
+		Integer maximumFileSize = new Integer(new Integer(props.getProperty(Environment.PROP_FILE_MAX_FILE_SIZE)).intValue()/1000);
+		next.addObject("maximumFileSize", maximumFileSize);
 		next.addObject("props", props);
 	}
 
