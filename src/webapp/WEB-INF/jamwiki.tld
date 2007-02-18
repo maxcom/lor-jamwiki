@@ -11,7 +11,7 @@
 	
 	<tag>
 		<name>enabled</name>
-		<tag-class>org.jamwiki.tags.EnabledTag</tag-class>
+		<tag-class>org.jamwiki.taglib.EnabledTag</tag-class>
 		<body-content>JSP</body-content>
 		<description>
 			Do not display content within the tag body unless the
@@ -24,7 +24,7 @@
 	</tag>
 	<tag>
 		<name>image</name>
-		<tag-class>org.jamwiki.tags.ImageLinkTag</tag-class>
+		<tag-class>org.jamwiki.taglib.ImageLinkTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
 			<name>maxDimension</name>
@@ -41,7 +41,7 @@
 	</tag>
 	<tag>
 		<name>link</name>
-		<tag-class>org.jamwiki.tags.LinkTag</tag-class>
+		<tag-class>org.jamwiki.taglib.LinkTag</tag-class>
 		<body-content>JSP</body-content>
 		<description>
 			Generate an HTML link to a specified JAMWiki topic.
@@ -68,7 +68,7 @@
 	</tag>
 	<tag>
 		<name>linkParam</name>
-		<tag-class>org.jamwiki.tags.LinkParamTag</tag-class>
+		<tag-class>org.jamwiki.taglib.LinkParamTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
 			<name>key</name>
@@ -81,7 +81,7 @@
 	</tag>
 	<tag>
 		<name>pagination</name>
-		<tag-class>org.jamwiki.tags.PaginationTag</tag-class>
+		<tag-class>org.jamwiki.taglib.PaginationTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
 			<name>total</name>
@@ -94,7 +94,7 @@
 	</tag>
 	<tag>
 		<name>watchlist</name>
-		<tag-class>org.jamwiki.tags.WatchlistTag</tag-class>
+		<tag-class>org.jamwiki.taglib.WatchlistTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
 			<name>topic</name>
@@ -103,7 +103,7 @@
 	</tag>
 	<tag>
 		<name>wiki-version</name>
-		<tag-class>org.jamwiki.tags.WikiVersionTag</tag-class>
+		<tag-class>org.jamwiki.taglib.WikiVersionTag</tag-class>
 		<body-content>empty</body-content>
 		<description>Display the current JAMWiki software version.</description>
 	</tag>

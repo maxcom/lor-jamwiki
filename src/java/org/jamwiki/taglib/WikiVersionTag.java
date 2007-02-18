@@ -14,50 +14,31 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.tags;
+package org.jamwiki.taglib;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import org.jamwiki.Environment;
+import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.WikiVersion;
 
 /**
- * JSP tag that executes its tag content only if the specified property has
- * a value of <code>true</code>.
+ * JSP tag that displays the current Wiki version as specified by
+ * {@link org.jamwiki.WikiVersion#CURRENT_WIKI_VERSION}.
  */
-public class EnabledTag extends BodyTagSupport {
+public class WikiVersionTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(EnabledTag.class.getName());
-	private String property = null;
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiVersionTag.class.getName());
 
 	/**
 	 *
 	 */
-	public int doStartTag() throws JspException {
+	public int doEndTag() throws JspException {
 		try {
-			String propertyName = (String)Environment.class.getField(this.property).get(null);
-			if (Environment.getBooleanValue(propertyName)) {
-				return EVAL_BODY_INCLUDE;
-			} else {
-				return SKIP_BODY;
-			}
+			this.pageContext.getOut().print(WikiVersion.CURRENT_WIKI_VERSION);
 		} catch (Exception e) {
-			logger.severe("Failure in enabled tag for " + this.property, e);
+			logger.severe("Failure while retrieving Wiki version", e);
 			throw new JspException(e);
 		}
-	}
-
-	/**
-	 *
-	 */
-	public String getProperty() {
-		return this.property;
-	}
-
-	/**
-	 *
-	 */
-	public void setProperty(String property) {
-		this.property = property;
+		return EVAL_PAGE;
 	}
 }

@@ -14,7 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.tags;
+package org.jamwiki.taglib;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
- * JSP tag used within {@link org.jamwiki.tags.LinkTag} tags to add query
+ * JSP tag used within {@link org.jamwiki.taglib.LinkTag} tags to add query
  * parameters to the generated URL, performing any required encoding of the
  * query parameters.
  */
