@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -65,6 +66,8 @@ public class AdminServlet extends JAMWikiServlet {
 			viewAdminSystem(request, next, pageInfo, null);
 		} else if (!StringUtils.hasText(function)) {
 			viewAdmin(request, next, pageInfo, null);
+		} else if (function.equals("cache")) {
+			cache(request, next, pageInfo);
 		} else if (function.equals("refreshIndex")) {
 			refreshIndex(request, next, pageInfo);
 		} else if (function.equals("properties")) {
@@ -99,6 +102,20 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.severe("Failure while adding virtual wiki", e);
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo, null);
+	}
+
+	/**
+	 *
+	 */
+	private void cache(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			WikiCache.initialize();
+			next.addObject("message", new WikiMessage("admin.message.cache"));
+		} catch (Exception e) {
+			logger.severe("Failure while clearing cache", e);
+			next.addObject("errors", new WikiMessage("admin.caption.cachefail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo, null);
 	}
@@ -210,7 +227,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.severe("Failure while loading recent changes", e);
-			next.addObject("messageObject", new WikiMessage("admin.caption.recentchangesfail", e.getMessage()));
+			next.addObject("errors", new WikiMessage("admin.caption.recentchangesfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo, null);
 	}
@@ -267,8 +284,8 @@ public class AdminServlet extends JAMWikiServlet {
 			SpamFilter.reload();
 			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
-			logger.severe("Failure while loading recent changes", e);
-			next.addObject("messageObject", new WikiMessage("admin.caption.spamfilterfail", e.getMessage()));
+			logger.severe("Failure while reloading spam filter patterns", e);
+			next.addObject("errors", new WikiMessage("admin.caption.spamfilterfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo, null);
 	}

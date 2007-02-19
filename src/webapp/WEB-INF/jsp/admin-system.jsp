@@ -17,17 +17,20 @@
 
 --%>
 <%@ page import="
-        java.util.Properties,
-        org.jamwiki.Environment,
-        org.jamwiki.WikiBase,
-        org.jamwiki.db.WikiDatabase,
-        org.apache.commons.pool.impl.GenericObjectPool
+        org.jamwiki.Environment
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
 
 <%@ include file="page-init.jsp" %>
+
+<c:if test="${!empty message}">
+<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+</c:if>
+<c:if test="${!empty errors}">
+<div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
+</c:if>
 
 <!-- Virtual Wikis -->
 <fieldset>
@@ -88,6 +91,20 @@
 </tr>
 </table>
 <input type="hidden" name="function" value="recentChanges" />
+</form>
+</fieldset>
+
+<!-- Cache -->
+<fieldset>
+<legend><f:message key="admin.title.cache" /></legend>
+<form action="<jamwiki:link value="Special:System" />" method="post">
+<table border="0" class="contents">
+<tr>
+	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
+	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
+</tr>
+</table>
+<input type="hidden" name="function" value="cache" />
 </form>
 </fieldset>
 

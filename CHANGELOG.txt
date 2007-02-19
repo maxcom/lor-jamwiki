@@ -10,6 +10,7 @@ New Features:
   * Update look & feel - do not underline links, add fieldset tags.
   * Split the main admin page into Special:Admin and Special:System.
   * Hide the Special:Convert admin page.
+  * Add an option to clear the cache from Special:System.
   * Added automatically generated JUnit tests from junitfactory.com.
 
 Translation Updates:
