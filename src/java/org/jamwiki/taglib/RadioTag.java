@@ -27,11 +27,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
- * Utility tag for creating HTML checkboxes.
+ * Utility tag for creating HTML radio boxes.
  */
-public class CheckboxTag extends TagSupport {
+public class RadioTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(CheckboxTag.class.getName());
+	private static WikiLogger logger = WikiLogger.getLogger(RadioTag.class.getName());
 	private String checked = null;
 	private String id = null;
 	private String name = null;
@@ -50,7 +50,7 @@ public class CheckboxTag extends TagSupport {
 		String tagStyle = null;
 		String tagValue = null;
 		try {
-			output += "<input type=\"checkbox\" value=\"true\"";
+			output += "<input type=\"radio\" value=\"true\"";
 			tagName = ExpressionEvaluationUtils.evaluateString("name", this.name, pageContext);
 			output += " name=\"" + tagName + "\"";
 			if (StringUtils.hasText(this.id)) {
@@ -74,7 +74,7 @@ public class CheckboxTag extends TagSupport {
 			output += " />";
 			this.pageContext.getOut().print(output);
 		} catch (Exception e) {
-			logger.severe("Failure in checkbox tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
+			logger.severe("Failure in radio tag for " + this.id + " / " + this.name + " / " + this.style + " / " + this.value, e);
 			throw new JspException(e);
 		}
 		return EVAL_PAGE;

@@ -17,6 +17,10 @@
 			Tag builds HTML checkbox tags.
 		</description>
 		<attribute>
+			<name>checked</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
 			<name>id</name>
 			<required>false</required>
 		</attribute>
@@ -34,7 +38,7 @@
 		</attribute>
 		<attribute>
 			<name>value</name>
-			<required>false</required>
+			<required>true</required>
 		</attribute>
 	</tag>
 	<tag>
@@ -117,6 +121,38 @@
 		</attribute>
 		<attribute>
 			<name>rootUrl</name>
+			<required>true</required>
+		</attribute>
+	</tag>
+	<tag>
+		<name>radio</name>
+		<tag-class>org.jamwiki.taglib.RadioTag</tag-class>
+		<body-content>empty</body-content>
+		<description>
+			Tag builds HTML radio tags.
+		</description>
+		<attribute>
+			<name>checked</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>onclick</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<name>value</name>
 			<required>true</required>
 		</attribute>
 	</tag>

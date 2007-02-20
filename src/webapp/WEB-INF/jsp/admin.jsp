@@ -108,12 +108,12 @@ function onRSS() {
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>"><f:message key="admin.caption.nonadminmove" /></label></td>
 	<c:set var="PROP_TOPIC_NON_ADMIN_TOPIC_MOVE"><%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_NON_ADMIN_TOPIC_MOVE}" value="${props[PROP_TOPIC_NON_ADMIN_TOPIC_MOVE]}" id="${PROP_TOPIC_NON_ADMIN_TOPIC_MOVE}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_NON_ADMIN_TOPIC_MOVE}" value="true" checked="${props[PROP_TOPIC_NON_ADMIN_TOPIC_MOVE]}" id="${PROP_TOPIC_NON_ADMIN_TOPIC_MOVE}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>"><f:message key="admin.caption.forceusername" /></label></td>
 	<c:set var="PROP_TOPIC_FORCE_USERNAME"><%= Environment.PROP_TOPIC_FORCE_USERNAME %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_FORCE_USERNAME}" value="${props[PROP_TOPIC_FORCE_USERNAME]}" id="${PROP_TOPIC_FORCE_USERNAME}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_FORCE_USERNAME}" value="true" checked="${props[PROP_TOPIC_FORCE_USERNAME]}" id="${PROP_TOPIC_FORCE_USERNAME}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
@@ -128,22 +128,22 @@ function onRSS() {
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_SPAM_FILTER %>"><f:message key="admin.caption.usespamfilter" /></label></td>
 	<c:set var="PROP_TOPIC_SPAM_FILTER"><%= Environment.PROP_TOPIC_SPAM_FILTER %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_SPAM_FILTER}" value="${props[PROP_TOPIC_SPAM_FILTER]}" id="${PROP_TOPIC_SPAM_FILTER}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_SPAM_FILTER}" value="true" checked="${props[PROP_TOPIC_SPAM_FILTER]}" id="${PROP_TOPIC_SPAM_FILTER}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>
 	<c:set var="PROP_TOPIC_USE_PREVIEW"><%= Environment.PROP_TOPIC_USE_PREVIEW %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_PREVIEW}" value="${props[PROP_TOPIC_USE_PREVIEW]}" id="${PROP_TOPIC_USE_PREVIEW}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_USE_PREVIEW}" value="true" checked="${props[PROP_TOPIC_USE_PREVIEW]}" id="${PROP_TOPIC_USE_PREVIEW}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_WYSIWYG %>"><f:message key="admin.caption.wysiwyg" /></label></td>
 	<c:set var="PROP_TOPIC_WYSIWYG"><%= Environment.PROP_TOPIC_WYSIWYG %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_WYSIWYG}" value="${props[PROP_TOPIC_WYSIWYG]}" id="${PROP_TOPIC_WYSIWYG}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_WYSIWYG}" value="true" checked="${props[PROP_TOPIC_WYSIWYG]}" id="${PROP_TOPIC_WYSIWYG}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PRINT_NEW_WINDOW %>"><f:message key="admin.caption.printnewwindow" /></label></td>
 	<c:set var="PROP_PRINT_NEW_WINDOW"><%= Environment.PROP_PRINT_NEW_WINDOW %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_PRINT_NEW_WINDOW}" value="${props[PROP_PRINT_NEW_WINDOW]}" id="${PROP_PRINT_NEW_WINDOW}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_PRINT_NEW_WINDOW}" value="true" checked="${props[PROP_PRINT_NEW_WINDOW]}" id="${PROP_PRINT_NEW_WINDOW}" /></td>
 </tr>
 <tr>
 	<td class="formcaption" valign="top"><label for="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><f:message key="admin.caption.metadescription" /></label></td>
@@ -174,7 +174,7 @@ function onRSS() {
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC %>"><f:message key="admin.caption.tableofcontents" /></label></td>
 	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><f:message key="admin.caption.tableofcontentsdepth" /></label></td>
@@ -185,17 +185,17 @@ function onRSS() {
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><f:message key="admin.caption.allowhtml" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_HTML"><%= Environment.PROP_PARSER_ALLOW_HTML %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_HTML}" value="${props[PROP_PARSER_ALLOW_HTML]}" id="${PROP_PARSER_ALLOW_HTML}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_HTML}" value="true" checked="${props[PROP_PARSER_ALLOW_HTML]}" id="${PROP_PARSER_ALLOW_HTML}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>"><f:message key="admin.caption.allowjavascript" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_JAVASCRIPT"><%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_JAVASCRIPT}" value="${props[PROP_PARSER_ALLOW_JAVASCRIPT]}" id="${PROP_PARSER_ALLOW_JAVASCRIPT}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_JAVASCRIPT}" value="true" checked="${props[PROP_PARSER_ALLOW_JAVASCRIPT]}" id="${PROP_PARSER_ALLOW_JAVASCRIPT}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>"><f:message key="admin.caption.allowtemplates" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_TEMPLATES"><%= Environment.PROP_PARSER_ALLOW_TEMPLATES %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_TEMPLATES}" value="${props[PROP_PARSER_ALLOW_TEMPLATES]}" id="${PROP_PARSER_ALLOW_TEMPLATES}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_TEMPLATES}" value="true" checked="${props[PROP_PARSER_ALLOW_TEMPLATES]}" id="${PROP_PARSER_ALLOW_TEMPLATES}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><f:message key="admin.caption.signatureuser" /></label></td>
@@ -312,17 +312,17 @@ FIXME - Email not supported right now, comment this out
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>"><f:message key="admin.caption.dbcp.testonborrow" /></label></td>
 	<c:set var="PROP_DBCP_TEST_ON_BORROW"><%= Environment.PROP_DBCP_TEST_ON_BORROW %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_ON_BORROW}" id="${PROP_DBCP_TEST_ON_BORROW}" value="${props[PROP_DBCP_TEST_ON_BORROW]}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_ON_BORROW}" value="true" checked="${props[PROP_DBCP_TEST_ON_BORROW]}" id="${PROP_DBCP_TEST_ON_BORROW}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>"><f:message key="admin.caption.dbcp.testonreturn" /></label></td>
 	<c:set var="PROP_DBCP_TEST_ON_RETURN"><%= Environment.PROP_DBCP_TEST_ON_RETURN %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_ON_RETURN}" id="${PROP_DBCP_TEST_ON_RETURN}" value="${props[PROP_DBCP_TEST_ON_RETURN]}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_ON_RETURN}" value="true" checked="${props[PROP_DBCP_TEST_ON_RETURN]}" id="${PROP_DBCP_TEST_ON_RETURN}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>"><f:message key="admin.caption.dbcp.testwhileidle" /></label></td>
 	<c:set var="PROP_DBCP_TEST_WHILE_IDLE"><%= Environment.PROP_DBCP_TEST_WHILE_IDLE %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_WHILE_IDLE}" id="${PROP_DBCP_TEST_WHILE_IDLE}" value="${props[PROP_DBCP_TEST_WHILE_IDLE]}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_WHILE_IDLE}" value="true" checked="${props[PROP_DBCP_TEST_WHILE_IDLE]}" id="${PROP_DBCP_TEST_WHILE_IDLE}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>"><f:message key="admin.caption.dbcp.minevictableidletime" /></label></td>
@@ -352,7 +352,7 @@ FIXME - Email not supported right now, comment this out
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>"><f:message key="admin.caption.dbcp.removeabandoned" /></label></td>
 	<c:set var="PROP_DBCP_REMOVE_ABANDONED"><%= Environment.PROP_DBCP_REMOVE_ABANDONED %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_REMOVE_ABANDONED}" id="${PROP_DBCP_REMOVE_ABANDONED}" value="${props[PROP_DBCP_REMOVE_ABANDONED]}" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_REMOVE_ABANDONED}" value="true" checked="${props[PROP_DBCP_REMOVE_ABANDONED]}" id="${PROP_DBCP_REMOVE_ABANDONED}" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>"><f:message key="admin.caption.dbcp.removeabandonedtimeout" /></label></td>
@@ -504,7 +504,7 @@ onLdap()
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_RSS_ALLOWED %>"><f:message key="admin.caption.rss.allowed" /></label></td>
 	<c:set var="PROP_RSS_ALLOWED"><%= Environment.PROP_RSS_ALLOWED %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_RSS_ALLOWED}" value="${props[PROP_RSS_ALLOWED]}" id="${PROP_RSS_ALLOWED}" onclick="onRSS()" /></td>
+	<td class="formelement"><jamwiki:checkbox name="${PROP_RSS_ALLOWED}" value="true" checked="${props[PROP_RSS_ALLOWED]}" id="${PROP_RSS_ALLOWED}" onclick="onRSS()" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_RSS_TITLE %>"><f:message key="admin.caption.rss.title" /></label></td>
