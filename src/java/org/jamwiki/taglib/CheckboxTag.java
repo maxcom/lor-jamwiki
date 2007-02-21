@@ -35,6 +35,7 @@ public class CheckboxTag extends TagSupport {
 	private String checked = null;
 	private String id = null;
 	private String name = null;
+	private String onchange = null;
 	private String onclick = null;
 	private String style = null;
 	private String value = null;
@@ -50,7 +51,9 @@ public class CheckboxTag extends TagSupport {
 		String tagStyle = null;
 		String tagValue = null;
 		try {
-			output += "<input type=\"checkbox\" value=\"true\"";
+			output += "<input type=\"checkbox\"";
+			tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
+			output += " value=\"" + tagValue + "\"";
 			tagName = ExpressionEvaluationUtils.evaluateString("name", this.name, pageContext);
 			output += " name=\"" + tagName + "\"";
 			if (StringUtils.hasText(this.id)) {
@@ -61,10 +64,12 @@ public class CheckboxTag extends TagSupport {
 				tagStyle = ExpressionEvaluationUtils.evaluateString("style", this.style, pageContext);
 				output += " style=\"" + tagStyle + "\"";
 			}
+			if (StringUtils.hasText(this.onchange)) {
+				output += " onchange=\"" + this.onchange + "\"";
+			}
 			if (StringUtils.hasText(this.onclick)) {
 				output += " onclick=\"" + this.onclick + "\"";
 			}
-			tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
 			if (StringUtils.hasText(this.checked)) {
 				tagChecked = ExpressionEvaluationUtils.evaluateString("checked", this.checked, pageContext);
 				if (tagChecked.equals(tagValue)) {
@@ -120,6 +125,20 @@ public class CheckboxTag extends TagSupport {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 *
+	 */
+	public String getOnchange() {
+		return this.onchange;
+	}
+
+	/**
+	 *
+	 */
+	public void setOnchange(String onchange) {
+		this.onchange = onchange;
 	}
 
 	/**

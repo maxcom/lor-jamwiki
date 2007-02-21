@@ -68,9 +68,12 @@ public class Environment {
 	public static final String PROP_EMAIL_SMTP_HOST = "smtp-host";
 	public static final String PROP_EMAIL_SMTP_PASSWORD = "smtp-password";
 	public static final String PROP_EMAIL_SMTP_USERNAME = "smtp-username";
+	public static final String PROP_FILE_BLACKLIST = "file-blacklist";
+	public static final String PROP_FILE_BLACKLIST_TYPE = "file-blacklist-type";
 	public static final String PROP_FILE_DIR_FULL_PATH = "file-dir-full-path";
 	public static final String PROP_FILE_DIR_RELATIVE_PATH = "file-dir-relative-path";
 	public static final String PROP_FILE_MAX_FILE_SIZE = "max-file-size";
+	public static final String PROP_FILE_WHITELIST = "file-whitelist";
 	public static final String PROP_IMAGE_RESIZE_INCREMENT = "image-resize-increment";
 	public static final String PROP_LDAP_FACTORY_CLASS = "ldap-factory-class";
 	public static final String PROP_LDAP_CONTEXT = "ldap-context";
@@ -187,10 +190,13 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
+		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,js,jsp,php,sh");
+		defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, "");
 		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, "");
 		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, "");
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
+		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
 		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "450");
 		defaults.setProperty(PROP_LDAP_CONTEXT, "ou=users,dc=mycompany,dc=com");
 		defaults.setProperty(PROP_LDAP_FACTORY_CLASS, "com.sun.jndi.ldap.LdapCtxFactory");

@@ -171,6 +171,9 @@ public class AdminServlet extends JAMWikiServlet {
 			props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);
 			setProperty(props, request, Environment.PROP_FILE_DIR_RELATIVE_PATH);
+			setProperty(props, request, Environment.PROP_FILE_BLACKLIST_TYPE);
+			setProperty(props, request, Environment.PROP_FILE_BLACKLIST);
+			setProperty(props, request, Environment.PROP_FILE_WHITELIST);
 			/*
 			setProperty(props, request, Environment.PROP_EMAIL_SMTP_HOST);
 			setProperty(props, request, Environment.PROP_EMAIL_SMTP_USERNAME);

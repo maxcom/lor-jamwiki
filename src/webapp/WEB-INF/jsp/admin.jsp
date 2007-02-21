@@ -42,6 +42,18 @@ function onPersistenceType() {
 		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false;
 	}
 }
+function onUploadType() {
+	if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>-1").checked) {
+		document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled=false;
+		document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled=true;
+	} else if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>-2").checked) {
+		document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled=false;
+	} else {
+		document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled=true;
+		document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled=true;
+	}
+}
 function onLdap() {
 	if (document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").options[document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").selectedIndex].value != "<%= WikiBase.USER_HANDLER_LDAP %>") {
 		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true;
@@ -384,6 +396,27 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><jamwiki:text name="${PROP_FILE_DIR_RELATIVE_PATH}" value="${props[PROP_FILE_DIR_RELATIVE_PATH]}" size="50" id="${PROP_FILE_DIR_RELATIVE_PATH}" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
+<c:set var="PROP_FILE_BLACKLIST_TYPE"><%= Environment.PROP_FILE_BLACKLIST_TYPE %></c:set>
+<c:set var="PROP_FILE_BLACKLIST"><%= Environment.PROP_FILE_BLACKLIST %></c:set>
+<c:set var="PROP_FILE_WHITELIST"><%= Environment.PROP_FILE_WHITELIST %></c:set>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><f:message key="admin.caption.upload.blacklisttype" /></label></td>
+	<td class="formelement">
+		<jamwiki:radio name="${PROP_FILE_BLACKLIST_TYPE}" value="" checked="${props[PROP_FILE_BLACKLIST_TYPE]}" id="${PROP_FILE_BLACKLIST_TYPE}-0" onchange="onUploadType()" />&#160;<f:message key="admin.caption.upload.allowall" />&#160;&#160;
+		<jamwiki:radio name="${PROP_FILE_BLACKLIST_TYPE}" value="${PROP_FILE_BLACKLIST}" checked="${props[PROP_FILE_BLACKLIST_TYPE]}" id="${PROP_FILE_BLACKLIST_TYPE}-1" onchange="onUploadType()" />&#160;<f:message key="admin.caption.upload.useblacklist" />&#160;&#160;
+		<jamwiki:radio name="${PROP_FILE_BLACKLIST_TYPE}" value="${PROP_FILE_WHITELIST}" checked="${props[PROP_FILE_BLACKLIST_TYPE]}" id="${PROP_FILE_BLACKLIST_TYPE}-2" onchange="onUploadType()" />&#160;<f:message key="admin.caption.upload.usewhitelist" />&#160;&#160;
+	</td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST %>"><f:message key="admin.caption.upload.blacklist" /></label></td>
+	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_BLACKLIST %>" id="<%= Environment.PROP_FILE_BLACKLIST %>"><c:out value="${props[PROP_FILE_BLACKLIST]}" /></textarea></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.upload.blacklisthelp" /></td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_WHITELIST %>"><f:message key="admin.caption.upload.whitelist" /></label></td>
+	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_WHITELIST %>" id="<%= Environment.PROP_FILE_WHITELIST %>"><c:out value="${props[PROP_FILE_WHITELIST]}" /></textarea></td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.upload.whitelisthelp" /></td></tr>
 </table>
 </fieldset>
 <!-- END FILE UPLOAD -->
@@ -459,6 +492,7 @@ FIXME - Email not supported right now, comment this out
 </tr>
 <script type="text/javascript">
 onPersistenceType()
+onUploadType()
 onLdap()
 </script>
 </table>

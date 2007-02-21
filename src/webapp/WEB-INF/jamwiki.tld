@@ -29,6 +29,10 @@
 			<required>true</required>
 		</attribute>
 		<attribute>
+			<name>onchange</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
 			<name>onclick</name>
 			<required>false</required>
 		</attribute>
@@ -142,6 +146,10 @@
 		<attribute>
 			<name>name</name>
 			<required>true</required>
+		</attribute>
+		<attribute>
+			<name>onchange</name>
+			<required>false</required>
 		</attribute>
 		<attribute>
 			<name>onclick</name>
