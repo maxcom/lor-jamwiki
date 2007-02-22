@@ -6,6 +6,7 @@ New Features:
 
   * Add the option to whitelist/blacklist allowed file upload types.
   * Upgrade to commons-io-1.3.1.jar.
+  * Upgrade to commons-fileupload-1.2.jar.
   * When displaying a "topic does not exist" message, also include a link to
     create the topic.
   * Update look & feel - do not underline links, add fieldset tags.
