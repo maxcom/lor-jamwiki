@@ -28,63 +28,49 @@
 
 <script type="text/javascript">
 function onPersistenceType() {
-	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL %>") {
-		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true;
-	} else {
-		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false;
+	var disabled = true;
+	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_EXTERNAL %>") {
+		disabled = false;
 	}
+	document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_DB_URL %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled = disabled;
 }
 function onUploadType() {
+	var whitelistDisabled = true;
+	var blacklistDisabled = true;
 	if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>-1").checked) {
-		document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled=true;
+		blacklistDisabled = false;
 	} else if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>-2").checked) {
-		document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled=false;
-	} else {
-		document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled=true;
+		whitelistDisabled = false;
 	}
+	document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled = blacklistDisabled;
+	document.getElementById("<%= Environment.PROP_FILE_WHITELIST %>").disabled = whitelistDisabled;
 }
 function onLdap() {
-	if (document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").options[document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").selectedIndex].value != "<%= WikiBase.USER_HANDLER_LDAP %>") {
-		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=true;
-		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=true;
-	} else {
-		document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled=false;
-		document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled=false;
+	var disabled = true;
+	if (document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").options[document.getElementById("<%= Environment.PROP_BASE_USER_HANDLER %>").selectedIndex].value == "<%= WikiBase.USER_HANDLER_LDAP %>") {
+		disabled = false;
 	}
+	document.getElementById("<%= Environment.PROP_LDAP_FACTORY_CLASS %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_URL %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_CONTEXT %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_FIELD_EMAIL %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_FIELD_LAST_NAME %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_FIELD_USERID %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_LOGIN %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_PASSWORD %>").disabled = disabled;
+	document.getElementById("<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>").disabled = disabled;
 }
 function onRSS() {
+	var disabled = true;
 	if (document.getElementById("<%= Environment.PROP_RSS_ALLOWED %>").checked) {
-		document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled=false;
-	} else {
-		document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled=true;
+		disabled = false;
 	}
+	document.getElementById("<%= Environment.PROP_RSS_TITLE %>").disabled = disabled;
 }
 </script>
 
