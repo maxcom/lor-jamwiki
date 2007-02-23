@@ -41,9 +41,9 @@ function onPersistenceType() {
 function onUploadType() {
 	var whitelistDisabled = true;
 	var blacklistDisabled = true;
-	if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>-1").checked) {
+	if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").options[document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").selectedIndex].value == "<%= WikiBase.UPLOAD_BLACKLIST %>") {
 		blacklistDisabled = false;
-	} else if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>-2").checked) {
+	} else if (document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").options[document.getElementById("<%= Environment.PROP_FILE_BLACKLIST_TYPE %>").selectedIndex].value == "<%= WikiBase.UPLOAD_WHITELIST %>") {
 		whitelistDisabled = false;
 	}
 	document.getElementById("<%= Environment.PROP_FILE_BLACKLIST %>").disabled = blacklistDisabled;
@@ -382,24 +382,26 @@ FIXME - Email not supported right now, comment this out
 	<td class="formelement"><jamwiki:text name="${PROP_FILE_DIR_RELATIVE_PATH}" value="${props[PROP_FILE_DIR_RELATIVE_PATH]}" size="50" id="${PROP_FILE_DIR_RELATIVE_PATH}" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
-<c:set var="PROP_FILE_BLACKLIST_TYPE"><%= Environment.PROP_FILE_BLACKLIST_TYPE %></c:set>
-<c:set var="PROP_FILE_BLACKLIST"><%= Environment.PROP_FILE_BLACKLIST %></c:set>
-<c:set var="PROP_FILE_WHITELIST"><%= Environment.PROP_FILE_WHITELIST %></c:set>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><f:message key="admin.caption.upload.blacklisttype" /></label></td>
 	<td class="formelement">
-		<jamwiki:radio name="${PROP_FILE_BLACKLIST_TYPE}" value="" checked="${props[PROP_FILE_BLACKLIST_TYPE]}" id="${PROP_FILE_BLACKLIST_TYPE}-0" onchange="onUploadType()" />&#160;<f:message key="admin.caption.upload.allowall" />&#160;&#160;
-		<jamwiki:radio name="${PROP_FILE_BLACKLIST_TYPE}" value="${PROP_FILE_BLACKLIST}" checked="${props[PROP_FILE_BLACKLIST_TYPE]}" id="${PROP_FILE_BLACKLIST_TYPE}-1" onchange="onUploadType()" />&#160;<f:message key="admin.caption.upload.useblacklist" />&#160;&#160;
-		<jamwiki:radio name="${PROP_FILE_BLACKLIST_TYPE}" value="${PROP_FILE_WHITELIST}" checked="${props[PROP_FILE_BLACKLIST_TYPE]}" id="${PROP_FILE_BLACKLIST_TYPE}-2" onchange="onUploadType()" />&#160;<f:message key="admin.caption.upload.usewhitelist" />&#160;&#160;
+		<c:set var="PROP_FILE_BLACKLIST_TYPE"><%= Environment.PROP_FILE_BLACKLIST_TYPE %></c:set>
+		<select name="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>" id="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>" onchange="onUploadType()">
+		<c:forEach items="${blacklistTypes}" var="blacklistType">
+		<option value="<c:out value="${blacklistType.key}" />"<c:if test="${props[PROP_FILE_BLACKLIST_TYPE] == blacklistType.key}"> selected="selected"</c:if>><f:message key="${blacklistType.value}" /></option>
+		</c:forEach>
+		</select>
 	</td>
 </tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST %>"><f:message key="admin.caption.upload.blacklist" /></label></td>
+	<c:set var="PROP_FILE_BLACKLIST"><%= Environment.PROP_FILE_BLACKLIST %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_BLACKLIST %>" id="<%= Environment.PROP_FILE_BLACKLIST %>"><c:out value="${props[PROP_FILE_BLACKLIST]}" /></textarea></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.upload.blacklisthelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_WHITELIST %>"><f:message key="admin.caption.upload.whitelist" /></label></td>
+	<c:set var="PROP_FILE_WHITELIST"><%= Environment.PROP_FILE_WHITELIST %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_WHITELIST %>" id="<%= Environment.PROP_FILE_WHITELIST %>"><c:out value="${props[PROP_FILE_WHITELIST]}" /></textarea></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.caption.upload.whitelisthelp" /></td></tr>

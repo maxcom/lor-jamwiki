@@ -81,6 +81,14 @@ public class WikiBase {
 	public static final String SPECIAL_PAGE_SPECIAL_PAGES = "SpecialPages";
 	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
+	/** Allow file uploads of any file type. */
+	public static final int UPLOAD_ALL = 0;
+	/** Use a blacklist to determine what file types can be uploaded. */
+	public static final int UPLOAD_BLACKLIST = 2;
+	/** Disable all file uploads. */
+	public static final int UPLOAD_NONE = 1;
+	/** Use a whitelist to determine what file types can be uploaded. */
+	public static final int UPLOAD_WHITELIST = 3;
 	/** Database user handler class */
 	public static final String USER_HANDLER_DATABASE = "org.jamwiki.db.DatabaseUserHandler";
 	/** LDAP user handler class */

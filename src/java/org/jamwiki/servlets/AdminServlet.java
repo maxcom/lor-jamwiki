@@ -17,8 +17,8 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
@@ -306,11 +306,17 @@ public class AdminServlet extends JAMWikiServlet {
 		next.addObject("dataHandlers", dataHandlers);
 		Collection parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
-		HashMap poolExhaustedMap = new HashMap();
+		LinkedHashMap poolExhaustedMap = new LinkedHashMap();
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.caption.dbcp.whenexhaustedaction.fail");
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.caption.dbcp.whenexhaustedaction.block");
 		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.caption.dbcp.whenexhaustedaction.grow");
 		next.addObject("poolExhaustedMap", poolExhaustedMap);
+		LinkedHashMap blacklistTypesMap = new LinkedHashMap();
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_ALL), "admin.caption.upload.allowall");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_NONE), "admin.caption.upload.allownone");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_BLACKLIST), "admin.caption.upload.useblacklist");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_WHITELIST), "admin.caption.upload.usewhitelist");
+		next.addObject("blacklistTypes", blacklistTypesMap);
 		if (props == null) {
 			props = Environment.getInstance();
 		}
