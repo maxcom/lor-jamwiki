@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
@@ -100,6 +101,27 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private boolean isFileTypeAllowed(String extension) {
+		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
+		if (blacklistType == WikiBase.UPLOAD_ALL) return true;
+		if (blacklistType == WikiBase.UPLOAD_NONE) return false;
+		if (!StringUtils.hasText(extension)) {
+			// FIXME - should non-extensions be represented in the whitelist/blacklist?
+			return true;
+		}
+		extension = extension.toLowerCase();
+		List list = Utilities.retrieveUploadFileList();
+		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
+			return !list.contains(extension);
+		} else if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
+			return list.contains(extension);
+		}
+		return false;
+	}
+
+	/**
+	 *
+	 */
 	private static String sanitizeFilename(String filename) {
 		if (!StringUtils.hasText(filename)) return null;
 		// some browsers set the full path, so strip to just the file name
@@ -139,6 +161,10 @@ public class UploadServlet extends JAMWikiServlet {
 					throw new WikiException(new WikiMessage("upload.error.filename"));
 				}
 				fileName = UploadServlet.sanitizeFilename(fileName);
+				String extension = FilenameUtils.getExtension(fileName);
+				if (!isFileTypeAllowed(extension)) {
+					throw new WikiException(new WikiMessage("upload.error.filetype", extension));
+				}
 				url = UploadServlet.buildUniqueFileName(fileName);
 				String subdirectory = UploadServlet.buildFileSubdirectory();
 				fileSize = item.getSize();

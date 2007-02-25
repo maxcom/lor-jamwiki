@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -989,6 +990,33 @@ public class Utilities {
 			i++;
 		}
 		return uri;
+	}
+
+	/**
+	 * If a blacklist or whitelist of allowed file upload types is being used,
+	 * retrieve the list from the properties file and return as a List object.
+	 * If no such list is being used then return an empty List object.
+	 *
+	 * @return A list consisting of lowercase versions of all file extensions
+	 *  for the whitelist/blacklist.  Entries in the list are of the form
+	 *  "txt", not ".txt".
+	 */
+	public static List retrieveUploadFileList() {
+		List list = new Vector();
+		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
+		String listString = "";
+		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
+			listString = Environment.getValue(Environment.PROP_FILE_BLACKLIST);
+		} else if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
+			listString = Environment.getValue(Environment.PROP_FILE_WHITELIST);
+		}
+		StringTokenizer tokens = new StringTokenizer(listString, "\n\r ,.");
+		while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken();
+			if (!StringUtils.hasText(token)) continue;
+			list.add(token.toLowerCase());
+		}
+		return list;
 	}
 
 	/**
