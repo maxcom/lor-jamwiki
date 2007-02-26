@@ -14,6 +14,10 @@ New Features:
   * Hide the Special:Convert admin page.
   * Add an option to clear the cache from Special:System.
   * Added automatically generated JUnit tests from junitfactory.com.
+  
+Bugfixes:
+
+  * Certain topic names could cause errors resulting in CPU usage of 100%.
 
 Translation Updates:
 

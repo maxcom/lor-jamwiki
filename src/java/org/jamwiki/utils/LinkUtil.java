@@ -17,8 +17,6 @@
 package org.jamwiki.utils;
 
 import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.io.FilenameUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -33,15 +31,6 @@ import org.springframework.util.StringUtils;
 public class LinkUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(LinkUtil.class.getName());
-	private static Pattern TOPIC_LINK_PATTERN = null;
-
-	static {
-		try {
-			TOPIC_LINK_PATTERN = Pattern.compile("(((([^\\n\\r\\?\\#\\:]+)\\:)?([^\\n\\r\\?\\#]+))?(#([^\\n\\r\\?]+))?)+(\\?([^\\n\\r]+))?");
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
 
 	/**
 	 * Build a query parameter.  If root is empty, this method returns
@@ -256,26 +245,42 @@ public class LinkUtil {
 	 * @return A WikiLink object that represents the link.
 	 */
 	public static WikiLink parseWikiLink(String raw) {
+		// note that this functionality was previously handled with a regular
+		// expression, but the expression caused CPU usage to spike to 100%
+		// with topics such as "Urnordisch oder Nordwestgermanisch?"
+		String processed = raw.trim();
 		WikiLink wikiLink = new WikiLink();
-		if (!StringUtils.hasText(raw)) {
+		if (!StringUtils.hasText(processed)) {
 			return new WikiLink();
 		}
-		raw = raw.trim();
-		Matcher m = TOPIC_LINK_PATTERN.matcher(raw);
-		if (!m.matches()) {
-			return new WikiLink();
+		// first see if the link ends with a query param - "?..."
+		int queryPos = processed.indexOf('?', 1);
+		if (queryPos != -1 && queryPos < processed.length()) {
+			String queryString = processed.substring(queryPos + 1);
+			wikiLink.setQuery(queryString);
+			processed = processed.substring(0, queryPos);
 		}
-		String namespace = m.group(4);
-		if (namespace == null) namespace = "";
-		wikiLink.setNamespace(namespace);
-		String destination = m.group(2);
-		if (StringUtils.hasText(destination)) destination = Utilities.decodeFromURL(destination);
-		wikiLink.setDestination(destination);
-		String article = m.group(5);
-		if (StringUtils.hasText(article)) article = Utilities.decodeFromURL(article);
-		wikiLink.setArticle(article);
-		wikiLink.setSection(m.group(7));
-		wikiLink.setQuery(m.group(9));
+		// now look for a section param - "#..."
+		int sectionPos = processed.indexOf('#', 1);
+		if (sectionPos != -1 && sectionPos < processed.length()) {
+			String sectionString = processed.substring(sectionPos + 1);
+			wikiLink.setSection(sectionString);
+			processed = processed.substring(0, sectionPos);
+		}
+		// since we're having so much fun, let's find a namespace (default empty).
+		String namespaceString = "";
+		int namespacePos = processed.indexOf(':', 1);
+		if (namespacePos != -1 && namespacePos < processed.length()) {
+			namespaceString = processed.substring(0, namespacePos);
+		}
+		wikiLink.setNamespace(namespaceString);
+		String topic = processed;
+		if (namespacePos > 0) {
+			topic = processed.substring(namespacePos + 1);
+		}
+		wikiLink.setArticle(Utilities.decodeFromURL(topic));
+		// destination is namespace + topic
+		wikiLink.setDestination(Utilities.decodeFromURL(processed));
 		return wikiLink;
 	}
 }
