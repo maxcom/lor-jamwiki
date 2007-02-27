@@ -22,8 +22,9 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
-  * Added Japanese translations (nattolover).
   * Updated German translations (axelclk).
+  * Updated Hungarian translations (bdanee).
+  * Added Japanese translations (nattolover).
   * Updated Polish translations (dlpa).
 
 0.5.1
