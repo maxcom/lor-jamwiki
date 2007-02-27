@@ -22,6 +22,7 @@ JAMWiki Contributors
      German:                Axel Kramer (axelclk)
                             Rainer Schmitz (swift)
      Hungarian:             Daniel Tar (bDaneE)
+     Japanese:              Natto Lover (nattolover)
      Polish:                Robert Matyja (dlpa)
      Ukranian:              Volodymyr Vlad (gutsul)
   Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
