@@ -29,7 +29,9 @@ import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
 
 /**
- *
+ * Utility methods for readding images from disk, saving images to disk,
+ * resizing images, and returning information about images such as width and
+ * height.
  */
 public class ImageUtil {
 
@@ -57,10 +59,19 @@ public class ImageUtil {
 	}
 
 	/**
-	 * Given a virtualWiki and topicName that correspond to an existing image,
+	 * Given a virtualWiki and WikiFIle that correspond to an existing image,
 	 * return the WikiImage object.  In addition, an optional maxDimension
 	 * parameter may be specified, in which case a resized version of the image
 	 * may be created.
+	 *
+	 * @param wikiFile Given a WikiFile object, use it to initialize a
+	 *  WikiImage object.
+	 * @param maxDimension The maximum width or height for the initialized
+	 *  WikiImage object.  Setting this value to 0 or less will cause the
+	 *  value to be ignored.
+	 * @return An initialized WikiImage object.
+	 * @throws Exception Thrown if an error occurs while initializing the
+	 *  WikiImage object.
 	 */
 	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws Exception {
 		if (wikiFile == null) {
@@ -82,7 +93,13 @@ public class ImageUtil {
 	}
 
 	/**
+	 * Given a File object, determine if the file is an image or if it is some
+	 * other type of file.  Note that this method will read in the entire file,
+	 * so there are performance implications for large files.
 	 *
+	 * @param file The File object for the file that is being examined.
+	 * @return Returns <code>true</code> if the file is an image object.
+	 * @throws Exception Thrown if any error occurs while reading the file.
 	 */
 	public static boolean isImage(File file) throws Exception {
 		return (ImageUtil.loadImage(file) != null);

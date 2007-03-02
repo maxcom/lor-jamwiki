@@ -26,7 +26,9 @@ import org.jamwiki.model.WikiImage;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * General utility methods for handling both wiki topic links such as
+ * "Topic#Section?query=param", as well as HTML links of the form
+ * http://example.com/.
  */
 public class LinkUtil {
 
@@ -34,10 +36,17 @@ public class LinkUtil {
 
 	/**
 	 * Build a query parameter.  If root is empty, this method returns
-	 * "?param=value".  If root is not empty this method this method
-	 * returns root + "&amp;param=value".  Note that parma and value will be
-	 * URL encoded, and if "query" does not start with a "?" then one will be
-	 * pre-pended.
+	 * "?param=value".  If root is not empty this method returns root +
+	 * "&amp;param=value".  Note that param and value will be  URL encoded,
+	 * and if "query" does not start with a "?" then one will be pre-pended.
+	 *
+	 * @param query The existing query parameter, if one is available.  If the
+	 *  query parameter does not start with "?" then one will be pre-pended.
+	 * @param param The name of the query parameter being appended.  This
+	 *  value will be URL encoded.
+	 * @param value The value of the query parameter being appended.  This
+	 *  value will be URL encoded.
+	 * @return The full query string generated using the input parameters.
 	 */
 	public static String appendQueryParam(String query, String param, String value) {
 		String url = "";
@@ -58,7 +67,22 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Utility method for building a URL link to a wiki edit page for a
+	 * specified topic.
 	 *
+	 * @param context The servlet context for the link that is being created.
+	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param topic The name of the topic for which an edit link is being
+	 *  created.
+	 * @param query Any existing query parameters to append to the edit link.
+	 *  This value may be either <code>null</code> or empty.
+	 * @param section The section defined by the name parameter within the
+	 *  HTML page for the topic being edited.  If provided then the edit link
+	 *  will allow editing of only the specified section.
+	 * @return A url that links to the edit page for the specified topic.
+	 *  Note that this method returns only the URL, not a fully-formed HTML
+	 *  anchor tag.
+	 * @throws Exception Thrown if any error occurs while builing the link URL.
 	 */
 	public static String buildEditLinkUrl(String context, String virtualWiki, String topic, String query, int section) throws Exception {
 		query = LinkUtil.appendQueryParam(query, "topic", topic);
@@ -73,7 +97,38 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Utility method for building an anchor tag that links to an image page
+	 * and includes the HTML image tag to display the image.
 	 *
+	 * @param context The servlet context for the link that is being created.
+	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param topicName The name of the image for which a link is being
+	 *  created.
+	 * @param frame Set to <code>true</code> if the image should display with
+	 *  a frame border.
+	 * @param thumb Set to <code>true</code> if the image should display as a
+	 *  thumbnail.
+	 * @param align Indicates how the image should horizontally align on the
+	 *  page.  Valid values are "left", "right" and "center".
+	 * @param caption An optional text caption to display for the image.  If
+	 *  no caption is used then this value should be either empty or
+	 *  <code>null</code>.
+	 * @param maxDimension A value in pixels indicating the maximum width or
+	 *  height value allowed for the image.  Images will be resized so that
+	 *  neither the width or height exceeds this value.
+	 * @param suppressLink If this value is <code>true</code> then the
+	 *  generated HTML will include the image tag without a link to the image
+	 *  topic page.
+	 * @param style The CSS class to use with the img HTML tag.  This value
+	 *  can be <code>null</code> or empty if no custom style is used.
+	 * @param escapeHtml Set to <code>true</code> if the caption should be
+	 *  HTML escaped.  This value should be <code>true</code> in any case
+	 *  where the caption is not guaranteed to be free from potentially
+	 *  malicious HTML code.
+	 * @return The full HTML required to display an image enclosed within an
+	 *  HTML anchor tag that links to the image topic page.
+	 * @throws Exception Thrown if any error occurs while builing the image
+	 *  HTML.
 	 */
 	public static String buildImageLinkHtml(String context, String virtualWiki, String topicName, boolean frame, boolean thumb, String align, String caption, int maxDimension, boolean suppressLink, String style, boolean escapeHtml) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -143,7 +198,24 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Build the HTML anchor link to a topic page for a given WikLink object.
 	 *
+	 * @param context The servlet context for the link that is being created.
+	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param wikiLink The WikiLink object containing all relevant information
+	 *  about the link being generated.
+	 * @param text The text to display as the link content.
+	 * @param style The CSS class to use with the anchor HTML tag.  This value
+	 *  can be <code>null</code> or empty if no custom style is used.
+	 * @param target The anchor link target, or <code>null</code> or empty if
+	 *  no target is needed.
+	 * @param escapeHtml Set to <code>true</code> if the link caption should
+	 *  be HTML escaped.  This value should be <code>true</code> in any case
+	 *  where the caption is not guaranteed to be free from potentially
+	 *  malicious HTML code.
+	 * @return An HTML anchor link that matches the given input parameters.
+	 * @throws Exception Thrown if any error occurs while builing the link
+	 *  HTML.
 	 */
 	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
@@ -177,7 +249,15 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Build a URL to the topic page for a given topic.
 	 *
+	 * @param context The servlet context path.  If this value is
+	 *  <code>null</code> then the resulting URL will NOT include context path,
+	 *  which breaks HTML links but is useful for servlet redirection URLs.
+	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param topic The topic name for the URL that is being generated.
+	 * @throws Exception Thrown if any error occurs while builing the link
+	 *  URL.
 	 */
 	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic) throws Exception {
 		if (!StringUtils.hasText(topic)) {
@@ -188,10 +268,16 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Build a URL to the topic page for a given topic.
 	 *
 	 * @param context The servlet context path.  If this value is
 	 *  <code>null</code> then the resulting URL will NOT include context path,
 	 *  which breaks HTML links but is useful for servlet redirection URLs.
+	 * @param virtualWiki The virtual wiki for the link that is being created.
+	 * @param wikiLink The WikiLink object containing all relevant information
+	 *  about the link being generated.
+	 * @throws Exception Thrown if any error occurs while builing the link
+	 *  URL.
 	 */
 	public static String buildInternalLinkUrl(String context, String virtualWiki, WikiLink wikiLink) throws Exception {
 		String topic = wikiLink.getDestination();
@@ -225,7 +311,11 @@ public class LinkUtil {
 	}
 
 	/**
+	 * Generate the HTML for an interwiki anchor link.
 	 *
+	 * @param wikiLink The WikiLink object containing all relevant information
+	 *  about the link being generated.
+	 * @return The HTML anchor tag for the interwiki link.
 	 */
 	public static String interWiki(WikiLink wikiLink) {
 		// remove namespace from link destination
