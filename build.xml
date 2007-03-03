@@ -63,8 +63,8 @@
 	</target>
 
 	<target name="init" depends="clean" description="Initialize for build sequence">
-		<mkdir dir="${dir.build}" />
 		<mkdir dir="${dir.build}/classes" />
+		<mkdir dir="${dir.local}/lib" />
 	</target>
 
 	<target name="jflex" depends="init,cleanLexers" description="Generate Java files from the lexer files">
