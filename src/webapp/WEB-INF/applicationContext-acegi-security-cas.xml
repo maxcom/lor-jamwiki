@@ -205,7 +205,7 @@
 			<value>
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
-				/**/Special:System=ROLE_ADMIN
+				/**/Special:Maintenance=ROLE_ADMIN
 				/**/Special:Translation=ROLE_ADMIN
 				/**/Special:Convert=ROLE_ADMIN
 				/**/Special:RecentChangesFeed=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN

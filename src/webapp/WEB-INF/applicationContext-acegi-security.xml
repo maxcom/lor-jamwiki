@@ -212,7 +212,7 @@
 	way to be able to pass a message to the login page with Acegi before re-implementing.
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
-				/**/Special:System=ROLE_ADMIN
+				/**/Special:Maintenance=ROLE_ADMIN
 				/**/Special:Translation=ROLE_ADMIN
 				/**/Special:Convert=ROLE_ADMIN
 	

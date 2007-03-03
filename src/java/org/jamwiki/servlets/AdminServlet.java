@@ -47,7 +47,7 @@ public class AdminServlet extends JAMWikiServlet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(AdminServlet.class.getName());
 	protected static final String JSP_ADMIN = "admin.jsp";
-	protected static final String JSP_ADMIN_SYSTEM = "admin-system.jsp";
+	protected static final String JSP_ADMIN_SYSTEM = "admin-maintenance.jsp";
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -62,7 +62,7 @@ public class AdminServlet extends JAMWikiServlet {
 			return ServletUtil.viewLogin(request, pageInfo, "Special:Admin", errorMessage);
 		}
 		String function = request.getParameter("function");
-		if (!StringUtils.hasText(function) && ServletUtil.isTopic(request, "Special:System")) {
+		if (!StringUtils.hasText(function) && ServletUtil.isTopic(request, "Special:Maintenance")) {
 			viewAdminSystem(request, next, pageInfo, null);
 		} else if (!StringUtils.hasText(function)) {
 			viewAdmin(request, next, pageInfo, null);
@@ -331,7 +331,7 @@ public class AdminServlet extends JAMWikiServlet {
 	private void viewAdminSystem(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
 		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
 		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("admin.title"));
+		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
 		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
 		next.addObject("wikis", virtualWikiList);
 	}

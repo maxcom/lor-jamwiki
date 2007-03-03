@@ -42,7 +42,7 @@
 	<th>&#160;</th>
 </tr>
 <c:forEach items="${wikis}" var="wiki">
-<form action="<jamwiki:link value="Special:System" />" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki" />
 <input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
 <input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
@@ -54,7 +54,7 @@
 </tr>
 </form>
 </c:forEach>
-<form action="<jamwiki:link value="Special:System" />" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki" />
 <tr>
 	<td class="formelement"><input type="text" name="name" /></td>
@@ -69,7 +69,7 @@
 <!-- Refresh Search Index -->
 <fieldset>
 <legend><f:message key="admin.title.refresh" /></legend>
-<form name="refreshform" method="post" action="<jamwiki:link value="Special:System" />">
+<form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
@@ -83,7 +83,7 @@
 <!-- Recent Changes -->
 <fieldset>
 <legend><f:message key="admin.title.recentchanges" /></legend>
-<form action="<jamwiki:link value="Special:System" />" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
@@ -97,7 +97,7 @@
 <!-- Cache -->
 <fieldset>
 <legend><f:message key="admin.title.cache" /></legend>
-<form action="<jamwiki:link value="Special:System" />" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
@@ -113,7 +113,7 @@
 <!-- Spam Filter -->
 <fieldset>
 <legend><f:message key="admin.title.spamfilter" /></legend>
-<form action="<jamwiki:link value="Special:System" />" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
