@@ -2,6 +2,9 @@
 0.5.3
 =====
 
+Translation Updates:
+
+  * Updated Chinese translations (hfl).
 
 0.5.2
 =====
