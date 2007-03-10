@@ -2,6 +2,10 @@
 0.5.3
 =====
 
+New Features:
+
+  * Upgrade to Spring Framework 2.0.3.
+
 Translation Updates:
 
   * Updated Chinese translations (hfl).
