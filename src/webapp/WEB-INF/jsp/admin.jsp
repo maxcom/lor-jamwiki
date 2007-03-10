@@ -113,6 +113,7 @@ function onRSS() {
 	<c:set var="PROP_TOPIC_FORCE_USERNAME"><%= Environment.PROP_TOPIC_FORCE_USERNAME %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_FORCE_USERNAME}" value="true" checked="${props[PROP_TOPIC_FORCE_USERNAME]}" id="${PROP_TOPIC_FORCE_USERNAME}" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.forceusernamehelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
 	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
