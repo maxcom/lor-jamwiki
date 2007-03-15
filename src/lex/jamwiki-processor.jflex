@@ -153,7 +153,7 @@ entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 
 /* non-container expressions */
 hr                 = "----"
-wikiheading        = [\=]+ [^\n\=]* [\=]+
+wikiheading        = [\=]+ [^\n\=]+ [\=]+
 bold               = "'''"
 italic             = "''"
 
