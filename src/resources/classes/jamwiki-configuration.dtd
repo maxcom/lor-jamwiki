@@ -1,16 +1,21 @@
 
 <!ELEMENT configuration (parsers?, user-handlers?, data-handlers?, namespaces*, pseudotopics*)>
 
+<!ELEMENT parsers (parser*)>
 <!ELEMENT parser (name, class, key?, state?)>
-<!ELEMENT user-handler (name, class, key?, state?)>
-<!ELEMENT data-handler (name, class, key?, state?)>
-<!ELEMENT namespaces (namespace*)>
-<!ELEMENT pseudotopics (pseudotopic*)>
 
+<!ELEMENT user-handlers (user-handler*)>
+<!ELEMENT user-handler (name, class, key?, state?)>
+
+<!ELEMENT data-handlers (data-handler*)>
+<!ELEMENT data-handler (name, class, key?, state?)>
+
+<!ELEMENT namespaces (namespace*)>
 <!ELEMENT namespace (name, main, comments)>
 <!ELEMENT main (#PCDATA)>
 <!ELEMENT comments (#PCDATA)>
 
+<!ELEMENT pseudotopics (pseudotopic*)>
 <!ELEMENT pseudotopic (name)>
 
 <!ELEMENT name (#PCDATA)>
