@@ -9,7 +9,9 @@ New Features:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
-  * Added Dutch translations (Angel).
+  * Updated Dutch translations (Angel).
+  * Updated German translations (axelclk).
+  * Updated Japanese translations (nattolover).
 
 0.5.2
 =====
