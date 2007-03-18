@@ -50,18 +50,24 @@ public class CheckboxTag extends TagSupport {
 		String tagName = null;
 		String tagStyle = null;
 		String tagValue = null;
+		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		try {
 			output += "<input type=\"checkbox\"";
-			tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
+			if (tmp != null) tagValue = tmp.toString();
 			output += " value=\"" + tagValue + "\"";
-			tagName = ExpressionEvaluationUtils.evaluateString("name", this.name, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
+			if (tmp != null) tagName = tmp.toString();
 			output += " name=\"" + tagName + "\"";
 			if (StringUtils.hasText(this.id)) {
-				tagId = ExpressionEvaluationUtils.evaluateString("id", this.id, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
+				if (tmp != null) tagId = tmp.toString();
 				output += " id=\"" + tagId + "\"";
 			}
 			if (StringUtils.hasText(this.style)) {
-				tagStyle = ExpressionEvaluationUtils.evaluateString("style", this.style, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
+				if (tmp != null) tagStyle = tmp.toString();
 				output += " style=\"" + tagStyle + "\"";
 			}
 			if (StringUtils.hasText(this.onchange)) {
@@ -71,7 +77,8 @@ public class CheckboxTag extends TagSupport {
 				output += " onclick=\"" + this.onclick + "\"";
 			}
 			if (StringUtils.hasText(this.checked)) {
-				tagChecked = ExpressionEvaluationUtils.evaluateString("checked", this.checked, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("checked", this.checked, pageContext);
+				if (tmp != null) tagChecked = tmp.toString();
 				if (tagChecked.equals(tagValue)) {
 					output += " checked=\"checked\"";
 				}

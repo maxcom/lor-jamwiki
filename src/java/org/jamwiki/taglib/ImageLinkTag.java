@@ -40,8 +40,11 @@ public class ImageLinkTag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		String linkValue = null;
+		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		try {
-			linkValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
+			if (tmp != null) linkValue = tmp.toString();
 		} catch (JspException e) {
 			logger.severe("Image link tag evaluated empty for value " + this.value, e);
 			throw e;

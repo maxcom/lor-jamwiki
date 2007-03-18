@@ -42,8 +42,11 @@ public class PaginationTag extends BodyTagSupport {
 	public int doEndTag() throws JspException {
 		String baseUrl = null;
 		int count = 0;
+		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		try {
-			baseUrl = ExpressionEvaluationUtils.evaluateString("rootUrl", this.rootUrl, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("rootUrl", this.rootUrl, pageContext);
+			if (tmp != null) baseUrl = tmp.toString();
 			count = ExpressionEvaluationUtils.evaluateInteger("total", this.total, pageContext);
 			this.pageContext.getOut().print(pagination(baseUrl, count));
 		} catch (Exception e) {

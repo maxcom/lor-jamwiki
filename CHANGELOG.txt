@@ -5,6 +5,11 @@
 New Features:
 
   * Upgrade to Spring Framework 2.0.3.
+  
+Bugfixes:
+
+  * Fix an error with Resin that could result in ClassCastException on pages
+    displaying "diff" links.
 
 Translation Updates:
 

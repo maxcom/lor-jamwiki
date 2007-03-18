@@ -50,12 +50,16 @@ public class TextTag extends TagSupport {
 		int tagSize = 0;
 		String tagStyle = null;
 		String tagValue = "";
+		// Resin throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		try {
 			output += "<input type=\"text\"";
-			tagName = ExpressionEvaluationUtils.evaluateString("name", this.name, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
+			if (tmp != null) tagName = tmp.toString();
 			output += " name=\"" + tagName + "\"";
 			if (StringUtils.hasText(this.id)) {
-				tagId = ExpressionEvaluationUtils.evaluateString("id", this.id, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
+				if (tmp != null) tagId = tmp.toString();
 				output += " id=\"" + tagId + "\"";
 			}
 			if (StringUtils.hasText(this.maxlength)) {
@@ -67,11 +71,13 @@ public class TextTag extends TagSupport {
 				output += " size=\"" + tagSize + "\"";
 			}
 			if (StringUtils.hasText(this.style)) {
-				tagStyle = ExpressionEvaluationUtils.evaluateString("style", this.style, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
+				if (tmp != null) tagStyle = tmp.toString();
 				output += " style=\"" + tagStyle + "\"";
 			}
 			if (StringUtils.hasText(this.value)) {
-				tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
+				if (tmp != null) tagValue = tmp.toString();
 			}
 			output += " value=\"" + tagValue + "\"";
 			output += " />";

@@ -46,10 +46,14 @@ public class LinkTag extends BodyTagSupport {
 	public int doEndTag() throws JspException {
 		String tagValue = null;
 		String tagTarget = null;
+		// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		try {
-			tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
+			if (tmp != null) tagValue = tmp.toString();
 			if (StringUtils.hasText(this.target)) {
-				tagTarget = ExpressionEvaluationUtils.evaluateString("target", this.target, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("target", this.target, pageContext);
+				if (tmp != null) tagTarget = tmp.toString();
 			}
 		} catch (JspException e) {
 			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
@@ -97,6 +101,8 @@ public class LinkTag extends BodyTagSupport {
 	private String buildLinkText() throws JspException {
 		String body = null;
 		String tagText = null;
+		// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		if (this.getBodyContent() != null) {
 			body = this.getBodyContent().getString();
 		}
@@ -104,7 +110,8 @@ public class LinkTag extends BodyTagSupport {
 			throw new JspException("Attribute 'text' and body content may not both be specified for link tag");
 		}
 		if (StringUtils.hasText(this.text)) {
-			tagText = ExpressionEvaluationUtils.evaluateString("text", this.text, pageContext);
+			tmp = ExpressionEvaluationUtils.evaluate("text", this.text, pageContext);
+			if (tmp != null) tagText = tmp.toString();
 		} else if (StringUtils.hasText(body)) {
 			tagText = body;
 		}

@@ -38,13 +38,16 @@ public class LinkParamTag extends BodyTagSupport {
 	 */
 	public int doEndTag() throws JspException {
 		String tagValue = null;
+		// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1", so use tmp variable
+		Object tmp = null;
 		LinkTag parent = (LinkTag)this.getParent();
 		if (parent == null) {
 			throw new JspException("linkParam tag not nested within a link tag");
 		}
 		try {
 			if (StringUtils.hasText(this.value)) {
-				tagValue = ExpressionEvaluationUtils.evaluateString("value", this.value, pageContext);
+				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
+				if (tmp != null) tagValue = tmp.toString();
 			} else {
 				tagValue = this.getBodyContent().getString();
 			}
