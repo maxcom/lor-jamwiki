@@ -5,6 +5,7 @@
 New Features:
 
   * Upgrade to Spring Framework 2.0.3.
+  * Hide edit tab from users who do not have permission to edit a topic.
   
 Bugfixes:
 

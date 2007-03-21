@@ -186,6 +186,35 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Determine if a user has permission to edit a topic.
+	 *
+	 * @param virtualWiki The virtual wiki name for the topic in question.
+	 * @param topicName The name of the topic in question.
+	 * @param user The current Wiki user, or <code>null</code> if there is
+	 *  no current user.
+	 * @return <code>true</code> if the user is allowed to edit the topic,
+	 *  <code>false</code> otherwise.
+	 */
+	protected static boolean isEditable(String virtualWiki, String topicName, WikiUser user) throws Exception {
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && user == null) {
+			// must be logged in to edit
+			return false;
+		}
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		if (topic == null) {
+			// new topic, edit away...
+			return true;
+		}
+		if (topic.getAdminOnly() && (user == null || !user.getAdmin())) {
+			return false;
+		}
+		if (topic.getReadOnly()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Determine if a user has permission to move a topic.
 	 *
 	 * @param virtualWiki The virtual wiki name for the topic in question.
@@ -305,6 +334,7 @@ public class ServletUtil {
 			next.addObject("edit", editLink);
 			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 			pageInfo.setMoveable(ServletUtil.isMoveable(virtualWiki, article, user));
+			pageInfo.setEditable(ServletUtil.isEditable(virtualWiki, article, user));
 			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 			if (watchlist.containsTopic(pageInfo.getTopicName())) {
 				pageInfo.setWatched(true);

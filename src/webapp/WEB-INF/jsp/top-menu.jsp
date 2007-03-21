@@ -25,8 +25,10 @@
 	<td class="menu-tab-space">&#160;</td>
 	<td class="menu-tab-nonselected"><jamwiki:link value="${comments}"><f:message key="tab.common.comments" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
+	<c:if test="${pageInfo.editable}">
 	<td class="menu-tab-nonselected"><jamwiki:link value="${edit}"><f:message key="tab.common.edit" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
+	</c:if>
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:History"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="tab.common.history" /></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	<c:if test="${pageInfo.moveable}">

@@ -32,6 +32,7 @@ public class WikiPageInfo {
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
 	private String contentJsp = JSP_TOPIC;
+	private boolean editable = false;
 	private boolean moveable = false;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
@@ -52,6 +53,7 @@ public class WikiPageInfo {
 	protected void reset() {
 		this.admin = false;
 		this.contentJsp = JSP_TOPIC;
+		this.editable = false;
 		this.moveable = false;
 		this.pageTitle = null;
 		this.redirectName = null;
@@ -113,6 +115,28 @@ public class WikiPageInfo {
 	 */
 	public String getDefaultTopic() {
 		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+	}
+
+	/**
+	 * Return a flag indicating whether or not the current user can edit the
+	 * current topic.
+	 *
+	 * @return <code>true</code> if the current user can edit the current
+	 *  page, <code>false</code> otherwise.
+	 */
+	public boolean getEditable() {
+		return this.editable;
+	}
+
+	/**
+	 * Set a flag indicating whether or not the current user can edit the
+	 * current topic.
+	 *
+	 * @param editable Set to <code>true</code> if the current user can edit
+	 *  the current page, <code>false</code> otherwise.
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 	/**

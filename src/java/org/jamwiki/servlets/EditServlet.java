@@ -186,7 +186,8 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = Utilities.getTopicFromRequest(request);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		if (!StringUtils.hasText(topicName) || !StringUtils.hasText(virtualWiki)) {
+		WikiUser user = Utilities.currentUser(request);
+		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
 		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
@@ -194,11 +195,19 @@ public class EditServlet extends JAMWikiServlet {
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic != null && topic.getAdminOnly() && !Utilities.isAdmin(request)) {
+		if (topic == null) {
+			// this should never trigger, but better safe than sorry...
+			return null;
+		}
+		if (topic.getAdminOnly()) {
 			WikiMessage messageObject = new WikiMessage("edit.exception.loginadmin", topicName);
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
-		return null;
+		if (topic.getReadOnly()) {
+			throw new WikiException(new WikiMessage("error.readonly"));
+		}
+		// it should be impossible to get here...
+		throw new WikiException(new WikiMessage("error.unknown", "Unable to determine topic editing permissions"));
 	}
 
 	/**
