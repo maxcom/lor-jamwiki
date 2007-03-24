@@ -507,6 +507,9 @@ public class ServletUtil {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		WikiUser user = Utilities.currentUser(request);
+		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
+			sectionEdit = false;
+		}
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
