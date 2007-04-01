@@ -81,6 +81,4 @@
 		<taglib-location>/WEB-INF/authz.tld</taglib-location>
 	</taglib>
 
-
-
 </web-app>
