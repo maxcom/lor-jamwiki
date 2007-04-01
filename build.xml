@@ -98,6 +98,7 @@
 			<zipfileset file="${basedir}/CHANGELOG.txt" prefix="" />
 			<zipfileset file="${basedir}/LICENSE.txt" prefix="" />
 			<zipfileset file="${basedir}/CREDITS.txt" prefix="" />
+			<zipfileset file="${basedir}/UPGRADE.txt" prefix="" />
 		</war>
 	</target>
 
