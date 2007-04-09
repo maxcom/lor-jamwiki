@@ -269,13 +269,17 @@ public class TemplateTag implements ParserTag {
 	 * and return the resulting template output.
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
+		parserInput.incrementTemplateDepth();
 		// extract the template name
 		String name = this.parseTemplateName(raw);
 		if (this.isMagicWord(name)) {
 			if (mode < JFlexParser.MODE_TEMPLATE) {
+				parserInput.decrementTemplateDepth();
 				return raw;
 			}
-			return this.processMagicWord(parserInput, name);
+			String output = this.processMagicWord(parserInput, name);
+			parserInput.decrementTemplateDepth();
+			return output;
 		}
 		boolean inclusion = false;
 		if (name.startsWith(NamespaceHandler.NAMESPACE_SEPARATOR)) {
@@ -286,6 +290,7 @@ public class TemplateTag implements ParserTag {
 		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
 		if (mode < JFlexParser.MODE_TEMPLATE) {
+			parserInput.decrementTemplateDepth();
 			return raw;
 		}
 		// make sure template was not redirected
@@ -298,9 +303,13 @@ public class TemplateTag implements ParserTag {
 			templateTopic = null;
 		}
 		if (inclusion) {
-			return this.processTemplateInclusion(parserInput, parserDocument, templateTopic, raw, name);
+			String output = this.processTemplateInclusion(parserInput, parserDocument, templateTopic, raw, name);
+			parserInput.decrementTemplateDepth();
+			return output;
 		}
-		return this.processTemplateContent(parserInput, parserDocument, templateTopic, raw, name);
+		String output = this.processTemplateContent(parserInput, parserDocument, templateTopic, raw, name);
+		parserInput.decrementTemplateDepth();
+		return output;
 	}
 
 	/**

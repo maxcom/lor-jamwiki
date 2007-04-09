@@ -36,7 +36,7 @@ public class IncludeOnlyTag implements ParserTag {
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
 		}
-		if (mode == JFlexParser.MODE_TEMPLATE) {
+		if (parserInput.getTemplateDepth() > 0) {
 			// strip tags and return
 			return ParserUtil.tagContent(raw);
 		}

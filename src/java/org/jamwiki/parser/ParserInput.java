@@ -32,6 +32,8 @@ public class ParserInput {
 	private int depth = 0;
 	private Locale locale = null;
 	private TableOfContents tableOfContents = new TableOfContents();
+	/** Template inclusion tracks whether or not template code is being parsed.  A counter is used to deal with nested templates. */
+	private int templateDepth = 0;
 	/** Hashtable of generic temporary objects used during parsing. */
 	private Hashtable tempParams = new Hashtable();
 	private String topicName = null;
@@ -189,6 +191,40 @@ public class ParserInput {
 	 */
 	public Hashtable getTempParams() {
 		return this.tempParams;
+	}
+
+	/**
+	 * Get the depth level when template code is being parsed.
+	 *
+	 * @return The current number of template inclusions.
+	 */
+	public int getTemplateDepth() {
+		return templateDepth;
+	}
+
+	/**
+	 * This method decreases the current template inclusion depth and should
+	 * only be called when a template finishes processing.
+	 */
+	public void decrementTemplateDepth() {
+		this.templateDepth--;
+	}
+
+	/**
+	 * This method decreases the current template inclusion depth and should
+	 * only be called when a template begins processing.
+	 */
+	public void incrementTemplateDepth() {
+		this.templateDepth++;
+	}
+
+	/**
+	 * Set the depth level when template code is being parsed.
+	 *
+	 * @param templateDepth The current number of template inclusions.
+	 */
+	public void setTemplateDepth(int templateDepth) {
+		this.templateDepth = templateDepth;
 	}
 
 	/**

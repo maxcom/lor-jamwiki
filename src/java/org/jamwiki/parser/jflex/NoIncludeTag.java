@@ -36,8 +36,8 @@ public class NoIncludeTag implements ParserTag {
 		if (mode < JFlexParser.MODE_TEMPLATE) {
 			return raw;
 		}
-		if (mode == JFlexParser.MODE_TEMPLATE) {
-			// no content is returned when called from a temlate
+		if (parserInput.getTemplateDepth() > 0) {
+			// no content is returned when called from a template
 			return "";
 		}
 		// anything else then strip tags and return
