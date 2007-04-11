@@ -90,18 +90,6 @@ public abstract class AbstractParser {
 	public abstract ParserDocument parseMetadata(String raw) throws Exception;
 
 	/**
-	 * Parse MediaWiki signatures and other tags that should not be
-	 * saved as part of the topic source.  This method is usually only called
-	 * during edits.
-	 *
-	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserDocument object containing parser output, including
-	 *  parsed content and metadata.
-	 * @throws Exception Thrown if any error occurs during parsing.
-	 */
-	public abstract ParserDocument parseSave(String raw) throws Exception;
-
-	/**
 	 * When making a section edit this function provides the capability to retrieve
 	 * all text within a specific heading level.  For example, if targetSection is
 	 * specified as five, and the sixth heading is an &lt;h2&gt;, then this method

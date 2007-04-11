@@ -601,16 +601,6 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testParseSave() throws Throwable {
-		ParserInput parserInput = new ParserInput();
-		parserInput.setUserIpAddress("testUtilitiesUserIpAddress");
-		ParserDocument result = Utilities.parseSave(parserInput, "testUtilitiesContent");
-		assertEquals("result.getContent()", "testUtilitiesContent", result.getContent());
-	}
-
-	/**
-	 *
-	 */
 	public void testParseSlice() throws Throwable {
 		// FIXME - implement this
 	}
@@ -950,30 +940,6 @@ public class UtilitiesTest extends TestCase {
 	public void testParseMetadataThrowsNullPointerException() throws Throwable {
 		try {
 			Utilities.parseMetadata(null, "testUtilitiesContent");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParseSaveThrowsException() throws Throwable {
-		try {
-			Utilities.parseSave(new ParserInput(), "testUtilitiesContent");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParseSaveThrowsNullPointerException() throws Throwable {
-		try {
-			Utilities.parseSave(null, "testUtilitiesContent");
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());

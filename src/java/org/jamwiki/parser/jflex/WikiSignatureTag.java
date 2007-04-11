@@ -54,6 +54,10 @@ public class WikiSignatureTag implements ParserTag {
 					email = userInfo.getEmail();
 					userId = Integer.toString(user.getUserId());
 				}
+				if (login == null || email == null || displayName == null) {
+					logger.info("Signature tagged parsed without user information available, returning empty");
+					return "";
+				}
 				MessageFormat formatter = new MessageFormat(Environment.getValue(Environment.PROP_PARSER_SIGNATURE_USER_PATTERN));
 				Object params[] = new Object[7];
 				params[0] = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + login;
@@ -68,7 +72,7 @@ public class WikiSignatureTag implements ParserTag {
 				// parse signature as link in order to store link metadata
 				WikiLinkTag wikiLinkTag = new WikiLinkTag();
 				wikiLinkTag.parse(parserInput, parserDocument, mode, signature);
-				if (mode != JFlexParser.MODE_SAVE) {
+				if (mode != JFlexParser.MODE_METADATA) {
 					signature = ParserUtil.parseFragment(parserInput, signature, mode);
 				}
 			}

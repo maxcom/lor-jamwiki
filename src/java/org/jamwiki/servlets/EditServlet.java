@@ -296,7 +296,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserDocument parserDocument = Utilities.parseSave(parserInput, contents);
+		ParserDocument parserDocument = Utilities.parseMetadata(parserInput, contents);
 		contents = parserDocument.getContent();
 		topic.setTopicContent(contents);
 		if (StringUtils.hasText(parserDocument.getRedirect())) {

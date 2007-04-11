@@ -815,22 +815,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Using the system parser, parse system content that should not be persisted
-	 * such as signatures.
-	 *
-	 * @param parserInput A ParserInput object that contains parser configuration
-	 *  information.
-	 * @param content The raw topic content that is to be parsed.
-	 * @return Returns a ParserDocument object with minimally parsed topic content
-	 *  and other parser output fields set.
-	 * @throws Exception Thrown if there are any parsing errors.
-	 */
-	public static ParserDocument parseSave(ParserInput parserInput, String content) throws Exception {
-		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseSave(content);
-	}
-
-	/**
 	 * When editing a section of a topic, this method provides a way of slicing
 	 * out a given section of the raw topic content.
 	 *

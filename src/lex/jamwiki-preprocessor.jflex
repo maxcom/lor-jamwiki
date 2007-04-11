@@ -55,10 +55,7 @@ import org.springframework.util.StringUtils;
         boolean validated = true;
         // validate parser settings
         if (this.mode > JFlexParser.MODE_PREPROCESS) validated = false;
-        if (this.mode == JFlexParser.MODE_SAVE) {
-            if (this.parserInput.getUserIpAddress() == null) validated = false;
-        }
-        if (this.mode >= JFlexParser.MODE_TEMPLATE) {
+        if (this.mode >= JFlexParser.MODE_METADATA) {
             if (this.parserInput.getVirtualWiki() == null) validated = false;
             if (this.parserInput.getTopicName() == null) validated = false;
         }
