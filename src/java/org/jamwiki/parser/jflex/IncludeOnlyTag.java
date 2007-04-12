@@ -33,7 +33,7 @@ public class IncludeOnlyTag implements ParserTag {
 	 * "<includeonly>text</includeonly>" and return the resulting output.
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		if (mode < JFlexParser.MODE_TEMPLATE) {
+		if (mode <= JFlexParser.MODE_METADATA) {
 			return raw;
 		}
 		if (parserInput.getTemplateDepth() > 0) {

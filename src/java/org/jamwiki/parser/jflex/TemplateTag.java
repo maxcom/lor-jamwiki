@@ -273,7 +273,7 @@ public class TemplateTag implements ParserTag {
 		// extract the template name
 		String name = this.parseTemplateName(raw);
 		if (this.isMagicWord(name)) {
-			if (mode < JFlexParser.MODE_TEMPLATE) {
+			if (mode <= JFlexParser.MODE_METADATA) {
 				parserInput.decrementTemplateDepth();
 				return raw;
 			}
@@ -289,7 +289,7 @@ public class TemplateTag implements ParserTag {
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
-		if (mode < JFlexParser.MODE_TEMPLATE) {
+		if (mode <= JFlexParser.MODE_METADATA) {
 			parserInput.decrementTemplateDepth();
 			return raw;
 		}
@@ -325,7 +325,7 @@ public class TemplateTag implements ParserTag {
 		// the first parameter to avoid having to implement special table logic
 		String param1 = (String)tokens.elementAt(0);
 		String value = raw.substring(param1.length() + 1);
-		return ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_TEMPLATE);
+		return ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
@@ -371,7 +371,7 @@ public class TemplateTag implements ParserTag {
 				pos++;
 			}
 		}
-		return ParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_TEMPLATE);
+		return ParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
@@ -434,7 +434,7 @@ public class TemplateTag implements ParserTag {
 			if (name == null) {
 				name = Integer.toString(count);
 			}
-			String value = (nameValue[1] == null) ? null : ParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_TEMPLATE);
+			String value = (nameValue[1] == null) ? null : ParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_PREPROCESS);
 			this.parameterValues.put(name, value);
 		}
 	}

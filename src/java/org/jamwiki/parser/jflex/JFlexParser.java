@@ -44,14 +44,12 @@ public class JFlexParser extends AbstractParser {
 	protected static final int MODE_SLICE = 2;
 	/** Metadata mode is primarily used by the search engine and parses topic content in order to set all ParserDocument metadata fields. */
 	protected static final int MODE_METADATA = 3;
-	/** Template mode processes templates, replacing template calls with the template contents. */
-	protected static final int MODE_TEMPLATE = 4;
 	/** Pre-process mode is currently equivalent to metadata mode and indicates that that the JFlex pre-processor parser should be run in full. */
-	protected static final int MODE_PREPROCESS = 5;
+	protected static final int MODE_PREPROCESS = 4;
 	/** Processing mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output. */
-	protected static final int MODE_PROCESS = 6;
+	protected static final int MODE_PROCESS = 5;
 	/** Layout mode indicates that the pre-processor, processor and post-processor should be run in full, parsing all Wiki syntax into formatted output and adding layout tags such as paragraphs. */
-	protected static final int MODE_LAYOUT = 7;
+	protected static final int MODE_LAYOUT = 6;
 
 	private static Pattern REDIRECT_PATTERN = null;
 
