@@ -999,18 +999,6 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testParserDocumentThrowsNullPointerException() throws Throwable {
-		try {
-			Utilities.parserDocument(null, "testUtilitiesVirtualWiki", "testUtilitiesTopicName");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
 	public void testReadFileThrowsFileNotFoundException() throws Throwable {
 		try {
 			Utilities.readFile("fakeFileName");

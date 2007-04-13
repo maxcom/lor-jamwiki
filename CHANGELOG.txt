@@ -6,6 +6,11 @@ New Features:
 
   * Upgrade to commons-dbcp-1.2.2.jar.
   * Upgrade to Lucene Search 2.1.
+  
+Bugfixes:
+
+  * Templates containing categories within <includeonly> or <noinclude> tags
+    should now work properly.
 
 
 0.5.3

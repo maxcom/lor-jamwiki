@@ -176,11 +176,21 @@ public class JFlexParser extends AbstractParser {
 	 * @return A ParserDocument object containing results of the parsing process.
 	 */
 	public ParserDocument parseMetadata(String raw) throws Exception {
-		StringReader reader = new StringReader(raw);
-		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
+		// FIXME - this is now slower than a full parse, which is very bad.
+		long start = System.currentTimeMillis();
+		// FIXME - set a bogus context value to avoid parser errors
+		if (this.parserInput.getContext() == null) this.parserInput.setContext("/wiki");
+		ParserDocument tmp = new ParserDocument();
+		// some parser expressions require that lines end in a newline, so add a newline
+		// to the end of the content for good measure
+		tmp = this.parsePreProcess(raw + "\n", tmp, JFlexParser.MODE_PREPROCESS);
+		tmp = this.parseProcess(tmp.getContent(), tmp, JFlexParser.MODE_PROCESS);
 		ParserDocument parserDocument = new ParserDocument();
-		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_METADATA);
-		return this.lex(lexer, raw);
+		parserDocument = this.parsePreProcess(raw, parserDocument, JFlexParser.MODE_METADATA);
+		parserDocument.appendMetadata(tmp);
+		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		logger.info("Parse time (parseMetadata) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		return parserDocument;
 	}
 
 	/**
