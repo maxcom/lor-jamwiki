@@ -116,7 +116,7 @@ public class WikiLogger {
 		if (url == null) {
 			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
 		}
-		File propertyFile = new File(URLDecoder.decode(url.getFile()));
+		File propertyFile = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
 		if (!propertyFile.exists()) {
 			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
 		}

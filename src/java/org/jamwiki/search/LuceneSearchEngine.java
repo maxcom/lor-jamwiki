@@ -84,7 +84,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		String topicName = topic.getName();
 		IndexWriter writer = null;
 		try {
-			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false);
+			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(), false);
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -159,7 +159,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		String topicName = topic.getName();
 		IndexReader reader = null;
 		try {
-			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false);
+			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
 			// delete the current document
 			try {
 				reader = IndexReader.open(directory);
@@ -192,7 +192,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			PhraseQuery query = new PhraseQuery();
 			Term term = new Term(ITYPE_TOPIC_LINK, topicName);
 			query.add(term);
-			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false));
+			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki)));
 			// actually perform the search
 			Hits hits = searcher.search(query);
 			for (int i = 0; i < hits.length(); i++) {
@@ -234,7 +234,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			query.add(qp.parse(text), Occur.SHOULD);
 			qp = new QueryParser(ITYPE_CONTENT, analyzer);
 			query.add(qp.parse(text), Occur.SHOULD);
-			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), false));
+			searcher = new IndexSearcher(FSDirectory.getDirectory(getSearchIndexPath(virtualWiki)));
 			// rewrite the query to expand it - required for wildcards to work with highlighter
 			Query rewrittenQuery = searcher.rewrite(query);
 			// actually perform the search
@@ -281,7 +281,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			IndexWriter writer = null;
 			try {
 				// create the search instance
-				FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki), true);
+				FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
 				StandardAnalyzer analyzer = new StandardAnalyzer();
 				writer = new IndexWriter(directory, analyzer, true);
 				directory.close();
@@ -312,7 +312,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			long start = System.currentTimeMillis();
 			int count = 0;
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()), true);
+			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()));
 			StandardAnalyzer analyzer = new StandardAnalyzer();
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
