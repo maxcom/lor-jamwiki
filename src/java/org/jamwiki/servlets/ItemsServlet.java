@@ -50,6 +50,8 @@ public class ItemsServlet extends JAMWikiServlet {
 			viewImages(request, next, pageInfo);
 		} else if (ServletUtil.isTopic(request, "Special:Filelist")) {
 			viewFiles(request, next, pageInfo);
+		} else if (ServletUtil.isTopic(request, "Special:Listusers")) {
+			viewUsers(request, next, pageInfo);
 		} else if (ServletUtil.isTopic(request, "Special:TopicsAdmin")) {
 			viewTopicsAdmin(request, next, pageInfo);
 		} else {
@@ -69,6 +71,21 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
+		pageInfo.setContentJsp(JSP_ITEMS);
+		pageInfo.setSpecial(true);
+	}
+
+	/**
+	 *
+	 */
+	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		Pagination pagination = Utilities.buildPagination(request, next);
+		Collection items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:Listusers");
+		pageInfo.setPageTitle(new WikiMessage("allusers.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
 	}

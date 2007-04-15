@@ -130,4 +130,14 @@ public class OracleQueryHandler extends AnsiQueryHandler {
 		stmt.setInt(4, pagination.getStart());
 		return stmt.executeQuery();
 	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USERS);
+		stmt.setInt(1, pagination.getEnd());
+		stmt.setInt(2, pagination.getStart());
+		return stmt.executeQuery();
+	}
 }

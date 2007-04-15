@@ -231,6 +231,9 @@
 		<name>Special:LinkTo</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:Listusers</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:Login</name>
 	</pseudotopic>
 	<pseudotopic>

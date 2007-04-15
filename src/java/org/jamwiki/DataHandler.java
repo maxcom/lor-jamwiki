@@ -384,6 +384,16 @@ public interface DataHandler {
 	public int lookupWikiUserCount() throws Exception;
 
 	/**
+	 * Return a collection of user logins for all wiki users.
+	 *
+	 * @param pagination A Pagination object indicating the total number of
+	 *  results and offset for the results to be retrieved.
+	 * @return A collection of user logins for all wiki users.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public Collection lookupWikiUsers(Pagination pagination) throws Exception;
+
+	/**
 	 * Move a topic to a new name, creating a redirect topic in the old
 	 * topic location.  An exception will be thrown if the topic cannot be
 	 * moved for any reason.

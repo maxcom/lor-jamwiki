@@ -6,6 +6,7 @@
 * [[Special:Filelist|All files]]
 * [[Special:Imagelist|All images]]
 * [[Special:Allpages|All topics]]
+* [[Special:Listusers|All users]]
 * [[Special:RecentChanges|Recent changes]]
 * [[Special:Search|Search]]
 * [[Special:Upload|Upload]]

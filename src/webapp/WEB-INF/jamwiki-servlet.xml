@@ -25,6 +25,7 @@
 				<prop key="/**/Special:Import">Import</prop>
 				<prop key="/**/Special:Imagelist">Items</prop>
 				<prop key="/**/Special:LinkTo">LinkTo</prop>
+				<prop key="/**/Special:Listusers">Items</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
 				<prop key="/**/Special:Manage">Manage</prop>

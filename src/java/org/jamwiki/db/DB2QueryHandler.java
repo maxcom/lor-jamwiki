@@ -130,4 +130,14 @@ public class DB2QueryHandler extends AnsiQueryHandler {
 		stmt.setInt(4, pagination.getEnd());
 		return stmt.executeQuery();
 	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USERS);
+		stmt.setInt(1, pagination.getStart());
+		stmt.setInt(2, pagination.getEnd());
+		return stmt.executeQuery();
+	}
 }

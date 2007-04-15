@@ -526,6 +526,17 @@ public interface QueryHandler {
 	public WikiResultSet lookupWikiUserInfo(String login) throws Exception;
 
 	/**
+	 * Retrieve a result set of all logins for every wiki user.
+	 *
+	 * @param pagination A Pagination object that specifies the number of results
+	 *  and starting result offset for the result set to be retrieved.
+	 * @return A WikiResult set of all logins for all wiki users, within the
+	 *  bounds specified by the pagination object.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception;
+
+	/**
 	 * Retrieve the next available topic id from the topic table.
 	 *
 	 * @param conn A database connection to use when connecting to the database

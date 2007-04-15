@@ -966,6 +966,18 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Collection lookupWikiUsers(Pagination pagination) throws Exception {
+		Vector results = new Vector();
+		WikiResultSet rs = this.queryHandler().lookupWikiUsers(pagination);
+		while (rs.next()) {
+			results.add(rs.getString("login"));
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
