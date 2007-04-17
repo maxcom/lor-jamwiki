@@ -777,6 +777,7 @@ public class Utilities {
 		ParserInput parserInput = new ParserInput();
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setTopicName(topicName);
+		parserInput.setAllowSectionEdit(false);
 		return Utilities.parseMetadata(parserInput, content);
 	}
 

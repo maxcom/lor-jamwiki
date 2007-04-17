@@ -37,6 +37,10 @@ public class WikiHeadingTag implements ParserTag {
 	 */
 	private String buildSectionEditLink(ParserInput parserInput, int section) {
 		if (!parserInput.getAllowSectionEdit()) return "";
+		if (parserInput.getLocale() == null) {
+			logger.info("Unable to build section edit links for " + parserInput.getTopicName() + " - locale is empty");
+			return "";
+		}
 		// FIXME - template inclusion causes section edits to break, so disable for now
 		String inclusion = (String)parserInput.getTempParams().get(TemplateTag.TEMPLATE_INCLUSION);
 		boolean disallowInclusion = (inclusion != null && inclusion.equals("true"));

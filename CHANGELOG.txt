@@ -13,6 +13,8 @@ Bugfixes:
 
   * Templates containing categories within <includeonly> or <noinclude> tags
     should now work properly.
+  * Updating Special:Admin no longer refreshes search index to avoid
+    performance issues.
 
 
 0.5.3
