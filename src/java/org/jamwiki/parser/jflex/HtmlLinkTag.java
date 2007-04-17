@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
@@ -112,9 +113,10 @@ public class HtmlLinkTag implements ParserTag {
 		link = StringUtils.replace(link, ">", "%3E");
 		link = StringUtils.replace(link, "\"", "%22");
 		link = StringUtils.replace(link, "\'", "%27");
+		String target = (Environment.getBooleanValue(Environment.PROP_EXTERNAL_LINK_NEW_WINDOW)) ? " target=\"_blank\"" : "";
 		html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-			 + text + "\" href=\"" + protocol + link + "\">" + text + "</a>"
-			 + punctuation;
+			 + text + "\" href=\"" + protocol + link + "\"" + target + ">"
+			 + text + "</a>" + punctuation;
 		return html;
 	}
 
