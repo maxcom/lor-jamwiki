@@ -16,6 +16,10 @@ Bugfixes:
   * Updating Special:Admin no longer refreshes search index to avoid
     performance issues.
 
+Translation Updates:
+
+  * Updated Dutch translations (Angel).
+
 
 0.5.3
 =====
