@@ -17,9 +17,9 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
-<%@ taglib uri="/WEB-INF/jamwiki.tld" prefix="jamwiki" %>
-<%@ taglib uri="/WEB-INF/fmt.tld" prefix="f" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="f" %>
+<%@ taglib uri="http://jamwiki.org/taglib" prefix="jamwiki" %>
 
 <%
 // no-cache headers

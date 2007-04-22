@@ -24,7 +24,7 @@
     contentType="text/html; charset=utf-8"
 %>
 
-<%@ taglib uri="/WEB-INF/c.tld" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:set var="initialized"><%= Environment.getValue(Environment.PROP_BASE_INITIALIZED) %></c:set>
 <c:set var="defaultTopic"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
