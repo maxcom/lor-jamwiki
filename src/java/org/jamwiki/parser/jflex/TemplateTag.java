@@ -273,7 +273,7 @@ public class TemplateTag implements ParserTag {
 		// extract the template name
 		String name = this.parseTemplateName(raw);
 		if (this.isMagicWord(name)) {
-			if (mode <= JFlexParser.MODE_METADATA) {
+			if (mode <= JFlexParser.MODE_MINIMAL) {
 				parserInput.decrementTemplateDepth();
 				return raw;
 			}
@@ -289,7 +289,7 @@ public class TemplateTag implements ParserTag {
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
 		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
-		if (mode <= JFlexParser.MODE_METADATA) {
+		if (mode <= JFlexParser.MODE_MINIMAL) {
 			parserInput.decrementTemplateDepth();
 			return raw;
 		}

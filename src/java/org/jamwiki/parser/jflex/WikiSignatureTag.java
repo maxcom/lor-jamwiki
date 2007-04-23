@@ -72,7 +72,7 @@ public class WikiSignatureTag implements ParserTag {
 				// parse signature as link in order to store link metadata
 				WikiLinkTag wikiLinkTag = new WikiLinkTag();
 				wikiLinkTag.parse(parserInput, parserDocument, mode, signature);
-				if (mode != JFlexParser.MODE_METADATA) {
+				if (mode != JFlexParser.MODE_MINIMAL) {
 					signature = ParserUtil.parseFragment(parserInput, signature, mode);
 				}
 			}

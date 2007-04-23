@@ -138,8 +138,7 @@ public class ServletUtil {
 				parserInput.setLocale(locale);
 				parserInput.setVirtualWiki(virtualWiki);
 				parserInput.setTopicName(topicName);
-				ParserDocument parserDocument = Utilities.parse(parserInput, content);
-				content = parserDocument.getContent();
+				content = Utilities.parse(parserInput, null, content);
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
@@ -518,19 +517,19 @@ public class ServletUtil {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
-		ParserDocument parserDocument = Utilities.parse(parserInput, topic.getTopicContent());
-		if (parserDocument != null) {
-			if (parserDocument.getCategories().size() > 0) {
-				LinkedHashMap categories = new LinkedHashMap();
-				for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {
-					String key = (String)iterator.next();
-					String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
-					categories.put(key, value);
-				}
-				next.addObject("categories", categories);
+		ParserDocument parserDocument = new ParserDocument();
+		String content = Utilities.parse(parserInput, parserDocument, topic.getTopicContent());
+		// FIXME - the null check should be unnecessary
+		if (parserDocument != null && parserDocument.getCategories().size() > 0) {
+			LinkedHashMap categories = new LinkedHashMap();
+			for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {
+				String key = (String)iterator.next();
+				String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+				categories.put(key, value);
 			}
-			topic.setTopicContent(parserDocument.getContent());
+			next.addObject("categories", categories);
 		}
+		topic.setTopicContent(content);
 		if (topic.getTopicType() == Topic.TYPE_CATEGORY) {
 			loadCategoryContent(next, virtualWiki, topic.getName());
 		}

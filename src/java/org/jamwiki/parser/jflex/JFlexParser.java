@@ -42,8 +42,8 @@ public class JFlexParser extends AbstractParser {
 	protected static final int MODE_SPLICE = 1;
 	/** Slice mode is used when retrieving a section of a topic for editing. */
 	protected static final int MODE_SLICE = 2;
-	/** Metadata mode is primarily used by the search engine and parses topic content in order to set all ParserDocument metadata fields. */
-	protected static final int MODE_METADATA = 3;
+	/** Minimal mode is used to do a bare minimum of parsing, usually just converting signature tags, prior to saving to the database. */
+	protected static final int MODE_MINIMAL = 3;
 	/** Pre-process mode is currently equivalent to metadata mode and indicates that that the JFlex pre-processor parser should be run in full. */
 	protected static final int MODE_PREPROCESS = 4;
 	/** Processing mode indicates that the pre-processor and processor should be run in full, parsing all Wiki syntax into formatted output. */
@@ -98,7 +98,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 * Utility method for executing a lexer parse.
 	 */
-	private ParserDocument lex(AbstractLexer lexer, String raw) throws Exception {
+	private String lex(AbstractLexer lexer, String raw) throws Exception {
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
 		if (this.parserInput.getDepth() > 100) {
@@ -112,13 +112,12 @@ public class JFlexParser extends AbstractParser {
 			content.append(line);
 		}
 		ParserDocument parserDocument = lexer.getParserDocument();
-		parserDocument.setContent(content.toString());
 		this.parserInput.decrementDepth();
 		String redirect = this.isRedirect(raw);
 		if (StringUtils.hasText(redirect)) {
 			parserDocument.setRedirect(redirect);
 		}
-		return parserDocument;
+		return content.toString();
 	}
 
 	/**
@@ -127,82 +126,103 @@ public class JFlexParser extends AbstractParser {
 	 * when parsing the contents of a link or performing similar internal
 	 * manipulation.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public ParserDocument parseFragment(String raw, int mode) throws Exception {
+	public String parseFragment(ParserDocument parserDocument, String raw, int mode) throws Exception {
 		// maintain the original output, which has all of the category and link info
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
-		ParserDocument parserDocument = new ParserDocument();
-		parserDocument = this.parsePreProcess(raw, parserDocument, preMode);
+		String output = raw;
+		output = this.parsePreProcess(parserDocument, output, preMode);
 		if (mode >= JFlexParser.MODE_PROCESS) {
 			// layout should not be done while parsing fragments
 			preMode = JFlexParser.MODE_PROCESS;
-			parserDocument = this.parseProcess(parserDocument.getContent(), parserDocument, preMode);
+			output = this.parseProcess(parserDocument, output, preMode);
 		}
-		return parserDocument;
+		return output;
 	}
 
 	/**
 	 * Returns a HTML representation of the given wiki raw text for online representation.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public ParserDocument parseHTML(String raw) throws Exception {
+	public String parseHTML(ParserDocument parserDocument, String raw) throws Exception {
 		long start = System.currentTimeMillis();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
-		raw += '\n';
-		// maintain the original output, which has all of the category and link info
-		ParserDocument parserDocument = new ParserDocument();
-		parserDocument = this.parsePreProcess(raw, parserDocument, JFlexParser.MODE_PREPROCESS);
-		parserDocument = this.parseProcess(parserDocument.getContent(), parserDocument, JFlexParser.MODE_PROCESS);
-		parserDocument = this.parsePostProcess(parserDocument.getContent(), parserDocument, JFlexParser.MODE_LAYOUT);
+		String output = raw + '\n';
+		output = this.parsePreProcess(parserDocument, output, JFlexParser.MODE_PREPROCESS);
+		output = this.parseProcess(parserDocument, output, JFlexParser.MODE_PROCESS);
+		output = this.parsePostProcess(parserDocument, output, JFlexParser.MODE_LAYOUT);
 		if (StringUtils.hasText(this.isRedirect(raw))) {
 			// redirects are parsed differently
-			parserDocument = this.parseRedirect(raw, parserDocument);
+			output = this.parseRedirect(parserDocument, raw);
 		}
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserDocument;
+		return output;
 	}
 
 	/**
 	 * This method provides a way to parse content and set all output metadata,
 	 * such as link values used by the search engine.
 	 *
-	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @return A ParserDocument object containing results of the parsing process.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 */
-	public ParserDocument parseMetadata(String raw) throws Exception {
-		// FIXME - this is now slower than a full parse, which is very bad.
+	public void parseMetadata(ParserDocument parserDocument, String raw) throws Exception {
 		long start = System.currentTimeMillis();
 		// FIXME - set a bogus context value to avoid parser errors
 		if (this.parserInput.getContext() == null) this.parserInput.setContext("/wiki");
-		ParserDocument tmp = new ParserDocument();
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
-		tmp = this.parsePreProcess(raw + "\n", tmp, JFlexParser.MODE_PREPROCESS);
-		tmp = this.parseProcess(tmp.getContent(), tmp, JFlexParser.MODE_PROCESS);
-		ParserDocument parserDocument = new ParserDocument();
-		parserDocument = this.parsePreProcess(raw, parserDocument, JFlexParser.MODE_METADATA);
-		parserDocument.appendMetadata(tmp);
+		String output = raw + '\n';
+		output = this.parsePreProcess(parserDocument, output, JFlexParser.MODE_PREPROCESS);
+		output = this.parseProcess(parserDocument, output, JFlexParser.MODE_PROCESS);
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseMetadata) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserDocument;
+	}
+
+	/**
+	 * Perform a bare minimum of parsing as required prior to saving a topic
+	 * to the database.  In general this method will simply parse signature
+	 * tags are return.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
+	 */
+	public String parseMinimal(String raw) throws Exception {
+		long start = System.currentTimeMillis();
+		String output = raw;
+		ParserDocument parserDocument = new ParserDocument();
+		output = this.parsePreProcess(parserDocument, output, JFlexParser.MODE_MINIMAL);
+		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		return output;
 	}
 
 	/**
 	 * First stage of the parser, this method parses templates and signatures
 	 * and builds metadata.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @param mode The parser mode to use when parsing.  Mode affects what
-	 *  type of parsing actions are taken when processing raw text.
-	 * @return A ParserDocument object containing results of the parsing process.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	private ParserDocument parsePreProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
+	private String parsePreProcess(ParserDocument parserDocument, String raw, int mode) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
@@ -214,12 +234,13 @@ public class JFlexParser extends AbstractParser {
 	 * Second stage of the parser, this method parses most Wiki syntax, validates
 	 * HTML, and performs the majority of the parser conversion.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @param mode The parser mode to use when parsing.  Mode affects what
-	 *  type of parsing actions are taken when processing raw text.
-	 * @return A ParserDocument object containing results of the parsing process.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	private ParserDocument parseProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
+	private String parseProcess(ParserDocument parserDocument, String raw, int mode) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_PROCESS);
@@ -231,12 +252,13 @@ public class JFlexParser extends AbstractParser {
 	 * adding paragraph tags and other layout elements that for various reasons
 	 * cannot be added during the first parsing stage.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @param mode The parser mode to use when parsing.  Mode affects what
-	 *  type of parsing actions are taken when processing raw text.
-	 * @return A ParserDocument object containing results of the parsing process.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	private ParserDocument parsePostProcess(String raw, ParserDocument parserDocument, int mode) throws Exception {
+	private String parsePostProcess(ParserDocument parserDocument, String raw, int mode) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_LAYOUT);
@@ -248,10 +270,13 @@ public class JFlexParser extends AbstractParser {
 	 * topic would be displayed, but in some cases (such as when explicitly viewing
 	 * a redirect) the redirect page contents need to be displayed.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserDocument object containing results of the parsing process.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	private ParserDocument parseRedirect(String raw, ParserDocument parserDocument) throws Exception {
+	private String parseRedirect(ParserDocument parserDocument, String raw) throws Exception {
 		String redirect = this.isRedirect(raw);
 		String style = "redirect";
 		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim())) {
@@ -259,9 +284,8 @@ public class JFlexParser extends AbstractParser {
 		}
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setDestination(redirect);
-		String content = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
-		parserDocument.setContent(content);
-		return parserDocument;
+		String output = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
+		return output;
 	}
 
 	/**
@@ -273,22 +297,23 @@ public class JFlexParser extends AbstractParser {
 	 * up to the next &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt; or the end of the document
 	 * will be returned.
 	 *
-	 * @param raw The raw Wiki syntax from which a section is to be retrieved.
-	 * @param targetSection The section of the document to be replaced (first section is 1).
-	 * @return All markup from the target section, contained within a ParserDocument
-	 *  object.
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
+	 * @param raw The raw Wiki text that is to be parsed.
+	 * @param targetSection The section (counted from zero) that is to be returned.
+	 * @return Returns the raw topic content for the target section.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public ParserDocument parseSlice(String raw, int targetSection) throws Exception {
+	public String parseSlice(ParserDocument parserDocument, String raw, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
-		ParserDocument parserDocument = new ParserDocument();
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SLICE);
 		lexer.setTargetSection(targetSection);
-		parserDocument = this.lex(lexer, raw);
+		String output = this.lex(lexer, raw);
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserDocument;
+		return output;
 	}
 
 	/**
@@ -300,22 +325,24 @@ public class JFlexParser extends AbstractParser {
 	 * &lt;h2&gt;, &lt;h3&gt; or the end of the document will be replaced with the
 	 * specified text.
 	 *
-	 * @param raw The raw Wiki syntax from which a section is to be replaced.
-	 * @param targetSection The section of the document to be replaced (first section is 1).
-	 * @param replacementText The text to replace the specified section text with.
-	 * @return The new topic markup, contained within a ParserDocument object.
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
+	 * @param raw The raw Wiki text that is to be parsed.
+	 * @param targetSection The section (counted from zero) that is to be returned.
+	 * @param replacementText The text to replace the target section text with.
+	 * @return The raw topic content including the new replacement text.
+	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public ParserDocument parseSplice(String raw, int targetSection, String replacementText) throws Exception {
+	public String parseSplice(ParserDocument parserDocument, String raw, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
-		ParserDocument parserDocument = new ParserDocument();
 		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SPLICE);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
-		parserDocument = this.lex(lexer, raw);
+		String output = this.lex(lexer, raw);
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
-		return parserDocument;
+		return output;
 	}
 }

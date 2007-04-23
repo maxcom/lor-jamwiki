@@ -734,17 +734,20 @@ public class Utilities {
 	 *
 	 * @param parserInput A ParserInput object that contains parser
 	 *  configuration information.
+	 * @param parserDocument A ParserDocument object that will hold metadata
+	 *  output.  If this parameter is <code>null</code> then metadata generated
+	 *  during parsing will not be available to the calling method.
 	 * @param content The raw topic content that is to be parsed.
-	 * @return A ParserDocument object with parsed topic content and other
-	 *  parser output fields set.
+	 * @return The parsed content.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserDocument parse(ParserInput parserInput, String content) throws Exception {
+	public static String parse(ParserInput parserInput, ParserDocument parserDocument, String content) throws Exception {
 		if (content == null) {
 			return null;
 		}
+		if (parserDocument == null) parserDocument = new ParserDocument();
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseHTML(content);
+		return parser.parseHTML(parserDocument, content);
 	}
 
 	/**
@@ -760,7 +763,25 @@ public class Utilities {
 	 */
 	public static ParserDocument parseMetadata(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseMetadata(content);
+		ParserDocument parserDocument = new ParserDocument();
+		parser.parseMetadata(parserDocument, content);
+		return parserDocument;
+	}
+
+	/**
+	 * Perform a bare minimum of parsing as required prior to saving a topic
+	 * to the database.  In general this method will simply parse signature
+	 * tags are return.
+	 *
+	 * @param parserInput A ParserInput object that contains parser configuration
+	 *  information.
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
+	 */
+	public static String parseMinimal(ParserInput parserInput, String raw) throws Exception {
+		AbstractParser parser = parserInstance(parserInput);
+		return parser.parseMinimal(raw);
 	}
 
 	/**
@@ -823,11 +844,10 @@ public class Utilities {
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
 	 * @param targetSection The section to be sliced and returned.
-	 * @return Returns a ParserDocument object containing the raw topic content
-	 *  for the target section.
+	 * @return Returns the raw topic content for the target section.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserDocument parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
+	public static String parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
@@ -838,24 +858,26 @@ public class Utilities {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseSlice(topic.getTopicContent(), targetSection);
+		ParserDocument parserDocument = new ParserDocument();
+		return parser.parseSlice(parserDocument, topic.getTopicContent(), targetSection);
 	}
 
 	/**
 	 * When editing a section of a topic, this method provides a way of splicing
 	 * an edited section back into the raw topic content.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param request The servlet request object.
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
 	 * @param targetSection The section to be sliced and returned.
 	 * @param replacementText The edited content that is to be spliced back into
 	 *  the raw topic.
-	 * @return Returns a ParserDocument object containing the raw topic content
-	 *  including the new replacement text.
+	 * @return The raw topic content including the new replacement text.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserDocument parseSplice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+	public static String parseSplice(ParserDocument parserDocument, HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
@@ -866,7 +888,7 @@ public class Utilities {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseSplice(topic.getTopicContent(), targetSection, replacementText);
+		return parser.parseSplice(parserDocument, topic.getTopicContent(), targetSection, replacementText);
 	}
 
 	/**

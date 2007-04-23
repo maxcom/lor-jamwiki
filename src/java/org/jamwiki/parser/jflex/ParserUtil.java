@@ -54,8 +54,8 @@ public class ParserUtil {
 	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws Exception {
 		if (!StringUtils.hasText(raw)) return raw;
 		JFlexParser parser = new JFlexParser(parserInput);
-		ParserDocument parserDocument = parser.parseFragment(raw, mode);
-		return parserDocument.getContent();
+		ParserDocument parserDocument = new ParserDocument();
+		return parser.parseFragment(parserDocument, raw, mode);
 	}
 
 	/**

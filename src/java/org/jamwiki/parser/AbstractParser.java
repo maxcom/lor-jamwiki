@@ -57,37 +57,50 @@ public abstract class AbstractParser {
 	 * when parsing the contents of a link or performing similar internal
 	 * manipulation.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
-	 * @return A ParserDocument object containing parser output, including
-	 *  parsed content and metadata.
+	 * @return The parsed content.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	// FIXME - should this have a mode flag???
-	public abstract ParserDocument parseFragment(String raw, int mode) throws Exception;
+	public abstract String parseFragment(ParserDocument parserDocument, String raw, int mode) throws Exception;
 
 	/**
 	 * Returns a HTML representation of the given wiki raw text for online
 	 * representation.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserDocument object containing parser output, including
-	 *  parsed content and metadata.
+	 * @return The parsed content.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public abstract ParserDocument parseHTML(String raw) throws Exception;
+	public abstract String parseHTML(ParserDocument parserDocument, String raw) throws Exception;
 
 	/**
 	 * This method provides a way to parse content and set all output
 	 * metadata, such as link values used by the search engine.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return A ParserDocument object containing parser output, including
-	 *  parsed content and metadata.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public abstract ParserDocument parseMetadata(String raw) throws Exception;
+	public abstract void parseMetadata(ParserDocument parserDocument, String raw) throws Exception;
+
+	/**
+	 * Perform a bare minimum of parsing as required prior to saving a topic
+	 * to the database.  In general this method will simply parse signature
+	 * tags are return.
+	 *
+	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * @return The parsed content.
+	 * @throws Exception Thrown if any error occurs during parsing.
+	 */
+	public abstract String parseMinimal(String raw) throws Exception;
 
 	/**
 	 * When making a section edit this function provides the capability to retrieve
@@ -96,13 +109,14 @@ public abstract class AbstractParser {
 	 * will return the heading tag and all text up to either the next &lt;h2&gt;,
 	 * &lt;h1&gt;, or the end of the document, whichever comes first.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki text that is to be parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
-	 * @return A ParserDocument object containing parser output, including
-	 *  parsed content and metadata.
+	 * @return Returns the raw topic content for the target section.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public abstract ParserDocument parseSlice(String raw, int targetSection) throws Exception;
+	public abstract String parseSlice(ParserDocument parserDocument, String raw, int targetSection) throws Exception;
 
 	/**
 	 * This method provides the capability for re-integrating a section edit back
@@ -110,12 +124,13 @@ public abstract class AbstractParser {
 	 * full Wiki text and a targetSection.  All of the content of targetSection
 	 * is then replaced with the new text.
 	 *
+	 * @param parserDocument A ParserDocument object containing parser
+	 *  metadata output.
 	 * @param raw The raw Wiki text that is to be parsed.
 	 * @param targetSection The section (counted from zero) that is to be returned.
 	 * @param replacementText The text to replace the target section text with.
-	 * @return A ParserDocument object containing parser output, including
-	 *  parsed content and metadata.
+	 * @return The raw topic content including the new replacement text.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	public abstract ParserDocument parseSplice(String raw, int targetSection, String replacementText) throws Exception;
+	public abstract String parseSplice(ParserDocument parserDocument, String raw, int targetSection, String replacementText) throws Exception;
 }

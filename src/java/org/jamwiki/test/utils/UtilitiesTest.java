@@ -571,7 +571,7 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testParse() throws Throwable {
-		ParserDocument result = Utilities.parse(new ParserInput(), null);
+		String result = Utilities.parse(new ParserInput(), null, null);
 		assertNull("result", result);
 	}
 
@@ -583,19 +583,26 @@ public class UtilitiesTest extends TestCase {
 		parserInput.setTopicName("testUtilitiesTopicName");
 		parserInput.setVirtualWiki("testUtilitiesVirtualWiki");
 		parserInput.setContext("testUtilitiesContext");
-		ParserDocument result = Utilities.parse(parserInput, "testUtilitiesContent");
-		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result.getContent());
+		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
+		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result);
 	}
 
 	/**
 	 *
 	 */
 	public void testParseMetadata() throws Throwable {
+		// FIXME - implement this
+	}
+
+	/**
+	 *
+	 */
+	public void testParseMinimal() throws Throwable {
 		ParserInput parserInput = new ParserInput();
 		parserInput.setVirtualWiki("testUtilitiesVirtualWiki");
 		parserInput.setTopicName("testUtilitiesTopicName");
-		ParserDocument result = Utilities.parseMetadata(parserInput, "testUtilitiesContent");
-		assertEquals("result.getContent()", "testUtilitiesContent", result.getContent());
+		String result = Utilities.parseMinimal(parserInput, "testUtilitiesContent");
+		assertEquals("result.getContent()", "testUtilitiesContent", result);
 	}
 
 	/**
@@ -616,8 +623,7 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testParserDocument() throws Throwable {
-		ParserDocument result = Utilities.parserDocument("testUtilitiesContent", "testUtilitiesVirtualWiki", "testUtilitiesTopicName");
-		assertEquals("result.getContent()", "testUtilitiesContent", result.getContent());
+		// FIXME - implement this
 	}
 
 	/**
@@ -965,7 +971,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseThrowsException() throws Throwable {
 		try {
-			Utilities.parse(new ParserInput(), "testUtilitiesContent");
+			Utilities.parse(new ParserInput(), null, "testUtilitiesContent");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
@@ -977,7 +983,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseThrowsNullPointerException() throws Throwable {
 		try {
-			Utilities.parse(null, "testUtilitiesContent");
+			Utilities.parse(null, null, "testUtilitiesContent");
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());

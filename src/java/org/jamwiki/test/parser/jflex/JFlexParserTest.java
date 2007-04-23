@@ -50,9 +50,9 @@ public class JFlexParserTest extends TestCase {
 		parserInput.setAllowSectionEdit(true);
 		JFlexParser parser = new JFlexParser(parserInput);
 		String output = null;
+		ParserDocument parserDocument = new ParserDocument();
 		try {
-			ParserDocument parserDocument = parser.parseHTML(raw);
-			output = parserDocument.getContent();
+			output = parser.parseHTML(parserDocument, raw);
 		} catch (Exception e) {}
 		return output;
 	}

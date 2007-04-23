@@ -22,7 +22,6 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,8 +60,8 @@ public class SpecialPagesServlet extends JAMWikiServlet {
 		// FIXME - hard coding
 		parserInput.setTopicName("Special:Specialpages");
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserDocument parserDocument = Utilities.parse(parserInput, contents);
-		next.addObject("pageContent", parserDocument.getContent());
+		String content = Utilities.parse(parserInput, null, contents);
+		next.addObject("pageContent", content);
 		pageInfo.setPageTitle(new WikiMessage("specialpages.title"));
 		pageInfo.setContentJsp(JSP_SPECIAL_PAGES);
 		pageInfo.setSpecial(true);

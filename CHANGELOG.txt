@@ -15,6 +15,7 @@ Bugfixes:
     should now work properly.
   * Updating Special:Admin no longer refreshes search index to avoid
     performance issues.
+  * Resolve TLD issues that caused errors with Tomcat 5.5 with Debian Etch.
 
 Translation Updates:
 

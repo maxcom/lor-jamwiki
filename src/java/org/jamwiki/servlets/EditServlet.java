@@ -95,8 +95,7 @@ public class EditServlet extends JAMWikiServlet {
 		} else if (StringUtils.hasText(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			ParserDocument parserDocument = Utilities.parseSlice(request, virtualWiki, topicName, section);
-			contents = parserDocument.getContent();
+			contents = Utilities.parseSlice(request, virtualWiki, topicName, section);
 		} else {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
@@ -271,8 +270,8 @@ public class EditServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			ParserDocument parserDocument = Utilities.parseSplice(request, virtualWiki, topicName, section, contents);
-			contents = parserDocument.getContent();
+			ParserDocument parserDocument = new ParserDocument();
+			contents = Utilities.parseSplice(parserDocument, request, virtualWiki, topicName, section, contents);
 			sectionName = parserDocument.getSectionName();
 		}
 		if (contents == null) {
@@ -297,7 +296,8 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
 		ParserDocument parserDocument = Utilities.parseMetadata(parserInput, contents);
-		contents = parserDocument.getContent();
+		// parse signatures and other values that need to be updated prior to saving
+		contents = Utilities.parseMinimal(parserInput, contents);
 		topic.setTopicContent(contents);
 		if (StringUtils.hasText(parserDocument.getRedirect())) {
 			// set up a redirect

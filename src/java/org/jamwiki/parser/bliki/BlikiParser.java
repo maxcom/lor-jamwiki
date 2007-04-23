@@ -12,15 +12,14 @@ public class BlikiParser extends JFlexParser {
 	/**
 	 * Parse text for online display.
 	 */
-	public ParserDocument parseHTML(String raw) throws Exception {
+	public String parseHTML(String raw) throws Exception {
 		ParserDocument doc = new ParserDocument();
 
 		String titlePrefix = "/jamwiki/" + parserInput.getVirtualWiki() + '/';
 		JAMWikiModel wikiModel = new JAMWikiModel(parserInput, doc, titlePrefix + "${image}", titlePrefix + "${title}");
 		String htmlStr = wikiModel.render(raw);
 		htmlStr = htmlStr == null ? "" : htmlStr;
-		doc.setContent(htmlStr);
-		return doc;
+		return htmlStr;
 	}
 
 }

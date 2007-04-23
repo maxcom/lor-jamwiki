@@ -28,7 +28,6 @@ public class ParserDocument implements Serializable {
 
 	private boolean cacheable = true;
 	private LinkedHashMap categories = new LinkedHashMap();
-	private String content = null;
 	private Vector links = new Vector();
 	private String redirect = null;
 	private String sectionName = null;
@@ -134,25 +133,6 @@ public class ParserDocument implements Serializable {
 	 */
 	public LinkedHashMap getCategories() {
 		return this.categories;
-	}
-
-	/**
-	 * Return the parsed content for the document currently being parsed.
-	 *
-	 * @return The parsed content for the document currently being parsed.
-	 */
-	public String getContent() {
-		return this.content;
-	}
-
-	/**
-	 * Set the parsed content for the document currently being parsed.
-	 *
-	 * @param content The parsed content for the document currently being
-	 *  parsed.
-	 */
-	public void setContent(String content) {
-		this.content = content;
 	}
 
 	/**
