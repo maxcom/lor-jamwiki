@@ -7,8 +7,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -65,22 +63,6 @@ import org.jamwiki.utils.WikiLogger;
      */
     private String returnText(String text) {
         return ((inTargetSection && this.mode == JFlexParser.MODE_SPLICE) || (!inTargetSection && this.mode == JFlexParser.MODE_SLICE)) ? "" : text;
-    }
-    
-    /**
-     *
-     */
-    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
-        this.parserInput = parserInput;
-        this.parserDocument = parserDocument;
-        this.mode = mode;
-        // validate parser settings
-        boolean validated = true;
-        if (this.mode != JFlexParser.MODE_SPLICE && this.mode != JFlexParser.MODE_SLICE) validated = false;
-        if (this.parserInput.getTopicName() == null) validated = false;
-        if (!validated) {
-            throw new Exception("Parser info not properly initialized");
-        }
     }
     
     /**

@@ -76,9 +76,9 @@ public abstract class AbstractLexer {
 	}
 
 	/**
-	 * Set the parser settings.  This method should also validate that
-	 * all settings required for the parser have been set, and if not it
-	 * should throw an exception.
+	 * Initialize the parser settings.  This functionality should be done
+	 * from the constructor, but since JFlex generates code it is not possible
+	 * to modify the constructor parameters.
 	 *
 	 * @param parserInput The ParserInput object containing parser parameters
 	 *  required for successful parsing.
@@ -86,10 +86,12 @@ public abstract class AbstractLexer {
 	 *  in multiple stages that output values are also built in stages.
 	 * @param mode The parser mode to use when parsing.  Mode affects what
 	 *  type of parsing actions are taken when processing raw text.
-	 * @throws Exception Thrown if the parser is not initialized properly,
-	 *  usually due to a parser input field not being set.
 	 */
-	public abstract void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception;
+	public final void init(ParserInput parserInput, ParserDocument parserDocument, int mode) {
+		this.parserInput = parserInput;
+		this.parserDocument = parserDocument;
+		this.mode = mode;
+	}
 
 	/**
 	 * Parse a token using the specified parser tag handler.  If an error

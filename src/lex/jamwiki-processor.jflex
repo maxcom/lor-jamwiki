@@ -6,8 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
@@ -95,25 +93,6 @@ import org.springframework.util.StringUtils;
         if (yystate() == TD) output = "</td>";
         if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
         return output;
-    }
-    
-    /**
-     *
-     */
-    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
-        this.parserInput = parserInput;
-        this.parserDocument = parserDocument;
-        this.mode = mode;
-        // validate parser settings
-        boolean validated = true;
-        if (this.mode != JFlexParser.MODE_PROCESS) validated = false;
-        if (this.parserInput.getTableOfContents() == null) validated = false;
-        if (this.parserInput.getTopicName() == null) validated = false;
-        if (this.parserInput.getContext() == null) validated = false;
-        if (this.parserInput.getVirtualWiki() == null) validated = false;
-        if (!validated) {
-            throw new Exception("Parser info not properly initialized");
-        }
     }
     
     /**

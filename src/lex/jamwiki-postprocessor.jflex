@@ -3,8 +3,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -35,23 +33,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPostProcessor.class.getName());
-    
-    /**
-     *
-     */
-    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
-        this.parserInput = parserInput;
-        this.parserDocument = parserDocument;
-        this.mode = mode;
-        // validate parser settings
-        boolean validated = true;
-        if (this.mode != JFlexParser.MODE_LAYOUT) validated = false;
-        if (this.parserInput == null) validated = false;
-        if (this.parserInput.getTableOfContents() == null) validated = false;
-        if (!validated) {
-            throw new Exception("Parser info not properly initialized");
-        }
-    }
 %}
 
 /* character expressions */

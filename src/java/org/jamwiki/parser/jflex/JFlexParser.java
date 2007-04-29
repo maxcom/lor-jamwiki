@@ -98,7 +98,8 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 * Utility method for executing a lexer parse.
 	 */
-	private String lex(AbstractLexer lexer, String raw) throws Exception {
+	private String lex(AbstractLexer lexer, String raw, ParserDocument parserDocument, int mode) throws Exception {
+		lexer.init(this.parserInput, parserDocument, mode);
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
 		if (this.parserInput.getDepth() > 100) {
@@ -111,7 +112,6 @@ public class JFlexParser extends AbstractParser {
 			if (line == null) break;
 			content.append(line);
 		}
-		ParserDocument parserDocument = lexer.getParserDocument();
 		this.parserInput.decrementDepth();
 		String redirect = this.isRedirect(raw);
 		if (StringUtils.hasText(redirect)) {
@@ -226,8 +226,8 @@ public class JFlexParser extends AbstractParser {
 		StringReader reader = new StringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
-		lexer.init(this.parserInput, parserDocument, preMode);
-		return this.lex(lexer, raw);
+		validatePreProcessor(lexer);
+		return this.lex(lexer, raw, parserDocument, preMode);
 	}
 
 	/**
@@ -243,8 +243,8 @@ public class JFlexParser extends AbstractParser {
 	private String parseProcess(ParserDocument parserDocument, String raw, int mode) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
-		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_PROCESS);
-		return this.lex(lexer, raw);
+		validateProcessor(lexer);
+		return this.lex(lexer, raw, parserDocument, JFlexParser.MODE_PROCESS);
 	}
 
 	/**
@@ -261,8 +261,8 @@ public class JFlexParser extends AbstractParser {
 	private String parsePostProcess(ParserDocument parserDocument, String raw, int mode) throws Exception {
 		StringReader reader = new StringReader(raw);
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
-		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_LAYOUT);
-		return this.lex(lexer, raw);
+		validatePostProcessor(lexer);
+		return this.lex(lexer, raw, parserDocument, JFlexParser.MODE_LAYOUT);
 	}
 
 	/**
@@ -308,9 +308,9 @@ public class JFlexParser extends AbstractParser {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
-		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SLICE);
 		lexer.setTargetSection(targetSection);
-		String output = this.lex(lexer, raw);
+		validateSpliceProcessor(lexer);
+		String output = this.lex(lexer, raw, parserDocument, JFlexParser.MODE_SLICE);
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
@@ -337,12 +337,87 @@ public class JFlexParser extends AbstractParser {
 		long start = System.currentTimeMillis();
 		StringReader reader = new StringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
-		lexer.init(this.parserInput, parserDocument, JFlexParser.MODE_SPLICE);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
-		String output = this.lex(lexer, raw);
+		validateSpliceProcessor(lexer);
+		String output = this.lex(lexer, raw, parserDocument, JFlexParser.MODE_SPLICE);
 		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
+	}
+
+	/**
+	 * Validate that all settings required for the parser have been set, and if
+	 * not throw an exception.
+	 *
+	 * @throws Exception Thrown if the parser is not initialized properly,
+	 *  usually due to a parser input field not being set.
+	 */
+	private static void validatePostProcessor(AbstractLexer lexer) throws Exception {
+		// validate parser settings
+		boolean validated = true;
+		if (lexer.mode != JFlexParser.MODE_LAYOUT) validated = false;
+		if (lexer.parserInput == null) validated = false;
+		if (lexer.parserInput.getTableOfContents() == null) validated = false;
+		if (!validated) {
+			throw new Exception("Parser info not properly initialized");
+		}
+	}
+
+	/**
+	 * Validate that all settings required for the parser have been set, and if
+	 * not throw an exception.
+	 *
+	 * @throws Exception Thrown if the parser is not initialized properly,
+	 *  usually due to a parser input field not being set.
+	 */
+	private static void validatePreProcessor(AbstractLexer lexer) throws Exception {
+		boolean validated = true;
+		// validate parser settings
+		if (lexer.mode > JFlexParser.MODE_PREPROCESS) validated = false;
+		if (lexer.mode >= JFlexParser.MODE_MINIMAL) {
+			if (lexer.parserInput.getVirtualWiki() == null) validated = false;
+			if (lexer.parserInput.getTopicName() == null) validated = false;
+		}
+		if (!validated) {
+			throw new Exception("Parser info not properly initialized");
+		}
+	}
+
+	/**
+	 * Validate that all settings required for the parser have been set, and if
+	 * not throw an exception.
+	 *
+	 * @throws Exception Thrown if the parser is not initialized properly,
+	 *  usually due to a parser input field not being set.
+	 */
+	private static void validateProcessor(AbstractLexer lexer) throws Exception {
+		// validate parser settings
+		boolean validated = true;
+		if (lexer.mode != JFlexParser.MODE_PROCESS) validated = false;
+		if (lexer.parserInput.getTableOfContents() == null) validated = false;
+		if (lexer.parserInput.getTopicName() == null) validated = false;
+		if (lexer.parserInput.getContext() == null) validated = false;
+		if (lexer.parserInput.getVirtualWiki() == null) validated = false;
+		if (!validated) {
+			throw new Exception("Parser info not properly initialized");
+		}
+	}
+
+	/**
+	 * Validate that all settings required for the parser have been set, and if
+	 * not throw an exception.
+	 *
+	 * @throws Exception Thrown if the parser is not initialized properly,
+	 *  usually due to a parser input field not being set.
+	 */
+	private static void validateSpliceProcessor(AbstractLexer lexer) throws Exception {
+		// validate parser settings
+		boolean validated = true;
+		if (lexer.mode != JFlexParser.MODE_SPLICE && lexer.mode != JFlexParser.MODE_SLICE) validated = false;
+		if (lexer.parserInput.getTopicName() == null) validated = false;
+		if (!validated) {
+			throw new Exception("Parser info not properly initialized");
+		}
 	}
 }

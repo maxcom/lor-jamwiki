@@ -6,8 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.Environment;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -44,25 +42,6 @@ import org.springframework.util.StringUtils;
     protected boolean allowHTML = false;
     protected int templateCharCount = 0;
     protected String templateString = "";
-    
-    /**
-     *
-     */
-    public void init(ParserInput parserInput, ParserDocument parserDocument, int mode) throws Exception {
-        this.parserInput = parserInput;
-        this.parserDocument = parserDocument;
-        this.mode = mode;
-        boolean validated = true;
-        // validate parser settings
-        if (this.mode > JFlexParser.MODE_PREPROCESS) validated = false;
-        if (this.mode >= JFlexParser.MODE_MINIMAL) {
-            if (this.parserInput.getVirtualWiki() == null) validated = false;
-            if (this.parserInput.getTopicName() == null) validated = false;
-        }
-        if (!validated) {
-            throw new Exception("Parser info not properly initialized");
-        }
-    }
 %}
 
 /* character expressions */
