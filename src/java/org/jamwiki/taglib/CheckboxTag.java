@@ -16,13 +16,9 @@
  */
 package org.jamwiki.taglib;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 

@@ -38,7 +38,7 @@ import org.springframework.util.ClassUtils;
  */
 public class WikiLogger {
 
-	private Logger logger = null;
+	private final Logger logger;
 
 	private static FileHandler DEFAULT_LOG_HANDLER = null;
 	private static Level DEFAULT_LOG_LEVEL = null;
@@ -84,7 +84,7 @@ public class WikiLogger {
 			String pattern = properties.getProperty("org.jamwiki.pattern");
 			int limit = new Integer(properties.getProperty("org.jamwiki.limit")).intValue();
 			int count = new Integer(properties.getProperty("org.jamwiki.count")).intValue();
-			boolean append = new Boolean(properties.getProperty("org.jamwiki.append")).booleanValue();
+			boolean append = Boolean.valueOf(properties.getProperty("org.jamwiki.append")).booleanValue();
 			String datePattern = properties.getProperty("org.jamwiki.timestamp");
 			DEFAULT_LOG_LEVEL = Level.parse(properties.getProperty("org.jamwiki.level"));
 			WikiLogger.DEFAULT_LOG_HANDLER = new FileHandler(pattern, limit, count, append);

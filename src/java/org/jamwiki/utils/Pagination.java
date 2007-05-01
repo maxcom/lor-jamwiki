@@ -24,8 +24,8 @@ public class Pagination {
 	/** Logger */
 	public static final WikiLogger logger = WikiLogger.getLogger(Pagination.class.getName());
 
-	private int numResults = 0;
-	private int offset = 0;
+	private final int numResults;
+	private final int offset;
 
 	/**
 	 * Create a pagination object with specified initial values.

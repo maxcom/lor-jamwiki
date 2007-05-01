@@ -199,7 +199,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_RSS_ALLOWED);
 			setProperty(props, request, Environment.PROP_RSS_TITLE);
 			Vector errors = Utilities.validateSystemSettings(props);
-			if (errors.size() > 0) {
+			if (!errors.isEmpty()) {
 				next.addObject("errors", errors);
 				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));
 			} else {

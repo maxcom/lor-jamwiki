@@ -54,6 +54,12 @@ public class NamespaceHandler {
 	/**
 	 *
 	 */
+	private NamespaceHandler() {
+	}
+
+	/**
+	 *
+	 */
 	public static String getCommentsNamespace(String namespace) {
 		if (!StringUtils.hasText(namespace)) {
 			// main namespace

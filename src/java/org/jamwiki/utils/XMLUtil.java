@@ -34,6 +34,12 @@ public class XMLUtil {
 	public static final WikiLogger logger = WikiLogger.getLogger(XMLUtil.class.getName());
 
 	/**
+	 *
+	 */
+	private XMLUtil() {
+	}
+
+	/**
 	 * Utiltiy method for building an XML tag of the form &lt;tagName&gt;value&lt;/tagName&gt;.
 	 *
 	 * @param tagName The name of the XML tag, such as &lt;tagName&gt;value&lt;/tagName&gt;.

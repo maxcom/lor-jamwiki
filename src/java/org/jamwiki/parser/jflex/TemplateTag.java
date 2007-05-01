@@ -418,7 +418,7 @@ public class TemplateTag implements ParserTag {
 	private void parseTemplateParameterValues(ParserInput parserInput, String raw) throws Exception {
 		String content = raw.substring("{{".length(), raw.length() - "}}".length());
 		Vector tokens = this.tokenizeParams(content);
-		if (tokens.size() == 0) {
+		if (tokens.isEmpty()) {
 			throw new Exception("No template name found in " + raw);
 		}
 		int count = -1;

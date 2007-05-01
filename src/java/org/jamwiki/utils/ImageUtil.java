@@ -41,6 +41,12 @@ public class ImageUtil {
 	/**
 	 *
 	 */
+	private ImageUtil() {
+	}
+
+	/**
+	 *
+	 */
 	private static int calculateImageIncrement(int maxDimension) {
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
 		double result = Math.ceil((double)maxDimension / (double)increment) * increment;

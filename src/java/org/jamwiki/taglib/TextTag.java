@@ -16,13 +16,9 @@
  */
 package org.jamwiki.taglib;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLink;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
@@ -55,11 +51,15 @@ public class TextTag extends TagSupport {
 		try {
 			output += "<input type=\"text\"";
 			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
-			if (tmp != null) tagName = tmp.toString();
+			if (tmp != null) {
+				tagName = tmp.toString();
+			}
 			output += " name=\"" + tagName + "\"";
 			if (StringUtils.hasText(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
-				if (tmp != null) tagId = tmp.toString();
+				if (tmp != null) {
+					tagId = tmp.toString();
+				}
 				output += " id=\"" + tagId + "\"";
 			}
 			if (StringUtils.hasText(this.maxlength)) {
@@ -72,12 +72,16 @@ public class TextTag extends TagSupport {
 			}
 			if (StringUtils.hasText(this.style)) {
 				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
-				if (tmp != null) tagStyle = tmp.toString();
+				if (tmp != null) {
+					tagStyle = tmp.toString();
+				}
 				output += " style=\"" + tagStyle + "\"";
 			}
 			if (StringUtils.hasText(this.value)) {
 				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-				if (tmp != null) tagValue = tmp.toString();
+				if (tmp != null) {
+					tagValue = tmp.toString();
+				}
 			}
 			output += " value=\"" + tagValue + "\"";
 			output += " />";

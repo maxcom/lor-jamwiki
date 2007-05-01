@@ -83,6 +83,12 @@ public class Utilities {
 	}
 
 	/**
+	 *
+	 */
+	private Utilities() {
+	}
+
+	/**
 	 * Utility method for setting a cookie.  This method will overwrite an existing
 	 * cookie of the same name if such a cookie already exists.
 	 *
@@ -163,7 +169,9 @@ public class Utilities {
 	 * @return The encoded string.
 	 */
 	public static String convertEncoding(String text, String fromEncoding, String toEncoding) {
-		if (!StringUtils.hasText(text)) return text;
+		if (!StringUtils.hasText(text)) {
+			return text;
+		}
 		if (!StringUtils.hasText(fromEncoding)) {
 			logger.warning("No character encoding specified to convert from, using UTF-8");
 			fromEncoding = "UTF-8";
@@ -236,6 +244,7 @@ public class Utilities {
 		// 0.5.0 is removed.
 		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
 			// this is a problem, but it should never occur
+			logger.warning("Utilities.dataHandlerInstance called without a valid PROP_DB_TYPE value");
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("ansi")) {
 			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ANSI);
 			Environment.saveProperties();
@@ -279,8 +288,7 @@ public class Utilities {
 	 */
 	public static String decodeFromRequest(String url) {
 		// convert underscores to spaces
-		url = StringUtils.replace(url, "_", " ");
-		return url;
+		return StringUtils.replace(url, "_", " ");
 	}
 
 	/**
@@ -294,12 +302,13 @@ public class Utilities {
 	 * @return A decoded value.
 	 */
 	public static String decodeFromURL(String url) {
+		String result = url;
 		try {
-			url = URLDecoder.decode(url, "UTF-8");
+			result = URLDecoder.decode(result, "UTF-8");
 		} catch (Exception e) {
 			logger.info("Failure while decoding url " + url + " with charset UTF-8");
 		}
-		return Utilities.decodeFromRequest(url);
+		return Utilities.decodeFromRequest(result);
 	}
 
 	/**
@@ -312,14 +321,14 @@ public class Utilities {
 	 */
 	public static String encodeForFilename(String name) {
 		// replace spaces with underscores
-		name = StringUtils.replace(name, " ", "_");
+		String result = StringUtils.replace(name, " ", "_");
 		// URL encode the rest of the name
 		try {
-			name = URLEncoder.encode(name, "UTF-8");
+			result = URLEncoder.encode(result, "UTF-8");
 		} catch (Exception e) {
 			logger.warning("Failure while encoding " + name + " with charset UTF-8");
 		}
-		return name;
+		return result;
 	}
 
 	/**
@@ -331,12 +340,12 @@ public class Utilities {
 	 * @return The encoded topic name value.
 	 */
 	public static String encodeForURL(String url) {
-		url = Utilities.encodeForFilename(url);
+		String result = Utilities.encodeForFilename(url);
 		// un-encode colons
-		url = StringUtils.replace(url, "%3A", ":");
+		result = StringUtils.replace(result, "%3A", ":");
 		// un-encode forward slashes
-		url = StringUtils.replace(url, "%2F", "/");
-		return url;
+		result = StringUtils.replace(result, "%2F", "/");
+		return result;
 	}
 
 	/**
@@ -347,14 +356,17 @@ public class Utilities {
 	 */
 	// FIXME - replace with org.springframework.web.util.HtmlUtils
 	public static String escapeHTML(String input) {
-		if (!StringUtils.hasText(input)) return input;
+		if (!StringUtils.hasText(input)) {
+			return input;
+		}
+		String result = input;
 		// for obvious reasons ampersand must be replaced first
-		input = StringUtils.replace(input, "&", "&amp;");
-		input = StringUtils.replace(input, ">", "&gt;");
-		input = StringUtils.replace(input, "<", "&lt;");
-		input = StringUtils.replace(input, "\"", "&quot;");
-		input = StringUtils.replace(input, "'", "&#39;");
-		return input;
+		result = StringUtils.replace(result, "&", "&amp;");
+		result = StringUtils.replace(result, ">", "&gt;");
+		result = StringUtils.replace(result, "<", "&lt;");
+		result = StringUtils.replace(result, "\"", "&quot;");
+		result = StringUtils.replace(result, "'", "&#39;");
+		return result;
 	}
 
 	/**
@@ -420,7 +432,9 @@ public class Utilities {
 				break;
 			}
 		}
-		if (buffer.length() == 0) return "";
+		if (buffer.length() == 0) {
+			return "";
+		}
 		buffer = buffer.reverse();
 		return buffer.toString();
 	}
@@ -429,13 +443,14 @@ public class Utilities {
 	 *
 	 */
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
+		int count = attempts;
 		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
 		// avoid infinite redirection
-		attempts++;
-		if (attempts > 10) {
+		count++;
+		if (count > 10) {
 			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
 		}
 		// get the topic that is being redirected to
@@ -453,7 +468,7 @@ public class Utilities {
 			return child;
 		}
 		// topic is a redirect, keep looking
-		return Utilities.findRedirectedTopic(child, attempts);
+		return Utilities.findRedirectedTopic(child, count);
 	}
 
 	/**
@@ -548,7 +563,9 @@ public class Utilities {
 		if (topic == null) {
 			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
 		}
-		if (topic == null) return null;
+		if (topic == null) {
+			return null;
+		}
 		return Utilities.decodeFromRequest(topic);
 	}
 
@@ -582,7 +599,9 @@ public class Utilities {
 		if (virtualWiki == null) {
 			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
 		}
-		if (virtualWiki == null) return null;
+		if (virtualWiki == null) {
+			return null;
+		}
 		return Utilities.decodeFromRequest(virtualWiki);
 	}
 
@@ -637,7 +656,9 @@ public class Utilities {
 			return false;
 		}
 		String namespace = wikiLink.getNamespace();
-		if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) return false;
+		if (namespace.equals(NamespaceHandler.NAMESPACE_SPECIAL)) {
+			return false;
+		}
 		String commentNamespace = NamespaceHandler.getCommentsNamespace(namespace);
 		return (namespace.equals(commentNamespace));
 	}
@@ -662,7 +683,9 @@ public class Utilities {
 	 *  otherwise.
 	 */
 	public static boolean isUpgrade() throws Exception {
-		if (Utilities.isFirstUse()) return false;
+		if (Utilities.isFirstUse()) {
+			return false;
+		}
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		WikiVersion currentVersion = new WikiVersion(WikiVersion.CURRENT_WIKI_VERSION);
 		return (oldVersion.before(currentVersion));
@@ -682,11 +705,17 @@ public class Utilities {
 		// this, but regular expressions don't handle things like "number between
 		// 0 and 255" very well, so use a heavier approach
 		// if no text, obviously not valid
-		if (!StringUtils.hasText(ipAddress)) return false;
+		if (!StringUtils.hasText(ipAddress)) {
+			return false;
+		}
 		// must contain three periods
-		if (StringUtils.countOccurrencesOf(ipAddress, ".") != 3) return false;
+		if (StringUtils.countOccurrencesOf(ipAddress, ".") != 3) {
+			return false;
+		}
 		// ip addresses must be between seven and 15 characters long
-		if (ipAddress.length() < 7 || ipAddress.length() > 15) return false;
+		if (ipAddress.length() < 7 || ipAddress.length() > 15) {
+			return false;
+		}
 		// verify that the string is "0-255.0-255.0-255.0-255".
 		StringTokenizer tokens = new StringTokenizer(ipAddress, ".");
 		String token = null;
@@ -695,7 +724,9 @@ public class Utilities {
 			token = tokens.nextToken();
 			try {
 				number = Integer.parseInt(token);
-				if (number < 0 || number > 255) return false;
+				if (number < 0 || number > 255) {
+					return false;
+				}
 			} catch (Exception e) {
 				// not a number
 				return false;
@@ -1020,7 +1051,9 @@ public class Utilities {
 		StringTokenizer tokens = new StringTokenizer(listString, "\n\r ,.");
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken();
-			if (!StringUtils.hasText(token)) continue;
+			if (!StringUtils.hasText(token)) {
+				continue;
+			}
 			list.add(token.toLowerCase());
 		}
 		return list;
@@ -1068,7 +1101,9 @@ public class Utilities {
 		try {
 			// verify that the file was correctly written
 			read = FileUtils.readFileToString(file, "UTF-8");
-			if (read == null || !text.equals(read)) throw new IOException();
+			if (read == null || !text.equals(read)) {
+				throw new IOException();
+			}
 		} catch (Exception e) {
 			return new WikiMessage("error.directoryread", name, e.getMessage());
 		}
@@ -1125,15 +1160,21 @@ public class Utilities {
 		boolean validParser = true;
 		String parserClass = props.getProperty(Environment.PROP_PARSER_CLASS);
 		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
-		if (parserClass == null || parserClass.equals(abstractParserClass)) validParser = false;
+		if (parserClass == null || parserClass.equals(abstractParserClass)) {
+			validParser = false;
+		}
 		try {
 			Class parent = ClassUtils.forName(parserClass);
 			Class child = ClassUtils.forName(abstractParserClass);
-			if (!child.isAssignableFrom(parent)) validParser = false;
+			if (!child.isAssignableFrom(parent)) {
+				validParser = false;
+			}
 		} catch (Exception e) {
 			validParser = false;
 		}
-		if (!validParser) errors.add(new WikiMessage("error.parserclass", parserClass));
+		if (!validParser) {
+			errors.add(new WikiMessage("error.parserclass", parserClass));
+		}
 		return errors;
 	}
 

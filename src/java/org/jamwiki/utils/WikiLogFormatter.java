@@ -32,7 +32,7 @@ import java.util.logging.LogRecord;
 public class WikiLogFormatter extends Formatter {
 
 	private static final String SEPARATOR = System.getProperty("line.separator");
-	private String datePattern = null;
+	private final String datePattern;
 
 	/**
 	 *

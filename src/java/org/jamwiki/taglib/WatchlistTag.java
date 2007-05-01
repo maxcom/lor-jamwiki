@@ -79,7 +79,9 @@ public class WatchlistTag extends BodyTagSupport {
 		try {
 			// Resin 3.0, 3.1 throws ClassCastException with evaluateString for values like "1".
 			Object tmp = ExpressionEvaluationUtils.evaluate("topic", this.topic, pageContext);
-			if (tmp != null) tagValue = tmp.toString();
+			if (tmp != null) {
+				tagValue = tmp.toString();
+			}
 		} catch (JspException e) {
 			logger.severe("Failure in watchlist tag for " + this.topic, e);
 			throw e;

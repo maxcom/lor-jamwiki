@@ -36,6 +36,12 @@ public class SpamFilter {
 	private static Pattern spamRegexPattern = null;
 
 	/**
+	 *
+	 */
+	private SpamFilter() {
+	}
+
+	/**
 	 * Attempt to match the local spam blacklist patterns against a content
 	 * string.  If any matches are found this method returns the matched
 	 * text, otherwise <code>null</code> is returned.  Note that if the wiki
@@ -50,7 +56,9 @@ public class SpamFilter {
 	 *  or matching against the spam filter regular expressions.
 	 */
 	public static String containsSpam(String content) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_SPAM_FILTER)) return null;
+		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_SPAM_FILTER)) {
+			return null;
+		}
 		long start = System.currentTimeMillis();
 		if (spamRegexPattern == null) {
 			SpamFilter.initialize();
@@ -76,7 +84,9 @@ public class SpamFilter {
 			String regex = "";
 			while (tokens.hasMoreTokens()) {
 				regex += tokens.nextToken();
-				if (tokens.hasMoreTokens()) regex += "|";
+				if (tokens.hasMoreTokens()) {
+					regex += "|";
+				}
 			}
 			spamRegexPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			logger.info("Loading spam filter regular expression:" + regex);

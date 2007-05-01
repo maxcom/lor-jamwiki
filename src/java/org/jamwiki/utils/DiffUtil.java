@@ -35,11 +35,19 @@ public class DiffUtil {
 	private static final int DIFF_UNCHANGED_LINE_DISPLAY = 2;
 
 	/**
+	 *
+	 */
+	private DiffUtil() {
+	}
+
+	/**
 	 * Split up a large String into an array of Strings made up of each line (indicated
 	 * by a newline) of the original String.
 	 */
 	private static String[] buildArray(String original) {
-		if (original == null) return null;
+		if (original == null) {
+			return null;
+		}
 		StringTokenizer tokens = new StringTokenizer(original, "\n");
 		int size = tokens.countTokens();
 		String[] array = new String[size];
@@ -94,13 +102,9 @@ public class DiffUtil {
 			previousStart = previousDiff.getAddedStart();
 		}
 		if (previousEnd != -1) {
-			if (current > (previousEnd + DIFF_UNCHANGED_LINE_DISPLAY)) {
-				// if there was a previous diff but it was several lines previous, buffer away
-				return true;
-			} else {
-				// there was a previous diff, and it overlaps with the current diff, don't buffer
-				return false;
-			}
+			// if there was a previous diff but it was several lines previous, buffer away.
+			// if there was a previous diff, and it overlaps with the current diff, don't buffer.
+			return (current > (previousEnd + DIFF_UNCHANGED_LINE_DISPLAY));
 		}
 		if (current <= (previousStart + DIFF_UNCHANGED_LINE_DISPLAY)) {
 			// the previous diff did not specify an end, and the current diff would overlap with
@@ -126,9 +130,15 @@ public class DiffUtil {
 	 * @return Returns a Vector of WikiDiff objects that correspond to the changed text.
 	 */
 	public static Vector diff(String newVersion, String oldVersion) {
-		if (oldVersion == null) oldVersion = "";
-		if (newVersion == null) newVersion = "";
-		if (newVersion.equals(oldVersion)) return new Vector();
+		if (oldVersion == null) {
+			oldVersion = "";
+		}
+		if (newVersion == null) {
+			newVersion = "";
+		}
+		if (newVersion.equals(oldVersion)) {
+			return new Vector();
+		}
 		return DiffUtil.process(newVersion, oldVersion);
 	}
 
@@ -136,8 +146,12 @@ public class DiffUtil {
 	 *
 	 */
 	private static boolean hasMoreDiffLines(int addedCurrent, int deletedCurrent, Difference currentDiff) {
-		if (addedCurrent == -1) addedCurrent = 0;
-		if (deletedCurrent == -1) deletedCurrent = 0;
+		if (addedCurrent == -1) {
+			addedCurrent = 0;
+		}
+		if (deletedCurrent == -1) {
+			deletedCurrent = 0;
+		}
 		return (addedCurrent <= currentDiff.getAddedEnd() || deletedCurrent <= currentDiff.getDeletedEnd());
 	}
 
@@ -146,7 +160,9 @@ public class DiffUtil {
 	 * be used for context.
 	 */
 	private static void postBufferDifference(Difference currentDiff, Difference nextDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
-		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) return;
+		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) {
+			return;
+		}
 		int deletedCurrent = (currentDiff.getDeletedEnd() + 1);
 		int addedCurrent = (currentDiff.getAddedEnd() + 1);
 		if (currentDiff.getDeletedEnd() == -1) {
@@ -170,7 +186,9 @@ public class DiffUtil {
 				addedCurrent++;
 				buffered = true;
 			}
-			if (!buffered) continue;
+			if (!buffered) {
+				continue;
+			}
 			WikiDiff wikiDiff = new WikiDiff(oldLine, newLine, lineNumber + 1, false);
 			wikiDiffs.add(wikiDiff);
 		}
@@ -181,7 +199,9 @@ public class DiffUtil {
 	 * be used for context.
 	 */
 	private static void preBufferDifference(Difference currentDiff, Difference previousDiff, Vector wikiDiffs, String[] oldArray, String[] newArray) {
-		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) return;
+		if (DIFF_UNCHANGED_LINE_DISPLAY <= 0) {
+			return;
+		}
 		int deletedCurrent = (currentDiff.getDeletedStart() - DIFF_UNCHANGED_LINE_DISPLAY);
 		int addedCurrent = (currentDiff.getAddedStart() - DIFF_UNCHANGED_LINE_DISPLAY);
 		if (previousDiff != null) {
@@ -204,7 +224,9 @@ public class DiffUtil {
 				addedCurrent++;
 				buffered = true;
 			}
-			if (!buffered) continue;
+			if (!buffered) {
+				continue;
+			}
 			WikiDiff wikiDiff = new WikiDiff(oldLine, newLine, lineNumber + 1, false);
 			wikiDiffs.add(wikiDiff);
 		}

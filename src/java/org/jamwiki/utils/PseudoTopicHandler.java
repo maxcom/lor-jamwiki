@@ -32,6 +32,12 @@ public class PseudoTopicHandler {
 	private static final WikiLogger logger = WikiLogger.getLogger(PseudoTopicHandler.class.getName());
 
 	/**
+	 *
+	 */
+	private PseudoTopicHandler() {
+	}
+
+	/**
 	 * Return true if there is a mapping for the given topic
 	 *
 	 * @param pseudotopicName The name of the pseudo-topic that is being tested

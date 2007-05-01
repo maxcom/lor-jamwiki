@@ -35,6 +35,12 @@ public class LinkUtil {
 	private static final WikiLogger logger = WikiLogger.getLogger(LinkUtil.class.getName());
 
 	/**
+	 *
+	 */
+	private LinkUtil() {
+	}
+
+	/**
 	 * Build a query parameter.  If root is empty, this method returns
 	 * "?param=value".  If root is not empty this method returns root +
 	 * "&amp;param=value".  Note that param and value will be  URL encoded,
@@ -58,7 +64,9 @@ public class LinkUtil {
 		} else {
 			url = "?";
 		}
-		if (!StringUtils.hasText(param)) return query;
+		if (!StringUtils.hasText(param)) {
+			return query;
+		}
 		url += Utilities.encodeForURL(param) + "=";
 		if (StringUtils.hasText(value)) {
 			url += Utilities.encodeForURL(value);
@@ -148,7 +156,9 @@ public class LinkUtil {
 		}
 		String html = "";
 		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
-		if (caption == null) caption = "";
+		if (caption == null) {
+			caption = "";
+		}
 		if (frame || thumb || StringUtils.hasText(align)) {
 			html += "<div class=\"";
 			if (thumb || frame) {
@@ -167,8 +177,12 @@ public class LinkUtil {
 		if (wikiImage.getWidth() > 0) {
 			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px\">";
 		}
-		if (!suppressLink) html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
-		if (!StringUtils.hasText(style)) style = "wikiimg";
+		if (!suppressLink) {
+			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
+		}
+		if (!StringUtils.hasText(style)) {
+			style = "wikiimg";
+		}
 		html += "<img class=\"" + style + "\" src=\"";
 		String url = new File(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH), wikiImage.getUrl()).getPath();
 		url = FilenameUtils.separatorsToUnix(url);
@@ -178,7 +192,9 @@ public class LinkUtil {
 		html += " height=\"" + wikiImage.getHeight() + "\"";
 		html += " alt=\"" + Utilities.escapeHTML(caption) + "\"";
 		html += " />";
-		if (!suppressLink) html += "</a>";
+		if (!suppressLink) {
+			html += "</a>";
+		}
 		if (StringUtils.hasText(caption)) {
 			html += "<div class=\"imgcaption\">";
 			if (escapeHtml) {
@@ -220,7 +236,9 @@ public class LinkUtil {
 	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
-		if (!StringUtils.hasText(text)) text = topic;
+		if (!StringUtils.hasText(text)) {
+			text = topic;
+		}
 		if (StringUtils.hasText(topic) && !StringUtils.hasText(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
@@ -300,11 +318,15 @@ public class LinkUtil {
 		url += "/";
 		url += Utilities.encodeForURL(topic);
 		if (StringUtils.hasText(section)) {
-			if (!section.startsWith("#")) url += "#";
+			if (!section.startsWith("#")) {
+				url += "#";
+			}
 			url += Utilities.encodeForURL(section);
 		}
 		if (StringUtils.hasText(query)) {
-			if (!query.startsWith("?")) url += "?";
+			if (!query.startsWith("?")) {
+				url += "?";
+			}
 			url += query;
 		}
 		return url;

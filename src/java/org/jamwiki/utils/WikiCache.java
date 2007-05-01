@@ -42,6 +42,12 @@ public class WikiCache {
 	}
 
 	/**
+	 *
+	 */
+	private WikiCache() {
+	}
+
+	/**
 	 * Add an object to the cache.
 	 *
 	 * @param cacheName The name of the cache that the object is being added

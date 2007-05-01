@@ -38,8 +38,8 @@ public class WikiReferencesTag implements ParserTag {
 			return raw;
 		}
 		Vector references = this.retrieveReferences(parserInput);
-		String html = (references.size() > 0) ? "<ol class=\"references\">" : "";
-		while (references.size() > 0) {
+		String html = (!references.isEmpty()) ? "<ol class=\"references\">" : "";
+		while (!references.isEmpty()) {
 			WikiReference reference = (WikiReference)references.elementAt(0);
 			references.removeElementAt(0);
 			html += "<li id=\"" + reference.getNotationName() + "\">";
@@ -55,10 +55,10 @@ public class WikiReferencesTag implements ParserTag {
 				}
 				pos++;
 			}
-			if (citations.size() > 0) {
+			if (!citations.isEmpty()) {
 				html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
 				html += reference.getCitation() + "." + reference.getCount() + "</a>&#160;";
-				while (citations.size() > 0) {
+				while (!citations.isEmpty()) {
 					WikiReference citation = (WikiReference)citations.elementAt(0);
 					html += "&#160;<a href=\"#" + citation.getReferenceName() + "\" title=\"\">";
 					html += citation.getCitation() + "." + citation.getCount() + "</a>&#160;";
@@ -72,7 +72,7 @@ public class WikiReferencesTag implements ParserTag {
 			html += ParserUtil.parseFragment(parserInput, reference.getContent(), JFlexParser.MODE_PROCESS);
 			html += "</li>";
 		}
-		html += (references.size() > 0) ? "</ol>" : "";
+		html += (!references.isEmpty()) ? "</ol>" : "";
 		return html;
 	}
 

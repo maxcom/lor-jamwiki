@@ -85,7 +85,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		next.addObject("newuser", user);
 		next.addObject("newuserinfo", userInfo);
 		Vector errors = validate(request, user);
-		if (errors.size() > 0) {
+		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
 			String oldPassword = request.getParameter("oldPassword");
 			String newPassword = request.getParameter("newPassword");

@@ -116,7 +116,7 @@ public class SetupServlet extends JAMWikiServlet {
 		WikiUser user = new WikiUser();
 		setAdminUser(request, user);
 		Vector errors = validate(request, user);
-		if (errors.size() > 0) {
+		if (!errors.isEmpty()) {
 			this.view(request, next, pageInfo);
 			next.addObject("errors", errors);
 			next.addObject("username", user.getUsername());

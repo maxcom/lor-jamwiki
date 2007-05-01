@@ -170,7 +170,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 				if (!upgradeStyleSheet(request, messages)) success = false;
 			}
 			Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
-			if (errors.size() > 0) {
+			if (!errors.isEmpty()) {
 				next.addObject("errors", errors);
 				success = false;
 			}

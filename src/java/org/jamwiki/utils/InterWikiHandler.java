@@ -41,6 +41,12 @@ public class InterWikiHandler {
 	}
 
 	/**
+	 *
+	 */
+	private InterWikiHandler() {
+	}
+
+	/**
 	 * Retrieve an inter-wiki mapping for the given namespace and use the value
 	 * parameter to create a URL to that wiki.  For example, a namespace of
 	 * "wikipedia" and a value of "Main Page" will resolve to a the URL
