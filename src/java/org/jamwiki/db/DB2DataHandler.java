@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 public class DB2DataHandler extends AnsiDataHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(DB2DataHandler.class.getName());
-	private QueryHandler queryHandler = new DB2QueryHandler();
+	private final QueryHandler queryHandler = new DB2QueryHandler();
 
 	/**
 	 *

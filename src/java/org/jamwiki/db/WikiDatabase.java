@@ -50,6 +50,12 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
+	private WikiDatabase() {
+	}
+
+	/**
+	 *
+	 */
 	private static Connection getConnection() throws Exception {
 		// add a connection to the conn array.  BE SURE TO RELEASE IT!
 		Connection conn = DatabaseConnection.getConnection();
@@ -140,11 +146,15 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void releaseConnection(Connection conn) throws Exception {
-		if (conn == null) return;
+		if (conn == null) {
+			return;
+		}
 		try {
 			conn.commit();
 		} finally {
-			if (conn != null) DatabaseConnection.closeConnection(conn);
+			if (conn != null) {
+				DatabaseConnection.closeConnection(conn);
+			}
 		}
 	}
 

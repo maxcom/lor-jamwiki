@@ -90,7 +90,9 @@ public class JFlexParser extends AbstractParser {
 	 *
 	 */
 	private String isRedirect(String content) {
-		if (!StringUtils.hasText(content)) return null;
+		if (!StringUtils.hasText(content)) {
+			return null;
+		}
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
 		return (m.matches()) ? Utilities.decodeFromURL(m.group(1).trim()) : null;
 	}
@@ -110,7 +112,9 @@ public class JFlexParser extends AbstractParser {
 		StringBuffer content = new StringBuffer();
 		while (true) {
 			String line = lexer.yylex();
-			if (line == null) break;
+			if (line == null) {
+				break;
+			}
 			content.append(line);
 		}
 		this.parserInput.decrementDepth();
@@ -184,7 +188,9 @@ public class JFlexParser extends AbstractParser {
 	public void parseMetadata(ParserDocument parserDocument, String raw) throws Exception {
 		long start = System.currentTimeMillis();
 		// FIXME - set a bogus context value to avoid parser errors
-		if (this.parserInput.getContext() == null) this.parserInput.setContext("/wiki");
+		if (this.parserInput.getContext() == null) {
+			this.parserInput.setContext("/wiki");
+		}
 		// some parser expressions require that lines end in a newline, so add a newline
 		// to the end of the content for good measure
 		String output = raw + '\n';
@@ -282,8 +288,7 @@ public class JFlexParser extends AbstractParser {
 		}
 		WikiLink wikiLink = new WikiLink();
 		wikiLink.setDestination(redirect);
-		String output = LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
-		return output;
+		return LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
 	}
 
 	/**

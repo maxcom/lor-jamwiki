@@ -128,7 +128,9 @@ public class WikiLinkTag implements ParserTag {
 			StringTokenizer tokens = new StringTokenizer(wikiLink.getText(), "|");
 			while (tokens.hasMoreTokens()) {
 				String token = tokens.nextToken();
-				if (!StringUtils.hasText(token)) continue;
+				if (!StringUtils.hasText(token)) {
+					continue;
+				}
 				if (token.equalsIgnoreCase("noframe")) {
 					frame = false;
 				} else if (token.equalsIgnoreCase("frame")) {

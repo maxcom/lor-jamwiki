@@ -36,7 +36,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiMail {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiMail.class.getName());
-	private Session session;
+	private final Session session;
 	private static WikiMail instance;
 
 	/**
@@ -56,7 +56,9 @@ public class WikiMail {
 	 * Provide a Singleton instance of the object.
 	 */
 	public static WikiMail getInstance() {
-		if (instance == null) instance = new WikiMail();
+		if (instance == null) {
+			instance = new WikiMail();
+		}
 		return instance;
 	}
 

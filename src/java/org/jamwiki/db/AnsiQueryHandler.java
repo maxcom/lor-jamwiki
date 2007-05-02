@@ -777,7 +777,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	public int nextTopicId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_SEQUENCE, conn);
 		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("topic_id");
+		if (rs.size() > 0) {
+			nextId = rs.getInt("topic_id");
+		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}
@@ -788,7 +790,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	public int nextTopicVersionId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE, conn);
 		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("topic_version_id");
+		if (rs.size() > 0) {
+			nextId = rs.getInt("topic_version_id");
+		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}
@@ -799,7 +803,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	public int nextVirtualWikiId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE, conn);
 		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("virtual_wiki_id");
+		if (rs.size() > 0) {
+			nextId = rs.getInt("virtual_wiki_id");
+		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}
@@ -810,7 +816,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	public int nextWikiFileId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_SEQUENCE, conn);
 		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("file_id");
+		if (rs.size() > 0) {
+			nextId = rs.getInt("file_id");
+		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}
@@ -821,7 +829,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	public int nextWikiFileVersionId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_FILE_VERSION_SEQUENCE, conn);
 		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("file_version_id");
+		if (rs.size() > 0) {
+			nextId = rs.getInt("file_version_id");
+		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}
@@ -832,7 +842,9 @@ public class AnsiQueryHandler implements QueryHandler {
 	public int nextWikiUserId(Connection conn) throws Exception {
 		WikiResultSet rs = DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_SEQUENCE, conn);
 		int nextId = 0;
-		if (rs.size() > 0) nextId = rs.getInt("wiki_user_id");
+		if (rs.size() > 0) {
+			nextId = rs.getInt("wiki_user_id");
+		}
 		// note - this returns the last id in the system, so add one
 		return nextId + 1;
 	}

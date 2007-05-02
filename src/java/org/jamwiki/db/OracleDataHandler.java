@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 public class OracleDataHandler extends AnsiDataHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(OracleDataHandler.class.getName());
-	private QueryHandler queryHandler = new OracleQueryHandler();
+	private final QueryHandler queryHandler = new OracleQueryHandler();
 
 	/**
 	 *

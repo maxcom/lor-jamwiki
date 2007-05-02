@@ -47,12 +47,20 @@ public class ParserUtil {
 	}
 
 	/**
+	 *
+	 */
+	private ParserUtil() {
+	}
+
+	/**
 	 * Provide a way to run the pre-processor against a fragment of text, such
 	 * as an image caption.  This method should be used sparingly since it is
 	 * not very efficient.
 	 */
 	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws Exception {
-		if (!StringUtils.hasText(raw)) return raw;
+		if (!StringUtils.hasText(raw)) {
+			return raw;
+		}
 		JFlexParser parser = new JFlexParser(parserInput);
 		ParserDocument parserDocument = new ParserDocument();
 		return parser.parseFragment(parserDocument, raw, mode);
@@ -63,13 +71,13 @@ public class ParserUtil {
 	 * unnecessary spaces).
 	 */
 	protected static String sanitizeHtmlTag(String tag) {
-		tag = tag.trim();
-		tag = StringUtils.deleteAny(tag, " ").toLowerCase();
-		if (tag.endsWith("/>")) {
+		String result = tag.trim();
+		result = StringUtils.deleteAny(result, " ").toLowerCase();
+		if (result.endsWith("/>")) {
 			// spaces were stripped, so make sure tag is of the form "<br />"
-			tag = tag.substring(0, tag.length() - 2) + " />";
+			result = result.substring(0, result.length() - 2) + " />";
 		}
-		return tag;
+		return result;
 	}
 
 	/**
@@ -110,20 +118,20 @@ public class ParserUtil {
 		String tagKeyword = m.group(2);
 		String attributes = m.group(3);
 		String tagClose = m.group(5);
-		tag = "<";
+		String result = "<";
 		if (tagOpen.indexOf('/') != -1) {
-			tag += "/";
+			result += "/";
 		}
-		tag += tagKeyword.toLowerCase().trim();
+		result += tagKeyword.toLowerCase().trim();
 		if (StringUtils.hasText(attributes)) {
 			attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-			tag += " " + attributes.trim();
+			result += " " + attributes.trim();
 		}
 		if (tagClose.indexOf('/') != -1) {
 			tagClose = " />";
 		}
-		tag += tagClose.trim();
-		return tag;
+		result += tagClose.trim();
+		return result;
 	}
 
 	/**
@@ -131,7 +139,9 @@ public class ParserUtil {
 	 * a bad thing, so clean up HTML tags to remove any such attributes.
 	 */
 	protected static String validateHtmlTagAttributes(String attributes) {
-		if (!StringUtils.hasText(attributes)) return attributes;
+		if (!StringUtils.hasText(attributes)) {
+			return attributes;
+		}
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {
 			// FIXME - can these two patterns be combined into one?
 			// pattern requires a space prior to the "onFoo", so make sure one exists

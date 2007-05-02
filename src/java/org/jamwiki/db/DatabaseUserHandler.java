@@ -91,8 +91,7 @@ public class DatabaseUserHandler implements UserHandler {
 	 */
 	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
 		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUserInfo(username);
-		if (rs.size() == 0) return null;
-		return initWikiUserInfo(rs);
+		return (rs.size() == 0) ? null : initWikiUserInfo(rs);
 	}
 
 	/**

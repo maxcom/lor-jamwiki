@@ -123,7 +123,7 @@ public class TemplateTag implements ParserTag {
 	protected static final String TEMPLATE_INCLUSION = "template-inclusion";
 	private static Pattern PARAM_NAME_VALUE_PATTERN = null;
 
-	private HashMap parameterValues = new HashMap();
+	private final HashMap parameterValues = new HashMap();
 
 	static {
 		try {
@@ -215,14 +215,18 @@ public class TemplateTag implements ParserTag {
 	 * to apply default values when no template value has been set.
 	 */
 	private String applyParameter(ParserInput parserInput, String param) throws Exception {
-		if (this.parameterValues == null) return param;
+		if (this.parameterValues == null) {
+			return param;
+		}
 		String content = param.substring("{{{".length(), param.length() - "}}}".length());
 		// re-parse in case of embedded templates or params
 		content = this.parseTemplateBody(parserInput, content);
 		String name = this.parseParamName(content);
 		String defaultValue = this.parseParamDefaultValue(parserInput, content);
 		String value = (String)this.parameterValues.get(name);
-		if (value == null && defaultValue == null) return param;
+		if (value == null && defaultValue == null) {
+			return param;
+		}
 		return (value == null) ? defaultValue : value;
 	}
 
@@ -250,7 +254,9 @@ public class TemplateTag implements ParserTag {
 			} else {
 				pos++;
 			}
-			if (count == 0) return pos;
+			if (count == 0) {
+				return pos;
+			}
 		}
 		return -1;
 	}

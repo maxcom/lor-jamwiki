@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 public class HSqlDataHandler extends AnsiDataHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(HSqlDataHandler.class.getName());
-	private QueryHandler queryHandler = new HSqlQueryHandler();
+	private final QueryHandler queryHandler = new HSqlQueryHandler();
 
 	/**
 	 *

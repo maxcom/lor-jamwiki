@@ -27,11 +27,11 @@ import java.util.LinkedHashMap;
 public class ParserDocument implements Serializable {
 
 	private boolean cacheable = true;
-	private LinkedHashMap categories = new LinkedHashMap();
-	private Vector links = new Vector();
+	private final LinkedHashMap categories = new LinkedHashMap();
+	private final Vector links = new Vector();
 	private String redirect = null;
 	private String sectionName = null;
-	private Vector templates = new Vector();
+	private final Vector templates = new Vector();
 
 	/**
 	 *

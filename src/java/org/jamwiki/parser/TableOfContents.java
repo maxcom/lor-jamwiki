@@ -57,7 +57,7 @@ public class TableOfContents {
 	/** Keep track of how many times the parser attempts to insert the TOC (one per "TOC" tag) */
 	private int insertionAttempt = 0;
 	private int minLevel = 4;
-	private Vector entries = new Vector();
+	private final Vector entries = new Vector();
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;
@@ -124,7 +124,9 @@ public class TableOfContents {
 		}
 		TableOfContentsEntry entry = new TableOfContentsEntry(name, text, level);
 		entries.add(entry);
-		if (level < minLevel) minLevel = level;
+		if (level < minLevel) {
+			minLevel = level;
+		}
 	}
 
 	/**

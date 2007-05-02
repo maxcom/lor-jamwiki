@@ -36,7 +36,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiResultSet {
 
 	private static WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
-	private Vector rows = new Vector();
+	private final Vector rows = new Vector();
 	private int rowPointer = -1;
 	private int totalRows = -1;
 	private LinkedHashMap currentRow = null;
@@ -92,7 +92,9 @@ public class WikiResultSet {
 				case java.sql.Types.CHAR:
 					String value = rs.getString(columnName);
 					char character = '0';
-					if (value != null && value.length() > 0) character = value.charAt(0);
+					if (value != null && value.length() > 0) {
+						character = value.charAt(0);
+					}
 					column.put(columnName.toLowerCase(), new Character(character));
 					break;
 				default:
@@ -157,7 +159,9 @@ public class WikiResultSet {
 	 *  copied has passed the end of the WikiResultSet.
 	 */
 	public void addRow(WikiResultSet rs) throws Exception {
-		if (rs.rowPointer == -1) rs.rowPointer++;
+		if (rs.rowPointer == -1) {
+			rs.rowPointer++;
+		}
 		if (rs.rowPointer >= rs.totalRows) {
 			throw new Exception("Attempt to access beyond final row of WikiResultSet");
 		}
@@ -385,7 +389,9 @@ public class WikiResultSet {
 	 * in this class.
 	 */
 	private void verifyColumn(String columnName) throws SQLException {
-		if (this.rowPointer == -1) this.rowPointer++;
+		if (this.rowPointer == -1) {
+			this.rowPointer++;
+		}
 		if (this.rowPointer >= this.totalRows) {
 			throw new SQLException("Attempt to access beyond last row of result set");
 		}

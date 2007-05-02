@@ -140,8 +140,7 @@ public class LdapUserHandler implements UserHandler {
 			BasicAttributes matchAttrs = new BasicAttributes(true);
 			matchAttrs.put(new BasicAttribute(Environment.getValue(Environment.PROP_LDAP_FIELD_USERID), username));
 			NamingEnumeration answer = ctx.search(Environment.getValue(Environment.PROP_LDAP_CONTEXT), matchAttrs, SEARCH_ATTRIBUTES);
-			if (!answer.hasMore()) return null;
-			return this.initWikiUserInfo(answer);
+			return (!answer.hasMore()) ? null : this.initWikiUserInfo(answer);
 		} finally {
 			try {
 				ctx.close();

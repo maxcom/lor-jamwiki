@@ -22,7 +22,6 @@ import java.util.Vector;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -38,6 +37,12 @@ public class DatabaseUpgrades {
 	/**
 	 *
 	 */
+	private DatabaseUpgrades() {
+	}
+
+	/**
+	 *
+	 */
 	public static WikiUser getWikiUser(String username) throws Exception {
 		// prior to JAMWiki 0.5.0 the remember_key column did not exist.  once
 		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
@@ -48,7 +53,9 @@ public class DatabaseUpgrades {
 			conn = DatabaseConnection.getConnection();
 			AnsiQueryHandler queryHandler = new AnsiQueryHandler();
 			WikiResultSet rs = queryHandler.lookupWikiUser(username, conn);
-			if (rs.size() == 0) return null;
+			if (rs.size() == 0) {
+				return null;
+			}
 			int userId = rs.getInt("wiki_user_id");
 			String sql = "select * from jam_wiki_user where wiki_user_id = ? ";
 			WikiPreparedStatement stmt = new WikiPreparedStatement(sql);

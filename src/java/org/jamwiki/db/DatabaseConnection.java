@@ -47,6 +47,12 @@ public class DatabaseConnection {
 	private static GenericObjectPool connectionPool = null;
 
 	/**
+	 *
+	 */
+	private DatabaseConnection() {
+	}
+
+	/**
 	 * Utility method for closing a database connection, a statement and a result set.
 	 * This method must ALWAYS be called for any connection retrieved by the
 	 * {@link DatabaseConnection#getConnection getConnection()} method, and the
@@ -250,7 +256,9 @@ public class DatabaseConnection {
 	 *
 	 */
 	protected static void handleErrors(Connection conn) {
-		if (conn == null) return;
+		if (conn == null) {
+			return;
+		}
 		try {
 			logger.warning("Rolling back database transactions");
 			conn.rollback();
@@ -305,7 +313,9 @@ public class DatabaseConnection {
 			// try to get a test connection
 			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
 		} finally {
-			if (conn != null) closeConnection(conn);
+			if (conn != null) {
+				closeConnection(conn);
+			}
 		}
 		poolInitialized = true;
 	}
