@@ -276,7 +276,9 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	private static void setProperty(Properties props, HttpServletRequest request, String parameter) {
 		String value = request.getParameter(parameter);
-		if (value == null) value = "";
+		if (value == null) {
+			value = "";
+		}
 		props.setProperty(parameter, value);
 	}
 

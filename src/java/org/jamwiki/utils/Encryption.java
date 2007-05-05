@@ -170,12 +170,14 @@ public class Encryption {
 	 * @param props The property object in which the property is being set.
 	 */
 	public static void setEncryptedProperty(String name, String value, Properties props) throws Exception {
-		value = Encryption.encrypt64(value);
-		if (value == null) value = "";
+		String encrypted = Encryption.encrypt64(value);
+		if (encrypted == null) {
+			encrypted = "";
+		}
 		if (props == null) {
-			Environment.setValue(name, value);
+			Environment.setValue(name, encrypted);
 		} else {
-			props.setProperty(name, value);
+			props.setProperty(name, encrypted);
 		}
 	}
 }

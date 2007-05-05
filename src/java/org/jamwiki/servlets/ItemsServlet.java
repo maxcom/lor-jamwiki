@@ -82,7 +82,6 @@ public class ItemsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void viewUsers(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Pagination pagination = Utilities.buildPagination(request, next);
 		Collection items = WikiBase.getDataHandler().lookupWikiUsers(pagination);
 		Vector links = new Vector();

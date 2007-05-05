@@ -108,13 +108,21 @@ public class WikiReferenceTag implements ParserTag {
 	// FIXME - this needs to be a general utility method
 	private String tagAttribute(String raw, String name) {
 		int pos = raw.indexOf('>');
-		if (pos == -1) return null;
+		if (pos == -1) {
+			return null;
+		}
 		pos = raw.toLowerCase().indexOf(name.toLowerCase());
-		if (pos == -1) return null;
+		if (pos == -1) {
+			return null;
+		}
 		int start = raw.indexOf("\"", pos);
-		if (start == -1 || (start + 1) >= raw.length()) return null;
+		if (start == -1 || (start + 1) >= raw.length()) {
+			return null;
+		}
 		int end = raw.indexOf("\"", start + 1);
-		if (end == -1 || end == (start + 1)) return null;
+		if (end == -1 || end == (start + 1)) {
+			return null;
+		}
 		return raw.substring(start + 1, end);
 	}
 }

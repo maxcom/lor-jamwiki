@@ -79,6 +79,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @param links A collection containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
+	// FIXME - why is synchronization needed?
 	public synchronized void addToIndex(Topic topic, Collection links) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
@@ -90,9 +91,13 @@ public class LuceneSearchEngine implements SearchEngine {
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 				writer.optimize();
 				Document standardDocument = createStandardDocument(topic);
-				if (standardDocument != null) writer.addDocument(standardDocument);
+				if (standardDocument != null) {
+					writer.addDocument(standardDocument);
+				}
 				Document keywordDocument = createKeywordDocument(topic, links);
-				if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
+				if (keywordDocument != null) {
+					writer.addDocument(keywordDocument, keywordAnalyzer);
+				}
 			} finally {
 				try {
 					if (writer != null) {
@@ -117,7 +122,9 @@ public class LuceneSearchEngine implements SearchEngine {
 	 */
 	private Document createKeywordDocument(Topic topic, Collection links) throws Exception {
 		String topicContent = topic.getTopicContent();
-		if (topicContent == null) topicContent = "";
+		if (topicContent == null) {
+			topicContent = "";
+		}
 		Document doc = new Document();
 		// store topic name for later retrieval
 		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -138,7 +145,9 @@ public class LuceneSearchEngine implements SearchEngine {
 	 */
 	private Document createStandardDocument(Topic topic) throws Exception {
 		String topicContent = topic.getTopicContent();
-		if (topicContent == null) topicContent = "";
+		if (topicContent == null) {
+			topicContent = "";
+		}
 		Document doc = new Document();
 		// store topic name and content for later retrieval
 		doc.add(new Field(ITYPE_TOPIC_PLAIN, topic.getName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -154,6 +163,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
+	// FIXME - why is synchronization needed?
 	public synchronized void deleteFromIndex(Topic topic) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
@@ -305,6 +315,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
+	// FIXME - why is synchronization needed?
 	public synchronized void refreshIndex() throws Exception {
 		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
 		Topic topic;
@@ -323,12 +334,16 @@ public class LuceneSearchEngine implements SearchEngine {
 					String topicName = (String)iter.next();
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
-					if (standardDocument != null) writer.addDocument(standardDocument);
+					if (standardDocument != null) {
+						writer.addDocument(standardDocument);
+					}
 					// FIXME - parsing all documents will be intolerably slow with even a
 					// moderately large Wiki
 					ParserDocument parserDocument = Utilities.parserDocument(topic.getTopicContent(), virtualWiki.getName(), topicName);
 					Document keywordDocument = createKeywordDocument(topic, parserDocument.getLinks());
-					if (keywordDocument != null) writer.addDocument(keywordDocument, keywordAnalyzer);
+					if (keywordDocument != null) {
+						writer.addDocument(keywordDocument, keywordAnalyzer);
+					}
 					count++;
 				}
 			} catch (Exception ex) {
@@ -363,7 +378,9 @@ public class LuceneSearchEngine implements SearchEngine {
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
 		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
 			summary = Utilities.escapeHTML(content.substring(0, Math.min(200, content.length())));
-			if (Math.min(200, content.length()) == 200) summary += "...";
+			if (Math.min(200, content.length()) == 200) {
+				summary += "...";
+			}
 		}
 		return summary;
 	}

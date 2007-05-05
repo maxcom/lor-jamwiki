@@ -52,7 +52,9 @@ public class JAMWikiFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
-		if (redirectNeeded(request, response)) return;
+		if (redirectNeeded(request, response)) {
+			return;
+		}
 		chain.doFilter(request, response);
 	}
 
@@ -102,10 +104,18 @@ public class JAMWikiFilter implements Filter {
 	 * Determine whether or not to redirect to the setup page.
 	 */
 	private boolean redirectSetup(HttpServletRequest request) throws Exception {
-		if (!Utilities.isFirstUse()) return false;
-		if (request.getRequestURI().toLowerCase().endsWith(".css")) return false;
-		if (ServletUtil.isTopic(request, "Special:Setup")) return false;
-		if (ServletUtil.isTopic(request, "jsp/setup.jsp")) return false;
+		if (!Utilities.isFirstUse()) {
+			return false;
+		}
+		if (request.getRequestURI().toLowerCase().endsWith(".css")) {
+			return false;
+		}
+		if (ServletUtil.isTopic(request, "Special:Setup")) {
+			return false;
+		}
+		if (ServletUtil.isTopic(request, "jsp/setup.jsp")) {
+			return false;
+		}
 		return true;
 	}
 
@@ -113,11 +123,21 @@ public class JAMWikiFilter implements Filter {
 	 * Determine whether or not to redirect to the upgrade page.
 	 */
 	private boolean redirectUpgrade(HttpServletRequest request) throws Exception {
-		if (!Utilities.isUpgrade()) return false;
-		if (request.getRequestURI().toLowerCase().endsWith(".css")) return false;
-		if (ServletUtil.isTopic(request, "Special:Upgrade")) return false;
-		if (ServletUtil.isTopic(request, "Special:Login")) return false;
-		if (ServletUtil.isTopic(request, "jsp/upgrade.jsp")) return false;
+		if (!Utilities.isUpgrade()) {
+			return false;
+		}
+		if (request.getRequestURI().toLowerCase().endsWith(".css")) {
+			return false;
+		}
+		if (ServletUtil.isTopic(request, "Special:Upgrade")) {
+			return false;
+		}
+		if (ServletUtil.isTopic(request, "Special:Login")) {
+			return false;
+		}
+		if (ServletUtil.isTopic(request, "jsp/upgrade.jsp")) {
+			return false;
+		}
 		return true;
 	}
 }

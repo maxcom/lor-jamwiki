@@ -47,7 +47,9 @@ public class LinkParamTag extends BodyTagSupport {
 		try {
 			if (StringUtils.hasText(this.value)) {
 				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-				if (tmp != null) tagValue = tmp.toString();
+				if (tmp != null) {
+					tagValue = tmp.toString();
+				}
 			} else {
 				tagValue = this.getBodyContent().getString();
 			}

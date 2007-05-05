@@ -61,7 +61,9 @@ public class SetupServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("setup.error.notrequired"));
 		}
 		String function = (request.getParameter("function") == null) ? request.getParameter("override") : request.getParameter("function");
-		if (function == null) function = "";
+		if (function == null) {
+			function = "";
+		}
 		try {
 			if (!this.verifyJDK()) {
 				String minimumVersion = MINIMUM_JDK_MAJOR_VERSION + "." + MINIMUM_JDK_MINOR_VERSION;
@@ -222,8 +224,12 @@ public class SetupServlet extends JAMWikiServlet {
 			StringTokenizer tokens = new StringTokenizer(jdk, ".");
 			int major = new Integer(tokens.nextToken()).intValue();
 			int minor = new Integer(tokens.nextToken()).intValue();
-			if (major < MINIMUM_JDK_MAJOR_VERSION) return false;
-			if (major == MINIMUM_JDK_MAJOR_VERSION && minor < MINIMUM_JDK_MINOR_VERSION) return false;
+			if (major < MINIMUM_JDK_MAJOR_VERSION) {
+				return false;
+			}
+			if (major == MINIMUM_JDK_MAJOR_VERSION && minor < MINIMUM_JDK_MINOR_VERSION) {
+				return false;
+			}
 			return true;
 		} catch (Exception e) {
 			logger.warning("Failure determining JDK version", e);

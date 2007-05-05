@@ -77,17 +77,27 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String buildUniqueFileName(String fileName) {
-		if (!StringUtils.hasText(fileName)) return null;
+		if (!StringUtils.hasText(fileName)) {
+			return null;
+		}
 		// file is appended with a timestamp of DDHHMMSS
 		GregorianCalendar cal = new GregorianCalendar();
 		String day = Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
-		if (day.length() == 1) day = "0" + day;
+		if (day.length() == 1) {
+			day = "0" + day;
+		}
 		String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
-		if (hour.length() == 1) hour = "0" + hour;
+		if (hour.length() == 1) {
+			hour = "0" + hour;
+		}
 		String minute = Integer.toString(cal.get(Calendar.MINUTE));
-		if (minute.length() == 1) minute = "0" + minute;
+		if (minute.length() == 1) {
+			minute = "0" + minute;
+		}
 		String second = Integer.toString(cal.get(Calendar.SECOND));
-		if (second.length() == 1) second = "0" + second;
+		if (second.length() == 1) {
+			second = "0" + second;
+		}
 		String suffix = "-" + day + hour + minute + second;
 		int pos = fileName.lastIndexOf('.');
 		if (pos == -1) {
@@ -103,8 +113,12 @@ public class UploadServlet extends JAMWikiServlet {
 	 */
 	private boolean isFileTypeAllowed(String extension) {
 		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
-		if (blacklistType == WikiBase.UPLOAD_ALL) return true;
-		if (blacklistType == WikiBase.UPLOAD_NONE) return false;
+		if (blacklistType == WikiBase.UPLOAD_ALL) {
+			return true;
+		}
+		if (blacklistType == WikiBase.UPLOAD_NONE) {
+			return false;
+		}
 		if (!StringUtils.hasText(extension)) {
 			// FIXME - should non-extensions be represented in the whitelist/blacklist?
 			return true;
@@ -123,7 +137,9 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String sanitizeFilename(String filename) {
-		if (!StringUtils.hasText(filename)) return null;
+		if (!StringUtils.hasText(filename)) {
+			return null;
+		}
 		// some browsers set the full path, so strip to just the file name
 		filename = FilenameUtils.getName(filename);
 		filename = StringUtils.replace(filename.trim(), " ", "_");

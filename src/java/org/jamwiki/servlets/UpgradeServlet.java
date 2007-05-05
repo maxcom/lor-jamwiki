@@ -146,7 +146,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			// file persistence mode removed during 0.4.0
 			if (oldVersion.before(0, 4, 0)) {
-				if (!upgrade040(request, messages)) success = false;
+				if (!upgrade040(request, messages)) {
+					success = false;
+				}
 			}
 			// then perform other needed upgrades
 			boolean stylesheet = false;
@@ -167,7 +169,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			}
 			if (stylesheet) {
 				// upgrade stylesheet
-				if (!upgradeStyleSheet(request, messages)) success = false;
+				if (!upgradeStyleSheet(request, messages)) {
+					success = false;
+				}
 			}
 			Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 			if (!errors.isEmpty()) {

@@ -776,7 +776,9 @@ public class Utilities {
 		if (content == null) {
 			return null;
 		}
-		if (parserDocument == null) parserDocument = new ParserDocument();
+		if (parserDocument == null) {
+			parserDocument = new ParserDocument();
+		}
 		AbstractParser parser = parserInstance(parserInput);
 		return parser.parseHTML(parserDocument, content);
 	}

@@ -46,7 +46,9 @@ public class PaginationTag extends BodyTagSupport {
 		Object tmp = null;
 		try {
 			tmp = ExpressionEvaluationUtils.evaluate("rootUrl", this.rootUrl, pageContext);
-			if (tmp != null) baseUrl = tmp.toString();
+			if (tmp != null) {
+				baseUrl = tmp.toString();
+			}
 			count = ExpressionEvaluationUtils.evaluateInteger("total", this.total, pageContext);
 			this.pageContext.getOut().print(pagination(baseUrl, count));
 		} catch (Exception e) {
@@ -120,7 +122,9 @@ public class PaginationTag extends BodyTagSupport {
 			int offset = pagination.getOffset() + pagination.getNumResults();
 			if (previous) {
 				offset = pagination.getOffset() - pagination.getNumResults();
-				if (offset < 0) offset = 0;
+				if (offset < 0) {
+					offset = 0;
+				}
 			}
 			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(pagination.getNumResults()));
 			query += "&amp;offset=" + offset;

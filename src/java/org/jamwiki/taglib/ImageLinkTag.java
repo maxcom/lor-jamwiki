@@ -44,7 +44,9 @@ public class ImageLinkTag extends TagSupport {
 		Object tmp = null;
 		try {
 			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) linkValue = tmp.toString();
+			if (tmp != null) {
+				linkValue = tmp.toString();
+			}
 		} catch (JspException e) {
 			logger.severe("Image link tag evaluated empty for value " + this.value, e);
 			throw e;

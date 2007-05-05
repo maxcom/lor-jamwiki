@@ -170,7 +170,9 @@ public class WikiPageInfo {
 	 */
 	public String getMetaDescription() {
 		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
-		if (!StringUtils.hasText(pattern)) return "";
+		if (!StringUtils.hasText(pattern)) {
+			return "";
+		}
 		MessageFormat formatter = new MessageFormat(pattern);
 		Object params[] = new Object[1];
 		params[0] = (this.topicName == null) ? "" : this.topicName;

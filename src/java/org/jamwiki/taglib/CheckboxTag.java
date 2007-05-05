@@ -51,19 +51,27 @@ public class CheckboxTag extends TagSupport {
 		try {
 			output += "<input type=\"checkbox\"";
 			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) tagValue = tmp.toString();
+			if (tmp != null) {
+				tagValue = tmp.toString();
+			}
 			output += " value=\"" + tagValue + "\"";
 			tmp = ExpressionEvaluationUtils.evaluate("name", this.name, pageContext);
-			if (tmp != null) tagName = tmp.toString();
+			if (tmp != null) {
+				tagName = tmp.toString();
+			}
 			output += " name=\"" + tagName + "\"";
 			if (StringUtils.hasText(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
-				if (tmp != null) tagId = tmp.toString();
+				if (tmp != null) {
+					tagId = tmp.toString();
+				}
 				output += " id=\"" + tagId + "\"";
 			}
 			if (StringUtils.hasText(this.style)) {
 				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
-				if (tmp != null) tagStyle = tmp.toString();
+				if (tmp != null) {
+					tagStyle = tmp.toString();
+				}
 				output += " style=\"" + tagStyle + "\"";
 			}
 			if (StringUtils.hasText(this.onchange)) {
@@ -74,7 +82,9 @@ public class CheckboxTag extends TagSupport {
 			}
 			if (StringUtils.hasText(this.checked)) {
 				tmp = ExpressionEvaluationUtils.evaluate("checked", this.checked, pageContext);
-				if (tmp != null) tagChecked = tmp.toString();
+				if (tmp != null) {
+					tagChecked = tmp.toString();
+				}
 				if (tagChecked.equals(tagValue)) {
 					output += " checked=\"checked\"";
 				}

@@ -38,8 +38,8 @@ public class XMLTopicFactory extends DefaultHandler {
 	/** Amount to indent */
 	private static final String XML_INDENT = "    ";
 
-	private WikiUser user;
-	private String authorIpAddress;
+	private final WikiUser user;
+	private final String authorIpAddress;
 	private int indentLevel = 0;
 	String virtualWiki = "en";
 	Hashtable namespaces = new Hashtable();
@@ -121,14 +121,18 @@ public class XMLTopicFactory extends DefaultHandler {
 		indentLevel++;
 		nl();
 		emit("ELEMENT: ");
-		String eName = lName; // element name
-		if ("".equals(eName)) eName = qName; // namespaceAware = false
+		String eName = lName;
+		if ("".equals(eName)) {
+			eName = qName;
+		}
 		emit("<"+eName);
 		lastStr = new StringBuffer();
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String aName = attrs.getLocalName(i); // Attr name
-				if ("".equals(aName)) aName = attrs.getQName(i);
+				if ("".equals(aName)) {
+					aName = attrs.getQName(i);
+				}
 				nl();
 				emit("   ATTR: ");
 				emit(aName);
@@ -137,7 +141,9 @@ public class XMLTopicFactory extends DefaultHandler {
 				emit("\"");
 			}
 		}
-		if (attrs.getLength() > 0) nl();
+		if (attrs.getLength() > 0) {
+			nl();
+		}
 		emit(">");
 		if ("namespace".equals(eName)) { // mapping of namespaces from imported file
 			nsKey = new Integer(attrs.getValue("key"));

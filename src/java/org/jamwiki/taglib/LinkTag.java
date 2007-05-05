@@ -50,10 +50,14 @@ public class LinkTag extends BodyTagSupport {
 		Object tmp = null;
 		try {
 			tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
-			if (tmp != null) tagValue = tmp.toString();
+			if (tmp != null) {
+				tagValue = tmp.toString();
+			}
 			if (StringUtils.hasText(this.target)) {
 				tmp = ExpressionEvaluationUtils.evaluate("target", this.target, pageContext);
-				if (tmp != null) tagTarget = tmp.toString();
+				if (tmp != null) {
+					tagTarget = tmp.toString();
+				}
 			}
 		} catch (JspException e) {
 			logger.severe("Failure in link tag for " + this.value + " / " + this.text, e);
@@ -111,7 +115,9 @@ public class LinkTag extends BodyTagSupport {
 		}
 		if (StringUtils.hasText(this.text)) {
 			tmp = ExpressionEvaluationUtils.evaluate("text", this.text, pageContext);
-			if (tmp != null) tagText = tmp.toString();
+			if (tmp != null) {
+				tagText = tmp.toString();
+			}
 		} else if (StringUtils.hasText(body)) {
 			tagText = body;
 		}

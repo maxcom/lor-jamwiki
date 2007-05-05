@@ -65,7 +65,9 @@ public class TranslationServlet extends JAMWikiServlet {
 		}
 		next.addObject("translations", new TreeMap(this.translations));
 		next.addObject("codes", this.retrieveTranslationCodes());
-		if (request.getParameter("language") != null) next.addObject("language", request.getParameter("language"));
+		if (request.getParameter("language") != null) {
+			next.addObject("language", request.getParameter("language"));
+		}
 		return next;
 	}
 
@@ -93,12 +95,20 @@ public class TranslationServlet extends JAMWikiServlet {
 		String filename;
 		for (int i = 0; i < files.length; i++) {
 			file = files[i];
-			if (!file.isFile()) continue;
+			if (!file.isFile()) {
+				continue;
+			}
 			filename = file.getName();
-			if (!StringUtils.hasText(filename)) continue;
-			if (!filename.startsWith("ApplicationResources_") || !filename.endsWith(".properties")) continue;
+			if (!StringUtils.hasText(filename)) {
+				continue;
+			}
+			if (!filename.startsWith("ApplicationResources_") || !filename.endsWith(".properties")) {
+				continue;
+			}
 			String code = filename.substring("ApplicationResources_".length(), filename.length() - ".properties".length());
-			if (StringUtils.hasText(code)) codes.add(code);
+			if (StringUtils.hasText(code)) {
+				codes.add(code);
+			}
 		}
 		return codes;
 	}

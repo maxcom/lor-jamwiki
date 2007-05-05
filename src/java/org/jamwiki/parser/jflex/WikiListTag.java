@@ -134,7 +134,9 @@ public class WikiListTag implements ParserTag {
 		int pos = 0;
 		String stack1Tag = "";
 		String stack2Tag = "";
-		if (stack1.size() != stack2.size()) return false;
+		if (stack1.size() != stack2.size()) {
+			return false;
+		}
 		while (pos < stack1.size()) {
 			stack1Tag = (String)stack1.get(pos);
 			stack2Tag = (String)stack2.get(pos);
@@ -181,7 +183,9 @@ public class WikiListTag implements ParserTag {
 	private Stack tagsToStack(String raw) {
 		int count = 0;
 		for (int i=0; i < raw.length(); i++) {
-			if (!isListTag(raw.charAt(i))) break;
+			if (!isListTag(raw.charAt(i))) {
+				break;
+			}
 			count++;
 		}
 		String tags = raw.substring(0, count);

@@ -68,6 +68,12 @@ public class ServletUtil {
 	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
 
 	/**
+	 *
+	 */
+	private ServletUtil() {
+	}
+
+	/**
 	 * This method ensures that the left menu, logo, and other required values
 	 * have been loaded into the session object.
 	 *
@@ -167,18 +173,19 @@ public class ServletUtil {
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws Exception {
 		Utilities.validateTopicName(topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null) {
-			topic = new Topic();
-			topic.setName(topicName);
-			topic.setVirtualWiki(virtualWiki);
-			WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-			String namespace = wikiLink.getNamespace();
-			if (namespace != null) {
-				if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-					topic.setTopicType(Topic.TYPE_CATEGORY);
-				} else if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
-					topic.setTopicType(Topic.TYPE_TEMPLATE);
-				}
+		if (topic != null) {
+			return topic;
+		}
+		topic = new Topic();
+		topic.setName(topicName);
+		topic.setVirtualWiki(virtualWiki);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
+		String namespace = wikiLink.getNamespace();
+		if (namespace != null) {
+			if (namespace.equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
+				topic.setTopicType(Topic.TYPE_CATEGORY);
+			} else if (namespace.equals(NamespaceHandler.NAMESPACE_TEMPLATE)) {
+				topic.setTopicType(Topic.TYPE_TEMPLATE);
 			}
 		}
 		return topic;

@@ -90,9 +90,15 @@ public class RegisterServlet extends JAMWikiServlet {
 			String oldPassword = request.getParameter("oldPassword");
 			String newPassword = request.getParameter("newPassword");
 			String confirmPassword = request.getParameter("confirmPassword");
-			if (oldPassword != null) next.addObject("oldPassword", oldPassword);
-			if (newPassword != null) next.addObject("newPassword", newPassword);
-			if (confirmPassword != null) next.addObject("confirmPassword", confirmPassword);
+			if (oldPassword != null) {
+				next.addObject("oldPassword", oldPassword);
+			}
+			if (newPassword != null) {
+				next.addObject("newPassword", newPassword);
+			}
+			if (confirmPassword != null) {
+				next.addObject("confirmPassword", confirmPassword);
+			}
 			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
