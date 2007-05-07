@@ -212,6 +212,8 @@
 		<javadoc destdir="${dir.build.javadoc}" windowtitle="JAMWiki ${app.version}" source="${compile.source}">
 			<packageset dir="${dir.src.java}" defaultexcludes="yes">
 				<include name="org/jamwiki/**" />
+				<!-- ignore JUnit test files (for now) -->
+				<exclude name="org/jamwiki/test/**" />
 			</packageset>
 			<classpath refid="jamwiki.lib.classpath" />
 		</javadoc>
