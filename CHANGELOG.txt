@@ -2,6 +2,11 @@
 0.6.0
 =====
 
+New Features:
+
+  * Remove ability to automatically upgrade from JAMWiki versions prior to
+    0.4.0.
+
 
 0.5.4
 =====

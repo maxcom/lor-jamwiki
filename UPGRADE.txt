@@ -52,9 +52,9 @@ MANUAL UPGRADES
 Manual upgrades should only be performed if an error occurs while upgrading
 JAMWiki automatically.  When upgrading manually, you should perform all
 upgrade steps sequentially for each version that is being upgraded,  unless
-otherwise noted.  For example, if upgrading from version 0.3.0 to version
-0.3.3, you should apply the upgrade steps for 0.3.1, followed by 0.3.2,
-followed by 0.3.3.
+otherwise noted.  For example, if upgrading from version 0.5.0 to version
+0.5.3, you should apply the upgrade steps for 0.5.1, followed by 0.5.2,
+followed by 0.5.3.
 
 
   JAMWiki 0.6.0

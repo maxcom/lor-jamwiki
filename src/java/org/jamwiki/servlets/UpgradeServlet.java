@@ -26,10 +26,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.db.AnsiDataHandler;
 import org.jamwiki.db.DatabaseUpgrades;
-import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.file.FileHandler;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
@@ -86,15 +83,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		WikiUser user = null;
-		if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
-			FileHandler handler = new FileHandler();
-			user = handler.lookupWikiUser(username, password, false);
-		} else {
-			if (!WikiBase.getUserHandler().authenticate(username, password)) {
-				return false;
-			}
-			user = DatabaseUpgrades.getWikiUser(username);
+		if (!WikiBase.getUserHandler().authenticate(username, password)) {
+			return false;
 		}
+		user = DatabaseUpgrades.getWikiUser(username);
 		if (user != null) {
 			//FIXME - login via Acegi Security
 			request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
@@ -117,19 +109,13 @@ public class UpgradeServlet extends JAMWikiServlet {
 		Vector messages = new Vector();
 		boolean success = true;
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 2, 0)) {
-			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.2.0"));
+		if (oldVersion.before(0, 4, 0)) {
+			messages.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.4.0"));
 			success = false;
 		} else {
 			// first perform database upgrades
 			if (!Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
 				try {
-					if (oldVersion.before(0, 3, 0)) {
-						messages = DatabaseUpgrades.upgrade030(messages);
-					}
-					if (oldVersion.before(0, 3, 1)) {
-						messages = DatabaseUpgrades.upgrade031(messages);
-					}
 					if (oldVersion.before(0, 4, 2)) {
 						messages = DatabaseUpgrades.upgrade042(messages);
 					}
@@ -144,23 +130,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 					success = false;
 				}
 			}
-			// file persistence mode removed during 0.4.0
-			if (oldVersion.before(0, 4, 0)) {
-				if (!upgrade040(request, messages)) {
-					success = false;
-				}
-			}
 			// then perform other needed upgrades
 			boolean stylesheet = false;
-			if (oldVersion.before(0, 3, 0)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 3, 1)) {
-				stylesheet = true;
-			}
-			if (oldVersion.before(0, 3, 5)) {
-				stylesheet = true;
-			}
 			if (oldVersion.before(0, 4, 2)) {
 				stylesheet = true;
 			}
@@ -207,36 +178,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private boolean upgrade040(HttpServletRequest request, Vector messages) {
-		try {
-			if (Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals("FILE")) {
-				// convert file to default database
-				WikiDatabase.setupDefaultDatabase(Environment.getInstance());
-				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
-				Environment.saveProperties();
-				FileHandler fromHandler = new FileHandler();
-				if (WikiBase.getDataHandler() instanceof AnsiDataHandler) {
-					AnsiDataHandler toHandler = (AnsiDataHandler)WikiBase.getDataHandler();
-					messages.addAll(AnsiDataHandler.convertFromFile(Utilities.currentUser(request), request.getLocale(), fromHandler, toHandler, null));
-				}
-			}
-			if (Environment.getValue(Environment.PROP_PARSER_CLASS) != null && Environment.getValue(Environment.PROP_PARSER_CLASS).equals("org.jamwiki.parser.JAMWikiParser")) {
-				Environment.setValue(Environment.PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
-				Environment.saveProperties();
-			}
-			return true;
-		} catch (Exception e) {
-			// FIXME - hard coding
-			String msg = "Unable to complete upgrade to new JAMWiki version.";
-			logger.severe(msg, e);
-			messages.add(msg + ": " + e.getMessage());
-			return false;
-		}
-	}
-
-	/**
-	 *
-	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
 			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
@@ -260,9 +201,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
-		if (oldVersion.before(0, 1, 0)) {
+		if (oldVersion.before(0, 4, 0)) {
 			Vector errors = new Vector();
-			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.1.0"));
+			errors.add(new WikiMessage("upgrade.error.oldversion", WikiVersion.CURRENT_WIKI_VERSION, "0.4.0"));
 			next.addObject("errors", errors);
 		}
 		pageInfo.setContentJsp(JSP_UPGRADE);
