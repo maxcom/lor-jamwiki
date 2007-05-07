@@ -19,18 +19,15 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.TreeMap;
 import java.util.Vector;
 import net.sf.ehcache.Element;
 import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.file.FileHandler;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Topic;
@@ -176,159 +173,6 @@ public class AnsiDataHandler implements DataHandler {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * @deprecated This method exists solely to allow upgrades to JAMWiki 0.4.0 or
-	 *  greater and will be replaced during the JAMWiki 0.6.x series.
-	 */
-	public static Vector convertFromFile(WikiUser user, Locale locale, FileHandler fromHandler, AnsiDataHandler toHandler, Object transactionObject) throws Exception {
-		Connection conn = null;
-		try {
-			toHandler.setup(locale, user);
-			WikiCache.removeCache(CACHE_VIRTUAL_WIKI);
-			conn = WikiDatabase.getConnection(transactionObject);
-			// FIXME - hard coding of messages
-			Vector messages = new Vector();
-			// purge EVERYTHING from the destination handler
-			WikiDatabase.purgeData(conn);
-			// users
-			Collection userNames = fromHandler.getAllWikiUserLogins();
-			int success = 0;
-			int failed = 0;
-			for (Iterator userIterator = userNames.iterator(); userIterator.hasNext();) {
-				String userName = (String)userIterator.next();
-				try {
-					WikiUser wikiUser = fromHandler.lookupWikiUser(userName);
-					WikiUserInfo wikiUserInfo = fromHandler.lookupWikiUserInfo(userName);
-					toHandler.addWikiUser(wikiUser, conn);
-					if (WikiBase.getUserHandler().isWriteable()) {
-						wikiUserInfo.setUserId(wikiUser.getUserId());
-						WikiBase.getUserHandler().addWikiUserInfo(wikiUserInfo, conn);
-					}
-					success++;
-				} catch (Exception e) {
-					String msg = "Unable to convert user: " + userName;
-					logger.severe(msg, e);
-					messages.add(msg + ": " + e.getMessage());
-					failed++;
-				}
-			}
-			messages.add("Converted " + success + " users successfully, " + failed + " conversions failed");
-			success = 0;
-			failed = 0;
-			Collection virtualWikis = fromHandler.getVirtualWikiList();
-			for (Iterator virtualWikiIterator = virtualWikis.iterator(); virtualWikiIterator.hasNext();) {
-				VirtualWiki virtualWiki = (VirtualWiki)virtualWikiIterator.next();
-				try {
-					toHandler.addVirtualWiki(virtualWiki, conn);
-					messages.add("Added virtual wiki " + virtualWiki.getName());
-				} catch (Exception e) {
-					String msg = "Unable to convert virtual wiki " + virtualWiki.getName();
-					logger.severe(msg, e);
-					messages.add(msg + ": " + e.getMessage());
-				}
-				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, virtualWiki.getName(), virtualWiki);
-				WikiCache.addToCache(CACHE_VIRTUAL_WIKI, new Integer(virtualWiki.getVirtualWikiId()), virtualWiki);
-				success = 0;
-				failed = 0;
-				// topics
-				Collection topicNames = fromHandler.getAllTopicNames(virtualWiki.getName());
-				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
-					String topicName = (String)topicIterator.next();
-					try {
-						Topic topic = fromHandler.lookupTopic(virtualWiki.getName(), topicName);
-						toHandler.addTopic(topic, conn);
-						success++;
-					} catch (Exception e) {
-						String msg = "Unable to convert topic: " + virtualWiki.getName() + " / " + topicName;
-						logger.severe(msg, e);
-						messages.add(msg + ": " + e.getMessage());
-						failed++;
-					}
-				}
-				messages.add("Converted " + success + " topics in virtual wiki " + virtualWiki.getName() + " successfully, " + failed + " conversions failed");
-				success = 0;
-				failed = 0;
-				// topic versions - must be added numerically due to previousTopicVersionId constraint
-				TreeMap versionsMap = new TreeMap();
-				Hashtable topicNameMap = new Hashtable();
-				for (Iterator topicIterator = topicNames.iterator(); topicIterator.hasNext();) {
-					String topicName = (String)topicIterator.next();
-					Collection versions = fromHandler.getAllTopicVersions(virtualWiki.getName(), topicName, false);
-					for (Iterator topicVersionIterator = versions.iterator(); topicVersionIterator.hasNext();) {
-						TopicVersion topicVersion = (TopicVersion)topicVersionIterator.next();
-						Integer key = new Integer(topicVersion.getTopicVersionId());
-						topicNameMap.put(key, topicName);
-						versionsMap.put(key, topicVersion);
-					}
-				}
-				for (Iterator topicVersionIterator = versionsMap.keySet().iterator(); topicVersionIterator.hasNext();) {
-					Integer key = (Integer)topicVersionIterator.next();
-					TopicVersion topicVersion = (TopicVersion)versionsMap.get(key);
-					String topicName = (String)topicNameMap.get(key);
-					try {
-						toHandler.addTopicVersion(topicVersion, conn);
-						success++;
-					} catch (Exception e) {
-						String msg = "Unable to convert topic version: " + virtualWiki.getName() + " / " + topicName + " / " + topicVersion.getTopicVersionId();
-						logger.severe(msg, e);
-						messages.add(msg + ": " + e.getMessage());
-						failed++;
-					}
-				}
-				messages.add("Converted " + success + " topic versions in virtual wiki " + virtualWiki.getName() + " successfully, " + failed + " conversions failed");
-				success = 0;
-				failed = 0;
-				// wiki files
-				Collection wikiFileNames = fromHandler.getAllWikiFileTopicNames(virtualWiki.getName());
-				for (Iterator wikiFileIterator = wikiFileNames.iterator(); wikiFileIterator.hasNext();) {
-					String topicName = (String)wikiFileIterator.next();
-					try {
-						WikiFile wikiFile = fromHandler.lookupWikiFile(virtualWiki.getName(), topicName);
-						toHandler.addWikiFile(wikiFile, conn);
-						success++;
-					} catch (Exception e) {
-						String msg = "Unable to convert wiki file: " + virtualWiki.getName() + " / " + topicName;
-						logger.severe(msg, e);
-						messages.add(msg + ": " + e.getMessage());
-						failed++;
-					}
-				}
-				messages.add("Converted " + success + " wiki files in virtual wiki " + virtualWiki.getName() + " successfully, " + failed + " conversions failed");
-				success = 0;
-				failed = 0;
-				// wiki file versions
-				for (Iterator topicIterator = wikiFileNames.iterator(); topicIterator.hasNext();) {
-					String topicName = (String)topicIterator.next();
-					Collection versions = fromHandler.getAllWikiFileVersions(virtualWiki.getName(), topicName, false);
-					for (Iterator wikiFileVersionIterator = versions.iterator(); wikiFileVersionIterator.hasNext();) {
-						WikiFileVersion wikiFileVersion = (WikiFileVersion)wikiFileVersionIterator.next();
-						try {
-							toHandler.addWikiFileVersion(wikiFileVersion, conn);
-							success++;
-						} catch (Exception e) {
-							String msg = "Unable to convert wiki file version: " + virtualWiki.getName() + " / " + topicName;
-							logger.severe(msg, e);
-							messages.add(msg + ": " + e.getMessage());
-							failed++;
-						}
-					}
-				}
-				messages.add("Converted " + success + " wiki file versions in virtual wiki " + virtualWiki.getName() + " successfully, " + failed + " conversions failed");
-				toHandler.reloadRecentChanges(conn);
-			}
-			// FIXME - since search index info is in the same directory it gets deleted
-			WikiBase.getSearchEngine().refreshIndex();
-			WikiCache.removeCache(CACHE_VIRTUAL_WIKI);
-			return messages;
-		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
-			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
-			WikiBase.reset(locale, user);
-		}
 	}
 
 	/**

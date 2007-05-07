@@ -214,7 +214,6 @@
 				/**/Special:Admin=ROLE_ADMIN
 				/**/Special:Maintenance=ROLE_ADMIN
 				/**/Special:Translation=ROLE_ADMIN
-				/**/Special:Convert=ROLE_ADMIN
 	
 	-->
 			</value>
