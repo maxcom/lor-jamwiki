@@ -7,7 +7,7 @@ New Features:
   * Upgrade to Spring Framework 2.0.4.
   * Upgrade to commons-dbcp-1.2.2.jar.
   * Upgrade to Lucene Search 2.1.
-  * Add Special:Userlist page to display a list of all wiki users.
+  * Add Special:Listusers page to display a list of all wiki users.
   * Add option to open external links in a new window.
   
 Bugfixes:
@@ -22,6 +22,7 @@ Translation Updates:
 
   * Updated Dutch translations (Angel).
   * Updated German translations (axelclk).
+  * Updated Polish translations (dlpa).
 
 
 0.5.3
