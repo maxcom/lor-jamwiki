@@ -22,8 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<c:if test="${!empty param['message']}"><div class="message red"><f:message key="${param['message']}" /></div></c:if>
-<c:if test="${!empty messageObject}"><div class="message red"><f:message key="${messageObject.key}"><f:param value="${messageObject.params[0]}" /></f:message></div></c:if>
+<jamwiki:authmsg css="message red" />
 
 <fieldset>
 <legend><f:message key="${pageInfo.pageTitle.key}" /></legend>

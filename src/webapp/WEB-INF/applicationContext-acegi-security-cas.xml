@@ -66,9 +66,20 @@
 	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint"><ref bean="casProcessingFilterEntryPoint"/></property>
 		<property name="accessDeniedHandler">
-			<bean class="org.acegisecurity.ui.AccessDeniedHandlerImpl">
+			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<!-- TODO: set error page -->
 				<property name="errorPage" value="/en/StartingPoints" />
+				<property name="urlPatterns">
+					<value>
+						PATTERN_TYPE_APACHE_ANT
+						/**/Special:Admin=admin.message.loginrequired
+						/**/Special:Edit=edit.exception.login
+						/**/Special:Maintenance=admin.message.propertyfailure
+						/**/Special:Manage=admin.message.loginrequired
+						/**/Special:Move=admin.message.loginrequired
+						/**/Special:Translation=edit.exception.loginadmin
+					</value>
+				</property>
 			</bean>
 		</property>
 	</bean>

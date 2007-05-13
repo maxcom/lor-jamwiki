@@ -1062,6 +1062,25 @@ public class Utilities {
 	}
 
 	/**
+	 * Users can specify a default locale in their preferences, so determine
+	 * if the current user is logged-in and has chosen a locale.  If not, use
+	 * the default locale from the request object.
+	 *
+	 * @param request The request object for the HTTP request.
+	 * @return Either the user's default locale (for logged-in users) or the
+	 *  locale specified in the request if no default locale is available.
+	 */
+	public static Locale retrieveUserLocale(HttpServletRequest request) {
+		WikiUser user = null;
+		try {
+			user = Utilities.currentUser(request);
+		} catch (Exception e) {
+			// safe to ignore
+		}
+		return (user != null) ? Utilities.buildLocale(user.getDefaultLocale()) : request.getLocale();
+	}
+
+	/**
 	 * Utility method to retrieve an instance of the current user handler.
 	 *
 	 * @return An instance of the current user handler.

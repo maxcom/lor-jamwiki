@@ -169,8 +169,19 @@
 			<ref bean="authenticationEntryPoint" />
 		</property>
 		<property name="accessDeniedHandler">
-			<bean class="org.acegisecurity.ui.AccessDeniedHandlerImpl">
+			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<property name="errorPage" value="/en/Special:Login" />
+				<property name="urlPatterns">
+					<value>
+						PATTERN_TYPE_APACHE_ANT
+						/**/Special:Admin=admin.message.loginrequired
+						/**/Special:Edit=edit.exception.login
+						/**/Special:Maintenance=admin.message.propertyfailure
+						/**/Special:Manage=admin.message.loginrequired
+						/**/Special:Move=admin.message.loginrequired
+						/**/Special:Translation=edit.exception.loginadmin
+					</value>
+				</property>
 			</bean>
 		</property>
 	</bean>
@@ -206,16 +217,13 @@
 		</property>
 		<property name="objectDefinitionSource">
 			<value>
-	<!--
-	
-	FIXME - disabled for now, these pages will just check their own security.  We need some
-	way to be able to pass a message to the login page with Acegi before re-implementing.
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
+				/**/Special:Edit=ROLE_ANONYMOUS,ROLE_USER
 				/**/Special:Maintenance=ROLE_ADMIN
+				/**/Special:Manage=ROLE_ADMIN
+				/**/Special:Move=ROLE_ADMIN
 				/**/Special:Translation=ROLE_ADMIN
-	
-	-->
 			</value>
 		</property>
 	</bean>
