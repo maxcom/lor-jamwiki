@@ -37,7 +37,6 @@
 		</property>
 	</bean>
 
-
 	<!-- ======================== HTTP Session integration ======================== -->
 
 	<bean id="httpSessionContextIntegrationFilter"
@@ -52,6 +51,23 @@
 	<bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties">
 		<property name="service"><value>${jamwiki.base.url}/j_acegi_cas_security_check</value></property>
 		<property name="sendRenew"><value>false</value></property>
+	</bean>
+
+	<!-- +++++++++ Error Message Provider +++++++++ -->
+	
+	<!-- specify default error messages when access is denied to a specific URL -->
+	<bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
+		<property name="urlPatterns">
+			<value>
+				PATTERN_TYPE_APACHE_ANT
+				/**/Special:Admin=admin.message.loginrequired
+				/**/Special:Edit=edit.exception.login
+				/**/Special:Maintenance=admin.message.propertyfailure
+				/**/Special:Manage=admin.message.loginrequired
+				/**/Special:Move=admin.message.loginrequired
+				/**/Special:Translation=edit.exception.loginadmin
+			</value>
+		</property>
 	</bean>
 
 	<!-- ======================== CAS Processing Filter ======================== -->
@@ -69,16 +85,8 @@
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<!-- TODO: set error page -->
 				<property name="errorPage" value="/en/StartingPoints" />
-				<property name="urlPatterns">
-					<value>
-						PATTERN_TYPE_APACHE_ANT
-						/**/Special:Admin=admin.message.loginrequired
-						/**/Special:Edit=edit.exception.login
-						/**/Special:Maintenance=admin.message.propertyfailure
-						/**/Special:Manage=admin.message.loginrequired
-						/**/Special:Move=admin.message.loginrequired
-						/**/Special:Translation=edit.exception.loginadmin
-					</value>
+				<property name="errorMessageProvider">
+					<ref bean="errorMessageProvider" />
 				</property>
 			</bean>
 		</property>

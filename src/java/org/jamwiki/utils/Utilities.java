@@ -577,13 +577,33 @@ public class Utilities {
 	 * @param request The servlet request object.
 	 * @return The decoded topic name retrieved from the URI.
 	 */
-	public static String getTopicFromURI(HttpServletRequest request) throws Exception {
+	public static String getTopicFromURI(HttpServletRequest request) {
 		// skip one directory, which is the virutal wiki
 		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
 		if (topic == null) {
-			throw new Exception("No topic in URL: " + request.getRequestURI());
+			logger.warning("No topic in URL: " + request.getRequestURI());
+			return null;
 		}
-		return Utilities.decodeFromURL(topic);
+		int pos = topic.indexOf('?');
+		if (pos != -1) {
+			// strip everything after and including '?'
+			if (pos == 0) {
+				logger.warning("No topic in URL: " + request.getRequestURI());
+				return null;
+			}
+			topic = topic.substring(0, topic.indexOf('?'));
+		}
+		pos = topic.indexOf('#');
+		if (pos != -1) {
+			// strip everything after and including '#'
+			if (pos == 0) {
+				logger.warning("No topic in URL: " + request.getRequestURI());
+				return null;
+			}
+			topic = topic.substring(0, topic.indexOf('#'));
+		}
+		topic = Utilities.decodeFromURL(topic);
+		return topic;
 	}
 
 	/**

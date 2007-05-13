@@ -162,6 +162,23 @@
 		</property>
 	</bean>
 
+	<!-- +++++++++ Error Message Provider +++++++++ -->
+	
+	<!-- specify default error messages when access is denied to a specific URL -->
+	<bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
+		<property name="urlPatterns">
+			<value>
+				PATTERN_TYPE_APACHE_ANT
+				/**/Special:Admin=admin.message.loginrequired
+				/**/Special:Edit=edit.exception.login
+				/**/Special:Maintenance=admin.message.propertyfailure
+				/**/Special:Manage=admin.message.loginrequired
+				/**/Special:Move=admin.message.loginrequired
+				/**/Special:Translation=edit.exception.loginadmin
+			</value>
+		</property>
+	</bean>
+
 	<!-- +++++++++ Enforce Security based on URLs  +++++++++ -->
 
 	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
@@ -171,16 +188,8 @@
 		<property name="accessDeniedHandler">
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<property name="errorPage" value="/en/Special:Login" />
-				<property name="urlPatterns">
-					<value>
-						PATTERN_TYPE_APACHE_ANT
-						/**/Special:Admin=admin.message.loginrequired
-						/**/Special:Edit=edit.exception.login
-						/**/Special:Maintenance=admin.message.propertyfailure
-						/**/Special:Manage=admin.message.loginrequired
-						/**/Special:Move=admin.message.loginrequired
-						/**/Special:Translation=edit.exception.loginadmin
-					</value>
+				<property name="errorMessageProvider">
+					<ref bean="errorMessageProvider" />
 				</property>
 			</bean>
 		</property>
@@ -191,6 +200,9 @@
 		<property name="loginFormUrl" value="/en/Special:Login" />
 		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
 		<property name="forceHttps" value="false" />
+		<property name="errorMessageProvider">
+			<ref bean="errorMessageProvider" />
+		</property>
 	</bean>
 
 	<!-- Intercept access to specified URLs and enforce security
