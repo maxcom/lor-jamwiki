@@ -35,6 +35,7 @@ public class WikiUser implements UserDetails {
 	private static final long serialVersionUID = -2818435399240684581L;
 
 	private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
+	private final GrantedAuthority ROLE_USER = new GrantedAuthorityImpl("ROLE_USER");
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = "0.0.0.0";
@@ -57,6 +58,9 @@ public class WikiUser implements UserDetails {
 	 *
 	 */
 	public WikiUser() {
+		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
+		authoritiesSet.add(ROLE_USER);
+		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
 	}
 
 	/**
@@ -93,7 +97,14 @@ public class WikiUser implements UserDetails {
 //		this.accountNonExpired = accountNonExpired;
 //		this.credentialsNonExpired = credentialsNonExpired;
 //		this.accountNonLocked = accountNonLocked;
-		setAuthorities(authorities);
+		if (authorities == null) {
+			authorities = new GrantedAuthority[0];
+		}
+		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
+		if (!authoritiesSet.contains(ROLE_USER)) {
+			authoritiesSet.add(ROLE_USER);
+		}
+		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
 	}
 
 	/**
