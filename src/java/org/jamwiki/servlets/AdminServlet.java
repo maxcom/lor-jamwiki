@@ -57,10 +57,6 @@ public class AdminServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (!Utilities.isAdmin(request)) {
-			WikiMessage errorMessage = new WikiMessage("admin.message.loginrequired");
-			return ServletUtil.viewLogin(request, pageInfo, "Special:Admin", errorMessage);
-		}
 		String function = request.getParameter("function");
 		if (!StringUtils.hasText(function) && ServletUtil.isTopic(request, "Special:Maintenance")) {
 			viewAdminSystem(request, next, pageInfo, null);

@@ -66,6 +66,12 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	 * @throws IOException in the event of any failure
 	 */
 	protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+		// FIXME - this method is a mess.  clean it up.
+		if (!url.equals(this.getAuthenticationFailureUrl()) && !url.equals("/DEFAULT_VIRTUAL_WIKI")) {
+			// if Acegi has saved a redirect URL then use that
+			super.sendRedirect(request, response, url);
+			return;
+		}
 		String target = request.getParameter("target");
 		String targetUrl = url;
 		if (url.equals("/DEFAULT_VIRTUAL_WIKI")) {
