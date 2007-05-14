@@ -26,7 +26,6 @@ import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
@@ -79,13 +78,13 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @param links A collection containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
-	// FIXME - why is synchronization needed?
 	public synchronized void addToIndex(Topic topic, Collection links) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		IndexWriter writer = null;
 		try {
 			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
+			// FIXME - move synchronization to the writer instance for this directory
 			try {
 				writer = new IndexWriter(directory, new StandardAnalyzer(), false);
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
@@ -163,21 +162,21 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
-	// FIXME - why is synchronization needed?
 	public synchronized void deleteFromIndex(Topic topic) {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		IndexReader reader = null;
+		IndexWriter writer = null;
 		try {
 			FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
 			// delete the current document
+			// FIXME - move synchronization to the writer instance for this directory
 			try {
-				reader = IndexReader.open(directory);
-				reader.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
+				writer = new IndexWriter(directory, new StandardAnalyzer(), false);
+				writer.deleteDocuments(new Term(ITYPE_TOPIC_PLAIN, topicName));
 			} finally {
-				if (reader != null) {
+				if (writer != null) {
 					try {
-						reader.close();
+						writer.close();
 					} catch (Exception e) {}
 				}
 			}
@@ -292,8 +291,7 @@ public class LuceneSearchEngine implements SearchEngine {
 			try {
 				// create the search instance
 				FSDirectory directory = FSDirectory.getDirectory(getSearchIndexPath(virtualWiki));
-				StandardAnalyzer analyzer = new StandardAnalyzer();
-				writer = new IndexWriter(directory, analyzer, true);
+				writer = new IndexWriter(directory, new StandardAnalyzer(), true);
 				directory.close();
 			} catch (Exception e) {
 				logger.severe("Unable to create search instance " + child.getPath(), e);
@@ -315,7 +313,6 @@ public class LuceneSearchEngine implements SearchEngine {
 	 *
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
-	// FIXME - why is synchronization needed?
 	public synchronized void refreshIndex() throws Exception {
 		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
 		Topic topic;
@@ -324,11 +321,11 @@ public class LuceneSearchEngine implements SearchEngine {
 			int count = 0;
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			FSDirectory directory = FSDirectory.getDirectory(this.getSearchIndexPath(virtualWiki.getName()));
-			StandardAnalyzer analyzer = new StandardAnalyzer();
 			KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 			IndexWriter writer = null;
+			// FIXME - move synchronization to the writer instance for this directory
 			try {
-				writer = new IndexWriter(directory, analyzer, true);
+				writer = new IndexWriter(directory, new StandardAnalyzer(), true);
 				Collection topicNames = WikiBase.getDataHandler().getAllTopicNames(virtualWiki.getName());
 				for (Iterator iter = topicNames.iterator(); iter.hasNext();) {
 					String topicName = (String)iter.next();
