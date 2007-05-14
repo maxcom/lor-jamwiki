@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.AccessDeniedException;
 import org.acegisecurity.ui.AccessDeniedHandler;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -35,10 +34,7 @@ import org.jamwiki.utils.WikiLogger;
 public class JAMWikiAccessDeniedHandler implements AccessDeniedHandler {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAccessDeniedHandler.class.getName());
-	public static final String JAMWIKI_ACCESS_DENIED_ERROR_KEY = "JAMWIKI_403_ERROR_KEY";
-	public static final String JAMWIKI_ACCESS_DENIED_URI_KEY = "JAMWIKI_403_URI_KEY";
 	private String errorPage;
-	private JAMWikiErrorMessageProvider errorMessageProvider;
 
 	/**
 	 *
@@ -46,9 +42,7 @@ public class JAMWikiAccessDeniedHandler implements AccessDeniedHandler {
 	public void handle(ServletRequest servletRequest, ServletResponse servletResponse, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
-		if (this.errorPage != null && this.getErrorMessageProvider() != null) {
-			request.setAttribute(JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
-			request.setAttribute(JAMWIKI_ACCESS_DENIED_URI_KEY, Utilities.getTopicFromURI(request));
+		if (this.errorPage != null) {
 			RequestDispatcher rd = request.getRequestDispatcher(this.errorPage);
 			rd.forward(request, response);
 		}
@@ -72,19 +66,5 @@ public class JAMWikiAccessDeniedHandler implements AccessDeniedHandler {
 			throw new IllegalArgumentException("ErrorPage must begin with '/'");
 		}
 		this.errorPage = errorPage;
-	}
-
-	/**
-	 *
-	 */
-	public JAMWikiErrorMessageProvider getErrorMessageProvider() {
-		return this.errorMessageProvider;
-	}
-
-	/**
-	 *
-	 */
-	public void setErrorMessageProvider(JAMWikiErrorMessageProvider errorMessageProvider) {
-		this.errorMessageProvider = errorMessageProvider;
 	}
 }

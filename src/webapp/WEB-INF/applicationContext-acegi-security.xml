@@ -13,7 +13,7 @@
 		<property name="filterInvocationDefinitionSource">
 			<value>
 				PATTERN_TYPE_APACHE_ANT
-				/**=httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
+				/**=httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,exceptionMessageFilter,filterInvocationInterceptor
 			</value>
 		</property>
 	</bean>
@@ -174,8 +174,15 @@
 				/**/Special:Maintenance=admin.message.propertyfailure
 				/**/Special:Manage=admin.message.loginrequired
 				/**/Special:Move=admin.message.loginrequired
-				/**/Special:Translation=edit.exception.loginadmin
+				/**/Special:Translation=admin.message.loginrequired
 			</value>
+		</property>
+	</bean>
+
+	<!-- add exception message to the request -->
+	<bean id="exceptionMessageFilter" class="org.jamwiki.authentication.JAMWikiExceptionMessageFilter">
+		<property name="errorMessageProvider">
+			<ref bean="errorMessageProvider" />
 		</property>
 	</bean>
 
@@ -188,9 +195,6 @@
 		<property name="accessDeniedHandler">
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<property name="errorPage" value="/en/Special:Login" />
-				<property name="errorMessageProvider">
-					<ref bean="errorMessageProvider" />
-				</property>
 			</bean>
 		</property>
 	</bean>
@@ -200,9 +204,6 @@
 		<property name="loginFormUrl" value="/en/Special:Login" />
 		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
 		<property name="forceHttps" value="false" />
-		<property name="errorMessageProvider">
-			<ref bean="errorMessageProvider" />
-		</property>
 	</bean>
 
 	<!-- Intercept access to specified URLs and enforce security

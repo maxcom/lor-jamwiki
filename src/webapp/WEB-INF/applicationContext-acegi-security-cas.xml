@@ -32,7 +32,7 @@
 		<property name="filterInvocationDefinitionSource">
 			<value>
 				PATTERN_TYPE_APACHE_ANT
-				/**=httpSessionContextIntegrationFilter,logoutFilter,casProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
+				/**=httpSessionContextIntegrationFilter,logoutFilter,casProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,exceptionMessageFilter,filterInvocationInterceptor
 			</value>
 		</property>
 	</bean>
@@ -65,8 +65,15 @@
 				/**/Special:Maintenance=admin.message.propertyfailure
 				/**/Special:Manage=admin.message.loginrequired
 				/**/Special:Move=admin.message.loginrequired
-				/**/Special:Translation=edit.exception.loginadmin
+				/**/Special:Translation=admin.message.loginrequired
 			</value>
+		</property>
+	</bean>
+
+	<!-- add exception message to the request -->
+	<bean id="exceptionMessageFilter" class="org.jamwiki.authentication.JAMWikiExceptionMessageFilter">
+		<property name="errorMessageProvider">
+			<ref bean="errorMessageProvider" />
 		</property>
 	</bean>
 
@@ -85,9 +92,6 @@
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<!-- TODO: set error page -->
 				<property name="errorPage" value="/en/StartingPoints" />
-				<property name="errorMessageProvider">
-					<ref bean="errorMessageProvider" />
-				</property>
 			</bean>
 		</property>
 	</bean>
