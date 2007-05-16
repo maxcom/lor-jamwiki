@@ -5,6 +5,7 @@
 * [[Special:Filelist|ファイル一覧]]
 * [[Special:Imagelist|画像一覧]] 
 * [[Special:Allpages|記事一覧]]
+* [[Special:Listusers|All users]]
 * [[Special:RecentChanges|最近の更新]]
 * [[Special:Search|検索]]
 * [[Special:Upload|アップロード]]
@@ -16,6 +17,7 @@
 
 * [[Special:Admin|システム設定]]
 * [[Special:Maintenance|メンテナンス操作]]
+* [[Special:Roles|Roles]]
 * [[Special:Translation|翻訳]]
 * [[Special:Setup|Wiki 設定]]
 * [[Special:Upgrade|Wiki のアップグレード]]

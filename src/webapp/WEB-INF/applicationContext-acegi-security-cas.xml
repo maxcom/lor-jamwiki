@@ -62,9 +62,10 @@
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=admin.message.loginrequired
 				/**/Special:Edit=edit.exception.login
-				/**/Special:Maintenance=admin.message.propertyfailure
+				/**/Special:Maintenance=admin.message.loginrequired
 				/**/Special:Manage=admin.message.loginrequired
 				/**/Special:Move=admin.message.loginrequired
+				/**/Special:Roles=admin.message.loginrequired
 				/**/Special:Translation=admin.message.loginrequired
 			</value>
 		</property>
@@ -229,9 +230,10 @@
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
 				/**/Special:Maintenance=ROLE_ADMIN
-				/**/Special:Translation=ROLE_ADMIN
 				/**/Special:RecentChangesFeed=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN
+			<!--	/**/Special:Roles=ROLE_ADMIN -->
 				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN
+				/**/Special:Translation=ROLE_ADMIN
 				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN
 				/**=ROLE_USER
 			</value>

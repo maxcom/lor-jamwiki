@@ -18,6 +18,7 @@
 
 * [[Special:Admin|Adminisztráció]]
 * [[Special:Maintenance|Maintenance]]
+* [[Special:Roles|Roles]]
 * [[Special:Translation|Fordítás]]
 * [[Special:Setup|Wiki telepítése]]
 * [[Special:Upgrade|Wiki frissítése]]

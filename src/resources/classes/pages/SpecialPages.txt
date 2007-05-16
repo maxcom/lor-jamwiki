@@ -18,6 +18,7 @@
 
 * [[Special:Admin|Configuration]]
 * [[Special:Maintenance|Maintenance]]
+* [[Special:Roles|Roles]]
 * [[Special:Translation|Translations]]
 * [[Special:Setup|Wiki setup]]
 * [[Special:Upgrade|Wiki upgrade]]

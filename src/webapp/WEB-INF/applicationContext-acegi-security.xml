@@ -171,9 +171,10 @@
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=admin.message.loginrequired
 				/**/Special:Edit=edit.exception.login
-				/**/Special:Maintenance=admin.message.propertyfailure
+				/**/Special:Maintenance=admin.message.loginrequired
 				/**/Special:Manage=admin.message.loginrequired
 				/**/Special:Move=admin.message.loginrequired
+				/**/Special:Roles=admin.message.loginrequired
 				/**/Special:Translation=admin.message.loginrequired
 			</value>
 		</property>
@@ -205,21 +206,6 @@
 		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
 		<property name="forceHttps" value="false" />
 	</bean>
-
-	<!-- Intercept access to specified URLs and enforce security
-		Change URL to role mapping to change authentication rules.
-		Examples:
-		Add
-			/**/Special:Edit=ROLE_USER
-		to require login to edit pages
-		Add
-			/**/Special:Login=ROLE_ANONYMOUS,ROLE_USER
-			/**/Special:Account=ROLE_ANONYMOUS,ROLE_USER
-			/**/jamwiki.css=ROLE_ANONYMOUS,ROLE_USER
-			/images/*.gif=ROLE_ANONYMOUS,ROLE_USER
-			/**=ROLE_USER
-		to require login to view or edit pages (menus are still visible)
-	-->
 	
 	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
 		<property name="authenticationManager">
@@ -236,6 +222,7 @@
 				/**/Special:Maintenance=ROLE_ADMIN
 				/**/Special:Manage=ROLE_ADMIN
 				/**/Special:Move=ROLE_ADMIN
+			<!--	/**/Special:Roles=ROLE_ADMIN -->
 				/**/Special:Translation=ROLE_ADMIN
 			</value>
 		</property>

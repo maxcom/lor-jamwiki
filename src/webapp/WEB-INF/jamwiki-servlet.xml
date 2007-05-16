@@ -27,15 +27,16 @@
 				<prop key="/**/Special:Listusers">Items</prop>
 				<prop key="/**/Special:Login">Login</prop>
 				<prop key="/**/Special:Logout">Login</prop>
+				<prop key="/**/Special:Maintenance">Admin</prop>
 				<prop key="/**/Special:Manage">Manage</prop>
 				<prop key="/**/Special:Move">Move</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:RecentChangesFeed">RecentChangesFeed</prop>
+				<prop key="/**/Special:Roles">Roles</prop>
 				<prop key="/**/Special:Search">Search</prop>
 				<prop key="/**/Special:Setup">Setup</prop>
 				<prop key="/**/Special:Specialpages">SpecialPages</prop>
-				<prop key="/**/Special:Maintenance">Admin</prop>
 				<prop key="/**/Special:TopicsAdmin">Items</prop>
 				<prop key="/**/Special:Translation">Translation</prop>
 				<prop key="/**/Special:Upgrade">Upgrade</prop>
@@ -68,6 +69,7 @@
 		<property name="defaultIncludeMinorEdits" value="false"/>
 	</bean>
 	<bean id="Register" class="org.jamwiki.servlets.RegisterServlet" />
+	<bean id="Roles" class="org.jamwiki.servlets.RolesServlet" />
 	<bean id="Search" class="org.jamwiki.servlets.SearchServlet" />
 	<bean id="Setup" class="org.jamwiki.servlets.SetupServlet" />
 	<bean id="SpecialPages" class="org.jamwiki.servlets.SpecialPagesServlet" />

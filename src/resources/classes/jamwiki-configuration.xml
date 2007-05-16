@@ -237,6 +237,9 @@
 		<name>Special:Logout</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:Maintenance</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:Manage</name>
 	</pseudotopic>
 	<pseudotopic>
@@ -252,6 +255,9 @@
 		<name>Special:RecentChangesFeed</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:Roles</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:Search</name>
 	</pseudotopic>
 	<pseudotopic>
@@ -259,9 +265,6 @@
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:Specialpages</name>
-	</pseudotopic>
-	<pseudotopic>
-		<name>Special:Maintenance</name>
 	</pseudotopic>
 	<pseudotopic>
 		<name>Special:TopicsAdmin</name>

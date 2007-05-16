@@ -4,6 +4,8 @@
 
 New Features:
 
+  * New infrastructure for assigning fine-grained user permissions, including
+    a new [[Special:Roles]] administrative interface.
   * Remove ability to automatically upgrade from JAMWiki versions prior to
     0.4.0.
   * Remove the unused & deprecated Special:Convert admin page.
