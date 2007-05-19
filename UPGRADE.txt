@@ -62,6 +62,16 @@ followed by 0.5.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.0".
+  2. Update the database schema by executing the following SQL statements:
+       a) Create the jam_role table:
+              CREATE TABLE jam_role (
+                   role_id INTEGER NOT NULL,
+                   role_name VARCHAR(200) NOT NULL,
+                   role_description VARCHAR(200),
+                   sort_priority INTEGER DEFAULT 1 NOT NULL,
+                   CONSTRAINT jam_pk_role PRIMARY KEY (role_id),
+                   CONSTRAINT jam_unique_role_name UNIQUE (role_name)
+              );
 
 
   JAMWiki 0.5.4

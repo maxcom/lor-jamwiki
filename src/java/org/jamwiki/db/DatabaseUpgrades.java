@@ -168,4 +168,26 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade060(Vector messages) throws Exception {
+		Connection conn = null;
+		try {
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			// create jam_role table
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_TABLE, conn);
+			messages.add("Added jam_role table");
+			conn.commit();
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_TABLE);
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return messages;
+	}
 }
