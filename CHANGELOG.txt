@@ -13,6 +13,7 @@ New Features:
 
 Bugfixes:
 
+  * Fix issue with corrupted topic names when editing non-ASCII topics.
   * Fix web.xml issue when using Glassfish application server (amerigo5).
 
 Translation Updates:
