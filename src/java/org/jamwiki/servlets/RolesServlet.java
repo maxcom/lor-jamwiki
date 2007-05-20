@@ -16,9 +16,10 @@
  */
 package org.jamwiki.servlets;
 
-import java.util.Vector;
+import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -57,15 +58,9 @@ public class RolesServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		// FIXME - dummy data
-		Vector roles = new Vector();
-		roles.add("ROLE_VIEW");
-		roles.add("ROLE_EDIT");
-		roles.add("ROLE_MOVE");
-		roles.add("ROLE_TRANSLATE");
-		roles.add("ROLE_ADMIN");
-		roles.add("ROLE_SYSTEM_ADMIN");
+		Collection roles = WikiBase.getDataHandler().getAllRoles();
 		next.addObject("roles", roles);
+		next.addObject("roleCount", new Integer(roles.size()));
 		pageInfo.setAdmin(true);
 		pageInfo.setContentJsp(JSP_ADMIN_ROLES);
 		pageInfo.setPageTitle(new WikiMessage("roles.title"));

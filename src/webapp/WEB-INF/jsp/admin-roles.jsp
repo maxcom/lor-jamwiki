@@ -75,7 +75,7 @@
 	<td class="formcaption"><f:message key="roles.caption.searchrole" />:</td>
 	<td class="formelement">
 		<select name="searchRole" id="searchRole">
-		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role}" />"><c:out value="${role}" /></option></c:forEach>
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.roleId}" />"><c:out value="${role.name}" /></option></c:forEach>
 		</select>
 	</td>
 </tr>
@@ -89,19 +89,25 @@
 <tr bgcolor="#ffffff">
 	<td>Anonymous Users</td>
 	<c:forEach items="${roles}" var="role" varStatus="status">
-	<c:if test="${status.index % 2 == 0}"><td></c:if><input type="checkbox" name="" />&#160;<c:out value="${role}" /><c:if test="${status.index % 2 == 0}"><br /></c:if><c:if test="${status.index % 2 == 1 || status.last}"></td></c:if>
+		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+		<input type="checkbox" name="" />&#160;<c:out value="${role.name}" /><br />
+		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
 	</c:forEach>
 </tr>
 <tr bgcolor="#e9e9f8">
 	<td>Logged-In Users</td>
 	<c:forEach items="${roles}" var="role" varStatus="status">
-	<c:if test="${status.index % 2 == 0}"><td></c:if><input type="checkbox" name="" />&#160;<c:out value="${role}" /><c:if test="${status.index % 2 == 0}"><br /></c:if><c:if test="${status.index % 2 == 1 || status.last}"></td></c:if>
+		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+		<input type="checkbox" name="" />&#160;<c:out value="${role.name}" /><br />
+		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
 	</c:forEach>
 </tr>
 <tr bgcolor="#ffffff">
 	<td>wrh2</td>
 	<c:forEach items="${roles}" var="role" varStatus="status">
-	<c:if test="${status.index % 2 == 0}"><td></c:if><input type="checkbox" name="" />&#160;<c:out value="${role}" /><c:if test="${status.index % 2 == 0}"><br /></c:if><c:if test="${status.index % 2 == 1 || status.last}"></td></c:if>
+		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+		<input type="checkbox" name="" />&#160;<c:out value="${role.name}" /><br />
+		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
 	</c:forEach>
 </tr>
 <tr><td colspan="4">&nbsp;</td></tr>
