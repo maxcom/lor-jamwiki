@@ -72,6 +72,14 @@ followed by 0.5.3.
                    CONSTRAINT jam_pk_role PRIMARY KEY (role_id),
                    CONSTRAINT jam_unique_role_name UNIQUE (role_name)
               );
+       b) Create the jam_wiki_user_role table:
+              CREATE TABLE jam_wiki_user_info (
+                   wiki_user_id INTEGER NOT NULL,
+                   role_id INTEGER NOT NULL,
+                   CONSTRAINT jam_pk_wiki_urole PRIMARY KEY (wiki_user_id, role_id),
+                   CONSTRAINT jam_fk_wiki_urole_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                   CONSTRAINT jam_fk_wiki_urole_role FOREIGN KEY (role_id) REFERENCES jam_role(role_id)
+              );
 
 
   JAMWiki 0.5.4

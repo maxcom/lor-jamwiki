@@ -180,10 +180,18 @@ public class DatabaseUpgrades {
 			// create jam_role table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_TABLE, conn);
 			messages.add("Added jam_role table");
+			// create jam_wiki_user_role table
+			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WIKI_USER_ROLE_TABLE, conn);
+			messages.add("Added jam_wiki_user_role table");
 			conn.commit();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
-			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_TABLE);
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_WIKI_USER_ROLE_TABLE);
+			} catch (Exception ex) {}
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_TABLE);
+			} catch (Exception ex) {}
 			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(conn);
