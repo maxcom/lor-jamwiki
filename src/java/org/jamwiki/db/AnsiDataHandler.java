@@ -30,6 +30,7 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -74,6 +75,17 @@ public class AnsiDataHandler implements DataHandler {
 	private void addRecentChange(RecentChange change, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(change.getVirtualWiki());
 		this.queryHandler().insertRecentChange(change, virtualWikiId, conn);
+	}
+
+	/**
+	 *
+	 */
+	private void addRole(Role role, Connection conn) throws Exception {
+		if (role.getRoleId() < 1) {
+			int roleId = this.queryHandler().nextRoleId(conn);
+			role.setRoleId(roleId);
+		}
+		this.queryHandler().insertRole(role, conn);
 	}
 
 	/**
@@ -268,6 +280,18 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public Collection getAllRoles() throws Exception {
+		Collection results = new Vector();
+		WikiResultSet rs = this.queryHandler().getRoles();
+		while (rs.next()) {
+			results.add(this.initRole(rs));
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getAllTopicNames(String virtualWiki) throws Exception {
 		Vector all = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
@@ -429,6 +453,22 @@ public class AnsiDataHandler implements DataHandler {
 			return change;
 		} catch (Exception e) {
 			logger.severe("Failure while initializing recent change", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
+	private Role initRole(WikiResultSet rs) {
+		try {
+			Role role = new Role();
+			role.setDescription(rs.getString("role_description"));
+			role.setName(rs.getString("role_name"));
+			role.setRoleId(rs.getInt("role_id"));
+			return role;
+		} catch (Exception e) {
+			logger.severe("Failure while initializing role", e);
 			return null;
 		}
 	}
@@ -948,6 +988,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private void updateRole(Role role, Connection conn) throws Exception {
+		this.queryHandler().updateRole(role, conn);
+	}
+
+	/**
+	 *
+	 */
 	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
@@ -1033,6 +1080,27 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFileVersion.setFileId(wikiFile.getFileId());
 			// write version
 			addWikiFileVersion(wikiFileVersion, conn);
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			WikiDatabase.releaseConnection(conn, transactionObject);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void writeRole(Role role, Object transactionObject) throws Exception {
+		Connection conn = null;
+		try {
+			conn = WikiDatabase.getConnection(transactionObject);
+			if (role.getRoleId() <= 0) {
+				this.addRole(role, conn);
+			} else {
+				this.updateRole(role, conn);
+			}
+			// FIXME - add caching
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

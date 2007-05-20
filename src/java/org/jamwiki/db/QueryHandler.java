@@ -19,6 +19,7 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -188,6 +189,16 @@ public interface QueryHandler {
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception;
 
 	/**
+	 * Retrieve a WikiResultSet containing all roles that have been defined for
+	 * the wiki.
+	 *
+	 * @return Returns a WikiResult set containing all roles that have been
+	 *  defined for the wiki.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getRoles() throws Exception;
+
+	/**
 	 * Retrieve a WikiResultSet containing the topic names of all admin-only
 	 * topics for the virtual wiki.
 	 *
@@ -280,6 +291,17 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception;
+
+	/**
+	 * Add a new role record to the database.  The role must not already exist
+	 * in the database or else an error will be thrown.
+	 *
+	 * @param role The Role record that is to be added to the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void insertRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic record to the database.  The topic must not already exist
@@ -537,6 +559,16 @@ public interface QueryHandler {
 	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception;
 
 	/**
+	 * Retrieve the next available role id from the role table.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available role id from the role table.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public int nextRoleId(Connection conn) throws Exception;
+
+	/**
 	 * Retrieve the next available topic id from the topic table.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -606,6 +638,16 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void reloadRecentChanges(Connection conn) throws Exception;
+
+	/**
+	 * Update a role record in the database.
+	 *
+	 * @param role The Role record that is to be updated in the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void updateRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Update a topic record in the database.

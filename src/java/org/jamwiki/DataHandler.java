@@ -18,6 +18,7 @@ package org.jamwiki;
 
 import java.util.Collection;
 import java.util.Locale;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -101,6 +102,14 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
+
+	/**
+	 * Return a collection of all Role objects for the wiki.
+	 *
+	 * @return A collection of all Role objects for the wiki.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public Collection getAllRoles() throws Exception;
 
 	/**
 	 * Return a collection of all topic names for all non-deleted topics that
@@ -513,6 +522,21 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception;
+
+	/**
+	 * Add or update a Role object.  This method will add a new record if
+	 * the Role does not have a role ID, otherwise it will perform an update.
+	 *
+	 * @param role The Role to add or update.  If the Role does not have
+	 *  a role ID then a new record is created, otherwise an update is
+	 *  performed.
+	 * @param transactionObject If this method is being called as part of a
+	 *  transaction then this parameter should contain the transaction object,
+	 *  such as a database connection.  If this method is not part of a
+	 *  transaction then this value should be <code>null</code>.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void writeRole(Role role, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if

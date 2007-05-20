@@ -180,6 +180,9 @@ public class DatabaseUpgrades {
 			// create jam_role table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_TABLE, conn);
 			messages.add("Added jam_role table");
+			// setup basic roles
+			WikiDatabase.setupRoles(conn);
+			messages.add("Added basic wiki roles.");
 			// create jam_wiki_user_role table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_WIKI_USER_ROLE_TABLE, conn);
 			messages.add("Added jam_wiki_user_role table");

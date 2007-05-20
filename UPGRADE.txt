@@ -68,7 +68,6 @@ followed by 0.5.3.
                    role_id INTEGER NOT NULL,
                    role_name VARCHAR(200) NOT NULL,
                    role_description VARCHAR(200),
-                   sort_priority INTEGER DEFAULT 1 NOT NULL,
                    CONSTRAINT jam_pk_role PRIMARY KEY (role_id),
                    CONSTRAINT jam_unique_role_name UNIQUE (role_name)
               );
@@ -80,6 +79,15 @@ followed by 0.5.3.
                    CONSTRAINT jam_fk_wiki_urole_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
                    CONSTRAINT jam_fk_wiki_urole_role FOREIGN KEY (role_id) REFERENCES jam_role(role_id)
               );
+       c) Add the basic roles:
+              INSERT into jam_role (role_id, role_name) values (1, 'ROLE_ADMIN');
+              INSERT into jam_role (role_id, role_name) values (2, 'ROLE_ADMIN_MANAGE');
+              INSERT into jam_role (role_id, role_name) values (3, 'ROLE_EDIT_EXISTING');
+              INSERT into jam_role (role_id, role_name) values (4, 'ROLE_EDIT_NEW');
+              INSERT into jam_role (role_id, role_name) values (5, 'ROLE_MOVE');
+              INSERT into jam_role (role_id, role_name) values (6, 'ROLE_TRANSLATE');
+              INSERT into jam_role (role_id, role_name) values (7, 'ROLE_UPLOAD');
+              INSERT into jam_role (role_id, role_name) values (8, 'ROLE_VIEW');
 
 
   JAMWiki 0.5.4
