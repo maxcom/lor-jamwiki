@@ -35,19 +35,19 @@
 
 <!-- Create Roles -->
 <form action="<jamwiki:link value="Special:Roles" />" method="post">
-<input type="hidden" name="function" value="createRole" />
+<input type="hidden" name="function" value="modifyRole" />
 <a name="create"></a>
 <fieldset>
 <legend><f:message key="roles.header.create" /></legend>
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="roleName"><f:message key="roles.caption.name" /></label></td>
-	<td class="formelement"><input type="text" name="roleName" id="roleName" value="" size="30" /></td>
+	<td class="formelement"><input type="text" name="roleName" id="roleName" value="<c:out value="${roleName}" />" size="30" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="roles.caption.namehelp" /></td></tr>
 <tr>
 	<td class="formcaption"><label for="roleDescription"><f:message key="roles.caption.description" /></label></td>
-	<td class="formelement"><textarea cols="30" rows="3" name="roleDescription" id="roleDescription"></textarea></td>
+	<td class="formelement"><textarea cols="30" rows="3" name="roleDescription" id="roleDescription"><c:out value="${roleDescription}" /></textarea></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="roles.caption.descriptionhelp" /></td></tr>
 </table>

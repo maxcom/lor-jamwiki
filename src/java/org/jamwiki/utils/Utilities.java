@@ -51,6 +51,7 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseConnection;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
@@ -70,11 +71,13 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 public class Utilities {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
+	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
 
 	static {
 		try {
+			INVALID_ROLE_NAME_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
 			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>\\[\\]?#]+)");
 			VALID_USER_LOGIN_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
 		} catch (Exception e) {
@@ -1175,6 +1178,24 @@ public class Utilities {
 			return new WikiMessage("error.directorydelete", name, e.getMessage());
 		}
 		return null;
+	}
+
+	/**
+	 * Utility method for determining if the parameters of a Role are valid
+	 * or not.
+	 *
+	 * @param role The Role to validate.
+	 * @throws WikiException Thrown if the role is invalid.
+	 */
+	public static void validateRole(Role role) throws WikiException {
+		Matcher m = INVALID_ROLE_NAME_PATTERN.matcher(role.getName());
+		if (!m.matches()) {
+			throw new WikiException(new WikiMessage("roles.error.name", role.getName()));
+		}
+		if (StringUtils.hasText(role.getDescription()) && role.getDescription().length() > 200) {
+			throw new WikiException(new WikiMessage("roles.error.description"));
+		}
+		// FIXME - throw a user-friendly error if the role name is already in use
 	}
 
 	/**

@@ -20,7 +20,10 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,14 +47,46 @@ public class RolesServlet extends JAMWikiServlet {
 		String function = request.getParameter("function");
 		if (!StringUtils.hasText(function)) {
 			view(request, next, pageInfo);
-		} else if (function.equals("createRole")) {
+		} else if (function.equals("modifyRole")) {
 			// for now view is the only action allowed...
-			view(request, next, pageInfo);
+			modifyRole(request, next, pageInfo);
 		} else if (function.equals("assignRole")) {
 			// for now view is the only action allowed...
 			view(request, next, pageInfo);
 		}
 		return next;
+	}
+
+	/**
+	 *
+	 */
+	private void modifyRole(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			Role role = new Role();
+			role.setName(request.getParameter("roleName"));
+			role.setDescription(request.getParameter("roleDescription"));
+			if (StringUtils.hasText(request.getParameter("roleId"))) {
+				role.setRoleId(new Integer(request.getParameter("roleId")).intValue());
+			}
+			Utilities.validateRole(role);
+			WikiBase.getDataHandler().writeRole(role, null);
+			next.addObject("message", new WikiMessage("roles.message.roleadded", role.getName()));
+			this.view(request, next, pageInfo);
+			return;
+		} catch (WikiException e) {
+			next.addObject("message", e.getWikiMessage());
+		} catch (Exception e) {
+			logger.severe("Failure while adding role", e);
+			next.addObject("message", new WikiMessage("roles.message.roleaddfail", e.getMessage()));
+		}
+		// only add name & description to the request if role not successfully modified.
+		if (request.getParameter("roleName") != null) {
+			next.addObject("roleName", request.getParameter("roleName"));
+		}
+		if (request.getParameter("roleDescription") != null) {
+			next.addObject("roleDescription", request.getParameter("roleDescription"));
+		}
+		this.view(request, next, pageInfo);
 	}
 
 	/**
