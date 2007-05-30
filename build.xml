@@ -6,7 +6,7 @@
 
 	<!-- build a list all jar files needed for compiling -->
 	<path id="jamwiki.lib.classpath">
-		<pathelement path="${dir.lib}/acegi-security-1.0.3.jar" />
+		<pathelement path="${dir.lib}/acegi-security-1.0.4.jar" />
 		<pathelement path="${dir.lib}/bliki.jar" />
 		<pathelement path="${dir.lib}/commons-codec.jar" />
 		<pathelement path="${dir.lib}/commons-dbcp-1.2.2.jar" />

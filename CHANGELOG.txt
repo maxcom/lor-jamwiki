@@ -10,6 +10,7 @@ New Features:
     0.4.0.
   * Remove the unused & deprecated Special:Convert admin page.
   * Upgrade to Spring Framework 2.0.5.
+  * Upgrade to Acegi Security 1.0.4.
 
 Bugfixes:
 
