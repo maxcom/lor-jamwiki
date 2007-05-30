@@ -18,6 +18,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Dutch translations (Angel).
   * Updated German translations (axelclk).
   * Updated Polish translations (dlpa).
 
