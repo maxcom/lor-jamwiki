@@ -231,6 +231,7 @@ public class DatabaseConnection {
 			}
 			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
 		} else {
+			// FIXME - JDK 1.3 is not supported, so update this code
 			// Use Reflection here to avoid a compile time dependency
 			// on the DataSource interface. It's not available by default
 			// on j2se 1.3.
@@ -328,8 +329,34 @@ public class DatabaseConnection {
 		try {
 			if (StringUtils.hasText(driver)) {
 				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+				if (url.startsWith("jdbc:")) {
+					if (!poolInitialized) {
+						setUpConnectionPool(url, user, password);
+					}
+					if (StringUtils.hasText(driver)) {
+						Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+					}
+					conn = DriverManager.getConnection(url, user, password);
+				} else {
+					// FIXME - JDK 1.3 is not supported, so update this code
+					// Use Reflection here to avoid a compile time dependency
+					// on the DataSource interface. It's not available by default
+					// on j2se 1.3.
+					Context ctx = new InitialContext();
+					Object dataSource = ctx.lookup(url);
+					Method m;
+					Object args[];
+					if (user.length() == 0) {
+						Class[] parameterTypes = null;
+						m = dataSource.getClass().getMethod("getConnection", parameterTypes);
+						args = new Object[]{};
+					} else {
+						m = dataSource.getClass().getMethod("getConnection", new Class[]{String.class, String.class});
+						args = new Object[]{user, password};
+					}
+					conn = (Connection)m.invoke(dataSource, args);
+				}
 			}
-			conn = DriverManager.getConnection(url, user, password);
 			if (existence) {
 				// test to see if database exists
 				executeQuery(WikiDatabase.getExistenceValidationQuery(), conn);
