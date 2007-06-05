@@ -58,17 +58,17 @@ public class Role {
 	}
 
 	/**
-	 *
+	 * Retrieve the role name.  Role names are returned in uppercase.
 	 */
 	public String getName() {
-		return this.name;
+		return (this.name == null) ? null : this.name.toUpperCase();
 	}
 
 	/**
-	 *
+	 * Set the role name.  Role names will be forced to uppercase.
 	 */
 	public void setName(String name) {
-		this.name = name;
+		this.name = ((name == null) ? null : name.toUpperCase());
 	}
 
 	/**
