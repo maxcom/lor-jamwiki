@@ -69,6 +69,18 @@ public interface QueryHandler {
 	public void deleteRecentChanges(int topicId, Connection conn) throws Exception;
 
 	/**
+	 * Delete a role record from the database.  It is OK to call this method
+	 * for roles that do not exist, but it will throw an error if called for a
+	 * role that is currently assigned to a user.
+	 *
+	 * @param role The Role record that is to be deleted from the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void deleteRole(Role role, Connection conn) throws Exception;
+
+	/**
 	 * Delete all categories associated with a topic.
 	 *
 	 * @param topicId The topic for which category association records are being
@@ -559,16 +571,6 @@ public interface QueryHandler {
 	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception;
 
 	/**
-	 * Retrieve the next available role id from the role table.
-	 *
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return The next available role id from the role table.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public int nextRoleId(Connection conn) throws Exception;
-
-	/**
 	 * Retrieve the next available topic id from the topic table.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -638,16 +640,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void reloadRecentChanges(Connection conn) throws Exception;
-
-	/**
-	 * Update a role record in the database.
-	 *
-	 * @param role The Role record that is to be updated in the database.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public void updateRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Update a topic record in the database.

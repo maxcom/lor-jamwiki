@@ -26,7 +26,6 @@ public class Role {
 	private static WikiLogger logger = WikiLogger.getLogger(Role.class.getName());
 	private String description = null;
 	private String name = null;
-	private int roleId = 0;
 
 	public static final String ROLE_ADMIN = "ROLE_ADMIN";
 	public static final String ROLE_ADMIN_MANAGE = "ROLE_ADMIN_MANAGE";
@@ -69,19 +68,5 @@ public class Role {
 	 */
 	public void setName(String name) {
 		this.name = ((name == null) ? null : name.toUpperCase());
-	}
-
-	/**
-	 *
-	 */
-	public int getRoleId() {
-		return this.roleId;
-	}
-
-	/**
-	 *
-	 */
-	public void setRoleId(int roleId) {
-		this.roleId = roleId;
 	}
 }

@@ -75,7 +75,7 @@
 	<td class="formcaption"><f:message key="roles.caption.searchrole" />:</td>
 	<td class="formelement">
 		<select name="searchRole" id="searchRole">
-		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.roleId}" />"><c:out value="${role.name}" /></option></c:forEach>
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />"><c:out value="${role.name}" /></option></c:forEach>
 		</select>
 	</td>
 </tr>

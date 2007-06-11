@@ -80,17 +80,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addRole(Role role, Connection conn) throws Exception {
-		if (role.getRoleId() < 1) {
-			int roleId = this.queryHandler().nextRoleId(conn);
-			role.setRoleId(roleId);
-		}
-		this.queryHandler().insertRole(role, conn);
-	}
-
-	/**
-	 *
-	 */
 	private void addTopic(Topic topic, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(topic.getVirtualWiki());
 		if (topic.getTopicId() < 1) {
@@ -465,7 +454,6 @@ public class AnsiDataHandler implements DataHandler {
 			Role role = new Role();
 			role.setDescription(rs.getString("role_description"));
 			role.setName(rs.getString("role_name"));
-			role.setRoleId(rs.getInt("role_id"));
 			return role;
 		} catch (Exception e) {
 			logger.severe("Failure while initializing role", e);
@@ -988,13 +976,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void updateRole(Role role, Connection conn) throws Exception {
-		this.queryHandler().updateRole(role, conn);
-	}
-
-	/**
-	 *
-	 */
 	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
@@ -1095,11 +1076,8 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			if (role.getRoleId() <= 0) {
-				this.addRole(role, conn);
-			} else {
-				this.updateRole(role, conn);
-			}
+			this.queryHandler().deleteRole(role, conn);
+			this.queryHandler().insertRole(role, conn);
 			// FIXME - add caching
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

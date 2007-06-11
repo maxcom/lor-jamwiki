@@ -65,9 +65,6 @@ public class RolesServlet extends JAMWikiServlet {
 			Role role = new Role();
 			role.setName(request.getParameter("roleName"));
 			role.setDescription(request.getParameter("roleDescription"));
-			if (StringUtils.hasText(request.getParameter("roleId"))) {
-				role.setRoleId(new Integer(request.getParameter("roleId")).intValue());
-			}
 			Utilities.validateRole(role);
 			WikiBase.getDataHandler().writeRole(role, null);
 			next.addObject("message", new WikiMessage("roles.message.roleadded", role.getName()));
