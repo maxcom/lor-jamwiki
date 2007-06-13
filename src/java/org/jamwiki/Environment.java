@@ -188,7 +188,7 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
 		defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, "false");
-		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,js,jsp,php,sh");
+		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
 		defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
 		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, "");
 		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, "");
