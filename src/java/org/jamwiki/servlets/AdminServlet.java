@@ -162,8 +162,6 @@ public class AdminServlet extends JAMWikiServlet {
 			setProperty(props, request, Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS);
 			setProperty(props, request, Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN);
 			setProperty(props, request, Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION);
-			setBooleanProperty(props, request, Environment.PROP_DBCP_REMOVE_ABANDONED);
-			setProperty(props, request, Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT);
 			int maxFileSizeInKB = Integer.parseInt(request.getParameter(Environment.PROP_FILE_MAX_FILE_SIZE));
 			props.setProperty(Environment.PROP_FILE_MAX_FILE_SIZE, Integer.toString(maxFileSizeInKB * 1000));
 			setProperty(props, request, Environment.PROP_FILE_DIR_FULL_PATH);

@@ -353,16 +353,6 @@ FIXME - Email not supported right now, comment this out
 		</c:forEach>
 	</td>
 </tr>
-<tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED %>"><f:message key="admin.caption.dbcp.removeabandoned" /></label></td>
-	<c:set var="PROP_DBCP_REMOVE_ABANDONED"><%= Environment.PROP_DBCP_REMOVE_ABANDONED %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_REMOVE_ABANDONED}" value="true" checked="${props[PROP_DBCP_REMOVE_ABANDONED]}" id="${PROP_DBCP_REMOVE_ABANDONED}" /></td>
-</tr>
-<tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %>"><f:message key="admin.caption.dbcp.removeabandonedtimeout" /></label></td>
-	<c:set var="PROP_DBCP_REMOVE_ABANDONED_TIMEOUT"><%= Environment.PROP_DBCP_REMOVE_ABANDONED_TIMEOUT %></c:set>
-	<td class="formelement"><jamwiki:text name="${PROP_DBCP_REMOVE_ABANDONED_TIMEOUT}" id="${PROP_DBCP_REMOVE_ABANDONED_TIMEOUT}" value="${props[PROP_DBCP_REMOVE_ABANDONED_TIMEOUT]}" size="5" /></td>
-</tr>
 </table>
 </fieldset>
 <!-- END DATABASE PERSISTENCE -->

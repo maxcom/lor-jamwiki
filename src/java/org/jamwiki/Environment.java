@@ -57,8 +57,6 @@ public class Environment {
 	public static final String PROP_DBCP_MAX_IDLE = "dbcp-max-idle";
 	public static final String PROP_DBCP_MIN_EVICTABLE_IDLE_TIME = "dbcp-min-evictable-idle-time";
 	public static final String PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN = "dbcp-num-tests-per-eviction-run";
-	public static final String PROP_DBCP_REMOVE_ABANDONED = "dbcp-remove-abandoned";
-	public static final String PROP_DBCP_REMOVE_ABANDONED_TIMEOUT = "dbcp-remove-abandoned-timeout";
 	public static final String PROP_DBCP_TEST_ON_BORROW = "dbcp-test-on-borrow";
 	public static final String PROP_DBCP_TEST_ON_RETURN = "dbcp-test-on-return";
 	public static final String PROP_DBCP_TEST_WHILE_IDLE = "dbcp-test-while-idle";
@@ -176,8 +174,6 @@ public class Environment {
 		defaults.setProperty(PROP_DBCP_MAX_IDLE, "3");
 		defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");
 		defaults.setProperty(PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, "5");
-		defaults.setProperty(PROP_DBCP_REMOVE_ABANDONED, "true");
-		defaults.setProperty(PROP_DBCP_REMOVE_ABANDONED_TIMEOUT, "120");
 		defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, "true");
 		defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, "true");
 		defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, "true");
