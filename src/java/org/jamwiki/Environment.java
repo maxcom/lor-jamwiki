@@ -66,6 +66,7 @@ public class Environment {
 	public static final String PROP_EMAIL_SMTP_HOST = "smtp-host";
 	public static final String PROP_EMAIL_SMTP_PASSWORD = "smtp-password";
 	public static final String PROP_EMAIL_SMTP_USERNAME = "smtp-username";
+	public static final String PROP_ENCRYPTION_ALGORITHM = "encryption-algorithm";
 	public static final String PROP_EXTERNAL_LINK_NEW_WINDOW = "external-link-new-window";
 	public static final String PROP_FILE_BLACKLIST = "file-blacklist";
 	public static final String PROP_FILE_BLACKLIST_TYPE = "file-blacklist-type";
@@ -183,6 +184,7 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_HOST, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
+		defaults.setProperty(PROP_ENCRYPTION_ALGORITHM, "SHA-512");
 		defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, "false");
 		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
 		defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));

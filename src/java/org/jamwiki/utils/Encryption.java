@@ -82,11 +82,28 @@ public class Encryption {
 	 */
 	public static String encrypt(String unencryptedString) throws Exception {
 		MessageDigest md = null;
+		String encryptionAlgorithm = Environment.getValue(Environment.PROP_ENCRYPTION_ALGORITHM);
 		try {
-			md = MessageDigest.getInstance("SHA-512");
+			md = MessageDigest.getInstance(encryptionAlgorithm);
 		} catch (NoSuchAlgorithmException e) {
-			logger.severe("JDK does not support the SHA-512 encryption algorithm");
-			throw e;
+			logger.warning("JDK does not support the " + encryptionAlgorithm + " encryption algorithm.  Weaker encryption will be attempted.");
+		}
+		if (md == null) {
+			// fallback to weaker encryption algorithm if nothing better is available
+			try {
+				md = MessageDigest.getInstance("SHA-1");
+			} catch (NoSuchAlgorithmException e) {
+				logger.severe("JDK does not support either the SHA-1 or SHA-512 encryption algorithms.");
+				throw e;
+			}
+			try {
+				// save the algorithm so that if the user upgrades the JDK they can
+				// still use passwords encrypted with the weaker algorithm
+				Environment.setValue(Environment.PROP_ENCRYPTION_ALGORITHM, "SHA-1");
+				Environment.saveProperties();
+			} catch (Exception e) {
+				logger.info("Failure while saving encryption algorithm property", e);
+			}
 		}
 		try {
 			md.update(unencryptedString.getBytes("UTF-8"));
