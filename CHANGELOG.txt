@@ -9,7 +9,7 @@ New Features:
   * Remove ability to automatically upgrade from JAMWiki versions prior to
     0.4.0.
   * Remove the unused & deprecated Special:Convert admin page.
-  * Upgrade to Spring Framework 2.0.5.
+  * Upgrade to Spring Framework 2.0.6.
   * Upgrade to Acegi Security 1.0.4.
   * Upgrade to ehcache 1.3.0.
 
@@ -40,7 +40,7 @@ New Features:
   * Upgrade to Lucene Search 2.1.
   * Add Special:Listusers page to display a list of all wiki users.
   * Add option to open external links in a new window.
-  
+
 Bugfixes:
 
   * Templates containing categories within <includeonly> or <noinclude> tags
@@ -63,7 +63,7 @@ New Features:
 
   * Upgrade to Spring Framework 2.0.3.
   * Hide edit tab from users who do not have permission to edit a topic.
-  
+
 Bugfixes:
 
   * Fix an error with Resin that could result in ClassCastException on pages
@@ -93,7 +93,7 @@ New Features:
   * Hide the Special:Convert admin page.
   * Add an option to clear the cache from Special:Maintenance.
   * Added automatically generated JUnit tests from junitfactory.com.
-  
+
 Bugfixes:
 
   * Certain topic names could cause errors resulting in CPU usage of 100%.
@@ -118,7 +118,7 @@ New Features:
   * Simplify the process for creating new Wiki "Special:" pages to hopefully
     make it easier for development of custom pages.
   * RSS updates (swift).
-  
+
 Bugfixes:
 
   * Fix infinite redirect problem when installing with BEA WebLogic.
@@ -257,7 +257,7 @@ Bugfixes:
 
 New Features:
 
-  * Add support for Mediawiki templates (see 
+  * Add support for Mediawiki templates (see
     http://meta.wikimedia.org/wiki/Help:Templates).
   * Replace file persistency mode with an embedded version of the HSQL
     database.
