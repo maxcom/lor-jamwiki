@@ -12,6 +12,7 @@ New Features:
   * Upgrade to Spring Framework 2.0.6.
   * Upgrade to Acegi Security 1.0.4.
   * Upgrade to ehcache 1.3.0.
+  * Upgrade to Lucene Search 2.2.
 
 Bugfixes:
 

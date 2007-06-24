@@ -19,8 +19,8 @@
 		<pathelement path="${dir.lib}/jdom-1.0.jar" />
 		<pathelement path="${dir.lib}/jstl-1.0.6.jar" />
 		<pathelement path="${dir.lib}/junit-3.8.2.jar" />
-		<pathelement path="${dir.lib}/lucene-core-2.1.0.jar" />
-		<pathelement path="${dir.lib}/lucene-highlighter-2.1.0.jar" />
+		<pathelement path="${dir.lib}/lucene-core-2.2.0.jar" />
+		<pathelement path="${dir.lib}/lucene-highlighter-2.2.0.jar" />
 		<pathelement path="${dir.lib}/mail.jar" />
 		<pathelement path="${dir.lib}/oro-2.0.8.jar" />
 		<pathelement path="${dir.lib}/rome-0.9.jar" />
