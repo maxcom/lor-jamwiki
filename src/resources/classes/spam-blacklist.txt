@@ -4,8 +4,10 @@ adware[ -_\.]freeware
 amatorial[ -_\.]sex
 best[ -_\.]porn
 display\:none
+ebony[ -_\.]anal
 free[ -_\.]porn
 israwell\.com
+lavandos\.org
 lesbian[ -_\.]video
 levitra[ -_\.]online
 naked[ -_\.]teen
@@ -13,11 +15,14 @@ news_[0-9]+\.htm
 nucreate\.info
 nudisplay\.info
 payday[ -_\.]loans
+plantar\-wart
 porno[ -_\.]video
+russianbrides
 seo\-master\.info
 super[ -_\.]porno
 superche\.info
 teen[ -_\.]xxx
 theche\.info
+top\-dating
 viagara[ -_\.]online
-xxx[ -_\.]teen
+xxx[ -_\.](porn|teen)
