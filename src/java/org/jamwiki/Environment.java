@@ -193,7 +193,7 @@ public class Environment {
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
 		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
-		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "450");
+		defaults.setProperty(PROP_IMAGE_RESIZE_INCREMENT, "100");
 		defaults.setProperty(PROP_LDAP_CONTEXT, "ou=users,dc=mycompany,dc=com");
 		defaults.setProperty(PROP_LDAP_FACTORY_CLASS, "com.sun.jndi.ldap.LdapCtxFactory");
 		defaults.setProperty(PROP_LDAP_FIELD_EMAIL, "mail");
