@@ -25,6 +25,7 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
+import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
@@ -67,18 +68,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void deleteRecentChanges(int topicId, Connection conn) throws Exception;
-
-	/**
-	 * Delete a role record from the database.  It is OK to call this method
-	 * for roles that do not exist, but it will throw an error if called for a
-	 * role that is currently assigned to a user.
-	 *
-	 * @param role The Role record that is to be deleted from the database.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public void deleteRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Delete all categories associated with a topic.
@@ -391,6 +380,17 @@ public interface QueryHandler {
 	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception;
 
 	/**
+	 * Add a new group record to the database.  The group must not already exist
+	 * in the database or else an error will be thrown.
+	 *
+	 * @param group The WikiGroup record that is to be added to the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void insertWikiGroup(WikiGroup group, Connection conn) throws Exception;
+
+	/**
 	 * Add a new user record to the database.  The user must not already exist
 	 * in the database or else an error will be thrown.
 	 *
@@ -623,6 +623,16 @@ public interface QueryHandler {
 	public int nextWikiFileVersionId(Connection conn) throws Exception;
 
 	/**
+	 * Retrieve the next available wiki group id from the wiki group table.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available wiki group id from the wiki group table.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public int nextWikiGroupId(Connection conn) throws Exception;
+
+	/**
 	 * Retrieve the next available wiki user id from the wiki user table.
 	 *
 	 * @param conn A database connection to use when connecting to the database
@@ -640,6 +650,16 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void reloadRecentChanges(Connection conn) throws Exception;
+
+	/**
+	 * Update a role record in the database.
+	 *
+	 * @param role The Role record that is to be updated in the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void updateRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Update a topic record in the database.
@@ -672,6 +692,16 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
+
+	/**
+	 * Update a group record in the database.
+	 *
+	 * @param group The WikiGroup record that is to be updated in the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void updateWikiGroup(WikiGroup group, Connection conn) throws Exception;
 
 	/**
 	 * Update a wiki user record in the database.

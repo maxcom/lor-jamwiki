@@ -25,6 +25,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
+import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserDocument;
@@ -525,10 +526,10 @@ public interface DataHandler {
 
 	/**
 	 * Add or update a Role object.  This method will add a new record if
-	 * the Role does not have a role ID, otherwise it will perform an update.
+	 * the role does not yet exist, otherwise the role will be updated.
 	 *
-	 * @param role The Role to add or update.  If the Role does not have
-	 *  a role ID then a new record is created, otherwise an update is
+	 * @param role The Role to add or update.  If the Role does not yet
+	 *  exist then a new record is created, otherwise an update is
 	 *  performed.
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
@@ -597,6 +598,21 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId, Object transactionObject) throws Exception;
+
+	/**
+	 * Add or update a WikiGroup object.  This method will add a new record if
+	 * the group does not have a group ID, otherwise it will perform an update.
+	 *
+	 * @param group The WikiGroup to add or update.  If the group does not have
+	 *  a group ID then a new record is created, otherwise an update is
+	 *  performed.
+	 * @param transactionObject If this method is being called as part of a
+	 *  transaction then this parameter should contain the transaction object,
+	 *  such as a database connection.  If this method is not part of a
+	 *  transaction then this value should be <code>null</code>.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a WikiUser object.  This method will add a new record

@@ -37,6 +37,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
+import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserDocument;
@@ -147,6 +148,17 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFileVersion.setUploadDate(uploadDate);
 		}
 		this.queryHandler().insertWikiFileVersion(wikiFileVersion, conn);
+	}
+
+	/**
+	 *
+	 */
+	private void addWikiGroup(WikiGroup group, Connection conn) throws Exception {
+		if (group.getGroupId() < 1) {
+			int groupId = this.queryHandler().nextWikiGroupId(conn);
+			group.setGroupId(groupId);
+		}
+		this.queryHandler().insertWikiGroup(group, conn);
 	}
 
 	/**
@@ -1042,6 +1054,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private void updateWikiGroup(WikiGroup group, Connection conn) throws Exception {
+		this.queryHandler().updateWikiGroup(group, conn);
+	}
+
+	/**
+	 *
+	 */
 	private void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		this.queryHandler().updateWikiUser(user, conn);
 	}
@@ -1076,8 +1095,16 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			this.queryHandler().deleteRole(role, conn);
-			this.queryHandler().insertRole(role, conn);
+			// FIXME - this is a crappy hack due to the fact that there isn't
+			// (yet) any sort of role.exists() method.
+			try {
+				// first try an insert.  if the role exists it will fail.
+				this.queryHandler().insertRole(role, conn);
+			} catch (Exception ex) {
+				// ignore the exception and try an update.  if that fails
+				// then there really is a problem.
+				this.queryHandler().updateRole(role, conn);
+			}
 			// FIXME - add caching
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
@@ -1210,6 +1237,26 @@ public class AnsiDataHandler implements DataHandler {
 				this.addWatchlistEntry(virtualWikiId, comments, userId, conn);
 				watchlist.add(article);
 				watchlist.add(comments);
+			}
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			WikiDatabase.releaseConnection(conn, transactionObject);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception {
+		Connection conn = null;
+		try {
+			conn = WikiDatabase.getConnection(transactionObject);
+			if (group.getGroupId() <= 0) {
+				this.addWikiGroup(group, conn);
+			} else {
+				this.updateWikiGroup(group, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

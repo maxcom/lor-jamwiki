@@ -63,31 +63,49 @@ followed by 0.5.3.
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.0".
   2. Update the database schema by executing the following SQL statements:
-       a) Create the jam_role table:
+       a) Create the jam_group table:
+              CREATE TABLE jam_group (
+                   group_id INTEGER NOT NULL,
+                   group_name VARCHAR(30) NOT NULL,
+                   group_description VARCHAR(200),
+                   CONSTRAINT jam_pk_group_id PRIMARY KEY (group_id),
+                   CONSTRAINT jam_unique_group_name UNIQUE (group_name)
+              );
+       b) Create the jam_role table:
               CREATE TABLE jam_role (
-                   role_id INTEGER NOT NULL,
-                   role_name VARCHAR(200) NOT NULL,
+                   role_name VARCHAR(30) NOT NULL,
                    role_description VARCHAR(200),
-                   CONSTRAINT jam_pk_role PRIMARY KEY (role_id),
+                   CONSTRAINT jam_pk_role PRIMARY KEY (role_name),
                    CONSTRAINT jam_unique_role_name UNIQUE (role_name)
               );
-       b) Create the jam_wiki_user_role table:
-              CREATE TABLE jam_wiki_user_info (
-                   wiki_user_id INTEGER NOT NULL,
-                   role_id INTEGER NOT NULL,
-                   CONSTRAINT jam_pk_wiki_urole PRIMARY KEY (wiki_user_id, role_id),
-                   CONSTRAINT jam_fk_wiki_urole_wiki_user FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
-                   CONSTRAINT jam_fk_wiki_urole_role FOREIGN KEY (role_id) REFERENCES jam_role(role_id)
+       c) Create the jam_role_map table:
+              CREATE TABLE jam_role_map (
+                   role_name VARCHAR(30) NOT NULL,
+                   wiki_user_id INTEGER,
+                   group_id INTEGER,
+                   CONSTRAINT jam_pk_role_map PRIMARY KEY
+                        (role_name, wiki_user_id, group_id),
+                   CONSTRAINT jam_fk_role_map_role FOREIGN KEY
+                        (role_name) REFERENCES jam_role(role_name),
+                   CONSTRAINT jam_fk_role_map_wiki_user FOREIGN KEY
+                        (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id),
+                   CONSTRAINT jam_fk_role_map_group FOREIGN KEY
+                        (group_id) REFERENCES jam_group(group_id)
               );
-       c) Add the basic roles:
-              INSERT into jam_role (role_id, role_name) values (1, 'ROLE_ADMIN');
-              INSERT into jam_role (role_id, role_name) values (2, 'ROLE_ADMIN_MANAGE');
-              INSERT into jam_role (role_id, role_name) values (3, 'ROLE_EDIT_EXISTING');
-              INSERT into jam_role (role_id, role_name) values (4, 'ROLE_EDIT_NEW');
-              INSERT into jam_role (role_id, role_name) values (5, 'ROLE_MOVE');
-              INSERT into jam_role (role_id, role_name) values (6, 'ROLE_TRANSLATE');
-              INSERT into jam_role (role_id, role_name) values (7, 'ROLE_UPLOAD');
-              INSERT into jam_role (role_id, role_name) values (8, 'ROLE_VIEW');
+       d) Add the basic groups:
+              INSERT into jam_group (group_id, group_name)
+                   values (1, 'ANONYMOUS_USERS');
+              INSERT into jam_group (group_id, group_name)
+                   values (2, 'LOGGED_IN_USERS');
+       e) Add the basic roles:
+              INSERT into jam_role (role_name) values ('ROLE_ADMIN');
+              INSERT into jam_role (role_name) values ('ROLE_ADMIN_MANAGE');
+              INSERT into jam_role (role_name) values ('ROLE_EDIT_EXISTING');
+              INSERT into jam_role (role_name) values ('ROLE_EDIT_NEW');
+              INSERT into jam_role (role_name) values ('ROLE_MOVE');
+              INSERT into jam_role (role_name) values ('ROLE_TRANSLATE');
+              INSERT into jam_role (role_name) values ('ROLE_UPLOAD');
+              INSERT into jam_role (role_name) values ('ROLE_VIEW');
 
 
   JAMWiki 0.5.4
@@ -190,7 +208,7 @@ followed by 0.5.3.
                         REFERENCES jam_wiki_user(wiki_user_id),
                    CONSTRAINT jam_fk_watchlist_vwiki FOREIGN KEY
                         (virtual_wiki_id)
-                        REFERENCES jam_virtual_wiki(virtual_wiki_id) 
+                        REFERENCES jam_virtual_wiki(virtual_wiki_id)
               );
        b) Update the jam_topic table.
             Oracle:
@@ -231,21 +249,21 @@ followed by 0.5.3.
      "wiki-version" property to "0.4.0".
   2. The default JAMWiki parser has changed.  To continue using the default
      parser, modify the /WEB-INF/classes/jamwiki.properties file and change
-     the "parser" value to "parser=org.jamwiki.parser.jflex.JFlexParser".        
+     the "parser" value to "parser=org.jamwiki.parser.jflex.JFlexParser".
   3. FILE PERSISTENCY MODE ONLY: convert existing content to use the HSQL
      database by doing the following:
        a) From Special:Admin change the Persistence setting to "Internal
           Database".
        b) From Special:Convert choose the option to convert file content to
           database content.
-  
+
 
   JAMWiki 0.3.6
   =============
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.3.6".
-  
+
 
   JAMWiki 0.3.5
   =============
@@ -355,11 +373,11 @@ followed by 0.5.3.
               drop table jam_image;
        b) Create the jam_category table.
               create table jam_category (
-                child_topic_id INTEGER NOT NULL, 
-                category_name VARCHAR(200) NOT NULL, 
-                sort_key VARCHAR(200), 
-                CONSTRAINT jam_pk_category PRIMARY KEY (child_topic_id, category_name), 
-                CONSTRAINT jam_fk_category_child_id FOREIGN KEY (child_topic_id) REFERENCES jam_topic(topic_id) 
+                child_topic_id INTEGER NOT NULL,
+                category_name VARCHAR(200) NOT NULL,
+                sort_key VARCHAR(200),
+                CONSTRAINT jam_pk_category PRIMARY KEY (child_topic_id, category_name),
+                CONSTRAINT jam_fk_category_child_id FOREIGN KEY (child_topic_id) REFERENCES jam_topic(topic_id)
               );
   3. Update the JAMWiki StyleSheet topic to match the content of the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic

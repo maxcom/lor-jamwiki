@@ -28,6 +28,7 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
+import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Utilities;
@@ -233,6 +234,22 @@ public class WikiDatabase {
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, conn);
+	}
+
+	/**
+	 *
+	 */
+	protected static void setupGroups(Connection conn) throws Exception {
+		WikiGroup group = new WikiGroup();
+		group.setName(WikiGroup.GROUP_ANONYMOUS);
+		// FIXME - use message key
+		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
+		WikiBase.getDataHandler().writeWikiGroup(group, conn);
+		group = new WikiGroup();
+		group.setName(WikiGroup.GROUP_REGISTERED_USER);
+		// FIXME - use message key
+		group.setDescription("All logged in users are automatically assigned to the registered user group.");
+		WikiBase.getDataHandler().writeWikiGroup(group, conn);
 	}
 
 	/**
