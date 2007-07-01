@@ -1091,20 +1091,10 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRole(Role role, Object transactionObject) throws Exception {
+	public void writeRole(Role role, Object transactionObject, boolean update) throws Exception {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			// FIXME - use a cached list of roles instead of iterating
-			Collection roles = this.getAllRoles();
-			Iterator roleIterator = roles.iterator();
-			boolean update = false;
-			while (roleIterator.hasNext()) {
-				Role tempRole = (Role)roleIterator.next();
-				if (role.getName().equals(tempRole.getName())) {
-					update = true;
-				}
-			}
 			if (update) {
 				this.queryHandler().updateRole(role, conn);
 			} else {

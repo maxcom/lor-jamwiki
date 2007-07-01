@@ -261,42 +261,42 @@ public class WikiDatabase {
 		role.setName(Role.ROLE_ADMIN);
 		// FIXME - use message key
 		role.setDescription("Allows access to set database parameters, modify parser settings, and set other wiki system settings.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_ADMIN_MANAGE);
 		// FIXME - use message key
 		role.setDescription("Allows access to reload recent changes, rebuild the search index, refresh the spam filter patterns, and perform other site maintenance tasks.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_EDIT_EXISTING);
 		// FIXME - use message key
 		role.setDescription("Allows a user to edit an existing topic.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_EDIT_NEW);
 		// FIXME - use message key
 		role.setDescription("Allows a user to create a new topic.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_MOVE);
 		// FIXME - use message key
 		role.setDescription("Allows a user to move a topic to a different name.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_TRANSLATE);
 		// FIXME - use message key
 		role.setDescription("Allows access to the translation tool used for modifying the values of message keys used to display text on the wiki.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_UPLOAD);
 		// FIXME - use message key
 		role.setDescription("Allows a user to upload a file to the wiki.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = new Role();
 		role.setName(Role.ROLE_VIEW);
 		// FIXME - use message key
 		role.setDescription("Allows a user to view topics on the wiki.");
-		WikiBase.getDataHandler().writeRole(role, conn);
+		WikiBase.getDataHandler().writeRole(role, conn, false);
 	}
 
 	/**

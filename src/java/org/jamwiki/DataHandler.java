@@ -535,9 +535,12 @@ public interface DataHandler {
 	 *  transaction then this parameter should contain the transaction object,
 	 *  such as a database connection.  If this method is not part of a
 	 *  transaction then this value should be <code>null</code>.
+	 * @param update A boolean value indicating whether this transaction is
+	 *  updating an existing role or not.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeRole(Role role, Object transactionObject) throws Exception;
+	// FIXME - the update flag should not be necessary
+	public void writeRole(Role role, Object transactionObject, boolean update) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if

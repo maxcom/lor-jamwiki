@@ -68,11 +68,12 @@ public class RolesServlet extends JAMWikiServlet {
 				role = new Role();
 				// once created a role name cannot be modified, so the text field
 				// will be disabled in the form.
-				String roleName = (StringUtils.hasText(request.getParameter("roleName"))) ? request.getParameter("roleName") : updateRole;
+				boolean update = !StringUtils.hasText(request.getParameter("roleName"));
+				String roleName = (update) ? updateRole : request.getParameter("roleName");
 				role.setName(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
 				Utilities.validateRole(role);
-				WikiBase.getDataHandler().writeRole(role, null);
+				WikiBase.getDataHandler().writeRole(role, null, update);
 				if (StringUtils.hasText(updateRole) && updateRole.equals(role.getName())) {
 					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getName()));
 				} else {
