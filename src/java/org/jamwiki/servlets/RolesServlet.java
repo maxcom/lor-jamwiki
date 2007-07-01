@@ -17,6 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
+import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
@@ -48,10 +49,9 @@ public class RolesServlet extends JAMWikiServlet {
 		if (!StringUtils.hasText(function)) {
 			view(request, next, pageInfo);
 		} else if (function.equals("modifyRole")) {
-			// for now view is the only action allowed...
 			modifyRole(request, next, pageInfo);
 		} else if (function.equals("assignRole")) {
-			// for now view is the only action allowed...
+			// FIXME - enable this
 			view(request, next, pageInfo);
 		}
 		return next;
@@ -61,27 +61,44 @@ public class RolesServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void modifyRole(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		try {
-			Role role = new Role();
-			role.setName(request.getParameter("roleName"));
-			role.setDescription(request.getParameter("roleDescription"));
-			Utilities.validateRole(role);
-			WikiBase.getDataHandler().writeRole(role, null);
-			next.addObject("message", new WikiMessage("roles.message.roleadded", role.getName()));
-			this.view(request, next, pageInfo);
-			return;
-		} catch (WikiException e) {
-			next.addObject("message", e.getWikiMessage());
-		} catch (Exception e) {
-			logger.severe("Failure while adding role", e);
-			next.addObject("message", new WikiMessage("roles.message.roleaddfail", e.getMessage()));
+		String updateRole = request.getParameter("updateRole");
+		Role role = null;
+		if (StringUtils.hasText(request.getParameter("Submit"))) {
+			try {
+				role = new Role();
+				// once created a role name cannot be modified, so the text field
+				// will be disabled in the form.
+				String roleName = (StringUtils.hasText(request.getParameter("roleName"))) ? request.getParameter("roleName") : updateRole;
+				role.setName(roleName);
+				role.setDescription(request.getParameter("roleDescription"));
+				Utilities.validateRole(role);
+				WikiBase.getDataHandler().writeRole(role, null);
+				if (StringUtils.hasText(updateRole) && updateRole.equals(role.getName())) {
+					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getName()));
+				} else {
+					next.addObject("message", new WikiMessage("roles.message.roleadded", role.getName()));
+				}
+			} catch (WikiException e) {
+				next.addObject("message", e.getWikiMessage());
+			} catch (Exception e) {
+				logger.severe("Failure while adding role", e);
+				next.addObject("message", new WikiMessage("roles.message.rolefail", e.getMessage()));
+			}
+		} else if (StringUtils.hasText(updateRole)) {
+			// FIXME - use a cached list of roles instead of iterating
+			// load details for the selected role
+			Collection roles = WikiBase.getDataHandler().getAllRoles();
+			Iterator roleIterator = roles.iterator();
+			while (roleIterator.hasNext()) {
+				Role tempRole = (Role)roleIterator.next();
+				if (tempRole.getName().equals(updateRole)) {
+					role = tempRole;
+				}
+			}
 		}
-		// only add name & description to the request if role not successfully modified.
-		if (request.getParameter("roleName") != null) {
-			next.addObject("roleName", request.getParameter("roleName"));
-		}
-		if (request.getParameter("roleDescription") != null) {
-			next.addObject("roleDescription", request.getParameter("roleDescription"));
+		if (role != null) {
+			next.addObject("roleName", role.getName());
+			next.addObject("roleDescription", role.getDescription());
 		}
 		this.view(request, next, pageInfo);
 	}

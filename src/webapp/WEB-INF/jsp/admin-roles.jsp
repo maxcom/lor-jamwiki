@@ -33,16 +33,26 @@
 <div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
 </c:if>
 
-<!-- Create Roles -->
-<form action="<jamwiki:link value="Special:Roles" />" method="post">
+<!-- Create/Update Roles -->
+<form action="<jamwiki:link value="Special:Roles" />" name="modifyRoleForm" method="post">
 <input type="hidden" name="function" value="modifyRole" />
 <a name="create"></a>
 <fieldset>
 <legend><f:message key="roles.header.create" /></legend>
 <table border="0" class="contents">
 <tr>
+	<td class="formcaption"><f:message key="roles.caption.selectrole" />:</td>
+	<td class="formelement">
+		<select name="updateRole" id="updateRole" onchange="document.modifyRoleForm.submit()">
+		<option value=""></option>
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />" <c:if test="${role.name == roleName}">selected="selected"</c:if>><c:out value="${role.name}" /></option></c:forEach>
+		</select>
+	</td>
+</tr>
+<tr><td colspan="2" class="formhelp"><f:message key="roles.caption.selectrolehelp" /></td></tr>
+<tr>
 	<td class="formcaption"><label for="roleName"><f:message key="roles.caption.name" /></label></td>
-	<td class="formelement"><input type="text" name="roleName" id="roleName" value="<c:out value="${roleName}" />" size="30" /></td>
+	<td class="formelement"><input type="text" name="roleName" id="roleName" value="<c:out value="${roleName}" />" size="30" <c:if test="${!empty roleName}">disabled="disabled"</c:if> /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="roles.caption.namehelp" /></td></tr>
 <tr>
