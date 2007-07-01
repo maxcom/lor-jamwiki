@@ -941,8 +941,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void updateRole(Role role, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_ROLE);
-		stmt.setString(1, role.getName());
-		stmt.setString(2, role.getDescription());
+		stmt.setString(1, role.getDescription());
+		stmt.setString(2, role.getName());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1002,6 +1002,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_GROUP);
 		stmt.setString(1, group.getName());
 		stmt.setString(2, group.getDescription());
+		stmt.setInt(3, group.getGroupId());
 		stmt.executeUpdate(conn);
 	}
 

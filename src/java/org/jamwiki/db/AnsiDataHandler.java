@@ -1095,15 +1095,20 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			// FIXME - this is a crappy hack due to the fact that there isn't
-			// (yet) any sort of role.exists() method.
-			try {
-				// first try an insert.  if the role exists it will fail.
-				this.queryHandler().insertRole(role, conn);
-			} catch (Exception ex) {
-				// ignore the exception and try an update.  if that fails
-				// then there really is a problem.
+			// FIXME - use a cached list of roles instead of iterating
+			Collection roles = this.getAllRoles();
+			Iterator roleIterator = roles.iterator();
+			boolean update = false;
+			while (roleIterator.hasNext()) {
+				Role tempRole = (Role)roleIterator.next();
+				if (role.getName().equals(tempRole.getName())) {
+					update = true;
+				}
+			}
+			if (update) {
 				this.queryHandler().updateRole(role, conn);
+			} else {
+				this.queryHandler().insertRole(role, conn);
 			}
 			// FIXME - add caching
 		} catch (Exception e) {

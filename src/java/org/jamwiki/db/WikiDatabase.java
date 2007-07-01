@@ -178,6 +178,7 @@ public class WikiDatabase {
 			}
 			try {
 				WikiDatabase.setupDefaultVirtualWiki(conn);
+				WikiDatabase.setupGroups(conn);
 				WikiDatabase.setupRoles(conn);
 				WikiDatabase.setupAdminUser(user, conn);
 				WikiDatabase.setupSpecialPages(locale, user, conn);
