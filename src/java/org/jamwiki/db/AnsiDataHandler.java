@@ -1110,6 +1110,48 @@ public class AnsiDataHandler implements DataHandler {
 	}
 
 	/**
+	 *
+	 */
+	public void writeRoleMapGroup(int groupId, Collection roles, Object transactionObject) throws Exception {
+		Connection conn = null;
+		try {
+			conn = WikiDatabase.getConnection(transactionObject);
+			this.queryHandler().deleteRoleMapGroup(groupId, conn);
+			Iterator roleIterator = roles.iterator();
+			while (roleIterator.hasNext()) {
+				String role = (String)roleIterator.next();
+				this.queryHandler().insertRoleMap(-1, groupId, role, conn);
+			}
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			WikiDatabase.releaseConnection(conn, transactionObject);
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void writeRoleMapUser(int userId, Collection roles, Object transactionObject) throws Exception {
+		Connection conn = null;
+		try {
+			conn = WikiDatabase.getConnection(transactionObject);
+			this.queryHandler().deleteRoleMapUser(userId, conn);
+			Iterator roleIterator = roles.iterator();
+			while (roleIterator.hasNext()) {
+				String role = (String)roleIterator.next();
+				this.queryHandler().insertRoleMap(userId, -1, role, conn);
+			}
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			WikiDatabase.releaseConnection(conn, transactionObject);
+		}
+	}
+
+	/**
 	 * Commit changes to a topic (and its version) to the database or
 	 * filesystem.
 	 *

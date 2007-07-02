@@ -70,6 +70,26 @@ public interface QueryHandler {
 	public void deleteRecentChanges(int topicId, Connection conn) throws Exception;
 
 	/**
+	 * Delete all role records for a specific group.
+	 *
+	 * @param groupId The group id for which role records are being deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void deleteRoleMapGroup(int groupId, Connection conn) throws Exception;
+
+	/**
+	 * Delete all role records for a specific user.
+	 *
+	 * @param userId The user id for which role records are being deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void deleteRoleMapUser(int userId, Connection conn) throws Exception;
+
+	/**
 	 * Delete all categories associated with a topic.
 	 *
 	 * @param topicId The topic for which category association records are being
@@ -303,6 +323,22 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public void insertRole(Role role, Connection conn) throws Exception;
+
+	/**
+	 * Add a new role mapping for a specific user or group.  The role
+	 * mapping must not already exist in the database or else an error will
+	 * be thrown.
+	 *
+	 * @param userId The user id for the user being assigned a role, or -1 if
+	 *  a group is being assigned a role.
+	 * @param groupId The group id for the group being assigned a role, or -1
+	 *  if a user is being assigned a role.
+	 * @param role The role name for the role being assigned.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic record to the database.  The topic must not already exist

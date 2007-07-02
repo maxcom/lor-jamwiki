@@ -63,6 +63,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WATCHLIST_TABLE = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
+	protected static String STATEMENT_DELETE_ROLE_MAP_GROUP = null;
+	protected static String STATEMENT_DELETE_ROLE_MAP_USER = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
 	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
@@ -85,6 +87,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
 	protected static String STATEMENT_INSERT_ROLE = null;
+	protected static String STATEMENT_INSERT_ROLE_MAP = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
@@ -179,6 +182,24 @@ public class AnsiQueryHandler implements QueryHandler {
 	public void deleteRecentChanges(int topicId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_RECENT_CHANGES_TOPIC);
 		stmt.setInt(1, topicId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteRoleMapGroup(int groupId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_ROLE_MAP_GROUP);
+		stmt.setInt(1, groupId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteRoleMapUser(int userId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_ROLE_MAP_USER);
+		stmt.setInt(1, userId);
 		stmt.executeUpdate(conn);
 	}
 
@@ -409,6 +430,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WATCHLIST_TABLE         = props.getProperty("STATEMENT_CREATE_WATCHLIST_TABLE");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
+		STATEMENT_DELETE_ROLE_MAP_GROUP          = props.getProperty("STATEMENT_DELETE_ROLE_MAP_GROUP");
+		STATEMENT_DELETE_ROLE_MAP_USER           = props.getProperty("STATEMENT_DELETE_ROLE_MAP_USER");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
 		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
@@ -431,6 +454,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
+		STATEMENT_INSERT_ROLE_MAP                = props.getProperty("STATEMENT_INSERT_ROLE_MAP");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
@@ -540,6 +564,25 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE);
 		stmt.setString(1, role.getName());
 		stmt.setString(2, role.getDescription());
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE_MAP);
+		stmt.setString(1, role);
+		if (userId > 0) {
+			stmt.setInt(2, userId);
+		} else {
+			stmt.setNull(2, Types.INTEGER);
+		}
+		if (groupId > 0) {
+			stmt.setInt(3, groupId);
+		} else {
+			stmt.setNull(3, Types.INTEGER);
+		}
 		stmt.executeUpdate(conn);
 	}
 

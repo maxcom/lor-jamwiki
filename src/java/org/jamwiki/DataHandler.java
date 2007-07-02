@@ -543,6 +543,38 @@ public interface DataHandler {
 	public void writeRole(Role role, Object transactionObject, boolean update) throws Exception;
 
 	/**
+	 * Add a set of group role mappings.  This method will first delete all
+	 * existing role mappings for the specified group, and will then create
+	 * a mapping for each specified role.
+	 *
+	 * @param groupId The group id for whom role mappings are being modified.
+	 * @param roles A Collection of String role names for all roles that are
+	 *  to be assigned to this group.
+	 * @param transactionObject If this method is being called as part of a
+	 *  transaction then this parameter should contain the transaction object,
+	 *  such as a database connection.  If this method is not part of a
+	 *  transaction then this value should be <code>null</code>.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void writeRoleMapGroup(int groupId, Collection roles, Object transactionObject) throws Exception;
+
+	/**
+	 * Add a set of user role mappings.  This method will first delete all
+	 * existing role mappings for the specified user, and will then create
+	 * a mapping for each specified role.
+	 *
+	 * @param userId The user id for whom role mappings are being modified.
+	 * @param roles A Collection of String role names for all roles that are
+	 *  to be assigned to this user.
+	 * @param transactionObject If this method is being called as part of a
+	 *  transaction then this parameter should contain the transaction object,
+	 *  such as a database connection.  If this method is not part of a
+	 *  transaction then this value should be <code>null</code>.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void writeRoleMapUser(int userId, Collection roles, Object transactionObject) throws Exception;
+
+	/**
 	 * Add or update a Topic object.  This method will add a new record if
 	 * the Topic does not have a topic ID, otherwise it will perform an update.
 	 * A TopicVersion object will also be created to capture the author, date,
