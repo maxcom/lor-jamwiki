@@ -364,6 +364,7 @@ public class AnsiDataHandler implements DataHandler {
 				roleMap = (RoleMap)roleMaps.get(groupId);
 			} else {
 				roleMap.setGroupId(groupId);
+				roleMap.setGroupName(rs.getString("group_name"));
 			}
 			roleMap.addRole(rs.getString("role_name"));
 			roleMaps.put(groupId, roleMap);
@@ -384,6 +385,7 @@ public class AnsiDataHandler implements DataHandler {
 				roleMap = (RoleMap)roleMaps.get(userId);
 			} else {
 				roleMap.setUserId(userId);
+				roleMap.setUserLogin(rs.getString("login"));
 			}
 			roleMap.addRole(rs.getString("role_name"));
 			roleMaps.put(userId, roleMap);
@@ -407,9 +409,11 @@ public class AnsiDataHandler implements DataHandler {
 			} else {
 				if (userId > 0) {
 					roleMap.setUserId(new Integer(userId));
+					roleMap.setUserLogin(rs.getString("login"));
 				}
 				if (groupId > 0) {
 					roleMap.setGroupId(new Integer(groupId));
+					roleMap.setGroupName(rs.getString("group_name"));
 				}
 			}
 			roleMap.addRole(rs.getString("role_name"));

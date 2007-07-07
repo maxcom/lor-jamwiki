@@ -17,6 +17,8 @@
 package org.jamwiki.model;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 import org.jamwiki.utils.WikiLogger;
 
@@ -29,8 +31,10 @@ public class RoleMap {
 
 	private static WikiLogger logger = WikiLogger.getLogger(RoleMap.class.getName());
 	private Integer groupId = null;
+	private String groupName = null;
 	private Collection roleNames = null;
 	private Integer userId = null;
+	private String userLogin = null;
 
 	/**
 	 *
@@ -41,7 +45,7 @@ public class RoleMap {
 	/**
 	 *
 	 */
-	public Integer groupId() {
+	public Integer getGroupId() {
 		return this.groupId;
 	}
 
@@ -50,6 +54,20 @@ public class RoleMap {
 	 */
 	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
+	}
+
+	/**
+	 *
+	 */
+	public String getGroupName() {
+		return this.groupName;
+	}
+
+	/**
+	 *
+	 */
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 
 	/**
@@ -88,5 +106,57 @@ public class RoleMap {
 	 */
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 *
+	 */
+	public String getUserLogin() {
+		return this.userLogin;
+	}
+
+	/**
+	 *
+	 */
+	public void setUserLogin(String userLogin) {
+		this.userLogin = userLogin;
+	}
+
+	/**
+	 * This method is simply a utility method to be used with JSTL for
+	 * determining if the current list of roles contains a specific role.
+	 */
+	 public HashMap getRoleNamesMap() {
+		HashMap results = new HashMap();
+		if (this.roleNames == null) {
+			return results;
+		}
+		Iterator roleNameIterator = this.roleNames.iterator();
+		while (roleNameIterator.hasNext()) {
+			String key = (String)roleNameIterator.next();
+			String value = this.getUserGroup() + "|" + key;
+			results.put(key, value);
+		}
+		return results;
+	}
+
+	/**
+	 * This is a utility method for building a concatenated version of the
+	 * user and group id values for use with JSTL.
+	 */
+	public String getUserGroup() {
+		String result = "";
+		if (this.userId != null) {
+			result += this.userId;
+		} else {
+			result += "0";
+		}
+		result += "|";
+		if (this.groupId != null) {
+			result += this.groupId;
+		} else {
+			result += "0";
+		}
+		return result;
 	}
 }

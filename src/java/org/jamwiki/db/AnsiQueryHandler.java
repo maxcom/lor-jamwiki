@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  * Default implementation of the QueryHandler implementation for retrieving, inserting,
@@ -358,8 +359,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public WikiResultSet getRoleMapByLogin(String loginFragment) throws Exception {
+		if (!StringUtils.hasText(loginFragment)) {
+			return new WikiResultSet();
+		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_LOGIN);
-		loginFragment = '%' + loginFragment + '%';
+		loginFragment = '%' + loginFragment.toLowerCase() + '%';
 		stmt.setString(1, loginFragment);
 		return stmt.executeQuery();
 	}
@@ -370,6 +374,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	public WikiResultSet getRoleMapByRole(String roleName) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_ROLE);
 		stmt.setString(1, roleName);
+		stmt.setString(2, roleName);
 		return stmt.executeQuery();
 	}
 
