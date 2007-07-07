@@ -25,8 +25,10 @@ JAMWiki Contributors
      Japanese:              Natto Lover (nattolover)
      Polish:                Robert Matyja (dlpa)
      Ukranian:              Volodymyr Vlad (gutsul)
-  Graphic Design:           AleXey "lexis" Rumyantsev (lexis@mail.ru)
+  Other Contributors:       AleXey "lexis" Rumyantsev (lexis@mail.ru)
+                            Luzius Thöny (luzi)
                             Oliver (okohll)
+                            Carsten Seiffert (carsten)
 
 
 Very Quick Wiki Contributors
