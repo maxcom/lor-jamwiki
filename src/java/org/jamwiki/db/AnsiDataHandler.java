@@ -19,6 +19,7 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -31,6 +32,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
+import org.jamwiki.model.RoleMap;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
@@ -347,6 +349,85 @@ public class AnsiDataHandler implements DataHandler {
 			all.add(change);
 		}
 		return all;
+	}
+
+	/**
+	 *
+	 */
+	public Collection getRoleMapGroups() throws Exception {
+		HashMap roleMaps = new HashMap();
+		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
+		while (rs.next()) {
+			Integer groupId = new Integer(rs.getInt("group_id"));
+			RoleMap roleMap = new RoleMap();
+			if (roleMaps.containsKey(groupId)) {
+				roleMap = (RoleMap)roleMaps.get(groupId);
+			} else {
+				roleMap.setGroupId(groupId);
+			}
+			roleMap.addRole(rs.getString("role_name"));
+			roleMaps.put(groupId, roleMap);
+		}
+		return roleMaps.values();
+	}
+
+	/**
+	 *
+	 */
+	public Collection getRoleMapByLogin(String loginFragment) throws Exception {
+		HashMap roleMaps = new HashMap();
+		WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
+		while (rs.next()) {
+			Integer userId = new Integer(rs.getInt("wiki_user_id"));
+			RoleMap roleMap = new RoleMap();
+			if (roleMaps.containsKey(userId)) {
+				roleMap = (RoleMap)roleMaps.get(userId);
+			} else {
+				roleMap.setUserId(userId);
+			}
+			roleMap.addRole(rs.getString("role_name"));
+			roleMaps.put(userId, roleMap);
+		}
+		return roleMaps.values();
+	}
+
+	/**
+	 *
+	 */
+	public Collection getRoleMapByRole(String roleName) throws Exception {
+		HashMap roleMaps = new HashMap();
+		WikiResultSet rs = this.queryHandler().getRoleMapByRole(roleName);
+		while (rs.next()) {
+			int userId = rs.getInt("wiki_user_id");
+			int groupId = rs.getInt("group_id");
+			RoleMap roleMap = new RoleMap();
+			String key = userId + "|" + groupId;
+			if (roleMaps.containsKey(key)) {
+				roleMap = (RoleMap)roleMaps.get(key);
+			} else {
+				if (userId > 0) {
+					roleMap.setUserId(new Integer(userId));
+				}
+				if (groupId > 0) {
+					roleMap.setGroupId(new Integer(groupId));
+				}
+			}
+			roleMap.addRole(rs.getString("role_name"));
+			roleMaps.put(key, roleMap);
+		}
+		return roleMaps.values();
+	}
+
+	/**
+	 *
+	 */
+	public Collection getRoleMapUser(int userId) throws Exception {
+		Collection results = new Vector();
+		WikiResultSet rs = this.queryHandler().getRoleMapUser(userId);
+		while (rs.next()) {
+			results.add(rs.getString("role_name"));
+		}
+		return results;
 	}
 
 	/**

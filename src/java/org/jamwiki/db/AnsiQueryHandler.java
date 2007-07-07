@@ -101,6 +101,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_GROUP_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
+	protected static String STATEMENT_SELECT_ROLE_MAP_GROUPS = null;
+	protected static String STATEMENT_SELECT_ROLE_MAP_LOGIN = null;
+	protected static String STATEMENT_SELECT_ROLE_MAP_ROLE = null;
+	protected static String STATEMENT_SELECT_ROLE_MAP_USER = null;
 	protected static String STATEMENT_SELECT_ROLES = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
@@ -346,6 +350,41 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public WikiResultSet getRoleMapGroups() throws Exception {
+		return DatabaseConnection.executeQuery(STATEMENT_SELECT_ROLE_MAP_GROUPS);
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getRoleMapByLogin(String loginFragment) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_LOGIN);
+		loginFragment = '%' + loginFragment + '%';
+		stmt.setString(1, loginFragment);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getRoleMapByRole(String roleName) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_ROLE);
+		stmt.setString(1, roleName);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet getRoleMapUser(int userId) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_USER);
+		stmt.setInt(1, userId);
+		return stmt.executeQuery();
+	}
+
+	/**
+	 *
+	 */
 	public WikiResultSet getRoles() throws Exception {
 		return DatabaseConnection.executeQuery(STATEMENT_SELECT_ROLES);
 	}
@@ -468,6 +507,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_GROUP_SEQUENCE          = props.getProperty("STATEMENT_SELECT_GROUP_SEQUENCE");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
+		STATEMENT_SELECT_ROLE_MAP_GROUPS         = props.getProperty("STATEMENT_SELECT_ROLE_MAP_GROUPS");
+		STATEMENT_SELECT_ROLE_MAP_LOGIN          = props.getProperty("STATEMENT_SELECT_ROLE_MAP_LOGIN");
+		STATEMENT_SELECT_ROLE_MAP_ROLE           = props.getProperty("STATEMENT_SELECT_ROLE_MAP_ROLE");
+		STATEMENT_SELECT_ROLE_MAP_USER           = props.getProperty("STATEMENT_SELECT_ROLE_MAP_USER");
 		STATEMENT_SELECT_ROLES                   = props.getProperty("STATEMENT_SELECT_ROLES");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
