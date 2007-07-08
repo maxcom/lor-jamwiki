@@ -75,7 +75,7 @@
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="roles.caption.searchlogin" />:</td>
-	<td class="formelement"><input type="text" name="searchLogin" value="" size="30" /></td>
+	<td class="formelement"><input type="text" name="searchLogin" value="<c:out value="${searchLogin}" />" size="30" /></td>
 	<td align="center"><input type="submit" name="search" value="<f:message key="search.search" />" /></td>
 </tr>
 <tr>
@@ -83,7 +83,7 @@
 	<td class="formelement" colspan="2">
 		<select name="searchRole" id="searchRole" onchange="document.searchRoleForm.submit()">
 		<option value=""></option>
-		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />"><c:out value="${role.name}" /></option></c:forEach>
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />" <c:if test="${role.name == searchRole}">selected="selected"</c:if>><c:out value="${role.name}" /></option></c:forEach>
 		</select>
 	</td>
 </tr>

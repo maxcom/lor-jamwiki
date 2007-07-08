@@ -187,9 +187,11 @@ public class RolesServlet extends JAMWikiServlet {
 			Collection roleMapUsers = null;
 			if (StringUtils.hasText(searchLogin)) {
 				roleMapUsers = WikiBase.getDataHandler().getRoleMapByLogin(searchLogin);
+				next.addObject("searchLogin", searchLogin);
 			} else {
 				String searchRole = request.getParameter("searchRole");
 				roleMapUsers = WikiBase.getDataHandler().getRoleMapByRole(searchRole);
+				next.addObject("searchRole", searchRole);
 			}
 			next.addObject("roleMapUsers", roleMapUsers);
 		} catch (Exception e) {
