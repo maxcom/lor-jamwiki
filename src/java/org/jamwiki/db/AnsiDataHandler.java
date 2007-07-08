@@ -19,7 +19,6 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -355,7 +354,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Collection getRoleMapGroups() throws Exception {
-		HashMap roleMaps = new HashMap();
+		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
 		while (rs.next()) {
 			Integer groupId = new Integer(rs.getInt("group_id"));
@@ -376,7 +375,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Collection getRoleMapByLogin(String loginFragment) throws Exception {
-		HashMap roleMaps = new HashMap();
+		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
 		while (rs.next()) {
 			Integer userId = new Integer(rs.getInt("wiki_user_id"));
@@ -397,7 +396,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Collection getRoleMapByRole(String roleName) throws Exception {
-		HashMap roleMaps = new HashMap();
+		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapByRole(roleName);
 		while (rs.next()) {
 			int userId = rs.getInt("wiki_user_id");
