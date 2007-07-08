@@ -517,7 +517,7 @@ onLdap()
 <!-- BEGIN RSS -->
 <a name="rss"></a>
 <fieldset>
-<legend><f:message key="admin.header.rss" /> (<f:message key="common.caption.experimental" />)</legend>
+<legend><f:message key="admin.header.rss" /></legend>
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_RSS_ALLOWED %>"><f:message key="admin.caption.rss.allowed" /></label></td>
