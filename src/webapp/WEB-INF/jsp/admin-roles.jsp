@@ -23,7 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="submenu">
-<a href="#create"><f:message key="roles.header.create" /></a> | <a href="#assign"><f:message key="roles.header.assign" /></a>
+<a href="#assign"><f:message key="roles.header.group" /> | <a href="#assign"><f:message key="roles.header.user" /></a> | <a href="#create"><f:message key="roles.header.modify" /></a>
 </div>
 
 <c:if test="${!empty message}">
@@ -33,12 +33,100 @@
 <div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
 </c:if>
 
+<!-- Assign Group Roles -->
+<form action="<jamwiki:link value="Special:Roles" />" method="post">
+<input type="hidden" name="function" value="assignRole" />
+<a name="group"></a>
+<fieldset>
+<legend><f:message key="roles.header.group" /></legend>
+<table border="0" class="contents" width="100%">
+<tr bgcolor="#d8d8e7">
+	<th><f:message key="roles.caption.groupname" /></th>
+	<th colspan="3"><f:message key="roles.caption.roles" /></th>
+</tr>
+<c:forEach items="${roleMapGroups}" var="roleMap">
+	<c:if test="${!empty roleMap.groupId}">
+<tr bgcolor="#ffffff">
+	<td>
+		<input type="hidden" name="candidateGroup" value="<c:out value="${roleMap.groupId}" />" />
+		<c:out value="${roleMap.groupName}" />
+	</td>
+		<c:forEach items="${roles}" var="role" varStatus="status">
+			<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+			<jamwiki:checkbox name="groupRole" value="${roleMap.userGroup}|${role.name}" checked="${roleMap.roleNamesMap[role.name]}" />&#160;<c:out value="${role.name}" /><br />
+			<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
+		</c:forEach>
+</tr>
+	</c:if>
+</c:forEach>
+<tr><td colspan="4">&nbsp;</td></tr>
+<tr><td colspan="4" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="common.save" />" /></td></tr>
+<tr><td colspan="4">&nbsp;</td></tr>
+</table>
+</fieldset>
+</form>
+
+<!-- Assign User Roles -->
+<a name="user"></a>
+<fieldset>
+<legend><f:message key="roles.header.user" /></legend>
+<form action="<jamwiki:link value="Special:Roles" />" method="post" name="searchRoleForm">
+<input type="hidden" name="function" value="searchRole" />
+<table border="0" class="contents">
+<tr>
+	<td class="formcaption"><f:message key="roles.caption.searchlogin" />:</td>
+	<td class="formelement"><input type="text" name="searchLogin" value="" size="30" /></td>
+	<td align="center"><input type="submit" name="search" value="<f:message key="search.search" />" /></td>
+</tr>
+<tr>
+	<td class="formcaption"><f:message key="roles.caption.searchrole" />:</td>
+	<td class="formelement" colspan="2">
+		<option value=""></option>
+		<select name="searchRole" id="searchRole" onchange="document.searchRoleForm.submit()">
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />"><c:out value="${role.name}" /></option></c:forEach>
+		</select>
+	</td>
+</tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+</table>
+</form>
+<c:if test="${!empty roleMapUsers}">
+<form action="<jamwiki:link value="Special:Roles" />" method="post">
+<input type="hidden" name="function" value="assignRole" />
+<table border="0" class="contents" width="100%">
+<tr bgcolor="#d8d8e7">
+	<th><f:message key="roles.caption.userlogin" /></th>
+	<th colspan="3"><f:message key="roles.caption.roles" /></th>
+</tr>
+<c:forEach items="${roleMapUsers}" var="roleMap">
+	<c:if test="${!empty roleMap.userId}">
+<tr bgcolor="#e9e9f8">
+	<td>
+		<input type="hidden" name="candidateUser" value="<c:out value="${roleMap.userId}" />" />
+		<c:out value="${roleMap.userLogin}" />
+	</td>
+		<c:forEach items="${roles}" var="role" varStatus="status">
+			<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
+			<jamwiki:checkbox name="userRole" value="${roleMap.userGroup}|${role.name}" checked="${roleMap.roleNamesMap[role.name]}" />&#160;<c:out value="${role.name}" /><br />
+			<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
+		</c:forEach>
+</tr>
+	</c:if>
+</c:forEach>
+<tr><td colspan="4">&nbsp;</td></tr>
+<tr><td colspan="4" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="common.save" />" /></td></tr>
+<tr><td colspan="4">&nbsp;</td></tr>
+</table>
+</form>
+</c:if>
+</fieldset>
+
 <!-- Create/Update Roles -->
 <form action="<jamwiki:link value="Special:Roles" />" name="modifyRoleForm" method="post">
 <input type="hidden" name="function" value="modifyRole" />
 <a name="create"></a>
 <fieldset>
-<legend><f:message key="roles.header.create" /></legend>
+<legend><f:message key="roles.header.modify" /></legend>
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="roles.caption.selectrole" />:</td>
@@ -65,64 +153,6 @@
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="common.save" />" /></td></tr>
 <tr><td colspan="2">&nbsp;</td></tr>
-</table>
-</fieldset>
-</form>
-
-<!-- Assign Roles -->
-<form action="<jamwiki:link value="Special:Roles" />" method="post">
-<input type="hidden" name="function" value="assignRole" />
-<a name="assign"></a>
-<fieldset>
-<legend><f:message key="roles.header.assign" /></legend>
-<table border="0" class="contents">
-<tr>
-	<td class="formcaption"><f:message key="roles.caption.searchlogin" />:</td>
-	<td class="formelement"><input type="text" name="searchLogin" value="" size="30" /></td>
-	<td rowspan="2" align="center"><input type="submit" name="search" value="<f:message key="search.search" />" /></td>
-</tr>
-<tr>
-	<td class="formcaption"><f:message key="roles.caption.searchrole" />:</td>
-	<td class="formelement">
-		<select name="searchRole" id="searchRole">
-		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />"><c:out value="${role.name}" /></option></c:forEach>
-		</select>
-	</td>
-</tr>
-<tr><td colspan="2">&nbsp;</td></tr>
-</table>
-<table border="0" class="contents" width="100%">
-<tr bgcolor="#d8d8e7">
-	<th>Login</th>
-	<th colspan="3">Roles</th>
-</tr>
-<tr bgcolor="#ffffff">
-	<td>Anonymous Users</td>
-	<c:forEach items="${roles}" var="role" varStatus="status">
-		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-		<input type="checkbox" name="" />&#160;<c:out value="${role.name}" /><br />
-		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
-	</c:forEach>
-</tr>
-<tr bgcolor="#e9e9f8">
-	<td>Logged-In Users</td>
-	<c:forEach items="${roles}" var="role" varStatus="status">
-		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-		<input type="checkbox" name="" />&#160;<c:out value="${role.name}" /><br />
-		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
-	</c:forEach>
-</tr>
-<tr bgcolor="#ffffff">
-	<td>wrh2</td>
-	<c:forEach items="${roles}" var="role" varStatus="status">
-		<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-		<input type="checkbox" name="" />&#160;<c:out value="${role.name}" /><br />
-		<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
-	</c:forEach>
-</tr>
-<tr><td colspan="4">&nbsp;</td></tr>
-<tr><td colspan="4" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="common.save" />" /></td></tr>
-<tr><td colspan="4">&nbsp;</td></tr>
 </table>
 </fieldset>
 </form>

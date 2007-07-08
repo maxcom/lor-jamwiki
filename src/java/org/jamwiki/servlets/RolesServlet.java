@@ -18,6 +18,8 @@ package org.jamwiki.servlets;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
@@ -50,11 +52,83 @@ public class RolesServlet extends JAMWikiServlet {
 			view(request, next, pageInfo);
 		} else if (function.equals("modifyRole")) {
 			modifyRole(request, next, pageInfo);
+		} else if (function.equals("searchRole")) {
+			searchRole(request, next, pageInfo);
 		} else if (function.equals("assignRole")) {
-			// FIXME - enable this
-			view(request, next, pageInfo);
+			assignRole(request, next, pageInfo);
 		}
 		return next;
+	}
+	
+	/**
+	 * Utility method for converting a processing an array of "userid|groupid|role" values
+	 * into a collection of roles for a specific id value.
+	 *
+	 * @return A Collection of role names for the given id, or an empty
+	 *  Collection if no matching values are found.
+	 */
+	private static Collection buildRoleArray(int userId, int groupId, String[] valueArray) {
+		Collection results = new Vector();
+		if (valueArray == null) {
+			return results;
+		}
+		for (int i=0; i < valueArray.length; i++) {
+			StringTokenizer tokens = new StringTokenizer(valueArray[i], "|");
+			String parsedUserId = tokens.nextToken();
+			int userInt = -1;
+			try {
+				userInt = Integer.parseInt(parsedUserId);
+			} catch (Exception ignore) {}
+			String parsedGroupId = tokens.nextToken();
+			int groupInt = -1;
+			try {
+				groupInt = Integer.parseInt(parsedGroupId);
+			} catch (Exception ignore) {}
+			String valueRole = tokens.nextToken();
+			if ((userId > 0 && userId == userInt) || (groupId > 0 && groupId == groupInt)) {
+				results.add(valueRole);
+			}
+		}
+		return results;
+	}
+
+	/**
+	 *
+	 */
+	private void assignRole(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		// the way this works is that there will be an array of candidate
+		// groups - these are all groups that could have been modified.  there
+		// will also be a groupRole array containing values of the form
+		// "userid|groupid|role".  process both, deleting all old roles for the
+		// candidate group array and adding the new roles in the groupRole
+		// array.
+		try {
+			String[] candidateGroups = request.getParameterValues("candidateGroup");
+			String[] groupRoles = request.getParameterValues("groupRole");
+			if (candidateGroups != null) {
+				for (int i=0; i < candidateGroups.length; i++) {
+					int groupId = Integer.parseInt(candidateGroups[i]);
+					Collection roles = buildRoleArray(-1, groupId, groupRoles);
+					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
+				}
+			}
+			// now do the same for user roles.
+			String[] candidateUsers = request.getParameterValues("candidateUser");
+			String[] userRoles = request.getParameterValues("userRole");
+			if (candidateUsers != null) {
+				for (int i=0; i < candidateUsers.length; i++) {
+					int userId = Integer.parseInt(candidateUsers[i]);
+					Collection roles = buildRoleArray(userId, -1, userRoles);
+					WikiBase.getDataHandler().writeRoleMapUser(userId, roles, null);
+				}
+			}
+		} catch (WikiException e) {
+			next.addObject("message", e.getWikiMessage());
+		} catch (Exception e) {
+			logger.severe("Failure while adding role", e);
+			next.addObject("message", new WikiMessage("roles.message.rolefail", e.getMessage()));
+		}
+		this.view(request, next, pageInfo);
 	}
 
 	/**
@@ -107,10 +181,33 @@ public class RolesServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void searchRole(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			String searchLogin = request.getParameter("searchLogin");
+			Collection roleMapUsers = null;
+			if (StringUtils.hasText(searchLogin)) {
+				roleMapUsers = WikiBase.getDataHandler().getRoleMapByLogin(searchLogin);
+			} else {
+				String searchRole = request.getParameter("searchRole");
+				roleMapUsers = WikiBase.getDataHandler().getRoleMapByRole(searchRole);
+			}
+			next.addObject("roleMapUsers", roleMapUsers);
+		} catch (Exception e) {
+			logger.severe("Failure while retrieving role", e);
+			next.addObject("message", new WikiMessage("roles.message.rolesearchfail", e.getMessage()));
+		}
+		this.view(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Collection roles = WikiBase.getDataHandler().getAllRoles();
 		next.addObject("roles", roles);
 		next.addObject("roleCount", new Integer(roles.size()));
+		Collection roleMapGroups = WikiBase.getDataHandler().getRoleMapGroups();
+		next.addObject("roleMapGroups", roleMapGroups);
 		pageInfo.setAdmin(true);
 		pageInfo.setContentJsp(JSP_ADMIN_ROLES);
 		pageInfo.setPageTitle(new WikiMessage("roles.title"));
