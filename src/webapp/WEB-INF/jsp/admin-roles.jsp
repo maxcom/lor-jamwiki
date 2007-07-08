@@ -46,7 +46,7 @@
 </tr>
 <c:forEach items="${roleMapGroups}" var="roleMap">
 	<c:if test="${!empty roleMap.groupId}">
-<tr bgcolor="#ffffff">
+<tr bgcolor="<jamwiki:alternate value1="#ffffff" value2="#e9e9f8" attributeName="groupList" />">
 	<td>
 		<input type="hidden" name="candidateGroup" value="<c:out value="${roleMap.groupId}" />" />
 		<c:out value="${roleMap.groupName}" />
@@ -81,8 +81,8 @@
 <tr>
 	<td class="formcaption"><f:message key="roles.caption.searchrole" />:</td>
 	<td class="formelement" colspan="2">
-		<option value=""></option>
 		<select name="searchRole" id="searchRole" onchange="document.searchRoleForm.submit()">
+		<option value=""></option>
 		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />"><c:out value="${role.name}" /></option></c:forEach>
 		</select>
 	</td>
@@ -100,7 +100,7 @@
 </tr>
 <c:forEach items="${roleMapUsers}" var="roleMap">
 	<c:if test="${!empty roleMap.userId}">
-<tr bgcolor="#e9e9f8">
+<tr bgcolor="<jamwiki:alternate value1="#ffffff" value2="#e9e9f8" attributeName="userList" />">
 	<td>
 		<input type="hidden" name="candidateUser" value="<c:out value="${roleMap.userId}" />" />
 		<c:out value="${roleMap.userLogin}" />
