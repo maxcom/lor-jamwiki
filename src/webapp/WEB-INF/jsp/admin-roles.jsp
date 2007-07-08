@@ -40,13 +40,13 @@
 <fieldset>
 <legend><f:message key="roles.header.group" /></legend>
 <table border="0" class="contents" width="100%">
-<tr bgcolor="#d8d8e7">
+<tr class="darkbg">
 	<th><f:message key="roles.caption.groupname" /></th>
 	<th colspan="3"><f:message key="roles.caption.roles" /></th>
 </tr>
 <c:forEach items="${roleMapGroups}" var="roleMap">
 	<c:if test="${!empty roleMap.groupId}">
-<tr bgcolor="<jamwiki:alternate value1="#ffffff" value2="#e9e9f8" attributeName="groupList" />">
+<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="userList" />">
 	<td>
 		<input type="hidden" name="candidateGroup" value="<c:out value="${roleMap.groupId}" />" />
 		<c:out value="${roleMap.groupName}" />
@@ -94,13 +94,13 @@
 <form action="<jamwiki:link value="Special:Roles" />" method="post">
 <input type="hidden" name="function" value="assignRole" />
 <table border="0" class="contents" width="100%">
-<tr bgcolor="#d8d8e7">
+<tr class="darkbg">
 	<th><f:message key="roles.caption.userlogin" /></th>
 	<th colspan="3"><f:message key="roles.caption.roles" /></th>
 </tr>
 <c:forEach items="${roleMapUsers}" var="roleMap">
 	<c:if test="${!empty roleMap.userId}">
-<tr bgcolor="<jamwiki:alternate value1="#ffffff" value2="#e9e9f8" attributeName="userList" />">
+<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="userList" />">
 	<td>
 		<input type="hidden" name="candidateUser" value="<c:out value="${roleMap.userId}" />" />
 		<c:out value="${roleMap.userLogin}" />

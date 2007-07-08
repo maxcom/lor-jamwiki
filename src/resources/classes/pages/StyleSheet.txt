@@ -476,3 +476,12 @@ td.formhelp {
 	font-size: 85%;
 	color: #5f5f5f;
 }
+tr.lightbg {
+	background-color: #ffffff;
+}
+tr.mediumbg {
+	background-color: #e9e9f8;
+}
+tr.darkbg {
+	background-color: #d8d8e7;
+}
