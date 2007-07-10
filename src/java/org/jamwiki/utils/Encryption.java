@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
  */
 public class Encryption {
 
-	private static WikiLogger logger = WikiLogger.getLogger(Encryption.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(Encryption.class.getName());
 	public static final String DES_ALGORITHM = "DES";
 	public static final String ENCRYPTION_KEY = "JAMWiki Key 12345";
 

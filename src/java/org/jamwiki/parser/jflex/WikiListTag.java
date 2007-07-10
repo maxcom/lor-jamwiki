@@ -29,7 +29,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiListTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiListTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiListTag.class.getName());
 
 	private static final String LIST_OPEN_STACK = "WikiListTag.LIST_OPEN_STACK";
 	private static final String LIST_CLOSE_STACK = "WikiListTag.LIST_CLOSE_STACK";

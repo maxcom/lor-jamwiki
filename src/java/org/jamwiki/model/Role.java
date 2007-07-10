@@ -23,7 +23,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class Role {
 
-	private static WikiLogger logger = WikiLogger.getLogger(Role.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(Role.class.getName());
 	private String description = null;
 	private String name = null;
 

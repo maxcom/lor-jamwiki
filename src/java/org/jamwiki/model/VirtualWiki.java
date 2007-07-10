@@ -24,7 +24,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class VirtualWiki implements Serializable {
 
-	private static WikiLogger logger = WikiLogger.getLogger(VirtualWiki.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(VirtualWiki.class.getName());
 	private String name = null;
 	private String defaultTopicName = null;
 	private int virtualWikiId = -1;

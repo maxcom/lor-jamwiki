@@ -45,7 +45,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class AdminServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(AdminServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(AdminServlet.class.getName());
 	protected static final String JSP_ADMIN = "admin.jsp";
 	protected static final String JSP_ADMIN_SYSTEM = "admin-maintenance.jsp";
 

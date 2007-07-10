@@ -30,7 +30,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class ImageLinkTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(ImageLinkTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(ImageLinkTag.class.getName());
 	private String maxDimension = null;
 	private String style = null;
 	private String value = null;

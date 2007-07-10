@@ -29,7 +29,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiReferenceTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiReferenceTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiReferenceTag.class.getName());
 	protected static final String REFERENCES_PARAM = "WikiReferenceTag.REFERENCES_PARAM";
 
 	/**

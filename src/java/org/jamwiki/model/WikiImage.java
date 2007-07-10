@@ -23,7 +23,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiImage extends WikiFile {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiImage.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiImage.class.getName());
 	private int fileVersionId = -1;
 	private int height = -1;
 	private int width = -1;

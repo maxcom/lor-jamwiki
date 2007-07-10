@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class MySqlQueryHandler extends AnsiQueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(MySqlQueryHandler.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(MySqlQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.mysql.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;

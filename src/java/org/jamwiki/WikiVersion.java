@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiVersion {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiVersion.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiVersion.class.getName());
 	private final int major;
 	private final int minor;
 	private final int patch;

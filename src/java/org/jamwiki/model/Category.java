@@ -23,7 +23,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class Category {
 
-	private static WikiLogger logger = WikiLogger.getLogger(Category.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(Category.class.getName());
 	private String childTopicName = null;
 	private String name = null;
 	private String sortKey = null;

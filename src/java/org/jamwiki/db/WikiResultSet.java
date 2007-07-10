@@ -35,7 +35,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiResultSet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiResultSet.class.getName());
 	private final Vector rows = new Vector();
 	private int rowPointer = -1;
 	private int totalRows = -1;

@@ -36,7 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class HistoryServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HistoryServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(HistoryServlet.class.getName());
 	protected static final String JSP_HISTORY = "history.jsp";
 
 	/**

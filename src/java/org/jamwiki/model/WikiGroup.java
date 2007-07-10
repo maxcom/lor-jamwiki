@@ -23,7 +23,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiGroup {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiGroup.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiGroup.class.getName());
 	private String description = null;
 	private int groupId = -1;
 	private String name = null;

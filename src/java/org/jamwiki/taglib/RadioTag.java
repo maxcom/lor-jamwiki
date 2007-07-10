@@ -27,7 +27,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class RadioTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(RadioTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(RadioTag.class.getName());
 	private String checked = null;
 	private String id = null;
 	private String name = null;

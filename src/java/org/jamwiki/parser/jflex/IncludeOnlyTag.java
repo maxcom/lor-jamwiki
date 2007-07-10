@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class IncludeOnlyTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(IncludeOnlyTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(IncludeOnlyTag.class.getName());
 
 	/**
 	 * Parse a call to a Mediawiki includeonly tag of the form

@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class HtmlCommentTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HtmlCommentTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(HtmlCommentTag.class.getName());
 
 	/**
 	 *

@@ -27,7 +27,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class TextTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(TextTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(TextTag.class.getName());
 	private String id = null;
 	private String maxlength = null;
 	private String name = null;

@@ -29,7 +29,7 @@ import org.springframework.util.StringUtils;
  */
 public class HtmlLinkTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(HtmlLinkTag.class.getName());
 
 	/**
 	 * Given a String that represents a Wiki HTML link (a URL with an optional

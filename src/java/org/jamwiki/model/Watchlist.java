@@ -28,7 +28,7 @@ public class Watchlist {
 
 	private String virtualWiki = null;
 	private Collection topics = new Vector();
-	private static WikiLogger logger = WikiLogger.getLogger(Watchlist.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(Watchlist.class.getName());
 
 	/**
 	 *

@@ -28,7 +28,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiReferencesTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiReferencesTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiReferencesTag.class.getName());
 
 	/**
 	 *

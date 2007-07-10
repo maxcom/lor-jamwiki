@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiPreparedStatement {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiPreparedStatement.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiPreparedStatement.class.getName());
 	private Object[] params = null;
 	private int[] paramTypes = null;
 	private final String sql;

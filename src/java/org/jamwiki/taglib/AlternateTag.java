@@ -30,7 +30,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class AlternateTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(AlternateTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(AlternateTag.class.getName());
 	private static final String ATTRIBUTE_ROOT_NAME = "org.jamwiki.taglib.AlternateTag";
 	private String value1 = null;
 	private String value2 = null;

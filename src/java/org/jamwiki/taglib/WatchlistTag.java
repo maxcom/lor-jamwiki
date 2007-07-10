@@ -30,7 +30,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class WatchlistTag extends BodyTagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WatchlistTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WatchlistTag.class.getName());
 	private String topic = null;
 
 	/**

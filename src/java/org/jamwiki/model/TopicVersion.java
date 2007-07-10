@@ -40,7 +40,7 @@ public class TopicVersion {
 	private int topicId = -1;
 	private int topicVersionId = -1;
 	private String versionContent = null;
-	private static WikiLogger logger = WikiLogger.getLogger(TopicVersion.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(TopicVersion.class.getName());
 
 	/**
 	 *

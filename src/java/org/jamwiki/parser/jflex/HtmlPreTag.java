@@ -28,7 +28,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class HtmlPreTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(HtmlPreTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(HtmlPreTag.class.getName());
 
 	/**
 	 * Parse a Mediawiki heading of the form "==heading==" and return the

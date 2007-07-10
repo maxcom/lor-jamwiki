@@ -28,7 +28,7 @@ import org.springframework.web.util.HtmlUtils;
  */
 public class CharacterTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(CharacterTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(CharacterTag.class.getName());
 
 	/**
 	 *

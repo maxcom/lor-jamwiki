@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
  */
 public class TemplateTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(TemplateTag.class.getName());
 	// current date values
 	private static final String MAGIC_CURRENT_DAY = "CURRENTDAY";
 	private static final String MAGIC_CURRENT_DAY2 = "CURRENTDAY2";

@@ -37,7 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ItemsServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
-	private static WikiLogger logger = WikiLogger.getLogger(ItemsServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(ItemsServlet.class.getName());
 	protected static final String JSP_ITEMS = "items.jsp";
 
 	/**

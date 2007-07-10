@@ -36,7 +36,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiLinkTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
 	private static Pattern WIKI_LINK_PATTERN = null;
 	private static Pattern IMAGE_SIZE_PATTERN = null;
 	// FIXME - make configurable

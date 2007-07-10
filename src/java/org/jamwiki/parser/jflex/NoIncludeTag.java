@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class NoIncludeTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(NoIncludeTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(NoIncludeTag.class.getName());
 
 	/**
 	 * Parse a call to a Mediawiki noinclude tag of the form

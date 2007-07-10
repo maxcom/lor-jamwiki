@@ -29,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class StylesheetServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(StylesheetServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(StylesheetServlet.class.getName());
 
 	/**
 	 *

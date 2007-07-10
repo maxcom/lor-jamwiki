@@ -27,7 +27,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class CheckboxTag extends TagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(CheckboxTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(CheckboxTag.class.getName());
 	private String checked = null;
 	private String id = null;
 	private String name = null;

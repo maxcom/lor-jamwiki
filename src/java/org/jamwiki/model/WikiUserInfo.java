@@ -31,7 +31,7 @@ public class WikiUserInfo {
 	private String lastName = null;
 	private int userId = -1;
 	private String username = null;
-	private static WikiLogger logger = WikiLogger.getLogger(WikiUserInfo.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserInfo.class.getName());
 
 	/**
 	 *

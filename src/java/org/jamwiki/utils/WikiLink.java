@@ -21,7 +21,7 @@ package org.jamwiki.utils;
  */
 public class WikiLink {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiLink.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiLink.class.getName());
 	/** Indicator that the link requires special handling, such as links starting with a colon. */
 	private boolean colon = false;
 	/** Article name, not including namespace. */

@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ManageServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(ManageServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(ManageServlet.class.getName());
 	protected static final String JSP_ADMIN_MANAGE = "admin-manage.jsp";
 
 	/**

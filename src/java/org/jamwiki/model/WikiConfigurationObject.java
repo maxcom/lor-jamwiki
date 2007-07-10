@@ -25,7 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 public class WikiConfigurationObject {
 
 	/** Standard logger. */
-	private static WikiLogger logger = WikiLogger.getLogger(WikiConfigurationObject.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiConfigurationObject.class.getName());
 
 	private String clazz;
 	private String key;

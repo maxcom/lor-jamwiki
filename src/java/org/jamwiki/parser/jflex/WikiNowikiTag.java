@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiNowikiTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiNowikiTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiNowikiTag.class.getName());
 
 	/**
 	 * Parse nowiki content - this method is passed content of the form

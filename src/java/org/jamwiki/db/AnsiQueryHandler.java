@@ -43,7 +43,7 @@ import org.springframework.util.StringUtils;
  */
 public class AnsiQueryHandler implements QueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(AnsiQueryHandler.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(AnsiQueryHandler.class.getName());
 	protected static final String SQL_PROPERTY_FILE_NAME = "sql.ansi.properties";
 
 	protected static String STATEMENT_CONNECTION_VALIDATION_QUERY = null;

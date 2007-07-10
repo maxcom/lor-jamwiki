@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiHeadingTag implements ParserTag {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
 	/**
 	 *

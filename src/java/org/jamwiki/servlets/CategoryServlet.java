@@ -37,7 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class CategoryServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
-	private static WikiLogger logger = WikiLogger.getLogger(CategoryServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(CategoryServlet.class.getName());
 	protected static final String JSP_CATEGORIES = "categories.jsp";
 
 	/**

@@ -32,7 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class PrintableServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(PrintableServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(PrintableServlet.class.getName());
 
 	/**
 	 *

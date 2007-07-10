@@ -29,7 +29,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class OracleQueryHandler extends AnsiQueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(OracleQueryHandler.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(OracleQueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.oracle.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;

@@ -29,7 +29,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class RoleMap {
 
-	private static WikiLogger logger = WikiLogger.getLogger(RoleMap.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(RoleMap.class.getName());
 	private Integer groupId = null;
 	private String groupName = null;
 	private Collection roleNames = null;

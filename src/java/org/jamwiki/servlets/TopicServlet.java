@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TopicServlet extends JAMWikiServlet {
 
 	/** Logger for this class and subclasses. */
-	private static WikiLogger logger = WikiLogger.getLogger(TopicServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(TopicServlet.class.getName());
 
 	/**
 	 * This method handles the request after its parent class receives control. It gets the topic's name and the

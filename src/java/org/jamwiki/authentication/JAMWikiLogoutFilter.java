@@ -39,7 +39,7 @@ import org.springframework.util.StringUtils;
 public class JAMWikiLogoutFilter extends LogoutFilter {
 
 	/** Standard logger. */
-	private static WikiLogger logger = WikiLogger.getLogger(JAMWikiLogoutFilter.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiLogoutFilter.class.getName());
 	// FIXME - this field can hopefully be removed in a future version of
 	// Acegi, see the comments for setFilterProcessesUrl() below for details.
 	private String filterProcessesUrl = "/j_acegi_logout";

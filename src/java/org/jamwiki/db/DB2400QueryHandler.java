@@ -30,7 +30,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class DB2400QueryHandler extends AnsiQueryHandler {
 
-	private static WikiLogger logger = WikiLogger.getLogger(DB2400QueryHandler.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(DB2400QueryHandler.class.getName());
 	private static final String SQL_PROPERTY_FILE_NAME = "sql.db2400.properties";
 	private static Properties props = null;
 	private static Properties defaults = null;

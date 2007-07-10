@@ -29,7 +29,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class LinkParamTag extends BodyTagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(LinkParamTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(LinkParamTag.class.getName());
 	private String value = null;
 	private String key = null;
 

@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class EnabledTag extends BodyTagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(EnabledTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(EnabledTag.class.getName());
 	private String property = null;
 
 	/**

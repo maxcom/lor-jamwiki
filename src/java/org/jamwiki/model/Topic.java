@@ -50,7 +50,7 @@ public class Topic implements Serializable {
 	private int topicId = -1;
 	private int topicType = TYPE_ARTICLE;
 	private String virtualWiki = null;
-	private static WikiLogger logger = WikiLogger.getLogger(Topic.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(Topic.class.getName());
 
 	/**
 	 *

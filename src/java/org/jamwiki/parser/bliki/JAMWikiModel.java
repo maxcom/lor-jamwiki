@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
  *
  */
 public class JAMWikiModel extends AbstractWikiModel {
-	private static WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
 	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
 

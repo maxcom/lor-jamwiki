@@ -24,7 +24,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class RecentChange {
 
-	private static WikiLogger logger = WikiLogger.getLogger(RecentChange.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(RecentChange.class.getName());
 	private Integer authorId = null;
 	private String authorName = null;
 	private String editComment = null;

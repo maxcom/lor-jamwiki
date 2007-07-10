@@ -24,7 +24,7 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiDiff {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiDiff.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiDiff.class.getName());
 	private boolean change = false;
 	private String newLine = null;
 	private String oldLine = null;

@@ -39,7 +39,7 @@ import org.springframework.util.StringUtils;
 public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 
 	/** Standard logger. */
-	private static WikiLogger logger = WikiLogger.getLogger(JAMWikiAuthenticationProcessingFilter.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAuthenticationProcessingFilter.class.getName());
 
 	/**
 	 * FIXME - override the parent method to determine if processing should

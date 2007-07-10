@@ -33,7 +33,7 @@ import org.springframework.web.util.ExpressionEvaluationUtils;
  */
 public class LinkTag extends BodyTagSupport {
 
-	private static WikiLogger logger = WikiLogger.getLogger(LinkTag.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(LinkTag.class.getName());
 	private String style = null;
 	private String target = null;
 	private String text = null;

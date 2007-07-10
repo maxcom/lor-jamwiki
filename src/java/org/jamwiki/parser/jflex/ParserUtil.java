@@ -29,7 +29,7 @@ import org.springframework.util.StringUtils;
  */
 public class ParserUtil {
 
-	private static WikiLogger logger = WikiLogger.getLogger(ParserUtil.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(ParserUtil.class.getName());
 	private static Pattern TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;

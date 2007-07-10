@@ -35,7 +35,7 @@ public class WikiFile {
 	private String url = null;
 	private int topicId = -1;
 	private String virtualWiki = null;
-	private static WikiLogger logger = WikiLogger.getLogger(WikiFile.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiFile.class.getName());
 
 	/**
 	 *

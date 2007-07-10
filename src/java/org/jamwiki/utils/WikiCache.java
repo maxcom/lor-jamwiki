@@ -31,7 +31,7 @@ import org.jamwiki.Environment;
  */
 public class WikiCache {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiCache.class.getName());
 	private static CacheManager cacheManager = null;
 
 	/** Directory for cache files. */

@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
  */
 public class WikiReference {
 
-	private static WikiLogger logger = WikiLogger.getLogger(WikiReference.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiReference.class.getName());
 
 	private final int citation;
 	private final String content;

@@ -41,7 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class TranslationServlet extends JAMWikiServlet {
 
-	private static WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
 	protected static final String JSP_ADMIN_TRANSLATION = "admin-translation.jsp";
 	private SortedProperties translations = new SortedProperties();
 
