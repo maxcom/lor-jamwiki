@@ -28,6 +28,7 @@ Translation Updates:
   * Updated Chinese translations (hfl).
   * Updated Dutch translations (Angel).
   * Updated German translations (axelclk).
+  * Updated Japanese translations (nattolover).
   * Updated Polish translations (dlpa).
 
 
