@@ -621,7 +621,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertRole(Role role, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE);
-		stmt.setString(1, role.getName());
+		stmt.setString(1, role.getAuthority());
 		stmt.setString(2, role.getDescription());
 		stmt.executeUpdate(conn);
 	}
@@ -1044,7 +1044,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	public void updateRole(Role role, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_ROLE);
 		stmt.setString(1, role.getDescription());
-		stmt.setString(2, role.getName());
+		stmt.setString(2, role.getAuthority());
 		stmt.executeUpdate(conn);
 	}
 

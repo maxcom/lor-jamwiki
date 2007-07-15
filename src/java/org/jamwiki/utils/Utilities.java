@@ -1188,9 +1188,9 @@ public class Utilities {
 	 * @throws WikiException Thrown if the role is invalid.
 	 */
 	public static void validateRole(Role role) throws WikiException {
-		Matcher m = INVALID_ROLE_NAME_PATTERN.matcher(role.getName());
+		Matcher m = INVALID_ROLE_NAME_PATTERN.matcher(role.getAuthority());
 		if (!m.matches()) {
-			throw new WikiException(new WikiMessage("roles.error.name", role.getName()));
+			throw new WikiException(new WikiMessage("roles.error.name", role.getAuthority()));
 		}
 		if (StringUtils.hasText(role.getDescription()) && role.getDescription().length() > 200) {
 			throw new WikiException(new WikiMessage("roles.error.description"));

@@ -561,9 +561,8 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private Role initRole(WikiResultSet rs) {
 		try {
-			Role role = new Role();
+			Role role = new Role(rs.getString("role_name"));
 			role.setDescription(rs.getString("role_description"));
-			role.setName(rs.getString("role_name"));
 			return role;
 		} catch (Exception e) {
 			logger.severe("Failure while initializing role", e);

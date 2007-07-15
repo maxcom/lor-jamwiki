@@ -16,30 +16,32 @@
  */
 package org.jamwiki.model;
 
+import org.acegisecurity.GrantedAuthorityImpl;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Provides an object representing a Wiki role.
+ * Provides an object representing a Wiki role and implementing the Acegi
+ * <code>GrantedAuthority</code> interface.
  */
-public class Role {
+public class Role extends GrantedAuthorityImpl {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Role.class.getName());
 	private String description = null;
-	private String name = null;
 
-	public static final String ROLE_ADMIN = "ROLE_ADMIN";
-	public static final String ROLE_ADMIN_MANAGE = "ROLE_ADMIN_MANAGE";
-	public static final String ROLE_EDIT_EXISTING = "ROLE_EDIT_EXISTING";
-	public static final String ROLE_EDIT_NEW = "ROLE_EDIT_NEW";
-	public static final String ROLE_MOVE = "ROLE_MOVE";
-	public static final String ROLE_TRANSLATE = "ROLE_TRANSLATE";
-	public static final String ROLE_UPLOAD = "ROLE_UPLOAD";
-	public static final String ROLE_VIEW = "ROLE_VIEW";
+	public static final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
+	public static final Role ROLE_DELETE = new Role("ROLE_DELETE");
+	public static final Role ROLE_EDIT_EXISTING = new Role("ROLE_EDIT_EXISTING");
+	public static final Role ROLE_EDIT_NEW = new Role("ROLE_EDIT_NEW");
+	public static final Role ROLE_MOVE = new Role("ROLE_MOVE");
+	public static final Role ROLE_TRANSLATE = new Role("ROLE_TRANSLATE");
+	public static final Role ROLE_UPLOAD = new Role("ROLE_UPLOAD");
+	public static final Role ROLE_VIEW = new Role("ROLE_VIEW");
 
 	/**
 	 *
 	 */
-	public Role() {
+	public Role(String role) {
+		super((role == null) ? null : role.toUpperCase());
 	}
 
 	/**
@@ -57,16 +59,12 @@ public class Role {
 	}
 
 	/**
-	 * Retrieve the role name.  Role names are returned in uppercase.
+	 * Two roles are equal if the role names are the same.
 	 */
-	public String getName() {
-		return (this.name == null) ? null : this.name.toUpperCase();
-	}
-
-	/**
-	 * Set the role name.  Role names will be forced to uppercase.
-	 */
-	public void setName(String name) {
-		this.name = ((name == null) ? null : name.toUpperCase());
+	public boolean equals(Role role) {
+		if (this.getAuthority() == null && role != null && role.getAuthority() == null) {
+			return true;
+		}
+		return (this.getAuthority() != null && role != null && this.getAuthority().equals(role.getAuthority()));
 	}
 }

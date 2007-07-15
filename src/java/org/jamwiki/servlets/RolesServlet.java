@@ -139,19 +139,18 @@ public class RolesServlet extends JAMWikiServlet {
 		Role role = null;
 		if (StringUtils.hasText(request.getParameter("Submit"))) {
 			try {
-				role = new Role();
 				// once created a role name cannot be modified, so the text field
 				// will be disabled in the form.
 				boolean update = !StringUtils.hasText(request.getParameter("roleName"));
 				String roleName = (update) ? updateRole : request.getParameter("roleName");
-				role.setName(roleName);
+				role = new Role(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
 				Utilities.validateRole(role);
 				WikiBase.getDataHandler().writeRole(role, null, update);
-				if (StringUtils.hasText(updateRole) && updateRole.equals(role.getName())) {
-					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getName()));
+				if (StringUtils.hasText(updateRole) && updateRole.equals(role.getAuthority())) {
+					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getAuthority()));
 				} else {
-					next.addObject("message", new WikiMessage("roles.message.roleadded", role.getName()));
+					next.addObject("message", new WikiMessage("roles.message.roleadded", role.getAuthority()));
 				}
 			} catch (WikiException e) {
 				next.addObject("message", e.getWikiMessage());
@@ -166,13 +165,13 @@ public class RolesServlet extends JAMWikiServlet {
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				Role tempRole = (Role)roleIterator.next();
-				if (tempRole.getName().equals(updateRole)) {
+				if (tempRole.getAuthority().equals(updateRole)) {
 					role = tempRole;
 				}
 			}
 		}
 		if (role != null) {
-			next.addObject("roleName", role.getName());
+			next.addObject("roleName", role.getAuthority());
 			next.addObject("roleDescription", role.getDescription());
 		}
 		this.view(request, next, pageInfo);

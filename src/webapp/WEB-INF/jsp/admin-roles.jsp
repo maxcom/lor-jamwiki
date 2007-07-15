@@ -53,7 +53,7 @@
 	</td>
 		<c:forEach items="${roles}" var="role" varStatus="status">
 			<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-			<jamwiki:checkbox name="groupRole" value="${roleMap.userGroup}|${role.name}" checked="${roleMap.roleNamesMap[role.name]}" />&#160;<c:out value="${role.name}" /><br />
+			<jamwiki:checkbox name="groupRole" value="${roleMap.userGroup}|${role.authority}" checked="${roleMap.roleNamesMap[role.authority]}" />&#160;<c:out value="${role.authority}" /><br />
 			<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
 		</c:forEach>
 </tr>
@@ -83,7 +83,7 @@
 	<td class="formelement" colspan="2">
 		<select name="searchRole" id="searchRole" onchange="document.searchRoleForm.submit()">
 		<option value=""></option>
-		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />" <c:if test="${role.name == searchRole}">selected="selected"</c:if>><c:out value="${role.name}" /></option></c:forEach>
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.authority}" />" <c:if test="${role.authority == searchRole}">selected="selected"</c:if>><c:out value="${role.authority}" /></option></c:forEach>
 		</select>
 	</td>
 </tr>
@@ -107,7 +107,7 @@
 	</td>
 		<c:forEach items="${roles}" var="role" varStatus="status">
 			<c:if test="${((3 * status.index) % roleCount) < 3}"><td></c:if>
-			<jamwiki:checkbox name="userRole" value="${roleMap.userGroup}|${role.name}" checked="${roleMap.roleNamesMap[role.name]}" />&#160;<c:out value="${role.name}" /><br />
+			<jamwiki:checkbox name="userRole" value="${roleMap.userGroup}|${role.authority}" checked="${roleMap.roleNamesMap[role.authority]}" />&#160;<c:out value="${role.authority}" /><br />
 			<c:if test="${((3 * status.count) % roleCount) < 3}"></td></c:if>
 		</c:forEach>
 </tr>
@@ -133,7 +133,7 @@
 	<td class="formelement">
 		<select name="updateRole" id="updateRole" onchange="document.modifyRoleForm.submit()">
 		<option value=""></option>
-		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.name}" />" <c:if test="${role.name == roleName}">selected="selected"</c:if>><c:out value="${role.name}" /></option></c:forEach>
+		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.authority}" />" <c:if test="${role.authority == roleName}">selected="selected"</c:if>><c:out value="${role.authority}" /></option></c:forEach>
 		</select>
 	</td>
 </tr>
