@@ -71,7 +71,7 @@
 	</target>
 
 	<target name="compile" depends="jflex" description="Compile source code">
-		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}">
+		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}" encoding="${compile.encoding}">
 			<src path="${dir.src.java}" />
 			<include name="org/jamwiki/**" />
 			<exclude name="org/jamwiki/test/**" />
@@ -120,7 +120,7 @@
 	</target>
 
 	<target name="junit-compile" depends="compile" description="Compile JUnit source code">
-		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}">
+		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}" encoding="${compile.encoding}">
 			<src path="${dir.src.java}" />
 			<include name="org/jamwiki/test/**" />
 			<exclude name="**/*.html" />
@@ -194,7 +194,7 @@
 
 	<target name="javadiff" depends="init" description="Generate the javadiff.jar file">
 		<delete file="${dir.lib}/javadiff-1.0.5.jar" />
-		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}">
+		<javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${dir.build.classes}" target="${compile.target}" source="${compile.source}" encoding="${compile.encoding}">
 			<src path="${dir.src.java}" />
 			<include name="org/incava/**" />
 		</javac>
@@ -204,7 +204,7 @@
 	</target>
 
 	<target name="javadoc" depends="jflex" description="Create Javadoc documentation">
-		<javadoc destdir="${dir.build.javadoc}" windowtitle="JAMWiki ${app.version}" source="${compile.source}">
+		<javadoc destdir="${dir.build.javadoc}" windowtitle="JAMWiki ${app.version}" source="${compile.source}" encoding="${compile.encoding}">
 			<packageset dir="${dir.src.java}" defaultexcludes="yes">
 				<include name="org/jamwiki/**" />
 				<!-- ignore JUnit test files (for now) -->
