@@ -1,0 +1,135 @@
+<project name="jamwiki" default="show">
+	
+	<target name="show">
+		<echo message="Please use -projecthelp to show available targets"></echo>
+	</target>
+	
+	<description>
+		This Ant script needs Ant 1.7 or above for target war-local
+	</description>	
+		
+	<target name="install" description="adds bliki to local repository">
+		<exec executable="mvn">
+			<arg value="install:install-file"/>
+			<arg value="-Dfile=lib/bliki.jar"/>
+	    	<arg value="-DgroupId=bliki"/>
+    		<arg value="-DartifactId=bliki"/>
+    		<arg value="-Dversion=1.0-SNAPSHOT"/>
+			<arg value="-Dpackaging=jar"/>
+			<arg value="-DgeneratePom=true"/>
+		</exec>
+  </target>
+	
+  <target name="mavenize" description="Moves files/directories to Maven structure. DON'T USE WITHOUT BACKUP!!!">
+  	<mkdir dir="src/main/java"/>
+  	<mkdir dir="src/test/java"/>
+  	<mkdir dir="src/main/webapp/WEB-INF/jsp"/>
+  	<mkdir dir="src/resources/classes"/>
+  	
+  	<!-- Move Java Sources-->
+  	<move failonerror="no" todir="src/main" file="src/java"/>
+
+  	<move failonerror="no" todir="src/main" file="src/webapp"/>
+  		
+  	<!-- Move content for WEB-INF/classes -->
+  	<move todir="src/main/resources" includeemptydirs="yes">
+  		<fileset dir="src/resources/classes">
+			<include name="**"/>
+  		</fileset>
+    </move>
+  			
+  	<!-- Move test classes-->
+  	<move todir="src/test/java" includeemptydirs="yes">
+  		<fileset dir="src/main/java">
+  			<include name="org/jamwiki/test/**"/>
+  		</fileset>
+  	</move>
+  	
+  	
+  	<!-- Move Text files to root folder in war file)-->
+  	<!-- like in Ant script-->
+  	<move todir="src/main/webapp">
+  		<fileset dir=".">
+			<include name="README.txt"/>
+			<include name="CHANGELOG.txt"/>
+			<include name="LICENSE.txt"/>
+			<include name="CREDITS.txt"/>	
+			<include name="UPGRADE.txt"/>
+ 		</fileset>
+  	</move>
+
+  	<!-- Move Webapp folder-->
+
+  	  	
+  	<!-- Add resources to webapp folder -->
+  	<move todir="src/main/webapp" includeemptydirs="yes">
+  	  		<fileset dir="src/resources">
+  	  			<include name="images/**"/>
+  	  			<include name="js/**"/>
+  	  		</fileset>
+  	</move>
+
+  	 <move todir="src/main/webapp" file="src/main/webapp/WEB-INF/jsp/index.jsp" failonerror="no"/>
+
+  	<!-- Delete all libraries that are managed by Maven -->
+    <delete>
+  		<fileset dir="lib">
+    		<exclude name="bliki*"/>
+    		<exclude name="javadiff*"/>
+    	</fileset>
+  	</delete>
+  	
+	<delete dir="src/java"/>
+	<delete dir="src/webapp"/>
+	<delete>
+		<fileset dir="src/resources">
+  			<include name="classes/**"/>
+  			<include name="images/**"/>
+  			<include name="js/**"/>
+		</fileset>
+	</delete>
+
+  </target>
+	
+	<!-- use this target until maven-warlocal-plugin is ready -->
+	<target name="war-local" description="like war-local in build.xml, but for new structure">
+		<property name="dir.build" value="target"/>
+		<property name="dir.local" value="local-files"/>
+		<property name="war.name" value="jamwiki"/>
+		<property name="dir.src.webapp" value="src/main/webapp"/>
+
+		<makeurl property="war.url">
+			<fileset dir="${dir.build}">
+				<include name="${war.name}*.war"/>
+			</fileset>
+		</makeurl>
+		<basename property="war.file" file="${war.url}"/>
+
+		<available file="${dir.build}/${war.file}" type="file" property="war.exists"/> 
+		<fail message="No war file found in target directory" unless="war.exists"/>
+
+		<echo message="${war.exists}"/>
+
+		<mkdir dir="${dir.build}/war"/>
+		<unwar src="${dir.build}/${war.file}" dest="${dir.build}/war">
+			<patternset>
+			<exclude name="**/web.xml" />
+			</patternset>
+		</unwar>
+
+		<delete file="${dir.build}/${war.file}" />
+		<copy todir="${dir.build}/war/WEB-INF/classes" overwrite="yes">
+			<fileset dir="${dir.local}">
+				<include name="*.properties" />
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${dir.build}/war/WEB-INF/lib" overwrite="yes">
+			<fileset dir="${dir.local}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<war destfile="${dir.build}/${war.file}" basedir="${dir.build}/war" webxml="${dir.src.webapp}/WEB-INF/web.xml" />
+		<delete dir="${dir.build}/war" />
+	</target>
+</project>
