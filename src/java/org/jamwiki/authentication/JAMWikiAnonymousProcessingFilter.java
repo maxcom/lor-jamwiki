@@ -42,9 +42,8 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 		if (user == null) {
 			logger.warning("No user attribute available in JAMWikiAnonymousProcessingFilter.  Please verify the Acegi configuration settings.");
 		}
-		// FIXE - a default role is required, which is overwritten here.  there
-		// should not be a default required.
-		user.setAuthorities(new Vector());
+		// FIXE - by default user is given ROLE_ANONYMOUS.  that gets used in some
+		// JSP pages.  needs to be cleaned up.
 		Role[] groupRoles = new Role[0];
 		try {
 			groupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
