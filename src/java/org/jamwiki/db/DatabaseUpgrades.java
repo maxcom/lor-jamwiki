@@ -179,18 +179,18 @@ public class DatabaseUpgrades {
 			// create jam_group table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_TABLE, conn);
 			messages.add("Added jam_group table");
-			// setup basic groups
-			WikiDatabase.setupGroups(conn);
-			messages.add("Added basic wiki groups.");
 			// create jam_role table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_TABLE, conn);
 			messages.add("Added jam_role table");
-			// setup basic roles
-			WikiDatabase.setupRoles(conn);
-			messages.add("Added basic wiki roles.");
 			// create jam_role_map table
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_MAP_TABLE, conn);
 			messages.add("Added jam_role_map table");
+			// setup basic roles
+			WikiDatabase.setupRoles(conn);
+			messages.add("Added basic wiki roles.");
+			// setup basic groups
+			WikiDatabase.setupGroups(conn);
+			messages.add("Added basic wiki groups.");
 			conn.commit();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
