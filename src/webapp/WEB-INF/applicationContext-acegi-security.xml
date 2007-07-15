@@ -222,8 +222,10 @@
 				/**/Special:Manage=ROLE_ADMIN
 				/**/Special:Move=ROLE_MOVE
 				/**/Special:Roles=ROLE_ADMIN
+				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_VIEW
 				/**/Special:Translation=ROLE_TRANSLATE
 				/**/Special:Upload=ROLE_UPLOAD
+				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_VIEW
 				/**=ROLE_VIEW
 			</value>
 		</property>
