@@ -99,13 +99,12 @@
 	<!-- +++++++++ Anonymous authentication +++++++++ -->
 	<!-- Anonymous users are assigned ROLE_ANONYMOUS to be able to allow exceptions to general access rules -->
 
-	<bean id="anonymousProcessingFilter" class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
+	<bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
 		<property name="key" value="jam35Wiki" />
 		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
 	</bean>
 
-	<bean id="anonymousAuthenticationProvider"
-		class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
+	<bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
 		<property name="key" value="jam35Wiki" />
 	</bean>
 

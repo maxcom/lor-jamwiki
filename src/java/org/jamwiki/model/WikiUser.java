@@ -297,14 +297,12 @@ public class WikiUser implements UserDetails {
 	 *
 	 */
 	private void addRoles(GrantedAuthority[] roles) {
-		logger.info("RYAN: addRoles called with " + roles.length + " roles");
 		if (this.authorities == null) {
 			this.authorities = new GrantedAuthority[0];
 		}
 		Set authoritiesSet = new HashSet(Arrays.asList(this.authorities));
 		for (int i=0; i < roles.length; i++) {
 			if (!authoritiesSet.contains(roles[i])) {
-				logger.info("RYAN: adding role " + roles[i].getAuthority() + " for user " + this.username);
 				authoritiesSet.add(roles[i]);
 			}
 		}
