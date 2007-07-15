@@ -210,17 +210,6 @@ public interface QueryHandler {
 	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception;
 
 	/**
-	 * Retrieve a WikiResultSet of user ids, group ids and role names for
-	 * all groups that have been assigned a role.
-	 *
-	 * @return A WikiResultSet of user ids, group ids and role names for all
-	 *  groups that have been assigned a role.  If no matches are found then
-	 *  this method returns an empty WikiResultSet.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public WikiResultSet getRoleMapGroups() throws Exception;
-
-	/**
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for all
 	 * users whose login contains the given login fragment.
 	 *
@@ -247,14 +236,35 @@ public interface QueryHandler {
 	public WikiResultSet getRoleMapByRole(String roleName) throws Exception;
 
 	/**
-	 * Retrieve a WikiResultSet containing all roles assigned to a given user.
+	 * Retrieve a WikiResultSet containing all roles assigned to a given group.
 	 *
-	 * @param userId The id of the user for whom roles are being retrieved.
+	 * @param groupName The name of the group for whom roles are being retrieved.
 	 * @return A WikiResultSet of role names for the given user, or an empty
 	 *  WikiResultSet if no roles are assigned to the user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoleMapUser(int userId) throws Exception;
+	public WikiResultSet getRoleMapGroup(String groupName) throws Exception;
+
+	/**
+	 * Retrieve a WikiResultSet of user ids, group ids and role names for
+	 * all groups that have been assigned a role.
+	 *
+	 * @return A WikiResultSet of user ids, group ids and role names for all
+	 *  groups that have been assigned a role.  If no matches are found then
+	 *  this method returns an empty WikiResultSet.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getRoleMapGroups() throws Exception;
+
+	/**
+	 * Retrieve a WikiResultSet containing all roles assigned to a given user.
+	 *
+	 * @param login The login of the user for whom roles are being retrieved.
+	 * @return A WikiResultSet of role names for the given user, or an empty
+	 *  WikiResultSet if no roles are assigned to the user.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public WikiResultSet getRoleMapUser(String login) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all roles that have been defined for

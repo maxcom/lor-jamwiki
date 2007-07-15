@@ -174,16 +174,6 @@ public interface DataHandler {
 	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
 
 	/**
-	 * Retrieve a collection of RoleMap objects for all groups.
-	 *
-	 * @return A collection of RoleMap objects containing all roles for all
-	 *  groups.  If no matches are found then this method returns an empty
-	 *  collection.  This method will never return <code>null</code>.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public Collection getRoleMapGroups() throws Exception;
-
-	/**
 	 * Retrieve a collection of RoleMap objects for all users whose login
 	 * contains the given login fragment.
 	 *
@@ -212,15 +202,36 @@ public interface DataHandler {
 	public Collection getRoleMapByRole(String roleName) throws Exception;
 
 	/**
-	 * Retrieve all roles assigned to a given user.
+	 * Retrieve all roles assigned to a given group.
 	 *
-	 * @param userId The id of the user for whom roles are being retrieved.
-	 * @return A collection of role names for the given user, or an empty
-	 *  collection if no roles are assigned to the user.  This method will
+	 * @param groupName The name of the group for whom roles are being retrieved.
+	 * @return An array of Role objects for the given group, or an empty
+	 *  array if no roles are assigned to the group.  This method will
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getRoleMapUser(int userId) throws Exception;
+	public Role[] getRoleMapGroup(String groupName) throws Exception;
+
+	/**
+	 * Retrieve a collection of RoleMap objects for all groups.
+	 *
+	 * @return A collection of RoleMap objects containing all roles for all
+	 *  groups.  If no matches are found then this method returns an empty
+	 *  collection.  This method will never return <code>null</code>.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public Collection getRoleMapGroups() throws Exception;
+
+	/**
+	 * Retrieve all roles assigned to a given user.
+	 *
+	 * @param login The login of the user for whom roles are being retrieved.
+	 * @return An array of Role objects for the given user, or an empty
+	 *  array if no roles are assigned to the user.  This method will
+	 *  never return <code>null</code>.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public Role[] getRoleMapUser(String login) throws Exception;
 
 	/**
 	 * Retrieve a collection of topic names for all admin-only topics, sorted

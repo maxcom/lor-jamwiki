@@ -353,27 +353,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getRoleMapGroups() throws Exception {
-		LinkedHashMap roleMaps = new LinkedHashMap();
-		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
-		while (rs.next()) {
-			Integer groupId = new Integer(rs.getInt("group_id"));
-			RoleMap roleMap = new RoleMap();
-			if (roleMaps.containsKey(groupId)) {
-				roleMap = (RoleMap)roleMaps.get(groupId);
-			} else {
-				roleMap.setGroupId(groupId);
-				roleMap.setGroupName(rs.getString("group_name"));
-			}
-			roleMap.addRole(rs.getString("role_name"));
-			roleMaps.put(groupId, roleMap);
-		}
-		return roleMaps.values();
-	}
-
-	/**
-	 *
-	 */
 	public Collection getRoleMapByLogin(String loginFragment) throws Exception {
 		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
@@ -424,13 +403,48 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getRoleMapUser(int userId) throws Exception {
+	public Role[] getRoleMapGroup(String groupName) throws Exception {
 		Collection results = new Vector();
-		WikiResultSet rs = this.queryHandler().getRoleMapUser(userId);
+		WikiResultSet rs = this.queryHandler().getRoleMapGroup(groupName);
 		while (rs.next()) {
-			results.add(rs.getString("role_name"));
+			Role role = this.initRole(rs);
+			results.add(role);
 		}
-		return results;
+		return (Role[])results.toArray(new Role[0]);
+	}
+
+	/**
+	 *
+	 */
+	public Collection getRoleMapGroups() throws Exception {
+		LinkedHashMap roleMaps = new LinkedHashMap();
+		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
+		while (rs.next()) {
+			Integer groupId = new Integer(rs.getInt("group_id"));
+			RoleMap roleMap = new RoleMap();
+			if (roleMaps.containsKey(groupId)) {
+				roleMap = (RoleMap)roleMaps.get(groupId);
+			} else {
+				roleMap.setGroupId(groupId);
+				roleMap.setGroupName(rs.getString("group_name"));
+			}
+			roleMap.addRole(rs.getString("role_name"));
+			roleMaps.put(groupId, roleMap);
+		}
+		return roleMaps.values();
+	}
+
+	/**
+	 *
+	 */
+	public Role[] getRoleMapUser(String login) throws Exception {
+		Collection results = new Vector();
+		WikiResultSet rs = this.queryHandler().getRoleMapUser(login);
+		while (rs.next()) {
+			Role role = this.initRole(rs);
+			results.add(role);
+		}
+		return (Role[])results.toArray(new Role[0]);
 	}
 
 	/**
