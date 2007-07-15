@@ -61,7 +61,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testPreprocessText() throws Throwable {
-		String result = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress").preprocessText("testXMLTopicFactoryText");
+		String result = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress").preprocessText("testXMLTopicFactoryText");
 		assertEquals("result", "testXMLTopicFactoryText", result);
 	}
 
@@ -69,7 +69,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testPreprocessText1() throws Throwable {
-		String result = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress").preprocessText(null);
+		String result = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress").preprocessText(null);
 		assertNull("result", result);
 	}
 
@@ -143,7 +143,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testEndElementThrowsNullPointerException2() throws Throwable {
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "page");
 			fail("Expected NullPointerException to be thrown");
@@ -156,7 +156,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testEndElementThrowsNullPointerException3() throws Throwable {
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "text");
 			fail("Expected NullPointerException to be thrown");
@@ -169,7 +169,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testEndElementThrowsNullPointerException4() throws Throwable {
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "namespace");
 			fail("Expected NullPointerException to be thrown");
@@ -182,7 +182,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testStartElementThrowsNullPointerException() throws Throwable {
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		try {
 			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactoryLName", "testXMLTopicFactoryQName", null);
 			fail("Expected NullPointerException to be thrown");
@@ -195,7 +195,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testStartElementThrowsNullPointerException1() throws Throwable {
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "testXMLTopicFactoryQName");
 		try {
 			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "", "testXMLTopicFactoryQName", null);
@@ -227,7 +227,7 @@ public class XMLTopicFactoryTest extends TestCase {
 	 *
 	 */
 	public void testStartElementThrowsNullPointerException3() throws Throwable {
-		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(), "testXMLTopicFactoryAuthorIpAddress");
+		XMLTopicFactory xMLTopicFactory = new XMLTopicFactory("testXMLTopicFactoryVirtualWiki", new WikiUser(""), "testXMLTopicFactoryAuthorIpAddress");
 		xMLTopicFactory.endElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactorySName", "testXMLTopicFactoryQName");
 		try {
 			xMLTopicFactory.startElement("testXMLTopicFactoryNamespaceURI", "testXMLTopicFactoryLName", "testXMLTopicFactoryQName", null);
