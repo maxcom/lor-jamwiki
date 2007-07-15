@@ -19,6 +19,7 @@ package org.jamwiki.authentication;
 import java.util.Vector;
 import org.acegisecurity.providers.anonymous.AnonymousProcessingFilter;
 import org.acegisecurity.userdetails.memory.UserAttribute;
+import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
@@ -38,6 +39,10 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 	 */
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
+		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			// wiki is not yet setup
+			return;
+		}
 		UserAttribute user = this.getUserAttribute();
 		if (user == null) {
 			logger.warning("No user attribute available in JAMWikiAnonymousProcessingFilter.  Please verify the Acegi configuration settings.");

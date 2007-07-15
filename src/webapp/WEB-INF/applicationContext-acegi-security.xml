@@ -101,7 +101,7 @@
 
 	<bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
 		<property name="key" value="jam35Wiki" />
-		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
+		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS,ROLE_VIEW" />
 	</bean>
 
 	<bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
