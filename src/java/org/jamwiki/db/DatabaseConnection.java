@@ -330,12 +330,6 @@ public class DatabaseConnection {
 			if (StringUtils.hasText(driver)) {
 				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
 				if (url.startsWith("jdbc:")) {
-					if (!poolInitialized) {
-						setUpConnectionPool(url, user, password);
-					}
-					if (StringUtils.hasText(driver)) {
-						Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
-					}
 					conn = DriverManager.getConnection(url, user, password);
 				} else {
 					// FIXME - JDK 1.3 is not supported, so update this code
