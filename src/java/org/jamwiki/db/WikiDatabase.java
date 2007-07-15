@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Vector;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
@@ -178,9 +179,9 @@ public class WikiDatabase {
 			}
 			try {
 				WikiDatabase.setupDefaultVirtualWiki(conn);
-				WikiDatabase.setupGroups(conn);
-				WikiDatabase.setupRoles(conn);
 				WikiDatabase.setupAdminUser(user, conn);
+				WikiDatabase.setupRoles(conn);
+				WikiDatabase.setupGroups(conn);
 				WikiDatabase.setupSpecialPages(locale, user, conn);
 			} catch (Exception e) {
 				DatabaseConnection.handleErrors(conn);
@@ -246,11 +247,24 @@ public class WikiDatabase {
 		// FIXME - use message key
 		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
 		WikiBase.getDataHandler().writeWikiGroup(group, conn);
+		Collection anonymousRoles = new Vector();
+		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
+		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
+		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
+		anonymousRoles.add(Role.ROLE_VIEW.getAuthority());
+		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), anonymousRoles, conn);
 		group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_REGISTERED_USER);
 		// FIXME - use message key
 		group.setDescription("All logged in users are automatically assigned to the registered user group.");
 		WikiBase.getDataHandler().writeWikiGroup(group, conn);
+		Collection userRoles = new Vector();
+		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
+		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
+		userRoles.add(Role.ROLE_MOVE.getAuthority());
+		userRoles.add(Role.ROLE_UPLOAD.getAuthority());
+		userRoles.add(Role.ROLE_VIEW.getAuthority());
+		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), userRoles, conn);
 	}
 
 	/**
