@@ -20,11 +20,12 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
 import org.acegisecurity.userdetails.UserDetails;
+import org.jamwiki.WikiBase;
+import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * Provides an object representing Wiki-specific information about a user of
@@ -32,10 +33,8 @@ import org.springframework.util.Assert;
  */
 public class WikiUser implements UserDetails {
 
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
 	private static final long serialVersionUID = -2818435399240684581L;
-
-	private final GrantedAuthority ROLE_ADMIN = new GrantedAuthorityImpl("ROLE_ADMIN");
-	private final GrantedAuthority ROLE_USER = new GrantedAuthorityImpl("ROLE_USER");
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = "0.0.0.0";
@@ -57,10 +56,10 @@ public class WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-	public WikiUser() {
-		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
-		authoritiesSet.add(ROLE_USER);
-		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
+	public WikiUser(String username) throws Exception {
+		this.username = username;
+		this.addGroupRoles();
+		this.addUserRoles();
 	}
 
 	/**
@@ -85,12 +84,11 @@ public class WikiUser implements UserDetails {
 	 *  <code>GrantedAuthority[]</code> array.
 	 */
 	public WikiUser(String username, String password, boolean enabled, boolean accountNonExpired,
-		boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities)
-		throws IllegalArgumentException {
-		if (((username == null) || "".equals(username)) || (password == null)) {
+			boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities)
+			throws IllegalArgumentException {
+		if (!StringUtils.hasText(username) || password == null) {
 			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
 		}
-
 		this.username = username;
 		this.password = password;
 //		this.enabled = enabled;
@@ -100,29 +98,27 @@ public class WikiUser implements UserDetails {
 		if (authorities == null) {
 			authorities = new GrantedAuthority[0];
 		}
-		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
-		if (!authoritiesSet.contains(ROLE_USER)) {
-			authoritiesSet.add(ROLE_USER);
-		}
-		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
+		this.addRoles(authorities);
+		this.addGroupRoles();
+		this.addUserRoles();
 	}
 
 	/**
 	 *
 	 */
 	public boolean getAdmin() {
-		return Arrays.asList(authorities).contains(ROLE_ADMIN);
+		return Arrays.asList(authorities).contains(Role.ROLE_ADMIN);
 	}
 
 	/**
-	 *
+	 * @deprecated Assign ROLE_ADMIN in the database instead.
 	 */
 	public void setAdmin(boolean admin) {
 		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
 		if (admin) {
-			authoritiesSet.add(ROLE_ADMIN);
+			authoritiesSet.add(Role.ROLE_ADMIN);
 		} else {
-			authoritiesSet.remove(ROLE_ADMIN);
+			authoritiesSet.remove(Role.ROLE_ADMIN);
 		}
 		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
 	}
@@ -239,8 +235,7 @@ public class WikiUser implements UserDetails {
 	protected void setAuthorities(GrantedAuthority[] authorities) {
 		Assert.notNull(authorities, "Cannot pass a null GrantedAuthority array");
 		for (int i = 0; i < authorities.length; i++) {
-			Assert.notNull(authorities[i],
-				"Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
+			Assert.notNull(authorities[i], "Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
 		}
 		this.authorities = authorities;
 	}
@@ -264,13 +259,6 @@ public class WikiUser implements UserDetails {
 	 */
 	public String getUsername() {
 		return username;
-	}
-
-	/**
-	 *
-	 */
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	/**
@@ -303,5 +291,57 @@ public class WikiUser implements UserDetails {
 	public boolean isEnabled() {
 		// TODO Not yet implemented
 		return true;
+	}
+
+	/**
+	 *
+	 */
+	private void addRoles(GrantedAuthority[] roles) {
+		logger.info("RYAN: addRoles called with " + roles.length + " roles");
+		if (this.authorities == null) {
+			this.authorities = new GrantedAuthority[0];
+		}
+		Set authoritiesSet = new HashSet(Arrays.asList(this.authorities));
+		for (int i=0; i < roles.length; i++) {
+			if (!authoritiesSet.contains(roles[i])) {
+				logger.info("RYAN: adding role " + roles[i].getAuthority() + " for user " + this.username);
+				authoritiesSet.add(roles[i]);
+			}
+		}
+		this.setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
+	}
+
+	/**
+	 *
+	 */
+	private void addGroupRoles() {
+		Role[] groupRoles = new Role[0];
+		try {
+			groupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
+		} catch (Exception e) {
+			// FIXME - without default roles bad things happen, so should this throw the
+			// error to the calling method?
+			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
+		}
+		this.addRoles(groupRoles);
+	}
+
+	/**
+	 *
+	 */
+	private void addUserRoles() {
+		if (!StringUtils.hasText(this.username)) {
+			// FIXME - log error?  RegisterServlet will trigger this.
+			return;
+		}
+		Role[] userRoles = new Role[0];
+		try {
+			userRoles = WikiBase.getDataHandler().getRoleMapUser(this.username);
+		} catch (Exception e) {
+			// FIXME - without default roles bad things happen, so should this throw the
+			// error to the calling method?
+			logger.severe("Unable to retrieve default roles for " + username, e);
+		}
+		this.addRoles(userRoles);
 	}
 }

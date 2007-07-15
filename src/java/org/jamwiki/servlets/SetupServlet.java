@@ -115,8 +115,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private boolean initialize(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		setProperties(request, next);
-		WikiUser user = new WikiUser();
-		setAdminUser(request, user);
+		WikiUser user = setAdminUser(request);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			this.view(request, next, pageInfo);
@@ -164,12 +163,14 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void setAdminUser(HttpServletRequest request, WikiUser user) throws Exception {
-		user.setUsername(request.getParameter("username"));
+	private WikiUser setAdminUser(HttpServletRequest request) throws Exception {
+		String username = request.getParameter("username");
+		WikiUser user = new WikiUser(username);
 		user.setPassword(Encryption.encrypt(request.getParameter("newPassword")));
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
 		user.setAdmin(true);
+		return user;
 	}
 
 	/**
@@ -198,7 +199,6 @@ public class SetupServlet extends JAMWikiServlet {
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
 		if (!StringUtils.hasText(user.getUsername())) {
-			user.setUsername("");
 			errors.add(new WikiMessage("error.loginempty"));
 		}
 		String newPassword = request.getParameter("newPassword");

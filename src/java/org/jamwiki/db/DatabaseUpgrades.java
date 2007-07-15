@@ -60,9 +60,8 @@ public class DatabaseUpgrades {
 			WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 			stmt.setInt(1, userId);
 			rs = stmt.executeQuery();
-			WikiUser user = new WikiUser();
+			WikiUser user = new WikiUser(username);
 			user.setUserId(rs.getInt("wiki_user_id"));
-			user.setUsername(rs.getString("login"));
 			user.setDisplayName(rs.getString("display_name"));
 			user.setCreateDate(rs.getTimestamp("create_date"));
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));

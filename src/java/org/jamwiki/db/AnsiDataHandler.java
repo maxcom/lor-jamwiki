@@ -705,9 +705,9 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private WikiUser initWikiUser(WikiResultSet rs) {
 		try {
-			WikiUser user = new WikiUser();
+			String username = rs.getString("login");
+			WikiUser user = new WikiUser(username);
 			user.setUserId(rs.getInt("wiki_user_id"));
-			user.setUsername(rs.getString("login"));
 			user.setDisplayName(rs.getString("display_name"));
 			user.setCreateDate(rs.getTimestamp("create_date"));
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));

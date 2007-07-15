@@ -113,7 +113,8 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private WikiUser setWikiUser(HttpServletRequest request) throws Exception {
-		WikiUser user = new WikiUser();
+		String username = request.getParameter("login");
+		WikiUser user = new WikiUser(username);
 		String userIdString = request.getParameter("userId");
 		if (StringUtils.hasText(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
@@ -121,7 +122,6 @@ public class RegisterServlet extends JAMWikiServlet {
 				user = WikiBase.getDataHandler().lookupWikiUser(userId, null);
 			}
 		}
-		user.setUsername(request.getParameter("login"));
 		user.setDisplayName(request.getParameter("displayName"));
 		String newPassword = request.getParameter("newPassword");
 		if (StringUtils.hasText(newPassword)) {
@@ -202,7 +202,8 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = new WikiUser();
+		// FIXME - i suspect initializing with a null login is bad
+		WikiUser user = new WikiUser("");
 		WikiUserInfo userInfo = new WikiUserInfo();
 		if (Utilities.currentUser(request) != null) {
 			user = Utilities.currentUser(request);
