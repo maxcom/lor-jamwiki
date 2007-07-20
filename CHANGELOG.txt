@@ -22,6 +22,9 @@ Bugfixes:
   * Resolve a JNDI database connectivity issue (mnencia).
   * Fix an issue related to the SHA-512 algorithm that broke installations
     on JDK versions prior to 1.4.2.
+  * UNIX systems without X could crash on image resizing.  Modify error
+    handling to catch Throwable rather than Exception and log a message
+    explaining how to work around this particular issue.
 
 Translation Updates:
 

@@ -106,8 +106,8 @@ public abstract class AbstractLexer {
 	protected String parseToken(String raw, ParserTag parserTag) {
 		try {
 			return parserTag.parse(this.parserInput, this.parserDocument, this.mode, raw);
-		} catch (Exception e) {
-			logger.info("Unable to parse " + raw, e);
+		} catch (Throwable t) {
+			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
 	}

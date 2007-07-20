@@ -170,7 +170,13 @@ public class ImageUtil {
 		} else {
 			height = maxDimension;
 		}
-		Image resized = original.getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING);
+		Image resized = null;
+		try {
+			resized = original.getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING);
+		} catch (Throwable t) {
+			logger.severe("Unable to resize image.  This problem sometimes occurs due to dependencies between Java and X on UNIX systems.  Consider enabling an X server or setting the java.awt.headless parameter to true for your JVM.", t);
+			resized = original;
+		}
 		BufferedImage bufferedImage = null;
 		if (resized instanceof BufferedImage) {
 			bufferedImage = (BufferedImage)resized;

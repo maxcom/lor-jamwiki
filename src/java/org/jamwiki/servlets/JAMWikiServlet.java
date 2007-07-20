@@ -75,8 +75,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			if (this.layout) {
 				ServletUtil.loadDefaults(request, next, pageInfo);
 			}
-		} catch (Exception e) {
-			return ServletUtil.viewError(request, e);
+		} catch (Throwable t) {
+			return ServletUtil.viewError(request, t);
 		}
 		long execution = System.currentTimeMillis() - start;
 		if (execution > JAMWikiServlet.SLOW_PAGE_LIMIT) {
