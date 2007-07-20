@@ -168,9 +168,11 @@ public class LinkUtil {
 				html += "imgleft ";
 			} else if (align != null && align.equalsIgnoreCase("center")) {
 				html += "imgcenter ";
-			} else {
-				// default right alignment
+			} else if (align != null && align.equalsIgnoreCase("right")) {
 				html += "imgright ";
+			} else {
+				// default alignment
+				html += "image "; 
 			}
 			html = html.trim() + "\">";
 		}
