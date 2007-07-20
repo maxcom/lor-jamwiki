@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+ http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jamwiki</groupId>
+	<artifactId>jamwiki</artifactId>
+	<packaging>war</packaging>
+	<name>JAMWiki</name>
+	<version>0.6.0-SNAPSHOT</version>
+	<description>
+		JAMWiki is a Java-based Wiki engine, which offers many of the
+		features of MediaWiki.
+	</description>
+	<url>http://www.jamwiki.org</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.acegisecurity</groupId>
+			<artifactId>acegi-security</artifactId>
+			<version>1.0.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.3</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>1.3</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>1.3.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.7</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>2.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-highlighter</artifactId>
+			<version>2.2.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+			<version>2.0.8</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>rome</artifactId>
+			<version>0.9</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-dao</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-support</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>2.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.0.6</version>
+			<scope>compile</scope>
+		</dependency>
+
+
+		<!--  These packages are in /repository
+		-->
+		<dependency>
+			<groupId>bliki</groupId>
+			<artifactId>bliki</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.jamwiki</groupId>
+			<artifactId>javadiff</artifactId>
+			<version>1.0.5</version>
+			<scope>compile</scope>
+			</dependency>
+
+	</dependencies>
+	<developers>
+		<developer>
+			<id>wrh2</id>
+			<name>Ryan Holliday</name>
+			<!-- to be done by Ryan -->
+			<email>NONE</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<!-- to be done by Ryan -->
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<id>mikegremi</id>
+			<name>Michael Greifeneder</name>
+			<email>mikegr@gmx.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		
+	</developers>
+
+	<properties>
+		<jflex.dir>${basedir}/src/lex</jflex.dir>
+		<jflex.output>
+			${project.build.sourceDirectory}/org/jamwiki/parser/jflex
+		</jflex.output>
+	</properties>
+	<build>
+		<defaultGoal>package</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.4</source>
+					<target>1.4</target>
+					<encoding>ISO-8859-1</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+    		    <artifactId>maven-surefire-plugin</artifactId>
+        		<configuration>
+        		 	<includes>
+        		 		<include>org/jamwiki/test/JAMWikiTestSuite.java</include>
+        		 	</includes>
+	        	</configuration>
+    		</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>clean-flex</id>
+						<phase>clean</phase>
+						<configuration>
+							<tasks>
+								<delete>
+									<fileset dir="${basedir}/src/main/java/org/jamwiki/parser/jflex">
+										<include name="JAMWikiPreProcessor.java" />
+										<include name="JAMWikiProcessor.java" />
+										<include name="JAMWikiPostProcessor.java" />
+										<include name="JAMWikiSpliceProcessor.java" />
+									</fileset>
+								</delete>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>generate-flex</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<taskdef
+									classname="JFlex.anttask.JFlexTask" name="jflex"
+									description="Create lexers for default lex plugin">
+								</taskdef>
+								<jflex
+									file="${jflex.dir}/jamwiki-preprocessor.jflex"
+									destdir="${project.build.sourceDirectory}" />
+								<jflex
+									file="${jflex.dir}/jamwiki-processor.jflex"
+									destdir="${project.build.sourceDirectory}" />
+								<jflex
+									file="${jflex.dir}/jamwiki-postprocessor.jflex"
+									destdir="${project.build.sourceDirectory}" />
+								<jflex
+									file="${jflex.dir}/jamwiki-spliceprocessor.jflex"
+									destdir="${project.build.sourceDirectory}" />
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+		    	  <groupId>de.jflex</groupId>
+    			  <artifactId>jflex</artifactId>
+		    	  <version>1.4.1</version>
+			    </dependency>
+			    </dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+			</plugin>
+			
+    		 <plugin>
+    		 	<artifactId>maven-source-plugin</artifactId>
+    		 </plugin>
+    		 
+		</plugins>
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+		    	<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-project-info-reports-plugin</artifactId>
+		        <reportSets>
+                     <reportSet>
+                        <reports>
+                           <report>index</report>                           
+                           <report>dependencies</report>
+                           <report>project-team</report>
+                           <report>issue-tracking</report>
+                           <report>license</report>
+                           <report>scm</report>
+                           <report>summary</report>                           
+                        </reports>
+                     </reportSet>
+                  </reportSets>
+	        </plugin>
+			<plugin>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetjdk>1.4</targetjdk>
+					<rulesets>
+						<ruleset>/rulesets/basic.xml</ruleset>
+						<ruleset>/rulesets/controversial.xml</ruleset>
+						<ruleset>/rulesets/imports.xml</ruleset>
+
+						<ruleset>/rulesets/braces.xml</ruleset>
+						<ruleset>/rulesets/clone.xml</ruleset>
+						<ruleset>/rulesets/codesize.xml</ruleset>
+						<ruleset>/rulesets/design.xml</ruleset>
+						<ruleset>/rulesets/j2ee.xml</ruleset>
+						<ruleset>/rulesets/strings.xml</ruleset>
+						<ruleset>/rulesets/unusedcode.xml</ruleset>
+						<!--
+							FIXME:
+							- get the JSP tests working
+							- the naming rules for short & long variable names
+							produce too many false positives
+							- the optimization rules produce too many false
+							positivies for assignments prefixed with "this."
+							<ruleset>basic-jsp</ruleset>
+							<ruleset>naming</ruleset>
+							<ruleset>optimizations</ruleset>
+						-->
+					</rulesets>
+					<format>xml</format>
+					<linkXref>true</linkXref>
+					<!--  Is is different than utf-8 ??? -->
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<configuration>
+				<tags>
+				    <tag>TODO</tag>
+		            <tag>FIXME</tag>
+        		    <tag>@todo</tag>
+        		    <tag>@deprecated</tag>
+				</tags>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+			</plugin>
+			<plugin>
+	    	    <groupId>org.apache.maven.plugins</groupId>
+    	    	<artifactId>maven-jxr-plugin</artifactId>
+	      	</plugin>
+		    <plugin>
+		       	<groupId>org.apache.maven.plugins</groupId>
+		      	<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<encoding>ISO-8859-1</encoding>
+				</configuration>
+		    </plugin>			
+			
+		</plugins>
+	</reporting>
+</project>
+<!--
+	mvn install:install-file –Dfile=lib/bliki.jar –DgroupId=bliki –DartifactId=bliki –Dversion=1.0-SNAPSHOT
+	mvn install:install-file –Dfile=lib/javadiff-1.0.5.jar –DgroupId=javadiff –DartifactId=javadiff –Dversion=1.0.5
+	mvn install:install-file –Dfile=lib/jflex-1.4.1.jar –DgroupId=jflex –DartifactId=jflex –Dversion=1.4.1
+-->
+<!-- For adding a local repository to SVN, instead of installing bliki.jar in local repository
+   <repository>
+      <id>provided.local</id>
+      <name>Locally Provided Repository</name>
+      <url>file:${project.basedir}/repository</url>
+      ...
+    </repository>
+-->

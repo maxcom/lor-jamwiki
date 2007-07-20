@@ -1,0 +1,9 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jamwiki</groupId>
+	<artifactId>javadiff</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.5</version>
+	<name>Javadiff Project</name>
+	<url>http://www.jamwiki.org</url>
+</project>
