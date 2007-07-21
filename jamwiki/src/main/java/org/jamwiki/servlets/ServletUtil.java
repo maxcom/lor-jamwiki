@@ -393,23 +393,23 @@ public class ServletUtil {
 	 * Utility method used when redirecting to an error page.
 	 *
 	 * @param request The servlet request object.
-	 * @param e The exception that is the source of the error.
+	 * @param t The exception that is the source of the error.
 	 * @return Returns a ModelAndView object corresponding to the error page display.
 	 */
-	protected static ModelAndView viewError(HttpServletRequest request, Exception e) {
-		if (!(e instanceof WikiException)) {
-			logger.severe("Servlet error", e);
+	protected static ModelAndView viewError(HttpServletRequest request, Throwable t) {
+		if (!(t instanceof WikiException)) {
+			logger.severe("Servlet error", t);
 		}
 		ModelAndView next = new ModelAndView("wiki");
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		pageInfo.setPageTitle(new WikiMessage("error.title"));
 		pageInfo.setContentJsp(JSP_ERROR);
 		pageInfo.setSpecial(true);
-		if (e instanceof WikiException) {
-			WikiException we = (WikiException)e;
+		if (t instanceof WikiException) {
+			WikiException we = (WikiException)t;
 			next.addObject("messageObject", we.getWikiMessage());
 		} else {
-			next.addObject("messageObject", new WikiMessage("error.unknown", e.toString()));
+			next.addObject("messageObject", new WikiMessage("error.unknown", t.toString()));
 		}
 		try {
 			ServletUtil.loadDefaults(request, next, pageInfo);
