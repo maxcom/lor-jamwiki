@@ -3,7 +3,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
 	<repositories>
