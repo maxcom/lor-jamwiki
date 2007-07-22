@@ -31,6 +31,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -211,7 +212,7 @@ public class ServletUtil {
 			// new topic, edit away...
 			return true;
 		}
-		if (topic.getAdminOnly() && (user == null || !user.getAdmin())) {
+		if (topic.getAdminOnly() && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
 			return false;
 		}
 		if (topic.getReadOnly()) {
@@ -231,7 +232,7 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 */
 	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUser user) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && (user == null || !user.getAdmin())) {
+		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
 			// non-admins not allowed to move pages
 			return false;
 		}
@@ -243,7 +244,7 @@ public class ServletUtil {
 		if (topic.getReadOnly()) {
 			return false;
 		}
-		if (topic.getAdminOnly() && (user == null || !user.getAdmin())) {
+		if (topic.getAdminOnly() && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
 			return false;
 		}
 		return true;
@@ -326,7 +327,7 @@ public class ServletUtil {
 			next.addObject(PARAMETER_USER, user);
 			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
 			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
-			next.addObject("adminUser", new Boolean(user.getAdmin()));
+			next.addObject("adminUser", new Boolean(user.hasRole(Role.ROLE_ADMIN)));
 		}
 		if (StringUtils.hasText(pageInfo.getTopicName())) {
 			String article = Utilities.extractTopicLink(pageInfo.getTopicName());

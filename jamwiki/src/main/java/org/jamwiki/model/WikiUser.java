@@ -106,13 +106,6 @@ public class WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-	public boolean getAdmin() {
-		return Arrays.asList(authorities).contains(Role.ROLE_ADMIN);
-	}
-
-	/**
-	 *
-	 */
 	public Timestamp getCreateDate() {
 		return this.createDate;
 	}
@@ -328,5 +321,22 @@ public class WikiUser implements UserDetails {
 			logger.severe("Unable to retrieve default roles for " + username, e);
 		}
 		this.addRoles(userRoles);
+	}
+
+	/**
+	 * Convenience method for determining if a user has been assigned a role
+	 * without the need to examine an array of Role objects.
+	 *
+	 * @param role If the user has been assigned this role then the method will
+	 *  return <code>true</code>.
+	 * @return <code>true</code> if the user has been assigned the specified
+	 *  role, <code>false</code> otherwise.
+	 */
+	public boolean hasRole(Role role) {
+		if (this.authorities == null) {
+			logger.warning("No roles assigned for user " + this.username);
+			return false;
+		}
+		return Arrays.asList(authorities).contains(role);
 	}
 }

@@ -681,7 +681,7 @@ public class Utilities {
 	 */
 	public static boolean isAdmin(HttpServletRequest request) throws Exception {
 		WikiUser user = currentUser(request);
-		return (user != null && user.getAdmin());
+		return (user != null && user.hasRole(Role.ROLE_ADMIN));
 	}
 
 	/**
