@@ -20,6 +20,21 @@
 	</description>
 	<url>http://www.jamwiki.org</url>
 
+	<repositories>
+		<repository>
+			<id>.org.jamwiki</id>
+			<name>Maven Repository for Jamwiki</name>
+			<layout>default</layout>
+			<url>file:///${basedir}/repository</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.acegisecurity</groupId>
