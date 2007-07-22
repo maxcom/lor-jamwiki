@@ -27,9 +27,10 @@
 		</license>
 	</licenses>
 
-	
+	<!-- TODO: split parent (inheritance of properties) 
+	from agregator (multiple modules called from one agregator project)-->	
 	<modules>
-		<module>jamwiki</module>
-		<module>javadiff</module>
+		<module>../jamwiki</module>
+		<module>../javadiff</module>
 	</modules>
 </project>
