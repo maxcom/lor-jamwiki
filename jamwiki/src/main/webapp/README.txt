@@ -177,70 +177,19 @@ The JAMWiki source is available from the Subversion source repository on
 Sourceforge.net.  To check out the code, first install Subversion and then
 execute the following command:
 
-  svn co https://svn.sourceforge.net/svnroot/jamwiki/trunk jamwiki
+  svn co https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk jamwiki
 
 This command will copy the current development code (the "trunk") into a local
 directory named "jamwiki".
 
-The software can be built from the ANT build script provided.  To build the
-software, install ANT (http://ant.apache.org/) and a JDK version 1.4 or later.
-Once ANT and the JDK are properly installed, run the following commands:
+The software can be built from the Maven build script provided.  To build the
+software, install Maven (http://maven.apache.org/) and a JDK version 1.4 or
+later.  Once Maven and the JDK are properly installed, run the following
+commands:
 
-  cd trunk
-  ant war
+  cd trunk/jamwiki
+  mvn package
 
 The software should build, and when complete a jamwiki-x.x.x.war file will be
-located in the trunk/build directory.  Consult your web application server's
-documentation for instructions on how to install this file.
-
-
-SOURCE REPOSITORY LAYOUT
-========================
-
-The source code repository is organized as follows:
-
-jamwiki (the root)
-   |- lib
-   |- src
-   |   |- java
-   |   |    |- org
-   |   |        |- jamwiki
-   |   |- lex
-   |   |    |- alt
-   |   |- lib
-   |   |- resources
-   |   |- webapp
-   |        |- WEB-INF
-   |             |- jsp
-   |- build (generated during build)
-
-
-* jamwiki (root)
-
-  This directory contains the Ant build files and this file.
-
-* jamwiki/lib
-
-  This directory contains all the libraries needed for JAMWiki.
-
-* jamwiki/src/java
-
-  Contains all java files belonging to the project. The project files are
-  tucked into a package structure org.jamwiki.*
-    
-* jamwiki/src/lex
-
-  Contains the parser source files from which the lexer (for example JFlex)
-  will generate the java source code for later use in compilation and
-  building. The lex directory only contains the default parser. The "alt"
-  subdirectory contains any alternative parsers distributed with the project.
-
-* jamwiki/src/lib
-
-  Contains all the libraries that should be packaged into the final WAR file.
-  These libraries CAN be used in the build process.
-
-* jamwiki/src/webapp
-
-  All the web application files are located in here conforming to the Maven
-  idea.
+located in the trunk/jamwiki/target/ directory.  Consult your web application
+server's documentation for instructions on how to install this file.
