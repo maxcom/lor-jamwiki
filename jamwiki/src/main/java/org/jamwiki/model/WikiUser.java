@@ -111,19 +111,6 @@ public class WikiUser implements UserDetails {
 	}
 
 	/**
-	 * @deprecated Assign ROLE_ADMIN in the database instead.
-	 */
-	public void setAdmin(boolean admin) {
-		Set authoritiesSet = new HashSet(Arrays.asList(authorities));
-		if (admin) {
-			authoritiesSet.add(Role.ROLE_ADMIN);
-		} else {
-			authoritiesSet.remove(Role.ROLE_ADMIN);
-		}
-		setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
-	}
-
-	/**
 	 *
 	 */
 	public Timestamp getCreateDate() {

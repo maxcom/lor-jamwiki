@@ -713,7 +713,6 @@ public class AnsiDataHandler implements DataHandler {
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
 			user.setCreateIpAddress(rs.getString("create_ip_address"));
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-			user.setAdmin(rs.getInt("is_admin") != 0);
 			user.setPassword(rs.getString("remember_key"));
 			user.setDefaultLocale(rs.getString("default_locale"));
 			return user;

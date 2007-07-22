@@ -179,9 +179,9 @@ public class WikiDatabase {
 			}
 			try {
 				WikiDatabase.setupDefaultVirtualWiki(conn);
-				WikiDatabase.setupAdminUser(user, conn);
 				WikiDatabase.setupRoles(conn);
 				WikiDatabase.setupGroups(conn);
+				WikiDatabase.setupAdminUser(user, conn);
 				WikiDatabase.setupSpecialPages(locale, user, conn);
 			} catch (Exception e) {
 				DatabaseConnection.handleErrors(conn);
@@ -210,6 +210,11 @@ public class WikiDatabase {
 			userInfo.setUserId(user.getUserId());
 		}
 		WikiBase.getDataHandler().writeWikiUser(user, userInfo, conn);
+		Vector roles = new Vector();
+		roles.add(Role.ROLE_ADMIN.getAuthority());
+		roles.add(Role.ROLE_DELETE.getAuthority());
+		roles.add(Role.ROLE_TRANSLATE.getAuthority());
+		WikiBase.getDataHandler().writeRoleMapUser(user.getUserId(), roles, conn);
 	}
 
 	/**

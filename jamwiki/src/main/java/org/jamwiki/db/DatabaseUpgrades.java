@@ -45,7 +45,7 @@ public class DatabaseUpgrades {
 	public static WikiUser getWikiUser(String username) throws Exception {
 		// prior to JAMWiki 0.5.0 the remember_key column did not exist.  once
 		// the ability to upgrade to JAMWiki 0.5.0 is removed this code can be
-		// replaced with the method (below) that has been commented out
+		// replaced with the method (below) that has been commented out.
 //		user = WikiBase.getDataHandler().lookupWikiUser(username, password, false);
 		Connection conn = null;
 		try {
@@ -67,7 +67,6 @@ public class DatabaseUpgrades {
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
 			user.setCreateIpAddress(rs.getString("create_ip_address"));
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-			user.setAdmin(rs.getInt("is_admin") != 0);
 			return user;
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
@@ -191,6 +190,29 @@ public class DatabaseUpgrades {
 			// setup basic groups
 			WikiDatabase.setupGroups(conn);
 			messages.add("Added basic wiki groups.");
+			// convert old-style admins to new
+			String sql = null;
+			sql = "insert into jam_role_map ( "
+			    + "  role_name, wiki_user_id "
+			    + ") "
+			    + "select 'ROLE_ADMIN', wiki_user_id "
+			    + "from jam_wiki_user where is_admin = 1 ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "insert into jam_role_map ( "
+			    + "  role_name, wiki_user_id "
+			    + ") "
+			    + "select 'ROLE_TRANSLATE', wiki_user_id "
+			    + "from jam_wiki_user where is_admin = 1 ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "insert into jam_role_map ( "
+			    + "  role_name, wiki_user_id "
+			    + ") "
+			    + "select 'ROLE_DELETE', wiki_user_id "
+			    + "from jam_wiki_user where is_admin = 1 ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "alter table jam_wiki_user drop column is_admin ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Converted admin users to new role structure.");
 			conn.commit();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

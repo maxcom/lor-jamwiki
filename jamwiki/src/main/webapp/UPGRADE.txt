@@ -83,7 +83,7 @@ followed by 0.5.3.
                    role_name VARCHAR(30) NOT NULL,
                    wiki_user_id INTEGER,
                    group_id INTEGER,
-                   CONSTRAINT jam_pk_role_map PRIMARY KEY
+                   CONSTRAINT jam_unique_role_map UNIQUE
                         (role_name, wiki_user_id, group_id),
                    CONSTRAINT jam_fk_role_map_role FOREIGN KEY
                         (role_name) REFERENCES jam_role(role_name),
@@ -93,10 +93,8 @@ followed by 0.5.3.
                         (group_id) REFERENCES jam_group(group_id)
               );
        d) Add the basic groups:
-              INSERT into jam_group (group_id, group_name)
-                   values (1, 'ANONYMOUS_USERS');
-              INSERT into jam_group (group_id, group_name)
-                   values (2, 'LOGGED_IN_USERS');
+              INSERT into jam_group (group_id, group_name) values (1, 'ANONYMOUS_USERS');
+              INSERT into jam_group (group_id, group_name) values (2, 'LOGGED_IN_USERS');
        e) Add the basic roles:
               INSERT into jam_role (role_name) values ('ROLE_ADMIN');
               INSERT into jam_role (role_name) values ('ROLE_ADMIN_MANAGE');
@@ -106,6 +104,27 @@ followed by 0.5.3.
               INSERT into jam_role (role_name) values ('ROLE_TRANSLATE');
               INSERT into jam_role (role_name) values ('ROLE_UPLOAD');
               INSERT into jam_role (role_name) values ('ROLE_VIEW');
+       f) Add the default role mappings:
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_EDIT_EXISTING', 1);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_EDIT_NEW', 1);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_UPLOAD', 1);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_VIEW', 1);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_EDIT_EXISTING', 2);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_EDIT_NEW', 2);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_MOVE', 2);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_UPLOAD', 2);
+              INSERT into jam_role_map (role_name, group_id) values ('ROLE_VIEW', 2);
+       g) Convert admins to the new role structure:
+              INSERT into jam_role_map (role_name, wiki_user_id)
+                   select 'ROLE_ADMIN', wiki_user_id
+                   from jam_wiki_user where is_admin = 1;
+              INSERT into jam_role_map (role_name, wiki_user_id)
+                   select 'ROLE_DELETE', wiki_user_id
+                   from jam_wiki_user where is_admin = 1;
+              INSERT into jam_role_map (role_name, wiki_user_id)
+                   select 'ROLE_TRANSLATE', wiki_user_id
+                   from jam_wiki_user where is_admin = 1;
+              ALTER TABLE jam_wiki_user DROP COLUMN is_admin;
 
 
   JAMWiki 0.5.4

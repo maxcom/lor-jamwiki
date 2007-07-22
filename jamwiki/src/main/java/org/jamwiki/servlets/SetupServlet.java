@@ -169,7 +169,6 @@ public class SetupServlet extends JAMWikiServlet {
 		user.setPassword(Encryption.encrypt(request.getParameter("newPassword")));
 		user.setCreateIpAddress(request.getRemoteAddr());
 		user.setLastLoginIpAddress(request.getRemoteAddr());
-		user.setAdmin(true);
 		return user;
 	}
 
