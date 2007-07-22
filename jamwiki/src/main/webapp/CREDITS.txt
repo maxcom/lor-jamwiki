@@ -8,6 +8,8 @@ JAMWiki Contributors
 
   Developers:               Ryan Holliday (wrh2)
                             Scott Croco (scroco)
+                            Régis Décamps (RegisDecamps)
+                            Michael Greifeneder (mikegr)
                             Axel Kramer (axelclk)
                             Robert Matyja (dlpa)
                             Rainer Schmitz (swift)
