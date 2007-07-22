@@ -218,7 +218,10 @@
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
-
+		<!--  These dependencies are related project.
+		They need to be "mvn install"ed 
+		before being able to compile JAMwiki. 
+		-->
 		<dependency>
 			<groupId>org.jamwiki</groupId>
 			<artifactId>javadiff</artifactId>
