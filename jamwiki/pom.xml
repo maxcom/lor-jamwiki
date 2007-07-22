@@ -23,6 +23,7 @@
 
 	<repositories>
 		<repository>
+			<!--  jamwiki custom repository allow to provide repositories locally -->
 			<id>.org.jamwiki</id>
 			<name>Maven Repository for Jamwiki</name>
 			<layout>default</layout>
@@ -47,60 +48,51 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.3</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
 			<version>1.2.2</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.3.1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>1.1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
 			<version>1.3</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 			<version>1.3.0</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.7</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.0</version>
-			<scope>compile</scope>
 		</dependency>
 
 
@@ -108,7 +100,6 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.0.6</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -122,35 +113,33 @@
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>2.2.0</version>
-			<scope>compile</scope>
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-highlighter</artifactId>
 			<version>2.2.0</version>
-			<scope>compile</scope>
+
 		</dependency>
 
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
 			<version>2.0.8</version>
-			<scope>compile</scope>
+
 		</dependency>
 
 		<dependency>
 			<groupId>rome</groupId>
 			<artifactId>rome</artifactId>
 			<version>0.9</version>
-			<scope>compile</scope>
 		</dependency>
 
 
@@ -172,49 +161,45 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-dao</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
+
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-support</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>2.0.6</version>
-			<scope>compile</scope>
 		</dependency>
 
 
@@ -222,7 +207,6 @@
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
 			<version>1.0.6</version>
-			<scope>compile</scope>
 		</dependency>
 
 
@@ -232,16 +216,14 @@
 			<groupId>bliki</groupId>
 			<artifactId>bliki</artifactId>
 			<version>1.0-SNAPSHOT</version>
-			<scope>compile</scope>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>org.jamwiki</groupId>
 			<artifactId>javadiff</artifactId>
 			<version>1.0.5</version>
-			<scope>compile</scope>
-			</dependency>
+		</dependency>
 
 	</dependencies>
 	<developers>
@@ -265,7 +247,6 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
-		
 	</developers>
 
 	<properties>
@@ -452,16 +433,3 @@
 		</plugins>
 	</reporting>
 </project>
-<!--
-	mvn install:install-file –Dfile=lib/bliki.jar –DgroupId=bliki –DartifactId=bliki –Dversion=1.0-SNAPSHOT
-	mvn install:install-file –Dfile=lib/javadiff-1.0.5.jar –DgroupId=javadiff –DartifactId=javadiff –Dversion=1.0.5
-	mvn install:install-file –Dfile=lib/jflex-1.4.1.jar –DgroupId=jflex –DartifactId=jflex –Dversion=1.4.1
--->
-<!-- For adding a local repository to SVN, instead of installing bliki.jar in local repository
-   <repository>
-      <id>provided.local</id>
-      <name>Locally Provided Repository</name>
-      <url>file:${project.basedir}/repository</url>
-      ...
-    </repository>
--->
