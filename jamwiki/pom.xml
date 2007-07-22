@@ -227,17 +227,40 @@
 
 	</dependencies>
 	<developers>
+		<!--  
+		See http://www.ohloh.net/projects/6482/analyses/latest/contributors
+		 -->
 		<developer>
 			<id>wrh2</id>
 			<name>Ryan Holliday</name>
-			<!-- to be done by Ryan -->
-			<email>NONE</email>
+			<email>wrh2 at users.sf.net</email>
 			<roles>
+				<role>architect</role>
+				<role>project leader</role>
 				<role>developer</role>
 			</roles>
 			<!-- to be done by Ryan -->
 			<timezone>-5</timezone>
 		</developer>
+		
+		<developer>
+			<id>rainers</id>
+			<name>Rainer Schmitz</name>
+			<email>rainers at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		
+		<developer>
+			<id>dlpa</id>
+			<name>dlpa</name>
+			<email>dlap at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>		
+		
 		<developer>
 			<id>mikegremi</id>
 			<name>Michael Greifeneder</name>
@@ -247,6 +270,34 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
+				
+		<developer>
+			<id>axelcl</id>
+			<name>Axel C. Kramer</name>
+			<email>axelcl at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		
+		<developer>
+			<id>ncsaba</id>
+			<name>Csaba Nagy</name>
+			<email>ncsaba at users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		
+		<developer>
+			<id>decamps</id>
+			<name>Régis Décamps</name>
+			<email>decamps@users.sf.net</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>		
 	</developers>
 
 	<properties>
