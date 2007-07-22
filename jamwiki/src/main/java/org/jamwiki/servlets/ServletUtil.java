@@ -232,7 +232,7 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 */
 	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUser user) throws Exception {
-		if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE) && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
+		if (user == null || !user.hasRole(Role.ROLE_MOVE)) {
 			// non-admins not allowed to move pages
 			return false;
 		}

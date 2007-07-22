@@ -104,11 +104,6 @@ function onRSS() {
 	<td class="formelement"><jamwiki:text name="${PROP_BASE_LOGO_IMAGE}" value="${props[PROP_BASE_LOGO_IMAGE]}" size="30" id="${PROP_BASE_LOGO_IMAGE}" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %>"><f:message key="admin.caption.nonadminmove" /></label></td>
-	<c:set var="PROP_TOPIC_NON_ADMIN_TOPIC_MOVE"><%= Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_NON_ADMIN_TOPIC_MOVE}" value="true" checked="${props[PROP_TOPIC_NON_ADMIN_TOPIC_MOVE]}" id="${PROP_TOPIC_NON_ADMIN_TOPIC_MOVE}" /></td>
-</tr>
-<tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>"><f:message key="admin.caption.forceusername" /></label></td>
 	<c:set var="PROP_TOPIC_FORCE_USERNAME"><%= Environment.PROP_TOPIC_FORCE_USERNAME %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_FORCE_USERNAME}" value="true" checked="${props[PROP_TOPIC_FORCE_USERNAME]}" id="${PROP_TOPIC_FORCE_USERNAME}" /></td>
