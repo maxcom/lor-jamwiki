@@ -780,30 +780,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Login the current user.  Used when the should be logged in
-	 * automatically, e.g. after registration.
-	 *
-	 * @param request The servlet request object.
-	 * @param user The WikiUser being logged in.
-	 */
-	public static void login(HttpServletRequest request, WikiUser user) throws Exception {
-		if (user == null) {
-			return;
-		}
-		GrantedAuthority[] grantedAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), grantedAuthorities);
-		authentication.setDetails(new WebAuthenticationDetails(request));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Watchlist watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
-		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
-		if (StringUtils.hasText(user.getDefaultLocale())) {
-			Locale locale = Utilities.buildLocale(user.getDefaultLocale());
-			request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
-		}
-	}
-
-	/**
 	 * Using the system parser, parse system content.
 	 *
 	 * @param parserInput A ParserInput object that contains parser

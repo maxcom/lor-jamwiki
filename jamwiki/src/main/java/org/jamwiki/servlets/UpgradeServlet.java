@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -167,10 +168,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// do not escape the HTML link
 			wm.setParamsWithoutEscaping(new String[]{htmlLink});
 			next.addObject("message", wm);
-			// re-login now that everything is up-to-date
-			WikiUser user = Utilities.currentUser(request);
-			// FIXME - What's that for? If Utilities.currentUser returns a user, he is logged. If not, no login is possible.
-			Utilities.login(request, user);
+			// force logout to ensure current user will be re-validated.  this is
+			// necessary because the upgrade may have changed underlying data structures.
+			SecurityContextHolder.clearContext();
 		} else {
 			next.addObject("error", new WikiMessage("upgrade.caption.upgradefailed"));
 			next.addObject("failure", "true");

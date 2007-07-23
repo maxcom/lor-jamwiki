@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -102,7 +103,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-			Utilities.login(request, user);
+			// force logout to ensure current user will be re-validated.  this is
+			// necessary because the install may have changed underlying data structures.
+			SecurityContextHolder.clearContext();
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();
 			ServletUtil.redirect(next, virtualWikiName, topic);

@@ -226,10 +226,6 @@
 				/**/Special:Translation=ROLE_TRANSLATE
 				/**/Special:Upload=ROLE_UPLOAD
 				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER
-				/**/*.css=ROLE_ANONYMOUS,ROLE_USER
-				/**/*.jpg=ROLE_ANONYMOUS,ROLE_USER
-				/**/*.gif=ROLE_ANONYMOUS,ROLE_USER
-				/**/*.png=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_VIEW
 			</value>
 		</property>
