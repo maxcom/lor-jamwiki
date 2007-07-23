@@ -42,9 +42,16 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAuthenticationProcessingFilter.class.getName());
 
 	/**
-	 * FIXME - override the parent method to determine if processing should
-	 * occur.  Needed due to the fact that different virtual wikis may be
-	 * used.
+	 * Indicates whether this filter should attempt to process a login request
+	 * for the current invocation.
+	 *
+	 * It strips any parameters from the "path" section of the request URL
+	 * (such as the jsessionid parameter in
+	 * http://host/myapp/index.html;jsessionid=blah) before matching against
+	 * the filterProcessesUrl property.
+	 *
+	 * FIXME - This method is needed due to the fact that different virtual
+	 * wikis may be used.
 	 */
 	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		String uri = request.getRequestURI();

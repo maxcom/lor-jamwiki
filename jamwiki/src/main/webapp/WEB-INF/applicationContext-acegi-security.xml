@@ -222,10 +222,14 @@
 				/**/Special:Manage=ROLE_ADMIN
 				/**/Special:Move=ROLE_MOVE
 				/**/Special:Roles=ROLE_ADMIN
-				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_VIEW
+				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_USER
 				/**/Special:Translation=ROLE_TRANSLATE
 				/**/Special:Upload=ROLE_UPLOAD
-				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_VIEW
+				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER
+				/**/*.css=ROLE_ANONYMOUS,ROLE_USER
+				/**/*.jpg=ROLE_ANONYMOUS,ROLE_USER
+				/**/*.gif=ROLE_ANONYMOUS,ROLE_USER
+				/**/*.png=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_VIEW
 			</value>
 		</property>

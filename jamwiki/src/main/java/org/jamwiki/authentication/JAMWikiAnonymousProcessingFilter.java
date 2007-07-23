@@ -23,6 +23,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -39,9 +40,13 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 	 */
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
-		if (!Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
-			// wiki is not yet setup
-			return;
+		try {
+			if (Utilities.isFirstUse() || Utilities.isUpgrade()) {
+				// wiki is not yet setup
+				return;
+			}
+		} catch (Exception e) {
+			logger.info("Failure while determining first use / upgrade status of the wiki", e);
 		}
 		UserAttribute user = this.getUserAttribute();
 		if (user == null) {

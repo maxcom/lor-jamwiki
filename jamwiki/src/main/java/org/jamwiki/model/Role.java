@@ -29,12 +29,16 @@ public class Role extends GrantedAuthorityImpl {
 	private String description = null;
 
 	public static final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
+	/** ROLE_ANONYMOUS is not store in the database but is instead automatically assigned to all non-logged in users. */
+	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
 	public static final Role ROLE_DELETE = new Role("ROLE_DELETE");
 	public static final Role ROLE_EDIT_EXISTING = new Role("ROLE_EDIT_EXISTING");
 	public static final Role ROLE_EDIT_NEW = new Role("ROLE_EDIT_NEW");
 	public static final Role ROLE_MOVE = new Role("ROLE_MOVE");
 	public static final Role ROLE_TRANSLATE = new Role("ROLE_TRANSLATE");
 	public static final Role ROLE_UPLOAD = new Role("ROLE_UPLOAD");
+	/** ROLE_USER is not store in the database but is instead automatically assigned to all logged in users. */
+	public static final Role ROLE_USER = new Role("ROLE_USER");
 	public static final Role ROLE_VIEW = new Role("ROLE_VIEW");
 
 	/**

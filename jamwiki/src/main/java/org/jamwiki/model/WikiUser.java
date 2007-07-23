@@ -23,6 +23,7 @@ import java.util.Set;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.userdetails.UserDetails;
 import org.jamwiki.WikiBase;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -50,7 +51,7 @@ public class WikiUser implements UserDetails {
 	 * (roles). A logged user always has ROLE_USER and may have other roles,
 	 * e.g. ROLE_ADMIN.
 	 */
-	private GrantedAuthority[] authorities = new GrantedAuthority[0];
+	private GrantedAuthority[] authorities = {Role.ROLE_USER};
 	private String password = null;
 
 	/**
@@ -58,6 +59,9 @@ public class WikiUser implements UserDetails {
 	 */
 	public WikiUser(String username) throws Exception {
 		this.username = username;
+		if (Utilities.isFirstUse() || Utilities.isUpgrade()) {
+			return;
+		}
 		this.addGroupRoles();
 		this.addUserRoles();
 	}
