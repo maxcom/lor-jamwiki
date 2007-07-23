@@ -425,28 +425,7 @@
 				<configuration>
 					<targetjdk>1.4</targetjdk>
 					<rulesets>
-						<ruleset>/rulesets/basic.xml</ruleset>
-						<ruleset>/rulesets/controversial.xml</ruleset>
-						<ruleset>/rulesets/imports.xml</ruleset>
-
-						<ruleset>/rulesets/braces.xml</ruleset>
-						<ruleset>/rulesets/clone.xml</ruleset>
-						<ruleset>/rulesets/codesize.xml</ruleset>
-						<ruleset>/rulesets/design.xml</ruleset>
-						<ruleset>/rulesets/j2ee.xml</ruleset>
-						<ruleset>/rulesets/strings.xml</ruleset>
-						<ruleset>/rulesets/unusedcode.xml</ruleset>
-						<!--
-							FIXME:
-							- get the JSP tests working
-							- the naming rules for short & long variable names
-							produce too many false positives
-							- the optimization rules produce too many false
-							positivies for assignments prefixed with "this."
-							<ruleset>basic-jsp</ruleset>
-							<ruleset>naming</ruleset>
-							<ruleset>optimizations</ruleset>
-						-->
+						<ruleset>${basedir}/pmd.xml</ruleset>
 					</rulesets>
 					<format>xml</format>
 					<linkXref>true</linkXref>
