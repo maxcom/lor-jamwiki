@@ -78,20 +78,6 @@ public class UtilitiesTest extends TestCase {
 		assertEquals(expected, result);
 	}
 
-
-        /**
-         * Exceptions are catched by JUnit and cause test case to fail.
-         */
-	private String getStringFromFile(String filename,String encoding) throws IOException, UnsupportedEncodingException {
-		filename="org/jamwiki/test/utils/"+filename;
-		ClassLoader classLoader=this.getClass().getClassLoader();
-		InputStream r = classLoader.getResourceAsStream(filename);
-		assertNotNull("Test resource not found "+filename,r);
-		BufferedReader bufferReader;
-		bufferReader = new BufferedReader(new InputStreamReader(r,encoding));
-		return bufferReader.readLine();
-	}
-
 	/**
 	 *
 	 */
