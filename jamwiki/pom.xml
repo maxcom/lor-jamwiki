@@ -267,9 +267,9 @@
 
 	<properties>
 		<jflex.dir>${basedir}/src/lex</jflex.dir>
-		<jflex.output>
-			${project.build.sourceDirectory}/org/jamwiki/parser/jflex
-		</jflex.output>
+		<jflex.output.directory>
+			${basedir}/target/generated-sources/jflex/
+		</jflex.output.directory>
 	</properties>
 	<build>
 		<defaultGoal>package</defaultGoal>
@@ -296,25 +296,6 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>clean-flex</id>
-						<phase>clean</phase>
-						<configuration>
-							<tasks>
-								<delete>
-									<fileset dir="${basedir}/src/main/java/org/jamwiki/parser/jflex">
-										<include name="JAMWikiPreProcessor.java" />
-										<include name="JAMWikiProcessor.java" />
-										<include name="JAMWikiPostProcessor.java" />
-										<include name="JAMWikiSpliceProcessor.java" />
-									</fileset>
-								</delete>
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>generate-flex</id>
 						<phase>generate-sources</phase>
 						<configuration>
@@ -325,16 +306,16 @@
 								</taskdef>
 								<jflex
 									file="${jflex.dir}/jamwiki-preprocessor.jflex"
-									destdir="${project.build.sourceDirectory}" />
+									destdir="${project.jflex.output.directory}" />
 								<jflex
 									file="${jflex.dir}/jamwiki-processor.jflex"
-									destdir="${project.build.sourceDirectory}" />
+									destdir="${project.jflex.output.directory}" />
 								<jflex
 									file="${jflex.dir}/jamwiki-postprocessor.jflex"
-									destdir="${project.build.sourceDirectory}" />
+									destdir="${project.jflex.output.directory}" />
 								<jflex
 									file="${jflex.dir}/jamwiki-spliceprocessor.jflex"
-									destdir="${project.build.sourceDirectory}" />
+									destdir="${project.jflex.output.directory}" />
 							</tasks>
 						</configuration>
 						<goals>
