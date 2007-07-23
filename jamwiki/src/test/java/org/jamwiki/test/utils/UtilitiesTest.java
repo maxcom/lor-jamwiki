@@ -448,20 +448,49 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testParse() throws Throwable {
-		String result = Utilities.parse(new ParserInput(), null, null);
-		assertNull("result", result);
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
+		//FIXME assertEquals(null,result); //What is the expected behaviour?
+	}
+	public void testParse1() throws Throwable {
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
+		assertEquals("paragraph", "<p>testUtilitiesContent\n</p>", result);
+		
+	}
+	public void testParse2() throws Throwable {
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "''it''");
+		assertEquals("italics", "<p><i>it</i>\n</p>", result);
+	}
+	public void testParse3() throws Throwable {
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "'''bold'''");
+		assertEquals("embolden", "<p><b>bold</b>\n</p>", result);
+	}
+	public void testParse4() throws Throwable {
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "''''text''''");
+		assertEquals("4 apostrophs do nothing", "<p>&#39;&#39;&#39;&#39;text&#39;&#39;&#39;&#39;\n</p>", result);
+	}
+	public void testParse5() throws Throwable {
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "'''''bold it'''''");
+		assertEquals("bold+it", "<p><b><i>blod</i></b>\n</p>", result);
+		
+	}
+	public void testParse6() throws Throwable {
+		ParserInput parserInput = getParserInput();
+		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
+		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result);		
 	}
 
-	/**
-	 *
-	 */
-	public void testParse1() throws Throwable {
+	private ParserInput getParserInput() {
 		ParserInput parserInput = new ParserInput();
 		parserInput.setTopicName("testUtilitiesTopicName");
 		parserInput.setVirtualWiki("testUtilitiesVirtualWiki");
 		parserInput.setContext("testUtilitiesContext");
-		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
-		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result);
+		return parserInput;
 	}
 
 	/**
