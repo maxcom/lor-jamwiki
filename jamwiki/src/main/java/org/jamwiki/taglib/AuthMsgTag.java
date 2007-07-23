@@ -16,7 +16,6 @@
  */
 package org.jamwiki.taglib;
 
-import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -24,7 +23,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiExceptionMessageFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
