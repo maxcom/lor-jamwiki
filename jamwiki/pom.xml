@@ -297,7 +297,7 @@
 				<executions>
 					<execution>
 						<id>generate-flex</id>
-						<phase>generate-sources</phase>
+						<phase>generate</phase>
 						<configuration>
 							<tasks>
 								<taskdef
