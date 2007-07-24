@@ -325,16 +325,16 @@
 								</taskdef>
 								<jflex
 									file="${jflex.dir}/jamwiki-preprocessor.jflex"
-									destdir="${project.jflex.output.directory}" />
+									destdir="${project.build.sourceDirectory}" />
 								<jflex
 									file="${jflex.dir}/jamwiki-processor.jflex"
-									destdir="${project.jflex.output.directory}" />
+									destdir="${project.build.sourceDirectory}" />
 								<jflex
 									file="${jflex.dir}/jamwiki-postprocessor.jflex"
-									destdir="${project.jflex.output.directory}" />
+									destdir="${project.build.sourceDirectory}" />
 								<jflex
 									file="${jflex.dir}/jamwiki-spliceprocessor.jflex"
-									destdir="${project.jflex.output.directory}" />
+									destdir="${project.build.sourceDirectory}" />
 							</tasks>
 						</configuration>
 						<goals>
