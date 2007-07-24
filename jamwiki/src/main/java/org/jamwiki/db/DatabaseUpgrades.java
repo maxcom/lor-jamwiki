@@ -57,13 +57,13 @@ public class DatabaseUpgrades {
 			if (rs.size() == 0) {
 				return null;
 			}
-			int userId = rs.getInt("wiki_user_id");
+			int userId = rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID);
 			String sql = "select * from jam_wiki_user where wiki_user_id = ? ";
 			WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 			stmt.setInt(1, userId);
 			rs = stmt.executeQuery();
 			WikiUser user = new WikiUser(username);
-			user.setUserId(rs.getInt("wiki_user_id"));
+			user.setUserId(rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID));
 			user.setDisplayName(rs.getString("display_name"));
 			user.setCreateDate(rs.getTimestamp("create_date"));
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));

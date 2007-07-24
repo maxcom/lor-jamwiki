@@ -70,7 +70,7 @@ public class DatabaseUserHandler implements UserHandler {
 	 */
 	private WikiUserInfo initWikiUserInfo(WikiResultSet rs) throws Exception {
 		WikiUserInfo userInfo = new WikiUserInfo();
-		userInfo.setUserId(rs.getInt("wiki_user_id"));
+		userInfo.setUserId(rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID));
 		userInfo.setUsername(rs.getString("login"));
 		userInfo.setEmail(rs.getString("email"));
 		userInfo.setFirstName(rs.getString("first_name"));

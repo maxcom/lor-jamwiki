@@ -61,6 +61,15 @@ public class AnsiDataHandler implements DataHandler {
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
 	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI";
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
+	
+	// some constants
+	public static final String DATA_TOPIC_NAME = "topic_name";
+	public static final String DATA_WIKI_USER_ID = "wiki_user_id" ;
+	public static final String DATA_GROUP_ID = "group_id";
+	public static final String DATA_CATEGORY_NAME = "category_name";
+	public static final String DATA_TOPIC_ID = "topic_id";
+	
+	
 	private final QueryHandler queryHandler = new AnsiQueryHandler();
 
 	/**
@@ -270,7 +279,7 @@ public class AnsiDataHandler implements DataHandler {
 		WikiResultSet rs = this.queryHandler().getCategories(virtualWikiId, pagination);
 		while (rs.next()) {
 			Category category = new Category();
-			category.setName(rs.getString("category_name"));
+			category.setName(rs.getString(DATA_CATEGORY_NAME));
 			// FIXME - child topic name not initialized
 			category.setVirtualWiki(virtualWiki);
 			category.setSortKey(rs.getString("sort_key"));
@@ -299,7 +308,7 @@ public class AnsiDataHandler implements DataHandler {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getAllTopicNames(virtualWikiId);
 		while (rs.next()) {
-			all.add(rs.getString("topic_name"));
+			all.add(rs.getString(DATA_TOPIC_NAME));
 		}
 		return all;
 	}
@@ -357,7 +366,7 @@ public class AnsiDataHandler implements DataHandler {
 		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapByLogin(loginFragment);
 		while (rs.next()) {
-			Integer userId = new Integer(rs.getInt("wiki_user_id"));
+			Integer userId = new Integer(rs.getInt(DATA_WIKI_USER_ID));
 			RoleMap roleMap = new RoleMap();
 			if (roleMaps.containsKey(userId)) {
 				roleMap = (RoleMap)roleMaps.get(userId);
@@ -378,8 +387,8 @@ public class AnsiDataHandler implements DataHandler {
 		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapByRole(roleName);
 		while (rs.next()) {
-			int userId = rs.getInt("wiki_user_id");
-			int groupId = rs.getInt("group_id");
+			int userId = rs.getInt(DATA_WIKI_USER_ID);
+			int groupId = rs.getInt(DATA_GROUP_ID);
 			RoleMap roleMap = new RoleMap();
 			String key = userId + "|" + groupId;
 			if (roleMaps.containsKey(key)) {
@@ -420,7 +429,7 @@ public class AnsiDataHandler implements DataHandler {
 		LinkedHashMap roleMaps = new LinkedHashMap();
 		WikiResultSet rs = this.queryHandler().getRoleMapGroups();
 		while (rs.next()) {
-			Integer groupId = new Integer(rs.getInt("group_id"));
+			Integer groupId = new Integer(rs.getInt(DATA_GROUP_ID));
 			RoleMap roleMap = new RoleMap();
 			if (roleMaps.containsKey(groupId)) {
 				roleMap = (RoleMap)roleMaps.get(groupId);
@@ -455,7 +464,7 @@ public class AnsiDataHandler implements DataHandler {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getTopicsAdmin(virtualWikiId, pagination);
 		while (rs.next()) {
-			String topicName = rs.getString("topic_name");
+			String topicName = rs.getString(DATA_TOPIC_NAME);
 			all.add(topicName);
 		}
 		return all;
@@ -506,7 +515,7 @@ public class AnsiDataHandler implements DataHandler {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().getWatchlist(virtualWikiId, userId);
 		while (rs.next()) {
-			String topicName = rs.getString("topic_name");
+			String topicName = rs.getString(DATA_TOPIC_NAME);
 			all.add(topicName);
 		}
 		return new Watchlist(virtualWiki, all);
@@ -538,11 +547,11 @@ public class AnsiDataHandler implements DataHandler {
 			if (previousTopicVersionId > 0) {
 				change.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
 			}
-			change.setTopicId(rs.getInt("topic_id"));
-			change.setTopicName(rs.getString("topic_name"));
+			change.setTopicId(rs.getInt(DATA_TOPIC_ID));
+			change.setTopicName(rs.getString(DATA_TOPIC_NAME));
 			change.setEditDate(rs.getTimestamp("edit_date"));
 			change.setEditComment(rs.getString("edit_comment"));
-			int userId = rs.getInt("wiki_user_id");
+			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
 				change.setAuthorId(new Integer(userId));
 			}
@@ -587,14 +596,14 @@ public class AnsiDataHandler implements DataHandler {
 			String virtualWiki = this.lookupVirtualWikiName(virtualWikiId);
 			Topic topic = new Topic();
 			topic.setAdminOnly(rs.getInt("topic_admin_only") != 0);
-			topic.setName(rs.getString("topic_name"));
+			topic.setName(rs.getString(DATA_TOPIC_NAME));
 			topic.setVirtualWiki(virtualWiki);
 			int currentVersionId = rs.getInt("current_version_id");
 			if (currentVersionId > 0) {
 				topic.setCurrentVersionId(new Integer(currentVersionId));
 			}
 			topic.setTopicContent(rs.getString("version_content"));
-			topic.setTopicId(rs.getInt("topic_id"));
+			topic.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			topic.setReadOnly(rs.getInt("topic_read_only") != 0);
 			topic.setDeleteDate(rs.getTimestamp("delete_date"));
 			topic.setTopicType(rs.getInt("topic_type"));
@@ -613,14 +622,14 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			TopicVersion topicVersion = new TopicVersion();
 			topicVersion.setTopicVersionId(rs.getInt("topic_version_id"));
-			topicVersion.setTopicId(rs.getInt("topic_id"));
+			topicVersion.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			topicVersion.setEditComment(rs.getString("edit_comment"));
 			topicVersion.setVersionContent(rs.getString("version_content"));
 			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
 			if (previousTopicVersionId > 0) {
 				topicVersion.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
 			}
-			int userId = rs.getInt("wiki_user_id");
+			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
 				topicVersion.setAuthorId(new Integer(userId));
 			}
@@ -663,7 +672,7 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFile.setFileName(rs.getString("file_name"));
 			wikiFile.setVirtualWiki(virtualWiki);
 			wikiFile.setUrl(rs.getString("file_url"));
-			wikiFile.setTopicId(rs.getInt("topic_id"));
+			wikiFile.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			wikiFile.setReadOnly(rs.getInt("file_read_only") != 0);
 			wikiFile.setDeleteDate(rs.getTimestamp("delete_date"));
 			wikiFile.setMimeType(rs.getString("mime_type"));
@@ -685,7 +694,7 @@ public class AnsiDataHandler implements DataHandler {
 			wikiFileVersion.setFileId(rs.getInt("file_id"));
 			wikiFileVersion.setUploadComment(rs.getString("upload_comment"));
 			wikiFileVersion.setUrl(rs.getString("file_url"));
-			int userId = rs.getInt("wiki_user_id");
+			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			if (userId > 0) {
 				wikiFileVersion.setAuthorId(new Integer(userId));
 			}
@@ -707,7 +716,7 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			String username = rs.getString("login");
 			WikiUser user = new WikiUser(username);
-			user.setUserId(rs.getInt("wiki_user_id"));
+			user.setUserId(rs.getInt(DATA_WIKI_USER_ID));
 			user.setDisplayName(rs.getString("display_name"));
 			user.setCreateDate(rs.getTimestamp("create_date"));
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
@@ -733,7 +742,7 @@ public class AnsiDataHandler implements DataHandler {
 			Category category = new Category();
 			category.setName(categoryName);
 			category.setVirtualWiki(virtualWiki);
-			category.setChildTopicName(rs.getString("topic_name"));
+			category.setChildTopicName(rs.getString(DATA_TOPIC_NAME));
 			category.setSortKey(rs.getString("sort_key"));
 			results.add(category);
 		}
@@ -813,7 +822,7 @@ public class AnsiDataHandler implements DataHandler {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().lookupTopicByType(virtualWikiId, topicType, pagination);
 		while (rs.next()) {
-			results.add(rs.getString("topic_name"));
+			results.add(rs.getString(DATA_TOPIC_NAME));
 		}
 		return results;
 	}
@@ -939,7 +948,7 @@ public class AnsiDataHandler implements DataHandler {
 			if (rs.size() == 0) {
 				return null;
 			}
-			int userId = rs.getInt("wiki_user_id");
+			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			return lookupWikiUser(userId, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
