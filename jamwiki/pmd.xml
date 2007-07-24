@@ -4,16 +4,22 @@
 	xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
 	xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
 	<description>
-		The ruleset for Jamwiki keeps only core rules.
+		The ruleset for Jamwiki is pretty complete.
 	</description>
 
-	<!-- We'll use the entire 'strings' ruleset -->
-	<rule ref="rulesets/strings.xml" />
 	<rule ref="/rulesets/basic.xml" />
-
-	<rule ref="/rulesets/controversial.xml" />
+	<rule ref="/rulesets/controversial.xml">
+		<!-- Dataflow generates too many
+		Found 'DU'-anomaly
+		 -->
+		<exclude name="DataflowAnomalyAnalysis" />
+		<!-- Fields in interfaces are automatically 
+		public static final, and methods are public abstract. 
+		Generating a warning because these modifiers are superfluous
+		is really controversial. -->
+		<exclude name="UnusedModifier" />
+	</rule>
 	<rule ref="/rulesets/imports.xml" />
-
 	<rule ref="/rulesets/braces.xml" />
 	<rule ref="/rulesets/clone.xml" />
 	<rule ref="/rulesets/codesize.xml" />
