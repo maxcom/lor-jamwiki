@@ -225,6 +225,9 @@
 		<name>Special:Import</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:ImportTiddly</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:LinkTo</name>
 	</pseudotopic>
 	<pseudotopic>
