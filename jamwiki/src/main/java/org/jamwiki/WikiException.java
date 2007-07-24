@@ -16,14 +16,11 @@
  */
 package org.jamwiki;
 
-import org.jamwiki.utils.WikiLogger;
 
 /**
  * Custom exception class for JAMWiki servlet errors.
  */
 public class WikiException extends Exception {
-
-	private static final WikiLogger logger = WikiLogger.getLogger(WikiException.class.getName());
 	private final WikiMessage wikiMessage;
 
 	/**
