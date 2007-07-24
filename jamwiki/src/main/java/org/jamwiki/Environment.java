@@ -32,11 +32,7 @@ import org.jamwiki.utils.WikiLogger;
  * Provides access to JAMWiki property values.
  */
 public class Environment {
-	//FIXME The logger is in scope package. Shouldn't it be private?
-	static WikiLogger logger = WikiLogger.getLogger(Environment.class.getName());
-
-	private static final String TRUE_STRING="true";
-	private static final String FALSE_STRING="false";
+	private static WikiLogger logger = WikiLogger.getLogger(Environment.class.getName());
 	
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
@@ -160,7 +156,7 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_COOKIE_EXPIRE, "31104000");
 		defaults.setProperty(PROP_BASE_DEFAULT_TOPIC, "StartingPoints");
 		defaults.setProperty(PROP_BASE_FILE_DIR, "");
-		defaults.setProperty(PROP_BASE_INITIALIZED, FALSE_STRING);
+		defaults.setProperty(PROP_BASE_INITIALIZED, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_BASE_LOGO_IMAGE, "logo_oliver.gif");
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
@@ -179,9 +175,9 @@ public class Environment {
 		defaults.setProperty(PROP_DBCP_MAX_IDLE, "3");
 		defaults.setProperty(PROP_DBCP_MIN_EVICTABLE_IDLE_TIME, "600");
 		defaults.setProperty(PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN, "5");
-		defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, TRUE_STRING);
-		defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, TRUE_STRING);
-		defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, TRUE_STRING);
+		defaults.setProperty(PROP_DBCP_TEST_ON_BORROW, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_DBCP_TEST_ON_RETURN, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_DBCP_TEST_WHILE_IDLE, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS, "120");
 		defaults.setProperty(PROP_DBCP_WHEN_EXHAUSTED_ACTION, String.valueOf(GenericObjectPool.WHEN_EXHAUSTED_GROW));
 		defaults.setProperty(PROP_EMAIL_REPLY_ADDRESS, "");
@@ -189,7 +185,7 @@ public class Environment {
 		defaults.setProperty(PROP_EMAIL_SMTP_PASSWORD, "");
 		defaults.setProperty(PROP_EMAIL_SMTP_USERNAME, "");
 		defaults.setProperty(PROP_ENCRYPTION_ALGORITHM, "SHA-512");
-		defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, FALSE_STRING);
+		defaults.setProperty(PROP_EXTERNAL_LINK_NEW_WINDOW, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
 		defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
 		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, "");
@@ -208,22 +204,22 @@ public class Environment {
 		defaults.setProperty(PROP_LDAP_PASSWORD, "");
 		defaults.setProperty(PROP_LDAP_SECURITY_AUTHENTICATION, "DIGEST-MD5");
 		defaults.setProperty(PROP_LDAP_URL, "ldap://localhost:389");
-		defaults.setProperty(PROP_PARSER_ALLOW_HTML, TRUE_STRING);
-		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, FALSE_STRING);
-		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, TRUE_STRING);
+		defaults.setProperty(PROP_PARSER_ALLOW_HTML, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_PARSER_ALLOW_JAVASCRIPT, Boolean.FALSE.toString());
+		defaults.setProperty(PROP_PARSER_ALLOW_TEMPLATES, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_CLASS, "org.jamwiki.parser.jflex.JFlexParser");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_DATE_PATTERN, "dd-MMM-yyyy HH:mm zzz");
 		defaults.setProperty(PROP_PARSER_SIGNATURE_USER_PATTERN, "[[{0}|{4}]]");
-		defaults.setProperty(PROP_PARSER_TOC, TRUE_STRING);
+		defaults.setProperty(PROP_PARSER_TOC, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_PARSER_TOC_DEPTH, "5");
-		defaults.setProperty(PROP_PRINT_NEW_WINDOW, FALSE_STRING);
+		defaults.setProperty(PROP_PRINT_NEW_WINDOW, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
-		defaults.setProperty(PROP_RSS_ALLOWED, TRUE_STRING);
+		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
-		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, FALSE_STRING);
-		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, TRUE_STRING);
-		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, TRUE_STRING);
-		defaults.setProperty(PROP_TOPIC_WYSIWYG, TRUE_STRING);
+		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, Boolean.FALSE.toString());
+		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
+		defaults.setProperty(PROP_TOPIC_WYSIWYG, Boolean.TRUE.toString());
 	}
 
 	/**
