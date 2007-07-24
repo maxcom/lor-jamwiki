@@ -22,21 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
-import org.jamwiki.model.RecentChange;
-import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.Utilities;
-import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.ServletRequestUtils;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -44,6 +31,17 @@ import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.SyndFeedOutput;
+import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.RecentChange;
+import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.ServletRequestUtils;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * Provides an RSS or Atom feed for recent changes.
@@ -113,7 +111,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 * @param feedUrlPrefix feed URL prefix to set; may not be null.
 	 */
 	public void setFeedUrlPrefix(String feedUrlPrefix) {
-		assert feedUrlPrefix != null : "Feed URL prefix may not be null";
+		Assert.notNull(feedUrlPrefix, "Feed URL prefix may not be null");
 		this.feedUrlPrefix = feedUrlPrefix;
 	}
 
