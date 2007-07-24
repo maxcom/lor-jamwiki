@@ -359,7 +359,34 @@
     		 <plugin>
     		 	<artifactId>maven-source-plugin</artifactId>
     		 </plugin>
-    		 
+    		 <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<configuration>
+					<xmlOutput>true</xmlOutput>
+					<threshold>Normal</threshold>
+					<effort>Default</effort>
+					<outputDirectory>target/findbugs</outputDirectory>					
+					<excludeFilterFile>
+						findbugs-exclude.xml
+					</excludeFilterFile><!-- 
+					<includeFilterFile>
+						findbugs-include.xml
+					</includeFilterFile>-->
+					<visitors>
+						FindDeadLocalStores,UnreadFields
+					</visitors>
+					<onlyAnalyze>
+						org.jamwiki.*
+					</onlyAnalyze><!-- 
+					<pluginList>
+						/libs/fb-contrib/fb-contrib-2.8.0.jar
+					</pluginList>-->
+					<debug>true</debug>
+					<relaxed>true</relaxed>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -424,7 +451,10 @@
 					<encoding>ISO-8859-1</encoding>
 				</configuration>
 		    </plugin>			
-			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</reporting>
 </project>
