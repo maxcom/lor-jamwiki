@@ -111,7 +111,7 @@ public class WikiBase {
 	private WikiBase() throws Exception {
 		WikiBase.dataHandler = Utilities.dataHandlerInstance();
 		WikiBase.userHandler = Utilities.userHandlerInstance();
-		this.searchEngine = new LuceneSearchEngine();
+		WikiBase.searchEngine = new LuceneSearchEngine();
 	}
 
 	/**
