@@ -77,13 +77,13 @@ public class WikiVersion {
 	 */
 	public boolean before(int major, int minor, int patch) {
 		if (this.major < major) {
-			return true;
+			return true; // NOPMD
 		}
 		if (this.major == major && this.minor < minor) {
-			return true;
+			return true; // NOPMD
 		}
 		if (this.major == major && this.minor == minor && this.patch < patch) {
-			return true;
+			return true; // NOPMD
 		}
 		return false;
 	}
