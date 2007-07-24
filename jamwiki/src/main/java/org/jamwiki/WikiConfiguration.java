@@ -151,7 +151,7 @@ public class WikiConfiguration {
 				} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {
 					this.parsePseudotopics(child);
 				} else {
-					logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+					logUnknownChild(node, child);
 				}
 			}
 			logger.config("Configuration values loaded from " + file.getPath());
@@ -159,6 +159,7 @@ public class WikiConfiguration {
 			logger.severe("Failure while parsing configuration file " + JAMWIKI_CONFIGURATION_FILE, e);
 		}
 	}
+
 
 	/**
 	 *
@@ -177,7 +178,7 @@ public class WikiConfiguration {
 			} else if (child.getNodeName().equals(XML_PARAM_STATE)) {
 				configurationObject.setState(XMLUtil.getTextContent(child));
 			} else {
-				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+				logUnknownChild(node, child);
 			}
 		}
 		return configurationObject;
@@ -194,7 +195,7 @@ public class WikiConfiguration {
 			if (child.getNodeName().equals(name)) {
 				results.add(this.parseConfigurationObject(child));
 			} else {
-				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+				logUnknownChild(node, child);
 			}
 		}
 		return results;
@@ -217,7 +218,7 @@ public class WikiConfiguration {
 			} else if (child.getNodeName().equals(XML_NAMESPACE_COMMENTS)) {
 				comments = XMLUtil.getTextContent(child);
 			} else {
-				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+				logUnknownChild(node, child);
 			}
 		}
 		this.namespaces.put(name, new String[]{main, comments});
@@ -233,7 +234,7 @@ public class WikiConfiguration {
 			if (child.getNodeName().equals(XML_NAMESPACE)) {
 				this.parseNamespace(child);
 			} else {
-				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+				logUnknownChild(node, child);
 			}
 		}
 	}
@@ -248,7 +249,7 @@ public class WikiConfiguration {
 			if (child.getNodeName().equals(XML_PARAM_NAME)) {
 				this.pseudotopics.add(XMLUtil.getTextContent(child));
 			} else {
-				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+				logUnknownChild(node, child);
 			}
 		}
 	}
@@ -263,8 +264,16 @@ public class WikiConfiguration {
 			if (child.getNodeName().equals(XML_PSEUDOTOPIC)) {
 				this.parsePseudotopic(child);
 			} else {
-				logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
+				logUnknownChild(node, child);
 			}
 		}
+	}
+	/**
+	 * Utility class to log two XML nodes.
+	 * @param node
+	 * @param child
+	 */
+	private void logUnknownChild(Node node, Node child) {
+		logger.finest("Unknown child of " + node.getNodeName() + " tag: " + child.getNodeName() + " / " + child.getNodeValue());
 	}
 }
