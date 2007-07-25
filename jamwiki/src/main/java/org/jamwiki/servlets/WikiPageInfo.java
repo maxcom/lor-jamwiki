@@ -65,7 +65,7 @@ public class WikiPageInfo {
 	/**
 	 * If a page is a part of the admin tool then this method will return
 	 * <code>true</code>.
-	 *
+	 * 
 	 * @return <code>true</code> if a page is part of the admin tool,
 	 *  <code>false</code> otherwise.
 	 */
@@ -120,7 +120,7 @@ public class WikiPageInfo {
 	/**
 	 * Return a flag indicating whether or not the current user can edit the
 	 * current topic.
-	 *
+	 * 
 	 * @return <code>true</code> if the current user can edit the current
 	 *  page, <code>false</code> otherwise.
 	 */
@@ -265,6 +265,47 @@ public class WikiPageInfo {
 		this.special = special;
 	}
 
+	/**
+	 * Return the namespace of the topic displayed by the current page
+	 * 
+	 * The namespace is the part of topic name, up to the column.
+	 * Return an empty String for regular articles.
+	 * 
+	 * The namespace cannot be set directly, only the topic name can be set.	 * 
+	 * 
+	 * @return The wiki namespace of this page.
+	 * @author Régis Décamps <decamps@users.sf.net>
+	 * @see getPagename
+	 * @see getTopicname
+	 * 
+	 */
+	public String getNamespace() {
+		if (getSpecial()) {
+			return "Special";
+		}
+		String ns = "";
+		int idx = topicName.indexOf(":");
+		if (topicName != null && idx > 0) {
+			ns = topicName.substring(0, idx);
+		}
+		return ns;
+	}
+
+	/**
+	 * Return the name of the page, i.e. the name of the topic displayed by the current page, without the namespace.
+	 * 
+	 * @return Name of the page.
+	 * @author Régis Décamps <decamps@users.sf.net>
+	 */
+	public String getPagename() {
+		String ns=topicName;
+		int idx = topicName.indexOf(":");
+		if (topicName != null && idx > 0) {
+			ns = topicName.substring(idx+1);
+		}
+		return ns;
+	}
+	
 	/**
 	 * Return the name of the topic being displayed by the current page.
 	 *

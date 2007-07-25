@@ -39,6 +39,10 @@
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Watchlist"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><c:if test="${pageInfo.watched}"><f:message key="tab.common.unwatch" /></c:if><c:if test="${!pageInfo.watched}"><f:message key="tab.common.watch" /></c:if></jamwiki:link></td>
 	<td class="menu-tab-space">&#160;</td>
 	</c:if>
+	<c:if test="${pageInfo.namespace == 'User'}">
+	<td class="menu-tab-nonselected"><jamwiki:link value="Special:Contributions?contributor=${pageInfo.pagename}"><f:message key="tab.common.contributions" /></jamwiki:link></td>	
+	<td class="menu-tab-space">&#160;</td>
+	</c:if>
 	<td class="menu-tab-nonselected"><jamwiki:link value="Special:LinkTo"><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:message key="tab.common.links" /></jamwiki:link></td>
 	<c:if test="${adminUser}">
 	<td class="menu-tab-space">&#160;</td>
