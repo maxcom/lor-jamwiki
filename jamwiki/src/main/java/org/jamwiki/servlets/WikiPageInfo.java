@@ -19,6 +19,9 @@ package org.jamwiki.servlets;
 import java.text.MessageFormat;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
@@ -65,7 +68,7 @@ public class WikiPageInfo {
 	/**
 	 * If a page is a part of the admin tool then this method will return
 	 * <code>true</code>.
-	 * 
+	 *
 	 * @return <code>true</code> if a page is part of the admin tool,
 	 *  <code>false</code> otherwise.
 	 */
@@ -120,7 +123,7 @@ public class WikiPageInfo {
 	/**
 	 * Return a flag indicating whether or not the current user can edit the
 	 * current topic.
-	 * 
+	 *
 	 * @return <code>true</code> if the current user can edit the current
 	 *  page, <code>false</code> otherwise.
 	 */
@@ -266,46 +269,34 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Return the namespace of the topic displayed by the current page
-	 * 
-	 * The namespace is the part of topic name, up to the column.
-	 * Return an empty String for regular articles.
-	 * 
-	 * The namespace cannot be set directly, only the topic name can be set.	 * 
-	 * 
-	 * @return The wiki namespace of this page.
-	 * @author Régis Décamps <decamps@users.sf.net>
+	 * Return the namespace of the topic displayed by the current page.  The
+	 * namespace is the part of topic name, up to the colon.  For regular
+	 * articles the namespace is an empty string.
+	 *
+	 * The namespace cannot be set directly, only the topic name can be set.
+	 *
+	 * @return The wiki namespace of this page, or an empty string for pages
+	 *  in the main namespace.
 	 * @see getPagename
 	 * @see getTopicname
-	 * 
+	 *
 	 */
 	public String getNamespace() {
-		if (getSpecial()) {
-			return "Special";
-		}
-		String ns = "";
-		int idx = topicName.indexOf(":");
-		if (topicName != null && idx > 0) {
-			ns = topicName.substring(0, idx);
-		}
-		return ns;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
+		return wikiLink.getNamespace();
 	}
 
 	/**
-	 * Return the name of the page, i.e. the name of the topic displayed by the current page, without the namespace.
-	 * 
+	 * Return the name of the page, i.e. the name of the topic displayed by
+	 * the current page, without the namespace.
+	 *
 	 * @return Name of the page.
-	 * @author Régis Décamps <decamps@users.sf.net>
 	 */
 	public String getPagename() {
-		String ns=topicName;
-		int idx = topicName.indexOf(":");
-		if (topicName != null && idx > 0) {
-			ns = topicName.substring(idx+1);
-		}
-		return ns;
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
+		return wikiLink.getArticle();
 	}
-	
+
 	/**
 	 * Return the name of the topic being displayed by the current page.
 	 *
@@ -323,6 +314,24 @@ public class WikiPageInfo {
 	 */
 	public void setTopicName(String topicName) {
 		this.topicName = topicName;
+	}
+
+	/**
+	 * If the page currently being viewed is a user page or a user comments
+	 * page return <code>true</code>
+	 *
+	 * @return <code>true</code> if the page currently being viewed is a
+	 *  user page, otherwise <code>false</code>.
+	 */
+	public boolean isUserPage() {
+		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
+		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER)) {
+			return true;
+		}
+		if (wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_USER_COMMENTS)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
