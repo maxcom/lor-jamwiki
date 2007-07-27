@@ -25,6 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.XMLTopicFactory;
@@ -63,7 +64,13 @@ public class ImportServlet extends JAMWikiServlet {
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Iterator iterator = ServletUtil.processMultipartRequest(request);
-		WikiUser user = Utilities.currentUser(request);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
 		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, request.getRemoteAddr());
 		String topicName = null;
 		while (iterator.hasNext()) {

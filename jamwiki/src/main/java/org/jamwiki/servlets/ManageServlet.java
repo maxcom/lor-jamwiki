@@ -22,8 +22,10 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -83,7 +85,14 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = "";
 		topic.setTopicContent(contents);
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
+		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true, null);
 	}
@@ -103,7 +112,14 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
+		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
@@ -146,7 +162,14 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
+		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true, null);
 	}

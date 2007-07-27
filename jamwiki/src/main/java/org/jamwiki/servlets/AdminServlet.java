@@ -29,6 +29,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.WikiDatabase;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -82,7 +83,13 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = Utilities.currentUser(request);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
 			if (StringUtils.hasText(request.getParameter("virtualWikiId"))) {
@@ -205,7 +212,14 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiBase.reset(request.getLocale(), Utilities.currentUser(request));
+				WikiUser user = Utilities.currentUser();
+				if (!user.hasRole(Role.ROLE_USER)) {
+					// FIXME - setting the user to null may not be necessary, but it is
+					// consistent with how the code behaved when Utilities.currentUser()
+					// returned null for non-logged-in users
+					user = null;
+				}
+				WikiBase.reset(request.getLocale(), user);
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {

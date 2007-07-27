@@ -20,6 +20,8 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.userdetails.UserDetails;
 import org.jamwiki.WikiBase;
@@ -53,6 +55,12 @@ public class WikiUser implements UserDetails {
 	 */
 	private GrantedAuthority[] authorities = {Role.ROLE_USER};
 	private String password = null;
+
+	/**
+	 *
+	 */
+	private WikiUser() {
+	}
 
 	/**
 	 *
@@ -342,5 +350,36 @@ public class WikiUser implements UserDetails {
 			return false;
 		}
 		return Arrays.asList(authorities).contains(role);
+	}
+
+	/**
+	 * Utility method for converting an Acegi <code>Authentication</code>
+	 * object into a <code>WikiUser</code>.  If the user is logged-in then the
+	 * <code>Authentication</code> object will have the <code>WikiUser</code>
+	 * as its principal.  If the user is not logged in then create an empty
+	 * <code>WikiUser</code> object and assign it the same authorities as the
+	 * <code>Authentication</code> object.
+	 *
+	 * @param auth The Acegi <code>Authentication</code> object that is being
+	 *  converted into a <code>WikiUser</code> object.
+	 * @return Returns a <code>WikiUser</code> object that corresponds to the
+	 *  Acegi <code>Authentication</code> object.  If the user is not currently
+	 *  logged-in then an empty <code>WikiUser</code> with the same authorities
+	 *  as the <code>Authentication</code> object is returned.  This method
+	 *  will never return <code>null</code>.
+	 * @throws AuthenticationCredentialsNotFoundException If authentication
+	 *  credentials are unavailable.
+	 */
+	public static WikiUser initWikiUser(Authentication auth) throws AuthenticationCredentialsNotFoundException {
+		if (auth == null) {
+			throw new AuthenticationCredentialsNotFoundException("No authentication credential available");
+		}
+		if (auth.getPrincipal() instanceof WikiUser) {
+			// logged-in user
+			return (WikiUser)auth.getPrincipal();
+		}
+		WikiUser user = new WikiUser();
+		user.setAuthorities(auth.getAuthorities());
+		return user;
 	}
 }

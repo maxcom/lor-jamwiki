@@ -42,8 +42,8 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = Utilities.currentUser(request);
-		if (user == null || !user.hasRole(Role.ROLE_MOVE)) {
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("admin.message.loginrequired");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
@@ -97,7 +97,14 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
-		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, Utilities.currentUser(request))) {
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
+		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, user)) {
 			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
 			return false;
@@ -113,7 +120,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (StringUtils.hasText(request.getParameter("moveComment"))) {
 			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), moveComment, fromTopic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), moveComment, fromTopic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
 		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination, null);
 		return true;

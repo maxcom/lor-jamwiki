@@ -20,6 +20,7 @@ import java.util.Locale;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -58,15 +59,14 @@ public class JAMWikiLocaleInterceptor extends LocaleChangeInterceptor {
 	 *
 	 */
 	private Locale retrieveUserLocale(HttpServletRequest request) throws ServletException {
+		Locale locale = null;
 		try {
-			WikiUser user = Utilities.currentUser(request);
-			if (user != null) {
-				return Utilities.buildLocale(user.getDefaultLocale());
-			}
-			return null;
-		} catch (Exception e) {
-			throw new ServletException(e);
+			WikiUser user = Utilities.currentUser();
+			locale = Utilities.buildLocale(user.getDefaultLocale());
+		} catch (AuthenticationCredentialsNotFoundException e) {
+			// do nothing, just use a default locale
 		}
+		return locale;
 	}
 
 	/**

@@ -28,6 +28,7 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.db.DatabaseUpgrades;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
@@ -186,10 +187,17 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
+			WikiUser user = Utilities.currentUser();
+			if (!user.hasRole(Role.ROLE_USER)) {
+				// FIXME - setting the user to null may not be necessary, but it is
+				// consistent with how the code behaved when Utilities.currentUser()
+				// returned null for non-logged-in users
+				user = null;
+			}
 			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
 			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
 				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, Utilities.currentUser(request), request.getRemoteAddr(), null);
+				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, request.getRemoteAddr(), null);
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
 			return true;

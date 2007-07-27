@@ -36,6 +36,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.Authentication;
+import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FileUtils;
@@ -188,20 +189,21 @@ public class Utilities {
 	}
 
 	/**
-	 * Retrieve the current logged-in user from Acegi SecurityContextHolder.  If there is
-	 * no user return <code>null</code>.
+	 * Retrieve the current <code>WikiUser</code> from Acegi
+	 * <code>SecurityContextHolder</code>.  If the current user is not
+	 * logged-in then this method will return an empty <code>WikiUser</code>
+	 * object.
 	 *
-	 * @param request The servlet request object.
-	 * @return The current logged-in user, or <code>null</code> if there is no
-	 *  user currently logged in.
+	 * @return The current logged-in <code>WikiUser</code>, or an empty
+	 *  <code>WikiUser</code> if there is no user currently logged in.
+	 *  This method will never return <code>null</code>.
+	 * @throws AuthenticationCredentialsNotFoundException If authentication
+	 *  credentials are unavailable.
 	 */
-	public static WikiUser currentUser(HttpServletRequest request) throws Exception {
+	public static WikiUser currentUser() throws AuthenticationCredentialsNotFoundException {
 		SecurityContext ctx = SecurityContextHolder.getContext();
-		if (ctx != null) {
-			Authentication auth = ctx.getAuthentication();
-			return ((auth == null) || "anonymousUser".equals(auth.getPrincipal())) ? null : (WikiUser)auth.getPrincipal();
-		}
-		return null;
+		Authentication auth = ctx.getAuthentication();
+		return WikiUser.initWikiUser(auth);
 	}
 
 	/**
@@ -221,8 +223,8 @@ public class Utilities {
 		}
 		// no watchlist in session, retrieve from database
 		watchlist = new Watchlist();
-		WikiUser user = currentUser(request);
-		if (user == null) {
+		WikiUser user = currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
 			return watchlist;
 		}
 		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
@@ -675,8 +677,8 @@ public class Utilities {
 	 *  object and if that user is an admin, <code>false</code> otherwise.
 	 */
 	public static boolean isAdmin(HttpServletRequest request) throws Exception {
-		WikiUser user = currentUser(request);
-		return (user != null && user.hasRole(Role.ROLE_ADMIN));
+		WikiUser user = currentUser();
+		return (user.hasRole(Role.ROLE_ADMIN));
 	}
 
 	/**
@@ -1087,11 +1089,14 @@ public class Utilities {
 	public static Locale retrieveUserLocale(HttpServletRequest request) {
 		WikiUser user = null;
 		try {
-			user = Utilities.currentUser(request);
-		} catch (Exception e) {
-			// safe to ignore
+			user = Utilities.currentUser();
+			if (user.getDefaultLocale() != null) {
+				return Utilities.buildLocale(user.getDefaultLocale());
+			}
+		} catch (AuthenticationCredentialsNotFoundException e) {
+			// ignore
 		}
-		return (user != null) ? Utilities.buildLocale(user.getDefaultLocale()) : request.getLocale();
+		return request.getLocale();
 	}
 
 	/**

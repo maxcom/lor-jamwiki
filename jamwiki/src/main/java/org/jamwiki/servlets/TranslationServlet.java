@@ -25,8 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
@@ -163,7 +165,14 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), editComment, contents);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
+		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), editComment, contents);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
 	}
 }

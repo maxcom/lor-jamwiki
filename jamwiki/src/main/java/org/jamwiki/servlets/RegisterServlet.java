@@ -25,6 +25,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
@@ -214,8 +215,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		// FIXME - i suspect initializing with a null login is bad
 		WikiUser user = new WikiUser("");
 		WikiUserInfo userInfo = new WikiUserInfo();
-		if (Utilities.currentUser(request) != null) {
-			user = Utilities.currentUser(request);
+		if (Utilities.currentUser().hasRole(Role.ROLE_USER)) {
+			user = Utilities.currentUser();
 			userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getUsername());
 		}
 		this.loadDefaults(request, next, pageInfo, user, userInfo);

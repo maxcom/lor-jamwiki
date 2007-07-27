@@ -30,6 +30,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiFile;
@@ -212,13 +213,19 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(contents);
 		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
-		WikiUser user = Utilities.currentUser(request);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
 		Integer authorId = null;
 		if (user != null) {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);
-		TopicVersion topicVersion = new TopicVersion(Utilities.currentUser(request), request.getRemoteAddr(), contents, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), contents, topic.getTopicContent());
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}

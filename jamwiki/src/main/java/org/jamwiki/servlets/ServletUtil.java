@@ -203,7 +203,7 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 */
 	protected static boolean isEditable(String virtualWiki, String topicName, WikiUser user) throws Exception {
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && user == null) {
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && (user == null || !user.hasRole(Role.ROLE_USER))) {
 			// must be logged in to edit
 			return false;
 		}
@@ -233,7 +233,7 @@ public class ServletUtil {
 	 */
 	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUser user) throws Exception {
 		if (user == null || !user.hasRole(Role.ROLE_MOVE)) {
-			// non-admins not allowed to move pages
+			// no permission granted to move pages
 			return false;
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -321,8 +321,8 @@ public class ServletUtil {
 		// load cached top area, nav bar, etc.
 		ServletUtil.buildLayout(request, next);
 		// add link to user page and comments page
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
+		WikiUser user = Utilities.currentUser();
+		if (user.hasRole(Role.ROLE_USER)) {
 			//add user object to model since it is not in session anymore
 			next.addObject(PARAMETER_USER, user);
 			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
@@ -513,7 +513,13 @@ public class ServletUtil {
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		WikiUser user = Utilities.currentUser(request);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
 		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			sectionEdit = false;
 		}

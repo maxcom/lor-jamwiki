@@ -23,6 +23,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.Watchlist;
@@ -112,8 +113,8 @@ public class EditServlet extends JAMWikiServlet {
 			return false;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
-		WikiUser user = Utilities.currentUser(request);
-		if (user != null) {
+		WikiUser user = Utilities.currentUser();
+		if (user.hasRole(Role.ROLE_USER)) {
 			message += user.getUsername() + " / ";
 		}
 		message += request.getRemoteAddr() + "): " + result;
@@ -185,11 +186,17 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = Utilities.getTopicFromRequest(request);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		WikiUser user = Utilities.currentUser(request);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && Utilities.currentUser(request) == null) {
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && user == null) {
 			WikiMessage messageObject = new WikiMessage("edit.exception.login");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
@@ -287,7 +294,13 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
-		WikiUser user = Utilities.currentUser(request);
+		WikiUser user = Utilities.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
