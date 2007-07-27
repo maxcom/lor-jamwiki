@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
@@ -135,10 +136,9 @@ public class SetupServlet extends JAMWikiServlet {
 			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			WikiBase.reset(request.getLocale(), user);
-			// FIXME - disabled automatic login because it's not possible(?)
-			// with Acegi Security
-			// Utilities.login(request, null, user, false);
 			Environment.saveProperties();
+			// force current user credentials to be removed and re-validated.
+			SecurityContextHolder.clearContext();
 			return true;
 		}
 	}

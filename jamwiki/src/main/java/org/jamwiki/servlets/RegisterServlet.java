@@ -105,8 +105,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-			// force logout to ensure current user credentials will be removed
-			// and re-validated.
+			// force current user credentials to be removed and re-validated.
 			SecurityContextHolder.clearContext();
 			// update the locale key since the user may have changed default locale
 			if (StringUtils.hasText(user.getDefaultLocale())) {

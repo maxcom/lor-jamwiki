@@ -16,6 +16,11 @@
  */
 package org.jamwiki.authentication;
 
+import java.io.IOException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import org.acegisecurity.providers.anonymous.AnonymousProcessingFilter;
 import org.acegisecurity.userdetails.memory.UserAttribute;
 import org.jamwiki.WikiBase;
@@ -32,12 +37,34 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAnonymousProcessingFilter.class.getName());
+	/** Default roles for anonymous users */
+	private static Role[] groupRoles = null;
 
 	/**
-	 * Set roles for non-logged-in user.
+	 * Set default roles for anonymous users.
 	 */
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
+		this.initRoles();
+	}
+
+	/**
+	 * Override the parent method to ensure that default roles for anonymous
+	 * users have been retrieved.
+	 */
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		if (groupRoles == null) {
+			// during setup and upgrade roles would not have been initialized, so
+			// initialize now.
+			this.initRoles();
+		}
+		super.doFilter(request, response, chain);
+	}
+
+	/**
+	 * Retrieve the default roles for anonymous users.
+	 */
+	private void initRoles() {
 		try {
 			if (Utilities.isFirstUse() || Utilities.isUpgrade()) {
 				// wiki is not yet setup
@@ -50,9 +77,7 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 		if (user == null) {
 			logger.warning("No user attribute available in JAMWikiAnonymousProcessingFilter.  Please verify the Acegi configuration settings.");
 		}
-		// FIXE - by default user is given ROLE_ANONYMOUS.  that gets used in some
-		// JSP pages.  needs to be cleaned up.
-		Role[] groupRoles = new Role[0];
+		groupRoles = new Role[0];
 		try {
 			groupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
 		} catch (Exception e) {
