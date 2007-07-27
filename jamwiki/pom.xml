@@ -180,7 +180,7 @@
 			<email>wrh2 at users.sf.net</email>
 			<roles>
 				<role>architect</role>
-				<role>project leader</role>
+				<role>project lead</role>
 				<role>developer</role>
 			</roles>
 			<timezone>-8</timezone>
@@ -242,7 +242,50 @@
 			<timezone>+1</timezone>
 		</developer>		
 	</developers>
-
+	<contributors>
+		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
+		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
+		<contributor><name>Anders Monrad</name><email>g9adm</email><roles><role>translator (Danish)</role></roles></contributor>
+		<contributor><name>Tarik Menbhi</name><roles><role>translator (Dutch)</role></roles></contributor>
+		<contributor><name>Wim Borghs (Angel)</name><roles><role>translator (Dutch)</role></roles></contributor>
+		<contributor><name>Henri Gomez</name><email>hgomez@users.sf.net</email><roles><role>translator (French)</role></roles></contributor>
+		<contributor><name>Axel Kramer</name><email>axelclk</email><roles><role>translator (German)</role></roles></contributor>
+		<contributor><name>Rainer Schmitz (swift)</name><roles><role>translator (German)</role></roles></contributor>
+		<contributor><name>Daniel Tar (bDaneE)</name><roles><role>translator (Hungarian)</role></roles></contributor>
+		<contributor><name>Natto Lover (nattolover)</name><roles><role>translator (Japanese)</role></roles></contributor>
+		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
+		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
+		<!-- TODO indicate roles -->
+		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email></contributor>
+		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
+		<contributor><name>Oliver</name><email>okohll</email></contributor>
+		<contributor><name>Carsten Seiffert</name><email>carsten</email></contributor>
+		<!--  VQWiki developers and contributors -->
+		<contributor>
+			<name>Martijn van der Kleijn</name>
+			<email>mvdkleijn at users.sourceforge.net</email>
+			<roles>
+				<role>VQWiki project lead</role>
+				<role>developer</role>
+				<role>translator</role>
+			</roles>
+			<organization>VQWiki project</organization>
+		</contributor>
+		<contributor><name>Andreas Studer</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>Colin Jacobs</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>Tobias Schulz-Hess</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>Fritz Freiheit</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>Gareth Cronin</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>HongLiang Bi</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>Tim Howland</name><organization>VQWiki project</organization><roles><role>documentation</role></roles></contributor>
+		<contributor><name>Marcello Teodori</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Zapo (erzapo)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Nico Jabin</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Johan Lindell</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Erik (xan-)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
+		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>	
+	</contributors>
 	<properties>
 		<jflex.dir>${basedir}/src/lex</jflex.dir>
 		<jflex.output>
