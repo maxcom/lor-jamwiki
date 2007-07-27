@@ -33,6 +33,7 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 /**
  * Used to process new user account setup.
@@ -103,9 +104,14 @@ public class RegisterServlet extends JAMWikiServlet {
 			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-			// force logout to ensure current user will be re-validated.  this is
-			// necessary because the install may have changed underlying data structures.
+			// force logout to ensure current user credentials will be removed
+			// and re-validated.
 			SecurityContextHolder.clearContext();
+			// update the locale key since the user may have changed default locale
+			if (StringUtils.hasText(user.getDefaultLocale())) {
+				Locale locale = Utilities.buildLocale(user.getDefaultLocale());
+				request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
+			}
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			String topic = virtualWiki.getDefaultTopicName();
 			ServletUtil.redirect(next, virtualWikiName, topic);
