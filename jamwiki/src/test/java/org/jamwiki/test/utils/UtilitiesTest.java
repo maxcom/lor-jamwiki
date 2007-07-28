@@ -51,13 +51,13 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testBuildLocale() throws Throwable {
 		Locale result = Utilities.buildLocale("");
-		assertNull("locale build from empty String", result);		
+		assertNull("locale build from empty String", result);
 		result=Utilities.buildLocale("fr_FR");
 		assertEquals(Locale.FRANCE,result);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void testBuildLocale1() throws Throwable {
 		Locale result = Utilities.buildLocale("fr_FR");
@@ -65,12 +65,12 @@ public class UtilitiesTest extends TestCase {
 	}
 
 	public void testConvertEncoding1() throws Throwable {
-		String expected="ça va là?";		
+		String expected="ça va là?";
 		String utf8 = "Ã§a va lÃ ?";
 		/* data utf8 opened as Latin1*/
 		String result = Utilities.convertEncoding(utf8, "ISO-8859-1", "UTF-8");
 		assertEquals(expected, result);
-		
+
 		/* data Latin1 opened as Latin1 */
 		result = Utilities.convertEncoding(expected, "ISO-8859-1", "ISO-8859-1");
 		assertEquals(expected, result);
@@ -434,7 +434,7 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testIsUpgrade() throws Throwable {
-		//TODO 
+		//TODO
 	}
 
 	/**
@@ -456,7 +456,7 @@ public class UtilitiesTest extends TestCase {
 		ParserInput parserInput = getParserInput();
 		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
 		assertEquals("paragraph", "<p>testUtilitiesContent\n</p>", result);
-		
+
 	}
 	public void testParse2() throws Throwable {
 		ParserInput parserInput = getParserInput();
@@ -468,21 +468,17 @@ public class UtilitiesTest extends TestCase {
 		String result = Utilities.parse(parserInput, null, "'''bold'''");
 		assertEquals("embolden", "<p><b>bold</b>\n</p>", result);
 	}
+
 	public void testParse4() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "''''text''''");
-		//FIXME assertEquals("4 apostrophs do nothing", "<p>&#39;&#39;&#39;&#39;text&#39;&#39;&#39;&#39;\n</p>", result);
+		String result = Utilities.parse(parserInput, null, "'''''bold it'''''");
+		assertEquals("bold+it", "<p><b><i>blod</i></b>\n</p>", result);
 	}
+
 	public void testParse5() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "'''''bold it'''''");
-		//FIXME assertEquals("bold+it", "<p><b><i>blod</i></b>\n</p>", result);
-		
-	}
-	public void testParse6() throws Throwable {
-		ParserInput parserInput = getParserInput();
 		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
-		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result);		
+		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result);
 	}
 
 	private ParserInput getParserInput() {
