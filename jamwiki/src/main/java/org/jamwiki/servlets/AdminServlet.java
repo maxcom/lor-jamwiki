@@ -207,12 +207,6 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
 				WikiUser user = Utilities.currentUser();
-				if (!user.hasRole(Role.ROLE_USER)) {
-					// FIXME - setting the user to null may not be necessary, but it is
-					// consistent with how the code behaved when Utilities.currentUser()
-					// returned null for non-logged-in users
-					user = null;
-				}
 				WikiBase.reset(request.getLocale(), user);
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}

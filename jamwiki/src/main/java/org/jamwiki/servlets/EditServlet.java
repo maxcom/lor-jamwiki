@@ -289,12 +289,6 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
 		WikiUser user = Utilities.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
@@ -321,7 +315,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserDocument, true, null);
 		// update watchlist
-		if (user != null) {
+		if (user.hasRole(Role.ROLE_USER)) {
 			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {

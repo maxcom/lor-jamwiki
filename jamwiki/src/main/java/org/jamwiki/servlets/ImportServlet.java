@@ -65,12 +65,6 @@ public class ImportServlet extends JAMWikiServlet {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		Iterator iterator = ServletUtil.processMultipartRequest(request);
 		WikiUser user = Utilities.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, request.getRemoteAddr());
 		String topicName = null;
 		while (iterator.hasNext()) {

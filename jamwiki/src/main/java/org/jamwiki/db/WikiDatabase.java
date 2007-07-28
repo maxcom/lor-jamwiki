@@ -196,8 +196,8 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupAdminUser(WikiUser user, Connection conn) throws Exception {
-		if (user == null) {
-			throw new Exception("Admin user not specified");
+		if (user == null || !user.hasRole(Role.ROLE_USER)) {
+			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {
 			logger.warning("Admin user already exists");

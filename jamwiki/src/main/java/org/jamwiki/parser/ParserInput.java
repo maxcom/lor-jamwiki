@@ -18,6 +18,7 @@ package org.jamwiki.parser;
 
 import java.util.Hashtable;
 import java.util.Locale;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 
 /**
@@ -312,10 +313,16 @@ public class ParserInput {
 	 * instance.  The wiki user object is used primarily when parsing
 	 * signatures.
 	 *
-	 * @param wikiUser The wiki user object associated with the current
+	 * @param user The wiki user object associated with the current
 	 *  parser input instance.
 	 */
-	public void setWikiUser(WikiUser wikiUser) {
-		this.wikiUser = wikiUser;
+	public void setWikiUser(WikiUser user) {
+		if (!user.hasRole(Role.ROLE_USER)) {
+			// FIXME - setting the user to null may not be necessary, but it is
+			// consistent with how the code behaved when Utilities.currentUser()
+			// returned null for non-logged-in users
+			user = null;
+		}
+		this.wikiUser = user;
 	}
 }

@@ -514,12 +514,6 @@ public class ServletUtil {
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
 		WikiUser user = Utilities.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			sectionEdit = false;
 		}
