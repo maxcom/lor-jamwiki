@@ -214,14 +214,8 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFileVersion.setUploadComment(contents);
 		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
 		WikiUser user = Utilities.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		Integer authorId = null;
-		if (user != null) {
+		if (user.getUserId() > 0) {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);

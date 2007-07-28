@@ -52,7 +52,7 @@ public class TopicVersion {
 	 *
 	 */
 	public TopicVersion(WikiUser user, String authorIpAddress, String editComment, String versionContent) {
-		if (user != null) {
+		if (user != null && user.getUserId() > 0) {
 			this.authorId = new Integer(user.getUserId());
 		}
 		this.authorIpAddress = authorIpAddress;

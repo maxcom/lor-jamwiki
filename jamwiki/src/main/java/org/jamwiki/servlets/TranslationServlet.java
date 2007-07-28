@@ -166,12 +166,6 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
 		WikiUser user = Utilities.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), editComment, contents);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
 	}

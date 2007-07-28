@@ -187,16 +187,10 @@ public class EditServlet extends JAMWikiServlet {
 		String topicName = Utilities.getTopicFromRequest(request);
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		WikiUser user = Utilities.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && user == null) {
+		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && !user.hasRole(Role.ROLE_USER)) {
 			WikiMessage messageObject = new WikiMessage("edit.exception.login");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
