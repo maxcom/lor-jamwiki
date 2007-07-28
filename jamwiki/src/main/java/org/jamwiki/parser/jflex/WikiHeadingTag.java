@@ -49,7 +49,7 @@ public class WikiHeadingTag implements ParserTag {
 		if (disallowInclusion) {
 			return "";
 		}
-		String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
+		String output = "<div class=\"section-edit\">[";
 		String url = "";
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);

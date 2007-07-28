@@ -396,6 +396,11 @@ li.undeletechange {
 	width: 98%;
 	overflow: hidden;
 }
+.section-edit {
+	font-size: 90%;
+	float: right;
+	padding: 15px 0px 0px 5px;
+}
 
 /* images */
 
