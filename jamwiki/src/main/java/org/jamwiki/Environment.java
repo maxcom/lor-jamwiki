@@ -32,8 +32,8 @@ import org.jamwiki.utils.WikiLogger;
  * Provides access to JAMWiki property values.
  */
 public class Environment {
-	private static WikiLogger logger = WikiLogger.getLogger(Environment.class.getName());
-	
+	private static final WikiLogger logger = WikiLogger.getLogger(Environment.class.getName());
+
 	public static final String PROP_BASE_COOKIE_EXPIRE = "cookie-expire";
 	public static final String PROP_BASE_DEFAULT_TOPIC = "default-topic";
 	public static final String PROP_BASE_FILE_DIR = "homeDir";
@@ -225,11 +225,11 @@ public class Environment {
 	/**
 	 * Get the value of a boolean property.
 	 * Returns <code>true</code> if the property is equal, ignoring case,
-	 * to the string "true". 
-	 * Returns false in all other cases (eg: "false", "yes", "1") 
+	 * to the string "true".
+	 * Returns false in all other cases (eg: "false", "yes", "1")
 	 *
 	 * @param name The name of the property whose value is to be retrieved.
-	 * @return The value of the property.  
+	 * @return The value of the property.
 	 */
 	public static boolean getBooleanValue(String name) {
 		String value = getValue(name);
