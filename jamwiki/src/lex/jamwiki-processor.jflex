@@ -31,13 +31,17 @@ import org.springframework.util.StringUtils;
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
+    if (wikiitalic) {
+        wikiitalic = false;
+        output.append( "</i>" );
+    }
     if (wikibold) {
         wikibold = false;
         output.append("</b>");
     }
-    if (wikiitalic) {
-        wikiitalic = false;
-        output.append( "</i>" );
+    if (wikibolditalic) {
+        wikibolditalic = false;
+        output.append("</i></b>");
     }
     // close any open list tags
     if (yystate() == LIST) {
@@ -74,6 +78,7 @@ import org.springframework.util.StringUtils;
     protected boolean allowHTML = false;
     protected boolean allowJavascript = false;
     protected boolean wikibold = false;
+    protected boolean wikibolditalic = false;
     protected boolean wikiitalic = false;
     
     /**
@@ -134,6 +139,7 @@ entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 hr                 = "----"
 wikiheading        = [\=]+ ([^\n\=]+|[^\n\=][^\n]+[^\n\=]) [\=]+
 bold               = "'''"
+bolditalic         = "'''''"
 italic             = "''"
 
 /* lists */
@@ -437,6 +443,12 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     wikibold = !wikibold;
     return (wikibold) ? "<b>" : "</b>";
+}
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{bolditalic} {
+    logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
+    wikibolditalic = !wikibolditalic;
+    return (wikibolditalic) ? "<b><i>" : "</i></b>";
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{italic} {

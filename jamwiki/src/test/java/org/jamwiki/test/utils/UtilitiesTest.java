@@ -472,7 +472,7 @@ public class UtilitiesTest extends TestCase {
 	public void testParse4() throws Throwable {
 		ParserInput parserInput = getParserInput();
 		String result = Utilities.parse(parserInput, null, "'''''bold it'''''");
-		assertEquals("bold+it", "<p><b><i>blod</i></b>\n</p>", result);
+		assertEquals("bold+it", "<p><b><i>bold it</i></b>\n</p>", result);
 	}
 
 	public void testParse5() throws Throwable {
