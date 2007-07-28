@@ -315,6 +315,9 @@ public class WikiDatabase {
 	 */
 	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Connection conn) throws Exception {
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
+		if (user == null) {
+			throw new IllegalArgumentException("Cannot pass null WikiUser object to setupSpecialPage");
+		}
 		String contents = Utilities.readSpecialPage(locale, topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);

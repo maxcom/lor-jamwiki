@@ -188,12 +188,6 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
 			WikiUser user = Utilities.currentUser();
-			if (!user.hasRole(Role.ROLE_USER)) {
-				// FIXME - setting the user to null may not be necessary, but it is
-				// consistent with how the code behaved when Utilities.currentUser()
-				// returned null for non-logged-in users
-				user = null;
-			}
 			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
 			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
 				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
