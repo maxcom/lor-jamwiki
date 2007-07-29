@@ -101,7 +101,7 @@
 
 	<bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
 		<property name="key" value="jam35Wiki" />
-		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS,ROLE_VIEW" />
+		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
 	</bean>
 
 	<bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
@@ -218,6 +218,7 @@
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_ADMIN
 				/**/Special:Edit=ROLE_EDIT_EXISTING,ROLE_EDIT_NEW
+				/**/Special:Login=ROLE_ANONYMOUS,ROLE_USER
 				/**/Special:Maintenance=ROLE_ADMIN
 				/**/Special:Manage=ROLE_ADMIN
 				/**/Special:Move=ROLE_MOVE
@@ -226,6 +227,7 @@
 				/**/Special:Translation=ROLE_TRANSLATE
 				/**/Special:Upload=ROLE_UPLOAD
 				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER
+				/**/*.jsp=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_VIEW
 			</value>
 		</property>
