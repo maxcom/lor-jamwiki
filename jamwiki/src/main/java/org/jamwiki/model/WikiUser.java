@@ -38,6 +38,8 @@ public class WikiUser implements UserDetails {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUser.class.getName());
 	private static final long serialVersionUID = -2818435399240684581L;
+	/** Default roles for logged-in users */
+	private static Role[] defaultGroupRoles = null;
 
 	private Timestamp createDate = new Timestamp(System.currentTimeMillis());
 	private String createIpAddress = "0.0.0.0";
@@ -70,12 +72,16 @@ public class WikiUser implements UserDetails {
 		if (Utilities.isFirstUse() || Utilities.isUpgrade()) {
 			return;
 		}
-		this.addGroupRoles();
+		this.addDefaultGroupRoles();
 		this.addUserRoles();
 	}
 
 	/**
-	 * Construct the <code>User</code> with the details required by {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}.
+	 * Construct the <code>User</code> with the details required by
+	 * {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}.  This
+	 * method should be used by systems that do NOT use the default JAMWiki
+	 * user and group roles.  This method will NOT assign default roles to the
+	 * user, and as a result the Special:Roles functionality will be ignored.
 	 *
 	 * @param username the username presented to the
 	 *  <code>DaoAuthenticationProvider</code>
@@ -111,8 +117,6 @@ public class WikiUser implements UserDetails {
 			authorities = new GrantedAuthority[0];
 		}
 		this.addRoles(authorities);
-		this.addGroupRoles();
-		this.addUserRoles();
 	}
 
 	/**
@@ -304,16 +308,18 @@ public class WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-	private void addGroupRoles() {
-		Role[] groupRoles = new Role[0];
-		try {
-			groupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
-		} catch (Exception e) {
-			// FIXME - without default roles bad things happen, so should this throw the
-			// error to the calling method?
-			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
+	private void addDefaultGroupRoles() {
+		if (WikiUser.defaultGroupRoles == null) {
+			try {
+				WikiUser.defaultGroupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
+			} catch (Exception e) {
+				// FIXME - without default roles bad things happen, so should this throw the
+				// error to the calling method?
+				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
+				return;
+			}
 		}
-		this.addRoles(groupRoles);
+		this.addRoles(WikiUser.defaultGroupRoles);
 	}
 
 	/**
@@ -381,5 +387,13 @@ public class WikiUser implements UserDetails {
 		WikiUser user = new WikiUser();
 		user.setAuthorities(auth.getAuthorities());
 		return user;
+	}
+
+	/**
+	 * Force a reset of the default logged-in users roles.  This method should
+	 * be called if the roles allowed to logged-in users are changed.
+	 */
+	public static void resetDefaultGroupRoles() {
+		WikiUser.defaultGroupRoles = null;
 	}
 }

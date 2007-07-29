@@ -1230,6 +1230,7 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			// refresh the current role requirements
 			JAMWikiAnonymousProcessingFilter.reset();
+			WikiUser.resetDefaultGroupRoles();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
