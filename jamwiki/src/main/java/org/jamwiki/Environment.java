@@ -96,6 +96,7 @@ public class Environment {
 	public static final String PROP_RECENT_CHANGES_NUM = "recent-changes-days";
 	public static final String PROP_RSS_ALLOWED = "rss-allowed";
 	public static final String PROP_RSS_TITLE = "rss-title";
+	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_FORCE_USERNAME = "force-username";
 	// FIXME - this property can be removed once the abilitity to upgrade to 0.6.0 is removed
 	public static final String PROP_TOPIC_NON_ADMIN_TOPIC_MOVE = "non-admin-redirect";
@@ -216,7 +217,6 @@ public class Environment {
 		defaults.setProperty(PROP_RECENT_CHANGES_NUM, "100");
 		defaults.setProperty(PROP_RSS_ALLOWED, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_RSS_TITLE, "Wiki Recent Changes");
-		defaults.setProperty(PROP_TOPIC_FORCE_USERNAME, Boolean.FALSE.toString());
 		defaults.setProperty(PROP_TOPIC_SPAM_FILTER, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_USE_PREVIEW, Boolean.TRUE.toString());
 		defaults.setProperty(PROP_TOPIC_WYSIWYG, Boolean.TRUE.toString());

@@ -104,12 +104,6 @@ function onRSS() {
 	<td class="formelement"><jamwiki:text name="${PROP_BASE_LOGO_IMAGE}" value="${props[PROP_BASE_LOGO_IMAGE]}" size="30" id="${PROP_BASE_LOGO_IMAGE}" /></td>
 </tr>
 <tr>
-	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_FORCE_USERNAME %>"><f:message key="admin.caption.forceusername" /></label></td>
-	<c:set var="PROP_TOPIC_FORCE_USERNAME"><%= Environment.PROP_TOPIC_FORCE_USERNAME %></c:set>
-	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_FORCE_USERNAME}" value="true" checked="${props[PROP_TOPIC_FORCE_USERNAME]}" id="${PROP_TOPIC_FORCE_USERNAME}" /></td>
-</tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.forceusernamehelp" /></td></tr>
-<tr>
 	<td class="formcaption"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
 	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></td>

@@ -203,7 +203,8 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 */
 	protected static boolean isEditable(String virtualWiki, String topicName, WikiUser user) throws Exception {
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && (user == null || !user.hasRole(Role.ROLE_USER))) {
+		// FIXME - differentiate between ROLE_EDIT_NEW and ROLE_EDIT_EXISTING
+		if (user == null || !user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			// must be logged in to edit
 			return false;
 		}

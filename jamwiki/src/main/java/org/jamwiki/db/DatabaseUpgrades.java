@@ -206,6 +206,19 @@ public class DatabaseUpgrades {
 					+ "from jam_wiki_user where is_admin = 1 ";
 				DatabaseConnection.executeUpdate(sql, conn);
 			}
+			if (!Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME)) {
+				sql = "delete from jam_role_map "
+				    + "where role_name = ? "
+				    + "and group_id = (select group_id from jam_group where group_name = ?) ";
+				WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
+				stmt.setString(1, Role.ROLE_EDIT_EXISTING.getAuthority());
+				stmt.setString(2, WikiGroup.GROUP_ANONYMOUS);
+				stmt.executeUpdate(conn);
+				stmt = new WikiPreparedStatement(sql);
+				stmt.setString(1, Role.ROLE_EDIT_NEW.getAuthority());
+				stmt.setString(2, WikiGroup.GROUP_ANONYMOUS);
+				stmt.executeUpdate(conn);
+			}
 			if (!Environment.getBooleanValue(Environment.PROP_TOPIC_NON_ADMIN_TOPIC_MOVE)) {
 			    sql = "delete from jam_role_map "
 			        + "where role_name = ? "

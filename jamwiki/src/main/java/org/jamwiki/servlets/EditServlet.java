@@ -190,7 +190,8 @@ public class EditServlet extends JAMWikiServlet {
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
-		if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME) && !user.hasRole(Role.ROLE_USER)) {
+		// FIXME - differentiate between ROLE_EDIT_NEW and ROLE_EDIT_EXISTING
+		if (!user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			WikiMessage messageObject = new WikiMessage("edit.exception.login");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
