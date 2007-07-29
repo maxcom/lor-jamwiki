@@ -190,9 +190,12 @@ public class EditServlet extends JAMWikiServlet {
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
-		// FIXME - differentiate between ROLE_EDIT_NEW and ROLE_EDIT_EXISTING
 		if (!user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			WikiMessage messageObject = new WikiMessage("login.message.edit");
+			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
+		}
+		if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+			WikiMessage messageObject = new WikiMessage("login.message.editnew");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);

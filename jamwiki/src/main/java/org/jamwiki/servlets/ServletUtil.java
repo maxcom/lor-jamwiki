@@ -203,9 +203,12 @@ public class ServletUtil {
 	 *  <code>false</code> otherwise.
 	 */
 	protected static boolean isEditable(String virtualWiki, String topicName, WikiUser user) throws Exception {
-		// FIXME - differentiate between ROLE_EDIT_NEW and ROLE_EDIT_EXISTING
 		if (user == null || !user.hasRole(Role.ROLE_EDIT_EXISTING)) {
-			// must be logged in to edit
+			// user does not have appropriate permissions
+			return false;
+		}
+		if (!user.hasRole(Role.ROLE_EDIT_NEW) && WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null) == null) {
+			// user does not have appropriate permissions
 			return false;
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
