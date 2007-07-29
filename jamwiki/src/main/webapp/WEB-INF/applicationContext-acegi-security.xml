@@ -168,13 +168,14 @@
 		<property name="urlPatterns">
 			<value>
 				PATTERN_TYPE_APACHE_ANT
-				/**/Special:Admin=admin.message.loginrequired
-				/**/Special:Edit=edit.exception.login
-				/**/Special:Maintenance=admin.message.loginrequired
-				/**/Special:Manage=admin.message.loginrequired
-				/**/Special:Move=admin.message.loginrequired
-				/**/Special:Roles=admin.message.loginrequired
-				/**/Special:Translation=admin.message.loginrequired
+				/**/Special:Admin=login.message.admin
+				/**/Special:Edit=login.message.edit
+				/**/Special:Maintenance=login.message.admin
+				/**/Special:Manage=login.message.admin
+				/**/Special:Move=login.message.move
+				/**/Special:Roles=login.message.admin
+				/**/Special:Translation=login.message.admin
+				/**/*=login.message.default
 			</value>
 		</property>
 	</bean>
@@ -222,6 +223,7 @@
 				/**/Special:Maintenance=ROLE_ADMIN
 				/**/Special:Manage=ROLE_ADMIN
 				/**/Special:Move=ROLE_MOVE
+				/**/Special:RecentChangesFeed=ROLE_ANONYMOUS,ROLE_USER
 				/**/Special:Roles=ROLE_ADMIN
 				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_USER
 				/**/Special:Translation=ROLE_TRANSLATE

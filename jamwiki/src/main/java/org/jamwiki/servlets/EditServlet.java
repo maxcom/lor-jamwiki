@@ -192,7 +192,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		// FIXME - differentiate between ROLE_EDIT_NEW and ROLE_EDIT_EXISTING
 		if (!user.hasRole(Role.ROLE_EDIT_EXISTING)) {
-			WikiMessage messageObject = new WikiMessage("edit.exception.login");
+			WikiMessage messageObject = new WikiMessage("login.message.edit");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -201,7 +201,7 @@ public class EditServlet extends JAMWikiServlet {
 			return null;
 		}
 		if (topic.getAdminOnly()) {
-			WikiMessage messageObject = new WikiMessage("edit.exception.loginadmin", topicName);
+			WikiMessage messageObject = new WikiMessage("login.message.editadmin", topicName);
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		if (topic.getReadOnly()) {

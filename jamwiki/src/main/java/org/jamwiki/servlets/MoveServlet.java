@@ -44,7 +44,7 @@ public class MoveServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		WikiUser user = Utilities.currentUser();
 		if (!user.hasRole(Role.ROLE_MOVE)) {
-			WikiMessage messageObject = new WikiMessage("admin.message.loginrequired");
+			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, Utilities.getTopicFromURI(request), messageObject);
 		}
 		if (request.getParameter("move") == null) {
