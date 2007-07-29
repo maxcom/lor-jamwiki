@@ -28,6 +28,7 @@ import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
@@ -1227,6 +1228,8 @@ public class AnsiDataHandler implements DataHandler {
 				String role = (String)roleIterator.next();
 				this.queryHandler().insertRoleMap(-1, groupId, role, conn);
 			}
+			// refresh the current role requirements
+			JAMWikiAnonymousProcessingFilter.reset();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;

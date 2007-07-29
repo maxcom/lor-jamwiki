@@ -89,4 +89,12 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 			user.addAuthority(groupRoles[i]);
 		}
 	}
+
+	/**
+	 * Force a reset of the default role object.  This method should be called
+	 * if the roles allowed to anonymous users are changed.
+	 */
+	public static void reset() {
+		JAMWikiAnonymousProcessingFilter.groupRoles = null;
+	}
 }
