@@ -18,22 +18,16 @@
  */
 package org.jamwiki.test.utils;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Properties;
-import java.util.Vector;
+
 import junit.framework.TestCase;
+
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.DatabaseUserHandler;
 import org.jamwiki.model.Topic;
-import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
