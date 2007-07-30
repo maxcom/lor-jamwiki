@@ -22,6 +22,7 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  *
@@ -40,7 +41,7 @@ public class HtmlPreTag implements ParserTag {
 			return raw;
 		}
 		if (mode == JFlexParser.MODE_PROCESS && !Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
-			return Utilities.escapeHTML(raw);
+			return HtmlUtils.htmlEscape(raw);
 		}
 		return ParserUtil.sanitizeHtmlTag(raw);
 	}

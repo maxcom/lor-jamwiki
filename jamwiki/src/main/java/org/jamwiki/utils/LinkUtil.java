@@ -24,6 +24,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * General utility methods for handling both wiki topic links such as
@@ -152,7 +153,7 @@ public class LinkUtil {
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
 			url = FilenameUtils.separatorsToUnix(url);
-			return "<a href=\"" + url + "\">" + Utilities.escapeHTML(caption) + "</a>";
+			return "<a href=\"" + url + "\">" + HtmlUtils.htmlEscape(caption) + "</a>";
 		}
 		String html = "";
 		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
@@ -192,7 +193,7 @@ public class LinkUtil {
 		html += "\"";
 		html += " width=\"" + wikiImage.getWidth() + "\"";
 		html += " height=\"" + wikiImage.getHeight() + "\"";
-		html += " alt=\"" + Utilities.escapeHTML(caption) + "\"";
+		html += " alt=\"" + HtmlUtils.htmlEscape(caption) + "\"";
 		html += " />";
 		if (!suppressLink) {
 			html += "</a>";
@@ -200,7 +201,7 @@ public class LinkUtil {
 		if (StringUtils.hasText(caption)) {
 			html += "<div class=\"imgcaption\">";
 			if (escapeHtml) {
-				html += Utilities.escapeHTML(caption);
+				html += HtmlUtils.htmlEscape(caption);
 			} else {
 				html += caption;
 			}
@@ -258,9 +259,9 @@ public class LinkUtil {
 		} else {
 			target = "";
 		}
-		String html = "<a title=\"" + Utilities.escapeHTML(text) + "\" href=\"" + url + "\"" + style + target + ">";
+		String html = "<a title=\"" + HtmlUtils.htmlEscape(text) + "\" href=\"" + url + "\"" + style + target + ">";
 		if (escapeHtml) {
-			html += Utilities.escapeHTML(text);
+			html += HtmlUtils.htmlEscape(text);
 		} else {
 			html += text;
 		}

@@ -25,6 +25,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * Used to generate a list of all edits made by a user.
@@ -53,7 +54,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("contributions", contributions);
 		next.addObject("numContributions", new Integer(contributions.size()));
 		next.addObject("contributor", userString);
-		pageInfo.setPageTitle(new WikiMessage("contributions.title", Utilities.escapeHTML(userString)));
+		pageInfo.setPageTitle(new WikiMessage("contributions.title", HtmlUtils.htmlEscape(userString)));
 		pageInfo.setContentJsp(JSP_CONTRIBUTIONS);
 		pageInfo.setSpecial(true);
 	}

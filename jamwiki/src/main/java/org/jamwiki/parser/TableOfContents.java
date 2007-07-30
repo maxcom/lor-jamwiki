@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * This class may be used in two ways:
@@ -249,7 +250,7 @@ public class TableOfContents {
 			}
 			closeList(adjustedLevel, text);
 			openList(adjustedLevel, text);
-			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(Utilities.escapeHTML(entry.text)).append("</a>");
+			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(HtmlUtils.htmlEscape(entry.text)).append("</a>");
 		}
 		closeList(0, text);
 		text.append("</td></tr></table>");

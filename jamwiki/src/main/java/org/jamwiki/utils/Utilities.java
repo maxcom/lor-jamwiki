@@ -349,27 +349,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Replace any occurrences of <, >, ", ', or & with their HTML equivalents.
-	 *
-	 * @param input The text from which XML characters are to be escaped.
-	 * @return An escaped version of the given text.
-	 */
-	// FIXME - replace with org.springframework.web.util.HtmlUtils
-	public static String escapeHTML(String input) {
-		if (!StringUtils.hasText(input)) {
-			return input;
-		}
-		String result = input;
-		// for obvious reasons ampersand must be replaced first
-		result = StringUtils.replace(result, "&", "&amp;");
-		result = StringUtils.replace(result, ">", "&gt;");
-		result = StringUtils.replace(result, "<", "&lt;");
-		result = StringUtils.replace(result, "\"", "&quot;");
-		result = StringUtils.replace(result, "'", "&#39;");
-		return result;
-	}
-
-	/**
 	 * Given an article name, return the appropriate comments topic article name.
 	 * For example, if the article name is "Topic" then the return value is
 	 * "Comments:Topic".

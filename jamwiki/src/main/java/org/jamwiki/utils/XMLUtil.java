@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Timestamp;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.springframework.web.util.HtmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -55,7 +57,7 @@ public class XMLUtil {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('<').append(tagName).append('>');
 		if (escape) {
-			tagValue = Utilities.escapeHTML(tagValue);
+			tagValue = HtmlUtils.htmlEscape(tagValue);
 		}
 		buffer.append(tagValue);
 		buffer.append("</").append(tagName).append('>');

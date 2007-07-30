@@ -48,6 +48,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  * An implementation of {@link org.jamwiki.search.SearchEngine} that uses
@@ -374,7 +375,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
 		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
-			summary = Utilities.escapeHTML(content.substring(0, Math.min(200, content.length())));
+			summary = HtmlUtils.htmlEscape(content.substring(0, Math.min(200, content.length())));
 			if (Math.min(200, content.length()) == 200) {
 				summary += "...";
 			}

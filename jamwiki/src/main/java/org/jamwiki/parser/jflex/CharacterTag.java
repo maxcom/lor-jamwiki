@@ -43,7 +43,7 @@ public class CharacterTag implements ParserTag {
 		if (isEntity(raw)) {
 			return raw;
 		}
-		return Utilities.escapeHTML(raw);
+		return HtmlUtils.htmlEscape(raw);
 	}
 
 	/**

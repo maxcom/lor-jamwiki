@@ -10,6 +10,7 @@ import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 
 %%
 
@@ -493,7 +494,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         beginState(JAVASCRIPT);
         return ParserUtil.sanitizeHtmlTag(yytext());
     }
-    return Utilities.escapeHTML(yytext());
+    return HtmlUtils.htmlEscape(yytext());
 }
 
 <JAVASCRIPT>{jsclose} {
@@ -502,7 +503,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         endState();
         return ParserUtil.sanitizeHtmlTag(yytext());
     }
-    return Utilities.escapeHTML(yytext());
+    return HtmlUtils.htmlEscape(yytext());
 }
 
 /* ----- other ----- */

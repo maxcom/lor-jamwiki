@@ -22,6 +22,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  *
@@ -37,7 +38,7 @@ public class HtmlTag implements ParserTag {
 		if (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
 			return ParserUtil.validateHtmlTag(raw);
 		} else {
-			return Utilities.escapeHTML(raw);
+			return HtmlUtils.htmlEscape(raw);
 		}
 	}
 }

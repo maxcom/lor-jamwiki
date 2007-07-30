@@ -21,6 +21,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  *
@@ -40,7 +41,7 @@ public class WikiNowikiTag implements ParserTag {
 		}
 		String content = ParserUtil.tagContent(raw);
 		if (mode == JFlexParser.MODE_PROCESS) {
-			return "<nowiki>" + Utilities.escapeHTML(content) + "</nowiki>";
+			return "<nowiki>" + HtmlUtils.htmlEscape(content) + "</nowiki>";
 		}
 		return content;
 	}

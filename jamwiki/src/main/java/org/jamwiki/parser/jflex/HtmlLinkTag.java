@@ -23,6 +23,7 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 
 /**
  *
@@ -106,7 +107,7 @@ public class HtmlLinkTag implements ParserTag {
 		if (!StringUtils.hasText(text)) {
 			text = link;
 		}
-		text = Utilities.escapeHTML(text);
+		text = HtmlUtils.htmlEscape(text);
 		link = link.substring(protocol.length());
 		// make sure link values are properly escaped.
 		link = StringUtils.replace(link, "<", "%3C");

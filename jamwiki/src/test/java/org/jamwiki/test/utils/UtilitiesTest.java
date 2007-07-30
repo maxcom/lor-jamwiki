@@ -127,15 +127,6 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testEscapeHTML() throws Throwable {
-		//TODO
-		String result = Utilities.escapeHTML(null);
-		assertNull("result", result);
-	}
-
-	/**
-	 *
-	 */
 	public void testExtractCommentsLink() throws Throwable {
 		// FIXME
 //		String result = Utilities.extractCommentsLink("testUtilitiesName");
