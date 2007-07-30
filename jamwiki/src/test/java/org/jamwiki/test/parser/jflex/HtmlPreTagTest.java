@@ -63,7 +63,7 @@ public class HtmlPreTagTest extends JFlexParserTest {
 		output = "<pre>test</pre>\n";
 		assertEquals(output, this.parse(input));
 		input = "<pre>'''bold'''</pre>";
-		output = "<pre>&#39;&#39;&#39;bold&#39;&#39;&#39;</pre>\n";
+		output = input+"\n";
 		assertEquals(output, this.parse(input));
 	}
 }
