@@ -206,7 +206,7 @@ public class DatabaseUpgrades {
 					+ "from jam_wiki_user where is_admin = 1 ";
 				DatabaseConnection.executeUpdate(sql, conn);
 			}
-			if (!Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME)) {
+			if (Environment.getBooleanValue(Environment.PROP_TOPIC_FORCE_USERNAME)) {
 				sql = "delete from jam_role_map "
 				    + "where role_name = ? "
 				    + "and group_id = (select group_id from jam_group where group_name = ?) ";
