@@ -60,6 +60,8 @@
 	</c:if>
 </c:forEach>
 <tr><td colspan="4">&nbsp;</td></tr>
+<tr><td colspan="4" class="formhelp"><f:message key="roles.help.grouproles" /></td></tr>
+<tr><td colspan="4">&nbsp;</td></tr>
 <tr><td colspan="4" class="formelement" align="center"><input type="submit" name="Submit" value="<f:message key="common.save" />" /></td></tr>
 <tr><td colspan="4">&nbsp;</td></tr>
 </table>
@@ -87,6 +89,8 @@
 		</select>
 	</td>
 </tr>
+<tr><td colspan="3">&nbsp;</td></tr>
+<tr><td colspan="3" class="formhelp"><f:message key="roles.help.userroles" /></td></tr>
 <tr><td colspan="3">&nbsp;</td></tr>
 </table>
 </form>
@@ -137,17 +141,17 @@
 		</select>
 	</td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="roles.caption.selectrolehelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="roles.help.selectrole" /></td></tr>
 <tr>
-	<td class="formcaption"><label for="roleName"><f:message key="roles.caption.name" /></label></td>
+	<td class="formcaption"><label for="roleName"><f:message key="roles.caption.rolename" /></label></td>
 	<td class="formelement"><input type="text" name="roleName" id="roleName" value="<c:out value="${roleName}" />" size="30" <c:if test="${!empty roleName}">disabled="disabled"</c:if> /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="roles.caption.namehelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="roles.help.rolename" /></td></tr>
 <tr>
-	<td class="formcaption"><label for="roleDescription"><f:message key="roles.caption.description" /></label></td>
+	<td class="formcaption"><label for="roleDescription"><f:message key="roles.caption.roledescription" /></label></td>
 	<td class="formelement"><textarea cols="30" rows="3" name="roleDescription" id="roleDescription"><c:out value="${roleDescription}" /></textarea></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="roles.caption.descriptionhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="roles.help.roledescription" /></td></tr>
 </table>
 <table border="0" class="contents" width="100%">
 <tr><td colspan="2">&nbsp;</td></tr>

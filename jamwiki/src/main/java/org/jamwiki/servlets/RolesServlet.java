@@ -111,6 +111,7 @@ public class RolesServlet extends JAMWikiServlet {
 					Collection roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
 				}
+				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
 			}
 			// now do the same for user roles.
 			String[] candidateUsers = request.getParameterValues("candidateUser");
@@ -121,6 +122,7 @@ public class RolesServlet extends JAMWikiServlet {
 					Collection roles = buildRoleArray(userId, -1, userRoles);
 					WikiBase.getDataHandler().writeRoleMapUser(userId, roles, null);
 				}
+				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}
 		} catch (WikiException e) {
 			next.addObject("message", e.getWikiMessage());

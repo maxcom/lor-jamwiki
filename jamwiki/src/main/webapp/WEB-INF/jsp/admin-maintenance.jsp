@@ -72,9 +72,10 @@
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
+	<td class="formcaption" style="width:200px"><f:message key="admin.title.refresh" /></td>
 	<td class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.rebuildsearch" /></td></tr>
 </table>
 <input type="hidden" name="function" value="refreshIndex" />
 </form>
@@ -86,9 +87,10 @@
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
+	<td class="formcaption" style="width:200px"><f:message key="admin.caption.recentchanges" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.reloadrecentchanges" /></td></tr>
 </table>
 <input type="hidden" name="function" value="recentChanges" />
 </form>
@@ -100,9 +102,10 @@
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
+	<td class="formcaption" style="width:200px"><f:message key="admin.caption.cache" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.clearcache" /></td></tr>
 </table>
 <input type="hidden" name="function" value="cache" />
 </form>
@@ -116,9 +119,10 @@
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
+	<td class="formcaption" style="width:200px"><f:message key="admin.caption.spamfilter" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.reloadspamfilter" /></td></tr>
 </table>
 <input type="hidden" name="function" value="spamFilter" />
 </form>
