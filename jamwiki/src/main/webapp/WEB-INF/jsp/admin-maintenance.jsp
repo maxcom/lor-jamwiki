@@ -77,7 +77,7 @@
 <fieldset>
 <legend><f:message key="admin.title.refresh" /></legend>
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
-<table border="0" class="contents">
+<table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="search" />">
 	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
 	<td class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
@@ -93,7 +93,7 @@
 <fieldset>
 <legend><f:message key="admin.title.recentchanges" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
-<table border="0" class="contents">
+<table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="recentchanges" />">
 	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
@@ -109,7 +109,7 @@
 <fieldset>
 <legend><f:message key="admin.title.cache" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
-<table border="0" class="contents">
+<table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
 	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
@@ -127,7 +127,7 @@
 <fieldset>
 <legend><f:message key="admin.title.spamfilter" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
-<table border="0" class="contents">
+<table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
 	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
