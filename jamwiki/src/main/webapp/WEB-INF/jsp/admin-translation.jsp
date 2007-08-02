@@ -52,7 +52,7 @@
 <input type="hidden" name="language" value="<c:out value="${language}" />" />
 <table>
 <c:forEach items="${translations}" var="translation">
-<tr>
+<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="translation" />">
 	<td><label for="translations[<c:out value="${translation.key}" />]"><c:out value="${translation.key}" /></label></td>
 	<td><textarea name="translations[<c:out value="${translation.key}" />]" style="overflow:auto;width:30em;height:4em;" id="translations[<c:out value="${translation.key}" />]"><c:out value="${translation.value}" /></textarea></td>
 </tr>

@@ -41,8 +41,8 @@
 <a name="virtualwiki"></a>
 <fieldset>
 <legend><f:message key="admin.title.virtualwiki" /></legend>
-<table border="0" class="contents">
-<tr>
+<table border="0" class="contents" width="99%">
+<tr class="darkbg">
 	<th><f:message key="common.name" /></th>
 	<th><f:message key="admin.caption.defaulttopic" /></th>
 	<th>&#160;</th>
@@ -52,17 +52,17 @@
 <input type="hidden" name="function" value="addVirtualWiki" />
 <input type="hidden" name="virtualWikiId" value="<c:out value="${wiki.virtualWikiId}" />" />
 <input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
-<tr>
+<tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="virtualwiki" />">
 	<%-- FIXME: need label element --%>
-	<td class="formelement"><c:out value="${wiki.name}" /></td>
-	<td class="formelement"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
+	<td class="formelement" style="width:150px"><c:out value="${wiki.name}" /></td>
+	<td class="formelement" style="width:200px"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="common.update" />" /></td>
 </tr>
 </form>
 </c:forEach>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <input type="hidden" name="function" value="addVirtualWiki" />
-<tr>
+<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="virtualwiki" />">
 	<td class="formelement"><input type="text" name="name" /></td>
 	<td class="formelement"><input type="text" name="defaultTopicName" value="<%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %>" size="30" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="common.add" />" /></td>
@@ -78,7 +78,7 @@
 <legend><f:message key="admin.title.refresh" /></legend>
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
 <table border="0" class="contents">
-<tr>
+<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="search" />">
 	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
 	<td class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
 </tr>
@@ -94,7 +94,7 @@
 <legend><f:message key="admin.title.recentchanges" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
-<tr>
+<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="recentchanges" />">
 	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
@@ -110,7 +110,7 @@
 <legend><f:message key="admin.title.cache" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
-<tr>
+<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
 	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
@@ -128,7 +128,7 @@
 <legend><f:message key="admin.title.spamfilter" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
-<tr>
+<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
 	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
