@@ -25,6 +25,11 @@
 
 <%@ include file="page-init.jsp" %>
 
+<div class="submenu">
+<a href="#virtualwiki"><f:message key="admin.title.virtualwiki" /></a> | <a href="#search"><f:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><f:message key="admin.title.recentchanges" /></a><br />
+<a href="#cache"><f:message key="admin.title.cache" /></a> | <a href="#spam"><f:message key="admin.title.spamfilter" /></a>
+</div>
+
 <c:if test="${!empty message}">
 <div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
 </c:if>
@@ -33,6 +38,7 @@
 </c:if>
 
 <!-- Virtual Wikis -->
+<a name="virtualwiki"></a>
 <fieldset>
 <legend><f:message key="admin.title.virtualwiki" /></legend>
 <table border="0" class="contents">
@@ -48,7 +54,7 @@
 <input type="hidden" name="name" value="<c:out value="${wiki.name}" />" />
 <tr>
 	<%-- FIXME: need label element --%>
-	<td class="formcaption"><c:out value="${wiki.name}" /></td>
+	<td class="formelement"><c:out value="${wiki.name}" /></td>
 	<td class="formelement"><input type="text" name="defaultTopicName" value="<c:out value="${wiki.defaultTopicName}" />" size="30" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="common.update" />" /></td>
 </tr>
@@ -67,12 +73,13 @@
 </fieldset>
 
 <!-- Refresh Search Index -->
+<a name="search"></a>
 <fieldset>
 <legend><f:message key="admin.title.refresh" /></legend>
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption" style="width:200px"><f:message key="admin.title.refresh" /></td>
+	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
 	<td class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.help.rebuildsearch" /></td></tr>
@@ -82,12 +89,13 @@
 </fieldset>
 
 <!-- Recent Changes -->
+<a name="recentchanges"></a>
 <fieldset>
 <legend><f:message key="admin.title.recentchanges" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption" style="width:200px"><f:message key="admin.caption.recentchanges" /></td>
+	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.help.reloadrecentchanges" /></td></tr>
@@ -97,12 +105,13 @@
 </fieldset>
 
 <!-- Cache -->
+<a name="cache"></a>
 <fieldset>
 <legend><f:message key="admin.title.cache" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption" style="width:200px"><f:message key="admin.caption.cache" /></td>
+	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.help.clearcache" /></td></tr>
@@ -114,12 +123,13 @@
 <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">
 
 <!-- Spam Filter -->
+<a name="spam"></a>
 <fieldset>
 <legend><f:message key="admin.title.spamfilter" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents">
 <tr>
-	<td class="formcaption" style="width:200px"><f:message key="admin.caption.spamfilter" /></td>
+	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.help.reloadspamfilter" /></td></tr>

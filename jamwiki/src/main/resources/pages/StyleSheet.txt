@@ -474,6 +474,7 @@ img.gallery {
 /* form styles */
 
 td.formcaption {
+	width: 250px;
 }
 td.formelement {
 }

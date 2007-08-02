@@ -23,7 +23,7 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="submenu">
-<a href="#assign"><f:message key="roles.header.group" /> | <a href="#assign"><f:message key="roles.header.user" /></a> | <a href="#create"><f:message key="roles.header.modify" /></a>
+<a href="#assign"><f:message key="roles.header.group" /></a> | <a href="#assign"><f:message key="roles.header.user" /></a> | <a href="#create"><f:message key="roles.header.modify" /></a>
 </div>
 
 <c:if test="${!empty message}">
@@ -39,7 +39,7 @@
 <a name="group"></a>
 <fieldset>
 <legend><f:message key="roles.header.group" /></legend>
-<table border="0" class="contents" width="100%">
+<table border="0" class="contents" width="99%">
 <tr class="darkbg">
 	<th><f:message key="roles.caption.groupname" /></th>
 	<th colspan="3"><f:message key="roles.caption.roles" /></th>
@@ -77,8 +77,8 @@
 <table border="0" class="contents">
 <tr>
 	<td class="formcaption"><f:message key="roles.caption.searchlogin" />:</td>
-	<td class="formelement"><input type="text" name="searchLogin" value="<c:out value="${searchLogin}" />" size="30" /></td>
-	<td align="center"><input type="submit" name="search" value="<f:message key="search.search" />" /></td>
+	<td class="formelement" style="width:200px"><input type="text" name="searchLogin" value="<c:out value="${searchLogin}" />" size="30" /></td>
+	<td align="left"><input type="submit" name="search" value="<f:message key="search.search" />" /></td>
 </tr>
 <tr>
 	<td class="formcaption"><f:message key="roles.caption.searchrole" />:</td>
@@ -97,7 +97,7 @@
 <c:if test="${!empty roleMapUsers}">
 <form action="<jamwiki:link value="Special:Roles" />" method="post">
 <input type="hidden" name="function" value="assignRole" />
-<table border="0" class="contents" width="100%">
+<table border="0" class="contents" width="99%">
 <tr class="darkbg">
 	<th><f:message key="roles.caption.userlogin" /></th>
 	<th colspan="3"><f:message key="roles.caption.roles" /></th>
@@ -131,7 +131,7 @@
 <a name="create"></a>
 <fieldset>
 <legend><f:message key="roles.header.modify" /></legend>
-<table border="0" class="contents">
+<table border="0" class="contents" width="99%">
 <tr>
 	<td class="formcaption"><f:message key="roles.caption.selectrole" />:</td>
 	<td class="formelement">
