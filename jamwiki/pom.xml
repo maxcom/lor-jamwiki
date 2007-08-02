@@ -123,7 +123,7 @@
 			<artifactId>servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
@@ -160,8 +160,8 @@
 		</dependency>
 
 		<!--  These dependencies are related project.
-		They need to be "mvn install"ed 
-		before being able to compile JAMwiki. 
+		They need to be "mvn install"ed
+		before being able to compile JAMwiki.
 		-->
 		<dependency>
 			<groupId>org.jamwiki</groupId>
@@ -169,23 +169,21 @@
 			<version>1.0.5</version>
 		</dependency>
 	</dependencies>
-	
+
 	<developers>
-		<!--  
+		<!--
 		See http://www.ohloh.net/projects/6482/analyses/latest/contributors
 		 -->
 		<developer>
 			<id>wrh2</id>
 			<name>Ryan Holliday</name>
-			<email>wrh2 at users.sf.net</email>
+			<url>http://mountaininterval.org/</url>
 			<roles>
-				<role>architect</role>
 				<role>project lead</role>
 				<role>developer</role>
 			</roles>
 			<timezone>-8</timezone>
 		</developer>
-		
 		<developer>
 			<id>rainers</id>
 			<name>Rainer Schmitz</name>
@@ -194,16 +192,14 @@
 				<role>developer</role>
 			</roles>
 		</developer>
-		
 		<developer>
 			<id>dlpa</id>
 			<name>dlpa</name>
-			<email>dlap at users.sf.net</email>
+			<email>dlpa at users.sf.net</email>
 			<roles>
 				<role>developer</role>
 			</roles>
-		</developer>		
-		
+		</developer>
 		<developer>
 			<id>mikegremi</id>
 			<name>Michael Greifeneder</name>
@@ -213,7 +209,6 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
-				
 		<developer>
 			<id>axelcl</id>
 			<name>Axel C. Kramer</name>
@@ -222,7 +217,6 @@
 				<role>developer</role>
 			</roles>
 		</developer>
-		
 		<developer>
 			<id>ncsaba</id>
 			<name>Csaba Nagy</name>
@@ -231,7 +225,6 @@
 				<role>developer</role>
 			</roles>
 		</developer>
-		
 		<developer>
 			<id>decamps</id>
 			<name>Régis Décamps</name>
@@ -240,7 +233,7 @@
 				<role>developer</role>
 			</roles>
 			<timezone>+1</timezone>
-		</developer>		
+		</developer>
 	</developers>
 	<contributors>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
@@ -256,27 +249,18 @@
 		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
 		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
 		<!-- TODO indicate roles -->
-		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email></contributor>
+		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email><roles><role>graphics designer</role></roles></contributor>
 		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
-		<contributor><name>Oliver</name><email>okohll</email></contributor>
+		<contributor><name>Oliver</name><email>okohll</email><roles><role>graphics designer</role></roles></contributor>
 		<contributor><name>Carsten Seiffert</name><email>carsten</email></contributor>
 		<!--  VQWiki developers and contributors -->
-		<contributor>
-			<name>Martijn van der Kleijn</name>
-			<email>mvdkleijn at users.sourceforge.net</email>
-			<roles>
-				<role>VQWiki project lead</role>
-				<role>developer</role>
-				<role>translator</role>
-			</roles>
-			<organization>VQWiki project</organization>
-		</contributor>
-		<contributor><name>Andreas Studer</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
-		<contributor><name>Colin Jacobs</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
-		<contributor><name>Tobias Schulz-Hess</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
-		<contributor><name>Fritz Freiheit</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
-		<contributor><name>Gareth Cronin</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
-		<contributor><name>HongLiang Bi</name><roles><role>developer</role></roles><organization>VQWiki project</organization></contributor>
+		<contributor><name>Martijn van der Kleijn</name><organization>VQWiki project</organization><email>mvdkleijn at users.sourceforge.net</email><roles><role>VQWiki project lead</role></roles></contributor>
+		<contributor><name>Andreas Studer</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Colin Jacobs</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Tobias Schulz-Hess</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Fritz Freiheit</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>Gareth Cronin</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
+		<contributor><name>HongLiang Bi</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
 		<contributor><name>Tim Howland</name><organization>VQWiki project</organization><roles><role>documentation</role></roles></contributor>
 		<contributor><name>Marcello Teodori</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 		<contributor><name>Zapo (erzapo)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
@@ -284,7 +268,7 @@
 		<contributor><name>Johan Lindell</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 		<contributor><name>Erik (xan-)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>	
+		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 	</contributors>
 	<properties>
 		<jflex.dir>${basedir}/src/lex</jflex.dir>
@@ -376,7 +360,7 @@
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
 			</plugin>
-			
+
     		 <plugin>
     		 	<artifactId>maven-source-plugin</artifactId>
     		 </plugin>
@@ -388,10 +372,10 @@
 					<xmlOutput>true</xmlOutput>
 					<threshold>Normal</threshold>
 					<effort>Default</effort>
-					<outputDirectory>target/findbugs</outputDirectory>					
+					<outputDirectory>target/findbugs</outputDirectory>
 					<excludeFilterFile>
 						findbugs-exclude.xml
-					</excludeFilterFile><!-- 
+					</excludeFilterFile><!--
 					<includeFilterFile>
 						findbugs-include.xml
 					</includeFilterFile>-->
@@ -400,7 +384,7 @@
 					</visitors>
 					<onlyAnalyze>
 						org.jamwiki.*
-					</onlyAnalyze><!-- 
+					</onlyAnalyze><!--
 					<pluginList>
 						/libs/fb-contrib/fb-contrib-2.8.0.jar
 					</pluginList>-->
@@ -419,13 +403,13 @@
 		        <reportSets>
                      <reportSet>
                         <reports>
-                           <report>index</report>                           
+                           <report>index</report>
                            <report>dependencies</report>
                            <report>project-team</report>
                            <report>issue-tracking</report>
                            <report>license</report>
                            <report>scm</report>
-                           <report>summary</report>                           
+                           <report>summary</report>
                         </reports>
                      </reportSet>
                   </reportSets>
@@ -471,7 +455,7 @@
 				<configuration>
 					<encoding>ISO-8859-1</encoding>
 				</configuration>
-		    </plugin>			
+		    </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
