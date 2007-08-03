@@ -143,7 +143,7 @@ function onRSS() {
 	<c:set var="PROP_BASE_META_DESCRIPTION"><%= Environment.PROP_BASE_META_DESCRIPTION %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><c:out value="${props[PROP_BASE_META_DESCRIPTION]}" /></textarea></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.metadescriptionhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.metadescription" /></td></tr>
 </table>
 </fieldset>
 <!-- END GENERAL SETTINGS -->
@@ -174,7 +174,7 @@ function onRSS() {
 	<c:set var="PROP_PARSER_TOC_DEPTH"><%= Environment.PROP_PARSER_TOC_DEPTH %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_PARSER_TOC_DEPTH}" value="${props[PROP_PARSER_TOC_DEPTH]}" size="5" maxlength="1" id="${PROP_PARSER_TOC_DEPTH}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.tableofcontentsdepthhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.tableofcontentsdepth" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><f:message key="admin.caption.allowhtml" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_HTML"><%= Environment.PROP_PARSER_ALLOW_HTML %></c:set>
@@ -195,13 +195,13 @@ function onRSS() {
 	<c:set var="PROP_PARSER_SIGNATURE_USER_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_PARSER_SIGNATURE_USER_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_USER_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_USER_PATTERN}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.signatureuserhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.signatureuser" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>"><f:message key="admin.caption.signaturedate" /></label></td>
 	<c:set var="PROP_PARSER_SIGNATURE_DATE_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_DATE_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.signaturedatehelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.signaturedate" /></td></tr>
 </table>
 </fieldset>
 <!-- END PARSER -->
@@ -249,7 +249,7 @@ FIXME - Email not supported right now, comment this out
 	<c:set var="PROP_BASE_FILE_DIR"><%= Environment.PROP_BASE_FILE_DIR %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_BASE_FILE_DIR}" value="${props[PROP_BASE_FILE_DIR]}" size="50" id="${PROP_BASE_FILE_DIR}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.filedirhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.filedir" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label></td>
 	<td class="formelement">
@@ -361,7 +361,7 @@ FIXME - Email not supported right now, comment this out
 	<c:set var="PROP_FILE_DIR_FULL_PATH"><%= Environment.PROP_FILE_DIR_FULL_PATH %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_FILE_DIR_FULL_PATH}" value="${props[PROP_FILE_DIR_FULL_PATH]}" size="50" id="${PROP_FILE_DIR_FULL_PATH}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.uploaddir" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>"><f:message key="admin.caption.uploaddirrel" /></label></td>
 	<c:set var="PROP_FILE_DIR_RELATIVE_PATH"><%= Environment.PROP_FILE_DIR_RELATIVE_PATH %></c:set>
@@ -384,13 +384,13 @@ FIXME - Email not supported right now, comment this out
 	<c:set var="PROP_FILE_BLACKLIST"><%= Environment.PROP_FILE_BLACKLIST %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_BLACKLIST %>" id="<%= Environment.PROP_FILE_BLACKLIST %>"><c:out value="${props[PROP_FILE_BLACKLIST]}" /></textarea></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.upload.blacklisthelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.upload.help.blacklist" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_FILE_WHITELIST %>"><f:message key="admin.caption.upload.whitelist" /></label></td>
 	<c:set var="PROP_FILE_WHITELIST"><%= Environment.PROP_FILE_WHITELIST %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_WHITELIST %>" id="<%= Environment.PROP_FILE_WHITELIST %>"><c:out value="${props[PROP_FILE_WHITELIST]}" /></textarea></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.upload.whitelisthelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.upload.help.whitelist" /></td></tr>
 </table>
 </fieldset>
 <!-- END FILE UPLOAD -->
@@ -426,24 +426,24 @@ FIXME - Email not supported right now, comment this out
 	<c:set var="PROP_LDAP_CONTEXT"><%= Environment.PROP_LDAP_CONTEXT %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_CONTEXT}" id="${PROP_LDAP_CONTEXT}" value="${props[PROP_LDAP_CONTEXT]}" size="50" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.contexthelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.context" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.ldap.security" /></label></td>
 	<c:set var="PROP_LDAP_SECURITY_AUTHENTICATION"><%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_SECURITY_AUTHENTICATION}" id="${PROP_LDAP_SECURITY_AUTHENTICATION}" value="${props[PROP_LDAP_SECURITY_AUTHENTICATION]}" size="20" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.securityhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.security" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.caption.ldap.login" /></label></td>
 	<c:set var="PROP_LDAP_LOGIN"><%= Environment.PROP_LDAP_LOGIN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_LOGIN}" id="${PROP_LDAP_LOGIN}" value="${props[PROP_LDAP_LOGIN]}" size="30" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.loginhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.login" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.caption.ldap.password" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.ldap.passwordhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.password" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_USERID %>"><f:message key="admin.caption.ldap.field.userid" /></label></td>
 	<c:set var="PROP_LDAP_FIELD_USERID"><%= Environment.PROP_LDAP_FIELD_USERID %></c:set>
@@ -483,13 +483,13 @@ onLdap()
 	<c:set var="PROP_CACHE_TOTAL_SIZE"><%= Environment.PROP_CACHE_TOTAL_SIZE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_CACHE_TOTAL_SIZE}" id="${PROP_CACHE_TOTAL_SIZE}" value="${props[PROP_CACHE_TOTAL_SIZE]}" size="10" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.cache.totalsizehelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.cache.help.totalsize" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %>"><f:message key="admin.caption.cache.individualsize" /></label></td>
 	<c:set var="PROP_CACHE_INDIVIDUAL_SIZE"><%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_CACHE_INDIVIDUAL_SIZE}" id="${PROP_CACHE_INDIVIDUAL_SIZE}" value="${props[PROP_CACHE_INDIVIDUAL_SIZE]}" size="10" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.cache.individualsizehelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.cache.help.individualsize" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_AGE %>"><f:message key="admin.caption.cache.maxage" /></label></td>
 	<c:set var="PROP_CACHE_MAX_AGE"><%= Environment.PROP_CACHE_MAX_AGE %></c:set>
