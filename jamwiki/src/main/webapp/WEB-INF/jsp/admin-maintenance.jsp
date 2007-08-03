@@ -111,7 +111,7 @@
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<td class="formcaption"><f:message key="admin.caption.cache" /></td>
+	<td class="formcaption"><f:message key="admin.cache.caption" /></td>
 	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.help.clearcache" /></td></tr>

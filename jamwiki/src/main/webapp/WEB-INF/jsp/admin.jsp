@@ -154,7 +154,7 @@ function onRSS() {
 <legend><f:message key="admin.header.parser" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_CLASS %>"><f:message key="admin.caption.parser" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_CLASS %>"><f:message key="admin.parser.caption" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_PARSER_CLASS %>" id="<%= Environment.PROP_PARSER_CLASS %>">
 		<c:set var="PROP_PARSER_CLASS"><%= Environment.PROP_PARSER_CLASS %></c:set>
@@ -165,43 +165,43 @@ function onRSS() {
 	</td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC %>"><f:message key="admin.caption.tableofcontents" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC %>"><f:message key="admin.parser.caption.tableofcontents" /></label></td>
 	<c:set var="PROP_PARSER_TOC"><%= Environment.PROP_PARSER_TOC %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_TOC}" value="true" checked="${props[PROP_PARSER_TOC]}" id="${PROP_PARSER_TOC}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><f:message key="admin.caption.tableofcontentsdepth" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_TOC_DEPTH %>"><f:message key="admin.parser.caption.tableofcontentsdepth" /></label></td>
 	<c:set var="PROP_PARSER_TOC_DEPTH"><%= Environment.PROP_PARSER_TOC_DEPTH %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_PARSER_TOC_DEPTH}" value="${props[PROP_PARSER_TOC_DEPTH]}" size="5" maxlength="1" id="${PROP_PARSER_TOC_DEPTH}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.tableofcontentsdepth" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.parser.help.tableofcontentsdepth" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><f:message key="admin.caption.allowhtml" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_HTML %>"><f:message key="admin.parser.caption.allowhtml" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_HTML"><%= Environment.PROP_PARSER_ALLOW_HTML %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_HTML}" value="true" checked="${props[PROP_PARSER_ALLOW_HTML]}" id="${PROP_PARSER_ALLOW_HTML}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>"><f:message key="admin.caption.allowjavascript" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %>"><f:message key="admin.parser.caption.allowjavascript" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_JAVASCRIPT"><%= Environment.PROP_PARSER_ALLOW_JAVASCRIPT %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_JAVASCRIPT}" value="true" checked="${props[PROP_PARSER_ALLOW_JAVASCRIPT]}" id="${PROP_PARSER_ALLOW_JAVASCRIPT}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>"><f:message key="admin.caption.allowtemplates" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_ALLOW_TEMPLATES %>"><f:message key="admin.parser.caption.allowtemplates" /></label></td>
 	<c:set var="PROP_PARSER_ALLOW_TEMPLATES"><%= Environment.PROP_PARSER_ALLOW_TEMPLATES %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_PARSER_ALLOW_TEMPLATES}" value="true" checked="${props[PROP_PARSER_ALLOW_TEMPLATES]}" id="${PROP_PARSER_ALLOW_TEMPLATES}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><f:message key="admin.caption.signatureuser" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %>"><f:message key="admin.parser.caption.signatureuser" /></label></td>
 	<c:set var="PROP_PARSER_SIGNATURE_USER_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_USER_PATTERN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_PARSER_SIGNATURE_USER_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_USER_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_USER_PATTERN}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.signatureuser" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.parser.help.signatureuser" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="parser" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>"><f:message key="admin.caption.signaturedate" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %>"><f:message key="admin.parser.caption.signaturedate" /></label></td>
 	<c:set var="PROP_PARSER_SIGNATURE_DATE_PATTERN"><%= Environment.PROP_PARSER_SIGNATURE_DATE_PATTERN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" value="${props[PROP_PARSER_SIGNATURE_DATE_PATTERN]}" size="50" id="${PROP_PARSER_SIGNATURE_DATE_PATTERN}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.signaturedate" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.parser.help.signaturedate" /></td></tr>
 </table>
 </fieldset>
 <!-- END PARSER -->
@@ -212,24 +212,24 @@ FIXME - Email not supported right now, comment this out
 <!-- BEGIN EMAIL -->
 <a name="email"></a>
 <fieldset>
-<legend><f:message key="admin.caption.smtp" /></legend>
+<legend><f:message key="admin.smtp.caption" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="email" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_HOST %>"><f:message key="admin.caption.smtp.host" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_HOST %>"><f:message key="admin.smtp.caption.host" /></label></td>
 	<c:set var="PROP_EMAIL_SMTP_HOST"><%= Environment.PROP_EMAIL_SMTP_HOST %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_EMAIL_SMTP_HOST}" value="${props[PROP_EMAIL_SMTP_HOST]}" size="30" id="${PROP_EMAIL_SMTP_HOST}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="email" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_USERNAME %>"><f:message key="admin.caption.smtp.user" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_USERNAME %>"><f:message key="admin.smtp.caption.user" /></label></td>
 	<c:set var="PROP_EMAIL_SMTP_USERNAME"><%= Environment.PROP_EMAIL_SMTP_USERNAME %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_EMAIL_SMTP_USERNAME}" value="${props[PROP_EMAIL_SMTP_USERNAME]}" size="30" id="${PROP_EMAIL_SMTP_USERNAME}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="email" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>"><f:message key="admin.caption.smtp.pass" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>"><f:message key="admin.smtp.caption.pass" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" value="<c:out value="${smtpPassword}" />" size="30" id="<%= Environment.PROP_EMAIL_SMTP_PASSWORD %>" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="email" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>"><f:message key="admin.caption.reply" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_EMAIL_REPLY_ADDRESS %>"><f:message key="admin.smtp.caption.reply" /></label></td>
 	<c:set var="PROP_EMAIL_REPLY_ADDRESS"><%= Environment.PROP_EMAIL_REPLY_ADDRESS %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_EMAIL_REPLY_ADDRESS}" value="${props[PROP_EMAIL_REPLY_ADDRESS]}" size="50" id="${PROP_EMAIL_REPLY_ADDRESS}" /></td>
 </tr>
@@ -251,7 +251,7 @@ FIXME - Email not supported right now, comment this out
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.help.filedir" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.caption.persistence" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.persistence.caption" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
 		<c:set var="PROP_BASE_PERSISTENCE_TYPE"><%= Environment.PROP_BASE_PERSISTENCE_TYPE %></c:set>
@@ -263,12 +263,12 @@ FIXME - Email not supported right now, comment this out
 	</td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.caption.databasedriver" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.persistence.caption.driver" /></label></td>
 	<c:set var="PROP_DB_DRIVER"><%= Environment.PROP_DB_DRIVER %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DB_DRIVER}" id="${PROP_DB_DRIVER}" value="${props[PROP_DB_DRIVER]}" size="50" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.caption.databasetype" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.persistence.caption.type" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
 		<c:set var="PROP_DB_TYPE"><%= Environment.PROP_DB_TYPE %></c:set>
@@ -279,62 +279,62 @@ FIXME - Email not supported right now, comment this out
 	</td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_URL %>"><f:message key="admin.caption.databaseurl" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_URL %>"><f:message key="admin.persistence.caption.url" /></label></td>
 	<c:set var="PROP_DB_URL"><%= Environment.PROP_DB_URL %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DB_URL}" id="${PROP_DB_URL}" value="${props[PROP_DB_URL]}" size="50" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_USERNAME %>"><f:message key="admin.caption.databaseuser" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_USERNAME %>"><f:message key="admin.persistence.caption.user" /></label></td>
 	<c:set var="PROP_DB_USERNAME"><%= Environment.PROP_DB_USERNAME %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DB_USERNAME}" id="${PROP_DB_USERNAME}" value="${props[PROP_DB_USERNAME]}" size="30" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.caption.databasepass" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.persistence.caption.pass" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="30" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_ACTIVE %>"><f:message key="admin.caption.dbcp.maxactive" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_ACTIVE %>"><f:message key="admin.persistence.caption.maxactive" /></label></td>
 	<c:set var="PROP_DBCP_MAX_ACTIVE"><%= Environment.PROP_DBCP_MAX_ACTIVE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DBCP_MAX_ACTIVE}" id="${PROP_DBCP_MAX_ACTIVE}" value="${props[PROP_DBCP_MAX_ACTIVE]}" size="5" maxlength="3" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_IDLE %>"><f:message key="admin.caption.dbcp.maxidle" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MAX_IDLE %>"><f:message key="admin.persistence.caption.maxidle" /></label></td>
 	<c:set var="PROP_DBCP_MAX_IDLE"><%= Environment.PROP_DBCP_MAX_IDLE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DBCP_MAX_IDLE}" id="${PROP_DBCP_MAX_IDLE}" value="${props[PROP_DBCP_MAX_IDLE]}" size="5" maxlength="3" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>"><f:message key="admin.caption.dbcp.testonborrow" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_BORROW %>"><f:message key="admin.persistence.caption.testonborrow" /></label></td>
 	<c:set var="PROP_DBCP_TEST_ON_BORROW"><%= Environment.PROP_DBCP_TEST_ON_BORROW %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_ON_BORROW}" value="true" checked="${props[PROP_DBCP_TEST_ON_BORROW]}" id="${PROP_DBCP_TEST_ON_BORROW}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>"><f:message key="admin.caption.dbcp.testonreturn" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_ON_RETURN %>"><f:message key="admin.persistence.caption.testonreturn" /></label></td>
 	<c:set var="PROP_DBCP_TEST_ON_RETURN"><%= Environment.PROP_DBCP_TEST_ON_RETURN %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_ON_RETURN}" value="true" checked="${props[PROP_DBCP_TEST_ON_RETURN]}" id="${PROP_DBCP_TEST_ON_RETURN}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>"><f:message key="admin.caption.dbcp.testwhileidle" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TEST_WHILE_IDLE %>"><f:message key="admin.persistence.caption.testwhileidle" /></label></td>
 	<c:set var="PROP_DBCP_TEST_WHILE_IDLE"><%= Environment.PROP_DBCP_TEST_WHILE_IDLE %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_DBCP_TEST_WHILE_IDLE}" value="true" checked="${props[PROP_DBCP_TEST_WHILE_IDLE]}" id="${PROP_DBCP_TEST_WHILE_IDLE}" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>"><f:message key="admin.caption.dbcp.minevictableidletime" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %>"><f:message key="admin.persistence.caption.minevictableidletime" /></label></td>
 	<c:set var="PROP_DBCP_MIN_EVICTABLE_IDLE_TIME"><%= Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DBCP_MIN_EVICTABLE_IDLE_TIME}" id="${PROP_DBCP_MIN_EVICTABLE_IDLE_TIME}" value="${props[PROP_DBCP_MIN_EVICTABLE_IDLE_TIME]}" size="5" maxlength="4" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.dbcp.help.minevictableidletime" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.persistence.help.minevictableidletime" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>"><f:message key="admin.caption.dbcp.timebetweenevictionruns" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %>"><f:message key="admin.persistence.caption.timebetweenevictionruns" /></label></td>
 	<c:set var="PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS"><%= Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS}" id="${PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS}" value="${props[PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS]}" size="5" maxlength="4" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>"><f:message key="admin.caption.dbcp.numtestsperevictionrun" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %>"><f:message key="admin.persistence.caption.numtestsperevictionrun" /></label></td>
 	<c:set var="PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN"><%= Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN}" id="${PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN}" value="${props[PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN]}" size="5" maxlength="4" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="database" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>"><f:message key="admin.caption.dbcp.whenexhaustedaction" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>"><f:message key="admin.persistence.caption.whenexhaustedaction" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>" id="<%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %>">
 		<c:set var="PROP_DBCP_WHEN_EXHAUSTED_ACTION"><%= Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION %></c:set>
@@ -353,23 +353,23 @@ FIXME - Email not supported right now, comment this out
 <legend><f:message key="admin.header.upload" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>"><f:message key="admin.caption.maxfilesize" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>"><f:message key="admin.upload.caption.maxfilesize" /></label></td>
 	<td class="formelement"><input type="text" name="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" value="<c:out value="${maximumFileSize}" />" size="10" id="<%= Environment.PROP_FILE_MAX_FILE_SIZE %>" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_FULL_PATH %>"><f:message key="admin.caption.uploaddir" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_FULL_PATH %>"><f:message key="admin.upload.caption.uploaddir" /></label></td>
 	<c:set var="PROP_FILE_DIR_FULL_PATH"><%= Environment.PROP_FILE_DIR_FULL_PATH %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_FILE_DIR_FULL_PATH}" value="${props[PROP_FILE_DIR_FULL_PATH]}" size="50" id="${PROP_FILE_DIR_FULL_PATH}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.uploaddir" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.upload.help.uploaddir" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>"><f:message key="admin.caption.uploaddirrel" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_DIR_RELATIVE_PATH %>"><f:message key="admin.upload.caption.uploaddirrel" /></label></td>
 	<c:set var="PROP_FILE_DIR_RELATIVE_PATH"><%= Environment.PROP_FILE_DIR_RELATIVE_PATH %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_FILE_DIR_RELATIVE_PATH}" value="${props[PROP_FILE_DIR_RELATIVE_PATH]}" size="50" id="${PROP_FILE_DIR_RELATIVE_PATH}" /></td>
 </tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.caption.uploaddirrelhelp" /></td></tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.upload.help.uploaddirrel" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><f:message key="admin.caption.upload.blacklisttype" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>"><f:message key="admin.upload.caption.blacklisttype" /></label></td>
 	<td class="formelement">
 		<c:set var="PROP_FILE_BLACKLIST_TYPE"><%= Environment.PROP_FILE_BLACKLIST_TYPE %></c:set>
 		<select name="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>" id="<%= Environment.PROP_FILE_BLACKLIST_TYPE %>" onchange="onUploadType()">
@@ -380,13 +380,13 @@ FIXME - Email not supported right now, comment this out
 	</td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST %>"><f:message key="admin.caption.upload.blacklist" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_BLACKLIST %>"><f:message key="admin.upload.caption.blacklist" /></label></td>
 	<c:set var="PROP_FILE_BLACKLIST"><%= Environment.PROP_FILE_BLACKLIST %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_BLACKLIST %>" id="<%= Environment.PROP_FILE_BLACKLIST %>"><c:out value="${props[PROP_FILE_BLACKLIST]}" /></textarea></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.upload.help.blacklist" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="upload" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_FILE_WHITELIST %>"><f:message key="admin.caption.upload.whitelist" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_FILE_WHITELIST %>"><f:message key="admin.upload.caption.whitelist" /></label></td>
 	<c:set var="PROP_FILE_WHITELIST"><%= Environment.PROP_FILE_WHITELIST %></c:set>
 	<td class="formelement"><textarea cols="30" rows="3" name="<%= Environment.PROP_FILE_WHITELIST %>" id="<%= Environment.PROP_FILE_WHITELIST %>"><c:out value="${props[PROP_FILE_WHITELIST]}" /></textarea></td>
 </tr>
@@ -401,7 +401,7 @@ FIXME - Email not supported right now, comment this out
 <legend><f:message key="admin.header.ldap" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_BASE_USER_HANDLER %>"><f:message key="admin.caption.ldap" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_USER_HANDLER %>"><f:message key="admin.ldap.caption" /></label></td>
 	<td class="formelement">
 		<select name="<%= Environment.PROP_BASE_USER_HANDLER %>" id="<%= Environment.PROP_BASE_USER_HANDLER %>" onchange="onLdap()">
 		<c:set var="PROP_BASE_USER_HANDLER"><%= Environment.PROP_BASE_USER_HANDLER %></c:set>
@@ -412,55 +412,55 @@ FIXME - Email not supported right now, comment this out
 	</td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FACTORY_CLASS %>"><f:message key="admin.caption.ldap.factory" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FACTORY_CLASS %>"><f:message key="admin.ldap.caption.factory" /></label></td>
 	<c:set var="PROP_LDAP_FACTORY_CLASS"><%= Environment.PROP_LDAP_FACTORY_CLASS %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_FACTORY_CLASS}" id="${PROP_LDAP_FACTORY_CLASS}" value="${props[PROP_LDAP_FACTORY_CLASS]}" size="50" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_URL %>"><f:message key="admin.caption.ldap.url" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_URL %>"><f:message key="admin.ldap.caption.url" /></label></td>
 	<c:set var="PROP_LDAP_URL"><%= Environment.PROP_LDAP_URL %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_URL}" id="${PROP_LDAP_URL}" value="${props[PROP_LDAP_URL]}" size="50" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.caption.ldap.context" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_CONTEXT %>"><f:message key="admin.ldap.caption.context" /></label></td>
 	<c:set var="PROP_LDAP_CONTEXT"><%= Environment.PROP_LDAP_CONTEXT %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_CONTEXT}" id="${PROP_LDAP_CONTEXT}" value="${props[PROP_LDAP_CONTEXT]}" size="50" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.context" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.caption.ldap.security" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %>"><f:message key="admin.ldap.caption.security" /></label></td>
 	<c:set var="PROP_LDAP_SECURITY_AUTHENTICATION"><%= Environment.PROP_LDAP_SECURITY_AUTHENTICATION %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_SECURITY_AUTHENTICATION}" id="${PROP_LDAP_SECURITY_AUTHENTICATION}" value="${props[PROP_LDAP_SECURITY_AUTHENTICATION]}" size="20" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.security" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.caption.ldap.login" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_LOGIN %>"><f:message key="admin.ldap.caption.login" /></label></td>
 	<c:set var="PROP_LDAP_LOGIN"><%= Environment.PROP_LDAP_LOGIN %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_LOGIN}" id="${PROP_LDAP_LOGIN}" value="${props[PROP_LDAP_LOGIN]}" size="30" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.login" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.caption.ldap.password" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_PASSWORD %>"><f:message key="admin.ldap.caption.password" /></label></td>
 	<td class="formelement"><input type="password" name="<%= Environment.PROP_LDAP_PASSWORD %>" id="<%= Environment.PROP_LDAP_PASSWORD %>" value="<c:out value="${ldapPassword}" />" size="30" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.ldap.help.password" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_USERID %>"><f:message key="admin.caption.ldap.field.userid" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_USERID %>"><f:message key="admin.ldap.caption.field.userid" /></label></td>
 	<c:set var="PROP_LDAP_FIELD_USERID"><%= Environment.PROP_LDAP_FIELD_USERID %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_USERID}" id="${PROP_LDAP_FIELD_USERID}" value="${props[PROP_LDAP_FIELD_USERID]}" size="20" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.ldap.field.firstname" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.ldap.caption.field.firstname" /></label></td>
 	<c:set var="PROP_LDAP_FIELD_FIRST_NAME"><%= Environment.PROP_LDAP_FIELD_FIRST_NAME %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_FIRST_NAME}" id="${PROP_LDAP_FIELD_FIRST_NAME}" value="${props[PROP_LDAP_FIELD_FIRST_NAME]}" size="20" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.caption.ldap.field.lastname" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_FIRST_NAME %>"><f:message key="admin.ldap.caption.field.lastname" /></label></td>
 	<c:set var="PROP_LDAP_FIELD_LAST_NAME"><%= Environment.PROP_LDAP_FIELD_LAST_NAME %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_LAST_NAME}" id="${PROP_LDAP_FIELD_LAST_NAME}" value="${props[PROP_LDAP_FIELD_LAST_NAME]}" size="20" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="ldap" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.caption.ldap.field.email" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_LDAP_FIELD_EMAIL %>"><f:message key="admin.ldap.caption.field.email" /></label></td>
 	<c:set var="PROP_LDAP_FIELD_EMAIL"><%= Environment.PROP_LDAP_FIELD_EMAIL %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_LDAP_FIELD_EMAIL}" id="${PROP_LDAP_FIELD_EMAIL}" value="${props[PROP_LDAP_FIELD_EMAIL]}" size="20" /></td>
 </tr>
@@ -479,24 +479,24 @@ onLdap()
 <legend><f:message key="admin.header.cache" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_TOTAL_SIZE %>"><f:message key="admin.caption.cache.totalsize" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_TOTAL_SIZE %>"><f:message key="admin.cache.caption.totalsize" /></label></td>
 	<c:set var="PROP_CACHE_TOTAL_SIZE"><%= Environment.PROP_CACHE_TOTAL_SIZE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_CACHE_TOTAL_SIZE}" id="${PROP_CACHE_TOTAL_SIZE}" value="${props[PROP_CACHE_TOTAL_SIZE]}" size="10" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.cache.help.totalsize" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %>"><f:message key="admin.caption.cache.individualsize" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %>"><f:message key="admin.cache.caption.individualsize" /></label></td>
 	<c:set var="PROP_CACHE_INDIVIDUAL_SIZE"><%= Environment.PROP_CACHE_INDIVIDUAL_SIZE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_CACHE_INDIVIDUAL_SIZE}" id="${PROP_CACHE_INDIVIDUAL_SIZE}" value="${props[PROP_CACHE_INDIVIDUAL_SIZE]}" size="10" /></td>
 </tr>
 <tr><td colspan="2" class="formhelp"><f:message key="admin.cache.help.individualsize" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_AGE %>"><f:message key="admin.caption.cache.maxage" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_AGE %>"><f:message key="admin.cache.caption.maxage" /></label></td>
 	<c:set var="PROP_CACHE_MAX_AGE"><%= Environment.PROP_CACHE_MAX_AGE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_CACHE_MAX_AGE}" id="${PROP_CACHE_MAX_AGE}" value="${props[PROP_CACHE_MAX_AGE]}" size="10" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>"><f:message key="admin.caption.cache.idleage" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_CACHE_MAX_IDLE_AGE %>"><f:message key="admin.cache.caption.idleage" /></label></td>
 	<c:set var="PROP_CACHE_MAX_IDLE_AGE"><%= Environment.PROP_CACHE_MAX_IDLE_AGE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_CACHE_MAX_IDLE_AGE}" id="${PROP_CACHE_MAX_IDLE_AGE}" value="${props[PROP_CACHE_MAX_IDLE_AGE]}" size="10" /></td>
 </tr>
@@ -510,12 +510,12 @@ onLdap()
 <legend><f:message key="admin.header.rss" /></legend>
 <table border="0" class="contents" width="99%">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="rss" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_RSS_ALLOWED %>"><f:message key="admin.caption.rss.allowed" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_RSS_ALLOWED %>"><f:message key="admin.rss.caption.allowed" /></label></td>
 	<c:set var="PROP_RSS_ALLOWED"><%= Environment.PROP_RSS_ALLOWED %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_RSS_ALLOWED}" value="true" checked="${props[PROP_RSS_ALLOWED]}" id="${PROP_RSS_ALLOWED}" onclick="onRSS()" /></td>
 </tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="rss" />">
-	<td class="formcaption"><label for="<%= Environment.PROP_RSS_TITLE %>"><f:message key="admin.caption.rss.title" /></label></td>
+	<td class="formcaption"><label for="<%= Environment.PROP_RSS_TITLE %>"><f:message key="admin.rss.caption.title" /></label></td>
 	<c:set var="PROP_RSS_TITLE"><%= Environment.PROP_RSS_TITLE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_RSS_TITLE}" id="${PROP_RSS_TITLE}" value="${props[PROP_RSS_TITLE]}" size="50" /></td>
 </tr>

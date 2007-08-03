@@ -112,7 +112,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.cache"));
 		} catch (Exception e) {
 			logger.severe("Failure while clearing cache", e);
-			next.addObject("errors", new WikiMessage("admin.caption.cachefail", e.getMessage()));
+			next.addObject("errors", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo, null);
 	}
@@ -225,7 +225,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.severe("Failure while loading recent changes", e);
-			next.addObject("errors", new WikiMessage("admin.caption.recentchangesfail", e.getMessage()));
+			next.addObject("errors", new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo, null);
 	}
@@ -285,7 +285,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
 			logger.severe("Failure while reloading spam filter patterns", e);
-			next.addObject("errors", new WikiMessage("admin.caption.spamfilterfail", e.getMessage()));
+			next.addObject("errors", new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo, null);
 	}
@@ -304,15 +304,15 @@ public class AdminServlet extends JAMWikiServlet {
 		Collection parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
 		LinkedHashMap poolExhaustedMap = new LinkedHashMap();
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.caption.dbcp.whenexhaustedaction.fail");
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.caption.dbcp.whenexhaustedaction.block");
-		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.caption.dbcp.whenexhaustedaction.grow");
+		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_FAIL), "admin.persistence.caption.whenexhaustedaction.fail");
+		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_BLOCK), "admin.persistence.caption.whenexhaustedaction.block");
+		poolExhaustedMap.put(new Integer(GenericObjectPool.WHEN_EXHAUSTED_GROW), "admin.persistence.caption.whenexhaustedaction.grow");
 		next.addObject("poolExhaustedMap", poolExhaustedMap);
 		LinkedHashMap blacklistTypesMap = new LinkedHashMap();
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_ALL), "admin.caption.upload.allowall");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_NONE), "admin.caption.upload.allownone");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_BLACKLIST), "admin.caption.upload.useblacklist");
-		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_WHITELIST), "admin.caption.upload.usewhitelist");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_ALL), "admin.upload.caption.allowall");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_NONE), "admin.upload.caption.allownone");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_BLACKLIST), "admin.upload.caption.useblacklist");
+		blacklistTypesMap.put(new Integer(WikiBase.UPLOAD_WHITELIST), "admin.upload.caption.usewhitelist");
 		next.addObject("blacklistTypes", blacklistTypesMap);
 		if (props == null) {
 			props = Environment.getInstance();
