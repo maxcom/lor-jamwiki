@@ -59,7 +59,6 @@ public class ServletUtil {
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
 	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
-	public static final String PARAMETER_USER = "user";
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String PARAMETER_WATCHLIST = "watchlist";
 	private static final String SPRING_REDIRECT_PREFIX = "redirect:";
@@ -150,7 +149,9 @@ public class ServletUtil {
 					links.put(moveLink, new WikiMessage("tab.common.move"));
 				}
 				if (user.hasRole(Role.ROLE_USER)) {
-					String watchlistLabel = (pageInfo.getWatched()) ? "tab.common.unwatch" : "tab.common.watch";
+					Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
+					boolean watched = (watchlist.containsTopic(pageName));
+					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
 					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeForURL(pageName);
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
 				}
@@ -424,33 +425,6 @@ public class ServletUtil {
 		}
 		// load cached top area, nav bar, etc.
 		ServletUtil.buildLayout(request, next);
-		// add link to user page and comments page
-		WikiUser user = Utilities.currentUser();
-		if (user.hasRole(Role.ROLE_USER)) {
-			//add user object to model since it is not in session anymore
-			next.addObject(PARAMETER_USER, user);
-			next.addObject("userpage", NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
-			next.addObject("usercomments", NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername());
-			next.addObject("adminUser", new Boolean(user.hasRole(Role.ROLE_ADMIN)));
-		}
-		if (StringUtils.hasText(pageInfo.getTopicName())) {
-			String article = Utilities.extractTopicLink(pageInfo.getTopicName());
-			String comments = Utilities.extractCommentsLink(pageInfo.getTopicName());
-			next.addObject("article", article);
-			next.addObject("comments", comments);
-			String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageInfo.getTopicName());
-			if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
-				editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
-			}
-			next.addObject("edit", editLink);
-			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-			pageInfo.setMoveable(ServletUtil.isMoveable(virtualWiki, article, user));
-			pageInfo.setEditable(ServletUtil.isEditable(virtualWiki, article, user));
-			Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
-			if (watchlist.containsTopic(pageInfo.getTopicName())) {
-				pageInfo.setWatched(true);
-			}
-		}
 		if (!StringUtils.hasText(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(Utilities.getTopicFromURI(request));
 		}

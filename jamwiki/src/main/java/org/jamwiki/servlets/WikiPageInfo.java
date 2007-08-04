@@ -36,15 +36,12 @@ public class WikiPageInfo {
 	protected static final String JSP_TOPIC = "topic.jsp";
 	private boolean admin = false;
 	private String contentJsp = JSP_TOPIC;
-	private boolean editable = false;
-	private boolean moveable = false;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
 	private boolean special = false;
 	private LinkedHashMap tabMenu = new LinkedHashMap();
 	private String topicName = "";
 	private LinkedHashMap userMenu = new LinkedHashMap();
-	private boolean watched = false;
 
 	/**
 	 *
@@ -59,15 +56,12 @@ public class WikiPageInfo {
 	protected void reset() {
 		this.admin = false;
 		this.contentJsp = JSP_TOPIC;
-		this.editable = false;
-		this.moveable = false;
 		this.pageTitle = null;
 		this.redirectName = null;
 		this.special = false;
 		this.tabMenu = new LinkedHashMap();
 		this.topicName = "";
 		this.userMenu = new LinkedHashMap();
-		this.watched = false;
 	}
 
 	/**
@@ -123,50 +117,6 @@ public class WikiPageInfo {
 	 */
 	public String getDefaultTopic() {
 		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-	}
-
-	/**
-	 * Return a flag indicating whether or not the current user can edit the
-	 * current topic.
-	 *
-	 * @return <code>true</code> if the current user can edit the current
-	 *  page, <code>false</code> otherwise.
-	 */
-	public boolean getEditable() {
-		return this.editable;
-	}
-
-	/**
-	 * Set a flag indicating whether or not the current user can edit the
-	 * current topic.
-	 *
-	 * @param editable Set to <code>true</code> if the current user can edit
-	 *  the current page, <code>false</code> otherwise.
-	 */
-	public void setEditable(boolean editable) {
-		this.editable = editable;
-	}
-
-	/**
-	 * Return a flag indicating whether or not the current user can move the
-	 * current topic.
-	 *
-	 * @return <code>true</code> if the current user can move the current
-	 *  page, <code>false</code> otherwise.
-	 */
-	public boolean getMoveable() {
-		return this.moveable;
-	}
-
-	/**
-	 * Set a flag indicating whether or not the current user can move the
-	 * current topic.
-	 *
-	 * @param moveable Set to <code>true</code> if the current user can move
-	 *  the current page, <code>false</code> otherwise.
-	 */
-	public void setMoveable(boolean moveable) {
-		this.moveable = moveable;
 	}
 
 	/**
@@ -381,27 +331,5 @@ public class WikiPageInfo {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Return a flag indicating whether or not the current page is in the
-	 * current user's watchlist.
-	 *
-	 * @return <code>true</code> if the current page is in the current user's
-	 *  watchlist, <code>false</code> otherwise.
-	 */
-	public boolean getWatched() {
-		return this.watched;
-	}
-
-	/**
-	 * Set a flag indicating whether or not the current page is in the
-	 * current user's watchlist.
-	 *
-	 * @param watched Set to <code>true</code> if the current page is in the
-	 *  current user's watchlist, <code>false</code> otherwise.
-	 */
-	public void setWatched(boolean watched) {
-		this.watched = watched;
 	}
 }

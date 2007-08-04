@@ -87,11 +87,11 @@ document.writeln("</div>");
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" accesskey="i" />
 <label for="minorEdit"><f:message key="edit.caption.minor" /></label>
-<c:if test="${!empty user}">
+<authz:authorize ifAllGranted="ROLE_USER">
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="watchTopic"<c:if test="${watchTopic}"> checked</c:if> id="watchTopic" accesskey="w" />
 <label for="watchTopic"><f:message key="edit.caption.watch" /></label>
-</c:if>
+</authz:authorize>
 </p>
 
 <c:if test="${!empty editResolve}">

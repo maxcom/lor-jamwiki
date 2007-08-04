@@ -89,12 +89,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			return false;
 		}
 		user = DatabaseUpgrades.getWikiUser(username);
-		if (user != null) {
-			//FIXME - login via Acegi Security
-			request.getSession().setAttribute(ServletUtil.PARAMETER_USER, user);
-			return true;
-		}
-		return false;
+		return (user != null);
 	}
 
 	/**
