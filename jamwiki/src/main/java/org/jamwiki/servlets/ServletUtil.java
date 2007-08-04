@@ -206,7 +206,7 @@ public class ServletUtil {
 		if (user.hasRole(Role.ROLE_ADMIN)) {
 			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
 		} else if (user.hasRole(Role.ROLE_TRANSLATE)) {
-			links.put("Special:Translate", new WikiMessage("usermenu.translate"));
+			links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
 		}
 		return links;
 	}
