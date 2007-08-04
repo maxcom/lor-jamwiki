@@ -17,6 +17,7 @@
 package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.LinkUtil;
@@ -41,6 +42,7 @@ public class WikiPageInfo {
 	private String redirectName = null;
 	private String topicName = "";
 	private boolean special = false;
+	private LinkedHashMap userMenu = new LinkedHashMap();
 	private boolean watched = false;
 
 	/**
@@ -62,6 +64,7 @@ public class WikiPageInfo {
 		this.redirectName = null;
 		this.topicName = "";
 		this.special = false;
+		this.userMenu = new LinkedHashMap();
 		this.watched = false;
 	}
 
@@ -314,6 +317,28 @@ public class WikiPageInfo {
 	 */
 	public void setTopicName(String topicName) {
 		this.topicName = topicName;
+	}
+
+	/**
+	 * Return a LinkedHashMap containing the topic and text for all links
+	 * that should appear for the user menu.
+	 *
+	 * @return A LinkedHashMap containing the topic and text for all links
+	 *  that should appear for the user menu.
+	 */
+	public LinkedHashMap getUserMenu() {
+		return this.userMenu;
+	}
+
+	/**
+	 * Set a LinkedHashMap containing the topic and text for all links
+	 * that should appear for the user menu.
+	 *
+	 * @userMenu A LinkedHashMap containing the topic and text for all links
+	 *  that should appear for the user menu.
+	 */
+	public void setUserMenu(LinkedHashMap userMenu) {
+		this.userMenu = userMenu;
 	}
 
 	/**

@@ -29,15 +29,37 @@ public class Role extends GrantedAuthorityImpl {
 	private String description = null;
 
 	public static final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
-	/** ROLE_ANONYMOUS is not store in the database but is instead automatically assigned to all non-logged in users. */
+	/**
+	 * ROLE_ANONYMOUS is not stored in the database but is instead
+	 * automatically assigned to all non-logged in users.
+	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
 	public static final Role ROLE_DELETE = new Role("ROLE_DELETE");
 	public static final Role ROLE_EDIT_EXISTING = new Role("ROLE_EDIT_EXISTING");
 	public static final Role ROLE_EDIT_NEW = new Role("ROLE_EDIT_NEW");
+	/**
+	 * ROLE_EMBEDDED is meant for use with installations that perform
+	 * authentication and user management in an external system, such as LDAP.
+	 * This role is not created during JAMWiki setup, and is not available
+	 * from the Special:Roles interface; instead it should be assigned by the
+	 * LDAP or other system that performs user authentication.
+	 */
+	public static final Role ROLE_EMBEDDED = new Role("ROLE_EMBEDDED");
 	public static final Role ROLE_MOVE = new Role("ROLE_MOVE");
+	/**
+	 * ROLE_NO_ACCOUNT is meant for use with installations that do not allow
+	 * user account management from within JAMWiki.  This role is not created
+	 * during JAMWiki setup, and is not available from the Special:Roles
+	 * interface; instead it should be assigned by the LDAP or other system
+	 * that allows account management.
+	 */
+	public static final Role ROLE_NO_ACCOUNT = new Role("ROLE_NO_ACCOUNT");
 	public static final Role ROLE_TRANSLATE = new Role("ROLE_TRANSLATE");
 	public static final Role ROLE_UPLOAD = new Role("ROLE_UPLOAD");
-	/** ROLE_USER is not store in the database but is instead automatically assigned to all logged in users. */
+	/**
+	 * ROLE_USER is not stored in the database but is instead automatically
+	 * assigned to all logged in users.
+	 */
 	public static final Role ROLE_USER = new Role("ROLE_USER");
 	public static final Role ROLE_VIEW = new Role("ROLE_VIEW");
 

@@ -111,6 +111,40 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Build a map of links and the corresponding link text to be used as the
+	 * user menu links for the WikiPageInfo object.
+	 */
+	private static LinkedHashMap buildUserMenu() {
+		LinkedHashMap links = new LinkedHashMap();
+		WikiUser user = Utilities.currentUser();
+		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
+			links.put("Special:Login", new WikiMessage("common.login"));
+			links.put("Special:Account", new WikiMessage("usermenu.register"));
+		}
+		if (user.hasRole(Role.ROLE_USER)) {
+			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
+			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
+			String username = user.getUsername();
+			if (StringUtils.hasText(user.getDisplayName())) {
+				username = user.getDisplayName();
+			}
+			links.put(userPage, new WikiMessage("usermenu.user", username));
+			links.put(userCommentsPage, new WikiMessage("usermenu.usercomments"));
+			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
+		}
+		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_NO_ACCOUNT)) {
+			links.put("Special:Account", new WikiMessage("usermenu.account"));
+		}
+		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_EMBEDDED)) {
+			links.put("Special:Logout", new WikiMessage("common.logout"));
+		}
+		if (user.hasRole(Role.ROLE_ADMIN)) {
+			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
+		}
+		return links;
+	}
+
+	/**
 	 * Retrieve the content of a topic from the cache, or if it is not yet in
 	 * the cache then add it to the cache.
 	 *
@@ -354,6 +388,7 @@ public class ServletUtil {
 		if (!StringUtils.hasText(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(Utilities.getTopicFromURI(request));
 		}
+		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 	}
 
