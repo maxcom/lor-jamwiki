@@ -40,8 +40,9 @@ public class WikiPageInfo {
 	private boolean moveable = false;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
-	private String topicName = "";
 	private boolean special = false;
+	private LinkedHashMap tabMenu = new LinkedHashMap();
+	private String topicName = "";
 	private LinkedHashMap userMenu = new LinkedHashMap();
 	private boolean watched = false;
 
@@ -62,8 +63,9 @@ public class WikiPageInfo {
 		this.moveable = false;
 		this.pageTitle = null;
 		this.redirectName = null;
-		this.topicName = "";
 		this.special = false;
+		this.tabMenu = new LinkedHashMap();
+		this.topicName = "";
 		this.userMenu = new LinkedHashMap();
 		this.watched = false;
 	}
@@ -298,6 +300,28 @@ public class WikiPageInfo {
 	public String getPagename() {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
 		return wikiLink.getArticle();
+	}
+
+	/**
+	 * Return a LinkedHashMap containing the topic and text for all links
+	 * that should appear for the tab menu.
+	 *
+	 * @return A LinkedHashMap containing the topic and text for all links
+	 *  that should appear for the tab menu.
+	 */
+	public LinkedHashMap getTabMenu() {
+		return this.tabMenu;
+	}
+
+	/**
+	 * Set a LinkedHashMap containing the topic and text for all links
+	 * that should appear for the tab menu.
+	 *
+	 * @userMenu A LinkedHashMap containing the topic and text for all links
+	 *  that should appear for the tab menu.
+	 */
+	public void setTabMenu(LinkedHashMap tabMenu) {
+		this.tabMenu = tabMenu;
 	}
 
 	/**

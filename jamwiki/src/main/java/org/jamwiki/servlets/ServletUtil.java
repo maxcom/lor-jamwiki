@@ -112,6 +112,69 @@ public class ServletUtil {
 
 	/**
 	 * Build a map of links and the corresponding link text to be used as the
+	 * tab menu links for the WikiPageInfo object.
+	 */
+	private static LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
+		LinkedHashMap links = new LinkedHashMap();
+		WikiUser user = Utilities.currentUser();
+		String pageName = pageInfo.getTopicName();
+		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		try {
+			if (pageInfo.getAdmin()) {
+				if (user.hasRole(Role.ROLE_ADMIN)) {
+					links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
+					links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
+					links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
+				}
+				if (user.hasRole(Role.ROLE_TRANSLATE)) {
+					links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
+				}
+			} else if (pageInfo.getSpecial()) {
+				links.put(pageName, new WikiMessage("tab.common.special"));
+			} else {
+				String article = Utilities.extractTopicLink(pageName);
+				String comments = Utilities.extractCommentsLink(pageName);
+				links.put(article, new WikiMessage("tab.common.article"));
+				links.put(comments, new WikiMessage("tab.common.comments"));
+				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
+					String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageName);
+					if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
+					}
+					links.put(editLink, new WikiMessage("tab.common.edit"));
+				}
+				String historyLink = "Special:History?topic=" + Utilities.encodeForURL(pageName);
+				links.put(historyLink, new WikiMessage("tab.common.history"));
+				if (ServletUtil.isMoveable(virtualWiki, pageName, user)) {
+					String moveLink = "Special:Move?topic=" + Utilities.encodeForURL(pageName);
+					links.put(moveLink, new WikiMessage("tab.common.move"));
+				}
+				if (user.hasRole(Role.ROLE_USER)) {
+					String watchlistLabel = (pageInfo.getWatched()) ? "tab.common.unwatch" : "tab.common.watch";
+					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeForURL(pageName);
+					links.put(watchlistLink, new WikiMessage(watchlistLabel));
+				}
+				if (pageInfo.isUserPage()) {
+					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeForURL(user.getUsername());
+					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
+				}
+				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeForURL(pageName);
+				links.put(linkToLink, new WikiMessage("tab.common.links"));
+				if (user.hasRole(Role.ROLE_ADMIN)) {
+					String manageLink = "Special:Manage?topic=" + Utilities.encodeForURL(pageName);
+					links.put(manageLink, new WikiMessage("tab.common.manage"));
+				}
+				String printLink = "Special:Print?topic=" + Utilities.encodeForURL(pageName);
+				links.put(printLink, new WikiMessage("tab.common.print"));
+			}
+		} catch (Exception e) {
+			logger.severe("Unable to build tabbed menu links", e);
+		}
+		return links;
+	}
+
+	/**
+	 * Build a map of links and the corresponding link text to be used as the
 	 * user menu links for the WikiPageInfo object.
 	 */
 	private static LinkedHashMap buildUserMenu() {
@@ -391,6 +454,7 @@ public class ServletUtil {
 			pageInfo.setTopicName(Utilities.getTopicFromURI(request));
 		}
 		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
+		pageInfo.setTabMenu(ServletUtil.buildTabMenu(request, pageInfo));
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 	}
 
