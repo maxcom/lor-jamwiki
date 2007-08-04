@@ -6,9 +6,16 @@ New Features:
 
   * New infrastructure for assigning fine-grained user permissions, including
     a new Special:Roles administrative interface.
-  * Remove ability to automatically upgrade from JAMWiki versions prior to
-    0.4.0.
+  * User pages now offer a "User Contributions" tab that displays all
+    contributions made by the user (RegisDecamps).
+  * Project converted to use Maven (RegisDecamps & mikegr).
+  * New Special:ImportTiddly page for importing from TiddlyWiki (mikegr).
+  * Update the UI used in the wiki admin pages.
+  * Remove ability to automatically upgrade from versions prior to 0.4.0.
   * Remove the unused & deprecated Special:Convert admin page.
+  * Updated spam filter patterns.
+  * Apostrophes are no longer automatically converted to &#39;. (RegisDecamps).
+  * Image resizing uses a smaller resize increment, improving image quality.
   * Upgrade to Spring Framework 2.0.6.
   * Upgrade to Acegi Security 1.0.4.
   * Upgrade to ehcache 1.3.0.
@@ -16,7 +23,7 @@ New Features:
 
 Bugfixes:
 
-  * Fix issue on Tomcat & some other application servers that could cause
+  * Fix issue on Tomcat 5 & some other application servers that could cause
     corrupted topic names when editing non-ASCII topics.
   * Fix web.xml issue when using Glassfish application server (amerigo5).
   * Resolve a JNDI database connectivity issue (mnencia).
@@ -26,6 +33,8 @@ Bugfixes:
     handling to catch Throwable rather than Exception and log a message
     explaining how to work around this particular issue.  Reported and
     debugged by Michael Osipov, who also provided a suggested fix.
+  * Fix parsing of bold italic ('''''), which produced incorrect HTML in
+    previous releases.
 
 Translation Updates:
 
