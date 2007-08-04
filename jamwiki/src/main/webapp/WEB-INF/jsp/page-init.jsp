@@ -20,6 +20,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="f" %>
 <%@ taglib uri="http://jamwiki.org/taglib" prefix="jamwiki" %>
+<%@ taglib uri="/WEB-INF/authz.tld" prefix="authz" %>
 
 <%
 // no-cache headers

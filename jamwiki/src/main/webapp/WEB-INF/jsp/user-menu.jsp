@@ -17,8 +17,6 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/authz.tld" prefix="authz" %>
-
 <table class="menu-user-table">
 <tr>
 	<c:forEach items="${pageInfo.userMenu}" var="menuItem">
