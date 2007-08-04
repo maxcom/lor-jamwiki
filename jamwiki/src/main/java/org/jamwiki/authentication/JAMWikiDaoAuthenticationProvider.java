@@ -43,7 +43,6 @@ public class JAMWikiDaoAuthenticationProvider extends DaoAuthenticationProvider 
 	 */
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-
 		try {
 			if (!WikiBase.getUserHandler().authenticate(userDetails.getUsername(),
 					authentication.getCredentials().toString())) {

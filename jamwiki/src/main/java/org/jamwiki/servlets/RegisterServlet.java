@@ -22,6 +22,8 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.acegisecurity.ui.WebAuthenticationDetails;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -81,6 +83,15 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void login(HttpServletRequest request, WikiUser user) {
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+		authentication.setDetails(new WebAuthenticationDetails(request));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+
+	/**
+	 *
+	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
 		WikiUser user = this.setWikiUser(request);
@@ -105,8 +116,8 @@ public class RegisterServlet extends JAMWikiServlet {
 			this.loadDefaults(request, next, pageInfo, user, userInfo);
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
-			// force current user credentials to be removed and re-validated.
-			SecurityContextHolder.clearContext();
+			// login the user
+			this.login(request, user);
 			// update the locale key since the user may have changed default locale
 			if (StringUtils.hasText(user.getDefaultLocale())) {
 				Locale locale = Utilities.buildLocale(user.getDefaultLocale());
