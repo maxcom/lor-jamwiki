@@ -155,7 +155,8 @@ public class ServletUtil {
 					links.put(watchlistLink, new WikiMessage(watchlistLabel));
 				}
 				if (pageInfo.isUserPage()) {
-					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeForURL(user.getUsername());
+					WikiLink wikiLink = LinkUtil.parseWikiLink(pageName);
+					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeForURL(wikiLink.getArticle());
 					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
 				}
 				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeForURL(pageName);
