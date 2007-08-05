@@ -232,9 +232,8 @@ public class WikiPageInfo {
 	 *
 	 * @return The wiki namespace of this page, or an empty string for pages
 	 *  in the main namespace.
-	 * @see getPagename
-	 * @see getTopicname
-	 *
+	 * @see #getPagename
+	 * @see #getTopicName
 	 */
 	public String getNamespace() {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(this.getTopicName());
@@ -267,8 +266,8 @@ public class WikiPageInfo {
 	 * Set a LinkedHashMap containing the topic and text for all links
 	 * that should appear for the tab menu.
 	 *
-	 * @userMenu A LinkedHashMap containing the topic and text for all links
-	 *  that should appear for the tab menu.
+	 * @param tabMenu A LinkedHashMap containing the topic and text for all
+	 *  links that should appear for the tab menu.
 	 */
 	public void setTabMenu(LinkedHashMap tabMenu) {
 		this.tabMenu = tabMenu;
@@ -308,8 +307,8 @@ public class WikiPageInfo {
 	 * Set a LinkedHashMap containing the topic and text for all links
 	 * that should appear for the user menu.
 	 *
-	 * @userMenu A LinkedHashMap containing the topic and text for all links
-	 *  that should appear for the user menu.
+	 * @param userMenu A LinkedHashMap containing the topic and text for all
+	 *  links that should appear for the user menu.
 	 */
 	public void setUserMenu(LinkedHashMap userMenu) {
 		this.userMenu = userMenu;

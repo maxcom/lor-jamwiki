@@ -24,13 +24,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
- * This abstract class implements both the "radio" tag and "checkbox" tag, 
+ * This abstract class implements both the "radio" tag and "checkbox" tag,
  * as they are very similar.
- * 
- *@see CheckboxTag
- *@see RadioTag
+ *
+ * @see CheckboxTag
+ * @see RadioTag
  */
 public abstract class AbstractButtonTag extends TagSupport {
+
 	private static final WikiLogger logger = WikiLogger.getLogger(AbstractButtonTag.class.getName());
 	private String checked = null;
 	private String id = null;
@@ -39,7 +40,10 @@ public abstract class AbstractButtonTag extends TagSupport {
 	private String onclick = null;
 	private String style = null;
 	private String value = null;
-	
+
+	/**
+	 *
+	 */
 	public AbstractButtonTag() {
 		super();
 	}
@@ -205,8 +209,9 @@ public abstract class AbstractButtonTag extends TagSupport {
 	}
 
 	/**
-	 * Returns the type of button, eg. "checkbox" or "radio"
-	 * @return
+	 * Returns the type of button, eg. "checkbox" or "radio".
+	 *
+	 * @return The type of button, eg. "checkbox" or "radio".
 	 */
 	public abstract String getButtonType() ;
 }
