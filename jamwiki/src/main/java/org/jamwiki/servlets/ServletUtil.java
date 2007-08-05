@@ -62,10 +62,6 @@ public class ServletUtil {
 	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
 	public static final String PARAMETER_WATCHLIST = "watchlist";
 	private static final String SPRING_REDIRECT_PREFIX = "redirect:";
-	public static final String USER_COOKIE = "user-cookie";
-	public static final String USER_COOKIE_DELIMITER = "|";
-	// FIXME - make configurable
-	public static final int USER_COOKIE_EXPIRES = 60 * 60 * 24 * 14; // 14 days
 
 	/**
 	 *
