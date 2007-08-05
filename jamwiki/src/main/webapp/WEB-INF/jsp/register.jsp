@@ -65,10 +65,12 @@
 	<td><label for="registerFirstName"><f:message key="register.caption.firstname" /></label>:</td>
 	<td><input type="text" name="firstName" value="<c:out value="${newuserinfo.firstName}" />" id="registerFirstName" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="register.help.firstname" /></td></tr>
 <tr>
 	<td><label for="registerLastName"><f:message key="register.caption.lastname" /></label>:</td>
 	<td><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="register.help.lastname" /></td></tr>
 </c:if>
 <c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
 <tr>
@@ -84,11 +86,13 @@
 	<td><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</td>
 	<td><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="register.help.displayname" /></td></tr>
 <c:if test="${newuserinfo.writeable}">
 <tr>
 	<td><label for="registerEmail"><f:message key="register.caption.email" /></label>:</td>
 	<td><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="register.help.email" /></td></tr>
 </c:if>
 <c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
 <tr>
@@ -106,6 +110,7 @@
 		</select>
 	</td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="register.help.locale" /></td></tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />"></td></tr>
 </table>
 </form>
