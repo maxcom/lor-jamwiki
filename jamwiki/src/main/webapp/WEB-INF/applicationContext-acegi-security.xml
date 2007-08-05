@@ -217,14 +217,14 @@
 		<property name="objectDefinitionSource">
 			<value>
 				PATTERN_TYPE_APACHE_ANT
-				/**/Special:Admin=ROLE_ADMIN
+				/**/Special:Admin=ROLE_SYSADMIN
 				/**/Special:Edit=ROLE_EDIT_EXISTING,ROLE_EDIT_NEW
 				/**/Special:Login=ROLE_ANONYMOUS,ROLE_USER
-				/**/Special:Maintenance=ROLE_ADMIN
+				/**/Special:Maintenance=ROLE_SYSADMIN
 				/**/Special:Manage=ROLE_ADMIN
 				/**/Special:Move=ROLE_MOVE
 				/**/Special:RecentChangesFeed=ROLE_ANONYMOUS,ROLE_USER
-				/**/Special:Roles=ROLE_ADMIN
+				/**/Special:Roles=ROLE_SYSADMIN
 				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_USER
 				/**/Special:Translation=ROLE_TRANSLATE
 				/**/Special:Upload=ROLE_UPLOAD

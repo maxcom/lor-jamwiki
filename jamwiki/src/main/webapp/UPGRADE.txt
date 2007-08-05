@@ -101,10 +101,10 @@ followed by 0.5.3.
               INSERT into jam_group (group_id, group_name) values (2, 'LOGGED_IN_USERS');
        e) Add the basic roles:
               INSERT into jam_role (role_name) values ('ROLE_ADMIN');
-              INSERT into jam_role (role_name) values ('ROLE_ADMIN_MANAGE');
               INSERT into jam_role (role_name) values ('ROLE_EDIT_EXISTING');
               INSERT into jam_role (role_name) values ('ROLE_EDIT_NEW');
               INSERT into jam_role (role_name) values ('ROLE_MOVE');
+              INSERT into jam_role (role_name) values ('ROLE_SYSADMIN');
               INSERT into jam_role (role_name) values ('ROLE_TRANSLATE');
               INSERT into jam_role (role_name) values ('ROLE_UPLOAD');
               INSERT into jam_role (role_name) values ('ROLE_VIEW');
@@ -124,6 +124,9 @@ followed by 0.5.3.
                    from jam_wiki_user where is_admin = 1;
               INSERT into jam_role_map (role_name, wiki_user_id)
                    select 'ROLE_DELETE', wiki_user_id
+                   from jam_wiki_user where is_admin = 1;
+              INSERT into jam_role_map (role_name, wiki_user_id)
+                   select 'ROLE_SYSADMIN', wiki_user_id
                    from jam_wiki_user where is_admin = 1;
               INSERT into jam_role_map (role_name, wiki_user_id)
                    select 'ROLE_TRANSLATE', wiki_user_id

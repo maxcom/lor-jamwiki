@@ -116,7 +116,7 @@ public class ServletUtil {
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
 		try {
 			if (pageInfo.getAdmin()) {
-				if (user.hasRole(Role.ROLE_ADMIN)) {
+				if (user.hasRole(Role.ROLE_SYSADMIN)) {
 					links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
 					links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
 					links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
@@ -199,7 +199,7 @@ public class ServletUtil {
 		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_EMBEDDED)) {
 			links.put("Special:Logout", new WikiMessage("common.logout"));
 		}
-		if (user.hasRole(Role.ROLE_ADMIN)) {
+		if (user.hasRole(Role.ROLE_SYSADMIN)) {
 			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
 		} else if (user.hasRole(Role.ROLE_TRANSLATE)) {
 			links.put("Special:Translation", new WikiMessage("tab.admin.translations"));

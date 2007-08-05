@@ -28,6 +28,11 @@ public class Role extends GrantedAuthorityImpl {
 	private static final WikiLogger logger = WikiLogger.getLogger(Role.class.getName());
 	private String description = null;
 
+	/**
+	 * ROLE_ADMIN gives permission to perform wiki maintenance tasks not
+	 * available to normal users.  It does not allow the ability to change
+	 * system settings.
+	 */
 	public static final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
 	/**
 	 * ROLE_ANONYMOUS is not stored in the database but is instead
@@ -54,6 +59,8 @@ public class Role extends GrantedAuthorityImpl {
 	 * that allows account management.
 	 */
 	public static final Role ROLE_NO_ACCOUNT = new Role("ROLE_NO_ACCOUNT");
+	/** ROLE_SYSADMIN provides the ability to change system settings. */
+	public static final Role ROLE_SYSADMIN = new Role("ROLE_SYSADMIN");
 	public static final Role ROLE_TRANSLATE = new Role("ROLE_TRANSLATE");
 	public static final Role ROLE_UPLOAD = new Role("ROLE_UPLOAD");
 	/**

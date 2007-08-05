@@ -213,6 +213,7 @@ public class WikiDatabase {
 		Vector roles = new Vector();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_DELETE.getAuthority());
+		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapUser(user.getUserId(), roles, conn);
 	}
@@ -278,7 +279,7 @@ public class WikiDatabase {
 	protected static void setupRoles(Connection conn) throws Exception {
 		Role role = Role.ROLE_ADMIN;
 		// FIXME - use message key
-		role.setDescription("Allows access to set database parameters, modify parser settings, and set other wiki system settings.");
+		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
 		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = Role.ROLE_DELETE;
 		// FIXME - use message key
@@ -295,6 +296,10 @@ public class WikiDatabase {
 		role = Role.ROLE_MOVE;
 		// FIXME - use message key
 		role.setDescription("Allows a user to move a topic to a different name.");
+		WikiBase.getDataHandler().writeRole(role, conn, false);
+		role = Role.ROLE_SYSADMIN;
+		// FIXME - use message key
+		role.setDescription("Allows access to set database parameters, modify parser settings, and set other wiki system settings.");
 		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = Role.ROLE_TRANSLATE;
 		// FIXME - use message key
