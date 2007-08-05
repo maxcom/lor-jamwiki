@@ -648,19 +648,6 @@ public class Utilities {
 	}
 
 	/**
-	 * Finds the current WikiUser object in the request and determines
-	 * if that user is an admin.
-	 *
-	 * @param request The current servlet request object.
-	 * @return <code>true</code> if the current request contains a valid user
-	 *  object and if that user is an admin, <code>false</code> otherwise.
-	 */
-	public static boolean isAdmin(HttpServletRequest request) throws Exception {
-		WikiUser user = currentUser();
-		return (user.hasRole(Role.ROLE_ADMIN));
-	}
-
-	/**
 	 * Given a topic name, determine if that name corresponds to a comments
 	 * page.
 	 *
