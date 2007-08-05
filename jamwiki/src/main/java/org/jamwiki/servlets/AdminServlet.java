@@ -29,7 +29,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -60,7 +59,7 @@ public class AdminServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
 		if (!StringUtils.hasText(function) && ServletUtil.isTopic(request, "Special:Maintenance")) {
-			viewAdminSystem(request, next, pageInfo, null);
+			viewAdminSystem(request, next, pageInfo);
 		} else if (!StringUtils.hasText(function)) {
 			viewAdmin(request, next, pageInfo, null);
 		} else if (function.equals("cache")) {
@@ -100,7 +99,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while adding virtual wiki", e);
 			next.addObject("message", new WikiMessage("admin.message.virtualwikifail", e.getMessage()));
 		}
-		viewAdminSystem(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo);
 	}
 
 	/**
@@ -114,7 +113,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while clearing cache", e);
 			next.addObject("errors", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
 		}
-		viewAdminSystem(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo);
 	}
 
 	/**
@@ -227,7 +226,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while loading recent changes", e);
 			next.addObject("errors", new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
 		}
-		viewAdminSystem(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo);
 	}
 
 	/**
@@ -241,7 +240,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while refreshing search index", e);
 			next.addObject("message", new WikiMessage("admin.message.searchrefresh", e.getMessage()));
 		}
-		viewAdminSystem(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo);
 	}
 
 	/**
@@ -287,7 +286,7 @@ public class AdminServlet extends JAMWikiServlet {
 			logger.severe("Failure while reloading spam filter patterns", e);
 			next.addObject("errors", new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
 		}
-		viewAdminSystem(request, next, pageInfo, null);
+		viewAdminSystem(request, next, pageInfo);
 	}
 
 	/**
@@ -325,7 +324,7 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void viewAdminSystem(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, Properties props) throws Exception {
+	private void viewAdminSystem(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));

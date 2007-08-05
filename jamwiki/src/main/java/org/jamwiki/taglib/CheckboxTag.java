@@ -16,18 +16,16 @@
  */
 package org.jamwiki.taglib;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
-import org.springframework.web.util.ExpressionEvaluationUtils;
-
 /**
  * Utility tag for creating HTML checkboxes.
  */
 public class CheckboxTag extends AbstractButtonTag {
+
 	private static final long serialVersionUID = -7902653586729676006L;
 
+	/**
+	 *
+	 */
 	public String getButtonType() {
 		return "checkbox";
 	}

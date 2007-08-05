@@ -16,13 +16,16 @@
  */
 package org.jamwiki.taglib;
 
-
 /**
  * Utility tag for creating HTML radio boxes.
  */
 public class RadioTag extends AbstractButtonTag {
+
 	private static final long serialVersionUID = 8363657305039407155L;
 
+	/**
+	 *
+	 */
 	public String getButtonType() {
 		return "radio";
 	}

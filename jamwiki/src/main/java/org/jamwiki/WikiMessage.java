@@ -16,7 +16,6 @@
  */
 package org.jamwiki;
 
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.util.HtmlUtils;
 
