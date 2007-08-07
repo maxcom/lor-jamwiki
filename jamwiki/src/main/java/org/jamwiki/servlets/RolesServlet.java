@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -102,6 +103,7 @@ public class RolesServlet extends JAMWikiServlet {
 		// "userid|groupid|role".  process both, deleting all old roles for the
 		// candidate group array and adding the new roles in the groupRole
 		// array.
+		ArrayList errors = new ArrayList();
 		try {
 			String[] candidateGroups = request.getParameterValues("candidateGroup");
 			String[] groupRoles = request.getParameterValues("groupRole");
@@ -120,15 +122,22 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i=0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					Collection roles = buildRoleArray(userId, -1, userRoles);
+					if (userId == Utilities.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
+						errors.add(new WikiMessage("roles.message.sysadminremove"));
+						roles.add(Role.ROLE_SYSADMIN.getAuthority());
+					}
 					WikiBase.getDataHandler().writeRoleMapUser(userId, roles, null);
 				}
 				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}
 		} catch (WikiException e) {
-			next.addObject("message", e.getWikiMessage());
+			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
 			logger.severe("Failure while adding role", e);
-			next.addObject("message", new WikiMessage("roles.message.rolefail", e.getMessage()));
+			errors.add(new WikiMessage("roles.message.rolefail", e.getMessage()));
+		}
+		if (errors.size() > 0) {
+			next.addObject("errors", errors);
 		}
 		this.view(request, next, pageInfo);
 	}

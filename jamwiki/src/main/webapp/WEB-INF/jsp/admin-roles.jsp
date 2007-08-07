@@ -27,7 +27,7 @@
 </div>
 
 <c:if test="${!empty message}">
-<div class="message red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
+<div class="message green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></div>
 </c:if>
 <c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
