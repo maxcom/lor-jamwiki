@@ -42,6 +42,10 @@ a.redirect:before {
 a.interwiki:after {
 	content:url("../images/external.png");
 }
+p {
+	margin: .4em 0 .5em 0;
+	line-height: 1.5em;
+}
 table {
 	font-size: 100%;
 	color: black;
@@ -115,17 +119,19 @@ dd {
 	margin-bottom: .1em;
 }
 ul {
+	line-height: 1.5em;
 	list-style-type: square;
-	margin: 0;
-	padding: 0em 0em 0em 2em;
+	margin: .3em 0 0 1.5em;
+	padding: 0;
 }
 ol {
-	margin: 0;
-	padding: 0em 0em 0em 2em;
+	line-height: 1.5em;
+	margin: .3em 0 0 3.2em;
+	padding: 0;
+	list-style-image: none;
 }
 li {
-	font-size: 100%;
-	padding-bottom: 4px;
+	margin-bottom: .1em;
 }
 textarea {
 	width: 100%;
@@ -223,9 +229,7 @@ td.navigation {
 	padding: 8px;
 	list-style-type: none;
 	border-bottom: 1px solid #D8D8E7;
-}
-#nav-menu li {
-	padding-bottom: 4px;
+	margin-left: 0px;
 }
 #nav-search {
 	background: white;
