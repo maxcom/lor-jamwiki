@@ -35,6 +35,8 @@ Bugfixes:
     debugged by Michael Osipov, who also provided a suggested fix.
   * Fix parsing of bold italic ('''''), which produced incorrect HTML in
     previous releases.
+  * Oracle stores empty strings as NULL, which causes breakage with empty
+    topics.  Issue should now be resolved.
 
 Translation Updates:
 

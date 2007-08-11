@@ -626,6 +626,11 @@ public class AnsiDataHandler implements DataHandler {
 			topicVersion.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			topicVersion.setEditComment(rs.getString("edit_comment"));
 			topicVersion.setVersionContent(rs.getString("version_content"));
+			// FIXME - Oracle cannot store an empty string - it converts them
+			// to null - so add a hack to work around the problem.
+			if (topicVersion.getVersionContent() == null) {
+				topicVersion.setVersionContent("");
+			}
 			int previousTopicVersionId = rs.getInt("previous_topic_version_id");
 			if (previousTopicVersionId > 0) {
 				topicVersion.setPreviousTopicVersionId(new Integer(previousTopicVersionId));
