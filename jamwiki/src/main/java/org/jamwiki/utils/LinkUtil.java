@@ -169,7 +169,7 @@ public class LinkUtil {
 				html += "imgleft ";
 			} else if (align != null && align.equalsIgnoreCase("center")) {
 				html += "imgcenter ";
-			} else if (align != null && align.equalsIgnoreCase("right")) {
+			} else if ((align != null && align.equalsIgnoreCase("right")) || thumb || frame) {
 				html += "imgright ";
 			} else {
 				// default alignment
