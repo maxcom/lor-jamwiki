@@ -27,6 +27,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  *
@@ -46,10 +47,10 @@ public class WikiSignatureTag implements ParserTag {
 				String email = parserInput.getUserIpAddress();
 				String displayName = parserInput.getUserIpAddress();
 				String userId = "-1";
-				if (parserInput.getWikiUser() != null) {
-					WikiUser user = parserInput.getWikiUser();
+				WikiUser user = parserInput.getWikiUser();
+				if (user != null && StringUtils.hasText(user.getUsername())) {
 					login = user.getUsername();
-					displayName = (user.getDisplayName() != null) ? user.getDisplayName() : user.getUsername();
+					displayName = (StringUtils.hasText(user.getDisplayName())) ? user.getDisplayName() : login;
 					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
 					email = userInfo.getEmail();
 					userId = Integer.toString(user.getUserId());
