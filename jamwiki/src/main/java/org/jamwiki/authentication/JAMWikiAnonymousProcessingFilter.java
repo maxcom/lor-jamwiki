@@ -17,6 +17,7 @@
 package org.jamwiki.authentication;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -85,9 +86,12 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 			// error to the calling method?
 			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
 		}
+		ArrayList anonymousRoles = new ArrayList();
+		anonymousRoles.add(Role.ROLE_ANONYMOUS);
 		for (int i=0; i < groupRoles.length; i++) {
-			user.addAuthority(groupRoles[i]);
+			anonymousRoles.add(groupRoles[i]);
 		}
+		user.setAuthorities(anonymousRoles);
 	}
 
 	/**
