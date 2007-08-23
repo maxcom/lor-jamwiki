@@ -38,6 +38,8 @@ Bugfixes:
   * Oracle stores empty strings as NULL, which causes breakage with empty
     topics.  Issue should now be resolved.
   * Wiki signatures could generate incorrectly for users without display names.
+  * Fix missing apostrophe in SQL used by MS SQL when querying all users.
+    Reported by yesesnono.
 
 Translation Updates:
 
