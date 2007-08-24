@@ -46,6 +46,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Added Croatian translations (Marija Susovic).
   * Updated Dutch translations (Angel).
   * Updated German translations (axelclk).
   * Updated Japanese translations (nattolover).

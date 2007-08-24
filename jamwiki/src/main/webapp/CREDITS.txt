@@ -18,6 +18,7 @@ JAMWiki Contributors
      Chinese (simplified):  Jiading (ewen0930)
                             Feilong Huang (hfl)
      Chinese (traditional): Jiading (ewen0930)
+     Croatian:              Marija Susovic
      Danish:                Anders Monrad (g9adm)
      Dutch:                 Tarik Menbhi & Wim Borghs (Angel)
      French:                Henri Gomez (hgomez)
