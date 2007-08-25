@@ -47,6 +47,7 @@ Translation Updates:
 
   * Updated Chinese translations (hfl).
   * Added Croatian translations (Marija Susovic).
+  * Updated Danish translations (g9adm).
   * Updated Dutch translations (Angel).
   * Updated German translations (axelclk).
   * Updated Japanese translations (nattolover).
