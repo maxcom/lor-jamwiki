@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Locale;
+import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.LuceneSearchEngine;
@@ -182,5 +183,7 @@ public class WikiBase {
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
 		WikiBase.dataHandler.setup(locale, user);
+		WikiUser.resetDefaultGroupRoles();
+		JAMWikiAnonymousProcessingFilter.reset();
 	}
 }
