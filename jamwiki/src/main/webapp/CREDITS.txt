@@ -23,6 +23,7 @@ JAMWiki Contributors
      Dutch:                 Tarik Menbhi & Wim Borghs (Angel)
      French:                Henri Gomez (hgomez)
      German:                Axel Kramer (axelclk)
+                            Frank Reifenstahl (frareinif)
                             Rainer Schmitz (swift)
      Hungarian:             Daniel Tar (bDaneE)
      Japanese:              Natto Lover (nattolover)
