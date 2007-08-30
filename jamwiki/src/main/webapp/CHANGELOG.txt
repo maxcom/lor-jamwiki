@@ -49,7 +49,7 @@ Translation Updates:
   * Added Croatian translations (Marija Susovic).
   * Updated Danish translations (g9adm).
   * Updated Dutch translations (Angel).
-  * Updated German translations (axelclk).
+  * Updated German translations (axelclk & frareinif).
   * Updated Japanese translations (nattolover).
   * Updated Polish translations (dlpa).
 
