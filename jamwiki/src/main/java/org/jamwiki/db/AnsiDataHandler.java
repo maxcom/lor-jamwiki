@@ -70,7 +70,6 @@ public class AnsiDataHandler implements DataHandler {
 	public static final String DATA_CATEGORY_NAME = "category_name";
 	public static final String DATA_TOPIC_ID = "topic_id";
 	
-	
 	private final QueryHandler queryHandler = new AnsiQueryHandler();
 
 	/**
@@ -604,6 +603,11 @@ public class AnsiDataHandler implements DataHandler {
 				topic.setCurrentVersionId(new Integer(currentVersionId));
 			}
 			topic.setTopicContent(rs.getString("version_content"));
+			// FIXME - Oracle cannot store an empty string - it converts them
+			// to null - so add a hack to work around the problem.
+			if (topic.getTopicContent() == null) {
+				topic.setTopicContent("");
+			}
 			topic.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			topic.setReadOnly(rs.getInt("topic_read_only") != 0);
 			topic.setDeleteDate(rs.getTimestamp("delete_date"));
