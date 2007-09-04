@@ -34,7 +34,7 @@ Bugfixes:
     explaining how to work around this particular issue.  Reported and
     debugged by Michael Osipov, who also provided a suggested fix.
   * Fix parsing of bold italic ('''''), which produced incorrect HTML in
-    previous releases.
+    previous releases.  Reported by RegisDecamps.
   * Oracle stores empty strings as NULL, which causes breakage with empty
     topics.  Issue should now be resolved.
   * Wiki signatures could generate incorrectly for users without display names.
