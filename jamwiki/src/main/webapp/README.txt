@@ -45,7 +45,8 @@ The basic steps for performing a new JAMWiki install are:
   1. Download the latest JAMWiki release from
      http://sourceforge.net/projects/jamwiki/.
   2. Deploy the JAMWiki WAR file.  See your web application server's
-     documentation for specific deployment instructions.
+     documentation for specific deployment instructions.  The WAR file should
+     be deployed as an exploded WAR to avoid potential issues.
   3. (Optional) If using an external database create a new database instance
      that can be used by JAMWiki, or verify that a database user is available
      with permission to create tables and sequences.  If support is needed for
