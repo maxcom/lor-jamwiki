@@ -100,7 +100,7 @@ public class DatabaseUpgrades {
 			messages.add("Added current_version_id column to jam_topic");
 			// add current_version_id constraint
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT, conn);
-			messages.add("Added jam_fk_topic_topic_ver constraint to jam_topic");
+			messages.add("Added jam_f_topic_topicv constraint to jam_topic");
 			// update jam_topic records
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS, conn);
 			messages.add("Added current_version_id values for jam_topic records");
