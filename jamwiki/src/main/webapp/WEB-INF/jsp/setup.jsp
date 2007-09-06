@@ -159,6 +159,8 @@ function onPersistenceType() {
 	<td class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="setupConfirmPassword" /></td>
 </tr>
 <tr><td colspan="2">&#160;</td></tr>
+<tr><td colspan="2" class="formHelp"><f:message key="${logMessage.key}"><f:param value="${logMessage.params[0]}" /><f:param value="${logMessage.params[1]}" /></f:message></td></tr>
+<tr><td colspan="2">&#160;</td></tr>
 <tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="admin.action.save" />" /></td></tr>
 <tr><td colspan="2">&#160;</td></tr>
 </table>

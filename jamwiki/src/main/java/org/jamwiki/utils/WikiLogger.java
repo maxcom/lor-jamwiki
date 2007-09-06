@@ -44,6 +44,7 @@ public class WikiLogger {
 	private static Level DEFAULT_LOG_LEVEL = null;
 	/** Log configuration property file. */
 	public final static String LOG_PROPERTIES_FILENAME = "logging.properties";
+	public final static String DEFAULT_LOG_FILENAME = "jamwiki.log.0";
 
 	static {
 		initializeLogParams();
@@ -54,6 +55,23 @@ public class WikiLogger {
 	 */
 	private WikiLogger(Logger logger) {
 		this.logger = logger;
+	}
+
+	/**
+	 *
+	 */
+	public static String getDefaultLogFile() {
+		System.out.println(System.getProperties());
+		String logFile = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + DEFAULT_LOG_FILENAME;
+		return logFile;
+	}
+
+	/**
+	 *
+	 */
+	public static String getLogConfigFile() {
+		String logConfig = System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "classes" + System.getProperty("file.separator") + LOG_PROPERTIES_FILENAME;
+		return logConfig;
 	}
 
 	/**
