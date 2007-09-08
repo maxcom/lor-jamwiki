@@ -44,7 +44,6 @@ public class TranslationServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TranslationServlet.class.getName());
 	protected static final String JSP_ADMIN_TRANSLATION = "admin-translation.jsp";
-	private SortedProperties translations = new SortedProperties();
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -60,11 +59,10 @@ public class TranslationServlet extends JAMWikiServlet {
 		} else {
 			view(request, next, pageInfo);
 		}
-		next.addObject("translations", new TreeMap(this.translations));
-		next.addObject("codes", this.retrieveTranslationCodes());
-		if (request.getParameter("language") != null) {
-			next.addObject("language", request.getParameter("language"));
-		}
+		String language = (StringUtils.hasText(request.getParameter("language"))) ? request.getParameter("language") : "en";
+		next.addObject("language", language);
+		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
+		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
 		return next;
 	}
 
@@ -119,6 +117,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("translation.title"));
 		Enumeration names = request.getParameterNames();
 		String name;
+		SortedProperties translations = new SortedProperties();
 		while (names.hasMoreElements()) {
 			name = (String)names.nextElement();
 			if (!name.startsWith("translations[") || !name.endsWith("]")) {
@@ -126,10 +125,12 @@ public class TranslationServlet extends JAMWikiServlet {
 			}
 			String key = name.substring("translations[".length(), name.length() - "]".length());
 			String value = request.getParameter(name);
-			this.translations.setProperty(key, value);
+			translations.setProperty(key, value);
 		}
-		Environment.saveProperties(filename(request), this.translations, null);
+		Environment.saveProperties(filename(request), translations, null);
 		this.writeTopic(request, null);
+		next.addObject("translations", new TreeMap(translations));
+		next.addObject("codes", this.retrieveTranslationCodes());
 	}
 
 	/**
@@ -138,14 +139,16 @@ public class TranslationServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String language = request.getParameter("language");
 		String filename = filename(request);
-		this.translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
+		SortedProperties translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		if (StringUtils.hasText(language)) {
 			filename = filename(request);
-			this.translations.putAll(Environment.loadProperties(filename));
+			translations.putAll(Environment.loadProperties(filename));
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("translation.title"));
+		next.addObject("translations", new TreeMap(translations));
+		next.addObject("codes", this.retrieveTranslationCodes());
 	}
 
 	/**

@@ -3,6 +3,9 @@
 
 New Features:
 
+  * Special:Translation now displays the original English message string as a
+    label.
+
 Bugfixes:
 
   * Fix DB2 installation by trimming all SQL constraint names to less than 18

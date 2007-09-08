@@ -22,7 +22,7 @@
 
 <%@ include file="page-init.jsp" %>
 
-<div class="message"><f:message key="translation.message.instructions" /></div>
+<div class="message"><f:message key="translation.caption.instructions" /></div>
 
 <fieldset>
 <legend><f:message key="translation.title" /></legend>
@@ -50,14 +50,23 @@
 
 <form name="adminTranslation" method="post" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="language" value="<c:out value="${language}" />" />
-<table>
+<table class="contents" width="99%">
+<tr class="darkbg">
+	<th class="paddedCell"><f:message key="translation.caption.key" /></th>
+	<th class="paddedCell"><f:message key="translation.caption.translation"><f:param value="${language}" /></f:message></th>
+</tr>
 <c:forEach items="${translations}" var="translation">
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="translation" />">
-	<td><label for="translations[<c:out value="${translation.key}" />]"><c:out value="${translation.key}" /></label></td>
-	<td><textarea name="translations[<c:out value="${translation.key}" />]" style="overflow:auto;width:30em;height:4em;" id="translations[<c:out value="${translation.key}" />]"><c:out value="${translation.value}" /></textarea></td>
+	<td class="paddedCell">
+		<label for="translations[<c:out value="${translation.key}" />]">
+		<p><code><c:out value="${translation.key}" /></code></p>
+		<div style="overflow:hidden"><c:out value="${defaultTranslations[translation.key]}" /></div>
+		</label>
+	</td>
+	<td class="paddedCell"><textarea name="translations[<c:out value="${translation.key}" />]" style="overflow:hidden;width:30em;height:5em;" id="translations[<c:out value="${translation.key}" />]"><c:out value="${translation.value}" /></textarea></td>
 </tr>
 </c:forEach>
-<tr><td colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />" /></td></tr>
+<tr><td class="paddedCell" colspan="2" align="center"><input type="submit" name="function" value="<f:message key="common.save" />" /></td></tr>
 </table>
 </form>
 

@@ -101,7 +101,6 @@ pre {
 	padding: 1em;
 }
 code {
-	background-color: #FBFBFD;
 	color: black;
 	font-size: 120%;
 }
@@ -477,21 +476,25 @@ img.gallery {
 
 /* form styles */
 
-td.formcaption {
+.formcaption {
 	width: 250px;
 }
-td.formelement {
+.formelement {
 }
-td.formhelp {
+.formhelp {
 	font-size: 85%;
 	color: #5f5f5f;
 }
-tr.lightbg {
+.lightbg {
 	background-color: #ffffff;
 }
-tr.mediumbg {
+.mediumbg {
 	background-color: #e9e9f8;
 }
-tr.darkbg {
+.darkbg {
 	background-color: #d8d8e7;
+}
+.paddedCell {
+	vertical-align: top;
+	padding: 3px;
 }
