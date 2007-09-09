@@ -40,9 +40,6 @@ public class JAMWikiLogoutFilter extends LogoutFilter {
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiLogoutFilter.class.getName());
-	// FIXME - this field can hopefully be removed in a future version of
-	// Acegi, see the comments for setFilterProcessesUrl() below for details.
-	private String filterProcessesUrl = "/j_acegi_logout";
 
 	/**
 	 *
@@ -64,7 +61,7 @@ public class JAMWikiLogoutFilter extends LogoutFilter {
 			uri = uri.substring(0, pathParamIndex);
 		}
 		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		return uri.endsWith(request.getContextPath() + "/" + virtualWiki + filterProcessesUrl);
+		return uri.endsWith(request.getContextPath() + "/" + virtualWiki + this.getFilterProcessesUrl());
 	}
 
 	/**
@@ -97,16 +94,5 @@ public class JAMWikiLogoutFilter extends LogoutFilter {
 			targetUrl = request.getContextPath() + "/" + virtualWiki + url;
 		}
 		response.sendRedirect(response.encodeRedirectURL(targetUrl));
-	}
-
-	/**
-	 * This method can hopefully be removed in a future version of Acegi -
-	 * see http://opensource.atlassian.com/projects/spring/browse/SEC-408 for
-	 * the issue report requesting that a getFilterProcessesUrl() method
-	 * be added to LogoutFilter.
-	 */
-	public void setFilterProcessesUrl(String filterProcessesUrl) {
-		super.setFilterProcessesUrl(filterProcessesUrl);
-		this.filterProcessesUrl = filterProcessesUrl;
 	}
 }
