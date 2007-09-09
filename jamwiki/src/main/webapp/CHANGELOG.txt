@@ -3,6 +3,7 @@
 
 New Features:
 
+  * Upgrade to Acegi Security 1.0.5.
   * Special:Translation now displays the original English message string as a
     label.
 
