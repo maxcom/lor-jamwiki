@@ -11,6 +11,8 @@ Bugfixes:
 
   * Fix DB2 installation by trimming all SQL constraint names to less than 18
     characters.
+  * If two entries in the TOC have the same text make sure that the links do
+    not always go to the first entry.
 
 Translation Updates:
 

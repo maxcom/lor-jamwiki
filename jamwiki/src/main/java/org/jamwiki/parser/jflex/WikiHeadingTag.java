@@ -83,7 +83,7 @@ public class WikiHeadingTag implements ParserTag {
 		}
 		String tagText = raw.substring(level, raw.length() - level).trim();
 		String tocText = this.stripMarkup(tagText);
-		String tagName = tocText;
+		String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
 		if (mode <= JFlexParser.MODE_SLICE) {
 			parserDocument.setSectionName(Utilities.encodeForURL(tagName));
 			return raw;

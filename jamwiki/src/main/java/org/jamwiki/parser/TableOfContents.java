@@ -16,14 +16,16 @@
  */
 package org.jamwiki.parser;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * This class may be used in two ways:
@@ -58,7 +60,7 @@ public class TableOfContents {
 	/** Keep track of how many times the parser attempts to insert the TOC (one per "TOC" tag) */
 	private int insertionAttempt = 0;
 	private int minLevel = 4;
-	private final Vector entries = new Vector();
+	private final Map entries = new LinkedHashMap();
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;
@@ -123,8 +125,9 @@ public class TableOfContents {
 		if (this.status != STATUS_NO_TOC && this.status != STATUS_TOC_INITIALIZED) {
 			this.setStatus(STATUS_TOC_INITIALIZED);
 		}
+		name = this.checkForUniqueName(name);
 		TableOfContentsEntry entry = new TableOfContentsEntry(name, text, level);
-		entries.add(entry);
+		this.entries.put(name, entry);
 		if (level < minLevel) {
 			minLevel = level;
 		}
@@ -157,6 +160,31 @@ public class TableOfContents {
 			return "";
 		}
 		return this.toHTML();
+	}
+
+	/**
+	 * Verify the the TOC name is unique.  If it is already in use append
+	 * a numerical suffix onto it.
+	 *
+	 * @param name The name to use in the TOC, unless it is already in use.
+	 * @return A unique name for use in the TOC, of the form "name" or "name_1"
+	 *  if "name" is already in use.
+	 */
+	public String checkForUniqueName(String name) {
+		if (!StringUtils.hasText(name)) {
+			name = "empty";
+		}
+		int count = 0;
+		String candidate = name;
+		while (count < 1000) {
+			if (this.entries.get(candidate) == null) {
+				return candidate;
+			}
+			count++;
+			candidate = name + "_" + count;
+		}
+		logger.warning("Unable to find appropriate TOC name after " + count + " iterations for value " + name);
+		return candidate;
 	}
 
 	/**
@@ -235,13 +263,14 @@ public class TableOfContents {
 	 * @return An HTML representation of this table of contents object.
 	 */
 	public String toHTML() {
-		Enumeration e = entries.elements();
+		Iterator tocIterator = this.entries.keySet().iterator();
 		StringBuffer text = new StringBuffer();
 		text.append("<table class=\"toc\"><tr><td>");
 		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
-		while (e.hasMoreElements()) {
-			entry = (TableOfContentsEntry)e.nextElement();
+		while (tocIterator.hasNext()) {
+			String key = (String)tocIterator.next();
+			entry = (TableOfContentsEntry)this.entries.get(key);
 			// adjusted level determines how far to indent the list
 			adjustedLevel = ((entry.level - minLevel) + 1);
 			if (adjustedLevel > Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH)) {
