@@ -55,8 +55,9 @@ public class JAMWikiTestSuite extends TestCase {
 		s.addTestSuite(org.jamwiki.test.utils.WikiLoggerTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.XMLTopicFactoryTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.XMLUtilTest.class);
-                s.addTestSuite(org.jamwiki.test.utils.TiddlyWikiParserTest.class);
-                s.addTestSuite(org.jamwiki.test.utils.TiddlyWiki2MediaWikiTranslatorTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.TiddlyWikiParserTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.TiddlyWiki2MediaWikiTranslatorTest.class);
+		s.addTestSuite(org.jamwiki.test.parser.TableOfContentsTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.CharacterTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlTagTest.class);
 		s.addTestSuite(org.jamwiki.test.parser.jflex.HtmlLinkTagTest.class);
