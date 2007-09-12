@@ -72,7 +72,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	private String filename(HttpServletRequest request) {
 		String filename = "ApplicationResources.properties";
 		String language = request.getParameter("language");
-		if (StringUtils.hasText(language)) {
+		if (StringUtils.hasText(language) && !language.equalsIgnoreCase("en")) {
 			// FIXME - should also check for valid language code
 			filename = "ApplicationResources_" + language + ".properties";
 		}
