@@ -122,6 +122,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 					if (oldVersion.before(0, 6, 0)) {
 						messages = DatabaseUpgrades.upgrade060(messages);
 					}
+					if (oldVersion.before(0, 6, 1)) {
+						messages = DatabaseUpgrades.upgrade061(messages);
+					}
 				} catch (Exception e) {
 					// FIXME - hard coding
 					String msg = "Unable to complete upgrade to new JAMWiki version.";

@@ -62,6 +62,11 @@ followed by 0.5.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.6.1".
+  2. Delete the unused ROLE_DELETE:
+       a) Delete values from the jam_role_map table:
+              DELETE from jam_role_map where role_name = 'ROLE_DELETE';
+       b) Delete values from the jam_role table:
+              DELETE from jam_role where role_name = 'ROLE_DELETE';
 
 
   JAMWiki 0.6.0
@@ -128,9 +133,6 @@ followed by 0.5.3.
        g) Convert admins to the new role structure:
               INSERT into jam_role_map (role_name, wiki_user_id)
                    select 'ROLE_ADMIN', wiki_user_id
-                   from jam_wiki_user where is_admin = 1;
-              INSERT into jam_role_map (role_name, wiki_user_id)
-                   select 'ROLE_DELETE', wiki_user_id
                    from jam_wiki_user where is_admin = 1;
               INSERT into jam_role_map (role_name, wiki_user_id)
                    select 'ROLE_SYSADMIN', wiki_user_id

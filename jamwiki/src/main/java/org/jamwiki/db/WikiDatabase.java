@@ -212,7 +212,6 @@ public class WikiDatabase {
 		WikiBase.getDataHandler().writeWikiUser(user, userInfo, conn);
 		Vector roles = new Vector();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
-		roles.add(Role.ROLE_DELETE.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
 		WikiBase.getDataHandler().writeRoleMapUser(user.getUserId(), roles, conn);
@@ -280,10 +279,6 @@ public class WikiDatabase {
 		Role role = Role.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
-		role = Role.ROLE_DELETE;
-		// FIXME - use message key
-		role.setDescription("Allows access to delete topics.");
 		WikiBase.getDataHandler().writeRole(role, conn, false);
 		role = Role.ROLE_EDIT_EXISTING;
 		// FIXME - use message key

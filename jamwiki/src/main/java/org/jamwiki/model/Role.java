@@ -39,7 +39,6 @@ public class Role extends GrantedAuthorityImpl {
 	 * automatically assigned to all non-logged in users.
 	 */
 	public static final Role ROLE_ANONYMOUS = new Role("ROLE_ANONYMOUS");
-	public static final Role ROLE_DELETE = new Role("ROLE_DELETE");
 	public static final Role ROLE_EDIT_EXISTING = new Role("ROLE_EDIT_EXISTING");
 	public static final Role ROLE_EDIT_NEW = new Role("ROLE_EDIT_NEW");
 	/**

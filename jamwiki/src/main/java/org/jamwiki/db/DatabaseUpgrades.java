@@ -196,7 +196,7 @@ public class DatabaseUpgrades {
 			String sql = null;
 			// assign admins all permissions during upgrades just to be safe.  for
 			// new installs it is sufficient just to give them the basics
-			Role[] adminRoles = {Role.ROLE_ADMIN, Role.ROLE_DELETE, Role.ROLE_EDIT_EXISTING, Role.ROLE_EDIT_NEW, Role.ROLE_MOVE, Role.ROLE_SYSADMIN, Role.ROLE_TRANSLATE, Role.ROLE_UPLOAD, Role.ROLE_VIEW};
+			Role[] adminRoles = {Role.ROLE_ADMIN, Role.ROLE_EDIT_EXISTING, Role.ROLE_EDIT_NEW, Role.ROLE_MOVE, Role.ROLE_SYSADMIN, Role.ROLE_TRANSLATE, Role.ROLE_UPLOAD, Role.ROLE_VIEW};
 			for (int i=0; i < adminRoles.length; i++) {
 				Role adminRole = adminRoles[i];
 				sql = "insert into jam_role_map ( "
@@ -243,6 +243,31 @@ public class DatabaseUpgrades {
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_TABLE);
 			} catch (Exception ex) {}
+			throw e;
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade061(Vector messages) throws Exception {
+		Connection conn = null;
+		try {
+			String sql = null;
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			// delete ROLE_DELETE
+			sql = "delete from jam_role_map where role_name = 'ROLE_DELETE'";
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "delete from jam_role where role_name = 'ROLE_DELETE'";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Removed ROLE_DELETE");
+			conn.commit();
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
 			throw e;
 		} finally {
 			DatabaseConnection.closeConnection(conn);
