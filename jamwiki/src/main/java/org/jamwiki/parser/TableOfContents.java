@@ -268,11 +268,17 @@ public class TableOfContents {
 		text.append("<table class=\"toc\"><tr><td>");
 		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
+		int previousLevel = 0;
 		while (tocIterator.hasNext()) {
 			String key = (String)tocIterator.next();
 			entry = (TableOfContentsEntry)this.entries.get(key);
 			// adjusted level determines how far to indent the list
 			adjustedLevel = ((entry.level - minLevel) + 1);
+			// cannot increase TOC indent level more than one level at a time
+			if (adjustedLevel > (previousLevel + 1)) {
+				adjustedLevel = previousLevel + 1;
+			}
+			previousLevel = adjustedLevel;
 			if (adjustedLevel > Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH)) {
 				// do not display if nested deeper than max
 				continue;

@@ -111,8 +111,7 @@ public class TableOfContentsTest extends TestCase {
 	 *
 	 */
 	public void testMultiLevelHeadings2() {
-		// if the first level is not the greatest level it should be reset
-		/* FIXME - implement
+		// cannot increase TOC indentation by more than one level
 		String input = "";
 		input = "====1.1.1====\n"
 		      + "==2==\n"
@@ -132,6 +131,5 @@ public class TableOfContentsTest extends TestCase {
 		toc.addEntry(toc.checkForUniqueName("3"), "3", 2);
 		toc.addEntry(toc.checkForUniqueName("4"), "4", 2);
 		assertEquals(output, toc.toHTML());
-		*/
 	}
 }
