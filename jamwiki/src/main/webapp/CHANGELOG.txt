@@ -18,6 +18,8 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Japanese translations (nattolover).
+
 
 0.6.0
 =====
