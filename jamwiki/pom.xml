@@ -384,6 +384,7 @@
                            <report>license</report>
                            <report>scm</report>
                            <report>summary</report>
+                           <report>jdepend</report>                           
                         </reports>
                      </reportSet>
                   </reportSets>
@@ -457,6 +458,10 @@
 					<debug>true</debug>
 					<relaxed>true</relaxed>
 				</configuration>
+			</plugin>
+			<plugin>
+			           <groupId>org.codehaus.mojo</groupId>
+			           <artifactId>jdepend-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</reporting>
