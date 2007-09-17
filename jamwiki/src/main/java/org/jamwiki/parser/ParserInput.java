@@ -51,6 +51,19 @@ public class ParserInput {
 	}
 
 	/**
+	 * Copy constructor.
+	 */
+	public ParserInput(ParserInput parserInput) {
+		this.allowSectionEdit = parserInput.allowSectionEdit;
+		this.context = parserInput.context;
+		this.locale = parserInput.locale;
+		this.topicName = parserInput.topicName;
+		this.userIpAddress = parserInput.userIpAddress;
+		this.virtualWiki = parserInput.virtualWiki;
+		this.wikiUser = parserInput.wikiUser;
+	}
+
+	/**
 	 * This method will return <code>true</code> if edit links are allowed
 	 * next to each section heading.  During preview and in some other
 	 * instances that feature needs to be disabled.

@@ -13,6 +13,7 @@ Bugfixes:
     characters.
   * If two entries in the TOC have the same text make sure that the links do
     not always go to the first entry.
+  * Fix parsing of TOC values containing wiki markup.
   * Better handle cases of mis-indented TOC (for example, h2 followed by h4).
   * ROLE_DELETE is the same as ROLE_ADMIN and has been removed.
 
