@@ -359,34 +359,43 @@ public class JFlexParser extends AbstractParser {
 		boolean validated = true;
 		if (lexer.mode == JFlexParser.MODE_SPLICE || lexer.mode == JFlexParser.MODE_SLICE) {
 			if (lexer.parserInput.getTopicName() == null) {
+				logger.info("Failure while initializing parser: topic name is null.");
 				validated = false;
 			}
 		} else if (lexer.mode == JFlexParser.MODE_LAYOUT) {
 			if (lexer.parserInput == null) {
+				logger.info("Failure while initializing parser: ParserInput is null.");
 				validated = false;
 			}
 			if (lexer.parserInput.getTableOfContents() == null) {
+				logger.info("Failure while initializing parser: table of contents object is null.");
 				validated = false;
 			}
 		} else if (lexer.mode == JFlexParser.MODE_PROCESS) {
 			if (lexer.parserInput.getTableOfContents() == null) {
+				logger.info("Failure while initializing parser: table of contents object is null.");
 				validated = false;
 			}
 			if (lexer.parserInput.getTopicName() == null) {
+				logger.info("Failure while initializing parser: topic name is null.");
 				validated = false;
 			}
 			if (lexer.parserInput.getContext() == null) {
+				logger.info("Failure while initializing parser: context is null.");
 				validated = false;
 			}
 			if (lexer.parserInput.getVirtualWiki() == null) {
+				logger.info("Failure while initializing parser: virtual wiki is null.");
 				validated = false;
 			}
 		} else if (lexer.mode <= JFlexParser.MODE_PREPROCESS) {
 			if (lexer.mode >= JFlexParser.MODE_MINIMAL) {
 				if (lexer.parserInput.getVirtualWiki() == null) {
+					logger.info("Failure while initializing parser: virtual wiki is null.");
 					validated = false;
 				}
 				if (lexer.parserInput.getTopicName() == null) {
+					logger.info("Failure while initializing parser: topic name is null.");
 					validated = false;
 				}
 			}
