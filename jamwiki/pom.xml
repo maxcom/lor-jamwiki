@@ -14,7 +14,7 @@
 	<artifactId>jamwiki</artifactId>
 	<packaging>war</packaging>
 	<name>JAMWiki</name>
-	<version>0.6.1-SNAPSHOT</version>
+	<version>${jamwiki.version}</version>
 	<description>
 		JAMWiki is a Java-based Wiki engine, which offers many of the
 		features of MediaWiki.
