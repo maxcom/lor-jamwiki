@@ -17,13 +17,15 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.WikiMessage;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 
@@ -47,9 +49,9 @@ public class ContributionsServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void contributions(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String userString = request.getParameter("contributor");
-		Pagination pagination = Utilities.buildPagination(request, next);
+		Pagination pagination = WikiUtil.buildPagination(request, next);
 		Collection contributions = WikiBase.getDataHandler().getUserContributions(virtualWiki, userString, pagination, true);
 		next.addObject("contributions", contributions);
 		next.addObject("numContributions", new Integer(contributions.size()));

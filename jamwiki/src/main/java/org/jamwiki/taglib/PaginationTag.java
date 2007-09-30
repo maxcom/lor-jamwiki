@@ -24,6 +24,7 @@ import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
@@ -70,7 +71,7 @@ public class PaginationTag extends BodyTagSupport {
 				return output;
 			}
 			output.append("<a href=\"");
-			String virtualWiki = Utilities.getVirtualWikiFromRequest(request);
+			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
 			String query = LinkUtil.appendQueryParam(wikiLink.getQuery(), "num", Integer.toString(num));
 			query += "&amp;offset=0";
@@ -117,7 +118,7 @@ public class PaginationTag extends BodyTagSupport {
 				return output;
 			}
 			output.append("<a href=\"");
-			String virtualWiki = Utilities.getVirtualWikiFromRequest(request);
+			String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 			WikiLink wikiLink = LinkUtil.parseWikiLink(baseUrl);
 			int offset = pagination.getOffset() + pagination.getNumResults();
 			if (previous) {
@@ -169,7 +170,7 @@ public class PaginationTag extends BodyTagSupport {
 	 */
 	private String pagination(String baseUrl, int count) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		Pagination pagination = Utilities.buildPagination(request, null);
+		Pagination pagination = WikiUtil.buildPagination(request, null);
 		StringBuffer output = new StringBuffer();
 		output.append(this.nextPage(pagination, baseUrl, count, true));
 		output.append("&#160;|&#160;");

@@ -17,12 +17,14 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -53,7 +55,7 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String topic = request.getParameter("text");
 		if (WikiBase.exists(virtualWiki, topic)) {
 			ServletUtil.redirect(next, virtualWiki, topic);
@@ -67,7 +69,7 @@ public class SearchServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void search(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String searchField = request.getParameter("text");
 		if (request.getParameter("text") == null) {
 			pageInfo.setPageTitle(new WikiMessage("search.title"));

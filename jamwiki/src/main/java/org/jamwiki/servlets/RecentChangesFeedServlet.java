@@ -37,6 +37,7 @@ import org.jamwiki.model.RecentChange;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -162,7 +163,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 		feed.setEncoding(FEED_ENCODING);
 		feed.setTitle(Environment.getValue(Environment.PROP_RSS_TITLE));
 		StringBuffer requestURL = request.getRequestURL();
-		String feedURL = feedUrlPrefix + requestURL.substring(0, requestURL.length() - Utilities.getTopicFromURI(request).length());
+		String feedURL = feedUrlPrefix + requestURL.substring(0, requestURL.length() - WikiUtil.getTopicFromURI(request).length());
 		feed.setLink(feedURL);
 		feed.setDescription("List of the last " + changes.size() + " changed wiki pages.");
 		boolean includeMinorEdits = ServletRequestUtils.getBooleanParameter(request, MINOR_EDITS,
@@ -235,8 +236,8 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 *
 	 */
 	private Collection getChanges(HttpServletRequest request) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Pagination pagination = Utilities.buildPagination(request, null);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		Pagination pagination = WikiUtil.buildPagination(request, null);
 		return WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);
 	}
 

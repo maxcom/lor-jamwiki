@@ -28,6 +28,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,9 +62,9 @@ public class WatchlistServlet extends JAMWikiServlet {
 		if (!user.hasRole(Role.ROLE_USER)) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
-		String topicName = Utilities.getTopicFromRequest(request);
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
+		String topicName = WikiUtil.getTopicFromRequest(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);
 		WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
 		String article = Utilities.extractTopicLink(topicName);
 		if (watchlist.containsTopic(topicName)) {
@@ -80,8 +81,8 @@ public class WatchlistServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
-		Pagination pagination = Utilities.buildPagination(request, next);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		Pagination pagination = WikiUtil.buildPagination(request, next);
 		WikiUser user = Utilities.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));

@@ -21,7 +21,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.ehcache.Element;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -45,6 +49,7 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -78,7 +83,7 @@ public class ServletUtil {
 	 *  constructed.
 	 */
 	private static void buildLayout(HttpServletRequest request, ModelAndView next) {
-		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
+		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
@@ -113,7 +118,7 @@ public class ServletUtil {
 		LinkedHashMap links = new LinkedHashMap();
 		WikiUser user = Utilities.currentUser();
 		String pageName = pageInfo.getTopicName();
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		try {
 			if (pageInfo.getAdmin()) {
 				if (user.hasRole(Role.ROLE_SYSADMIN)) {
@@ -145,7 +150,7 @@ public class ServletUtil {
 					links.put(moveLink, new WikiMessage("tab.common.move"));
 				}
 				if (user.hasRole(Role.ROLE_USER)) {
-					Watchlist watchlist = Utilities.currentWatchlist(request, virtualWiki);
+					Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);
 					boolean watched = (watchlist.containsTopic(pageName));
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
 					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeForURL(pageName);
@@ -269,7 +274,7 @@ public class ServletUtil {
 	 *  initializing the topic object.
 	 */
 	protected static Topic initializeTopic(String virtualWiki, String topicName) throws Exception {
-		Utilities.validateTopicName(topicName);
+		WikiUtil.validateTopicName(topicName);
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic != null) {
 			return topic;
@@ -362,7 +367,7 @@ public class ServletUtil {
 	 */
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
-			String topic = Utilities.getTopicFromURI(request);
+			String topic = WikiUtil.getTopicFromURI(request);
 			if (!StringUtils.hasText(topic)) {
 				return false;
 			}
@@ -422,7 +427,7 @@ public class ServletUtil {
 		// load cached top area, nav bar, etc.
 		ServletUtil.buildLayout(request, next);
 		if (!StringUtils.hasText(pageInfo.getTopicName())) {
-			pageInfo.setTopicName(Utilities.getTopicFromURI(request));
+			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
 		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
 		pageInfo.setTabMenu(ServletUtil.buildTabMenu(request, pageInfo));
@@ -513,7 +518,7 @@ public class ServletUtil {
 	protected static ModelAndView viewLogin(HttpServletRequest request, WikiPageInfo pageInfo, String topic, WikiMessage messageObject) throws Exception {
 		ModelAndView next = new ModelAndView("wiki");
 		pageInfo.reset();
-		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
+		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		String target = request.getParameter("target");
 		if (!StringUtils.hasText(target)) {
 			if (!StringUtils.hasText(topic)) {
@@ -547,7 +552,7 @@ public class ServletUtil {
 	 * @throws Exception Thrown if any error occurs during processing.
 	 */
 	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		if (!StringUtils.hasText(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
@@ -578,7 +583,7 @@ public class ServletUtil {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		Utilities.validateTopicName(topic.getName());
+		WikiUtil.validateTopicName(topic.getName());
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = Utilities.findRedirectedTopic(topic, 0);
 			if (!child.getName().equals(topic.getName())) {
@@ -640,4 +645,24 @@ public class ServletUtil {
 			pageInfo.setPageTitle(pageTitle);
 		}
 	}
+	
+
+	/**
+	 * Utility method for setting a cookie.  This method will overwrite an existing
+	 * cookie of the same name if such a cookie already exists.
+	 *
+	 * @param response The servlet response object.
+	 * @param cookieName The name of the cookie to be set.
+	 * @param cookieValue The value of the cookie to be set.
+	 * @param cookieAge The length of time before the cookie expires, specified in seconds.
+	 * @throws Exception Thrown if any error occurs while setting cookie values.
+	 */
+	public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int cookieAge) throws Exception {
+		Cookie cookie = null;
+		// after confirming credentials
+		cookie = new Cookie(cookieName, cookieValue);
+		cookie.setMaxAge(cookieAge);
+		response.addCookie(cookie);
+	}
+
 }

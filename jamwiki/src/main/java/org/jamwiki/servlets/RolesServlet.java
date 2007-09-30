@@ -29,6 +29,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -156,7 +157,7 @@ public class RolesServlet extends JAMWikiServlet {
 				String roleName = (update) ? updateRole : request.getParameter("roleName");
 				role = new Role(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
-				Utilities.validateRole(role);
+				WikiUtil.validateRole(role);
 				WikiBase.getDataHandler().writeRole(role, null, update);
 				if (StringUtils.hasText(updateRole) && updateRole.equals(role.getAuthority())) {
 					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getAuthority()));

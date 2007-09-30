@@ -27,6 +27,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * Provides access to JAMWiki property values.
@@ -356,7 +357,7 @@ public class Environment {
 			// NOPMD file might not exist
 		}
 		try {
-			file = new File(Utilities.getClassLoaderRoot(), filename);
+			file = new File(WikiUtil.getClassLoaderRoot(), filename);
 			return file; //NOPMD
 		} catch (Exception e) {
 			logger.severe("Error while searching for resource " + filename, e);

@@ -51,6 +51,7 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -1296,7 +1297,7 @@ public class AnsiDataHandler implements DataHandler {
 			WikiCache.removeFromCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key);
 			WikiCache.removeFromCache(CACHE_TOPICS, key);
 			conn = WikiDatabase.getConnection(transactionObject);
-			Utilities.validateTopicName(topic.getName());
+			WikiUtil.validateTopicName(topic.getName());
 			if (topic.getTopicId() <= 0) {
 				addTopic(topic, conn);
 			} else {
@@ -1351,7 +1352,7 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			Utilities.validateTopicName(virtualWiki.getName());
+			WikiUtil.validateTopicName(virtualWiki.getName());
 			if (virtualWiki.getVirtualWikiId() <= 0) {
 				this.addVirtualWiki(virtualWiki, conn);
 			} else {
@@ -1425,7 +1426,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception {
-		Utilities.validateUserName(user.getUsername());
+		WikiUtil.validateUserName(user.getUsername());
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);

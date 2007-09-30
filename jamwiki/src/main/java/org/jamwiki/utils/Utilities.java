@@ -18,7 +18,6 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -26,15 +25,11 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
@@ -44,22 +39,15 @@ import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.UserHandler;
 import org.jamwiki.WikiBase;
-import org.jamwiki.WikiException;
-import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.db.DatabaseConnection;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
-import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.servlets.ServletUtil;
 import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This class provides a variety of utility methods.
@@ -67,9 +55,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class Utilities {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
-	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
-	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
-	private static Pattern VALID_USER_LOGIN_PATTERN = null;
+	public static Pattern INVALID_ROLE_NAME_PATTERN = null;
+	public static Pattern INVALID_TOPIC_NAME_PATTERN = null;
+	public static Pattern VALID_USER_LOGIN_PATTERN = null;
 
 	static {
 		try {
@@ -85,24 +73,6 @@ public class Utilities {
 	 *
 	 */
 	private Utilities() {
-	}
-
-	/**
-	 * Utility method for setting a cookie.  This method will overwrite an existing
-	 * cookie of the same name if such a cookie already exists.
-	 *
-	 * @param response The servlet response object.
-	 * @param cookieName The name of the cookie to be set.
-	 * @param cookieValue The value of the cookie to be set.
-	 * @param cookieAge The length of time before the cookie expires, specified in seconds.
-	 * @throws Exception Thrown if any error occurs while setting cookie values.
-	 */
-	public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int cookieAge) throws Exception {
-		Cookie cookie = null;
-		// after confirming credentials
-		cookie = new Cookie(cookieName, cookieValue);
-		cookie.setMaxAge(cookieAge);
-		response.addCookie(cookie);
 	}
 
 	/**
@@ -125,39 +95,6 @@ public class Utilities {
 		return (Locale)localeEditor.getValue();
 	}
 
-	/**
-	 * Create a pagination object based on parameters found in the current
-	 * request.
-	 *
-	 * @param request The servlet request object.
-	 * @param next A ModelAndView object corresponding to the page being
-	 *  constructed.
-	 * @return A Pagination object constructed from parameters found in the
-	 *  request object.
-	 */
-	public static Pagination buildPagination(HttpServletRequest request, ModelAndView next) {
-		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
-		if (request.getParameter("num") != null) {
-			try {
-				num = new Integer(request.getParameter("num")).intValue();
-			} catch (Exception e) {
-				// invalid number
-			}
-		}
-		int offset = 0;
-		if (request.getParameter("offset") != null) {
-			try {
-				offset = new Integer(request.getParameter("offset")).intValue();
-			} catch (Exception e) {
-				// invalid number
-			}
-		}
-		if (next != null) {
-			next.addObject("num", new Integer(num));
-			next.addObject("offset", new Integer(offset));
-		}
-		return new Pagination(num, offset);
-	}
 
 	/**
 	 * Convert a string value from one encoding to another.
@@ -206,31 +143,6 @@ public class Utilities {
 		return WikiUser.initWikiUser(auth);
 	}
 
-	/**
-	 * Retrieve the current logged-in user's watchlist from the session.  If
-	 * there is no watchlist return an empty watchlist.
-	 *
-	 * @param request The servlet request object.
-	 * @param virtualWiki The virtual wiki for the watchlist being parsed.
-	 * @return The current logged-in user's watchlist, or an empty watchlist
-	 *  if there is no watchlist in the session.
-	 */
-	public static Watchlist currentWatchlist(HttpServletRequest request, String virtualWiki) throws Exception {
-		// get watchlist stored in session
-		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(ServletUtil.PARAMETER_WATCHLIST);
-		if (watchlist != null) {
-			return watchlist;
-		}
-		// no watchlist in session, retrieve from database
-		watchlist = new Watchlist();
-		WikiUser user = currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			return watchlist;
-		}
-		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
-		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
-		return watchlist;
-	}
 
 	/**
 	 * Utility method to retrieve an instance of the current data handler.
@@ -418,37 +330,7 @@ public class Utilities {
 		return buffer.toString();
 	}
 
-	/**
-	 *
-	 */
-	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
-		int count = attempts;
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
-			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
-			return parent;
-		}
-		// avoid infinite redirection
-		count++;
-		if (count > 10) {
-			throw new WikiException(new WikiMessage("topic.redirect.infinite"));
-		}
-		// get the topic that is being redirected to
-		Topic child = WikiBase.getDataHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), false, null);
-		if (child == null) {
-			// child being redirected to doesn't exist, return parent
-			return parent;
-		}
-		if (!StringUtils.hasText(child.getRedirectTo())) {
-			// found a topic that is not a redirect, return
-			return child;
-		}
-		if (WikiBase.getDataHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), false, null) == null) {
-			// child is a redirect, but its target does not exist
-			return child;
-		}
-		// topic is a redirect, keep looking
-		return Utilities.findRedirectedTopic(child, count);
-	}
+
 
 	/**
 	 * Given a message key and locale return a locale-specific message.
@@ -500,152 +382,17 @@ public class Utilities {
 		URL url = loader.getResource(filename);
 		if (url == null) {
 			url = ClassLoader.getSystemResource(filename);
-			if (url == null) {
-				throw new Exception("Unable to find " + filename);
-			}
-			file = FileUtils.toFile(url);
-		} else {
-			file = FileUtils.toFile(url);
 		}
+		if (url == null) {
+			throw new Exception("Unable to find " + filename);
+		} 
+		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
-			throw new Exception("Found invalid class loader root " + file);
+			throw new Exception("Found invalid root class loader for file " + filename);
 		}
 		return file;
 	}
 
-	/**
-	 * Attempt to get the class loader root directory.  This method works
-	 * by searching for a file that MUST exist in the class loader root
-	 * and then returning its parent directory.
-	 *
-	 * @return Returns a file indicating the directory of the class loader.
-	 * @throws Exception Thrown if the class loader can not be found.
-	 */
-	public static File getClassLoaderRoot() throws Exception {
-		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
-		if (!file.exists()) {
-			throw new Exception("Unable to find class loader root");
-		}
-		return file.getParentFile();
-	}
-
-	/**
-	 * Retrieve a topic name from the servlet request.  This method will
-	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
-	 * and will decode it appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded topic name retrieved from the request.
-	 */
-	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		String topic = null;
-		if (request.getMethod().equalsIgnoreCase("GET")) {
-			// parameters passed via the URL and URL encoded, so request.getParameter may
-			// not interpret non-ASCII characters properly.  This code attempts to work
-			// around that issue by manually decoding.  yes, this is ugly and it would be
-			// great if someone could eventually make it unnecessary.
-			String query = request.getQueryString();
-			if (!StringUtils.hasText(query)) {
-				return null;
-			}
-			String prefix = ServletUtil.PARAMETER_TOPIC + "=";
-			int pos = query.indexOf(prefix);
-			if (pos != -1 && (pos + prefix.length()) < query.length()) {
-				topic = query.substring(pos + prefix.length());
-				if (topic.indexOf("&") != -1) {
-					topic = topic.substring(0, topic.indexOf("&"));
-				}
-			}
-			return Utilities.decodeFromURL(topic);
-		}
-		topic = request.getParameter(ServletUtil.PARAMETER_TOPIC);
-		if (topic == null) {
-			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
-		}
-		if (topic == null) {
-			return null;
-		}
-		return Utilities.decodeFromRequest(topic);
-	}
-
-	/**
-	 * Retrieve a topic name from the request URI.  This method will retrieve
-	 * the portion of the URI that follows the virtual wiki and decode it
-	 * appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded topic name retrieved from the URI.
-	 */
-	public static String getTopicFromURI(HttpServletRequest request) {
-		// skip one directory, which is the virutal wiki
-		String topic = Utilities.retrieveDirectoriesFromURI(request, 1);
-		if (topic == null) {
-			logger.warning("No topic in URL: " + request.getRequestURI());
-			return null;
-		}
-		int pos = topic.indexOf('?');
-		if (pos != -1) {
-			// strip everything after and including '?'
-			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
-				return null;
-			}
-			topic = topic.substring(0, topic.indexOf('?'));
-		}
-		pos = topic.indexOf('#');
-		if (pos != -1) {
-			// strip everything after and including '#'
-			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
-				return null;
-			}
-			topic = topic.substring(0, topic.indexOf('#'));
-		}
-		topic = Utilities.decodeFromURL(topic);
-		return topic;
-	}
-
-	/**
-	 * Retrieve a virtual wiki name from the servlet request.  This method
-	 * will retrieve a request parameter matching the PARAMETER_VIRTUAL_WIKI
-	 * value, and will decode it appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded virtual wiki name retrieved from the request.
-	 */
-	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
-		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
-		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
-		}
-		if (virtualWiki == null) {
-			return null;
-		}
-		return Utilities.decodeFromRequest(virtualWiki);
-	}
-
-	/**
-	 * Retrieve a virtual wiki name from the request URI.  This method will
-	 * retrieve the portion of the URI that immediately follows the servlet
-	 * context and decode it appropriately.
-	 *
-	 * @param request The servlet request object.
-	 * @return The decoded virtual wiki name retrieved from the URI.
-	 */
-	public static String getVirtualWikiFromURI(HttpServletRequest request) {
-		String uri = Utilities.retrieveDirectoriesFromURI(request, 0);
-		if (uri == null) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
-			return null;
-		}
-		int slashIndex = uri.indexOf('/');
-		if (slashIndex == -1) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
-			return null;
-		}
-		String virtualWiki = uri.substring(0, slashIndex);
-		return Utilities.decodeFromURL(virtualWiki);
-	}
 
 	/**
 	 * Given a topic name, determine if that name corresponds to a comments
@@ -825,7 +572,7 @@ public class Utilities {
 	 * @return An instance of the system parser.
 	 * @throws Exception Thrown if a parser instance can not be instantiated.
 	 */
-	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
+	public static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
 		Class clazz = ClassUtils.forName(parserClass);
@@ -851,60 +598,6 @@ public class Utilities {
 		return parser.buildRedirectContent(topicName);
 	}
 
-	/**
-	 * When editing a section of a topic, this method provides a way of slicing
-	 * out a given section of the raw topic content.
-	 *
-	 * @param request The servlet request object.
-	 * @param virtualWiki The virtual wiki for the topic being parsed.
-	 * @param topicName The name of the topic being parsed.
-	 * @param targetSection The section to be sliced and returned.
-	 * @return Returns the raw topic content for the target section.
-	 * @throws Exception Thrown if a parser error occurs.
-	 */
-	public static String parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int targetSection) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null || topic.getTopicContent() == null) {
-			return null;
-		}
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
-		AbstractParser parser = parserInstance(parserInput);
-		ParserDocument parserDocument = new ParserDocument();
-		return parser.parseSlice(parserDocument, topic.getTopicContent(), targetSection);
-	}
-
-	/**
-	 * When editing a section of a topic, this method provides a way of splicing
-	 * an edited section back into the raw topic content.
-	 *
-	 * @param parserDocument A ParserDocument object containing parser
-	 *  metadata output.
-	 * @param request The servlet request object.
-	 * @param virtualWiki The virtual wiki for the topic being parsed.
-	 * @param topicName The name of the topic being parsed.
-	 * @param targetSection The section to be sliced and returned.
-	 * @param replacementText The edited content that is to be spliced back into
-	 *  the raw topic.
-	 * @return The raw topic content including the new replacement text.
-	 * @throws Exception Thrown if a parser error occurs.
-	 */
-	public static String parseSplice(ParserDocument parserDocument, HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null || topic.getTopicContent() == null) {
-			return null;
-		}
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
-		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseSplice(parserDocument, topic.getTopicContent(), targetSection, replacementText);
-	}
 
 	/**
 	 * Utility method for reading a file from a classpath directory and returning
@@ -980,39 +673,6 @@ public class Utilities {
 		return contents;
 	}
 
-	/**
-	 * Utility method for retrieving values from the URI.  This method
-	 * will attempt to properly convert the URI encoding, and then offers a way
-	 * to return directories after the initial context directory.  For example,
-	 * if the URI is "/context/first/second/third" and this method is called
-	 * with a skipCount of 1, the return value is "second/third".
-	 *
-	 * @param request The servlet request object.
-	 * @param skipCount The number of directories to skip.
-	 * @return A UTF-8 encoded portion of the URL that skips the web application
-	 *  context and skipCount directories, or <code>null</code> if the number of
-	 *  directories is less than skipCount.
-	 */
-	private static String retrieveDirectoriesFromURI(HttpServletRequest request, int skipCount) {
-		String uri = request.getRequestURI().trim();
-		// FIXME - needs testing on other platforms
-		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
-		String contextPath = request.getContextPath().trim();
-		if (!StringUtils.hasText(uri) || contextPath == null) {
-			return null;
-		}
-		uri = uri.substring(contextPath.length() + 1);
-		int i = 0;
-		while (i < skipCount) {
-			int slashIndex = uri.indexOf('/');
-			if (slashIndex == -1) {
-				return null;
-			}
-			uri = uri.substring(slashIndex + 1);
-			i++;
-		}
-		return uri;
-	}
 
 	/**
 	 * If a blacklist or whitelist of allowed file upload types is being used,
@@ -1043,27 +703,6 @@ public class Utilities {
 		return list;
 	}
 
-	/**
-	 * Users can specify a default locale in their preferences, so determine
-	 * if the current user is logged-in and has chosen a locale.  If not, use
-	 * the default locale from the request object.
-	 *
-	 * @param request The request object for the HTTP request.
-	 * @return Either the user's default locale (for logged-in users) or the
-	 *  locale specified in the request if no default locale is available.
-	 */
-	public static Locale retrieveUserLocale(HttpServletRequest request) {
-		WikiUser user = null;
-		try {
-			user = Utilities.currentUser();
-			if (user.getDefaultLocale() != null) {
-				return Utilities.buildLocale(user.getDefaultLocale());
-			}
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			// ignore
-		}
-		return request.getLocale();
-	}
 
 	/**
 	 * Utility method to retrieve an instance of the current user handler.
@@ -1081,166 +720,36 @@ public class Utilities {
 		Object[] initArgs = new Object[0];
 		return (UserHandler)constructor.newInstance(initArgs);
 	}
-
+	
 	/**
-	 * Verify that a directory exists and is writable.
 	 *
-	 * @param name The full name (including the path) for the directory being tested.
-	 * @return A WikiMessage object containing any error encountered, otherwise
-	 *  <code>null</code>.
 	 */
-	public static WikiMessage validateDirectory(String name) {
-		File directory = new File(name);
-		if (!directory.exists() || !directory.isDirectory()) {
-			return new WikiMessage("error.directoryinvalid", name);
+	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
+		int count = attempts;
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
+			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
+			return parent;
 		}
-		String filename = "jamwiki-test-" + System.currentTimeMillis() + ".txt";
-		File file = new File(name, filename);
-		String text = "Testing";
-		String read = null;
-		try {
-			// attempt to write a temp file to the directory
-			FileUtils.writeStringToFile(file, text, "UTF-8");
-		} catch (Exception e) {
-			return new WikiMessage("error.directorywrite", name, e.getMessage());
+		// avoid infinite redirection
+		count++;
+		if (count > 10) {
+			//TODO throw new WikiException(new WikiMessage("topic.redirect.infinite"));
 		}
-		try {
-			// verify that the file was correctly written
-			read = FileUtils.readFileToString(file, "UTF-8");
-			if (read == null || !text.equals(read)) {
-				throw new IOException();
-			}
-		} catch (Exception e) {
-			return new WikiMessage("error.directoryread", name, e.getMessage());
+		// get the topic that is being redirected to
+		Topic child = WikiBase.getDataHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), false, null);
+		if (child == null) {
+			// child being redirected to doesn't exist, return parent
+			return parent;
 		}
-		try {
-			// attempt to delete the file
-			FileUtils.forceDelete(file);
-		} catch (Exception e) {
-			return new WikiMessage("error.directorydelete", name, e.getMessage());
+		if (!StringUtils.hasText(child.getRedirectTo())) {
+			// found a topic that is not a redirect, return
+			return child;
 		}
-		return null;
-	}
-
-	/**
-	 * Utility method for determining if the parameters of a Role are valid
-	 * or not.
-	 *
-	 * @param role The Role to validate.
-	 * @throws WikiException Thrown if the role is invalid.
-	 */
-	public static void validateRole(Role role) throws WikiException {
-		Matcher m = INVALID_ROLE_NAME_PATTERN.matcher(role.getAuthority());
-		if (!m.matches()) {
-			throw new WikiException(new WikiMessage("roles.error.name", role.getAuthority()));
+		if (WikiBase.getDataHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), false, null) == null) {
+			// child is a redirect, but its target does not exist
+			return child;
 		}
-		if (StringUtils.hasText(role.getDescription()) && role.getDescription().length() > 200) {
-			throw new WikiException(new WikiMessage("roles.error.description"));
-		}
-		// FIXME - throw a user-friendly error if the role name is already in use
-	}
-
-	/**
-	 * Validate that vital system properties, such as database connection settings,
-	 * have been specified properly.
-	 *
-	 * @param props The property object to validate against.
-	 * @return A Vector of WikiMessage objects containing any errors encountered,
-	 *  or an empty Vector if no errors are encountered.
-	 */
-	public static Vector validateSystemSettings(Properties props) {
-		Vector errors = new Vector();
-		// test directory permissions & existence
-		WikiMessage baseDirError = Utilities.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
-		if (baseDirError != null) {
-			errors.add(baseDirError);
-		}
-		WikiMessage fullDirError = Utilities.validateDirectory(props.getProperty(Environment.PROP_FILE_DIR_FULL_PATH));
-		if (fullDirError != null) {
-			errors.add(fullDirError);
-		}
-		String classesDir = null;
-		try {
-			classesDir = Utilities.getClassLoaderRoot().getPath();
-			WikiMessage classesDirError = Utilities.validateDirectory(classesDir);
-			if (classesDirError != null) {
-				errors.add(classesDirError);
-			}
-		} catch (Exception e) {
-			errors.add(new WikiMessage("error.directorywrite", classesDir, e.getMessage()));
-		}
-		// test database
-		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
-		String url = props.getProperty(Environment.PROP_DB_URL);
-		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
-		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
-		try {
-			DatabaseConnection.testDatabase(driver, url, userName, password, false);
-		} catch (Exception e) {
-			logger.severe("Invalid database settings", e);
-			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
-		}
-		// verify valid parser class
-		boolean validParser = true;
-		String parserClass = props.getProperty(Environment.PROP_PARSER_CLASS);
-		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
-		if (parserClass == null || parserClass.equals(abstractParserClass)) {
-			validParser = false;
-		}
-		try {
-			Class parent = ClassUtils.forName(parserClass);
-			Class child = ClassUtils.forName(abstractParserClass);
-			if (!child.isAssignableFrom(parent)) {
-				validParser = false;
-			}
-		} catch (Exception e) {
-			validParser = false;
-		}
-		if (!validParser) {
-			errors.add(new WikiMessage("error.parserclass", parserClass));
-		}
-		return errors;
-	}
-
-	/**
-	 * Utility method for determining if a topic name is valid for use on the Wiki,
-	 * meaning that it is not empty and does not contain any invalid characters.
-	 *
-	 * @param name The topic name to validate.
-	 * @throws WikiException Thrown if the user name is invalid.
-	 */
-	public static void validateTopicName(String name) throws WikiException {
-		if (!StringUtils.hasText(name)) {
-			throw new WikiException(new WikiMessage("common.exception.notopic"));
-		}
-		if (PseudoTopicHandler.isPseudoTopic(name)) {
-			throw new WikiException(new WikiMessage("common.exception.pseudotopic", name));
-		}
-		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		String namespace = wikiLink.getNamespace();
-		if (namespace != null && namespace.toLowerCase().trim().equals(NamespaceHandler.NAMESPACE_SPECIAL.toLowerCase())) {
-			throw new WikiException(new WikiMessage("common.exception.name", name));
-		}
-		Matcher m = INVALID_TOPIC_NAME_PATTERN.matcher(name);
-		if (m.find()) {
-			throw new WikiException(new WikiMessage("common.exception.name", name));
-		}
-	}
-
-	/**
-	 * Utility method for determining if a username is valid for use on the Wiki,
-	 * meaning that it is not empty and does not contain any invalid characters.
-	 *
-	 * @param name The username to validate.
-	 * @throws WikiException Thrown if the user name is invalid.
-	 */
-	public static void validateUserName(String name) throws WikiException {
-		if (!StringUtils.hasText(name)) {
-			throw new WikiException(new WikiMessage("error.loginempty"));
-		}
-		Matcher m = VALID_USER_LOGIN_PATTERN.matcher(name);
-		if (!m.matches()) {
-			throw new WikiException(new WikiMessage("common.exception.name", name));
-		}
+		// topic is a redirect, keep looking
+		return findRedirectedTopic(child, count);
 	}
 }

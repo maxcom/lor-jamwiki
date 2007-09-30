@@ -29,8 +29,8 @@ import org.acegisecurity.AcegiSecurityException;
 import org.acegisecurity.AuthenticationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * This class provides an additional filter that is added to the Acegi
@@ -93,10 +93,10 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
-			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_URI_KEY, Utilities.getTopicFromURI(request));
+			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
 		} else if (exception instanceof AuthenticationException) {
 			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
-			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, Utilities.getTopicFromURI(request));
+			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
 		}
 	}
 

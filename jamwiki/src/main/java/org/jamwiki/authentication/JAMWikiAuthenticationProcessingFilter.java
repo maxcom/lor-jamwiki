@@ -24,8 +24,8 @@ import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.VirtualWiki;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -60,7 +60,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 			// strip everything after the first semi-colon
 			uri = uri.substring(0, pathParamIndex);
 		}
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		return uri.endsWith(request.getContextPath() + "/" + virtualWiki + this.getFilterProcessesUrl());
 	}
 
@@ -84,7 +84,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 		if (url.equals("/DEFAULT_VIRTUAL_WIKI")) {
 			// ugly, but a hard-coded constant seems to be the only way to
 			// allow a dynamic url value
-			String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
+			String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 			if (!StringUtils.hasText(virtualWikiName)) {
 				virtualWikiName = WikiBase.DEFAULT_VWIKI;
 			}
@@ -99,7 +99,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 			}
 			targetUrl = request.getContextPath() + "/" + virtualWikiName + "/" + target;
 		} else if (!url.startsWith("http://") && !url.startsWith("https://")) {
-			String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 			targetUrl = request.getContextPath() + "/" + virtualWiki + url;
 			if (StringUtils.hasText(target)) {
 				targetUrl += (url.indexOf('?') == -1) ? "?" : "&";

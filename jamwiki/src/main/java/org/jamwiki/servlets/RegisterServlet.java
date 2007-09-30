@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -93,7 +94,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = Utilities.getVirtualWikiFromURI(request);
+		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		WikiUser user = this.setWikiUser(request);
 		WikiUserInfo userInfo = this.setWikiUserInfo(request);
 		next.addObject("newuser", user);
@@ -187,7 +188,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		try {
-			Utilities.validateUserName(user.getUsername());
+			WikiUtil.validateUserName(user.getUsername());
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		}

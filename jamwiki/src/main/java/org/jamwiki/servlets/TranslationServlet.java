@@ -32,6 +32,7 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -84,7 +85,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	private TreeSet retrieveTranslationCodes() throws Exception {
 		TreeSet codes = new TreeSet();
-		File propertyRoot = Utilities.getClassLoaderRoot();
+		File propertyRoot = WikiUtil.getClassLoaderRoot();
 		File[] files = propertyRoot.listFiles();
 		File file;
 		String filename;
@@ -155,7 +156,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
-		String virtualWiki = Utilities.getVirtualWikiFromURI(request);
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);

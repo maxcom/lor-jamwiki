@@ -31,6 +31,7 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiUtil;
 
 public class UtilitiesTest extends TestCase {
 	/**
@@ -542,7 +543,7 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testValidateDirectory1() throws Throwable {
-		WikiMessage result = Utilities.validateDirectory("testUtilitiesName");
+		WikiMessage result = WikiUtil.validateDirectory("testUtilitiesName");
 		assertEquals("result.getKey()", "error.directoryinvalid", result.getKey());
 	}
 
@@ -568,7 +569,7 @@ public class UtilitiesTest extends TestCase {
 		props.put("homeDir", "testString");
 		props.put("parser", "org.jamwiki.parser.AbstractParser");
 		props.put("url", "testString");
-		Utilities.validateSystemSettings(props);
+		WikiUtil.validateSystemSettings(props);
 		assertTrue("Test completed without Exception", true);
 		// dependencies on static and environment state led to removal of 1 assertion(s)
 	}
@@ -581,7 +582,7 @@ public class UtilitiesTest extends TestCase {
 		props.put("file-dir-full-path", "testString");
 		props.put("homeDir", "testString");
 		props.put("url", "testString");
-		Utilities.validateSystemSettings(props);
+		WikiUtil.validateSystemSettings(props);
 		assertTrue("Test completed without Exception", true);
 		// dependencies on static and environment state led to removal of 1 assertion(s)
 	}
@@ -968,7 +969,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateDirectoryThrowsNullPointerException() throws Throwable {
 		try {
-			Utilities.validateDirectory(null);
+			WikiUtil.validateDirectory(null);
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -987,7 +988,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateSystemSettingsThrowsNullPointerException1() throws Throwable {
 		try {
-			Utilities.validateSystemSettings(new Properties());
+			WikiUtil.validateSystemSettings(new Properties());
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -999,7 +1000,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateTopicNameThrowsNullPointerException() throws Throwable {
 		try {
-			Utilities.validateTopicName(null);
+			WikiUtil.validateTopicName(null);
 			fail("Expected NullPointerException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -1011,7 +1012,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateTopicNameThrowsWikiException() throws Throwable {
 		try {
-			Utilities.validateTopicName("");
+			WikiUtil.validateTopicName("");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -1024,7 +1025,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
 		try {
-			Utilities.validateTopicName("testUtilities\rName");
+			WikiUtil.validateTopicName("testUtilities\rName");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -1037,7 +1038,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateUserNameThrowsWikiException() throws Throwable {
 		try {
-			Utilities.validateUserName("testUtilities\rName");
+			WikiUtil.validateUserName("testUtilities\rName");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -1050,7 +1051,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateUserNameThrowsWikiException1() throws Throwable {
 		try {
-			Utilities.validateUserName("");
+			WikiUtil.validateUserName("");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());

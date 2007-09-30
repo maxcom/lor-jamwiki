@@ -34,6 +34,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -196,7 +197,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector errors = Utilities.validateSystemSettings(Environment.getInstance());
+		Vector errors = WikiUtil.validateSystemSettings(Environment.getInstance());
 		if (!StringUtils.hasText(user.getUsername())) {
 			errors.add(new WikiMessage("error.loginempty"));
 		}

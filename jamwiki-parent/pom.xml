@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.6.1-SNAPSHOT</version>
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
 
@@ -31,21 +31,29 @@
 		</license>
 	</licenses>
 
-	<!-- TODO: split parent (inheritance of properties) 
-		from agregator (multiple modules called from one agregator project)-->
-	<modules>
-		<module>../jamwiki</module>
-		<module>../javadiff</module>
-	</modules>
-
 	<!-- dependency management defines the version to use in projects that inherits from the parent.
 		The dependency management does not tell the sub-project to depend from what is listed bellow.-->
 	<properties>
-		<jamwiki.version>0.6.1</jamwiki.version>
 		<dependency.spring.version>2.0.6</dependency.spring.version>
+		<jamwiki.version>0.6.1-SNAPSHOT</jamwiki.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki</artifactId>
+				<version>${jamwiki.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki-parser-jflex</artifactId>
+				<version>0.6.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>javadiff</artifactId>
+				<version>1.0.5</version>
+			</dependency>
 			<dependency>
 				<groupId>org.acegisecurity</groupId>
 				<artifactId>acegi-security</artifactId>
