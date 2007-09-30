@@ -6,18 +6,16 @@ import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import junit.framework.TestCase;
+
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.TiddlyWikiParser;
-
-import junit.framework.TestCase;
 
 public class TiddlyWikiParserTest extends TestCase {
 
