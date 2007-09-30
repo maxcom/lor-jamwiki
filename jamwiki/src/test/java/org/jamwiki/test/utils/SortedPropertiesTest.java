@@ -18,11 +18,10 @@
  */
 package org.jamwiki.test.utils;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.Properties;
+
 import junit.framework.TestCase;
+
 import org.jamwiki.utils.SortedProperties;
 
 /**
