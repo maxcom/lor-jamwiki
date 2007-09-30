@@ -137,8 +137,7 @@ textarea {
 	padding: .1em;
 }
 fieldset {
-	margin: 1em 0 1em 0;
-	padding: 0 1em 0 1em;
+	padding: 5px;
 	border: 1px solid #D8D8E7;
 }
 legend {
@@ -476,8 +475,14 @@ img.gallery {
 
 /* form styles */
 
+.formentry {
+	padding: 3px 5px;
+}
 .formcaption {
 	width: 250px;
+	float: left;
+	font-weight: bold;
+	padding-right: 10px;
 }
 .formelement {
 }
@@ -497,4 +502,8 @@ img.gallery {
 .paddedCell {
 	vertical-align: top;
 	padding: 3px;
+}
+textarea.medium {
+	width: 400px;
+	height: 60px;
 }

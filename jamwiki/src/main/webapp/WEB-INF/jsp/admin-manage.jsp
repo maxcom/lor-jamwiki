@@ -51,29 +51,37 @@
 <input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <tr><td colspan="2"><h4><f:message key="manage.caption.delete"><f:param value="${pageInfo.topicName}" /></f:message></h4></td></tr>
 <tr><td colspan="2"><div class="message"><f:message key="manage.delete.warning" /></div></td></tr>
-<tr>
-	<td class="formcaption" nowrap><label for="deleteComment"><f:message key="manage.delete.reason" /></label>: </td>
-	<td class="formelement" width="90%"><input type="text" name="deleteComment" value="" id="deleteComment" size="60" /></td>
-</tr>
+</table>
+
+<div class="formentry">
+	<div class="formcaption" nowrap><label for="deleteComment"><f:message key="manage.delete.reason" /></label>: </div>
+	<div class="formelement" width="90%"><input type="text" name="deleteComment" value="" id="deleteComment" size="60" /></div>
+</div>
 <c:if test="${!empty manageCommentsPage}">
-<tr>
-	<td class="formcaption" colspan="2"><label for="manageCommentsPage"><f:message key="manage.delete.commentspage" /></label>:&#160;<input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></td>
-</tr>
+<div class="formentry">
+	<div class="formcaption"><label for="manageCommentsPage"><f:message key="manage.delete.commentspage" /></label>:</div>
+	<div class="formelement"><input type="checkbox" name="manageCommentsPage" value="<c:out value="${manageCommentsPage}" />" id="manageCommentsPage" /></div>
+</div>
 </c:if>
-<tr><td>&#160;</td><td align="left"><input type="submit" name="delete" value="<f:message key="common.delete" />" /></td></tr>
+<div class="formentry">
+	<div class="formcaption">&#160;</div>
+	<div class="formelement"><input type="submit" name="delete" value="<f:message key="common.delete" />" /></div>
+</div>
 </form>
-<tr><td colspan="2"><h4><f:message key="manage.caption.permissions" /></h4></td></tr>
+<h4><f:message key="manage.caption.permissions" /></h4>
 <form name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
 <input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
-<tr>
-	<td class="formcaption" nowrap><label for="readOnly"><f:message key="manage.caption.readonly" /></label>: </td>
-	<td class="formelement"><input type="checkbox" name="readOnly" value="true"<c:if test="${readOnly}"> checked</c:if> id="readOnly" /></td>
-</tr>
-<tr>
-	<td class="formcaption" nowrap><label for="adminOnly"><f:message key="manage.caption.adminonly" /></label>: </td>
-	<td class="formelement"><input type="checkbox" name="adminOnly" value="true"<c:if test="${adminOnly}"> checked</c:if> id="adminOnly" /></td>
-</tr>
-<tr><td>&#160;</td><td align="left"><input type="submit" name="permissions" value="<f:message key="common.update" />" /></td></tr>
+<div class="formentry">
+	<div class="formcaption" nowrap><label for="readOnly"><f:message key="manage.caption.readonly" /></label>: </div>
+	<div class="formelement"><input type="checkbox" name="readOnly" value="true"<c:if test="${readOnly}"> checked</c:if> id="readOnly" /></div>
+</div>
+<div class="formentry">
+	<div class="formcaption" nowrap><label for="adminOnly"><f:message key="manage.caption.adminonly" /></label>: </div>
+	<div class="formelement"><input type="checkbox" name="adminOnly" value="true"<c:if test="${adminOnly}"> checked</c:if> id="adminOnly" /></div>
+</div>
+<div class="formentry">
+	<div class="formcaption">&#160;</div>
+	<div class="formelement"><input type="submit" name="permissions" value="<f:message key="common.update" />" /></div>
+</div>
 </form>
 </c:if>
-</table>

@@ -77,13 +77,11 @@
 <fieldset>
 <legend><f:message key="admin.title.refresh" /></legend>
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
-<table border="0" class="contents" width="99%">
-<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="search" />">
-	<td class="formcaption"><f:message key="admin.title.refresh" /></td>
-	<td class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></td>
-</tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.rebuildsearch" /></td></tr>
-</table>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="search" />">
+	<div class="formcaption"><f:message key="admin.title.refresh" /></div>
+	<div class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></div>
+	<div class="formhelp"><f:message key="admin.help.rebuildsearch" /></div>
+</div>
 <input type="hidden" name="function" value="refreshIndex" />
 </form>
 </fieldset>
@@ -93,13 +91,11 @@
 <fieldset>
 <legend><f:message key="admin.title.recentchanges" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
-<table border="0" class="contents" width="99%">
-<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="recentchanges" />">
-	<td class="formcaption"><f:message key="admin.caption.recentchanges" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
-</tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.reloadrecentchanges" /></td></tr>
-</table>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="recentchanges" />">
+	<div class="formcaption"><f:message key="admin.caption.recentchanges" /></div>
+	<div class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></div>
+	<div class="formhelp"><f:message key="admin.help.reloadrecentchanges" /></div>
+</div>
 <input type="hidden" name="function" value="recentChanges" />
 </form>
 </fieldset>
@@ -109,13 +105,11 @@
 <fieldset>
 <legend><f:message key="admin.title.cache" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
-<table border="0" class="contents" width="99%">
-<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<td class="formcaption"><f:message key="admin.cache.caption" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
-</tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.clearcache" /></td></tr>
-</table>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
+	<div class="formcaption"><f:message key="admin.cache.caption" /></div>
+	<div class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></div>
+	<div class="formhelp"><f:message key="admin.help.clearcache" /></div>
+</div>
 <input type="hidden" name="function" value="cache" />
 </form>
 </fieldset>
@@ -127,13 +121,11 @@
 <fieldset>
 <legend><f:message key="admin.title.spamfilter" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
-<table border="0" class="contents" width="99%">
-<tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
-	<td class="formcaption"><f:message key="admin.caption.spamfilter" /></td>
-	<td class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></td>
-</tr>
-<tr><td colspan="2" class="formhelp"><f:message key="admin.help.reloadspamfilter" /></td></tr>
-</table>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
+	<div class="formcaption"><f:message key="admin.caption.spamfilter" /></div>
+	<div class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></div>
+	<div class="formhelp"><f:message key="admin.help.reloadspamfilter" /></div>
+</div>
 <input type="hidden" name="function" value="spamFilter" />
 </form>
 </fieldset>
