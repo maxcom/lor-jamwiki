@@ -98,16 +98,19 @@ function onRSS() {
 	<c:set var="PROP_BASE_DEFAULT_TOPIC"><%= Environment.PROP_BASE_DEFAULT_TOPIC %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_BASE_DEFAULT_TOPIC}" value="${props[PROP_BASE_DEFAULT_TOPIC]}" size="30" id="${PROP_BASE_DEFAULT_TOPIC}" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.defaulttopic" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_BASE_LOGO_IMAGE %>"><f:message key="admin.caption.logoimage" /></label></td>
 	<c:set var="PROP_BASE_LOGO_IMAGE"><%= Environment.PROP_BASE_LOGO_IMAGE %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_BASE_LOGO_IMAGE}" value="${props[PROP_BASE_LOGO_IMAGE]}" size="30" id="${PROP_BASE_LOGO_IMAGE}" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.logoimage" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_IMAGE_RESIZE_INCREMENT %>"><f:message key="admin.caption.imageresize" /></label></td>
 	<c:set var="PROP_IMAGE_RESIZE_INCREMENT"><%= Environment.PROP_IMAGE_RESIZE_INCREMENT %></c:set>
 	<td class="formelement"><jamwiki:text name="${PROP_IMAGE_RESIZE_INCREMENT}" size="5" maxlength="4" value="${props[PROP_IMAGE_RESIZE_INCREMENT]}" id="${PROP_IMAGE_RESIZE_INCREMENT}" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.imageresize" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_RECENT_CHANGES_NUM %>"><f:message key="admin.caption.recentchangesdefault" /></label></td>
 	<c:set var="PROP_RECENT_CHANGES_NUM"><%= Environment.PROP_RECENT_CHANGES_NUM %></c:set>
@@ -118,6 +121,7 @@ function onRSS() {
 	<c:set var="PROP_TOPIC_SPAM_FILTER"><%= Environment.PROP_TOPIC_SPAM_FILTER %></c:set>
 	<td class="formelement"><jamwiki:checkbox name="${PROP_TOPIC_SPAM_FILTER}" value="true" checked="${props[PROP_TOPIC_SPAM_FILTER]}" id="${PROP_TOPIC_SPAM_FILTER}" /></td>
 </tr>
+<tr><td colspan="2" class="formhelp"><f:message key="admin.help.usespamfilter" /></td></tr>
 <tr class="<jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
 	<td class="formcaption"><label for="<%= Environment.PROP_TOPIC_USE_PREVIEW %>"><f:message key="admin.caption.usepreview" /></label></td>
 	<c:set var="PROP_TOPIC_USE_PREVIEW"><%= Environment.PROP_TOPIC_USE_PREVIEW %></c:set>
