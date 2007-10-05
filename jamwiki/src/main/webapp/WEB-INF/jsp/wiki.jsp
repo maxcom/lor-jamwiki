@@ -46,7 +46,7 @@
 	</div>
 </div>
 <div id="wiki-content">
-	<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
+	<%@ include file="user-menu.jsp"%>
 	<%@ include file="top-menu.jsp"%>
 	<div id="contents" >
 	<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>

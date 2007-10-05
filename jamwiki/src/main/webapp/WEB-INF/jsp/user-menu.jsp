@@ -17,11 +17,9 @@
 
 --%>
 
-<table class="menu-user-table">
-<tr>
-	<c:forEach items="${pageInfo.userMenu}" var="menuItem">
-		<c:set var="menuText" value="${menuItem.value}" />
-		<td class="menu-user"><jamwiki:link value="${menuItem.key}"><f:message key="${menuText.key}"><f:param value="${menuText.params[0]}" /></f:message></jamwiki:link></td>
-	</c:forEach>
-</tr>
-</table>
+<div id="user-menu">
+<c:forEach items="${pageInfo.userMenu}" var="menuItem">
+	<div class="menu-item"><jamwiki:link value="${menuItem.key}"><f:message key="${menuItem.value.key}"><f:param value="${menuItem.value.params[0]}" /></f:message></jamwiki:link></div>
+</c:forEach>
+</div>
+<div class="clear"></div>
