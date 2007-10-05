@@ -6,7 +6,7 @@ body {
 	background: #f9f9f9 url(../images/denalibg.jpg) 0 0 no-repeat;
 	color: black;
 	margin: 0;
-	padding: 5px;
+	padding: 0;
 }
 body, input, select {
 	font: 95% sans-serif, tahoma;
@@ -45,10 +45,6 @@ a.interwiki:after {
 p {
 	margin: .4em 0 .5em 0;
 	line-height: 1.5em;
-}
-table {
-	font-size: 100%;
-	color: black;
 }
 h1 {
 	border-bottom: 1px solid #D8D8E7;
@@ -174,6 +170,36 @@ div.submenu {
 	text-align: center;
 }
 
+/* global positioning */
+
+#wiki-page {
+	font-size: 100%;
+	color: black;
+	padding: 5px;
+}
+#wiki-navigation {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	font-size: 90%;
+	padding: 5px 5px 5px 0px;
+	vertical-align: top;
+	width: 180px;
+}
+#wiki-content {
+	position: relative;
+	margin-left: 185px;
+	font-size: 80%;
+	vertical-align: top;
+}
+#wiki-footer {
+	clear: both;
+	font-size: 80%;
+	color: gray;
+	padding: 15px 0px 5px 0px;
+	text-align: right;
+}
+
 /* main content area */
 
 #contents {
@@ -181,10 +207,6 @@ div.submenu {
 	padding: 14px;
 	padding-bottom: 25px;
 	border: 1px solid #D8D8E7;
-}
-td.main-content {
-	font-size: 80%;
-	vertical-align: top;
 }
 #contents-header {
 	font-size: 200%;
@@ -201,12 +223,6 @@ td.main-content {
 
 /* navbar elements */
 
-td.navigation {
-	font-size: 90%;
-	padding: 5px 5px 5px 0px;
-	vertical-align: top;
-	width: 180px;
-}
 #logo {
 	border: 0px;
 	margin: 8px 0px 0px 0px;
@@ -361,13 +377,7 @@ td.menu-user {
 
 /* footer */
 
-td.footer {
-	font-size: 80%;
-	color: gray;
-	padding: 15px 0px 5px 0px;
-	text-align: right;
-}
-td.footer hr, td.footer br {
+#wiki-footer hr, #wiki-footer br {
 	display: none;
 }
 

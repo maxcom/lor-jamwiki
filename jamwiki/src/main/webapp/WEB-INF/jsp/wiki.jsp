@@ -24,54 +24,50 @@
 
 <%@ include file="top.jsp" %>
 
-<table border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr>
-	<td class="navigation">
-		<div id="logo">
-		<%-- FIXME - need image width and height --%>
-		<a class="logo" href="<jamwiki:link value="${defaultTopic}" />"><img border="0" src="<c:url value="/images/${logo}" />" alt="" /></a>
-		</div>
-		<br />
-		<c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">
-		<div id="nav-menu">
-		<c:out value="${leftMenu}" escapeXml="false" />
-		</div>
-		</c:if>
-		<div id="nav-search">
-		<form method="post" action="<jamwiki:link value="Special:Search" />">
-		<input type="text" name="text" size="20" value="" />
-		<br />
-		<input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
-		<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
-		</form>
-		</div>
-	</td>
-	<td class="main-content">
-		<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
-		<%@ include file="top-menu.jsp"%>
-		<div id="contents" >
-		<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
-		<c:if test="${!empty pageInfo.redirectName}">
-		<c:set var="redirectUrl"><jamwiki:link value="${pageInfo.redirectName}"><jamwiki:linkParam key="redirect" value="no" /><c:out value="${pageInfo.redirectName}" /></jamwiki:link></c:set>
-		<div id="contents-subheader"><f:message key="topic.redirect.from"><f:param value="${redirectUrl}" /></f:message></div>
-		</c:if>
+<div id="wiki-page">
+<div id="wiki-navigation">
+	<div id="logo">
+	<%-- FIXME - need image width and height --%>
+	<a class="logo" href="<jamwiki:link value="${defaultTopic}" />"><img border="0" src="<c:url value="/images/${logo}" />" alt="" /></a>
+	</div>
+	<br />
+	<c:if test="${!empty leftMenu && leftMenu != '<br/><br/>'}">
+	<div id="nav-menu">
+	<c:out value="${leftMenu}" escapeXml="false" />
+	</div>
+	</c:if>
+	<div id="nav-search">
+	<form method="post" action="<jamwiki:link value="Special:Search" />">
+	<input type="text" name="text" size="20" value="" />
+	<br />
+	<input type="submit" name="search" value='<f:message key="generalmenu.search"/>'/>
+	<input type="submit" name="jumpto" value='<f:message key="generalmenu.jumpto"/>'/>
+	</form>
+	</div>
+</div>
+<div id="wiki-content">
+	<div id="user-menu"><%@ include file="user-menu.jsp"%></div>
+	<%@ include file="top-menu.jsp"%>
+	<div id="contents" >
+	<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
+	<c:if test="${!empty pageInfo.redirectName}">
+	<c:set var="redirectUrl"><jamwiki:link value="${pageInfo.redirectName}"><jamwiki:linkParam key="redirect" value="no" /><c:out value="${pageInfo.redirectName}" /></jamwiki:link></c:set>
+	<div id="contents-subheader"><f:message key="topic.redirect.from"><f:param value="${redirectUrl}" /></f:message></div>
+	</c:if>
 <c:set var="contentJsp" scope="page" value="${pageInfo.contentJsp}" />
 <%
 // Servlet 2.3 doesn't understand the EL language, so a scriptlet has to be used...
 String contentJsp = (String)pageContext.getAttribute("contentJsp");
 %>
-		<jsp:include page="<%= contentJsp %>" flush="true" />
-		<br />
-		</div>
-	</td>
-</tr>
-<tr>
-	<td colspan="2" class="footer">
-		<hr width="99%" />
-		<c:out value="${bottomArea}" escapeXml="false" />
-		<br/>
-		<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> <f:message key="footer.message.version" /> <jamwiki:wiki-version/></font>
-	</td>
-</tr>
-</table>
+	<jsp:include page="<%= contentJsp %>" flush="true" />
+	<br />
+	</div>
+</div>
+<div id="wiki-footer">
+	<hr width="99%" />
+	<c:out value="${bottomArea}" escapeXml="false" />
+	<br/>
+	<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> <f:message key="footer.message.version" /> <jamwiki:wiki-version/></font>
+</div>
+
 <%@ include file="close-document.jsp"%>
