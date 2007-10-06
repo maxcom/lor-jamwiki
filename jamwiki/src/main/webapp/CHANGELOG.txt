@@ -3,10 +3,11 @@
 
 New Features:
 
-  * Upgrade to Acegi Security 1.0.5.
+  * Look & feel updates including replacing HTML tables with divs.
   * Special:Translation now displays the original English message string as a
     label.
-  * Look & feel updates including replacing HTML tables with divs.
+  * Upgrade to Spring Framework 2.0.7.
+  * Upgrade to Acegi Security 1.0.5.
 
 Bugfixes:
 
