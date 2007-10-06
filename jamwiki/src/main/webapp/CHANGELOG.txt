@@ -17,6 +17,8 @@ Bugfixes:
   * Fix parsing of TOC values containing wiki markup.
   * Better handle cases of mis-indented TOC (for example, h2 followed by h4).
   * ROLE_DELETE is the same as ROLE_ADMIN and has been removed.
+  * Add a dummy query parameter to the jamwiki.css link to avoid browser
+    caching issues that could cause old CSS to be displayed.
 
 Translation Updates:
 

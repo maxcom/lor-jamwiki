@@ -108,6 +108,11 @@ public class ServletUtil {
 		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
 		next.addObject(ServletUtil.PARAMETER_VIRTUAL_WIKI, virtualWikiName);
+		Integer cssRevision = new Integer(0);
+		try {
+			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWikiName, WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
+		} catch (Exception e) {}
+		next.addObject("cssRevision", cssRevision);
 	}
 
 	/**
