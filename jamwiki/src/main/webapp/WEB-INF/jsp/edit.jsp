@@ -76,7 +76,7 @@ document.writeln("</div>");
 </jamwiki:enabled>
 
 <p>
-<textarea name="contents" rows="25" cols="80" style="width:100%" accesskey=","><c:out value="${contents}" escapeXml="true" /></textarea>
+<textarea name="contents" rows="25" cols="80" accesskey=","><c:out value="${contents}" escapeXml="true" /></textarea>
 </p>
 <p><label for="editComment"><f:message key="edit.caption.comment" /></label>: <input type="text" name="editComment" value="<c:out value="${editComment}" />" size="60" id="editComment" /></p>
 <p>
@@ -97,7 +97,7 @@ document.writeln("</div>");
 <c:if test="${!empty editResolve}">
 <%@ include file="diff-include.jsp" %>
 <p>
-<textarea name="contentsResolve" rows="25" cols="80" style="width:100%"><c:out value="${contentsResolve}" escapeXml="true" /></textarea>
+<textarea name="contentsResolve" rows="25" cols="80"><c:out value="${contentsResolve}" escapeXml="true" /></textarea>
 </p>
 </c:if>
 

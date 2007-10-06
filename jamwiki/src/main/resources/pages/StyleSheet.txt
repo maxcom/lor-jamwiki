@@ -5,8 +5,8 @@
 body {
 	background: #f9f9f9 url(../images/denalibg.jpg) 0 0 no-repeat;
 	color: black;
-	margin: 0;
-	padding: 0;
+	margin: 0px;
+	padding: 0px;
 }
 body, input, select {
 	font: 95% sans-serif, tahoma;
@@ -129,30 +129,19 @@ li {
 	margin-bottom: .1em;
 }
 textarea {
-	width: 100%;
-	padding: .1em;
+	width: 99%;
+	padding: 0.1em;
 }
 fieldset {
 	padding: 5px;
 	border: 1px solid #D8D8E7;
 }
 legend {
-	padding: .5em;
+	padding: 0.5em;
 	font-weight: bold;
 }
 div.clear {
 	clear: both;
-}
-.clearblock:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
-}
-/* Hides from IE-mac \*/
-* html .clearblock {
-	height: 1%;
 }
 .red {
 	font-weight: bold;
@@ -336,8 +325,9 @@ table.toc td {
 /* tab menu */
 
 #tab-menu {
-	padding: 0;
-	margin: 0;
+	padding: 0px;
+	margin: 0px;
+	margin-left: 6px;
 }
 #tab-menu .tab-item {
 	float: left;
@@ -346,7 +336,8 @@ table.toc td {
 	border: 1px solid #D8D8E7;
 	border-bottom: none;
 	padding: 0.2em 0.5em 0.2em 0.5em;
-	margin-left: 6px;
+	margin: 0px;
+	margin-right: 6px;
 	font-size: 85%;
 	text-align: center;
 }
