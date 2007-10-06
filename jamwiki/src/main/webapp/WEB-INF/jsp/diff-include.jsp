@@ -19,33 +19,33 @@
 <c:if test="${!badinput}">
 	<c:if test="${empty diffs}"><div class="message"><f:message key="diff.nochange" /></div></c:if>
 	<c:if test="${!empty diffs}">
-<table class="diff">
+<div id="diff">
 		<c:set var="previousLineNumber" value="-10" />
 		<c:forEach items="${diffs}" var="diff">
 			<c:if test="${diff.lineNumber > (previousLineNumber + 1)}">
-<tr><td colspan="4" class="diff-line"><f:message key="diff.line" /> <c:out value="${diff.lineNumber}" />:</td></tr>
+<div class="diff-line"><f:message key="diff.line" /> <c:out value="${diff.lineNumber}" />:</div>
 			</c:if>
-<tr>
+<div class="diff-entry">
 			<c:if test="${!empty diff.oldLine && diff.change}">
-	<td class="diff-indicator">-</td>
-	<td class="diff-delete"><c:out value="${diff.oldLine}" /></td>
+	<div class="diff-indicator">-</div>
+	<div class="diff-delete"><c:out value="${diff.oldLine}" />&#160;</div>
 			</c:if>
 			<c:if test="${empty diff.oldLine || !diff.change}">
-	<td class="diff-no-indicator">&#160;</td>
-	<td class="diff-unchanged"><c:out value="${diff.oldLine}" /></td>
+	<div class="diff-indicator">&#160;</div>
+	<div class="diff-unchanged"><c:out value="${diff.oldLine}" />&#160;</div>
 			</c:if>
 			<c:if test="${!empty diff.newLine && diff.change}">
-	<td class="diff-indicator">+</td>
-	<td class="diff-add"><c:out value="${diff.newLine}" /></td>
+	<div class="diff-indicator">+</div>
+	<div class="diff-add"><c:out value="${diff.newLine}" />&#160;</div>
 			</c:if>
 			<c:if test="${empty diff.newLine || !diff.change}">
-	<td class="diff-no-indicator">&#160;</td>
-	<td class="diff-unchanged"><c:out value="${diff.newLine}" /></td>
+	<div class="diff-indicator">&#160;</div>
+	<div class="diff-unchanged"><c:out value="${diff.newLine}" />&#160;</div>
 			</c:if>
-</tr>
+</div>
 			<c:set var="previousLineNumber" value="${diff.lineNumber}" />
 		</c:forEach>
-</table>
+</div>
 	</c:if>
 </c:if>
 <c:if test="${badinput=='true'}">

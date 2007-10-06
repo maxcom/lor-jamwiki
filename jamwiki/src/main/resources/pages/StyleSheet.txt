@@ -260,42 +260,45 @@ div.submenu {
 
 /* diff page */
 
-table.diff {
-	border: 0;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-}
-td.diff-delete {
+.diff-delete {
+	float: left;
 	background: #ee7777;
 	font-weight: bold;
 	padding: 0.1em;
-	width: 49%;
+	width: 48%;
+	overflow: hidden;
 }
-td.diff-add {
+.diff-add {
+	float: left;
 	background: #77ee77;
 	font-weight: bold;
 	padding: 0.1em;
-	width: 49%;
+	width: 48%;
+	overflow: hidden;
 }
-td.diff-unchanged {
+.diff-unchanged {
+	float: left;
 	background: #dddddd;
 	padding: 0.1em;
-	width: 49%;
+	width: 48%;
+	overflow: hidden;
 }
-td.diff-indicator {
+.diff-indicator {
+	float: left;
 	font-weight: bold;
 	padding: 0.1em;
 	text-align: right;
-	width: 1%;
+	width: 10px;
 }
-td.diff-no-indicator {
-	padding: 0.1em;
-	width: 1%;
-}
-td.diff-line {
+.diff-line {
+	clear: both;
 	padding: 0.5em 0.1em 0.1em 0.1em;
 	font-weight: bold;
+}
+.diff-entry {
+	clear: both;
+	margin: 1px;
+	padding: 1px;
 }
 
 /* topic elements */
