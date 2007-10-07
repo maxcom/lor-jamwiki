@@ -481,6 +481,12 @@ img.gallery {
 	font-weight: bold;
 	padding-right: 10px;
 }
+.formcaption-small {
+	width: 90px;
+	float: left;
+	font-weight: bold;
+	padding-right: 10px;
+}
 .formelement {
 }
 .formhelp {

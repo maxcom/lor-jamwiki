@@ -29,24 +29,22 @@
 
 <form method="post" action="<c:url value="/${virtualWiki}/j_acegi_security_check" />">
 <input type="hidden" name="target" value="<c:out value="${target}"/>" />
-<table>
-<tr>
-	<td><label for="loginUsername"><f:message key="login.username"/></label></td>
-	<td><input type="text" name="j_username" value="<c:out value="${param.username}" />" id="loginUsername" /></td>
-</tr>
-<tr>
-	<td><label for="loginPassword"><f:message key="login.password"/></label></td>
-	<td><input type="password" name="j_password" id="loginPassword" /></td>
-</tr>
-<tr>
-	<td>&#160;</td>
-	<td><input type="checkbox" value="true" name="_acegi_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td><input type="submit" name="function" value="<f:message key="common.login" />" /></td>
-</tr>
-</table>
+<div class="formentry">
+	<div class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></div>
+	<div class="formelement"><input type="text" name="j_username" value="<c:out value="${param.username}" />" id="loginUsername" /></div>
+</div>
+<div class="formentry">
+	<div class="formcaption-small"><label for="loginPassword"><f:message key="login.password"/></label></div>
+	<div class="formelement"><input type="password" name="j_password" id="loginPassword" /></div>
+</div>
+<div class="formentry">
+	<div class="formcaption-small">&#160;</div>
+	<div class="formelement"><input type="checkbox" value="true" name="_acegi_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></div>
+</div>
+<div class="formentry">
+	<div class="formcaption-small">&#160;</div>
+	<div class="formelement"><input type="submit" name="function" value="<f:message key="common.login" />" /></div>
+</div>
 </form>
 
 </fieldset>
