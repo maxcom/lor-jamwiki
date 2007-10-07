@@ -41,13 +41,12 @@ public class TableOfContentsTest extends TestCase {
 		      + "==test==\n"
 		      + "==test==";
 		String output = "";
-		output = "<table class=\"toc\">"
-		       + "<tr><td><ol>"
+		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
 		       + "<li><a href=\"#test\">test</a></li>"
 		       + "<li><a href=\"#test_1\">test</a></li>"
 		       + "<li><a href=\"#test_2\">test</a></li>"
 		       + "<li><a href=\"#test_3\">test</a></li>"
-		       + "</ol></td></tr></table>";
+		       + "</ol></div><div class=\"clear\"></div></div>";
 		TableOfContents toc = new TableOfContents();
 		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
 		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
@@ -66,13 +65,12 @@ public class TableOfContentsTest extends TestCase {
 		      + "==test==\n"
 		      + "==test==";
 		String output = "";
-		output = "<table class=\"toc\">"
-		       + "<tr><td><ol>"
+		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
 		       + "<li><a href=\"#test\">test</a></li>"
 		       + "<li><a href=\"#test_2\">test_2</a></li>"
 		       + "<li><a href=\"#test_1\">test</a></li>"
 		       + "<li><a href=\"#test_3\">test</a></li>"
-		       + "</ol></td></tr></table>";
+		       + "</ol></div><div class=\"clear\"></div></div>";
 		TableOfContents toc = new TableOfContents();
 		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
 		toc.addEntry(toc.checkForUniqueName("test_2"), "test_2", 2);
@@ -91,14 +89,13 @@ public class TableOfContentsTest extends TestCase {
 		      + "==2==\n"
 		      + "==3==";
 		String output = "";
-		output = "<table class=\"toc\">"
-		       + "<tr><td><ol>"
+		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
 		       + "<li><a href=\"#1\">1</a><ol>"
 		       +   "<li><a href=\"#1.1\">1.1</a></li>"
 		       + "</ol></li>"
 		       + "<li><a href=\"#2\">2</a></li>"
 		       + "<li><a href=\"#3\">3</a></li>"
-		       + "</ol></td></tr></table>";
+		       + "</ol></div><div class=\"clear\"></div></div>";
 		TableOfContents toc = new TableOfContents();
 		toc.addEntry(toc.checkForUniqueName("1"), "1", 2);
 		toc.addEntry(toc.checkForUniqueName("1.1"), "1.1", 3);
@@ -118,13 +115,12 @@ public class TableOfContentsTest extends TestCase {
 		      + "==3==\n"
 		      + "==4==";
 		String output = "";
-		output = "<table class=\"toc\">"
-		       + "<tr><td><ol>"
+		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
 		       + "<li><a href=\"#1.1.1\">1.1.1</a></li>"
 		       + "<li><a href=\"#2\">2</a></li>"
 		       + "<li><a href=\"#3\">3</a></li>"
 		       + "<li><a href=\"#4\">4</a></li>"
-		       + "</ol></td></tr></table>";
+		       + "</ol></div><div class=\"clear\"></div></div>";
 		TableOfContents toc = new TableOfContents();
 		toc.addEntry(toc.checkForUniqueName("1.1.1"), "1.1.1", 4);
 		toc.addEntry(toc.checkForUniqueName("2"), "2", 2);

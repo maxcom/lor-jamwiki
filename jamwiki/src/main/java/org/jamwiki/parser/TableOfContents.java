@@ -28,20 +28,8 @@ import org.springframework.web.util.HtmlUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * This class may be used in two ways:
- * <ol>
- * <li>The static addTableOfContents(String) method may be called to automatically
- * add a table of contents on the right side of an article.  This method
- * works with all lexers, because it parses the HTML for headers. However it
- * doesn't care where it is. So if you have a header on the LeftMenu or
- * BottomArea, it will also add a TOC there...</li>
- *
- * <li>The static addTableOfContents(TableOfContents, StringBuffer) method
- * may be called to insert a pre-built TableOfContents object into an
- * article.  This method requires that the parser has added all table of
- * contents headings to the object.  It is a bit more flexible but requires
- * more preperatory work.</li>
- * </ol>
+ * This class is used to generate a table of contents based on values passed in
+ * through the parser.
  */
 public class TableOfContents {
 
@@ -64,50 +52,6 @@ public class TableOfContents {
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;
-
-	/**
-	 * Adds TOC at the beginning as a table on the right side of the page if the
-	 * page has any HTML-headers.
-	 *
-	 * @param text The parsed content into which a table of contents is to be added.
-	 * @return The parsed content with a table of contents included in it.
-	 */
-	public static String addTableOfContents(String text) {
-		logger.fine("Start TOC generating...");
-		Pattern p = Pattern.compile("<[Hh][123][^>]*>(.*)</[Hh][123][^>]*>");
-		Matcher m = p.matcher(text);
-		StringBuffer result = new StringBuffer();
-		StringBuffer toc = new StringBuffer();
-		toc.append("<table align=\"right\" class=\"toc\"><tr><td>");
-		int position = 0;
-		while (m.find()) {
-			result.append(text.substring(position, m.start(1)));
-			position = m.start(1);
-			result.append("<a class=\"tocheader\" name=\"" + position
-					+ "\" id=\"" + position + "\"></a>");
-			if (m.group().startsWith("<h1") || m.group().startsWith("<H1")) {
-				toc.append("<span class=\"tocheader1\">");
-			} else if (m.group().startsWith("<h2") || m.group().startsWith("<H2")) {
-				toc.append("<span class=\"tocheader2\">");
-			} else {
-				toc.append("<span class=\"tocheader3\">");
-			}
-			toc.append("<li><a href=\"#" + position + "\">" + m.group(1)
-					+ "</a></li></span>");
-			result.append(text.substring(position, m.end(1)));
-			position = m.end(1);
-			logger.fine("Adding content: " + m.group(1));
-		}
-		toc.append("</td></tr></table>");
-		result.append(text.substring(position));
-		if (position > 0) {
-			logger.fine("adding TOC at the beginning!");
-			toc.append(result);
-		} else {
-			toc = result;
-		}
-		return toc.toString();
-	}
 
 	/**
 	 * Add a new table of contents entry to the table of contents object.
@@ -265,7 +209,7 @@ public class TableOfContents {
 	public String toHTML() {
 		Iterator tocIterator = this.entries.keySet().iterator();
 		StringBuffer text = new StringBuffer();
-		text.append("<table class=\"toc\"><tr><td>");
+		text.append("<div class=\"toc-container\"><div class=\"toc-content\">");
 		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
 		int previousLevel = 0;
@@ -288,7 +232,7 @@ public class TableOfContents {
 			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(HtmlUtils.htmlEscape(entry.text)).append("</a>");
 		}
 		closeList(0, text);
-		text.append("</td></tr></table>");
+		text.append("</div><div class=\"clear\"></div></div>");
 		return text.toString();
 	}
 
