@@ -448,6 +448,18 @@ img.gallery {
 	border: 1px solid #bbbbbb;
 	padding: 0.3em;
 }
+#toolbar a {
+	border: none;
+	text-decoration: none;
+}
+#toolbar a img {
+	padding: 0px;
+	margin: 0px 1px 0px 0px;
+	border: 1px solid #000000;
+}
+#toolbar a img:hover {
+	border-color: #D8D8E7;
+}
 
 /* search results */
 
