@@ -24,6 +24,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Japanese translations (nattolover).
+  * Updated German translations (frareinif).
 
 
 0.6.0
