@@ -69,5 +69,6 @@ String contentJsp = (String)pageContext.getAttribute("contentJsp");
 	<br/>
 	<font size="-3"><a href="http://jamwiki.org/">JAMWiki</a> <f:message key="footer.message.version" /> <jamwiki:wiki-version/></font>
 </div>
+</div>
 
 <%@ include file="close-document.jsp"%>
