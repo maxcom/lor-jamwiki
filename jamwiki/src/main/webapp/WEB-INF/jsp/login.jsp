@@ -30,20 +30,20 @@
 <form method="post" action="<c:url value="/${virtualWiki}/j_acegi_security_check" />">
 <input type="hidden" name="target" value="<c:out value="${target}"/>" />
 <div class="formentry">
-	<div class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></div>
-	<div class="formelement"><input type="text" name="j_username" value="<c:out value="${param.username}" />" id="loginUsername" /></div>
+	<span class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></span>
+	<span class="formelement"><input type="text" name="j_username" value="<c:out value="${param.username}" />" id="loginUsername" /></span>
 </div>
 <div class="formentry">
-	<div class="formcaption-small"><label for="loginPassword"><f:message key="login.password"/></label></div>
-	<div class="formelement"><input type="password" name="j_password" id="loginPassword" /></div>
+	<span class="formcaption-small"><label for="loginPassword"><f:message key="login.password"/></label></span>
+	<span class="formelement"><input type="password" name="j_password" id="loginPassword" /></span>
 </div>
 <div class="formentry">
-	<div class="formcaption-small">&#160;</div>
-	<div class="formelement"><input type="checkbox" value="true" name="_acegi_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></div>
+	<span class="formcaption-small">&#160;</span>
+	<span class="formelement"><input type="checkbox" value="true" name="_acegi_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></span>
 </div>
 <div class="formentry">
-	<div class="formcaption-small">&#160;</div>
-	<div class="formelement"><input type="submit" name="function" value="<f:message key="common.login" />" /></div>
+	<span class="formcaption-small">&#160;</span>
+	<span class="formelement"><input type="submit" name="function" value="<f:message key="common.login" />" /></span>
 </div>
 </form>
 

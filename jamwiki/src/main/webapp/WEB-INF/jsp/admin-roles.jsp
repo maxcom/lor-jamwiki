@@ -73,17 +73,17 @@
 <form action="<jamwiki:link value="Special:Roles" />" method="post" name="searchRoleForm">
 <input type="hidden" name="function" value="searchRole" />
 <div class="formentry">
-	<div class="formcaption"><f:message key="roles.caption.searchlogin" />:</div>
-	<div class="formelement"><input type="text" name="searchLogin" value="<c:out value="${searchLogin}" />" size="30" /></div>
+	<span class="formcaption"><f:message key="roles.caption.searchlogin" />:</span>
+	<span class="formelement"><input type="text" name="searchLogin" value="<c:out value="${searchLogin}" />" size="30" /></span>
 </div>
 <div class="formentry">
-	<div class="formcaption"><f:message key="roles.caption.searchrole" />:</div>
-	<div class="formelement">
+	<span class="formcaption"><f:message key="roles.caption.searchrole" />:</span>
+	<span class="formelement">
 		<select name="searchRole" id="searchRole" onchange="document.searchRoleForm.submit()">
 		<option value=""></option>
 		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.authority}" />" <c:if test="${role.authority == searchRole}">selected="selected"</c:if>><c:out value="${role.authority}" /></option></c:forEach>
 		</select>
-	</div>
+	</span>
 </div>
 <div align="center" style="padding:10px"><input type="submit" name="search" value="<f:message key="search.search" />" /></div>
 <table border="0" class="contents">
@@ -126,24 +126,24 @@
 <a name="create"></a>
 <fieldset>
 <legend><f:message key="roles.header.modify" /></legend>
-<div class="formentry">
-	<div class="formcaption"><f:message key="roles.caption.selectrole" />:</div>
-	<div class="formelement">
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="create" />">
+	<span class="formcaption"><f:message key="roles.caption.selectrole" />:</span>
+	<span class="formelement">
 		<select name="updateRole" id="updateRole" onchange="document.modifyRoleForm.submit()">
 		<option value=""></option>
 		<c:forEach items="${roles}" var="role"><option value="<c:out value="${role.authority}" />" <c:if test="${role.authority == roleName}">selected="selected"</c:if>><c:out value="${role.authority}" /></option></c:forEach>
 		</select>
-	</div>
+	</span>
 	<div class="formhelp"><f:message key="roles.help.selectrole" /></div>
 </div>
-<div class="formentry">
-	<div class="formcaption"><label for="roleName"><f:message key="roles.caption.rolename" /></label></div>
-	<div class="formelement"><input type="text" name="roleName" id="roleName" value="<c:out value="${roleName}" />" size="30" <c:if test="${!empty roleName}">disabled="disabled"</c:if> /></div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="create" />">
+	<span class="formcaption"><label for="roleName"><f:message key="roles.caption.rolename" /></label></span>
+	<span class="formelement"><input type="text" name="roleName" id="roleName" value="<c:out value="${roleName}" />" size="30" <c:if test="${!empty roleName}">disabled="disabled"</c:if> /></span>
 	<div class="formhelp"><f:message key="roles.help.rolename" /></div>
 </div>
-<div class="formentry">
-	<div class="formcaption"><label for="roleDescription"><f:message key="roles.caption.roledescription" /></label></div>
-	<div class="formelement"><textarea class="medium" name="roleDescription" id="roleDescription"><c:out value="${roleDescription}" /></textarea></div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="create" />">
+	<span class="formcaption"><label for="roleDescription"><f:message key="roles.caption.roledescription" /></label></span>
+	<span class="formelement"><textarea class="medium" name="roleDescription" id="roleDescription"><c:out value="${roleDescription}" /></textarea></span>
 	<div class="formhelp"><f:message key="roles.help.roledescription" /></div>
 </div>
 <div align="center" style="padding:10px"><input type="submit" name="Submit" value="<f:message key="common.save" />" /></div>

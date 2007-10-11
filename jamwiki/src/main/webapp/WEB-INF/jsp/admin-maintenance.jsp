@@ -78,8 +78,8 @@
 <legend><f:message key="admin.title.refresh" /></legend>
 <form name="refreshform" method="post" action="<jamwiki:link value="Special:Maintenance" />">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="search" />">
-	<div class="formcaption"><f:message key="admin.title.refresh" /></div>
-	<div class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></div>
+	<span class="formcaption"><f:message key="admin.title.refresh" /></span>
+	<span class="formelement"><input type="submit" name="submit" value="<f:message key="admin.action.refresh" />" /></span>
 	<div class="formhelp"><f:message key="admin.help.rebuildsearch" /></div>
 </div>
 <input type="hidden" name="function" value="refreshIndex" />
@@ -92,8 +92,8 @@
 <legend><f:message key="admin.title.recentchanges" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="recentchanges" />">
-	<div class="formcaption"><f:message key="admin.caption.recentchanges" /></div>
-	<div class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></div>
+	<span class="formcaption"><f:message key="admin.caption.recentchanges" /></span>
+	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
 	<div class="formhelp"><f:message key="admin.help.reloadrecentchanges" /></div>
 </div>
 <input type="hidden" name="function" value="recentChanges" />
@@ -106,8 +106,8 @@
 <legend><f:message key="admin.title.cache" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="cache" />">
-	<div class="formcaption"><f:message key="admin.cache.caption" /></div>
-	<div class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></div>
+	<span class="formcaption"><f:message key="admin.cache.caption" /></span>
+	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
 	<div class="formhelp"><f:message key="admin.help.clearcache" /></div>
 </div>
 <input type="hidden" name="function" value="cache" />
@@ -122,8 +122,8 @@
 <legend><f:message key="admin.title.spamfilter" /></legend>
 <form action="<jamwiki:link value="Special:Maintenance" />" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
-	<div class="formcaption"><f:message key="admin.caption.spamfilter" /></div>
-	<div class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></div>
+	<span class="formcaption"><f:message key="admin.caption.spamfilter" /></span>
+	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
 	<div class="formhelp"><f:message key="admin.help.reloadspamfilter" /></div>
 </div>
 <input type="hidden" name="function" value="spamFilter" />

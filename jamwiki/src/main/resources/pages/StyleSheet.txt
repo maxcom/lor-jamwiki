@@ -486,16 +486,17 @@ img.gallery {
 
 .formentry {
 	padding: 3px 5px;
+	clear: both;
 }
 .formcaption {
-	width: 250px;
 	float: left;
+	width: 250px;
 	font-weight: bold;
 	padding-right: 10px;
 }
 .formcaption-small {
-	width: 90px;
 	float: left;
+	width: 90px;
 	font-weight: bold;
 	padding-right: 10px;
 }
@@ -504,6 +505,7 @@ img.gallery {
 .formhelp {
 	font-size: 85%;
 	color: #5f5f5f;
+	clear: both;
 }
 .lightbg {
 	background-color: #ffffff;
