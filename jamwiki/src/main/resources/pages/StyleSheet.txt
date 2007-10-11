@@ -455,7 +455,7 @@ img.gallery {
 #toolbar a img {
 	padding: 0px;
 	margin: 0px 1px 0px 0px;
-	border: 1px solid #000000;
+	border: 1px solid #7E7ECB;
 }
 #toolbar a img:hover {
 	border-color: #D8D8E7;
