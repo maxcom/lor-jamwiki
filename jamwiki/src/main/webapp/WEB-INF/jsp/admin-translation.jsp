@@ -53,6 +53,7 @@
 <div class="formentry darkbg">
 	<span class="translationElement"><f:message key="translation.caption.key" /></span>
 	<span class="translationElement"><f:message key="translation.caption.translation"><f:param value="${language}" /></f:message></span>
+	<div class="clear"></div>
 </div>
 <c:forEach items="${translations}" var="translation">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="translation" />">
