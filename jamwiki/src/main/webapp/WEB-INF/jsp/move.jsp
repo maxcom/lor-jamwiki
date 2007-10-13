@@ -33,21 +33,21 @@
 <form name="delete" method="get" action="<jamwiki:link value="Special:Move" />">
 <input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <div class="formentry">
-	<div class="formcaption" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </div>
-	<div class="formelement" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></div>
+	<span class="formcaption-medium" nowrap><label for="moveDestination"><f:message key="move.destination" /></label>: </span>
+	<span class="formelement" width="90%"><input type="text" name="moveDestination" value="<c:out value="${moveDestination}" />" id="moveDestination" size="60" /></span>
 </div>
 <div class="formentry">
-	<div class="formcaption" nowrap><label for="moveComment"><f:message key="move.comment" /></label>: </div>
-	<div class="formelement" width="90%"><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></div>
+	<span class="formcaption-medium" nowrap><label for="moveComment"><f:message key="move.comment" /></label>: </span>
+	<span class="formelement" width="90%"><input type="text" name="moveComment" value="<c:out value="${moveComment}" />" id="moveComment" size="60" /></span>
 </div>
 <c:if test="${!empty moveCommentsPage}">
 <div class="formentry">
-	<div class="formcaption"><label for="moveCommentsPage"><f:message key="move.commentspage" /></label>:</div>
-	<div class="formelement"><input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></div>
+	<span class="formcaption-medium"><label for="moveCommentsPage"><f:message key="move.commentspage" /></label>:</span>
+	<span class="formelement"><input type="checkbox" name="moveCommentsPage" value="<c:out value="${moveCommentsPage}" />" id="moveCommentsPage" /></span>
 </div>
 </c:if>
 <div class="formentry">
-	<div class="formcaption">&#160;</div>
-	<div class="formelement"><input type="submit" name="move" value="<f:message key="common.move" />" /></div>
+	<span class="formcaption-medium">&#160;</span>
+	<span class="formelement"><input type="submit" name="move" value="<f:message key="common.move" />" /></span>
 </div>
 </form>
