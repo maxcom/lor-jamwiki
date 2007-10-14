@@ -21,6 +21,8 @@ import org.jamwiki.model.WikiUserInfo;
 /**
  * This interface provides methods needed when authenticating and retrieving
  * basic user information.
+ *
+ * @see org.jamwiki.WikiBase#getUserHandler
  */
 public interface UserHandler {
 

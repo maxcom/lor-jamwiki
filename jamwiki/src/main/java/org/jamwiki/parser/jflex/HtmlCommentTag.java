@@ -22,7 +22,8 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * When parsing wiki syntax, this class is used to remove any HTML comments in
+ * the syntax.
  */
 public class HtmlCommentTag implements ParserTag {
 

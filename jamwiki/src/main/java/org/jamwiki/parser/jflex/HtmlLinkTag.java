@@ -26,7 +26,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
 /**
- *
+ * This class provides the capability for parsing HTML links of the form
+ * <code>[http://example.com optional text]</code> as well as raw links
+ * of the form <code>http://example.com</code>.
  */
 public class HtmlLinkTag implements ParserTag {
 

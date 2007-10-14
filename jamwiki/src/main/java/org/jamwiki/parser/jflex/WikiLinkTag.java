@@ -32,7 +32,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * This class parses wiki links of the form <code>[[Topic to Link To|Link Text]]</code>.
  */
 public class WikiLinkTag implements ParserTag {
 

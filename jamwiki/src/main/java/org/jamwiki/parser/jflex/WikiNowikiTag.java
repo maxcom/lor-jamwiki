@@ -23,7 +23,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.util.HtmlUtils;
 
 /**
- *
+ * This class parses nowiki tags of the form <code>&lt;nowiki&gt;content&lt;/nowiki&gt;</code>.
  */
 public class WikiNowikiTag implements ParserTag {
 

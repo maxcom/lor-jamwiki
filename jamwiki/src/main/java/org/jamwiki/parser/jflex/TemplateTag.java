@@ -40,7 +40,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * <code>TemplateTag</code> parses Mediawiki template syntax, which allows
+ * programmatic structures to be embedded in wiki syntax.
  */
 public class TemplateTag implements ParserTag {
 

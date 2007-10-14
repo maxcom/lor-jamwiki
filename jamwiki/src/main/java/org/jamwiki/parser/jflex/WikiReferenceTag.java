@@ -25,7 +25,7 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * This class parses nowiki tags of the form <code>&lt;ref name="name"&gt;content&lt;/ref&gt;</code>.
  */
 public class WikiReferenceTag implements ParserTag {
 

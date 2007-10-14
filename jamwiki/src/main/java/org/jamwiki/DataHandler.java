@@ -35,8 +35,10 @@ import org.jamwiki.utils.Pagination;
  * This interface provides all methods needed when retrieving or modifying
  * Wiki data.  Any database or other persistency class must implement
  * this interface, and there should also be a corresponding
- * &lt;data-handler&gt; entry for the class in the jamwiki-configuration.xml
- * file.
+ * &lt;data-handler&gt; entry for the class in the
+ * <code>jamwiki-configuration.xml</code> file.
+ *
+ * @see org.jamwiki.WikiBase#getDataHandler
  */
 public interface DataHandler {
 

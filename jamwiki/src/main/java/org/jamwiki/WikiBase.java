@@ -30,8 +30,13 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- * This class should be used for retrieving core JAMWiki elements, such as the
- * current data handler (database, file, etc).
+ * <code>WikiBase</code> is loaded as a singleton class and provides access
+ * to all core wiki structures.  In addition this class provides utility methods
+ * for resetting core structures including caches and permissions.
+ *
+ * @see org.jamwiki.DataHandler
+ * @see org.jamwiki.UserHandler
+ * @see org.jamwiki.search.SearchEngine
  */
 public class WikiBase {
 
@@ -125,6 +130,7 @@ public class WikiBase {
 	 * @return <code>true</code> if the topic exists or is a special system topic.
 	 * @throws Exception Thrown if any error occurs during lookup.
 	 */
+	// FIXME - this method isn't really appropriate for this class and should be moved.
 	public static boolean exists(String virtualWiki, String topicName) throws Exception {
 		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
 			return false;

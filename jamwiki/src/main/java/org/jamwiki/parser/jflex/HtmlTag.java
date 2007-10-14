@@ -24,7 +24,13 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.util.HtmlUtils;
 
 /**
+ * All HTML tags that aren't parsed by other methods are passed to this
+ * class for processing.  Note that this class <b>only</b> handles the opening
+ * and closing HTML tags, and not the content within those tags, and will
+ * either return a sanitized version of the tag or an escaped version of the
+ * tag for wikis that do not allow HTML tags in wiki syntax.
  *
+ * @see HtmlPreTag
  */
 public class HtmlTag implements ParserTag {
 

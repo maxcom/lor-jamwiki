@@ -25,7 +25,9 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * This class parses wiki list entries of the form <code>* list content</code>,
+ * as well as lists using <code>:</code> and <code>#</code> or any combination
+ * of the three.
  */
 public class WikiListTag implements ParserTag {
 

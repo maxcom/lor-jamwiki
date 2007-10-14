@@ -23,7 +23,11 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.util.HtmlUtils;
 
 /**
- *
+ * This class is used to parse plain text that is not a part of a wiki
+ * syntax pattern.  All characters will be returned unchanged except for
+ * those characters such as ampersands or greater than signs that have an
+ * HTML entity value, and those characters will be converted (example:
+ * <code>&amp;amp;</code> for ampersands).
  */
 public class CharacterTag implements ParserTag {
 

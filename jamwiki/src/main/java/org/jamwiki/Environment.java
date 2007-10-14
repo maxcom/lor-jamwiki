@@ -30,7 +30,9 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
 /**
- * Provides access to JAMWiki property values.
+ * The <code>Environment</code> class is instantiated as a singleton to
+ * provides access to JAMWiki property values stored in the
+ * <code>jamwiki.properties</code> file.
  */
 public class Environment {
 	private static final WikiLogger logger = WikiLogger.getLogger(Environment.class.getName());

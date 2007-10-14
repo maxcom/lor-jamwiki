@@ -30,7 +30,8 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * This class parses signature tags of the form <code>~~~</code>,
+ * <code>~~~~</code> and <code>~~~~~</code>.
  */
 public class WikiSignatureTag implements ParserTag {
 

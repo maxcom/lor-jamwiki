@@ -24,7 +24,13 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.web.util.HtmlUtils;
 
 /**
+ * All &lt;pre&gt; tags and the corresponding closing tag are passed to this
+ * method for processing.  Note that only the tags are passed - the content
+ * is parsed separately - and it is the job of this class to determine whether
+ * to strip the tag from the output or to return it as escaped HTML for wikis
+ * that do not allow HTML tags to be used in wiki syntax.
  *
+ * @see HtmlTag
  */
 public class HtmlPreTag implements ParserTag {
 

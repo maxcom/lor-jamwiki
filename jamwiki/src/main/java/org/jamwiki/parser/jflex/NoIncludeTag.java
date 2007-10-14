@@ -22,7 +22,7 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- *
+ * This class parses nowiki tags of the form <code>&lt;noinclude&gt;content&lt;/noinclude&gt;</code>.
  */
 public class NoIncludeTag implements ParserTag {
 

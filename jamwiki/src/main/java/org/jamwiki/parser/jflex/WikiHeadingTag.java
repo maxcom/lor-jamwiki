@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 
 /**
- *
+ * This class parses wiki headings of the form <code>==heading content==</code>.
  */
 public class WikiHeadingTag implements ParserTag {
 
