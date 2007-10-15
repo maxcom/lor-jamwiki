@@ -109,8 +109,8 @@ followed by 0.5.3.
                         (group_id) REFERENCES jam_group(group_id)
               );
        d) Add the basic groups:
-              INSERT into jam_group (group_id, group_name) values (1, 'ANONYMOUS_USERS');
-              INSERT into jam_group (group_id, group_name) values (2, 'LOGGED_IN_USERS');
+              INSERT into jam_group (group_id, group_name) values (1, 'GROUP_ANONYMOUS');
+              INSERT into jam_group (group_id, group_name) values (2, 'GROUP_REGISTERED_USER');
        e) Add the basic roles:
               INSERT into jam_role (role_name) values ('ROLE_ADMIN');
               INSERT into jam_role (role_name) values ('ROLE_EDIT_EXISTING');
