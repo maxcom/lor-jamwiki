@@ -58,12 +58,13 @@
 <c:forEach items="${translations}" var="translation">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="translation" />">
 	<span class="translationElement">
-		<label for="translations[<c:out value="${translation.key}" />]">
-		<p><code><c:out value="${translation.key}" /></code></p>
-		<div style="overflow:hidden"><c:out value="${defaultTranslations[translation.key]}" /></div>
+		<label for="<c:out value="${translation.key}" />">
+		<code><c:out value="${translation.key}" /></code>
+		<br />
+		<span style="overflow:hidden"><c:out value="${defaultTranslations[translation.key]}" /></span>
 		</label>
 	</span>
-	<span class="translationElement"><textarea name="translations[<c:out value="${translation.key}" />]" style="overflow:hidden;width:30em;height:5em;" id="translations[<c:out value="${translation.key}" />]"><c:out value="${translation.value}" /></textarea></span>
+	<span class="translationElement"><textarea name="translations[<c:out value="${translation.key}" />]" style="overflow:hidden;width:30em;height:5em;" id="<c:out value="${translation.key}" />"><c:out value="${translation.value}" /></textarea></span>
 	<div class="clear"></div>
 </div>
 </c:forEach>
