@@ -11,8 +11,11 @@ New Features:
 
 Bugfixes:
 
-  * Fix DB2 installation by trimming all SQL constraint names to less than 18
-    characters.
+  * "Open printable link in new window" functionality was broken in 0.6.0.  Bug
+    found and fix suggested by Ernesto Arteaga(arterzatij@radioactivo.com) and
+    Esteban Dueñas(edvjar@hotmail.com)
+  * Fix an issue with DB2 installation by trimming all SQL constraint names to
+    less than 18 characters.
   * If two entries in the TOC have the same text make sure that the links do
     not always go to the first entry.
   * Fix parsing of TOC values containing wiki markup.
@@ -23,8 +26,8 @@ Bugfixes:
 
 Translation Updates:
 
-  * Updated Japanese translations (nattolover).
   * Updated German translations (frareinif).
+  * Updated Japanese translations (nattolover).
 
 
 0.6.0
