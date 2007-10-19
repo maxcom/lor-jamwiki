@@ -18,7 +18,8 @@
 --%>
 <%@ page import="
         org.jamwiki.Environment,
-        org.jamwiki.WikiBase
+        org.jamwiki.WikiBase,
+        org.jamwiki.servlets.ServletUtil
     "
     errorPage="error.jsp"
     contentType="text/html; charset=utf-8"
@@ -27,7 +28,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <c:set var="initialized"><%= Environment.getValue(Environment.PROP_BASE_INITIALIZED) %></c:set>
-<c:set var="defaultTopic"><%= Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC) %></c:set>
+<c:set var="defaultTopic"><%= ServletUtil.retrieveVirtualWiki(WikiBase.DEFAULT_VWIKI).getDefaultTopicName() %></c:set>
 <c:set var="defaultVirtualWiki"><%= WikiBase.DEFAULT_VWIKI %></c:set>
 <c:choose>
 	<c:when test="${initialized && !empty defaultTopic}">

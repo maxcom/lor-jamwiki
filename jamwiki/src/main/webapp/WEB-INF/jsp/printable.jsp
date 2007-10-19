@@ -31,9 +31,9 @@
 <c:if test="${!empty pageInfo.metaDescription}">
 	<meta name="description" content="<c:out value="${pageInfo.metaDescription}" />" />
 </c:if>
-<c:if test="${!empty pageInfo.defaultTopic}">
-	<link rel="start" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
-	<link rel="home" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
+<c:if test="${!empty defaultTopic}">
+	<link rel="start" title="<c:out value="${defaultTopic}" />" href="<jamwiki:link value="${defaultTopic}" />" />
+	<link rel="home" title="<c:out value="${defaultTopic}" />" href="<jamwiki:link value="${defaultTopic}" />" />
 </c:if>
 	<link href="<jamwiki:link value="jamwiki.css" />" type="text/css" rel="stylesheet" />
 </head>

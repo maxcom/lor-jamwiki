@@ -70,6 +70,7 @@ public class WikiBase {
 	/** Postgres data handler class */
 	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
 	/** Name of the default wiki */
+	// FIXME - make this configurable
 	public static final String DEFAULT_VWIKI = "en";
 	/** Data stored using an external database */
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";

@@ -88,29 +88,19 @@ public class ServletUtil {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 		}
-		VirtualWiki virtualWiki = null;
-		String defaultTopic = null;
-		try {
-			virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
-			defaultTopic = virtualWiki.getDefaultTopicName();
-		} catch (Exception e) {}
-		if (virtualWiki == null) {
-			logger.severe("No virtual wiki found for " + virtualWikiName);
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
-			defaultTopic = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-		}
+		VirtualWiki virtualWiki = retrieveVirtualWiki(virtualWikiName);
 		// build the layout contents
 		String leftMenu = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
 		next.addObject("leftMenu", leftMenu);
-		next.addObject("defaultTopic", defaultTopic);
-		next.addObject("virtualWiki", virtualWikiName);
+		next.addObject("defaultTopic", virtualWiki.getDefaultTopicName());
+		next.addObject("virtualWiki", virtualWiki.getName());
 		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
-		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
+		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
-		next.addObject(ServletUtil.PARAMETER_VIRTUAL_WIKI, virtualWikiName);
+		next.addObject(ServletUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
 		Integer cssRevision = new Integer(0);
 		try {
-			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWikiName, WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
+			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
 		} catch (Exception e) {}
 		next.addObject("cssRevision", cssRevision);
 	}
@@ -474,6 +464,38 @@ public class ServletUtil {
 		String view = ServletUtil.SPRING_REDIRECT_PREFIX + target;
 		next.clear();
 		next.setViewName(view);
+	}
+
+	/**
+	 * Given a virtual wiki name, return a <code>VirtualWiki</code> object.
+	 * If there is no virtual wiki available with the given name then the
+	 * default virtual wiki is returned.
+	 *
+	 * @param virtualWikiName The name of the virtual wiki that is being
+	 *  retrieved.
+	 * @return A <code>VirtualWiki</code> object.  If there is no virtual
+	 *  wiki available with the given name then the default virtual wiki is
+	 *  returned.
+	 */
+	public static VirtualWiki retrieveVirtualWiki(String virtualWikiName) {
+		VirtualWiki virtualWiki = null;
+		if (virtualWikiName == null) {
+			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+		}
+		// FIXME - the check here for initialized properties is due to this
+		// change being made late in a release cycle.  Revisit in a future
+		// release & clean this up.
+		if (Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			try {
+				virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+			} catch (Exception e) {}
+		}
+		if (virtualWiki == null) {
+			logger.severe("No virtual wiki found for " + virtualWikiName);
+			virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
+			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
+		}
+		return virtualWiki;
 	}
 
 	/**

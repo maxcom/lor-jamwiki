@@ -26,9 +26,9 @@
 <c:if test="${!empty pageInfo.metaDescription}">
 	<meta name="description" content="<c:out value="${pageInfo.metaDescription}" />" />
 </c:if>
-<c:if test="${!empty pageInfo.defaultTopic}">
-	<link rel="start" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
-	<link rel="home" title="<c:out value="${pageInfo.defaultTopic}" />" href="<jamwiki:link value="${pageInfo.defaultTopic}" />" />
+<c:if test="${!empty defaultTopic}">
+	<link rel="start" title="<c:out value="${defaultTopic}" />" href="<jamwiki:link value="${defaultTopic}" />" />
+	<link rel="home" title="<c:out value="${defaultTopic}" />" href="<jamwiki:link value="${defaultTopic}" />" />
 </c:if>
 <jamwiki:enabled property="PROP_RSS_ALLOWED">
 	<%-- This RSS link is automatically recognized by (some) browsers --%>

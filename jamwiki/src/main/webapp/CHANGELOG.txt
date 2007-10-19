@@ -12,8 +12,10 @@ New Features:
 Bugfixes:
 
   * "Open printable link in new window" functionality was broken in 0.6.0.  Bug
-    found and fix suggested by Ernesto Arteaga(arterzatij@radioactivo.com) and
-    Esteban Dueñas(edvjar@hotmail.com)
+    found and fix suggested by Ernesto Arteaga (arterzatij@radioactivo.com) and
+    Esteban Dueñas (edvjar@hotmail.com).
+  * Fix an issue where redirection from index.jsp would lead to the wrong topic
+    when the default topic has previously been changed.
   * Fix an issue with DB2 installation by trimming all SQL constraint names to
     less than 18 characters.
   * If two entries in the TOC have the same text make sure that the links do

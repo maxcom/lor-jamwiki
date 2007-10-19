@@ -110,16 +110,6 @@ public class WikiPageInfo {
 	}
 
 	/**
-	 * Every virtual wiki has a default topic, and this method returns the
-	 * default topic for the current virtual wiki.
-	 *
-	 * @return The default topic for the current virtual wiki.
-	 */
-	public String getDefaultTopic() {
-		return Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
-	}
-
-	/**
 	 * Return a description for the current page that can be used in an HTML
 	 * meta tag.
 	 *
