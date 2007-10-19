@@ -28,6 +28,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Chinese translations (hfl).
   * Updated German translations (frareinif).
   * Updated Japanese translations (nattolover).
 
