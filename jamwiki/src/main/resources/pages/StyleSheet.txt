@@ -130,7 +130,6 @@ li {
 }
 textarea {
 	width: 99%;
-	padding: 0.1em;
 }
 fieldset {
 	padding: 5px;
@@ -486,6 +485,7 @@ img.gallery {
 /* form styles */
 
 .formentry {
+	width: 99%;
 	padding: 3px 5px;
 	clear: both;
 }
@@ -529,6 +529,11 @@ img.gallery {
 	padding: 3px;
 	width: 49%;
 	overflow: hidden;
+}
+textarea.translation {
+	width: 100%;
+	overflow:hidden;
+	height:5em;
 }
 textarea.medium {
 	width: 400px;

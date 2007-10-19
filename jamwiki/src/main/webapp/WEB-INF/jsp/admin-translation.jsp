@@ -64,7 +64,7 @@
 		<span style="overflow:hidden"><c:out value="${defaultTranslations[translation.key]}" /></span>
 		</label>
 	</span>
-	<span class="translationElement"><textarea name="translations[<c:out value="${translation.key}" />]" style="overflow:hidden;width:30em;height:5em;" id="<c:out value="${translation.key}" />"><c:out value="${translation.value}" /></textarea></span>
+	<span class="translationElement"><textarea name="translations[<c:out value="${translation.key}" />]" class="translation" id="<c:out value="${translation.key}" />"><c:out value="${translation.value}" /></textarea></span>
 	<div class="clear"></div>
 </div>
 </c:forEach>
