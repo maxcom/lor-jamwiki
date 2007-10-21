@@ -236,6 +236,8 @@
 				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN
 				/**/Special:Translation=ROLE_SYSADMIN
 				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER,ROLE_ADMIN
+				/**/*.css=ROLE_ANONYMOUS,ROLE_USER
+				/images/**=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_USER
 			</value>
 		</property>

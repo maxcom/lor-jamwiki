@@ -230,6 +230,8 @@
 				/**/Special:Upload=ROLE_UPLOAD
 				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER
 				/**/*.jsp=ROLE_ANONYMOUS,ROLE_USER
+				/**/*.css=ROLE_ANONYMOUS,ROLE_USER
+				/images/**=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_VIEW
 			</value>
 		</property>
