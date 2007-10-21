@@ -16,6 +16,8 @@ Bugfixes:
     Esteban Dueñas (edvjar@hotmail.com).
   * Fix an issue where redirection from index.jsp would lead to the wrong topic
     when the default topic has previously been changed.
+  * Allow access to CSS and JAMWiki images even if a user does not have
+    ROLE_VIEW to prevent display issues on the Special:Login page.
   * Fix an issue with DB2 installation by trimming all SQL constraint names to
     less than 18 characters.
   * If two entries in the TOC have the same text make sure that the links do
