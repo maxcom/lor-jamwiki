@@ -24,6 +24,7 @@
 <c:if test="${topicFile}"><div id="topic-file-download"><f:message key="topic.file.download" />:&#160;<a href="<c:out value="${fileVersions[0].url}" />"><c:out value="${topicObject.name}" /></a></div></c:if>
 <c:out value="${topicObject.topicContent}" escapeXml="false" />
 </div>
+<div class="clear"></div>
 		<c:if test="${!empty fileVersions}">
 <h2><f:message key="topic.filehistory" /></h2>
 <ul>
