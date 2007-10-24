@@ -1,6 +1,11 @@
 0.6.2
 =====
 
+Bugfixes:
+
+  * The web.xml file incorrectly implemented the servlet 2.4 specification.
+    Correct it to follow the servlet 2.3 specification.
+
 
 0.6.1
 =====
