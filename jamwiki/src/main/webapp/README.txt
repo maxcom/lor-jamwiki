@@ -14,7 +14,7 @@ JAMWiki requires a web application server (such as Tomcat or Websphere) that
 supports the following specifications:
 
   JDK 1.4 or later
-  Servlet 2.3 or later
+  Servlet 2.4 or later
 
 JAMWiki can be configured to store its data either in an external database or
 using an embedded version of the HSQL database that is included in the
