@@ -3,7 +3,10 @@
 
 New Features:
 
-  * Update web.xml and other files to full servlet 2.4 compliance.
+  * Upgrade project dependencies to Servlet 2.4 and JSP 2.0.  Bugs in previous
+    JAMWiki configuration settings required these dependencies, so this change
+    should be backwards-compatible.
+  * Upgrade to JSTL 1.1.
 
 Bugfixes:
 
