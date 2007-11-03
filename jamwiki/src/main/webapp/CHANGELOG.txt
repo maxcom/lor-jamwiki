@@ -6,12 +6,14 @@ New Features:
   * Upgrade project dependencies to Servlet 2.4 and JSP 2.0.  Bugs in previous
     JAMWiki configuration settings required these dependencies, so this change
     should be backwards-compatible.
-  * Upgrade to JSTL 1.1.
+  * Upgrade to JSTL 1.1.2 (from 1.0.6).
 
 Bugfixes:
 
   * Resolve a CSS issue that caused the TOC to be invisible on IE6.  Reported
     by bvold.
+  * Umlauts, ampersands and other special characters were being double-escaped
+    in the TOC.  Fix contributed by Louis Martin.
 
 
 0.6.1

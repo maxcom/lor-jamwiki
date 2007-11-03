@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
-import org.springframework.web.util.HtmlUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -229,7 +228,7 @@ public class TableOfContents {
 			}
 			closeList(adjustedLevel, text);
 			openList(adjustedLevel, text);
-			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(HtmlUtils.htmlEscape(entry.text)).append("</a>");
+			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(entry.text).append("</a>");
 		}
 		closeList(0, text);
 		text.append("</div><div class=\"clear\"></div></div>");
