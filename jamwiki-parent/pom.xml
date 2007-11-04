@@ -46,11 +46,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki-parser-jflex</artifactId>
-				<version>0.6.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
 				<artifactId>javadiff</artifactId>
 				<version>1.0.5</version>
 			</dependency>
