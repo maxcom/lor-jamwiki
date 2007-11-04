@@ -30,6 +30,6 @@ response.setHeader("Pragma", "no-cache");
 %>
 <f:setBundle basename="ApplicationResources" />
 <%
-// must re-set the response header because the f:setBundle tag can sometimes override it
-response.setContentType("text/html; charset=utf-8");
+response.setContentType("text/html");
+response.setCharacterEncoding("UTF-8");
 %>

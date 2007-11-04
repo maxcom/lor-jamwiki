@@ -62,7 +62,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public class RecentChangesFeedServlet extends AbstractController {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(RecentChangesFeedServlet.class.getName());
-	private static final String MIME_TYPE = "application/xml; charset=UTF-8";
+	private static final String MIME_TYPE = "application/xml";
 	private static final String FEED_ENCODING = "UTF-8";
 	private static final String DEFAULT_FEED_TYPE = "rss_2.0";
 	private static final String FEED_TYPE = "feedType";
@@ -142,6 +142,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 			SyndFeed feed = getFeed(request);
 			feed.setFeedType(feedType);
 			response.setContentType(MIME_TYPE);
+			response.setCharacterEncoding(FEED_ENCODING);
 			SyndFeedOutput output = new SyndFeedOutput();
 			output.output(feed, response.getWriter());
 		} catch (Exception e) {

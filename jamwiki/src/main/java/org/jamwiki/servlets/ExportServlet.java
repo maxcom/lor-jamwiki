@@ -41,6 +41,7 @@ public class ExportServlet extends JAMWikiServlet {
 			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 			String content = "";
 			response.setContentType("text/xml");
+			response.setCharacterEncoding("UTF-8");
 			PrintWriter out = response.getWriter();
 			out.print(content);
 			out.close();
