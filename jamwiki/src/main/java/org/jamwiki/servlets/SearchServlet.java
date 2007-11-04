@@ -17,10 +17,8 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.WikiLogger;
@@ -60,7 +58,7 @@ public class SearchServlet extends JAMWikiServlet {
 		if (WikiBase.exists(virtualWiki, topic)) {
 			ServletUtil.redirect(next, virtualWiki, topic);
 		} else {
-			next.addObject("notopic", new WikiMessage("topic.notcreated", topic));
+			next.addObject("notopic", topic);
 			this.search(request, next, pageInfo);
 		}
 	}

@@ -14,6 +14,8 @@ Bugfixes:
     by bvold.
   * Umlauts, ampersands and other special characters were being double-escaped
     in the TOC.  Fix contributed by Louis Martin.
+  * Fix issue where search terms were double-escaped when no search results
+    were found.
 
 
 0.6.1
