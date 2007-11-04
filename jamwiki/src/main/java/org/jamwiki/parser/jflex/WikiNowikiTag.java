@@ -16,11 +16,11 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;nowiki&gt;content&lt;/nowiki&gt;</code>.
@@ -40,7 +40,7 @@ public class WikiNowikiTag implements ParserTag {
 		}
 		String content = ParserUtil.tagContent(raw);
 		if (mode == JFlexParser.MODE_PROCESS) {
-			return "<nowiki>" + HtmlUtils.htmlEscape(content) + "</nowiki>";
+			return "<nowiki>" + StringEscapeUtils.escapeHtml(content) + "</nowiki>";
 		}
 		return content;
 	}

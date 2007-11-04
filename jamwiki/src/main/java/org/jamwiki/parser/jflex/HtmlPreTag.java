@@ -16,12 +16,12 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * All &lt;pre&gt; tags and the corresponding closing tag are passed to this
@@ -46,7 +46,7 @@ public class HtmlPreTag implements ParserTag {
 			return raw;
 		}
 		if (mode == JFlexParser.MODE_PROCESS && !Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
-			return HtmlUtils.htmlEscape(raw);
+			return StringEscapeUtils.escapeHtml(raw);
 		}
 		return ParserUtil.sanitizeHtmlTag(raw);
 	}

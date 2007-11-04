@@ -5,12 +5,12 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 
 %%
 
@@ -494,7 +494,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         beginState(JAVASCRIPT);
         return ParserUtil.sanitizeHtmlTag(yytext());
     }
-    return HtmlUtils.htmlEscape(yytext());
+    return StringEscapeUtils.escapeHtml(yytext());
 }
 
 <JAVASCRIPT>{jsclose} {
@@ -503,7 +503,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         endState();
         return ParserUtil.sanitizeHtmlTag(yytext());
     }
-    return HtmlUtils.htmlEscape(yytext());
+    return StringEscapeUtils.escapeHtml(yytext());
 }
 
 /* ----- other ----- */

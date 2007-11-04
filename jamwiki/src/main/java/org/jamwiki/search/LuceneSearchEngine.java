@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -48,7 +49,6 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.Utilities;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * An implementation of {@link org.jamwiki.search.SearchEngine} that uses
@@ -375,7 +375,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
 		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
-			summary = HtmlUtils.htmlEscape(content.substring(0, Math.min(200, content.length())));
+			summary = StringEscapeUtils.escapeHtml(content.substring(0, Math.min(200, content.length())));
 			if (Math.min(200, content.length()) == 200) {
 				summary += "...";
 			}

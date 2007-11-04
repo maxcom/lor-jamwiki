@@ -16,12 +16,12 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * All HTML tags that aren't parsed by other methods are passed to this
@@ -43,7 +43,7 @@ public class HtmlTag implements ParserTag {
 		if (Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
 			return ParserUtil.validateHtmlTag(raw);
 		} else {
-			return HtmlUtils.htmlEscape(raw);
+			return StringEscapeUtils.escapeHtml(raw);
 		}
 	}
 }

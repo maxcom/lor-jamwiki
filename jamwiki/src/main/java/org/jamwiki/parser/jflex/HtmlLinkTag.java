@@ -16,6 +16,7 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
@@ -23,7 +24,6 @@ import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * This class provides the capability for parsing HTML links of the form
@@ -109,7 +109,7 @@ public class HtmlLinkTag implements ParserTag {
 		if (!StringUtils.hasText(text)) {
 			text = link;
 		}
-		text = HtmlUtils.htmlEscape(text);
+		text = StringEscapeUtils.escapeHtml(text);
 		link = link.substring(protocol.length());
 		// make sure link values are properly escaped.
 		link = StringUtils.replace(link, "<", "%3C");

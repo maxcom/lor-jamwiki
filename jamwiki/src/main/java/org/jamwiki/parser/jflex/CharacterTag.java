@@ -16,11 +16,11 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * This class is used to parse plain text that is not a part of a wiki
@@ -46,14 +46,14 @@ public class CharacterTag implements ParserTag {
 		if (isEntity(raw)) {
 			return raw;
 		}
-		return HtmlUtils.htmlEscape(raw);
+		return StringEscapeUtils.escapeHtml(raw);
 	}
 
 	/**
 	 *
 	 */
 	private boolean isEntity(String raw) {
-		String unescaped = HtmlUtils.htmlUnescape(raw);
+		String unescaped = StringEscapeUtils.unescapeHtml(raw);
 		// see if it was successfully converted, in which case it is an entity
 		return (!raw.equals(unescaped));
 	}

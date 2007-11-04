@@ -17,17 +17,15 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 
 /**
  * Used to generate a list of all edits made by a user.
@@ -56,7 +54,7 @@ public class ContributionsServlet extends JAMWikiServlet {
 		next.addObject("contributions", contributions);
 		next.addObject("numContributions", new Integer(contributions.size()));
 		next.addObject("contributor", userString);
-		pageInfo.setPageTitle(new WikiMessage("contributions.title", HtmlUtils.htmlEscape(userString)));
+		pageInfo.setPageTitle(new WikiMessage("contributions.title", StringEscapeUtils.escapeHtml(userString)));
 		pageInfo.setContentJsp(JSP_CONTRIBUTIONS);
 		pageInfo.setSpecial(true);
 	}

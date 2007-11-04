@@ -17,7 +17,7 @@
 package org.jamwiki;
 
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.web.util.HtmlUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class is a utility class useful for storing messages key and object
@@ -53,7 +53,7 @@ public class WikiMessage {
 	public WikiMessage(String key, String param1) {
 		this.key = key;
 		this.params = new String[1];
-		params[0] = HtmlUtils.htmlEscape(param1);
+		params[0] = StringEscapeUtils.escapeHtml(param1);
 	}
 
 	/**
@@ -72,8 +72,8 @@ public class WikiMessage {
 	public WikiMessage(String key, String param1, String param2) {
 		this.key = key;
 		this.params = new String[2];
-		params[0] = HtmlUtils.htmlEscape(param1);
-		params[1] = HtmlUtils.htmlEscape(param2);
+		params[0] = StringEscapeUtils.escapeHtml(param1);
+		params[1] = StringEscapeUtils.escapeHtml(param2);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class WikiMessage {
 		if (params != null) {
 			this.params = new String[params.length];
 			for (int i=0; i < params.length; i++) {
-				this.params[i] = HtmlUtils.htmlEscape(params[i]);
+				this.params[i] = StringEscapeUtils.escapeHtml(params[i]);
 			}
 		}
 	}
