@@ -17,6 +17,10 @@ Bugfixes:
   * Fix issue where search terms were double-escaped when no search results
     were found.
 
+Translation Updates:
+
+  * Updated Polish translations (dlpa).
+
 
 0.6.1
 =====
