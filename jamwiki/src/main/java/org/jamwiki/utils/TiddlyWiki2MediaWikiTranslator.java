@@ -20,7 +20,6 @@ package org.jamwiki.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**

@@ -19,8 +19,6 @@ package org.jamwiki.parser;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;

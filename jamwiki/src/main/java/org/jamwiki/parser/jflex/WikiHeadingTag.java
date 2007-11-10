@@ -23,7 +23,6 @@ import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.
