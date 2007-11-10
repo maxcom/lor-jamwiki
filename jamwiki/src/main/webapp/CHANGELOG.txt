@@ -7,6 +7,7 @@ New Features:
     JAMWiki configuration settings required these dependencies, so this change
     should be backwards-compatible.
   * Upgrade to JSTL 1.1.2 (from 1.0.6).
+  * Replace several custom methods with the org.apache.commons.lang equivalent.
 
 Bugfixes:
 

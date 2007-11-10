@@ -17,11 +17,11 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.apache.commons.lang.SystemUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
@@ -48,8 +48,7 @@ public class SetupServlet extends JAMWikiServlet {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(SetupServlet.class.getName());
 	protected static final String JSP_SETUP = "setup.jsp";
-	private static final int MINIMUM_JDK_MAJOR_VERSION = 1;
-	private static final int MINIMUM_JDK_MINOR_VERSION = 4;
+	private static final int MINIMUM_JDK_VERSION = 140;
 
 	/**
 	 * This method handles the request after its parent class receives control.
@@ -67,9 +66,8 @@ public class SetupServlet extends JAMWikiServlet {
 			function = "";
 		}
 		try {
-			if (!this.verifyJDK()) {
-				String minimumVersion = MINIMUM_JDK_MAJOR_VERSION + "." + MINIMUM_JDK_MINOR_VERSION;
-				throw new WikiException(new WikiMessage("setup.error.jdk", minimumVersion, System.getProperty("java.version")));
+			if (!SystemUtils.isJavaVersionAtLeast(MINIMUM_JDK_VERSION)) {
+				throw new WikiException(new WikiMessage("setup.error.jdk", new Integer(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
 			}
 			if (StringUtils.hasText(function) && initialize(request, next, pageInfo)) {
 				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
@@ -213,29 +211,6 @@ public class SetupServlet extends JAMWikiServlet {
 			}
 		}
 		return errors;
-	}
-
-	/**
-	 *
-	 */
-	private boolean verifyJDK() {
-		try {
-			String jdk = System.getProperty("java.version");
-			StringTokenizer tokens = new StringTokenizer(jdk, ".");
-			int major = new Integer(tokens.nextToken()).intValue();
-			int minor = new Integer(tokens.nextToken()).intValue();
-			if (major < MINIMUM_JDK_MAJOR_VERSION) {
-				return false;
-			}
-			if (major == MINIMUM_JDK_MAJOR_VERSION && minor < MINIMUM_JDK_MINOR_VERSION) {
-				return false;
-			}
-			return true;
-		} catch (Exception e) {
-			logger.warning("Failure determining JDK version", e);
-			// allow setup to continue if JDK version not found
-			return true;
-		}
 	}
 
 	/**
