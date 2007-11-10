@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
 import org.jamwiki.model.WikiConfigurationObject;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -133,7 +133,7 @@ public class WikiConfiguration {
 			this.parsers = new Vector();
 			this.pseudotopics = new Vector();
 			this.userHandlers = new Vector();
-			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
+			File file = WikiUtil.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
 			Node node = document.getElementsByTagName(XML_CONFIGURATION_ROOT).item(0);
 			NodeList children = node.getChildNodes();

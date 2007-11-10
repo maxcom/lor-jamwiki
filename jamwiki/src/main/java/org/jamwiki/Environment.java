@@ -25,7 +25,6 @@ import java.util.Properties;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -353,7 +352,7 @@ public class Environment {
 	private static File retrievePropertyFile(String filename) {
 		File file = null;
 		try {
-			file = Utilities.getClassLoaderFile(filename);
+			file = WikiUtil.getClassLoaderFile(filename);
 			return file; //NOPMD
 		} catch (Exception e) {
 			// NOPMD file might not exist

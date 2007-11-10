@@ -2,13 +2,12 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Matcher;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.jamwiki.Environment;
@@ -69,8 +68,6 @@ public class WikiUtil {
 		}
 		return Utilities.decodeFromRequest(topic);
 	}
-	
-
 
 	/**
 	 * Retrieve a topic name from the request URI.  This method will retrieve
@@ -108,7 +105,7 @@ public class WikiUtil {
 		topic = Utilities.decodeFromURL(topic);
 		return topic;
 	}
-	
+
 	/**
 	 * Create a pagination object based on parameters found in the current
 	 * request.
@@ -142,7 +139,35 @@ public class WikiUtil {
 		}
 		return new Pagination(num, offset);
 	}
-	
+
+	/**
+	 * Given a file name for a file that is located somewhere in the application
+	 * classpath, return a File object representing the file.
+	 *
+	 * @param filename The name of the file (relative to the classpath) that is
+	 *  to be retrieved.
+	 * @return A file object representing the requested filename
+	 * @throws Exception Thrown if the classloader can not be found or if
+	 *  the file can not be found in the classpath.
+	 */
+	public static File getClassLoaderFile(String filename) throws Exception {
+		// note that this method is used when initializing logging, so it must
+		// not attempt to log anything.
+		File file = null;
+		ClassLoader loader = ClassUtils.getDefaultClassLoader();
+		URL url = loader.getResource(filename);
+		if (url == null) {
+			url = ClassLoader.getSystemResource(filename);
+		}
+		if (url == null) {
+			throw new Exception("Unable to find " + filename);
+		}
+		file = FileUtils.toFile(url);
+		if (file == null || !file.exists()) {
+			throw new Exception("Found invalid root class loader for file " + filename);
+		}
+		return file;
+	}
 
 	/**
 	 * Retrieve a virtual wiki name from the request URI.  This method will
@@ -166,8 +191,6 @@ public class WikiUtil {
 		String virtualWiki = uri.substring(0, slashIndex);
 		return Utilities.decodeFromURL(virtualWiki);
 	}
-	
-
 
 	/**
 	 * Retrieve a virtual wiki name from the servlet request.  This method
@@ -187,8 +210,6 @@ public class WikiUtil {
 		}
 		return Utilities.decodeFromRequest(virtualWiki);
 	}
-	
-
 
 	/**
 	 * Retrieve the current logged-in user's watchlist from the session.  If
@@ -215,8 +236,6 @@ public class WikiUtil {
 		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
 		return watchlist;
 	}
-	
-
 
 	/**
 	 * When editing a section of a topic, this method provides a way of splicing
@@ -247,8 +266,6 @@ public class WikiUtil {
 		return parser.parseSplice(parserDocument, topic.getTopicContent(), targetSection, replacementText);
 	}
 
-
-
 	public static String parseSlice(HttpServletRequest request,
 			String virtualWiki, String topicName, int section) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
@@ -264,7 +281,7 @@ public class WikiUtil {
 		ParserDocument parserDocument = new ParserDocument();
 		return parser.parseSlice(parserDocument, topic.getTopicContent(), section);
 	}
-	
+
 	/**
 	 * Utility method for retrieving values from the URI.  This method
 	 * will attempt to properly convert the URI encoding, and then offers a way
@@ -298,7 +315,6 @@ public class WikiUtil {
 		}
 		return uri;
 	}
-	
 
 	/**
 	 * Users can specify a default locale in their preferences, so determine
@@ -321,7 +337,6 @@ public class WikiUtil {
 		}
 		return request.getLocale();
 	}
-	
 
 	/**
 	 * Validate that vital system properties, such as database connection settings,
@@ -384,7 +399,6 @@ public class WikiUtil {
 		}
 		return errors;
 	}
-	
 
 	/**
 	 * Verify that a directory exists and is writable.
@@ -444,7 +458,6 @@ public class WikiUtil {
 		// FIXME - throw a user-friendly error if the role name is already in use
 	}
 
-
 	/**
 	 * Utility method for determining if a topic name is valid for use on the Wiki,
 	 * meaning that it is not empty and does not contain any invalid characters.
@@ -486,7 +499,7 @@ public class WikiUtil {
 			throw new WikiException(new WikiMessage("common.exception.name", name));
 		}
 	}
-	
+
 	/**
 	 * Attempt to get the class loader root directory.  This method works
 	 * by searching for a file that MUST exist in the class loader root
@@ -497,7 +510,7 @@ public class WikiUtil {
 	 */
 	public static File getClassLoaderRoot() throws Exception {
 		// The file hard-coded here MUST be in the class loader directory.
-		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
+		File file = WikiUtil.getClassLoaderFile("ApplicationResources.properties");
 		if (!file.exists()) {
 			throw new Exception("Unable to find class loader root");
 		}

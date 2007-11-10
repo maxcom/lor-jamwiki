@@ -21,9 +21,7 @@ package org.jamwiki.test.utils;
 import java.io.FileNotFoundException;
 import java.util.Locale;
 import java.util.Properties;
-
 import junit.framework.TestCase;
-
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.DatabaseUserHandler;
@@ -691,7 +689,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testGetClassLoaderFileThrowsException() throws Throwable {
 		try {
-			Utilities.getClassLoaderFile("testUtilitiesFilename");
+			WikiUtil.getClassLoaderFile("testUtilitiesFilename");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Unable to find testUtilitiesFilename", ex.getMessage());

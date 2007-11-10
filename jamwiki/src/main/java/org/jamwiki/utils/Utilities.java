@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Pattern;
-
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
@@ -95,7 +94,6 @@ public class Utilities {
 		return (Locale)localeEditor.getValue();
 	}
 
-
 	/**
 	 * Convert a string value from one encoding to another.
 	 *
@@ -142,7 +140,6 @@ public class Utilities {
 		Authentication auth = ctx.getAuthentication();
 		return WikiUser.initWikiUser(auth);
 	}
-
 
 	/**
 	 * Utility method to retrieve an instance of the current data handler.
@@ -330,8 +327,6 @@ public class Utilities {
 		return buffer.toString();
 	}
 
-
-
 	/**
 	 * Given a message key and locale return a locale-specific message.
 	 *
@@ -363,36 +358,6 @@ public class Utilities {
 		formatter.applyPattern(message);
 		return formatter.format(params);
 	}
-
-	/**
-	 * Given a file name for a file that is located somewhere in the application
-	 * classpath, return a File object representing the file.
-	 *
-	 * @param filename The name of the file (relative to the classpath) that is
-	 *  to be retrieved.
-	 * @return A file object representing the requested filename
-	 * @throws Exception Thrown if the classloader can not be found or if
-	 *  the file can not be found in the classpath.
-	 */
-	public static File getClassLoaderFile(String filename) throws Exception {
-		// note that this method is used when initializing logging, so it must
-		// not attempt to log anything.
-		File file = null;
-		ClassLoader loader = ClassUtils.getDefaultClassLoader();
-		URL url = loader.getResource(filename);
-		if (url == null) {
-			url = ClassLoader.getSystemResource(filename);
-		}
-		if (url == null) {
-			throw new Exception("Unable to find " + filename);
-		} 
-		file = FileUtils.toFile(url);
-		if (file == null || !file.exists()) {
-			throw new Exception("Found invalid root class loader for file " + filename);
-		}
-		return file;
-	}
-
 
 	/**
 	 * Given a topic name, determine if that name corresponds to a comments
@@ -598,7 +563,6 @@ public class Utilities {
 		return parser.buildRedirectContent(topicName);
 	}
 
-
 	/**
 	 * Utility method for reading a file from a classpath directory and returning
 	 * its contents as a String.
@@ -673,7 +637,6 @@ public class Utilities {
 		return contents;
 	}
 
-
 	/**
 	 * If a blacklist or whitelist of allowed file upload types is being used,
 	 * retrieve the list from the properties file and return as a List object.
@@ -703,7 +666,6 @@ public class Utilities {
 		return list;
 	}
 
-
 	/**
 	 * Utility method to retrieve an instance of the current user handler.
 	 *
@@ -720,7 +682,7 @@ public class Utilities {
 		Object[] initArgs = new Object[0];
 		return (UserHandler)constructor.newInstance(initArgs);
 	}
-	
+
 	/**
 	 *
 	 */

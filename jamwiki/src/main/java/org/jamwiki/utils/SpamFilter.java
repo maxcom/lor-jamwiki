@@ -78,7 +78,7 @@ public class SpamFilter {
 	 */
 	private static void initialize() throws Exception {
 		try {
-			File file = Utilities.getClassLoaderFile(SPAM_BLACKLIST_FILE);
+			File file = WikiUtil.getClassLoaderFile(SPAM_BLACKLIST_FILE);
 			String regexText = FileUtils.readFileToString(file, "UTF-8");
 			StringTokenizer tokens = new StringTokenizer(regexText, "\n\r");
 			String regex = "";
