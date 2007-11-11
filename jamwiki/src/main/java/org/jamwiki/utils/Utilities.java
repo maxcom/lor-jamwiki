@@ -267,6 +267,18 @@ public class Utilities {
 	}
 
 	/**
+	 * Retrieve the webapp root.
+	 *
+	 * @return The default webapp root directory.
+	 */
+	// FIXME - there HAS to be a utility method available in Spring or some other
+	// common library that offers this functionality.
+	public static File getWebappRoot() throws Exception {
+		// webapp root is two levels above /WEB-INF/classes/
+		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
+	}
+
+	/**
 	 * Determine if the given string is an IP address.  This method uses pattern
 	 * matching to see if the given string could be a valid IP address.
 	 *
