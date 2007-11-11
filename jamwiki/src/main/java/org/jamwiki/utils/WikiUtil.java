@@ -66,9 +66,9 @@ public class WikiUtil {
 
 	static {
 		try {
-			INVALID_ROLE_NAME_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
-			INVALID_TOPIC_NAME_PATTERN = Pattern.compile("([\\n\\r\\\\<>\\[\\]?#]+)");
-			VALID_USER_LOGIN_PATTERN = Pattern.compile("([A-Za-z0-9_]+)");
+			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
+			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
+			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
