@@ -43,7 +43,6 @@ import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
@@ -241,33 +240,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
 		this.queryHandler().deleteWatchlistEntry(virtualWikiId, topicName, userId, conn);
-	}
-
-	/**
-	 *
-	 */
-	public Collection diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
-		TopicVersion version1 = this.lookupTopicVersion(topicVersionId1, null);
-		TopicVersion version2 = this.lookupTopicVersion(topicVersionId2, null);
-		if (version1 == null && version2 == null) {
-			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
-			logger.severe(msg);
-			throw new Exception(msg);
-		}
-		String contents1 = null;
-		if (version1 != null) {
-			contents1 = version1.getVersionContent();
-		}
-		String contents2 = null;
-		if (version2 != null) {
-			contents2 = version2.getVersionContent();
-		}
-		if (contents1 == null && contents2 == null) {
-			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
-			logger.severe(msg);
-			throw new Exception(msg);
-		}
-		return DiffUtil.diff(contents1, contents2);
 	}
 
 	/**

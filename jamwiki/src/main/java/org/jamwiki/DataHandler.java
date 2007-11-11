@@ -78,23 +78,6 @@ public interface DataHandler {
 	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
-	 * Execute a diff between two versions of a topic, returning a collection
-	 * of WikiDiff objects indicating what has changed between the versions.
-	 *
-	 * @param topicName The name of the topic for which a diff is being
-	 *  performed.
-	 * @param topicVersionId1 The version ID for the old version being
-	 *  compared against.
-	 * @param topicVersionId2 The version ID for the old version being
-	 *  compared to.
-	 * @return A collection of WikiDiff objects indicating what has changed
-	 *  between the versions.  An empty collection is returned if there are
-	 *  no differences.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public Collection diff(String topicName, int topicVersionId1, int topicVersionId2) throws Exception;
-
-	/**
 	 * Return a collection of all Category objects for a given virtual wiki.
 	 *
 	 * @param virtualWiki The virtual wiki for which categories are being

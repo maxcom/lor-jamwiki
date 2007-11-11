@@ -16,11 +16,14 @@
  */
 package org.jamwiki.utils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
+import org.jamwiki.WikiBase;
+import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiDiff;
 
 /**
@@ -140,6 +143,45 @@ public class DiffUtil {
 			return new Vector();
 		}
 		return DiffUtil.process(newVersion, oldVersion);
+	}
+
+	/**
+	 * Execute a diff between two versions of a topic, returning a collection
+	 * of WikiDiff objects indicating what has changed between the versions.
+	 *
+	 * @param topicName The name of the topic for which a diff is being
+	 *  performed.
+	 * @param topicVersionId1 The version ID for the old version being
+	 *  compared against.
+	 * @param topicVersionId2 The version ID for the old version being
+	 *  compared to.
+	 * @return A collection of WikiDiff objects indicating what has changed
+	 *  between the versions.  An empty collection is returned if there are
+	 *  no differences.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public static Collection diffTopicVersions(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
+		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1, null);
+		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2, null);
+		if (version1 == null && version2 == null) {
+			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
+			logger.severe(msg);
+			throw new Exception(msg);
+		}
+		String contents1 = null;
+		if (version1 != null) {
+			contents1 = version1.getVersionContent();
+		}
+		String contents2 = null;
+		if (version2 != null) {
+			contents2 = version2.getVersionContent();
+		}
+		if (contents1 == null && contents2 == null) {
+			String msg = "No versions found for " + topicVersionId1 + " against " + topicVersionId2;
+			logger.severe(msg);
+			throw new Exception(msg);
+		}
+		return DiffUtil.diff(contents1, contents2);
 	}
 
 	/**
