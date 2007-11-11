@@ -32,8 +32,8 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -318,7 +318,7 @@ public class WikiDatabase {
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null WikiUser object to setupSpecialPage");
 		}
-		String contents = Utilities.readSpecialPage(locale, topicName);
+		String contents = WikiUtil.readSpecialPage(locale, topicName);
 		Topic topic = new Topic();
 		topic.setName(topicName);
 		topic.setVirtualWiki(virtualWiki);
@@ -326,7 +326,7 @@ public class WikiDatabase {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 	}
 
 	/**

@@ -85,7 +85,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	private TreeSet retrieveTranslationCodes() throws Exception {
 		TreeSet codes = new TreeSet();
-		File propertyRoot = WikiUtil.getClassLoaderRoot();
+		File propertyRoot = Utilities.getClassLoaderRoot();
 		File[] files = propertyRoot.listFiles();
 		File file;
 		String filename;
@@ -168,7 +168,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), editComment, contents);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
 	}

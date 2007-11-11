@@ -20,13 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
-import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -65,7 +65,7 @@ public class ManageServlet extends JAMWikiServlet {
 		deletePage(request, next, pageInfo, topicName);
 		if (StringUtils.hasText(request.getParameter("manageCommentsPage"))) {
 			String manageCommentsPage = Utilities.decodeFromRequest(request.getParameter("manageCommentsPage"));
-			if (Utilities.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
+			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
@@ -85,7 +85,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = "";
 		topic.setTopicContent(contents);
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true, null);
@@ -106,7 +106,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
@@ -125,7 +125,7 @@ public class ManageServlet extends JAMWikiServlet {
 		undeletePage(request, next, pageInfo, topicName);
 		if (StringUtils.hasText(request.getParameter("manageCommentsPage"))) {
 			String manageCommentsPage = Utilities.decodeFromRequest(request.getParameter("manageCommentsPage"));
-			if (Utilities.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
+			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);
 			}
 		}
@@ -150,7 +150,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true, null);
@@ -166,7 +166,7 @@ public class ManageServlet extends JAMWikiServlet {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String commentsPage = Utilities.extractCommentsLink(topicName);
+		String commentsPage = WikiUtil.extractCommentsLink(topicName);
 		if (!topicName.equals(commentsPage)) {
 			Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, true, null);
 			if (commentsTopic != null && commentsTopic.getDeleted() == topic.getDeleted()) {

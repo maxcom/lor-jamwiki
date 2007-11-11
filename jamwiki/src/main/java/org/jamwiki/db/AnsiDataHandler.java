@@ -47,7 +47,6 @@ import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
@@ -1010,7 +1009,7 @@ public class AnsiDataHandler implements DataHandler {
 			// first rename the source topic with the new destination name
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
-			ParserDocument fromParserDocument = Utilities.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
+			ParserDocument fromParserDocument = WikiUtil.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
 			writeTopic(fromTopic, fromVersion, fromParserDocument, true, conn);
 			// now either create a new topic that is a redirect with the
 			// source topic's old name, or else undelete the new topic and
@@ -1026,14 +1025,14 @@ public class AnsiDataHandler implements DataHandler {
 				toTopic.setTopicId(-1);
 				toTopic.setName(fromTopicName);
 			}
-			String content = Utilities.parserRedirectContent(destination);
+			String content = WikiUtil.parserRedirectContent(destination);
 			toTopic.setRedirectTo(destination);
 			toTopic.setTopicType(Topic.TYPE_REDIRECT);
 			toTopic.setTopicContent(content);
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
-			ParserDocument toParserDocument = Utilities.parserDocument(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
+			ParserDocument toParserDocument = WikiUtil.parserDocument(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
 			writeTopic(toTopic, toVersion, toParserDocument, true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
@@ -1111,7 +1110,7 @@ public class AnsiDataHandler implements DataHandler {
 			// update topic to indicate deleted, add delete topic version.  if
 			// topic has categories or other metadata then parser document is
 			// also needed.
-			ParserDocument parserDocument = Utilities.parserDocument(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
+			ParserDocument parserDocument = WikiUtil.parserDocument(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
 			topic.setDeleteDate(null);
 			this.writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
 		} catch (Exception e) {
@@ -1130,12 +1129,12 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
-			String contents = Utilities.readSpecialPage(locale, topicName);
+			String contents = WikiUtil.readSpecialPage(locale, topicName);
 			Topic topic = this.lookupTopic(virtualWiki, topicName, false, conn);
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+			writeTopic(topic, topicVersion, WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1283,7 +1282,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *  page moves.
 	 * @param parserDocument The parserDocument object that contains a list of
 	 *  links in the topic content, categories, etc.  This parameter may be
-	 *  set with the Utilities.getParserDocument() method.
+	 *  set with the WikiUtil.getParserDocument() method.
 	 * @param transactionObject Database connection or other parameters
 	 *  required for updates.
 	 * @param userVisible A flag indicating whether or not this change should
@@ -1379,8 +1378,8 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
 			int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-			String article = Utilities.extractTopicLink(topicName);
-			String comments = Utilities.extractCommentsLink(topicName);
+			String article = WikiUtil.extractTopicLink(topicName);
+			String comments = WikiUtil.extractCommentsLink(topicName);
 			if (watchlist.containsTopic(topicName)) {
 				// remove from watchlist
 				this.deleteWatchlistEntry(virtualWikiId, article, userId, conn);

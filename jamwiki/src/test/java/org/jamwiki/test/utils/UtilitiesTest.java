@@ -122,8 +122,8 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testExtractCommentsLink() throws Throwable {
 		// FIXME
-//		String result = Utilities.extractCommentsLink("testUtilitiesName");
-//		assertEquals("result", "null:testUtilitiesName", result);
+//		String result = WikiUtil.extractCommentsLink("testWikiUtilName");
+//		assertEquals("result", "null:testWikiUtilName", result);
 	}
 
 	/**
@@ -131,8 +131,8 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testExtractTopicLink() throws Throwable {
 		//TODO
-		String result = Utilities.extractTopicLink("testUtilitiesName");
-		assertSame("result", "testUtilitiesName", result);
+		String result = WikiUtil.extractTopicLink("testWikiUtilName");
+		assertSame("result", "testWikiUtilName", result);
 	}
 
 	/**
@@ -348,9 +348,9 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testFindRedirectedTopic() throws Throwable {
 		Topic parent = new Topic();
-		parent.setRedirectTo("testUtilitiesRedirectTo");
+		parent.setRedirectTo("testWikiUtilRedirectTo");
 		parent.setTopicType(2);
-		Topic result = Utilities.findRedirectedTopic(parent, 8);
+		Topic result = WikiUtil.findRedirectedTopic(parent, 8);
 		assertSame("result", parent, result);
 	}
 
@@ -360,7 +360,7 @@ public class UtilitiesTest extends TestCase {
 	public void testFindRedirectedTopic1() throws Throwable {
 		Topic parent = new Topic();
 		parent.setTopicType(2);
-		Topic result = Utilities.findRedirectedTopic(parent, 100);
+		Topic result = WikiUtil.findRedirectedTopic(parent, 100);
 		assertSame("result", parent, result);
 	}
 
@@ -390,7 +390,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testIsFirstUse() throws Throwable {
 		// FIXME
-//		boolean result = Utilities.isFirstUse();
+//		boolean result = WikiUtil.isFirstUse();
 //		assertTrue("result", result);
 	}
 
@@ -433,43 +433,43 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParse() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
+		String result = WikiUtil.parse(parserInput, null, "testWikiUtilContent");
 		//FIXME assertEquals(null,result); //What is the expected behaviour?
 	}
 	public void testParse1() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
-		assertEquals("paragraph", "<p>testUtilitiesContent\n</p>", result);
+		String result = WikiUtil.parse(parserInput, null, "testWikiUtilContent");
+		assertEquals("paragraph", "<p>testWikiUtilContent\n</p>", result);
 
 	}
 	public void testParse2() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "''it''");
+		String result = WikiUtil.parse(parserInput, null, "''it''");
 		assertEquals("italics", "<p><i>it</i>\n</p>", result);
 	}
 	public void testParse3() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "'''bold'''");
+		String result = WikiUtil.parse(parserInput, null, "'''bold'''");
 		assertEquals("embolden", "<p><b>bold</b>\n</p>", result);
 	}
 
 	public void testParse4() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "'''''bold it'''''");
+		String result = WikiUtil.parse(parserInput, null, "'''''bold it'''''");
 		assertEquals("bold+it", "<p><b><i>bold it</i></b>\n</p>", result);
 	}
 
 	public void testParse5() throws Throwable {
 		ParserInput parserInput = getParserInput();
-		String result = Utilities.parse(parserInput, null, "testUtilitiesContent");
-		assertEquals("result.getContent()", "<p>testUtilitiesContent\n</p>", result);
+		String result = WikiUtil.parse(parserInput, null, "testWikiUtilContent");
+		assertEquals("result.getContent()", "<p>testWikiUtilContent\n</p>", result);
 	}
 
 	private ParserInput getParserInput() {
 		ParserInput parserInput = new ParserInput();
-		parserInput.setTopicName("testUtilitiesTopicName");
-		parserInput.setVirtualWiki("testUtilitiesVirtualWiki");
-		parserInput.setContext("testUtilitiesContext");
+		parserInput.setTopicName("testWikiUtilTopicName");
+		parserInput.setVirtualWiki("testWikiUtilVirtualWiki");
+		parserInput.setContext("testWikiUtilContext");
 		return parserInput;
 	}
 
@@ -485,10 +485,10 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseMinimal() throws Throwable {
 		ParserInput parserInput = new ParserInput();
-		parserInput.setVirtualWiki("testUtilitiesVirtualWiki");
-		parserInput.setTopicName("testUtilitiesTopicName");
-		String result = Utilities.parseMinimal(parserInput, "testUtilitiesContent");
-		assertEquals("result.getContent()", "testUtilitiesContent", result);
+		parserInput.setVirtualWiki("testWikiUtilVirtualWiki");
+		parserInput.setTopicName("testWikiUtilTopicName");
+		String result = WikiUtil.parseMinimal(parserInput, "testWikiUtilContent");
+		assertEquals("result.getContent()", "testWikiUtilContent", result);
 	}
 
 	/**
@@ -516,15 +516,15 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testParserRedirectContent() throws Throwable {
-		String result = Utilities.parserRedirectContent("testUtilitiesTopicName");
-		assertEquals("result", "#REDIRECT [[testUtilitiesTopicName]]", result);
+		String result = WikiUtil.parserRedirectContent("testWikiUtilTopicName");
+		assertEquals("result", "#REDIRECT [[testWikiUtilTopicName]]", result);
 	}
 
 	/**
 	 *
 	 */
 	public void testUserHandlerInstance() throws Throwable {
-		DatabaseUserHandler result = (DatabaseUserHandler) Utilities.userHandlerInstance();
+		DatabaseUserHandler result = (DatabaseUserHandler) WikiUtil.userHandlerInstance();
 		assertTrue("result.isWriteable()", result.isWriteable());
 	}
 
@@ -554,7 +554,7 @@ public class UtilitiesTest extends TestCase {
 //		props.put("homeDir", "testString");
 //		props.put("parser", "org.jamwiki.parser.AbstractParser");
 //		props.put("file-dir-full-path", "8&=\fCcx[|;o\nlAR*JsUiU1,\\\fH/)5 h{3c4Wxc;s");
-//		Vector result = Utilities.validateSystemSettings(props);
+//		Vector result = WikiUtil.validateSystemSettings(props);
 //		assertEquals("result.size()", 5, result.size());
 	}
 
@@ -611,7 +611,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testExtractCommentsLinkThrowsException() throws Throwable {
 		try {
-			Utilities.extractCommentsLink("");
+			WikiUtil.extractCommentsLink("");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Empty topic name ", ex.getMessage());
@@ -623,7 +623,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testExtractTopicLinkThrowsException() throws Throwable {
 		try {
-			Utilities.extractTopicLink("");
+			WikiUtil.extractTopicLink("");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Empty topic name ", ex.getMessage());
@@ -647,11 +647,11 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testFindRedirectedTopicThrowsClassNotFoundException() throws Throwable {
 		Topic parent = new Topic();
-		parent.setRedirectTo("testUtilitiesRedirectTo");
+		parent.setRedirectTo("testWikiUtilRedirectTo");
 		parent.setTopicType(2);
-		parent.setVirtualWiki("testUtilitiesVirtualWiki");
+		parent.setVirtualWiki("testWikiUtilVirtualWiki");
 		try {
-			Utilities.findRedirectedTopic(parent, 8);
+			WikiUtil.findRedirectedTopic(parent, 8);
 			fail("Expected ClassNotFoundException to be thrown");
 		} catch (ClassNotFoundException ex) {
 			assertTrue("Test completed without Exception", true);
@@ -689,7 +689,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testGetClassLoaderFileThrowsException() throws Throwable {
 		try {
-			WikiUtil.getClassLoaderFile("testUtilitiesFilename");
+			Utilities.getClassLoaderFile("testUtilitiesFilename");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Unable to find testUtilitiesFilename", ex.getMessage());
@@ -748,7 +748,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseMetadataThrowsException() throws Throwable {
 		try {
-			Utilities.parseMetadata(new ParserInput(), "testUtilitiesContent");
+			WikiUtil.parseMetadata(new ParserInput(), "testWikiUtilContent");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
@@ -760,7 +760,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseMetadataThrowsNullPointerException() throws Throwable {
 		try {
-			Utilities.parseMetadata(null, "testUtilitiesContent");
+			WikiUtil.parseMetadata(null, "testWikiUtilContent");
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -786,7 +786,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseThrowsException() throws Throwable {
 		try {
-			Utilities.parse(new ParserInput(), null, "testUtilitiesContent");
+			WikiUtil.parse(new ParserInput(), null, "testWikiUtilContent");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
@@ -798,7 +798,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParseThrowsNullPointerException() throws Throwable {
 		try {
-			Utilities.parse(null, null, "testUtilitiesContent");
+			WikiUtil.parse(null, null, "testWikiUtilContent");
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -810,7 +810,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testParserDocumentThrowsException() throws Throwable {
 		try {
-			Utilities.parserDocument("testUtilitiesContent", null, "testUtilitiesTopicName");
+			WikiUtil.parserDocument("testWikiUtilContent", null, "testWikiUtilTopicName");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
@@ -859,7 +859,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testReadSpecialPageThrowsFileNotFoundException() throws Throwable {
 		try {
-			Utilities.readSpecialPage(null, "testUtilitiesPageName");
+			WikiUtil.readSpecialPage(null, "testWikiUtilPageName");
 			fail("Expected FileNotFoundException to be thrown");
 		} catch (FileNotFoundException ex) {
 			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
@@ -871,7 +871,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testReadSpecialPageThrowsFileNotFoundException1() throws Throwable {
 		try {
-			Utilities.readSpecialPage(Locale.GERMAN, "testUtilitiesPageName");
+			WikiUtil.readSpecialPage(Locale.GERMAN, "testWikiUtilPageName");
 			fail("Expected FileNotFoundException to be thrown");
 		} catch (FileNotFoundException ex) {
 			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
@@ -883,7 +883,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testReadSpecialPageThrowsFileNotFoundException2() throws Throwable {
 		try {
-			Utilities.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testUtilitiesPageName");
+			WikiUtil.readSpecialPage(Locale.SIMPLIFIED_CHINESE, "testWikiUtilPageName");
 			fail("Expected FileNotFoundException to be thrown");
 		} catch (FileNotFoundException ex) {
 			assertEquals("ex.getClass()", FileNotFoundException.class, ex.getClass());
@@ -951,7 +951,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
 		try {
-			WikiUtil.validateTopicName("testUtilities\rName");
+			WikiUtil.validateTopicName("testWikiUtil\rName");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
@@ -964,7 +964,7 @@ public class UtilitiesTest extends TestCase {
 	 */
 	public void testValidateUserNameThrowsWikiException() throws Throwable {
 		try {
-			WikiUtil.validateUserName("testUtilities\rName");
+			WikiUtil.validateUserName("testWikiUtil\rName");
 			fail("Expected WikiException to be thrown");
 		} catch (WikiException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());

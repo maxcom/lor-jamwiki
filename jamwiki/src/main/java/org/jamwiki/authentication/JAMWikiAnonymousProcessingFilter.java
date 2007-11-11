@@ -27,8 +27,8 @@ import org.acegisecurity.userdetails.memory.UserAttribute;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * This class allows anonymous users to be provided default roles from the
@@ -67,7 +67,7 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 	 */
 	private void initRoles() {
 		try {
-			if (Utilities.isFirstUse() || Utilities.isUpgrade()) {
+			if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
 				// wiki is not yet setup
 				return;
 			}

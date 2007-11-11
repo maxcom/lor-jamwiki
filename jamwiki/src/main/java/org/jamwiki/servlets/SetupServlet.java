@@ -32,7 +32,6 @@ import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
@@ -58,7 +57,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (!Utilities.isFirstUse()) {
+		if (!WikiUtil.isFirstUse()) {
 			throw new WikiException(new WikiMessage("setup.error.notrequired"));
 		}
 		String function = (request.getParameter("function") == null) ? request.getParameter("override") : request.getParameter("function");

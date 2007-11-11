@@ -24,6 +24,7 @@ import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -61,7 +62,7 @@ public class JAMWikiLocaleInterceptor extends LocaleChangeInterceptor {
 	private Locale retrieveUserLocale(HttpServletRequest request) throws ServletException {
 		Locale locale = null;
 		try {
-			WikiUser user = Utilities.currentUser();
+			WikiUser user = WikiUtil.currentUser();
 			locale = Utilities.buildLocale(user.getDefaultLocale());
 		} catch (AuthenticationCredentialsNotFoundException e) {
 			// do nothing, just use a default locale

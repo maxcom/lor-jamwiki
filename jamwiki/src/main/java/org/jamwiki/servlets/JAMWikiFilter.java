@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * Perform filtering of all Wiki page requests, including setting the
@@ -104,7 +104,7 @@ public class JAMWikiFilter implements Filter {
 	 * Determine whether or not to redirect to the setup page.
 	 */
 	private boolean redirectSetup(HttpServletRequest request) throws Exception {
-		if (!Utilities.isFirstUse()) {
+		if (!WikiUtil.isFirstUse()) {
 			return false;
 		}
 		if (request.getRequestURI().toLowerCase().endsWith(".css")) {
@@ -123,7 +123,7 @@ public class JAMWikiFilter implements Filter {
 	 * Determine whether or not to redirect to the upgrade page.
 	 */
 	private boolean redirectUpgrade(HttpServletRequest request) throws Exception {
-		if (!Utilities.isUpgrade()) {
+		if (!WikiUtil.isUpgrade()) {
 			return false;
 		}
 		if (request.getRequestURI().toLowerCase().endsWith(".css")) {

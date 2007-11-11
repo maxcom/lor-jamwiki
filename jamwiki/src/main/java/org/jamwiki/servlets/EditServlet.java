@@ -32,7 +32,6 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -113,7 +112,7 @@ public class EditServlet extends JAMWikiServlet {
 			return false;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		if (user.hasRole(Role.ROLE_USER)) {
 			message += user.getUsername() + " / ";
 		}
@@ -186,7 +185,7 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
@@ -292,7 +291,7 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
@@ -300,9 +299,9 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserDocument parserDocument = Utilities.parseMetadata(parserInput, contents);
+		ParserDocument parserDocument = WikiUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving
-		contents = Utilities.parseMinimal(parserInput, contents);
+		contents = WikiUtil.parseMinimal(parserInput, contents);
 		topic.setTopicContent(contents);
 		if (StringUtils.hasText(parserDocument.getRedirect())) {
 			// set up a redirect

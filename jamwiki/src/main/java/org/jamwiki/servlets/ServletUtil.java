@@ -21,11 +21,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import net.sf.ehcache.Element;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -111,7 +109,7 @@ public class ServletUtil {
 	 */
 	private static LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		try {
@@ -127,8 +125,8 @@ public class ServletUtil {
 			} else if (pageInfo.getSpecial()) {
 				links.put(pageName, new WikiMessage("tab.common.special"));
 			} else {
-				String article = Utilities.extractTopicLink(pageName);
-				String comments = Utilities.extractCommentsLink(pageName);
+				String article = WikiUtil.extractTopicLink(pageName);
+				String comments = WikiUtil.extractCommentsLink(pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
@@ -177,7 +175,7 @@ public class ServletUtil {
 	 */
 	private static LinkedHashMap buildUserMenu() {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
 			links.put("Special:Login", new WikiMessage("common.login"));
 			links.put("Special:Account", new WikiMessage("usermenu.register"));
@@ -242,7 +240,7 @@ public class ServletUtil {
 				parserInput.setLocale(locale);
 				parserInput.setVirtualWiki(virtualWiki);
 				parserInput.setTopicName(topicName);
-				content = Utilities.parse(parserInput, null, content);
+				content = WikiUtil.parse(parserInput, null, content);
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
@@ -612,7 +610,7 @@ public class ServletUtil {
 		}
 		WikiUtil.validateTopicName(topic.getName());
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
-			Topic child = Utilities.findRedirectedTopic(topic, 0);
+			Topic child = WikiUtil.findRedirectedTopic(topic, 0);
 			if (!child.getName().equals(topic.getName())) {
 				pageInfo.setRedirectName(topic.getName());
 				pageTitle = new WikiMessage("topic.title", child.getName());
@@ -621,7 +619,7 @@ public class ServletUtil {
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			sectionEdit = false;
 		}
@@ -634,7 +632,7 @@ public class ServletUtil {
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserDocument parserDocument = new ParserDocument();
-		String content = Utilities.parse(parserInput, parserDocument, topic.getTopicContent());
+		String content = WikiUtil.parse(parserInput, parserDocument, topic.getTopicContent());
 		// FIXME - the null check should be unnecessary
 		if (parserDocument != null && parserDocument.getCategories().size() > 0) {
 			LinkedHashMap categories = new LinkedHashMap();

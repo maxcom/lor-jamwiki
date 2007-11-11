@@ -27,7 +27,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
@@ -123,7 +122,7 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i=0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					Collection roles = buildRoleArray(userId, -1, userRoles);
-					if (userId == Utilities.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
+					if (userId == WikiUtil.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}

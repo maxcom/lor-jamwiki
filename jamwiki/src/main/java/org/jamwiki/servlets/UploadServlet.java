@@ -125,7 +125,7 @@ public class UploadServlet extends JAMWikiServlet {
 			return true;
 		}
 		extension = extension.toLowerCase();
-		List list = Utilities.retrieveUploadFileList();
+		List list = WikiUtil.retrieveUploadFileList();
 		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
 			return !list.contains(extension);
 		} else if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
@@ -213,7 +213,7 @@ public class UploadServlet extends JAMWikiServlet {
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(contents);
 		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		Integer authorId = null;
 		if (user.getUserId() > 0) {
 			authorId = new Integer(user.getUserId());
@@ -235,7 +235,7 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setMimeType(contentType);
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, Utilities.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getDataHandler().writeFile(wikiFile, wikiFileVersion, null);
 		ServletUtil.redirect(next, virtualWiki, topicName);

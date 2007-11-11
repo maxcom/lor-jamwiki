@@ -37,6 +37,7 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -302,7 +303,7 @@ public class TemplateTag implements ParserTag {
 		}
 		// make sure template was not redirected
 		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
-			templateTopic = Utilities.findRedirectedTopic(templateTopic, 0);
+			templateTopic = WikiUtil.findRedirectedTopic(templateTopic, 0);
 			name = templateTopic.getName();
 		}
 		if (templateTopic != null && templateTopic.getTopicType() == Topic.TYPE_REDIRECT) {
@@ -621,13 +622,13 @@ public class TemplateTag implements ParserTag {
 			String namespace = wikiLink.getNamespace();
 			return Utilities.encodeForURL(NamespaceHandler.getMainNamespace(namespace));
 		} else if (name.equals(MAGIC_TALK_PAGE_NAME)) {
-			return Utilities.extractCommentsLink(parserInput.getTopicName());
+			return WikiUtil.extractCommentsLink(parserInput.getTopicName());
 		} else if (name.equals(MAGIC_TALK_PAGE_NAME_E)) {
-			return Utilities.encodeForURL(Utilities.extractCommentsLink(parserInput.getTopicName()));
+			return Utilities.encodeForURL(WikiUtil.extractCommentsLink(parserInput.getTopicName()));
 		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME) || name.equals(MAGIC_ARTICLE_PAGE_NAME)) {
-			return Utilities.extractTopicLink(parserInput.getTopicName());
+			return WikiUtil.extractTopicLink(parserInput.getTopicName());
 		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
-			return Utilities.encodeForURL(Utilities.extractTopicLink(parserInput.getTopicName()));
+			return Utilities.encodeForURL(WikiUtil.extractTopicLink(parserInput.getTopicName()));
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
 		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);

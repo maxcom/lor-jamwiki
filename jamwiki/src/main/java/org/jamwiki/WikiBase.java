@@ -24,7 +24,7 @@ import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.PseudoTopicHandler;
-import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
@@ -116,8 +116,8 @@ public class WikiBase {
 	 * @throws Exception If the instance cannot be instantiated.
 	 */
 	private WikiBase() throws Exception {
-		WikiBase.dataHandler = Utilities.dataHandlerInstance();
-		WikiBase.userHandler = Utilities.userHandlerInstance();
+		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
+		WikiBase.userHandler = WikiUtil.userHandlerInstance();
 		WikiBase.searchEngine = new LuceneSearchEngine();
 	}
 

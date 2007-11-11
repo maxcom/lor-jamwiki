@@ -32,7 +32,6 @@ import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -58,7 +57,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 * @return A <code>ModelAndView</code> object to be handled by the rest of the Spring framework.
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (!Utilities.isUpgrade()) {
+		if (!WikiUtil.isUpgrade()) {
 			throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
 		}
 		String function = request.getParameter("function");
@@ -192,7 +191,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	 */
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
-			WikiUser user = Utilities.currentUser();
+			WikiUser user = WikiUtil.currentUser();
 			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
 			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
 				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();

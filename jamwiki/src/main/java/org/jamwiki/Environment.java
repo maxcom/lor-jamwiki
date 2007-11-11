@@ -26,7 +26,7 @@ import java.util.Properties;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
+import org.jamwiki.utils.Utilities;
 
 /**
  * The <code>Environment</code> class is instantiated as a singleton to
@@ -352,13 +352,13 @@ public class Environment {
 	private static File retrievePropertyFile(String filename) {
 		File file = null;
 		try {
-			file = WikiUtil.getClassLoaderFile(filename);
+			file = Utilities.getClassLoaderFile(filename);
 			return file; //NOPMD
 		} catch (Exception e) {
 			// NOPMD file might not exist
 		}
 		try {
-			file = new File(WikiUtil.getClassLoaderRoot(), filename);
+			file = new File(Utilities.getClassLoaderRoot(), filename);
 			return file; //NOPMD
 		} catch (Exception e) {
 			logger.severe("Error while searching for resource " + filename, e);

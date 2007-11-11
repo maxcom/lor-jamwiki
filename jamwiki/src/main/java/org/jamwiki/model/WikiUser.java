@@ -25,8 +25,8 @@ import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.userdetails.UserDetails;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -69,7 +69,7 @@ public class WikiUser implements UserDetails {
 	 */
 	public WikiUser(String username) throws Exception {
 		this.username = username;
-		if (Utilities.isFirstUse() || Utilities.isUpgrade()) {
+		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
 			return;
 		}
 		this.addDefaultGroupRoles();

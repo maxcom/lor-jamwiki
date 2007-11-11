@@ -20,14 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
-import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -43,7 +43,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
@@ -73,8 +73,8 @@ public class MoveServlet extends JAMWikiServlet {
 		}
 		if (StringUtils.hasText(request.getParameter("moveCommentsPage"))) {
 			String moveCommentsPage = Utilities.decodeFromRequest(request.getParameter("moveCommentsPage"));
-			String commentsDestination = Utilities.extractCommentsLink(moveDestination);
-			if (Utilities.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
+			String commentsDestination = WikiUtil.extractCommentsLink(moveDestination);
+			if (WikiUtil.isCommentsPage(moveCommentsPage) && !moveCommentsPage.equals(topicName) && !commentsDestination.equals(moveDestination)) {
 				if (!movePage(request, next, pageInfo, moveCommentsPage, commentsDestination)) {
 					return;
 				}
@@ -98,7 +98,7 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, user)) {
 			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));
@@ -134,7 +134,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (topic == null) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
-		String commentsPage = Utilities.extractCommentsLink(topicName);
+		String commentsPage = WikiUtil.extractCommentsLink(topicName);
 		Topic commentsTopic = WikiBase.getDataHandler().lookupTopic(virtualWiki, commentsPage, false, null);
 		if (commentsTopic != null) {
 			// add option to also move comments page

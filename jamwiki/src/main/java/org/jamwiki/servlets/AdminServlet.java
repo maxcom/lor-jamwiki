@@ -83,7 +83,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = Utilities.currentUser();
+		WikiUser user = WikiUtil.currentUser();
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
 			if (StringUtils.hasText(request.getParameter("virtualWikiId"))) {
@@ -205,7 +205,7 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUser user = Utilities.currentUser();
+				WikiUser user = WikiUtil.currentUser();
 				WikiBase.reset(request.getLocale(), user);
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
