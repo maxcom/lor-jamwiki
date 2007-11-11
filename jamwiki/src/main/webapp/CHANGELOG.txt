@@ -9,6 +9,7 @@ New Features:
   * Upgrade to JSTL 1.1.2 (from 1.0.6).
   * Make the valid login, topic name, and role name patterns configurable.
   * Replace several custom methods with the org.apache.commons.lang equivalent.
+  * Make the search engine instance a configurable parameter.
 
 Bugfixes:
 

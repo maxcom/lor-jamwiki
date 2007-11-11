@@ -147,6 +147,18 @@ function onRSS() {
 	<span class="formelement"><textarea class="medium" name="<%= Environment.PROP_BASE_META_DESCRIPTION %>" id="<%= Environment.PROP_BASE_META_DESCRIPTION %>"><c:out value="${props[PROP_BASE_META_DESCRIPTION]}" /></textarea></span>
 	<div class="formhelp"><f:message key="admin.help.metadescription" /></div>
 </div>
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="general" />">
+	<span class="formcaption"><label for="<%= Environment.PROP_BASE_SEARCH_ENGINE %>"><f:message key="admin.caption.searchengine" /></label></span>
+	<c:set var="PROP_BASE_SEARCH_ENGINE"><%= Environment.PROP_BASE_SEARCH_ENGINE %></c:set>
+	<span class="formelement">
+		<select name="<%= Environment.PROP_BASE_SEARCH_ENGINE %>" id="<%= Environment.PROP_BASE_SEARCH_ENGINE %>">
+		<c:set var="PROP_BASE_SEARCH_ENGINE"><%= Environment.PROP_BASE_SEARCH_ENGINE %></c:set>
+		<c:forEach items="${searchEngines}" var="searchEngine">
+		<option value="<c:out value="${searchEngine.clazz}" />"<c:if test="${props[PROP_BASE_SEARCH_ENGINE] == searchEngine.clazz}"> selected="selected"</c:if>><c:if test="${!empty searchEngine.key}"><f:message key="${searchEngine.key}" /></c:if><c:if test="${empty searchEngine.key}"><c:out value="${searchEngine.name}" /></c:if><c:if test="${searchEngine.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		</c:forEach>
+		</select>
+	</span>
+</div>
 </fieldset>
 <!-- END GENERAL SETTINGS -->
 

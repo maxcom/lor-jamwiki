@@ -47,6 +47,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -738,6 +739,23 @@ public class WikiUtil {
 			// ignore
 		}
 		return request.getLocale();
+	}
+
+	/**
+	 * Utility method to retrieve an instance of the current search engine.
+	 *
+	 * @return An instance of the current search engine.
+	 * @throws Exception Thrown if a user handler instance can not be
+	 *  instantiated.
+	 */
+	public static SearchEngine searchEngineInstance() throws Exception {
+		String searchEngineClass = Environment.getValue(Environment.PROP_BASE_SEARCH_ENGINE);
+		logger.fine("Search engine: " + searchEngineClass);
+		Class clazz = ClassUtils.forName(searchEngineClass);
+		Class[] parameterTypes = new Class[0];
+		Constructor constructor = clazz.getConstructor(parameterTypes);
+		Object[] initArgs = new Object[0];
+		return (SearchEngine)constructor.newInstance(initArgs);
 	}
 
 	/**

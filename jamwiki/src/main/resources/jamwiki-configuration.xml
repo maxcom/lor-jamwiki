@@ -115,6 +115,29 @@
 <!--
    ====================================================================
 
+   Search engines that can be used with JAMWiki:
+
+   name  - A human-readable name for the search engine.
+   class - The fully qualified class name for the search engine class.
+   key   - The ApplicationResources translation key for the search engine
+           name.  If this value is not specified then the "name"
+           value is used when displaying the authentication mechanism name.
+   state - An optional parameter that can be set to "experimental" to warn
+           site administrators that a search engine is a work-in-progress.
+
+   ======================================================================
+-->
+<search-engines>
+	<search-engine>
+		<name>Lucene</name>
+		<class>org.jamwiki.search.LuceneSearchEngine</class>
+		<key>admin.searchengine.lucene</key>
+	</search-engine>
+</search-engines>
+
+<!--
+   ====================================================================
+
    Namespaces that can be used with JAMWiki:
 
    name     - The internal-use-only name for the namespace.  WARNING: Do not

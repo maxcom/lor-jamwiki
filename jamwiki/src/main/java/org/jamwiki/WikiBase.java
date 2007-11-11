@@ -20,7 +20,6 @@ import java.util.Locale;
 import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.search.LuceneSearchEngine;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.PseudoTopicHandler;
@@ -76,6 +75,8 @@ public class WikiBase {
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
 	public static final String PERSISTENCE_INTERNAL = "INTERNAL";
+	/** Lucene search engine class */
+	public static final String SEARCH_ENGINE_LUCENE = "org.jamwiki.search.LuceneSearchEngine";
 	/** Root directory within the WAR distribution that contains the default topic pages. */
 	public static final String SPECIAL_PAGE_DIR = "pages";
 	/** Name of the default starting points topic. */
@@ -118,7 +119,7 @@ public class WikiBase {
 	private WikiBase() throws Exception {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
 		WikiBase.userHandler = WikiUtil.userHandlerInstance();
-		WikiBase.searchEngine = new LuceneSearchEngine();
+		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
 
 	/**

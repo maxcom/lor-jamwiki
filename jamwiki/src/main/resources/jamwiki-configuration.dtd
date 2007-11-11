@@ -1,5 +1,5 @@
 
-<!ELEMENT configuration (parsers?, user-handlers?, data-handlers?, namespaces*, pseudotopics*)>
+<!ELEMENT configuration (parsers?, user-handlers?, data-handlers?, search-engines?, namespaces*, pseudotopics*)>
 
 <!ELEMENT parsers (parser*)>
 <!ELEMENT parser (name, class, key?, state?)>
@@ -9,6 +9,9 @@
 
 <!ELEMENT data-handlers (data-handler*)>
 <!ELEMENT data-handler (name, class, key?, state?)>
+
+<!ELEMENT search-engines (search-engine*)>
+<!ELEMENT search-engine (name, class, key?, state?)>
 
 <!ELEMENT namespaces (namespace*)>
 <!ELEMENT namespace (name, main, comments)>

@@ -133,6 +133,7 @@ public class AdminServlet extends JAMWikiServlet {
 			setBooleanProperty(props, request, Environment.PROP_TOPIC_USE_PREVIEW);
 			setBooleanProperty(props, request, Environment.PROP_PRINT_NEW_WINDOW);
 			setBooleanProperty(props, request, Environment.PROP_EXTERNAL_LINK_NEW_WINDOW);
+			setProperty(props, request, Environment.PROP_BASE_SEARCH_ENGINE);
 			setProperty(props, request, Environment.PROP_PARSER_CLASS);
 			setBooleanProperty(props, request, Environment.PROP_PARSER_TOC);
 			setProperty(props, request, Environment.PROP_PARSER_TOC_DEPTH);
@@ -301,6 +302,8 @@ public class AdminServlet extends JAMWikiServlet {
 		next.addObject("userHandlers", userHandlers);
 		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
 		next.addObject("dataHandlers", dataHandlers);
+		Collection searchEngines = WikiConfiguration.getInstance().getSearchEngines();
+		next.addObject("searchEngines", searchEngines);
 		Collection parsers = WikiConfiguration.getInstance().getParsers();
 		next.addObject("parsers", parsers);
 		LinkedHashMap poolExhaustedMap = new LinkedHashMap();

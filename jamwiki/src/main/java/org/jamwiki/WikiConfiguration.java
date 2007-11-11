@@ -49,6 +49,7 @@ public class WikiConfiguration {
 	private HashMap namespaces = null;
 	private Vector parsers = null;
 	private Vector pseudotopics = null;
+	private Vector searchEngines = null;
 	private Vector userHandlers = null;
 
 	/** Name of the configuration file. */
@@ -68,6 +69,8 @@ public class WikiConfiguration {
 	private static final String XML_PARSER_ROOT = "parsers";
 	private static final String XML_PSEUDOTOPIC = "pseudotopic";
 	private static final String XML_PSEUDOTOPIC_ROOT = "pseudotopics";
+	private static final String XML_SEARCH_ENGINE = "search-engine";
+	private static final String XML_SEARCH_ENGINE_ROOT = "search-engines";
 	private static final String XML_USER_HANDLER = "user-handler";
 	private static final String XML_USER_HANDLER_ROOT = "user-handlers";
 
@@ -119,6 +122,13 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
+	public Collection getSearchEngines() {
+		return this.searchEngines;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getUserHandlers() {
 		return this.userHandlers;
 	}
@@ -132,6 +142,7 @@ public class WikiConfiguration {
 			this.namespaces = new HashMap();
 			this.parsers = new Vector();
 			this.pseudotopics = new Vector();
+			this.searchEngines = new Vector();
 			this.userHandlers = new Vector();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
@@ -144,6 +155,8 @@ public class WikiConfiguration {
 					this.parsers = this.parseConfigurationObjects(child, XML_PARSER);
 				} else if (child.getNodeName().equals(XML_DATA_HANDLER_ROOT)) {
 					this.dataHandlers = this.parseConfigurationObjects(child, XML_DATA_HANDLER);
+				} else if (child.getNodeName().equals(XML_SEARCH_ENGINE_ROOT)) {
+					this.searchEngines = this.parseConfigurationObjects(child, XML_SEARCH_ENGINE);
 				} else if (child.getNodeName().equals(XML_USER_HANDLER_ROOT)) {
 					this.userHandlers = this.parseConfigurationObjects(child, XML_USER_HANDLER);
 				} else if (child.getNodeName().equals(XML_NAMESPACE_ROOT)) {
