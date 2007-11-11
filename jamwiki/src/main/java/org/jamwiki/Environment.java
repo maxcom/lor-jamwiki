@@ -197,7 +197,7 @@ public class Environment {
 		defaults.setProperty(PROP_FILE_BLACKLIST, "bat,bin,exe,htm,html,js,jsp,php,sh");
 		defaults.setProperty(PROP_FILE_BLACKLIST_TYPE, String.valueOf(WikiBase.UPLOAD_BLACKLIST));
 		defaults.setProperty(PROP_FILE_DIR_FULL_PATH, Environment.retrieveDefaultUploadDirectory());
-		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, "/upload/");
+		defaults.setProperty(PROP_FILE_DIR_RELATIVE_PATH, Environment.retrieveDefaultRelativeUploadDirectory());
 		// size is in bytes
 		defaults.setProperty(PROP_FILE_MAX_FILE_SIZE, "2000000");
 		defaults.setProperty(PROP_FILE_WHITELIST, "bmp,gif,jpeg,jpg,pdf,png,properties,svg,txt,zip");
@@ -345,6 +345,20 @@ public class Environment {
 			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
 		}
 		return properties;
+	}
+
+	/**
+	 * Return the default relative upload directory (/context/upload/) as a String.
+	 *
+	 * @return The default relative upload directory (/context/upload/) as a String.
+	 */
+	private static String retrieveDefaultRelativeUploadDirectory() {
+		try {
+			return "/" + Utilities.getWebappRoot().getName() + "/upload/";
+		} catch (Exception e) {
+			logger.severe("Failure while trying to retrieve default file upload directory", e);
+		}
+		return "";
 	}
 
 	/**
