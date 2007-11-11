@@ -37,7 +37,13 @@
 			</releases>
 		</repository>
 	</repositories>
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jflex</id>
+			<name>JFlex repository</name>
+			<url>http://jflex.sourceforge.net/repo/</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.acegisecurity</groupId>
@@ -275,12 +281,6 @@
 		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
 	</contributors>
-	<properties>
-		<jflex.dir>${basedir}/src/lex</jflex.dir>
-		<jflex.output>
-			${project.build.sourceDirectory}/org/jamwiki/parser/jflex
-		</jflex.output>
-	</properties>
 	<build>
 		<defaultGoal>package</defaultGoal>
 		<plugins>
@@ -303,62 +303,16 @@
 	        	</configuration>
     		</plugin>
 			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
+				<groupId>de.jflex.maven.plugin</groupId>
+				<artifactId>maven-jflex-plugin</artifactId>
+				<version>0.2</version>
 				<executions>
 					<execution>
-						<id>clean-flex</id>
-						<phase>clean</phase>
-						<configuration>
-							<tasks>
-								<delete>
-									<fileset dir="${basedir}/src/main/java/org/jamwiki/parser/jflex">
-										<include name="JAMWikiPreProcessor.java" />
-										<include name="JAMWikiProcessor.java" />
-										<include name="JAMWikiPostProcessor.java" />
-										<include name="JAMWikiSpliceProcessor.java" />
-									</fileset>
-								</delete>
-							</tasks>
-						</configuration>
 						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>generate-flex</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<tasks>
-								<taskdef
-									classname="JFlex.anttask.JFlexTask" name="jflex"
-									description="Create lexers for default lex plugin">
-								</taskdef>
-								<jflex
-									file="${jflex.dir}/jamwiki-preprocessor.jflex"
-									destdir="${project.build.sourceDirectory}" />
-								<jflex
-									file="${jflex.dir}/jamwiki-processor.jflex"
-									destdir="${project.build.sourceDirectory}" />
-								<jflex
-									file="${jflex.dir}/jamwiki-postprocessor.jflex"
-									destdir="${project.build.sourceDirectory}" />
-								<jflex
-									file="${jflex.dir}/jamwiki-spliceprocessor.jflex"
-									destdir="${project.build.sourceDirectory}" />
-							</tasks>
-						</configuration>
-						<goals>
-							<goal>run</goal>
+							<goal>generate</goal>
 						</goals>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-		    	  <groupId>de.jflex</groupId>
-    			  <artifactId>jflex</artifactId>
-		    	  <version>1.4.1</version>
-			    </dependency>
-			    </dependencies>
 			</plugin>
 
 			<plugin>
