@@ -22,6 +22,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.util.StringUtils;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;references /&gt;</code>.
@@ -37,6 +38,9 @@ public class WikiReferencesTag implements ParserTag {
 		if (mode < JFlexParser.MODE_LAYOUT) {
 			return raw;
 		}
+		// retrieve all references, then loop through in order, building an HTML
+		// reference list for display.  While looping, if there are multiple citations
+		// for the same reference then include those in the output as well.
 		Vector references = this.retrieveReferences(parserInput);
 		String html = (!references.isEmpty()) ? "<ol class=\"references\">" : "";
 		while (!references.isEmpty()) {
@@ -50,6 +54,9 @@ public class WikiReferencesTag implements ParserTag {
 				WikiReference temp = (WikiReference)references.elementAt(pos);
 				if (temp.getName() != null && reference.getName() != null && reference.getName().equals(temp.getName())) {
 					citations.add(temp);
+					if (!StringUtils.hasText(reference.getContent()) && StringUtils.hasText(temp.getContent())) {
+						reference.setContent(temp.getContent());
+					}
 					references.removeElementAt(pos);
 					continue;
 				}

@@ -11,6 +11,8 @@ New Features:
   * Replace several custom methods with the org.apache.commons.lang equivalent.
   * During setup, create a default directory to use for image and other file
     uploads to hopefully eliminate some confusion.
+  * When using multiple references to the same source, use the first non-empty
+    reference definition instead of using the first reference definition.
   * Make the search engine instance a configurable parameter.
 
 Bugfixes:

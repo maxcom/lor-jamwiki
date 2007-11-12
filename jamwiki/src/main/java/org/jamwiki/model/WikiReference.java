@@ -29,7 +29,7 @@ public class WikiReference {
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiReference.class.getName());
 
 	private final int citation;
-	private final String content;
+	private String content;
 	private final int count;
 	private final String name;
 
@@ -55,6 +55,13 @@ public class WikiReference {
 	 */
 	public String getContent() {
 		return this.content;
+	}
+
+	/**
+	 *
+	 */
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	/**
