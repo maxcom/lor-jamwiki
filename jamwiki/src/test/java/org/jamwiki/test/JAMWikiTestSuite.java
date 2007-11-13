@@ -53,6 +53,7 @@ public class JAMWikiTestSuite extends TestCase {
 		s.addTestSuite(org.jamwiki.test.utils.WikiLinkTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.WikiLogFormatterTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.WikiLoggerTest.class);
+		s.addTestSuite(org.jamwiki.test.utils.WikiUtilTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.XMLTopicFactoryTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.XMLUtilTest.class);
 		s.addTestSuite(org.jamwiki.test.utils.TiddlyWikiParserTest.class);
