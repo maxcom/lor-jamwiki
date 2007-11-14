@@ -50,14 +50,6 @@ body, input, select {
 </head>
 <body>
 
-<script type="text/javascript">
-<!--
-function confirmSubmit() {
-	return confirm("<f:message key="common.confirm" />");
-}
-// -->
-</script>
-
 <c:if test="${!empty message}">
 <p class="green"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message></p>
 </c:if>
@@ -79,7 +71,7 @@ function confirmSubmit() {
 	<td><label for="loginPassword"><f:message key="login.password"/></label></td>
 	<td><input type="password" name="password" id="loginPassword" /></td>
 </tr>
-<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" onclick="return confirmSubmit()" /></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" /></td></tr>
 </table>
 </form>
 </c:if>
