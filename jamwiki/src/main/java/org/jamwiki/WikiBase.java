@@ -117,9 +117,7 @@ public class WikiBase {
 	 * @throws Exception If the instance cannot be instantiated.
 	 */
 	private WikiBase() throws Exception {
-		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
-		WikiBase.userHandler = WikiUtil.userHandlerInstance();
-		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
+		this.reload();
 	}
 
 	/**
@@ -175,6 +173,16 @@ public class WikiBase {
 	 */
 	public static UserHandler getUserHandler() {
 		return WikiBase.userHandler;
+	}
+
+	/**
+	 * Reload the data handler, user handler, and other basic wiki
+	 * data structures.
+	 */
+	public static void reload() throws Exception {
+		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
+		WikiBase.userHandler = WikiUtil.userHandlerInstance();
+		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
 
 	/**

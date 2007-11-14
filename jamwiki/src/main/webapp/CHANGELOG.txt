@@ -24,6 +24,8 @@ Bugfixes:
     in the TOC.  Fix contributed by Louis Martin.
   * Fix issue where search terms were double-escaped when no search results
     were found.
+  * Reload data handler and other values after upgrade to (hopefully) avoid
+    problems with incorrect data handler instances.
 
 Translation Updates:
 

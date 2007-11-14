@@ -162,6 +162,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 		if (success) {
 			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 			Environment.saveProperties();
+			// reset data handler and other instances.  this probably hides a bug
+			// elsewhere since no reset should be needed, but it's anyone's guess
+			// where that might be...
+			WikiBase.reload();
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(WikiBase.DEFAULT_VWIKI);
 			WikiLink wikiLink = new WikiLink();
 			wikiLink.setDestination(virtualWiki.getDefaultTopicName());
