@@ -30,6 +30,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Polish translations (dlpa).
+  * Updated Spanish translations (AngelPinazo).
 
 
 0.6.1
