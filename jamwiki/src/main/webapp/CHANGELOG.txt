@@ -15,6 +15,7 @@ New Features:
     reference definition instead of using the first reference definition.
   * Make the search engine instance a configurable parameter.
   * Remove the unnecessary "Are you sure" prompt when upgrading.
+  * Use JFlex Maven plugin instead of Ant task (RegisDecamps).
 
 Bugfixes:
 
