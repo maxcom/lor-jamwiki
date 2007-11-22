@@ -30,6 +30,7 @@ Bugfixes:
 
 Translation Updates:
 
+  * Updated Chinese translations (hfl).
   * Updated Polish translations (dlpa).
   * Updated Spanish translations (AngelPinazo).
 
