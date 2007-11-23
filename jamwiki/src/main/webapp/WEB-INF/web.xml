@@ -57,6 +57,10 @@
 		<servlet-name>jamwiki</servlet-name>
 		<url-pattern>/en/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>jamwiki</servlet-name>
+		<url-pattern>/ru/*</url-pattern>
+	</servlet-mapping>
 	<!-- virtual wiki mapping(s) -->
 	<servlet-mapping>
 		<servlet-name>jamwiki</servlet-name>
