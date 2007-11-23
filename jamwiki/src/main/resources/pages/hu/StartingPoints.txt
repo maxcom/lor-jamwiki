@@ -1,0 +1,18 @@
+<div style="text-align:center;font-weight:bold;color:green;font-size:150%">A JAMWiki sikeresen fel lett telepítve!</div>
+
+Az lapokat az oldal tetején található "szerkesztés" fülre való kattintással tudod szerkeszteni.  A wiki tulajdonságait a [[Special:Admin]] oldalon állíthatod be.  Ezen kívül vannak lapok, melyek megváltoztatásával testre szabhatod a wikit:
+
+* [[LeftMenu]] - a bal oldali navigációs menü, ami minden oldalon megtalálható.
+* [[BottomArea]] - az oldal alján megjelenõ lábjegyzet.
+* [[StyleSheet]] - a CSS kódot tartalmazó oldal.
+
+Támogasd azzal a JAMWiki-t, hogy leírod a telepítés sikerességét a [http://jamwiki.org/ jamwiki.org] oldalon.  Kérdéseket, hibajelentéseket és ötleteket is hagyhatsz az oldalon, ezzel is segítve a wikit.  Ezen kívül ott megtalálhatod a legújabb JAMWiki dokumentációt is.
+
+Néhány hasznos funkció:
+
+* [[Special:RecentChanges]] - A frissen módosított szócikkek listája.
+* [[Special:Upload]] - Fájlok és képek feltöltése a wikibe.
+* [[Special:Search]] - Keresés a wikiben.
+* [[Special:Account]] - Felhasználó készítése.
+* [[Special:Allpages]] - A wikiben található összes szócikk listája.
+* [[Special:Specialpages]] - A speciális oldalak listája.
