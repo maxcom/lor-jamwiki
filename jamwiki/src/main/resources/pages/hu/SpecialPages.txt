@@ -1,0 +1,24 @@
+
+===Minden felhasználó számára elérhetõ lapok===
+
+* [[Special:TopicsAdmin|Csak adminisztrátorok számára elérhetõ lapok]]
+* [[Special:Allpages|Minden oldal]]
+* [[Special:Categories|Kategóriák]]
+* [[Special:Filelist|All files]]
+* [[Special:Imagelist|All images]]
+* [[Special:Listusers|All users]]
+* [[Special:RecentChanges|Friss változások]]
+* [[Special:Search|Keresés]]
+* [[Special:Upload|Feltöltés]]
+* [[Special:Login|Felhasználó bejelentkezés]]
+* [[Special:Logout|Felhasználó kijelentkezés]]
+* [[Special:Account|Felhasználó regisztráció]]
+
+===Adminisztratív lapok===
+
+* [[Special:Admin|Adminisztráció]]
+* [[Special:Maintenance|Maintenance]]
+* [[Special:Roles|Roles]]
+* [[Special:Translation|Fordítás]]
+* [[Special:Setup|Wiki telepítése]]
+* [[Special:Upgrade|Wiki frissítése]]

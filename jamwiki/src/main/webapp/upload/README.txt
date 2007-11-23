@@ -1,0 +1,1 @@
+This directory is the default file upload directory used to hold wiki uploads.  If another directory is used for uploads then this directory can safely be deleted.

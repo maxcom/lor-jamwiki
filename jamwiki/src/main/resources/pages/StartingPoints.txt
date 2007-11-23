@@ -1,0 +1,18 @@
+<div style="text-align:center;font-weight:bold;color:green;font-size:150%">JAMWiki has been successfully installed!</div>
+
+You can edit any page by clicking the "Edit" tab at the top of the page.  Configuration settings for this installation may be modified from the [[Special:Admin]] page.  In addition, these topics can be updated to change the look and feel of your Wiki:
+
+* [[LeftMenu]] - The left navigation menu that appears on every page.
+* [[BottomArea]] - The footer that appears on every page.
+* [[StyleSheet]] - The stylesheet that contains CSS style information for the site.
+
+Finally, please contribute to the JAMWiki project by reporting the success or failure of your installation at [http://jamwiki.org/ jamwiki.org].  Feedback, questions and bug reports should also be left at [http://jamwiki.org/ jamiki.org] so that JAMWiki can continue to improve.  In addition, [http://jamwiki.org/ jamwiki.org] also has the latest JAMWiki documentation including instructions for further cusomizing your installation.
+
+Some other useful functions:
+
+* [[Special:RecentChanges]] - A list of recently modified Wiki topics.
+* [[Special:Upload]] - Used to upload files and images to the Wiki.
+* [[Special:Search]] - Search the Wiki.
+* [[Special:Account]] - Create an account so that edits are propertly credited.
+* [[Special:Allpages]] - A list of all the topics in the Wiki.
+* [[Special:Specialpages]] - An index of wiki "Special" pages.
