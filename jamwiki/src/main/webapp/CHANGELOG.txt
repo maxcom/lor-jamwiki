@@ -16,6 +16,7 @@ New Features:
   * Make the search engine instance a configurable parameter.
   * Remove the unnecessary "Are you sure" prompt when upgrading.
   * Use JFlex Maven plugin instead of Ant task (RegisDecamps).
+  * Updated spam filter patterns.
 
 Bugfixes:
 
@@ -31,6 +32,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Updated German translations (axelclk).
   * Updated Polish translations (dlpa).
   * Updated Spanish translations (AngelPinazo).
 
