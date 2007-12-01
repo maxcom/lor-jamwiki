@@ -155,9 +155,7 @@ public class WikiDatabase {
 		try {
 			conn.commit();
 		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn);
-			}
+			DatabaseConnection.closeConnection(conn);
 		}
 	}
 

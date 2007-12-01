@@ -134,8 +134,7 @@ public class HtmlLinkTag implements ParserTag {
 		}
 		if (raw.startsWith("[") && raw.endsWith("]")) {
 			return this.buildHtmlLink(raw);
-		} else {
-			return this.buildHtmlLinkRaw(raw);
 		}
+		return this.buildHtmlLinkRaw(raw);
 	}
 }

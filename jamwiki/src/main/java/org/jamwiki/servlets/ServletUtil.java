@@ -311,7 +311,7 @@ public class ServletUtil {
 			// new topic, edit away...
 			return true;
 		}
-		if (topic.getAdminOnly() && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
+		if (topic.getAdminOnly() && !user.hasRole(Role.ROLE_ADMIN)) {
 			return false;
 		}
 		if (topic.getReadOnly()) {
@@ -343,7 +343,7 @@ public class ServletUtil {
 		if (topic.getReadOnly()) {
 			return false;
 		}
-		if (topic.getAdminOnly() && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
+		if (topic.getAdminOnly() && !user.hasRole(Role.ROLE_ADMIN)) {
 			return false;
 		}
 		return true;
@@ -634,8 +634,7 @@ public class ServletUtil {
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserDocument parserDocument = new ParserDocument();
 		String content = WikiUtil.parse(parserInput, parserDocument, topic.getTopicContent());
-		// FIXME - the null check should be unnecessary
-		if (parserDocument != null && parserDocument.getCategories().size() > 0) {
+		if (parserDocument.getCategories().size() > 0) {
 			LinkedHashMap categories = new LinkedHashMap();
 			for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {
 				String key = (String)iterator.next();

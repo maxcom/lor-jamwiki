@@ -128,7 +128,8 @@ public class UploadServlet extends JAMWikiServlet {
 		List list = WikiUtil.retrieveUploadFileList();
 		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
 			return !list.contains(extension);
-		} else if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
+		}
+		if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
 			return list.contains(extension);
 		}
 		return false;

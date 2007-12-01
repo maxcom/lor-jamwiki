@@ -91,13 +91,9 @@ public class LuceneSearchEngine implements SearchEngine {
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 				writer.optimize();
 				Document standardDocument = createStandardDocument(topic);
-				if (standardDocument != null) {
-					writer.addDocument(standardDocument);
-				}
+				writer.addDocument(standardDocument);
 				Document keywordDocument = createKeywordDocument(topic, links);
-				if (keywordDocument != null) {
-					writer.addDocument(keywordDocument, keywordAnalyzer);
-				}
+				writer.addDocument(keywordDocument, keywordAnalyzer);
 			} finally {
 				try {
 					if (writer != null) {
@@ -332,16 +328,12 @@ public class LuceneSearchEngine implements SearchEngine {
 					String topicName = (String)iter.next();
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
-					if (standardDocument != null) {
-						writer.addDocument(standardDocument);
-					}
+					writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a
 					// moderately large Wiki
 					ParserDocument parserDocument = WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki.getName(), topicName);
 					Document keywordDocument = createKeywordDocument(topic, parserDocument.getLinks());
-					if (keywordDocument != null) {
-						writer.addDocument(keywordDocument, keywordAnalyzer);
-					}
+					writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;
 				}
 			} catch (Exception ex) {

@@ -123,22 +123,22 @@ public class SetupServlet extends JAMWikiServlet {
 			next.addObject("newPassword", request.getParameter("newPassword"));
 			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
 			return false;
-		} else if (previousInstall() && request.getParameter("override") == null) {
+		}
+		if (previousInstall() && request.getParameter("override") == null) {
 			// user is trying to do a new install when a previous installation exists
 			next.addObject("upgrade", "true");
 			next.addObject("username", user.getUsername());
 			next.addObject("newPassword", request.getParameter("newPassword"));
 			next.addObject("confirmPassword", request.getParameter("confirmPassword"));
 			return false;
-		} else {
-			Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
-			Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
-			WikiBase.reset(request.getLocale(), user);
-			Environment.saveProperties();
-			// force current user credentials to be removed and re-validated.
-			SecurityContextHolder.clearContext();
-			return true;
 		}
+		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
+		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
+		WikiBase.reset(request.getLocale(), user);
+		Environment.saveProperties();
+		// force current user credentials to be removed and re-validated.
+		SecurityContextHolder.clearContext();
+		return true;
 	}
 
 	/**

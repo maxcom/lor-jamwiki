@@ -460,37 +460,48 @@ public class TemplateTag implements ParserTag {
 		if (name.equals(MAGIC_LOCAL_DAY)) {
 			formatter.applyPattern("d");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_DAY2)) {
+		}
+		if (name.equals(MAGIC_LOCAL_DAY2)) {
 			formatter.applyPattern("dd");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_DAY_NAME)) {
+		}
+		if (name.equals(MAGIC_LOCAL_DAY_NAME)) {
 			formatter.applyPattern("EEEE");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_DAY_OF_WEEK)) {
+		}
+		if (name.equals(MAGIC_LOCAL_DAY_OF_WEEK)) {
 			formatter.applyPattern("F");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_MONTH)) {
+		}
+		if (name.equals(MAGIC_LOCAL_MONTH)) {
 			formatter.applyPattern("MM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_MONTH_ABBR)) {
+		}
+		if (name.equals(MAGIC_LOCAL_MONTH_ABBR)) {
 			formatter.applyPattern("MMM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_MONTH_NAME)) {
+		}
+		if (name.equals(MAGIC_LOCAL_MONTH_NAME)) {
 			formatter.applyPattern("MMMM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_TIME)) {
+		}
+		if (name.equals(MAGIC_LOCAL_TIME)) {
 			formatter.applyPattern("HH:mm");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_HOUR)) {
+		}
+		if (name.equals(MAGIC_LOCAL_HOUR)) {
 			formatter.applyPattern("HH");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_WEEK)) {
+		}
+		if (name.equals(MAGIC_LOCAL_WEEK)) {
 			formatter.applyPattern("w");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_YEAR)) {
+		}
+		if (name.equals(MAGIC_LOCAL_YEAR)) {
 			formatter.applyPattern("yyyy");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_TIMESTAMP)) {
+		}
+		if (name.equals(MAGIC_LOCAL_TIMESTAMP)) {
 			formatter.applyPattern("yyyyMMddHHmmss");
 			return formatter.format(current);
 		}
