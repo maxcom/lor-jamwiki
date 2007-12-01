@@ -490,6 +490,7 @@ public class ServletUtil {
 		}
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for " + virtualWikiName);
+			virtualWiki = new VirtualWiki();
 			virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
