@@ -21,6 +21,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -34,7 +35,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -68,7 +68,7 @@ public class SetupServlet extends JAMWikiServlet {
 			if (!SystemUtils.isJavaVersionAtLeast(MINIMUM_JDK_VERSION)) {
 				throw new WikiException(new WikiMessage("setup.error.jdk", new Integer(MINIMUM_JDK_VERSION).toString(), System.getProperty("java.version")));
 			}
-			if (StringUtils.hasText(function) && initialize(request, next, pageInfo)) {
+			if (!StringUtils.isBlank(function) && initialize(request, next, pageInfo)) {
 				ServletUtil.redirect(next, WikiBase.DEFAULT_VWIKI, Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 			} else {
 				view(request, next, pageInfo);
@@ -195,7 +195,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = WikiUtil.validateSystemSettings(Environment.getInstance());
-		if (!StringUtils.hasText(user.getUsername())) {
+		if (StringUtils.isBlank(user.getUsername())) {
 			errors.add(new WikiMessage("error.loginempty"));
 		}
 		String newPassword = request.getParameter("newPassword");

@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -38,7 +39,6 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * <code>TemplateTag</code> parses Mediawiki template syntax, which allows
@@ -349,7 +349,7 @@ public class TemplateTag implements ParserTag {
 			name = raw;
 		}
 		name = name.trim();
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new Exception("No parameter name specified");
 		}
@@ -387,7 +387,7 @@ public class TemplateTag implements ParserTag {
 	 * the template name.
 	 */
 	private String parseTemplateName(String raw) throws Exception {
-		if (!StringUtils.hasText(raw)) {
+		if (StringUtils.isBlank(raw)) {
 			throw new Exception("Empty template text");
 		}
 		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
@@ -404,7 +404,7 @@ public class TemplateTag implements ParserTag {
 		if (this.isMagicWord(name)) {
 			return name;
 		}
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new Exception("No template name specified");
 		}

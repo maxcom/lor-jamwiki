@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
@@ -27,7 +28,6 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * This class parses signature tags of the form <code>~~~</code>,
@@ -49,9 +49,9 @@ public class WikiSignatureTag implements ParserTag {
 				String displayName = parserInput.getUserIpAddress();
 				String userId = "-1";
 				WikiUser user = parserInput.getWikiUser();
-				if (user != null && StringUtils.hasText(user.getUsername())) {
+				if (user != null && !StringUtils.isBlank(user.getUsername())) {
 					login = user.getUsername();
-					displayName = (StringUtils.hasText(user.getDisplayName())) ? user.getDisplayName() : login;
+					displayName = (!StringUtils.isBlank(user.getDisplayName())) ? user.getDisplayName() : login;
 					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
 					email = userInfo.getEmail();
 					userId = Integer.toString(user.getUserId());

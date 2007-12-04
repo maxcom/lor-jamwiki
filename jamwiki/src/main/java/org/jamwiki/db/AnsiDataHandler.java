@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Vector;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -50,7 +51,6 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * Default implementation of the {@link org.jamwiki.DataHandler} interface for
@@ -735,7 +735,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception {
-		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
+		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
 		Connection conn = null;

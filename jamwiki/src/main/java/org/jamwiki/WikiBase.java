@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Locale;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
@@ -26,7 +27,6 @@ import org.jamwiki.utils.PseudoTopicHandler;
 import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * <code>WikiBase</code> is loaded as a singleton class and provides access
@@ -132,7 +132,7 @@ public class WikiBase {
 	 */
 	// FIXME - this method isn't really appropriate for this class and should be moved.
 	public static boolean exists(String virtualWiki, String topicName) throws Exception {
-		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
+		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return false;
 		}
 		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
@@ -141,7 +141,7 @@ public class WikiBase {
 		if (InterWikiHandler.isInterWiki(topicName)) {
 			return true;
 		}
-		if (!StringUtils.hasText(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
 			// not initialized yet
 			return false;
 		}

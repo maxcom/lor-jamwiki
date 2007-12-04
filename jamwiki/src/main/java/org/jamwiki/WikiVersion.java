@@ -17,8 +17,8 @@
 package org.jamwiki;
 
 import java.util.StringTokenizer;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility class that holds the current Wiki version constant and provides
@@ -41,7 +41,7 @@ public class WikiVersion {
 	 * @param version A version string of the form "0.3.5".
 	 */
 	public WikiVersion(String version) throws Exception {
-		if (!StringUtils.hasText(version)) {
+		if (StringUtils.isBlank(version)) {
 			throw new Exception("Invalid Wiki version: " + version);
 		}
 		StringTokenizer tokens = new StringTokenizer(version, ".");

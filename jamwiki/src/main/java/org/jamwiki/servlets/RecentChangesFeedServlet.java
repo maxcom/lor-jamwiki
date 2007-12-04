@@ -31,6 +31,7 @@ import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.SyndFeedOutput;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.RecentChange;
@@ -39,7 +40,6 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -200,7 +200,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 		description = new SyndContentImpl();
 		description.setType("text/plain");
 		StringBuffer descr = new StringBuffer();
-		if (StringUtils.hasText(change.getEditComment())) {
+		if (!StringUtils.isBlank(change.getEditComment())) {
 			descr.append(change.getEditComment());
 		}
 		if (change.getDelete()) {

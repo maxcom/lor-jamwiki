@@ -21,8 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.sql.Types;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * This class is a wrapper around the java.sql.PreparedStatement class, allowing a
@@ -46,7 +46,7 @@ public class WikiPreparedStatement {
 	 */
 	public WikiPreparedStatement(String sql) {
 		this.sql = sql;
-		this.numElements = StringUtils.countOccurrencesOf(sql, "?");
+		this.numElements = StringUtils.countMatches(sql, "?");
 		this.params = new Object[numElements];
 		this.paramTypes = new int[numElements];
 	}

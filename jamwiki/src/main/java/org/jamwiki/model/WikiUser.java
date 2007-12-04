@@ -24,11 +24,11 @@ import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.userdetails.UserDetails;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * Provides an object representing Wiki-specific information about a user of
@@ -104,7 +104,7 @@ public class WikiUser implements UserDetails {
 	public WikiUser(String username, String password, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities)
 			throws IllegalArgumentException {
-		if (!StringUtils.hasText(username) || password == null) {
+		if (StringUtils.isBlank(username) || password == null) {
 			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
 		}
 		this.username = username;
@@ -326,7 +326,7 @@ public class WikiUser implements UserDetails {
 	 *
 	 */
 	private void addUserRoles() {
-		if (!StringUtils.hasText(this.username)) {
+		if (StringUtils.isBlank(this.username)) {
 			// FIXME - log error?  RegisterServlet will trigger this.
 			return;
 		}

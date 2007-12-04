@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -37,7 +38,6 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -59,9 +59,9 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
-		if (!StringUtils.hasText(function) && ServletUtil.isTopic(request, "Special:Maintenance")) {
+		if (StringUtils.isBlank(function) && !ServletUtil.isTopic(request, "Special:Maintenance")) {
 			viewAdminSystem(request, next, pageInfo);
-		} else if (!StringUtils.hasText(function)) {
+		} else if (StringUtils.isBlank(function)) {
 			viewAdmin(request, next, pageInfo, null);
 		} else if (function.equals("cache")) {
 			cache(request, next, pageInfo);
@@ -86,13 +86,13 @@ public class AdminServlet extends JAMWikiServlet {
 		WikiUser user = WikiUtil.currentUser();
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
-			if (StringUtils.hasText(request.getParameter("virtualWikiId"))) {
+			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				virtualWiki.setVirtualWikiId(new Integer(request.getParameter("virtualWikiId")).intValue());
 			}
 			virtualWiki.setName(request.getParameter("name"));
 			virtualWiki.setDefaultTopicName(Utilities.encodeForURL(request.getParameter("defaultTopicName")));
 			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, null);
-			if (!StringUtils.hasText(request.getParameter("virtualWikiId"))) {
+			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
 				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki, null);
 			}
 			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
@@ -257,7 +257,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static void setPassword(Properties props, HttpServletRequest request, ModelAndView next, String parameter, String passwordParam) throws Exception {
-		if (StringUtils.hasText(request.getParameter(parameter))) {
+		if (!StringUtils.isBlank(request.getParameter(parameter))) {
 			String value = request.getParameter(parameter);
 			Encryption.setEncryptedProperty(parameter, value, props);
 			next.addObject(passwordParam, request.getParameter(parameter));

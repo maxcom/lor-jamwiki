@@ -28,6 +28,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -48,7 +49,6 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -131,7 +131,7 @@ public class ServletUtil {
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
 					String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageName);
-					if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+					if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 					}
 					links.put(editLink, new WikiMessage("tab.common.edit"));
@@ -184,7 +184,7 @@ public class ServletUtil {
 			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String username = user.getUsername();
-			if (StringUtils.hasText(user.getDisplayName())) {
+			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();
 			}
 			links.put(userPage, new WikiMessage("usermenu.user", username));
@@ -361,7 +361,7 @@ public class ServletUtil {
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
 			String topic = WikiUtil.getTopicFromURI(request);
-			if (!StringUtils.hasText(topic)) {
+			if (StringUtils.isBlank(topic)) {
 				return false;
 			}
 			if (value != null &&  topic.equals(value)) {
@@ -419,7 +419,7 @@ public class ServletUtil {
 		}
 		// load cached top area, nav bar, etc.
 		ServletUtil.buildLayout(request, next);
-		if (!StringUtils.hasText(pageInfo.getTopicName())) {
+		if (StringUtils.isBlank(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
 		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
@@ -546,13 +546,13 @@ public class ServletUtil {
 		pageInfo.reset();
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		String target = request.getParameter("target");
-		if (!StringUtils.hasText(target)) {
-			if (!StringUtils.hasText(topic)) {
+		if (StringUtils.isBlank(target)) {
+			if (StringUtils.isBlank(topic)) {
 				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
 			target = topic;
-			if (StringUtils.hasText(request.getQueryString())) {
+			if (!StringUtils.isBlank(request.getQueryString())) {
 				target += "?" + request.getQueryString();
 			}
 		}
@@ -579,7 +579,7 @@ public class ServletUtil {
 	 */
 	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		if (!StringUtils.hasText(virtualWiki)) {
+		if (StringUtils.isBlank(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);

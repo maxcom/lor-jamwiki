@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -39,7 +40,6 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -78,7 +78,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String buildUniqueFileName(String fileName) {
-		if (!StringUtils.hasText(fileName)) {
+		if (StringUtils.isBlank(fileName)) {
 			return null;
 		}
 		// file is appended with a timestamp of DDHHMMSS
@@ -120,7 +120,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (blacklistType == WikiBase.UPLOAD_NONE) {
 			return false;
 		}
-		if (!StringUtils.hasText(extension)) {
+		if (StringUtils.isBlank(extension)) {
 			// FIXME - should non-extensions be represented in the whitelist/blacklist?
 			return true;
 		}
@@ -139,7 +139,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String sanitizeFilename(String filename) {
-		if (!StringUtils.hasText(filename)) {
+		if (StringUtils.isBlank(filename)) {
 			return null;
 		}
 		// some browsers set the full path, so strip to just the file name

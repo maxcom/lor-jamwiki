@@ -32,6 +32,7 @@ import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.UserHandler;
@@ -50,7 +51,6 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -210,16 +210,16 @@ public class WikiUtil {
 	 * @return The comments article name for the article name.
 	 */
 	public static String extractCommentsLink(String name) throws Exception {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new Exception("Empty topic name " + name);
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+		if (StringUtils.isBlank(wikiLink.getNamespace())) {
 			return NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + name;
 		}
 		String namespace = wikiLink.getNamespace();
 		String commentsNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return (StringUtils.hasText(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
+		return (!StringUtils.isBlank(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
 	}
 
 	/**
@@ -232,16 +232,16 @@ public class WikiUtil {
 	 * @return The topic article name for the article name.
 	 */
 	public static String extractTopicLink(String name) throws Exception {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new Exception("Empty topic name " + name);
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+		if (StringUtils.isBlank(wikiLink.getNamespace())) {
 			return name;
 		}
 		String namespace = wikiLink.getNamespace();
 		String mainNamespace = NamespaceHandler.getMainNamespace(namespace);
-		return (StringUtils.hasText(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class WikiUtil {
 	 */
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
 		int count = attempts;
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(parent.getRedirectTo())) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
@@ -264,7 +264,7 @@ public class WikiUtil {
 			// child being redirected to doesn't exist, return parent
 			return parent;
 		}
-		if (!StringUtils.hasText(child.getRedirectTo())) {
+		if (StringUtils.isBlank(child.getRedirectTo())) {
 			// found a topic that is not a redirect, return
 			return child;
 		}
@@ -292,7 +292,7 @@ public class WikiUtil {
 			// around that issue by manually decoding.  yes, this is ugly and it would be
 			// great if someone could eventually make it unnecessary.
 			String query = request.getQueryString();
-			if (!StringUtils.hasText(query)) {
+			if (StringUtils.isBlank(query)) {
 				return null;
 			}
 			String prefix = ServletUtil.PARAMETER_TOPIC + "=";
@@ -405,7 +405,7 @@ public class WikiUtil {
 	 */
 	public static boolean isCommentsPage(String topicName) {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+		if (StringUtils.isBlank(wikiLink.getNamespace())) {
 			return false;
 		}
 		String namespace = wikiLink.getNamespace();
@@ -625,7 +625,7 @@ public class WikiUtil {
 			country = locale.getCountry();
 		}
 		String subdirectory = "";
-		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
+		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
 				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
@@ -634,7 +634,7 @@ public class WikiUtil {
 				logger.info("File " + filename + " does not exist");
 			}
 		}
-		if (contents == null && StringUtils.hasText(language)) {
+		if (contents == null && !StringUtils.isBlank(language)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
 				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
@@ -674,7 +674,7 @@ public class WikiUtil {
 		// FIXME - needs testing on other platforms
 		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
 		String contextPath = request.getContextPath().trim();
-		if (!StringUtils.hasText(uri) || contextPath == null) {
+		if (StringUtils.isBlank(uri) || contextPath == null) {
 			return null;
 		}
 		uri = uri.substring(contextPath.length() + 1);
@@ -711,7 +711,7 @@ public class WikiUtil {
 		StringTokenizer tokens = new StringTokenizer(listString, "\n\r ,.");
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken();
-			if (!StringUtils.hasText(token)) {
+			if (StringUtils.isBlank(token)) {
 				continue;
 			}
 			list.add(token.toLowerCase());
@@ -827,7 +827,7 @@ public class WikiUtil {
 		if (!m.matches()) {
 			throw new WikiException(new WikiMessage("roles.error.name", role.getAuthority()));
 		}
-		if (StringUtils.hasText(role.getDescription()) && role.getDescription().length() > 200) {
+		if (!StringUtils.isBlank(role.getDescription()) && role.getDescription().length() > 200) {
 			throw new WikiException(new WikiMessage("roles.error.description"));
 		}
 		// FIXME - throw a user-friendly error if the role name is already in use
@@ -903,7 +903,7 @@ public class WikiUtil {
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateTopicName(String name) throws WikiException {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(name)) {
@@ -928,7 +928,7 @@ public class WikiUtil {
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateUserName(String name) throws WikiException {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("error.loginempty"));
 		}
 		Matcher m = WikiUtil.VALID_USER_LOGIN_PATTERN.matcher(name);

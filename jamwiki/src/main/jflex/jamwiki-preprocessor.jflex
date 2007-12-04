@@ -5,9 +5,9 @@
  */
 package org.jamwiki.parser.jflex;
 
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 %%
 
@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
-    if (StringUtils.hasText(this.templateString)) {
+    if (!StringUtils.isBlank(this.templateString)) {
         // FIXME - this leaves unparsed text
         output.append(this.templateString);
         this.templateString = "";

@@ -17,18 +17,16 @@
 package org.jamwiki.authentication;
 
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.acegisecurity.ui.logout.LogoutFilter;
 import org.acegisecurity.ui.logout.LogoutHandler;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * This class is a hack implemented to work around the fact that the default
@@ -80,7 +78,7 @@ public class JAMWikiLogoutFilter extends LogoutFilter {
 			// ugly, but a hard-coded constant seems to be the only way to
 			// allow a dynamic url value
 			String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-			if (!StringUtils.hasText(virtualWikiName)) {
+			if (StringUtils.isBlank(virtualWikiName)) {
 				virtualWikiName = WikiBase.DEFAULT_VWIKI;
 			}
 			String topicName = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);

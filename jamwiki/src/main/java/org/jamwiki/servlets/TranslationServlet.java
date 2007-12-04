@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
@@ -33,7 +34,6 @@ import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -55,12 +55,12 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
-		if (StringUtils.hasText(function)) {
+		if (!StringUtils.isBlank(function)) {
 			translate(request, next, pageInfo);
 		} else {
 			view(request, next, pageInfo);
 		}
-		String language = (StringUtils.hasText(request.getParameter("language"))) ? request.getParameter("language") : "en";
+		String language = (!StringUtils.isBlank(request.getParameter("language"))) ? request.getParameter("language") : "en";
 		next.addObject("language", language);
 		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
@@ -73,7 +73,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	private String filename(HttpServletRequest request) {
 		String filename = "ApplicationResources.properties";
 		String language = request.getParameter("language");
-		if (StringUtils.hasText(language) && !language.equalsIgnoreCase("en")) {
+		if (!StringUtils.isBlank(language) && !language.equalsIgnoreCase("en")) {
 			// FIXME - should also check for valid language code
 			filename = "ApplicationResources_" + language + ".properties";
 		}
@@ -95,14 +95,14 @@ public class TranslationServlet extends JAMWikiServlet {
 				continue;
 			}
 			filename = file.getName();
-			if (!StringUtils.hasText(filename)) {
+			if (StringUtils.isBlank(filename)) {
 				continue;
 			}
 			if (!filename.startsWith("ApplicationResources_") || !filename.endsWith(".properties")) {
 				continue;
 			}
 			String code = filename.substring("ApplicationResources_".length(), filename.length() - ".properties".length());
-			if (StringUtils.hasText(code)) {
+			if (!StringUtils.isBlank(code)) {
 				codes.add(code);
 			}
 		}
@@ -141,7 +141,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		String language = request.getParameter("language");
 		String filename = filename(request);
 		SortedProperties translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
-		if (StringUtils.hasText(language)) {
+		if (!StringUtils.isBlank(language)) {
 			filename = filename(request);
 			translations.putAll(Environment.loadProperties(filename));
 		}

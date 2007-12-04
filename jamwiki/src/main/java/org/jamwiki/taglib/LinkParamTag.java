@@ -18,8 +18,8 @@ package org.jamwiki.taglib;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
@@ -45,7 +45,7 @@ public class LinkParamTag extends BodyTagSupport {
 			throw new JspException("linkParam tag not nested within a link tag");
 		}
 		try {
-			if (StringUtils.hasText(this.value)) {
+			if (!StringUtils.isBlank(this.value)) {
 				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
 				if (tmp != null) {
 					tagValue = tmp.toString();

@@ -19,6 +19,7 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import java.sql.Types;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
@@ -34,7 +35,6 @@ import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * Default implementation of the QueryHandler implementation for retrieving, inserting,
@@ -353,7 +353,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public WikiResultSet getRoleMapByLogin(String loginFragment) throws Exception {
-		if (!StringUtils.hasText(loginFragment)) {
+		if (StringUtils.isBlank(loginFragment)) {
 			return new WikiResultSet();
 		}
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_LOGIN);

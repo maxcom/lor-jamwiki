@@ -19,10 +19,10 @@ package org.jamwiki.parser;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Utilities;
-import org.springframework.util.StringUtils;
 
 /**
  * This class is used to generate a table of contents based on values passed in
@@ -112,7 +112,7 @@ public class TableOfContents {
 	 *  if "name" is already in use.
 	 */
 	public String checkForUniqueName(String name) {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			name = "empty";
 		}
 		int count = 0;

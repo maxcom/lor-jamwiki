@@ -16,9 +16,9 @@
  */
 package org.jamwiki.model;
 
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * Provides an object representing a Wiki reference, which is a citation
@@ -82,7 +82,7 @@ public class WikiReference {
 	 *
 	 */
 	public String getNotationName() {
-		if (!StringUtils.hasText(this.name)) {
+		if (StringUtils.isBlank(this.name)) {
 			return "_note-" + this.citation;
 		}
 		return "_note-" + Utilities.encodeForURL(this.name);
@@ -92,7 +92,7 @@ public class WikiReference {
 	 *
 	 */
 	public String getReferenceName() {
-		if (!StringUtils.hasText(this.name)) {
+		if (StringUtils.isBlank(this.name)) {
 			return "_ref-" + this.citation;
 		}
 		return "_ref-" + Utilities.encodeForURL(this.name) + "_" + this.count;

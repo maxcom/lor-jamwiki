@@ -19,12 +19,11 @@ package org.jamwiki.taglib;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
-
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
@@ -54,7 +53,7 @@ public class LinkTag extends BodyTagSupport {
 			if (tmp != null) {
 				tagValue = tmp.toString();
 			}
-			if (StringUtils.hasText(this.target)) {
+			if (!StringUtils.isBlank(this.target)) {
 				tmp = ExpressionEvaluationUtils.evaluate("target", this.target, pageContext);
 				if (tmp != null) {
 					tagTarget = tmp.toString();
@@ -69,11 +68,11 @@ public class LinkTag extends BodyTagSupport {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		String url = null;
 		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
-		if (StringUtils.hasText(this.queryParams)) {
+		if (!StringUtils.isBlank(this.queryParams)) {
 			wikiLink.setQuery(this.queryParams);
 		}
 		try {
-			if (StringUtils.hasText(tagText)) {
+			if (!StringUtils.isBlank(tagText)) {
 				// return formatted link of the form "<a href="/wiki/en/Special:Edit">text</a>"
 				url = LinkUtil.buildInternalLinkHtml(request.getContextPath(), virtualWiki, wikiLink, tagText, this.style, tagTarget, true);
 			} else {
@@ -94,7 +93,7 @@ public class LinkTag extends BodyTagSupport {
 	 *
 	 */
 	protected void addQueryParam(String key, String value) throws JspException {
-		if (!StringUtils.hasText(key)) {
+		if (StringUtils.isBlank(key)) {
 			throw new JspException("linkParam key value cannot be empty");
 		}
 		this.queryParams = LinkUtil.appendQueryParam(this.queryParams, key, value);
@@ -111,15 +110,15 @@ public class LinkTag extends BodyTagSupport {
 		if (this.getBodyContent() != null) {
 			body = this.getBodyContent().getString();
 		}
-		if (StringUtils.hasText(body) && StringUtils.hasText(this.text)) {
+		if (!StringUtils.isBlank(body) && !StringUtils.isBlank(this.text)) {
 			throw new JspException("Attribute 'text' and body content may not both be specified for link tag");
 		}
-		if (StringUtils.hasText(this.text)) {
+		if (!StringUtils.isBlank(this.text)) {
 			tmp = ExpressionEvaluationUtils.evaluate("text", this.text, pageContext);
 			if (tmp != null) {
 				tagText = tmp.toString();
 			}
-		} else if (StringUtils.hasText(body)) {
+		} else if (!StringUtils.isBlank(body)) {
 			tagText = body;
 		}
 		return tagText;

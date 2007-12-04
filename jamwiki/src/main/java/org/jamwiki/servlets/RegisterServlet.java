@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.WebAuthenticationDetails;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -35,7 +36,6 @@ import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -63,7 +63,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiUser user, WikiUserInfo userInfo) throws Exception {
-		if (!StringUtils.hasText(user.getDefaultLocale()) && request.getLocale() != null) {
+		if (StringUtils.isBlank(user.getDefaultLocale()) && request.getLocale() != null) {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
 		TreeMap locales = new TreeMap();
@@ -120,7 +120,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			// login the user
 			this.login(request, user);
 			// update the locale key since the user may have changed default locale
-			if (StringUtils.hasText(user.getDefaultLocale())) {
+			if (!StringUtils.isBlank(user.getDefaultLocale())) {
 				Locale locale = Utilities.buildLocale(user.getDefaultLocale());
 				request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
 			}
@@ -137,7 +137,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		String username = request.getParameter("login");
 		WikiUser user = new WikiUser(username);
 		String userIdString = request.getParameter("userId");
-		if (StringUtils.hasText(userIdString)) {
+		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
 				user = WikiBase.getDataHandler().lookupWikiUser(userId, null);
@@ -145,7 +145,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		}
 		user.setDisplayName(request.getParameter("displayName"));
 		String newPassword = request.getParameter("newPassword");
-		if (StringUtils.hasText(newPassword)) {
+		if (!StringUtils.isBlank(newPassword)) {
 			user.setPassword(Encryption.encrypt(newPassword));
 		}
 		user.setDefaultLocale(request.getParameter("defaultLocale"));
@@ -162,7 +162,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUserInfo userInfo = new WikiUserInfo();
 		String username = request.getParameter("login");
 		String userIdString = request.getParameter("userId");
-		if (StringUtils.hasText(userIdString)) {
+		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
 				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
@@ -176,7 +176,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		userInfo.setFirstName(request.getParameter("firstName"));
 		userInfo.setLastName(request.getParameter("lastName"));
 		String newPassword = request.getParameter("newPassword");
-		if (StringUtils.hasText(newPassword)) {
+		if (!StringUtils.isBlank(newPassword)) {
 			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
 		}
 		return userInfo;
@@ -198,16 +198,16 @@ public class RegisterServlet extends JAMWikiServlet {
 		}
 		String newPassword = request.getParameter("newPassword");
 		String confirmPassword = request.getParameter("confirmPassword");
-		if (user.getUserId() < 1 && !StringUtils.hasText(newPassword)) {
+		if (user.getUserId() < 1 && StringUtils.isBlank(newPassword)) {
 			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
 		if (!WikiBase.getUserHandler().isWriteable() && !WikiBase.getUserHandler().authenticate(user.getUsername(), newPassword)) {
 			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
-		if (StringUtils.hasText(newPassword) || StringUtils.hasText(confirmPassword)) {
-			if (!StringUtils.hasText(newPassword)) {
+		if (!StringUtils.isBlank(newPassword) || !StringUtils.isBlank(confirmPassword)) {
+			if (StringUtils.isBlank(newPassword)) {
 				errors.add(new WikiMessage("error.newpasswordempty"));
-			} else if (WikiBase.getUserHandler().isWriteable() && !StringUtils.hasText(confirmPassword)) {
+			} else if (WikiBase.getUserHandler().isWriteable() && StringUtils.isBlank(confirmPassword)) {
 				errors.add(new WikiMessage("error.passwordconfirm"));
 			} else if (WikiBase.getUserHandler().isWriteable() && !newPassword.equals(confirmPassword)) {
 				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
