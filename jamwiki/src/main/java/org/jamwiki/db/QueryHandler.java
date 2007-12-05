@@ -45,7 +45,7 @@ public interface QueryHandler {
 	 * @return Returns a simple query that can be used to validate a database
 	 *  connection.
 	 */
-	public String connectionValidationQuery();
+	String connectionValidationQuery();
 
 	/**
 	 * Method called to set up all JAMWiki system tables, indexes, and other
@@ -57,7 +57,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void createTables(Connection conn) throws Exception;
+	void createTables(Connection conn) throws Exception;
 
 	/**
 	 * Delete all records from the recent changes table for a specific topic.
@@ -67,7 +67,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteRecentChanges(int topicId, Connection conn) throws Exception;
+	void deleteRecentChanges(int topicId, Connection conn) throws Exception;
 
 	/**
 	 * Delete all role records for a specific group.
@@ -77,7 +77,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteRoleMapGroup(int groupId, Connection conn) throws Exception;
+	void deleteRoleMapGroup(int groupId, Connection conn) throws Exception;
 
 	/**
 	 * Delete all role records for a specific user.
@@ -87,7 +87,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteRoleMapUser(int userId, Connection conn) throws Exception;
+	void deleteRoleMapUser(int userId, Connection conn) throws Exception;
 
 	/**
 	 * Delete all categories associated with a topic.
@@ -98,7 +98,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteTopicCategories(int topicId, Connection conn) throws Exception;
+	void deleteTopicCategories(int topicId, Connection conn) throws Exception;
 
 	/**
 	 * Delete a user's watchlist entry using the topic name to determine which
@@ -113,7 +113,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
+	void deleteWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
 
 	/**
 	 * Drop all JAMWiki database objects.  This method drops tables, indexes, and
@@ -124,7 +124,7 @@ public interface QueryHandler {
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 */
-	public void dropTables(Connection conn);
+	void dropTables(Connection conn);
 
 	/**
 	 * Return a simple query, that if successfully run indicates that JAMWiki
@@ -133,7 +133,7 @@ public interface QueryHandler {
 	 * @return Returns a simple query that, if successfully run, indicates
 	 *  that JAMWiki tables have been set up in the database.
 	 */
-	public String existenceValidationQuery();
+	String existenceValidationQuery();
 
 	/**
 	 * Retrieve a WikiResultSet containing all topic names that exist for a
@@ -146,7 +146,7 @@ public interface QueryHandler {
 	 *  wiki, not including any previously deleted topics.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getAllTopicNames(int virtualWikiId) throws Exception;
+	WikiResultSet getAllTopicNames(int virtualWikiId) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet consisting of all wiki file version information for
@@ -160,7 +160,7 @@ public interface QueryHandler {
 	 *  versions of the specified wiki file.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws Exception;
+	WikiResultSet getAllWikiFileVersions(WikiFile wikiFile, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all categories associated with a particular
@@ -175,7 +175,7 @@ public interface QueryHandler {
 	 *  virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception;
+	WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
@@ -191,7 +191,7 @@ public interface QueryHandler {
 	 *  wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
+	WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all recent changes made to the wiki for a
@@ -207,7 +207,7 @@ public interface QueryHandler {
 	 *  wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception;
+	WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for all
@@ -221,7 +221,7 @@ public interface QueryHandler {
 	 *  found then this method returns an empty WikiResultSet.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoleMapByLogin(String loginFragment) throws Exception;
+	WikiResultSet getRoleMapByLogin(String loginFragment) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for
@@ -233,7 +233,7 @@ public interface QueryHandler {
 	 *  empty WikiResultSet if no matches are found.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoleMapByRole(String roleName) throws Exception;
+	WikiResultSet getRoleMapByRole(String roleName) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all roles assigned to a given group.
@@ -243,7 +243,7 @@ public interface QueryHandler {
 	 *  WikiResultSet if no roles are assigned to the user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoleMapGroup(String groupName) throws Exception;
+	WikiResultSet getRoleMapGroup(String groupName) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for
@@ -254,7 +254,7 @@ public interface QueryHandler {
 	 *  this method returns an empty WikiResultSet.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoleMapGroups() throws Exception;
+	WikiResultSet getRoleMapGroups() throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all roles assigned to a given user.
@@ -264,7 +264,7 @@ public interface QueryHandler {
 	 *  WikiResultSet if no roles are assigned to the user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoleMapUser(String login) throws Exception;
+	WikiResultSet getRoleMapUser(String login) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all roles that have been defined for
@@ -274,7 +274,7 @@ public interface QueryHandler {
 	 *  defined for the wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getRoles() throws Exception;
+	WikiResultSet getRoles() throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing the topic names of all admin-only
@@ -288,7 +288,7 @@ public interface QueryHandler {
 	 *  topics for the virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception;
+	WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all recent changes made to the wiki by a
@@ -305,7 +305,7 @@ public interface QueryHandler {
 	 * @return A WikiResultSet containing all recent changes made by a particular user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
+	WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all virtual wiki information for all
@@ -317,7 +317,7 @@ public interface QueryHandler {
 	 *  for every virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getVirtualWikis(Connection conn) throws Exception;
+	WikiResultSet getVirtualWikis(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing the topic ID and topic name for
@@ -330,7 +330,7 @@ public interface QueryHandler {
 	 *  watchlist items.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getWatchlist(int virtualWikiId, int userId) throws Exception;
+	WikiResultSet getWatchlist(int virtualWikiId, int userId) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all recent changes for topics in the
@@ -344,7 +344,7 @@ public interface QueryHandler {
 	 * @return A WikiResultSet containing recent changes for the watchlist.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception;
+	WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception;
 
 	/**
 	 * Add a new category record to the database.  Note that this method will fail
@@ -357,7 +357,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertCategory(Category category, int virtualWikiId, Connection conn) throws Exception;
+	void insertCategory(Category category, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new recent change record to the database.
@@ -368,7 +368,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception;
+	void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new role record to the database.  The role must not already exist
@@ -379,7 +379,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertRole(Role role, Connection conn) throws Exception;
+	void insertRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Add a new role mapping for a specific user or group.  The role
@@ -395,7 +395,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception;
+	void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic record to the database.  The topic must not already exist
@@ -407,7 +407,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
+	void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic version record to the database.  The topic version must
@@ -418,7 +418,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception;
+	void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception;
 
 	/**
 	 * Add a new virtual wiki record to the database.  The virtual wiki must
@@ -429,7 +429,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
+	void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
 
 	/**
 	 * Add a new watchlist entry record to the database.  An identical entry
@@ -445,7 +445,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
+	void insertWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new wiki file record to the database.  The wiki file must not
@@ -457,7 +457,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
+	void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Add a new wiki file version record to the database.  The wiki file
@@ -470,7 +470,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception;
+	void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception;
 
 	/**
 	 * Add a new group record to the database.  The group must not already exist
@@ -481,7 +481,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWikiGroup(WikiGroup group, Connection conn) throws Exception;
+	void insertWikiGroup(WikiGroup group, Connection conn) throws Exception;
 
 	/**
 	 * Add a new user record to the database.  The user must not already exist
@@ -492,7 +492,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWikiUser(WikiUser user, Connection conn) throws Exception;
+	void insertWikiUser(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 * Add a new user information record to the database.  The user information
@@ -504,7 +504,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
+	void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing the topic name and sort key for all
@@ -520,7 +520,7 @@ public interface QueryHandler {
 	 *  associated with a specific category.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName, int topicType) throws Exception;
+	WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName, int topicType) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all topic information for a given topic.
@@ -537,7 +537,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, Connection conn) throws Exception;
+	WikiResultSet lookupTopic(int virtualWikiId, String topicName, boolean caseSensitive, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set of all topics of a given type within a virtual wiki.
@@ -553,7 +553,7 @@ public interface QueryHandler {
 	 *  object.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception;
+	WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and templates,
@@ -562,7 +562,7 @@ public interface QueryHandler {
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the topics
 	 *  being retrieved.
 	 */
-	public WikiResultSet lookupTopicCount(int virtualWikiId) throws Exception;
+	WikiResultSet lookupTopicCount(int virtualWikiId) throws Exception;
 
 	/**
 	 * Retrieve a result set containing a specific topic version.
@@ -574,7 +574,7 @@ public interface QueryHandler {
 	 *  result set if no matching record is found.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupTopicVersion(int topicVersionId, Connection conn) throws Exception;
+	WikiResultSet lookupTopicVersion(int topicVersionId, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing all wiki file information for a given WikiFile.
@@ -587,7 +587,7 @@ public interface QueryHandler {
 	 *  returned.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiFile(int virtualWikiId, int topicId) throws Exception;
+	WikiResultSet lookupWikiFile(int virtualWikiId, int topicId) throws Exception;
 
 	/**
 	 * Return a count of all wiki files currently available on the Wiki.  This
@@ -596,7 +596,7 @@ public interface QueryHandler {
 	 * @param virtualWikiId The virtual wiki id for the virtual wiki of the files
 	 *  being retrieved.
 	 */
-	public WikiResultSet lookupWikiFileCount(int virtualWikiId) throws Exception;
+	WikiResultSet lookupWikiFileCount(int virtualWikiId) throws Exception;
 
 	/**
 	 * Retrieve a result set containing all user information for a given WikiUser.
@@ -608,7 +608,7 @@ public interface QueryHandler {
 	 *  an empty result set if no matching user exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiUser(int userId, Connection conn) throws Exception;
+	WikiResultSet lookupWikiUser(int userId, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing all user information for a given WikiUser.
@@ -620,7 +620,7 @@ public interface QueryHandler {
 	 *  an empty result set if no matching user exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception;
+	WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing all user information for a given WikiUser.
@@ -634,12 +634,12 @@ public interface QueryHandler {
 	 *  an empty result set if no matching user exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiUser(String login, String encryptedPassword, Connection conn) throws Exception;
+	WikiResultSet lookupWikiUser(String login, String encryptedPassword, Connection conn) throws Exception;
 
 	/**
 	 * Return a count of all wiki users.
 	 */
-	public WikiResultSet lookupWikiUserCount() throws Exception;
+	WikiResultSet lookupWikiUserCount() throws Exception;
 
 	/**
 	 * Retrieve a result set containing all user information for a given
@@ -650,7 +650,7 @@ public interface QueryHandler {
 	 *  an empty result set if no matching user exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiUserInfo(String login) throws Exception;
+	WikiResultSet lookupWikiUserInfo(String login) throws Exception;
 
 	/**
 	 * Retrieve a result set of all logins for every wiki user.
@@ -661,7 +661,7 @@ public interface QueryHandler {
 	 *  bounds specified by the pagination object.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception;
+	WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve the next available topic id from the topic table.
@@ -671,7 +671,7 @@ public interface QueryHandler {
 	 * @return The next available topic id from the topic table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextTopicId(Connection conn) throws Exception;
+	int nextTopicId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available topic version id from the topic version table.
@@ -681,7 +681,7 @@ public interface QueryHandler {
 	 * @return The next available topic version id from the topic version table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextTopicVersionId(Connection conn) throws Exception;
+	int nextTopicVersionId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available virtual wiki id from the virtual wiki table.
@@ -691,7 +691,7 @@ public interface QueryHandler {
 	 * @return The next available virtual wiki id from the virtual wiki table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextVirtualWikiId(Connection conn) throws Exception;
+	int nextVirtualWikiId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available wiki file id from the wiki file table.
@@ -701,7 +701,7 @@ public interface QueryHandler {
 	 * @return The next available wiki file id from the wiki file table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiFileId(Connection conn) throws Exception;
+	int nextWikiFileId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available wiki file version id from the wiki file
@@ -713,7 +713,7 @@ public interface QueryHandler {
 	 *  version table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiFileVersionId(Connection conn) throws Exception;
+	int nextWikiFileVersionId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available wiki group id from the wiki group table.
@@ -723,7 +723,7 @@ public interface QueryHandler {
 	 * @return The next available wiki group id from the wiki group table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiGroupId(Connection conn) throws Exception;
+	int nextWikiGroupId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available wiki user id from the wiki user table.
@@ -733,7 +733,7 @@ public interface QueryHandler {
 	 * @return The next available wiki user id from the wiki user table.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int nextWikiUserId(Connection conn) throws Exception;
+	int nextWikiUserId(Connection conn) throws Exception;
 
 	/**
 	 * Refresh the recent changes content by reloading the recent changes table.
@@ -742,7 +742,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void reloadRecentChanges(Connection conn) throws Exception;
+	void reloadRecentChanges(Connection conn) throws Exception;
 
 	/**
 	 * Update a role record in the database.
@@ -752,7 +752,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateRole(Role role, Connection conn) throws Exception;
+	void updateRole(Role role, Connection conn) throws Exception;
 
 	/**
 	 * Update a topic record in the database.
@@ -763,7 +763,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
+	void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Update a virtual wiki record in the database.
@@ -773,7 +773,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
+	void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception;
 
 	/**
 	 * Update a wiki file record in the database.
@@ -784,7 +784,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
+	void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
 	 * Update a group record in the database.
@@ -794,7 +794,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateWikiGroup(WikiGroup group, Connection conn) throws Exception;
+	void updateWikiGroup(WikiGroup group, Connection conn) throws Exception;
 
 	/**
 	 * Update a wiki user record in the database.
@@ -804,7 +804,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateWikiUser(WikiUser user, Connection conn) throws Exception;
+	void updateWikiUser(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 * Update a wiki user information record in the database.
@@ -815,5 +815,5 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
+	void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
 }

@@ -34,14 +34,14 @@ public interface SearchEngine {
 	 * @param links A collection containing the topic names for all topics that link
 	 *  to the current topic.
 	 */
-	public void addToIndex(Topic topic, Collection links);
+	void addToIndex(Topic topic, Collection links);
 
 	/**
 	 * Remove a topic from the search index.
 	 *
 	 * @param topic The topic object that is to be removed from the index.
 	 */
-	public void deleteFromIndex(Topic topic);
+	void deleteFromIndex(Topic topic);
 
 	/**
 	 * Find all documents that link to a specified topic.
@@ -51,7 +51,7 @@ public interface SearchEngine {
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  link to the topic.
 	 */
-	public Collection findLinkedTo(String virtualWiki, String topicName);
+	Collection findLinkedTo(String virtualWiki, String topicName);
 
 	/**
 	 * Find all documents that contain a specific search term, ordered by relevance.
@@ -61,12 +61,12 @@ public interface SearchEngine {
 	 * @return A collection of SearchResultEntry objects for all documents that
 	 *  contain the search term.
 	 */
-	public Collection findResults(String virtualWiki, String text);
+	Collection findResults(String virtualWiki, String text);
 
 	/**
 	 * Refresh the current search index by re-visiting all topic pages.
 	 *
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
-	public void refreshIndex() throws Exception;
+	void refreshIndex() throws Exception;
 }
