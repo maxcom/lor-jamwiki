@@ -25,10 +25,10 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
 
 /**
  * The purpose of this class is to load MediaWiki XML-file to the JAMWiki.
@@ -208,7 +208,7 @@ public class XMLTopicFactory extends DefaultHandler {
 			topic.setTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 			// Store topic in database
 			try {
-				WikiBase.getDataHandler().writeTopic(topic, topicVersion, WikiUtil.parserDocument(pageText, virtualWiki, pageName), true, null);
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserDocument(pageText, virtualWiki, pageName), true, null);
 				this.processedTopicName = topic.getName();
 			} catch (Exception e) {
 				throw new SAXException(e);

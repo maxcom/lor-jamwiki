@@ -42,6 +42,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
@@ -240,7 +241,7 @@ public class ServletUtil {
 				parserInput.setLocale(locale);
 				parserInput.setVirtualWiki(virtualWiki);
 				parserInput.setTopicName(topicName);
-				content = WikiUtil.parse(parserInput, null, content);
+				content = ParserUtil.parse(parserInput, null, content);
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
@@ -633,7 +634,7 @@ public class ServletUtil {
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserDocument parserDocument = new ParserDocument();
-		String content = WikiUtil.parse(parserInput, parserDocument, topic.getTopicContent());
+		String content = ParserUtil.parse(parserInput, parserDocument, topic.getTopicContent());
 		if (parserDocument.getCategories().size() > 0) {
 			LinkedHashMap categories = new LinkedHashMap();
 			for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {

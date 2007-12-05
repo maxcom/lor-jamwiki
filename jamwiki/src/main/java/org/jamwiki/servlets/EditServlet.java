@@ -30,6 +30,7 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -95,7 +96,7 @@ public class EditServlet extends JAMWikiServlet {
 		} else if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = WikiUtil.parseSlice(request, virtualWiki, topicName, section);
+			contents = ParserUtil.parseSlice(request, virtualWiki, topicName, section);
 		} else {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
@@ -275,7 +276,7 @@ public class EditServlet extends JAMWikiServlet {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
 			ParserDocument parserDocument = new ParserDocument();
-			contents = WikiUtil.parseSplice(parserDocument, request, virtualWiki, topicName, section, contents);
+			contents = ParserUtil.parseSplice(parserDocument, request, virtualWiki, topicName, section, contents);
 			sectionName = parserDocument.getSectionName();
 		}
 		if (contents == null) {
@@ -299,9 +300,9 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserDocument parserDocument = WikiUtil.parseMetadata(parserInput, contents);
+		ParserDocument parserDocument = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving
-		contents = WikiUtil.parseMinimal(parserInput, contents);
+		contents = ParserUtil.parseMinimal(parserInput, contents);
 		topic.setTopicContent(contents);
 		if (!StringUtils.isBlank(parserDocument.getRedirect())) {
 			// set up a redirect
