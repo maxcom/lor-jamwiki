@@ -101,9 +101,11 @@ public class WikiSignatureTag implements ParserTag {
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		if (raw.equals("~~~")) {
 			return this.buildWikiSignature(parserInput, parserDocument, mode, true, false);
-		} else if (raw.equals("~~~~")) {
+		}
+		if (raw.equals("~~~~")) {
 			return this.buildWikiSignature(parserInput, parserDocument, mode, true, true);
-		} else if (raw.equals("~~~~~")) {
+		}
+		if (raw.equals("~~~~~")) {
 			return this.buildWikiSignature(parserInput, parserDocument, mode, false, true);
 		}
 		return raw;

@@ -162,9 +162,8 @@ public class WikiListTag implements ParserTag {
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
 		if (raw == null || raw.length() == 0 || !isListTag(raw.charAt(0))) {
 			return this.closeList(parserInput);
-		} else {
-			return listItem(parserInput, raw);
 		}
+		return listItem(parserInput, raw);
 	}
 
 	/**

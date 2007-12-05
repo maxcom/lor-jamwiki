@@ -74,7 +74,8 @@ public class NamespaceHandler {
 			String comments = values[1];
 			if (namespace.equals(NAMESPACE_SPECIAL)) {
 				return NAMESPACE_SPECIAL;
-			} else if (namespace.equals(main) || (comments != null && namespace.equals(comments))) {
+			}
+			if (namespace.equals(main) || (comments != null && namespace.equals(comments))) {
 				return comments;
 			}
 		}

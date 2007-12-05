@@ -75,15 +75,17 @@ public class AuthMsgTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
 		if (request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY) != null) {
 			return this.processAccessDeniedException(request);
-		} else if (request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY) != null) {
-			return this.processAuthenticationRequiredException(request);
-		} else if (request.getParameter("message") != null) {
-			return this.processAuthorizationException(request);
-		} else if (request.getAttribute("messageObject") != null) {
-			return this.processLegacyLogin(request);
-		} else {
-			return null;
 		}
+		if (request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY) != null) {
+			return this.processAuthenticationRequiredException(request);
+		}
+		if (request.getParameter("message") != null) {
+			return this.processAuthorizationException(request);
+		}
+		if (request.getAttribute("messageObject") != null) {
+			return this.processLegacyLogin(request);
+		}
+		return null;
 	}
 
 	/**
