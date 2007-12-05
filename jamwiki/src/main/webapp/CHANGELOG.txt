@@ -5,6 +5,10 @@ New Features:
 
   * Upgrade to Spring Framework 2.5.
 
+Translation Updates:
+
+  * Updated Dutch translations (Angel).
+
 
 0.6.2
 =====
