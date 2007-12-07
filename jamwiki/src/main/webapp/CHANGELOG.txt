@@ -8,6 +8,7 @@ New Features:
 Translation Updates:
 
   * Updated Dutch translations (Angel).
+  * Updated Japanese translations (nattolover).
 
 
 0.6.2
