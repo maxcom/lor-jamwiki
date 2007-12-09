@@ -59,7 +59,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
-		if (StringUtils.isBlank(function) && !ServletUtil.isTopic(request, "Special:Maintenance")) {
+		if (StringUtils.isBlank(function) && ServletUtil.isTopic(request, "Special:Maintenance")) {
 			viewAdminSystem(request, next, pageInfo);
 		} else if (StringUtils.isBlank(function)) {
 			viewAdmin(request, next, pageInfo, null);
