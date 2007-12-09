@@ -4,6 +4,8 @@
 New Features:
 
   * Upgrade to Spring Framework 2.5.
+  * The Special:Translation page will now default to the user's default
+    language instead of defaulting to English.
 
 Translation Updates:
 

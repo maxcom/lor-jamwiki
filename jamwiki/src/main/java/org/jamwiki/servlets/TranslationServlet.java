@@ -60,7 +60,19 @@ public class TranslationServlet extends JAMWikiServlet {
 		} else {
 			view(request, next, pageInfo);
 		}
-		String language = (!StringUtils.isBlank(request.getParameter("language"))) ? request.getParameter("language") : "en";
+		// if a language is specified in the form, use it, other default to default language or
+		// request language if no default is available.
+		String language = request.getParameter("language");
+		if (StringUtils.isBlank(language)) {
+			WikiUser user = WikiUtil.currentUser();
+			if (!StringUtils.isBlank(user.getDefaultLocale())) {
+				language = user.getDefaultLocale().split("_")[0];
+			} else if (request.getLocale() != null) {
+				language = request.getLocale().getLanguage();
+			} else {
+				language = "en";
+			}
+		}
 		next.addObject("language", language);
 		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
@@ -106,6 +118,8 @@ public class TranslationServlet extends JAMWikiServlet {
 				codes.add(code);
 			}
 		}
+		// there is no ApplicationResources_en.properties file - only ApplicationResources.properties, so add "en"
+		codes.add("en");
 		return codes;
 	}
 
