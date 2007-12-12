@@ -32,46 +32,10 @@ public class ImageUtilTest extends TestCase {
 	 */
 	public void testInitializeImageThrowsNullPointerException() throws Throwable {
 		try {
-			ImageUtil.initializeImage(new WikiImage(), 0);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testInitializeImageThrowsNullPointerException1() throws Throwable {
-		try {
-			ImageUtil.initializeImage(new WikiImage(), 1);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testInitializeImageThrowsNullPointerException2() throws Throwable {
-		try {
-			ImageUtil.initializeImage(new WikiImage(), -1);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testInitializeImageThrowsNullPointerException3() throws Throwable {
-		try {
-			ImageUtil.initializeImage(null, 100);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
+			ImageUtil.initializeImage(null, 0);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			assertNotNull(ex.getMessage());
 		}
 	}
 
