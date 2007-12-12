@@ -10,6 +10,7 @@ New Features:
 Translation Updates:
 
   * Updated Dutch translations (Angel).
+  * Updated German translations (axelclk).
   * Updated Japanese translations (nattolover).
 
 
