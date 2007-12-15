@@ -11,6 +11,7 @@ Bugfixes:
 
   * Umlauts, ampersands and other special characters were being double-escaped
     in the user menu.  Bug reported by Толик.
+  * Resolve a CSS issue that impacted display of diffs.  Reported by legendsen.
 
 Translation Updates:
 

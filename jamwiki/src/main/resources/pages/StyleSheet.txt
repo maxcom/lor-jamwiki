@@ -139,9 +139,6 @@ legend {
 	padding: 0.5em;
 	font-weight: bold;
 }
-div.clear {
-	clear: both;
-}
 .red {
 	font-weight: bold;
 	color: #ff0000;
@@ -288,7 +285,7 @@ div.submenu {
 	font-weight: bold;
 	padding: 0.1em;
 	text-align: right;
-	width: 10px;
+	width: 7px;
 }
 .diff-line {
 	clear: both;
@@ -296,7 +293,6 @@ div.submenu {
 	font-weight: bold;
 }
 .diff-entry {
-	clear: both;
 	margin: 1px;
 	padding: 1px;
 }

@@ -42,6 +42,7 @@
 	<div class="diff-indicator">&#160;</div>
 	<div class="diff-unchanged"><c:out value="${diff.newLine}" />&#160;</div>
 			</c:if>
+	<div class="clear"></div>
 </div>
 			<c:set var="previousLineNumber" value="${diff.lineNumber}" />
 		</c:forEach>
