@@ -12,6 +12,7 @@ Translation Updates:
   * Updated Dutch translations (Angel).
   * Updated German translations (axelclk).
   * Updated Japanese translations (nattolover).
+  * Updated Spanish translations (AngelPinazo).
 
 
 0.6.2
