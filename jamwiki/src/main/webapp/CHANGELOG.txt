@@ -1,4 +1,4 @@
-0.6.3
+﻿0.6.3
 =====
 
 New Features:
@@ -6,6 +6,11 @@ New Features:
   * Upgrade to Spring Framework 2.5.
   * The Special:Translation page will now default to the user's default
     language instead of defaulting to English.
+
+Bugfixes:
+
+  * Umlauts, ampersands and other special characters were being double-escaped
+    in the user menu.  Bug reported by Толик.
 
 Translation Updates:
 

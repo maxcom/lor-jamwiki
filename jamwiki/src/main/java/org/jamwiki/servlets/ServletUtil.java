@@ -188,7 +188,10 @@ public class ServletUtil {
 			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();
 			}
-			links.put(userPage, new WikiMessage("usermenu.user", username));
+			// user name will be escaped by the jamwiki:link tag
+			WikiMessage userMenuMessage = new WikiMessage("usermenu.user");
+			userMenuMessage.setParamsWithoutEscaping(new String[]{username});
+			links.put(userPage, userMenuMessage);
 			links.put(userCommentsPage, new WikiMessage("usermenu.usercomments"));
 			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
 		}
