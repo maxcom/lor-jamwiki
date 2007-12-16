@@ -16,9 +16,10 @@ Bugfixes:
 Translation Updates:
 
   * Updated Dutch translations (Angel).
+  * Added Galician translations (mmeixide).
   * Updated German translations (axelclk).
   * Updated Japanese translations (nattolover).
-  * Updated Spanish translations (AngelPinazo).
+  * Updated Spanish translations (AngelPinazo & mmeixide).
 
 
 0.6.2

@@ -73,6 +73,10 @@ public class RegisterServlet extends JAMWikiServlet {
 			String value = key + " - " + localeArray[i].getDisplayName(localeArray[i]);
 			locales.put(value, key);
 		}
+		// FIXME - hack.  make sure all locales not supported by the JDK are included
+		if (locales.get("gl") == null) {
+			locales.put("gl - galego", "gl");
+		}
 		next.addObject("locales", locales);
 		next.addObject("newuser", user);
 		next.addObject("newuserinfo", userInfo);
