@@ -201,8 +201,9 @@
 	</bean>
 
 	<!-- Redirection of user login -->
-	<bean id="authenticationEntryPoint" class="org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint">
-		<property name="loginFormUrl" value="/en/Special:Login" />
+	<bean id="authenticationEntryPoint" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilterEntryPoint">
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilterEntryPoint adds it -->
+		<property name="loginFormUrl" value="/Special:Login" />
 		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
 		<property name="forceHttps" value="false" />
 	</bean>

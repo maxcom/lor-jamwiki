@@ -12,6 +12,9 @@ Bugfixes:
   * Umlauts, ampersands and other special characters were being double-escaped
     in the user menu.  Bug reported by Толик.
   * Resolve a CSS issue that impacted display of diffs.  Reported by legendsen.
+  * When an access denied message is displayed make sure that the login page
+    displayed is in the same virtual wiki as the orginal page request.  Bug
+    reported by Feilong Huang.
 
 Translation Updates:
 
