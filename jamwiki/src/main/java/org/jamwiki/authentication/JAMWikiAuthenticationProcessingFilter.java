@@ -55,6 +55,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	 */
 	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		String uri = request.getRequestURI();
+		// FIXME - move the "strip after semicolon" code to WikiUtil
 		int pathParamIndex = uri.indexOf(';');
 		if (pathParamIndex > 0) {
 			// strip everything after the first semi-colon

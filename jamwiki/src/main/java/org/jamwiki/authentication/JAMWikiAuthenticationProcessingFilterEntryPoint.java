@@ -43,14 +43,13 @@ public class JAMWikiAuthenticationProcessingFilterEntryPoint extends Authenticat
 	 */
 	protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response,  AuthenticationException exception) {
 		String uri = request.getRequestURI();
-		logger.info("RYAN1: " + uri);
+		// FIXME - move the "strip after semicolon" code to WikiUtil
 		int pathParamIndex = uri.indexOf(';');
 		if (pathParamIndex > 0) {
 			// strip everything after the first semi-colon
 			uri = uri.substring(0, pathParamIndex);
 		}
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		logger.info("RYAN2: " + "/" + virtualWiki + this.getLoginFormUrl());
 		return "/" + virtualWiki + this.getLoginFormUrl();
 	}
 }

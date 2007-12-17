@@ -195,7 +195,8 @@
 		</property>
 		<property name="accessDeniedHandler">
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
-				<property name="errorPage" value="/en/Special:Login" />
+				<!-- do not include virtual wiki in the url, JAMWikiAccessDeniedHandler adds it -->
+				<property name="errorPage" value="/Special:Login" />
 			</bean>
 		</property>
 	</bean>
