@@ -16,6 +16,8 @@
  */
 package org.jamwiki.servlets;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -26,6 +28,7 @@ import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.WebAuthenticationDetails;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
@@ -67,15 +70,18 @@ public class RegisterServlet extends JAMWikiServlet {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
 		TreeMap locales = new TreeMap();
+		HashMap translations = WikiConfiguration.getInstance().getTranslations();
+		Iterator iterator = translations.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String)iterator.next();
+			String value = key + " - " + (String)translations.get(key);
+			locales.put(value, key);
+		}
 		Locale[] localeArray = Locale.getAvailableLocales();
 		for (int i=0; i < localeArray.length; i++) {
 			String key = localeArray[i].toString();
 			String value = key + " - " + localeArray[i].getDisplayName(localeArray[i]);
 			locales.put(value, key);
-		}
-		// FIXME - hack.  make sure all locales not supported by the JDK are included
-		if (locales.get("gl") == null) {
-			locales.put("gl - galego", "gl");
 		}
 		next.addObject("locales", locales);
 		next.addObject("newuser", user);

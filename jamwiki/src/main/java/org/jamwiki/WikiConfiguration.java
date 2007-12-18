@@ -50,6 +50,7 @@ public class WikiConfiguration {
 	private Vector parsers = null;
 	private Vector pseudotopics = null;
 	private Vector searchEngines = null;
+	private HashMap translations = null;
 	private Vector userHandlers = null;
 
 	/** Name of the configuration file. */
@@ -71,6 +72,8 @@ public class WikiConfiguration {
 	private static final String XML_PSEUDOTOPIC_ROOT = "pseudotopics";
 	private static final String XML_SEARCH_ENGINE = "search-engine";
 	private static final String XML_SEARCH_ENGINE_ROOT = "search-engines";
+	private static final String XML_TRANSLATION = "translation";
+	private static final String XML_TRANSLATION_ROOT = "translations";
 	private static final String XML_USER_HANDLER = "user-handler";
 	private static final String XML_USER_HANDLER_ROOT = "user-handlers";
 
@@ -129,6 +132,13 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
+	public HashMap getTranslations() {
+		return this.translations;
+	}
+
+	/**
+	 *
+	 */
 	public Collection getUserHandlers() {
 		return this.userHandlers;
 	}
@@ -143,6 +153,7 @@ public class WikiConfiguration {
 			this.parsers = new Vector();
 			this.pseudotopics = new Vector();
 			this.searchEngines = new Vector();
+			this.translations = new HashMap();
 			this.userHandlers = new Vector();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
@@ -163,6 +174,8 @@ public class WikiConfiguration {
 					this.parseNamespaces(child);
 				} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {
 					this.parsePseudotopics(child);
+				} else if (child.getNodeName().equals(XML_TRANSLATION_ROOT)) {
+					this.parseTranslations(child);
 				} else {
 					logUnknownChild(node, child);
 				}
@@ -172,7 +185,6 @@ public class WikiConfiguration {
 			logger.severe("Failure while parsing configuration file " + JAMWIKI_CONFIGURATION_FILE, e);
 		}
 	}
-
 
 	/**
 	 *
@@ -281,6 +293,42 @@ public class WikiConfiguration {
 			}
 		}
 	}
+
+	/**
+	 *
+	 */
+	private void parseTranslation(Node node) throws Exception {
+		NodeList children = node.getChildNodes();
+		String name = "";
+		String key = "";
+		for (int j=0; j < children.getLength(); j++) {
+			Node child = children.item(j);
+			if (child.getNodeName().equals(XML_PARAM_NAME)) {
+				name = XMLUtil.getTextContent(child);
+			} else if (child.getNodeName().equals(XML_PARAM_KEY)) {
+				key = XMLUtil.getTextContent(child);
+			} else {
+				logUnknownChild(node, child);
+			}
+		}
+		this.translations.put(key, name);
+	}
+
+	/**
+	 *
+	 */
+	private void parseTranslations(Node node) throws Exception {
+		NodeList children = node.getChildNodes();
+		for (int j=0; j < children.getLength(); j++) {
+			Node child = children.item(j);
+			if (child.getNodeName().equals(XML_TRANSLATION)) {
+				this.parseTranslation(child);
+			} else {
+				logUnknownChild(node, child);
+			}
+		}
+	}
+
 	/**
 	 * Utility class to log two XML nodes.
 	 * @param node
