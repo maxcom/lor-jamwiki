@@ -259,6 +259,7 @@ div.submenu {
 
 .diff-delete {
 	float: left;
+	position: relative;
 	background: #ee7777;
 	font-weight: bold;
 	padding: 0.1em;
@@ -267,6 +268,7 @@ div.submenu {
 }
 .diff-add {
 	float: left;
+	position: relative;
 	background: #77ee77;
 	font-weight: bold;
 	padding: 0.1em;
@@ -275,6 +277,7 @@ div.submenu {
 }
 .diff-unchanged {
 	float: left;
+	position: relative;
 	background: #dddddd;
 	padding: 0.1em;
 	width: 48%;
@@ -282,6 +285,7 @@ div.submenu {
 }
 .diff-indicator {
 	float: left;
+	position: relative;
 	font-weight: bold;
 	padding: 0.1em;
 	text-align: right;
@@ -293,6 +297,7 @@ div.submenu {
 	font-weight: bold;
 }
 .diff-entry {
+	clear: both;
 	margin: 1px;
 	padding: 1px;
 }
