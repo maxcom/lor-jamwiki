@@ -60,8 +60,30 @@ public class TranslationServlet extends JAMWikiServlet {
 		} else {
 			view(request, next, pageInfo);
 		}
-		// if a language is specified in the form, use it, other default to default language or
-		// request language if no default is available.
+		String language = this.retrieveLanguage(request);
+		next.addObject("language", language);
+		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
+		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
+		return next;
+	}
+
+	/**
+	 *
+	 */
+	private String filename(String language) {
+		String filename = "ApplicationResources.properties";
+		if (!StringUtils.isBlank(language) && !language.equalsIgnoreCase("en")) {
+			// FIXME - should also check for valid language code
+			filename = "ApplicationResources_" + language + ".properties";
+		}
+		return filename;
+	}
+
+	/**
+	 * If a language is specified in the form, use it, other default to default language or
+	 * request language if no default is available.
+	 */
+	private String retrieveLanguage(HttpServletRequest request) {
 		String language = request.getParameter("language");
 		if (StringUtils.isBlank(language)) {
 			WikiUser user = WikiUtil.currentUser();
@@ -73,23 +95,7 @@ public class TranslationServlet extends JAMWikiServlet {
 				language = "en";
 			}
 		}
-		next.addObject("language", language);
-		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
-		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
-		return next;
-	}
-
-	/**
-	 *
-	 */
-	private String filename(HttpServletRequest request) {
-		String filename = "ApplicationResources.properties";
-		String language = request.getParameter("language");
-		if (!StringUtils.isBlank(language) && !language.equalsIgnoreCase("en")) {
-			// FIXME - should also check for valid language code
-			filename = "ApplicationResources_" + language + ".properties";
-		}
-		return filename;
+		return language;
 	}
 
 	/**
@@ -142,7 +148,8 @@ public class TranslationServlet extends JAMWikiServlet {
 			String value = request.getParameter(name);
 			translations.setProperty(key, value);
 		}
-		Environment.saveProperties(filename(request), translations, null);
+		String language = this.retrieveLanguage(request);
+		Environment.saveProperties(filename(language), translations, null);
 		this.writeTopic(request, null);
 		next.addObject("translations", new TreeMap(translations));
 		next.addObject("codes", this.retrieveTranslationCodes());
@@ -152,11 +159,10 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String language = request.getParameter("language");
-		String filename = filename(request);
+		String language = this.retrieveLanguage(request);
 		SortedProperties translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		if (!StringUtils.isBlank(language)) {
-			filename = filename(request);
+			String filename = filename(language);
 			translations.putAll(Environment.loadProperties(filename));
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
@@ -171,8 +177,9 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
-		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
+		String language = request.getParameter("language");
+		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(language));
+		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();
