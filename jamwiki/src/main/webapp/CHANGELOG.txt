@@ -24,6 +24,7 @@ Translation Updates:
   * Added Galician translations (mmeixide).
   * Updated German translations (axelclk).
   * Updated Japanese translations (nattolover).
+  * Added Portugese translations (mmeixide).
   * Updated Spanish translations (AngelPinazo & mmeixide).
 
 
