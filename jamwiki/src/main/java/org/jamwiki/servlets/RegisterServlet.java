@@ -78,7 +78,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			locales.put(value, key);
 		}
 		Locale[] localeArray = Locale.getAvailableLocales();
-		for (int i=0; i < localeArray.length; i++) {
+		for (int i = 0; i < localeArray.length; i++) {
 			String key = localeArray[i].toString();
 			String value = key + " - " + localeArray[i].getDisplayName(localeArray[i]);
 			locales.put(value, key);

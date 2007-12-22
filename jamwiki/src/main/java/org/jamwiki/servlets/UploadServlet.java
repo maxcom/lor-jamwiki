@@ -189,7 +189,7 @@ public class UploadServlet extends JAMWikiServlet {
 				fileSize = item.getSize();
 				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 				if (!directory.exists() && !directory.mkdirs()) {
-					throw new WikiException(new WikiMessage("upload.error.directorycreate",  directory.getAbsolutePath()));
+					throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
 				}
 				contentType = item.getContentType();
 				url = subdirectory + "/" + url;

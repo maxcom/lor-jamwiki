@@ -197,7 +197,7 @@ public class DatabaseUpgrades {
 			// assign admins all permissions during upgrades just to be safe.  for
 			// new installs it is sufficient just to give them the basics
 			Role[] adminRoles = {Role.ROLE_ADMIN, Role.ROLE_EDIT_EXISTING, Role.ROLE_EDIT_NEW, Role.ROLE_MOVE, Role.ROLE_SYSADMIN, Role.ROLE_TRANSLATE, Role.ROLE_UPLOAD, Role.ROLE_VIEW};
-			for (int i=0; i < adminRoles.length; i++) {
+			for (int i = 0; i < adminRoles.length; i++) {
 				Role adminRole = adminRoles[i];
 				sql = "insert into jam_role_map ( "
 					+ "  role_name, wiki_user_id "

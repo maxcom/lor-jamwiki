@@ -51,7 +51,7 @@ public class XMLTopicFactory extends DefaultHandler {
 	String pageName = null;
 	String pageText = null;
 	private String processedTopicName = null;
-	private static String lineEnd =  System.getProperty("line.separator");
+	private static String lineEnd = System.getProperty("line.separator");
 	private static final WikiLogger logger = WikiLogger.getLogger(XMLTopicFactory.class.getName());
 
 	/**
@@ -236,7 +236,7 @@ public class XMLTopicFactory extends DefaultHandler {
 	 */
 	private void nl() throws SAXException {
 		logger.fine(lineEnd);
-		for (int i=0; i < indentLevel; i++) {
+		for (int i = 0; i < indentLevel; i++) {
 			logger.fine(XML_INDENT);
 		}
 	}
@@ -317,16 +317,16 @@ public class XMLTopicFactory extends DefaultHandler {
 	public String preprocessText(String text) {
 		String ret = text;
 		// convert all namespaces names from MediaWiki to JAMWiki local representation
-		ret = StringUtils.replace(ret, "[[category:","[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
+		ret = StringUtils.replace(ret, "[[category:", "[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
 		if (!"Category".equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			ret = StringUtils.replace(ret, "[[Category:","[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
+			ret = StringUtils.replace(ret, "[[Category:", "[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
 		}
-		ret = StringUtils.replace(ret, "[["+ns14+":","[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
-		ret = StringUtils.replace(ret, "[[image:","[["+NamespaceHandler.NAMESPACE_IMAGE+":");
+		ret = StringUtils.replace(ret, "[["+ns14+":", "[["+NamespaceHandler.NAMESPACE_CATEGORY+":");
+		ret = StringUtils.replace(ret, "[[image:", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
 		if (!"Image".equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			ret = StringUtils.replace(ret, "[[Image:","[["+NamespaceHandler.NAMESPACE_IMAGE+":");
+			ret = StringUtils.replace(ret, "[[Image:", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
 		}
-		ret = StringUtils.replace(ret, "[["+ns6+":","[["+NamespaceHandler.NAMESPACE_IMAGE+":");
+		ret = StringUtils.replace(ret, "[["+ns6+":", "[["+NamespaceHandler.NAMESPACE_IMAGE+":");
 
 		return ret;
 	}

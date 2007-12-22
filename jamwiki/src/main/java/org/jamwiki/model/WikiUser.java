@@ -297,7 +297,7 @@ public class WikiUser implements UserDetails {
 			this.authorities = new GrantedAuthority[0];
 		}
 		Set authoritiesSet = new HashSet(Arrays.asList(this.authorities));
-		for (int i=0; i < roles.length; i++) {
+		for (int i = 0; i < roles.length; i++) {
 			if (!authoritiesSet.contains(roles[i])) {
 				authoritiesSet.add(roles[i]);
 			}

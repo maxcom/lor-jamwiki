@@ -126,7 +126,7 @@ public class WikiPreparedStatement {
 	 *
 	 */
 	private void loadStatement() throws Exception {
-		for (int i=0; i < this.paramTypes.length; i++) {
+		for (int i = 0; i < this.paramTypes.length; i++) {
 			if (params[i] == null) {
 				this.statement.setNull(i+1, paramTypes[i]);
 			} else if (paramTypes[i] == Types.CHAR) {

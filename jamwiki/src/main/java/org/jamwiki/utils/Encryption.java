@@ -148,7 +148,7 @@ public class Encryption {
 	 */
 	private static String bytes2String(byte[] bytes) {
 		StringBuffer buffer = new StringBuffer();
-		for (int i=0; i < bytes.length; i++) {
+		for (int i = 0; i < bytes.length; i++) {
 			buffer.append((char)bytes[i]);
 		}
 		return buffer.toString();

@@ -50,7 +50,7 @@ public class Environment {
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
 	public static final String PROP_CACHE_MAX_IDLE_AGE = "cache-max-idle-age";
 	public static final String PROP_CACHE_TOTAL_SIZE = "cache-total-size";
-	public static final String PROP_DB_DRIVER= "driver";
+	public static final String PROP_DB_DRIVER = "driver";
 	public static final String PROP_DB_PASSWORD = "db-password";
 	public static final String PROP_DB_TYPE = "database-type";
 	public static final String PROP_DB_URL = "url";

@@ -88,7 +88,7 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 		}
 		ArrayList anonymousRoles = new ArrayList();
 		anonymousRoles.add(Role.ROLE_ANONYMOUS);
-		for (int i=0; i < groupRoles.length; i++) {
+		for (int i = 0; i < groupRoles.length; i++) {
 			anonymousRoles.add(groupRoles[i]);
 		}
 		user.setAuthorities(anonymousRoles);

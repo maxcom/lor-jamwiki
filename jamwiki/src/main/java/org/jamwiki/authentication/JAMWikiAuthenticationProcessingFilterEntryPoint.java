@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
-import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -41,7 +40,7 @@ public class JAMWikiAuthenticationProcessingFilterEntryPoint extends Authenticat
 	 * Return the URL to redirect to in case of a login being required.  This method
 	 * uses the configured login URL and prepends the virtual wiki.
 	 */
-	protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response,  AuthenticationException exception) {
+	protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
 		String uri = request.getRequestURI();
 		// FIXME - move the "strip after semicolon" code to WikiUtil
 		int pathParamIndex = uri.indexOf(';');

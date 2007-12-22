@@ -73,7 +73,7 @@ public class RolesServlet extends JAMWikiServlet {
 		if (valueArray == null) {
 			return results;
 		}
-		for (int i=0; i < valueArray.length; i++) {
+		for (int i = 0; i < valueArray.length; i++) {
 			StringTokenizer tokens = new StringTokenizer(valueArray[i], "|");
 			String parsedUserId = tokens.nextToken();
 			int userInt = -1;
@@ -108,7 +108,7 @@ public class RolesServlet extends JAMWikiServlet {
 			String[] candidateGroups = request.getParameterValues("candidateGroup");
 			String[] groupRoles = request.getParameterValues("groupRole");
 			if (candidateGroups != null) {
-				for (int i=0; i < candidateGroups.length; i++) {
+				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
 					Collection roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
@@ -119,7 +119,7 @@ public class RolesServlet extends JAMWikiServlet {
 			String[] candidateUsers = request.getParameterValues("candidateUser");
 			String[] userRoles = request.getParameterValues("userRole");
 			if (candidateUsers != null) {
-				for (int i=0; i < candidateUsers.length; i++) {
+				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					Collection roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == WikiUtil.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {

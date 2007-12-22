@@ -213,7 +213,7 @@ public class DiffUtil {
 		if (currentDiff.getAddedEnd() == -1) {
 			addedCurrent = (currentDiff.getAddedStart());
 		}
-		for (int i=0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
+		for (int i = 0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
 			int lineNumber = ((deletedCurrent < 0) ? 0 : deletedCurrent);
 			String oldLine = null;
 			String newLine = null;
@@ -250,7 +250,7 @@ public class DiffUtil {
 			deletedCurrent = Math.max(previousDiff.getDeletedEnd() + 1, deletedCurrent);
 			addedCurrent = Math.max(previousDiff.getAddedEnd() + 1, addedCurrent);
 		}
-		for (int i=0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
+		for (int i = 0; i < DIFF_UNCHANGED_LINE_DISPLAY; i++) {
 			int lineNumber = ((deletedCurrent < 0) ? 0 : deletedCurrent);
 			String oldLine = null;
 			String newLine = null;
@@ -287,7 +287,7 @@ public class DiffUtil {
 		Difference currentDiff = null;
 		Difference previousDiff = null;
 		Difference nextDiff = null;
-		for (int i=0; i < diffs.size(); i++) {
+		for (int i = 0; i < diffs.size(); i++) {
 			currentDiff = (Difference)diffs.get(i);
 			preBufferDifference(currentDiff, previousDiff, wikiDiffs, oldArray, newArray);
 			processDifference(currentDiff, wikiDiffs, oldArray, newArray);

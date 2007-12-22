@@ -101,7 +101,7 @@ public class ImportServlet extends JAMWikiServlet {
 		String subdirectory = "tmp";
 		File directory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), subdirectory);
 		if (!directory.exists() && !directory.mkdirs()) {
-			throw new WikiException(new WikiMessage("upload.error.directorycreate",  directory.getAbsolutePath()));
+			throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
 		}
 		// use current timestamp as unique file name
 		String filename = System.currentTimeMillis() + ".xml";

@@ -90,7 +90,7 @@ public class WikiMessage {
 		this.key = key;
 		if (params != null) {
 			this.params = new String[params.length];
-			for (int i=0; i < params.length; i++) {
+			for (int i = 0; i < params.length; i++) {
 				this.params[i] = StringEscapeUtils.escapeHtml(params[i]);
 			}
 		}

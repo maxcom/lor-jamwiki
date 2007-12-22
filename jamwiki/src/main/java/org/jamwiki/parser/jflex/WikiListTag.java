@@ -183,7 +183,7 @@ public class WikiListTag implements ParserTag {
 	 */
 	private Stack tagsToStack(String raw) {
 		int count = 0;
-		for (int i=0; i < raw.length(); i++) {
+		for (int i = 0; i < raw.length(); i++) {
 			if (!isListTag(raw.charAt(i))) {
 				break;
 			}
@@ -192,7 +192,7 @@ public class WikiListTag implements ParserTag {
 		String tags = raw.substring(0, count);
 		// build a stack of html tags based on current values passed to lexer
 		Stack currentOpenStack = new Stack();
-		for (int i=0; i < tags.length(); i++) {
+		for (int i = 0; i < tags.length(); i++) {
 			String tag = "" + tags.charAt(i);
 			String listOpenTag = (String)listOpenHash.get(tag);
 			String listItemOpenTag = (String)listItemOpenHash.get(tag);
