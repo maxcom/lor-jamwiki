@@ -259,6 +259,7 @@ public class LinkUtil {
 		} else {
 			target = "";
 		}
+		text = StringEscapeUtils.unescapeHtml(text);
 		String html = "<a title=\"" + StringEscapeUtils.escapeHtml(text) + "\" href=\"" + url + "\"" + style + target + ">";
 		if (escapeHtml) {
 			html += StringEscapeUtils.escapeHtml(StringEscapeUtils.unescapeHtml(text));
