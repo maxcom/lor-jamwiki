@@ -18,6 +18,8 @@ Bugfixes:
     reported by Feilong Huang.
   * Fix several potential (although unlikely) NPE scenarios identified by
     static code analysis tools.
+  * Update the CSS for pre tags to prevent overflows in tables.  Reported by
+    Michael Habbert.
 
 Translation Updates:
 

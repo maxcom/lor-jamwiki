@@ -395,7 +395,6 @@ li.undeletechange {
 	padding: 10px 0px 10px 0px;
 }
 #content-article pre {
-	width: 98%;
 	overflow: hidden;
 }
 .section-edit {
