@@ -20,6 +20,8 @@ Bugfixes:
     static code analysis tools.
   * Update the CSS for pre tags to prevent overflows in tables.  Reported by
     Michael Habbert.
+  * Fix a bug that broke the Special:Contributions when using a non-ASCII user
+    login.
 
 Translation Updates:
 

@@ -274,6 +274,46 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Retrieve a parameter from the servlet request.  This method works around
+	 * some issues encountered when retrieving non-ASCII values from URL
+	 * parameters.
+	 *
+	 * @param request The servlet request object.
+	 * @param name The parameter name to be retrieved.
+	 * @return The decoded parameter value retrieved from the request.
+	 */
+	public static String getParameterFromRequest(HttpServletRequest request, String name) throws Exception {
+		String value = null;
+		if (request.getMethod().equalsIgnoreCase("GET")) {
+			// parameters passed via the URL are URL encoded, so request.getParameter may
+			// not interpret non-ASCII characters properly.  This code attempts to work
+			// around that issue by manually decoding.  yes, this is ugly and it would be
+			// great if someone could eventually make it unnecessary.
+			String query = request.getQueryString();
+			if (StringUtils.isBlank(query)) {
+				return null;
+			}
+			String prefix = name + "=";
+			int pos = query.indexOf(prefix);
+			if (pos != -1 && (pos + prefix.length()) < query.length()) {
+				value = query.substring(pos + prefix.length());
+				if (value.indexOf("&") != -1) {
+					value = value.substring(0, value.indexOf("&"));
+				}
+			}
+			return Utilities.decodeFromURL(value);
+		}
+		value = request.getParameter(name);
+		if (value == null) {
+			value = (String)request.getAttribute(name);
+		}
+		if (value == null) {
+			return null;
+		}
+		return Utilities.decodeFromRequest(value);
+	}
+
+	/**
 	 * Retrieve a topic name from the servlet request.  This method will
 	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
 	 * and will decode it appropriately.
@@ -282,34 +322,7 @@ public class WikiUtil {
 	 * @return The decoded topic name retrieved from the request.
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		String topic = null;
-		if (request.getMethod().equalsIgnoreCase("GET")) {
-			// parameters passed via the URL and URL encoded, so request.getParameter may
-			// not interpret non-ASCII characters properly.  This code attempts to work
-			// around that issue by manually decoding.  yes, this is ugly and it would be
-			// great if someone could eventually make it unnecessary.
-			String query = request.getQueryString();
-			if (StringUtils.isBlank(query)) {
-				return null;
-			}
-			String prefix = ServletUtil.PARAMETER_TOPIC + "=";
-			int pos = query.indexOf(prefix);
-			if (pos != -1 && (pos + prefix.length()) < query.length()) {
-				topic = query.substring(pos + prefix.length());
-				if (topic.indexOf("&") != -1) {
-					topic = topic.substring(0, topic.indexOf("&"));
-				}
-			}
-			return Utilities.decodeFromURL(topic);
-		}
-		topic = request.getParameter(ServletUtil.PARAMETER_TOPIC);
-		if (topic == null) {
-			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
-		}
-		if (topic == null) {
-			return null;
-		}
-		return Utilities.decodeFromRequest(topic);
+		return WikiUtil.getParameterFromRequest(request, ServletUtil.PARAMETER_TOPIC);
 	}
 
 	/**
