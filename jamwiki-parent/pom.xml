@@ -52,7 +52,7 @@
 			<dependency>
 				<groupId>org.acegisecurity</groupId>
 				<artifactId>acegi-security</artifactId>
-				<version>1.0.5</version>
+				<version>1.0.6</version>
 				<!-- FIXME: The Maven dependencies have not been updated for Spring 2.5 -->
 				<exclusions>
 					<exclusion>
