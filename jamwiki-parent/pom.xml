@@ -34,7 +34,7 @@
 	<!-- dependency management defines the version to use in projects that inherits from the parent.
 		The dependency management does not tell the sub-project to depend from what is listed bellow.-->
 	<properties>
-		<dependency.spring.version>2.5</dependency.spring.version>
+		<dependency.spring.version>2.5.1</dependency.spring.version>
 		<jamwiki.version>0.6.3-SNAPSHOT</jamwiki.version>
 	</properties>
 	<dependencyManagement>

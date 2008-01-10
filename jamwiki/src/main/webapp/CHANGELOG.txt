@@ -3,7 +3,7 @@
 
 New Features:
 
-  * Upgrade to Spring Framework 2.5.
+  * Upgrade to Spring Framework 2.5.1.
   * The Special:Translation page will now default to the user's default
     language instead of defaulting to English.
   * Upgrade to Acegi Security 1.0.6.
