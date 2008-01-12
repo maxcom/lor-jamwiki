@@ -16,17 +16,12 @@
  */
 package org.jamwiki.servlets;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import net.sf.ehcache.Element;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
@@ -429,24 +424,6 @@ public class ServletUtil {
 		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
 		pageInfo.setTabMenu(ServletUtil.buildTabMenu(request, pageInfo));
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
-	}
-
-	/**
-	 * Utility method for parsing a multipart servlet request.  This method returns
-	 * an iterator of FileItem objects that corresponds to the request.
-	 *
-	 * @param request The servlet request containing the multipart request.
-	 * @return Returns an iterator of FileItem objects the corresponds to the request.
-	 * @throws Exception Thrown if any problems occur while processing the request.
-	 */
-	protected static Iterator processMultipartRequest(HttpServletRequest request) throws Exception {
-		// Create a factory for disk-based file items
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		factory.setRepository(new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH)));
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		upload.setHeaderEncoding("UTF-8");
-		upload.setSizeMax(Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		return upload.parseRequest(request).iterator();
 	}
 
 	/**

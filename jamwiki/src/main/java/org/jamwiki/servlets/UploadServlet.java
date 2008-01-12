@@ -38,6 +38,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -158,7 +159,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
-		Iterator iterator = ServletUtil.processMultipartRequest(request);
+		Iterator iterator = RequestUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		String fileName = null;
 		String url = null;
 		String contentType = null;

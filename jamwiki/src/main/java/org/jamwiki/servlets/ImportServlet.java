@@ -27,6 +27,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.XMLTopicFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -62,7 +63,7 @@ public class ImportServlet extends JAMWikiServlet {
 	 */
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		Iterator iterator = ServletUtil.processMultipartRequest(request);
+		Iterator iterator = RequestUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		WikiUser user = WikiUtil.currentUser();
 		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, request.getRemoteAddr());
 		String topicName = null;
