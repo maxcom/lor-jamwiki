@@ -147,6 +147,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 			if (oldVersion.before(0, 6, 1)) {
 				stylesheet = true;
 			}
+			if (oldVersion.before(0, 6, 2)) {
+				stylesheet = true;
+			}
 			if (oldVersion.before(0, 6, 3)) {
 				stylesheet = true;
 			}
