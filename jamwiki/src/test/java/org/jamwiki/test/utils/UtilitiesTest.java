@@ -301,19 +301,27 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testIsIpAddress() throws Throwable {
-		//test length
-		assertTrue("1.2.3.4",Utilities.isIpAddress("1.2.3.4"));
-		assertTrue("127.0.0.1",Utilities.isIpAddress("127.0.0.1"));
-		assertFalse("1.2.3.4.5",Utilities.isIpAddress("1.2.3.4.5"));
-		//out of bound values
-		assertFalse("out of bound value",Utilities.isIpAddress("256.2.3.4"));
-		assertFalse("out of bound value",Utilities.isIpAddress("1.257.3.4"));
-		assertFalse("out of bound value",Utilities.isIpAddress("1.2.258.4"));
-		assertFalse("out of bound value",Utilities.isIpAddress("1.2.3.259"));
-		assertFalse("out of bound value",Utilities.isIpAddress("-1.2.3.4"));
+		//test ipv4 addresses
+		assertTrue("0.0.0.0", Utilities.isIpAddress("0.0.0.0"));
+		assertTrue("1.2.3.4", Utilities.isIpAddress("1.2.3.4"));
+		assertTrue("127.0.0.1", Utilities.isIpAddress("127.0.0.1"));
+		assertTrue("255.255.255.255", Utilities.isIpAddress("255.255.255.255"));
+		assertTrue("240.0.199.200", Utilities.isIpAddress("240.0.199.200"));
+		assertFalse("1.2.3.4.5", Utilities.isIpAddress("1.2.3.4.5"));
+		assertFalse("256.1.1.1", Utilities.isIpAddress("256.1.1.1"));
+		assertFalse("1.1.1.", Utilities.isIpAddress("256.1.1."));
+		assertFalse("a.b.c.d", Utilities.isIpAddress("a.b.c.d"));
+		//test ipv6 addresses
+		assertTrue("0:0:0:0:0:0:0:0", Utilities.isIpAddress("0:0:0:0:0:0:0:0"));
+		assertTrue("1234:abcd:eFe9:5500:30:a:99aa:5542", Utilities.isIpAddress("1234:abcd:eFe9:5500:30:a:99aa:5542"));
+		assertFalse("1234:abcd:eFe9:5500:30:a:99aa:", Utilities.isIpAddress("1234:abcd:eFe9:5500:30:a:99aa:"));
+		assertFalse("1234:abcd:eFe9:5500:30:a:99aa:0:0", Utilities.isIpAddress("1234:abcd:eFe9:5500:30:a:99aa:0:0"));
+		assertFalse("123g:abcd:eFe9:5500:30:a:99aa:0", Utilities.isIpAddress("123g:abcd:eFe9:5500:30:a:99aa:0"));
+		assertFalse("1234:abcd:eFe9:5500:30:a:99aa:", Utilities.isIpAddress("1234:abcd:eFe9:5500:30:a:99aa:"));
+		assertFalse("abcd:eFe9:5500:30:a:99aa:5542", Utilities.isIpAddress("abcd:eFe9:5500:30:a:99aa:5542"));
 		//empty and null
-		assertFalse("empty string",Utilities.isIpAddress(""));
-		assertFalse("null string",Utilities.isIpAddress(null));
+		assertFalse("empty string", Utilities.isIpAddress(""));
+		assertFalse("null string", Utilities.isIpAddress(null));
 	}
 
 	/**

@@ -25,6 +25,8 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.propertyeditors.LocaleEditor;
@@ -37,6 +39,20 @@ import org.springframework.util.ClassUtils;
 public class Utilities {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(Utilities.class.getName());
+
+	private static Pattern VALID_IPV4_PATTERN = null;
+	private static Pattern VALID_IPV6_PATTERN = null;
+	private static final String ipv4Pattern = "(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])";
+	private static final String ipv6Pattern = "([0-9a-f]{1,4}:){7}([0-9a-f]){1,4}";
+
+	static {
+		try {
+			VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
+			VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
+		} catch (Exception e) {
+			logger.severe("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 *
@@ -279,8 +295,8 @@ public class Utilities {
 	}
 
 	/**
-	 * Determine if the given string is an IP address.  This method uses pattern
-	 * matching to see if the given string could be a valid IP address.
+	 * Determine if the given string is a valid IPv4 or IPv6 address.  This method
+	 * uses pattern matching to see if the given string could be a valid IP address.
 	 *
 	 * @param ipAddress A string that is to be examined to verify whether or not
 	 *  it could be a valid IP address.
@@ -288,39 +304,15 @@ public class Utilities {
 	 *  <code>false</code> otherwise.
 	 */
 	public static boolean isIpAddress(String ipAddress) {
-		// note that a regular expression would be the easiest way to handle
-		// this, but regular expressions don't handle things like "number between
-		// 0 and 255" very well, so use a heavier approach
-		// if no text, obviously not valid
 		if (StringUtils.isBlank(ipAddress)) {
 			return false;
 		}
-		// must contain three periods
-		if (StringUtils.countMatches(ipAddress, ".") != 3) {
-			return false;
+		Matcher m1 = Utilities.VALID_IPV4_PATTERN.matcher(ipAddress);
+		if (m1.matches()) {
+			return true;
 		}
-		// ip addresses must be between seven and 15 characters long
-		if (ipAddress.length() < 7 || ipAddress.length() > 15) {
-			return false;
-		}
-		// verify that the string is "0-255.0-255.0-255.0-255".
-		StringTokenizer tokens = new StringTokenizer(ipAddress, ".");
-		String token = null;
-		int number = -1;
-		while (tokens.hasMoreTokens()) {
-			token = tokens.nextToken();
-			try {
-				number = Integer.parseInt(token);
-				if (number < 0 || number > 255) {
-					return false;
-				}
-			} catch (Exception e) {
-				// not a number
-				return false;
-			}
-		}
-		// all tests passed, it's an IP address
-		return true;
+		Matcher m2 = Utilities.VALID_IPV6_PATTERN.matcher(ipAddress);
+		return m2.matches();
 	}
 
 	/**
