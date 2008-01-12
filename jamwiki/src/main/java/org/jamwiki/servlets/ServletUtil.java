@@ -674,24 +674,4 @@ public class ServletUtil {
 			pageInfo.setPageTitle(pageTitle);
 		}
 	}
-	
-
-	/**
-	 * Utility method for setting a cookie.  This method will overwrite an existing
-	 * cookie of the same name if such a cookie already exists.
-	 *
-	 * @param response The servlet response object.
-	 * @param cookieName The name of the cookie to be set.
-	 * @param cookieValue The value of the cookie to be set.
-	 * @param cookieAge The length of time before the cookie expires, specified in seconds.
-	 * @throws Exception Thrown if any error occurs while setting cookie values.
-	 */
-	public static void addCookie(HttpServletResponse response, String cookieName, String cookieValue, int cookieAge) throws Exception {
-		Cookie cookie = null;
-		// after confirming credentials
-		cookie = new Cookie(cookieName, cookieValue);
-		cookie.setMaxAge(cookieAge);
-		response.addCookie(cookie);
-	}
-
 }
