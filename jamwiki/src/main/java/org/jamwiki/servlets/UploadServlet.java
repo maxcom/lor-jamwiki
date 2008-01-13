@@ -215,14 +215,14 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(contents);
-		wikiFileVersion.setAuthorIpAddress(request.getRemoteAddr());
+		wikiFileVersion.setAuthorIpAddress(RequestUtil.getIpAddress(request));
 		WikiUser user = WikiUtil.currentUser();
 		Integer authorId = null;
 		if (user.getUserId() > 0) {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);
-		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), contents, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), contents, topic.getTopicContent());
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}

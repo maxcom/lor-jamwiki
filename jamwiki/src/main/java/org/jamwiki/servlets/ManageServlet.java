@@ -25,6 +25,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -86,7 +87,7 @@ public class ManageServlet extends JAMWikiServlet {
 		String contents = "";
 		topic.setTopicContent(contents);
 		WikiUser user = WikiUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("deleteComment"), contents);
+		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true, null);
 	}
@@ -107,7 +108,7 @@ public class ManageServlet extends JAMWikiServlet {
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
 		WikiUser user = WikiUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
@@ -151,7 +152,7 @@ public class ManageServlet extends JAMWikiServlet {
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
 		WikiUser user = WikiUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, request.getRemoteAddr(), request.getParameter("undeleteComment"), contents);
+		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true, null);
 	}

@@ -7,6 +7,8 @@ New Features:
   * The Special:Translation page will now default to the user's default
     language instead of defaulting to English.
   * Upgrade to Acegi Security 1.0.6.
+  * Add support for IPv6 to prevent database errors on IPv6 systems.  Problem
+    reported by huntc.
 
 Bugfixes:
 

@@ -40,6 +40,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
@@ -610,7 +611,7 @@ public class ServletUtil {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress(request.getRemoteAddr());
+		parserInput.setUserIpAddress(RequestUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserDocument parserDocument = new ParserDocument();

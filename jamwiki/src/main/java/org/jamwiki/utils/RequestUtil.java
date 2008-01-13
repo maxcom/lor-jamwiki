@@ -38,6 +38,31 @@ public class RequestUtil {
 	}
 
 	/**
+	 * Duplicate the functionality of the request.getRemoteAddr() method, but
+	 * for IPv6 addresses strip off any local interface information (anything
+	 * following a "%").
+	 *
+	 * @param request the HTTP request object.
+	 * @return The IP address that the request originated from, or 0.0.0.0 if
+	 *  the originating address cannot be determined.
+	 */
+	public static String getIpAddress(HttpServletRequest request) {
+		if (request == null) {
+			throw new IllegalArgumentException("Request object cannot be null");
+		}
+		String ipAddress = request.getRemoteAddr();
+		int pos = ipAddress.indexOf("%");
+		if (pos != -1) {
+			ipAddress = ipAddress.substring(0, pos);
+		}
+		if (!Utilities.isIpAddress(ipAddress)) {
+			logger.info("Invalid IP address found in request: " + ipAddress);
+			ipAddress = "0.0.0.0";
+		}
+		return ipAddress;
+	}
+
+	/**
 	 * Utility method for parsing a multipart servlet request.  This method returns
 	 * an iterator of FileItem objects that corresponds to the request.
 	 *

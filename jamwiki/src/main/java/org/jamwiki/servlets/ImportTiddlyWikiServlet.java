@@ -76,7 +76,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 			// returned null for non-logged-in users
 			user = null;
 		}
-		TiddlyWikiParser parser = new TiddlyWikiParser(virtualWiki, user, request.getRemoteAddr());
+		TiddlyWikiParser parser = new TiddlyWikiParser(virtualWiki, user, RequestUtil.getIpAddress(request));
 		String topicName = null;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();
