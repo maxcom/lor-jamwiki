@@ -274,4 +274,67 @@ public class DatabaseUpgrades {
 		}
 		return messages;
 	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade063(Vector messages) throws Exception {
+		Connection conn = null;
+		try {
+			String sql = null;
+			conn = DatabaseConnection.getConnection();
+			conn.setAutoCommit(false);
+			// increase the size of ip address columns
+			String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+			if (dbType.equals(WikiBase.DATA_HANDLER_DB2) || dbType.equals(WikiBase.DATA_HANDLER_DB2400)) {
+				sql = "alter table jam_topic_version alter column wiki_user_ip_address set data type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_file_version alter column wiki_user_ip_address set data type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user alter column create_ip_address set data type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user alter column last_login_ip_address set data type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL) || dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_topic_version modify wiki_user_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_file_version modify wiki_user_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user modify create_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user modify last_login_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_POSTGRES)) {
+				sql = "alter table jam_topic_version alter column wiki_user_ip_address type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_file_version alter column wiki_user_ip_address type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user alter column create_ip_address type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user alter column last_login_ip_address type varchar(39) ";
+				DatabaseConnection.executeUpdate(sql, conn);
+			} else {
+				sql = "alter table jam_topic_version alter column wiki_user_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_file_version alter column wiki_user_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user alter column create_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				sql = "alter table jam_wiki_user alter column last_login_ip_address varchar(39) not null ";
+				DatabaseConnection.executeUpdate(sql, conn);
+			}
+			messages.add("Increased IP address field sizes to support IPv6");
+			conn.commit();
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			messages.add("Unable to modify database schema to support IPv6.  Please see UPGRADE.txt for further details on this optional modification." + e.getMessage());
+			// do not throw this error and halt the upgrade process - changing the column size
+			// is not required for systems that have already been successfully installed, it
+			// is simply being done to keep new installs consistent with existing installs.
+			logger.info("Failure while updating database for IPv6 support.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
+		}
+		return messages;
+	}
 }

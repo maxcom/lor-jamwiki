@@ -66,6 +66,30 @@ followed by 0.5.3.
      the default the StyleSheet topic can be found in the
      /WEB-INF/classes/pages/StyleSheet file.  Note that the StyleSheet topic
      can only be edited AFTER all other upgrade steps have been completed.
+  3. (Optional) Update the database schema by executing the following SQL
+     statements:
+       a) All database fields that hold IP addresses should be increased in
+          size from 15 to 39 characters to support IPv6:
+            DB2 and DB2/400:
+              alter table jam_topic_version alter column wiki_user_ip_address set data type varchar(39);
+              alter table jam_file_version alter column wiki_user_ip_address set data type varchar(39);
+              alter table jam_wiki_user alter column create_ip_address set data type varchar(39);
+              alter table jam_wiki_user alter column last_login_ip_address set data type varchar(39);
+            MySql and Oracle:
+              alter table jam_topic_version modify wiki_user_ip_address varchar(39) not null;
+              alter table jam_file_version modify wiki_user_ip_address varchar(39) not null;
+              alter table jam_wiki_user modify create_ip_address varchar(39) not null;
+              alter table jam_wiki_user modify last_login_ip_address varchar(39) not null;
+            Postgres:
+              alter table jam_topic_version alter column wiki_user_ip_address type varchar(39);
+              alter table jam_file_version alter column wiki_user_ip_address type varchar(39);
+              alter table jam_wiki_user alter column create_ip_address type varchar(39);
+              alter table jam_wiki_user alter column last_login_ip_address type varchar(39);
+            Other Databases:
+              alter table jam_topic_version alter column wiki_user_ip_address varchar(39) not null;
+              alter table jam_file_version alter column wiki_user_ip_address varchar(39) not null;
+              alter table jam_wiki_user alter column create_ip_address varchar(39) not null;
+              alter table jam_wiki_user alter column last_login_ip_address varchar(39) not null;
 
 
   JAMWiki 0.6.2
