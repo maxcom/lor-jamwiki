@@ -16,7 +16,6 @@
  */
 package org.jamwiki;
 
-import java.util.StringTokenizer;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
@@ -44,13 +43,13 @@ public class WikiVersion {
 		if (StringUtils.isBlank(version)) {
 			throw new Exception("Invalid Wiki version: " + version);
 		}
-		StringTokenizer tokens = new StringTokenizer(version, ".");
-		if (tokens.countTokens() != 3) {
+		String[] tokens = version.split("\\.");
+		if (tokens.length != 3) {
 			throw new Exception("Invalid Wiki version: " + version);
 		}
-		this.major = new Integer(tokens.nextToken()).intValue();
-		this.minor = new Integer(tokens.nextToken()).intValue();
-		this.patch = new Integer(tokens.nextToken()).intValue();
+		this.major = new Integer(tokens[0]).intValue();
+		this.minor = new Integer(tokens[1]).intValue();
+		this.patch = new Integer(tokens[2]).intValue();
 	}
 
 	/**

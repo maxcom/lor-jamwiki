@@ -17,10 +17,10 @@
 package org.jamwiki.utils;
 
 import java.io.File;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 
 /**
@@ -79,14 +79,18 @@ public class SpamFilter {
 	private static void initialize() throws Exception {
 		try {
 			File file = Utilities.getClassLoaderFile(SPAM_BLACKLIST_FILE);
-			String regexText = FileUtils.readFileToString(file, "UTF-8");
-			StringTokenizer tokens = new StringTokenizer(regexText, "\n\r");
 			String regex = "";
-			while (tokens.hasMoreTokens()) {
-				regex += tokens.nextToken();
-				if (tokens.hasMoreTokens()) {
+			String regexText = FileUtils.readFileToString(file, "UTF-8").trim();
+			String[] tokens = regexText.split("\n");
+			for (int i = 0; i < tokens.length; i++) {
+				String token = tokens[i];
+				if (StringUtils.isBlank(token)) {
+					continue;
+				}
+				if (i > 0) {
 					regex += "|";
 				}
+				regex += token.trim();
 			}
 			spamRegexPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			logger.info("Loading spam filter regular expression:" + regex);

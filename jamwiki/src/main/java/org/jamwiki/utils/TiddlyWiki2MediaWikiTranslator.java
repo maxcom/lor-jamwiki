@@ -84,23 +84,23 @@ public class TiddlyWiki2MediaWikiTranslator {
             }
             
             private String translateTableLine(String line) {
-                    StringTokenizer tokenizer = new StringTokenizer(line, "|");
-                    StringBuffer output = new StringBuffer();
-                    output.append("|");
-                    while(tokenizer.hasMoreTokens()) { 
-                            String token = tokenizer.nextToken();
-                            if (token.startsWith("!")) { //headers bold
-                                    output.append("'''");
-                            }
-                            output.append(token);
-                            if (token.startsWith("!")) {
-                                    output.append("'''");
-                            }
-                            if (tokenizer.hasMoreTokens()) {
-                                    output.append("||");
-                            }
+                String[] tokens = line.split("\\|");
+                StringBuffer output = new StringBuffer();
+                output.append("|");
+                for (int i = 0; i < tokens.length; i++) {
+                    String token = tokens[i];
+                    if (i > 0) {
+                        output.append("||");
                     }
-                    return output.toString();
+                    if (token.startsWith("!")) { //headers bold
+                        output.append("'''");
+                    }
+                    output.append(token);
+                    if (token.startsWith("!")) {
+                        output.append("'''");
+                    }
+                }
+                return output.toString();
             }
             
             private String headers(String wikicode) throws IOException {

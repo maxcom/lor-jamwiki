@@ -18,7 +18,6 @@ package org.jamwiki.utils;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
@@ -51,15 +50,7 @@ public class DiffUtil {
 		if (original == null) {
 			return null;
 		}
-		StringTokenizer tokens = new StringTokenizer(original, "\n");
-		int size = tokens.countTokens();
-		String[] array = new String[size];
-		int count = 0;
-		while (tokens.hasMoreTokens()) {
-			array[count] = tokens.nextToken();
-			count++;
-		}
-		return array;
+		return original.split("\n");
 	}
 
 	/**

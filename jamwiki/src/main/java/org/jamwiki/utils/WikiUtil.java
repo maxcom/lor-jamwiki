@@ -22,7 +22,6 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -554,9 +553,9 @@ public class WikiUtil {
 		} else if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
 			listString = Environment.getValue(Environment.PROP_FILE_WHITELIST);
 		}
-		StringTokenizer tokens = new StringTokenizer(listString, "\n\r ,.");
-		while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken();
+		String[] tokens = listString.split("[\\s,\\.]");
+		for (int i = 0; i < tokens.length; i++) {
+			String token = tokens[i];
 			if (StringUtils.isBlank(token)) {
 				continue;
 			}

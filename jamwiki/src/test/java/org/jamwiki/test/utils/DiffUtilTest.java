@@ -87,8 +87,8 @@ public class DiffUtilTest extends TestCase {
 	 *
 	 */
 	public void testDiff7() throws Throwable {
-		Vector result = DiffUtil.diff("\n", null);
-		assertEquals("result.size()", 0, result.size());
+		Vector result = DiffUtil.diff("foo\n", null);
+		assertEquals("result.size()", 1, result.size());
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class DiffUtilTest extends TestCase {
 	 */
 	public void testDiff11() throws Throwable {
 		Vector result = DiffUtil.diff("\n", "");
-		assertEquals("result.size()", 0, result.size());
+		assertEquals("result.size()", 1, result.size());
 	}
 
 	/**

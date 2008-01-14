@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
@@ -125,9 +124,9 @@ public class WikiLinkTag implements ParserTag {
 		String align = null;
 		int maxDimension = -1;
 		if (!StringUtils.isBlank(wikiLink.getText())) {
-			StringTokenizer tokens = new StringTokenizer(wikiLink.getText(), "|");
-			while (tokens.hasMoreTokens()) {
-				String token = tokens.nextToken();
+			String[] tokens = wikiLink.getText().split("\\|");
+			for (int i = 0; i < tokens.length; i++) {
+				String token = tokens[i];
 				if (StringUtils.isBlank(token)) {
 					continue;
 				}

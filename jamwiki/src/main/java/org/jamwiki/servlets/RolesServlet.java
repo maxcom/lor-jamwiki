@@ -19,7 +19,6 @@ package org.jamwiki.servlets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,18 +73,18 @@ public class RolesServlet extends JAMWikiServlet {
 			return results;
 		}
 		for (int i = 0; i < valueArray.length; i++) {
-			StringTokenizer tokens = new StringTokenizer(valueArray[i], "|");
-			String parsedUserId = tokens.nextToken();
+			String[] tokens = valueArray[i].split("\\|");
+			String parsedUserId = tokens[0];
 			int userInt = -1;
 			try {
 				userInt = Integer.parseInt(parsedUserId);
 			} catch (Exception ignore) {}
-			String parsedGroupId = tokens.nextToken();
+			String parsedGroupId = tokens[1];
 			int groupInt = -1;
 			try {
 				groupInt = Integer.parseInt(parsedGroupId);
 			} catch (Exception ignore) {}
-			String valueRole = tokens.nextToken();
+			String valueRole = tokens[2];
 			if ((userId > 0 && userId == userInt) || (groupId > 0 && groupId == groupInt)) {
 				results.add(valueRole);
 			}
