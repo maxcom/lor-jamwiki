@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6.3-SNAPSHOT</version>
+	<version>0.6.4-SNAPSHOT</version>
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
 
@@ -35,7 +35,7 @@
 		The dependency management does not tell the sub-project to depend from what is listed bellow.-->
 	<properties>
 		<dependency.spring.version>2.5.1</dependency.spring.version>
-		<jamwiki.version>0.6.3-SNAPSHOT</jamwiki.version>
+		<jamwiki.version>0.6.4-SNAPSHOT</jamwiki.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
