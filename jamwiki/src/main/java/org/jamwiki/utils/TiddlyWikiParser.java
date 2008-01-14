@@ -30,7 +30,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 
 /**
  * This class parse a TiddlyWiki file and imports it to JamWiki
@@ -59,14 +59,14 @@ public class TiddlyWikiParser {
      * @author Michael Greifeneder mikegr@gmx.net
      */
     public interface WikiBaseFascade {
-            public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception;
+            public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception;
     }
 
     /**
      * Defaul WikiBaseFascade for production.
      */
     private WikiBaseFascade wikiBase = new WikiBaseFascade() {
-            public void   writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception {
+            public void   writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception {
                     WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
             }
     };

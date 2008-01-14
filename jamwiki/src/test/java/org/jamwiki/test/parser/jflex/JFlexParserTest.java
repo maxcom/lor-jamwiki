@@ -18,7 +18,7 @@ package org.jamwiki.test.parser.jflex;
 
 import junit.framework.TestCase;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.JFlexParser;
 import org.jamwiki.utils.Utilities;
 
@@ -50,9 +50,9 @@ public class JFlexParserTest extends TestCase {
 		parserInput.setAllowSectionEdit(true);
 		JFlexParser parser = new JFlexParser(parserInput);
 		String output = null;
-		ParserDocument parserDocument = new ParserDocument();
+		ParserOutput parserOutput = new ParserOutput();
 		try {
-			output = parser.parseHTML(parserDocument, raw);
+			output = parser.parseHTML(parserOutput, raw);
 		} catch (Exception e) {}
 		return output;
 	}

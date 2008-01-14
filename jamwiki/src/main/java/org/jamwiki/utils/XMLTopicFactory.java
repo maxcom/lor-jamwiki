@@ -208,7 +208,7 @@ public class XMLTopicFactory extends DefaultHandler {
 			topic.setTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 			// Store topic in database
 			try {
-				WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserDocument(pageText, virtualWiki, pageName), true, null);
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserOutput(pageText, virtualWiki, pageName), true, null);
 				this.processedTopicName = topic.getName();
 			} catch (Exception e) {
 				throw new SAXException(e);

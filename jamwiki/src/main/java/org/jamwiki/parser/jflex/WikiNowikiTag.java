@@ -18,7 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
@@ -33,7 +33,7 @@ public class WikiNowikiTag implements ParserTag {
 	 * Parse nowiki content - this method is passed content of the form
 	 * "<nowiki>content</nowiki>".
 	 */
-	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		if (mode <= JFlexParser.MODE_PREPROCESS) {
 			// return content unchanged
 			return raw;

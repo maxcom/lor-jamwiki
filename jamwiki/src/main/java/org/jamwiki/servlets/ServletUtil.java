@@ -36,7 +36,7 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -614,11 +614,11 @@ public class ServletUtil {
 		parserInput.setUserIpAddress(RequestUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
-		ParserDocument parserDocument = new ParserDocument();
-		String content = ParserUtil.parse(parserInput, parserDocument, topic.getTopicContent());
-		if (parserDocument.getCategories().size() > 0) {
+		ParserOutput parserOutput = new ParserOutput();
+		String content = ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
+		if (parserOutput.getCategories().size() > 0) {
 			LinkedHashMap categories = new LinkedHashMap();
-			for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {
+			for (Iterator iterator = parserOutput.getCategories().keySet().iterator(); iterator.hasNext();) {
 				String key = (String)iterator.next();
 				String value = key.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 				categories.put(key, value);

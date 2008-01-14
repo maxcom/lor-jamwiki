@@ -17,7 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
@@ -32,7 +32,7 @@ public class IncludeOnlyTag implements ParserTag {
 	 * Parse a call to a Mediawiki includeonly tag of the form
 	 * "<includeonly>text</includeonly>" and return the resulting output.
 	 */
-	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		if (mode <= JFlexParser.MODE_MINIMAL) {
 			return raw;
 		}

@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.TiddlyWikiParser;
 
 public class TiddlyWikiParserTest extends TestCase {
@@ -56,7 +56,7 @@ public class TiddlyWikiParserTest extends TestCase {
                 public ArrayList topics = new ArrayList();
                 public ArrayList versions = new ArrayList();
                 
-                public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception {
+                public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception {
                         topics.add(topic);
                         versions.add(topicVersion);
                 }

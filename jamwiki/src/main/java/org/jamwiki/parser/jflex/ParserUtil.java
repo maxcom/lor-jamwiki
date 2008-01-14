@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -62,8 +62,8 @@ public class ParserUtil {
 			return raw;
 		}
 		JFlexParser parser = new JFlexParser(parserInput);
-		ParserDocument parserDocument = new ParserDocument();
-		return parser.parseFragment(parserDocument, raw, mode);
+		ParserOutput parserOutput = new ParserOutput();
+		return parser.parseFragment(parserOutput, raw, mode);
 	}
 
 	/**

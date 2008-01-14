@@ -325,7 +325,7 @@ public class WikiDatabase {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 	}
 
 	/**

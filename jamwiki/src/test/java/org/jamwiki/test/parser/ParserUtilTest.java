@@ -141,9 +141,9 @@ public class ParserUtilTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testParserDocumentThrowsException() throws Throwable {
+	public void testParserOutputThrowsException() throws Throwable {
 		try {
-			ParserUtil.parserDocument("testParserUtilContent", null, "testParserUtilTopicName");
+			ParserUtil.parserOutput("testParserUtilContent", null, "testParserUtilTopicName");
 			fail("Expected Exception to be thrown");
 		} catch (Exception ex) {
 			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());

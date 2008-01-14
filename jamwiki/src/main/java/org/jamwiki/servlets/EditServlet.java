@@ -29,7 +29,7 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
@@ -276,9 +276,9 @@ public class EditServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			ParserDocument parserDocument = new ParserDocument();
-			contents = ParserUtil.parseSplice(parserDocument, request, virtualWiki, topicName, section, contents);
-			sectionName = parserDocument.getSectionName();
+			ParserOutput parserOutput = new ParserOutput();
+			contents = ParserUtil.parseSplice(parserOutput, request, virtualWiki, topicName, section, contents);
+			sectionName = parserOutput.getSectionName();
 		}
 		if (contents == null) {
 			logger.warning("The topic " + topicName + " has no content");
@@ -301,13 +301,13 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(RequestUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserDocument parserDocument = ParserUtil.parseMetadata(parserInput, contents);
+		ParserOutput parserOutput = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving
 		contents = ParserUtil.parseMinimal(parserInput, contents);
 		topic.setTopicContent(contents);
-		if (!StringUtils.isBlank(parserDocument.getRedirect())) {
+		if (!StringUtils.isBlank(parserOutput.getRedirect())) {
 			// set up a redirect
-			topic.setRedirectTo(parserDocument.getRedirect());
+			topic.setRedirectTo(parserOutput.getRedirect());
 			topic.setTopicType(Topic.TYPE_REDIRECT);
 		} else if (topic.getTopicType() == Topic.TYPE_REDIRECT) {
 			// no longer a redirect
@@ -318,7 +318,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserDocument, true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput, true, null);
 		// update watchlist
 		if (user.hasRole(Role.ROLE_USER)) {
 			Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);

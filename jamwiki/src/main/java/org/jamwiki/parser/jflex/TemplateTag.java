@@ -31,7 +31,7 @@ import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -276,7 +276,7 @@ public class TemplateTag implements ParserTag {
 	 * Parse a call to a Mediawiki template of the form "{{template|param1|param2}}"
 	 * and return the resulting template output.
 	 */
-	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
 		parserInput.incrementTemplateDepth();
 		// extract the template name
 		String name = this.parseTemplateName(raw);
@@ -296,7 +296,7 @@ public class TemplateTag implements ParserTag {
 		}
 		// get the parsed template body
 		Topic templateTopic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), name, false, null);
-		this.processTemplateMetadata(parserInput, parserDocument, templateTopic, raw, name);
+		this.processTemplateMetadata(parserInput, parserOutput, templateTopic, raw, name);
 		if (mode <= JFlexParser.MODE_MINIMAL) {
 			parserInput.decrementTemplateDepth();
 			return raw;
@@ -311,11 +311,11 @@ public class TemplateTag implements ParserTag {
 			templateTopic = null;
 		}
 		if (inclusion) {
-			String output = this.processTemplateInclusion(parserInput, parserDocument, templateTopic, raw, name);
+			String output = this.processTemplateInclusion(parserInput, parserOutput, templateTopic, raw, name);
 			parserInput.decrementTemplateDepth();
 			return output;
 		}
-		String output = this.processTemplateContent(parserInput, parserDocument, templateTopic, raw, name);
+		String output = this.processTemplateContent(parserInput, parserOutput, templateTopic, raw, name);
 		parserInput.decrementTemplateDepth();
 		return output;
 	}
@@ -725,7 +725,7 @@ public class TemplateTag implements ParserTag {
 	 * Given a template call of the form "{{name|param|param}}" return the
 	 * parsed output.
 	 */
-	private String processTemplateContent(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateContent(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -738,7 +738,7 @@ public class TemplateTag implements ParserTag {
 	 * Given a template call of the form "{{:name}}" parse the template
 	 * inclusion.
 	 */
-	private String processTemplateInclusion(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
+	private String processTemplateInclusion(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
 		if (templateTopic == null) {
 			return "[[" + name + "]]";
 		}
@@ -750,10 +750,10 @@ public class TemplateTag implements ParserTag {
 	/**
 	 * Process template values, setting link and other metadata output values.
 	 */
-	private void processTemplateMetadata(ParserInput parserInput, ParserDocument parserDocument, Topic templateTopic, String raw, String name) throws Exception {
+	private void processTemplateMetadata(ParserInput parserInput, ParserOutput parserOutput, Topic templateTopic, String raw, String name) throws Exception {
 		name = (templateTopic != null) ? templateTopic.getName() : name;
-		parserDocument.addLink(name);
-		parserDocument.addTemplate(name);
+		parserOutput.addLink(name);
+		parserOutput.addTemplate(name);
 	}
 
 	/**

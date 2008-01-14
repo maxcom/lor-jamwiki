@@ -36,35 +36,35 @@ public class ParserUtil {
 	 *
 	 * @param parserInput A ParserInput object that contains parser
 	 *  configuration information.
-	 * @param parserDocument A ParserDocument object that will hold metadata
+	 * @param parserOutput A ParserOutput object that will hold metadata
 	 *  output.  If this parameter is <code>null</code> then metadata generated
 	 *  during parsing will not be available to the calling method.
 	 * @param content The raw topic content that is to be parsed.
 	 * @return The parsed content.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static String parse(ParserInput parserInput, ParserDocument parserDocument, String content) throws Exception {
+	public static String parse(ParserInput parserInput, ParserOutput parserOutput, String content) throws Exception {
 		if (content == null) {
 			return null;
 		}
-		if (parserDocument == null) {
-			parserDocument = new ParserDocument();
+		if (parserOutput == null) {
+			parserOutput = new ParserOutput();
 		}
 		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseHTML(parserDocument, content);
+		return parser.parseHTML(parserOutput, content);
 	}
 
 	/**
-	 * Retrieve a default ParserDocument object for a given topic name.  Note that
+	 * Retrieve a default ParserOutput object for a given topic name.  Note that
 	 * the content has almost no parsing performed on it other than to generate
 	 * parser output metadata.
 	 *
 	 * @param content The raw topic content.
-	 * @return Returns a minimal ParserDocument object initialized primarily with
+	 * @return Returns a minimal ParserOutput object initialized primarily with
 	 *  parser metadata such as links.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static ParserDocument parserDocument(String content, String virtualWiki, String topicName) throws Exception {
+	public static ParserOutput parserOutput(String content, String virtualWiki, String topicName) throws Exception {
 		ParserInput parserInput = new ParserInput();
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setTopicName(topicName);
@@ -79,15 +79,15 @@ public class ParserUtil {
 	 * @param parserInput A ParserInput object that contains parser configuration
 	 *  information.
 	 * @param content The raw topic content that is to be parsed.
-	 * @return Returns a ParserDocument object with minimally parsed topic content
+	 * @return Returns a ParserOutput object with minimally parsed topic content
 	 *  and other parser output fields set.
 	 * @throws Exception Thrown if there are any parsing errors.
 	 */
-	public static ParserDocument parseMetadata(ParserInput parserInput, String content) throws Exception {
+	public static ParserOutput parseMetadata(ParserInput parserInput, String content) throws Exception {
 		AbstractParser parser = parserInstance(parserInput);
-		ParserDocument parserDocument = new ParserDocument();
-		parser.parseMetadata(parserDocument, content);
-		return parserDocument;
+		ParserOutput parserOutput = new ParserOutput();
+		parser.parseMetadata(parserOutput, content);
+		return parserOutput;
 	}
 
 	/**
@@ -162,15 +162,15 @@ public class ParserUtil {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
-		ParserDocument parserDocument = new ParserDocument();
-		return parser.parseSlice(parserDocument, topic.getTopicContent(), section);
+		ParserOutput parserOutput = new ParserOutput();
+		return parser.parseSlice(parserOutput, topic.getTopicContent(), section);
 	}
 
 	/**
 	 * When editing a section of a topic, this method provides a way of splicing
 	 * an edited section back into the raw topic content.
 	 *
-	 * @param parserDocument A ParserDocument object containing parser
+	 * @param parserOutput A ParserOutput object containing parser
 	 *  metadata output.
 	 * @param request The servlet request object.
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
@@ -181,7 +181,7 @@ public class ParserUtil {
 	 * @return The raw topic content including the new replacement text.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static String parseSplice(ParserDocument parserDocument, HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+	public static String parseSplice(ParserOutput parserOutput, HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
@@ -192,6 +192,6 @@ public class ParserUtil {
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
-		return parser.parseSplice(parserDocument, topic.getTopicContent(), targetSection, replacementText);
+		return parser.parseSplice(parserOutput, topic.getTopicContent(), targetSection, replacementText);
 	}
 }

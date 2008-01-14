@@ -1,6 +1,6 @@
 package org.jamwiki.parser.bliki;
 
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.jflex.JFlexParser;
 
@@ -13,7 +13,7 @@ public class BlikiParser extends JFlexParser {
 	 * Parse text for online display.
 	 */
 	public String parseHTML(String raw) throws Exception {
-		ParserDocument doc = new ParserDocument();
+		ParserOutput doc = new ParserOutput();
 
 		String titlePrefix = "/jamwiki/" + parserInput.getVirtualWiki() + '/';
 		JAMWikiModel wikiModel = new JAMWikiModel(parserInput, doc, titlePrefix + "${image}", titlePrefix + "${title}");

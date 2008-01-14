@@ -43,7 +43,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -218,9 +218,9 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			// update topic to indicate deleted, add delete topic version.  parser output
 			// should be empty since nothing to add to search engine.
-			ParserDocument parserDocument = new ParserDocument();
+			ParserOutput parserOutput = new ParserOutput();
 			topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
-			this.writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
+			this.writeTopic(topic, topicVersion, parserOutput, userVisible, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -982,8 +982,8 @@ public class AnsiDataHandler implements DataHandler {
 			// first rename the source topic with the new destination name
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
-			ParserDocument fromParserDocument = ParserUtil.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
-			writeTopic(fromTopic, fromVersion, fromParserDocument, true, conn);
+			ParserOutput fromParserOutput = ParserUtil.parserOutput(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
+			writeTopic(fromTopic, fromVersion, fromParserOutput, true, conn);
 			// now either create a new topic that is a redirect with the
 			// source topic's old name, or else undelete the new topic and
 			// rename.
@@ -1005,8 +1005,8 @@ public class AnsiDataHandler implements DataHandler {
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
-			ParserDocument toParserDocument = ParserUtil.parserDocument(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
-			writeTopic(toTopic, toVersion, toParserDocument, true, conn);
+			ParserOutput toParserOutput = ParserUtil.parserOutput(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
+			writeTopic(toTopic, toVersion, toParserOutput, true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1083,9 +1083,9 @@ public class AnsiDataHandler implements DataHandler {
 			// update topic to indicate deleted, add delete topic version.  if
 			// topic has categories or other metadata then parser document is
 			// also needed.
-			ParserDocument parserDocument = ParserUtil.parserDocument(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
+			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
 			topic.setDeleteDate(null);
-			this.writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
+			this.writeTopic(topic, topicVersion, parserOutput, userVisible, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1107,7 +1107,7 @@ public class AnsiDataHandler implements DataHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, ParserUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+			writeTopic(topic, topicVersion, ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1253,16 +1253,16 @@ public class AnsiDataHandler implements DataHandler {
 	 *  being added.  This parameter should never be null UNLESS the change is
 	 *  not user visible, such as when deleting a topic temporarily during
 	 *  page moves.
-	 * @param parserDocument The parserDocument object that contains a list of
+	 * @param parserOutput The parserOutput object that contains a list of
 	 *  links in the topic content, categories, etc.  This parameter may be
-	 *  set with the ParserUtil.parserDocument() method.
+	 *  set with the ParserUtil.parserOutput() method.
 	 * @param transactionObject Database connection or other parameters
 	 *  required for updates.
 	 * @param userVisible A flag indicating whether or not this change should
 	 *  be visible to Wiki users.  This flag should be true except in rare
 	 *  cases, such as when temporarily deleting a topic during page moves.
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
@@ -1291,10 +1291,10 @@ public class AnsiDataHandler implements DataHandler {
 				RecentChange change = new RecentChange(topic, topicVersion, authorName);
 				this.addRecentChange(change, conn);
 			}
-			if (parserDocument != null) {
+			if (parserOutput != null) {
 				// add / remove categories associated with the topic
 				this.deleteTopicCategories(topic, conn);
-				LinkedHashMap categories = parserDocument.getCategories();
+				LinkedHashMap categories = parserOutput.getCategories();
 				for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
 					String categoryName = (String)iterator.next();
 					Category category = new Category();
@@ -1305,9 +1305,9 @@ public class AnsiDataHandler implements DataHandler {
 					this.addCategory(category, conn);
 				}
 			}
-			if (parserDocument != null) {
+			if (parserOutput != null) {
 				WikiBase.getSearchEngine().deleteFromIndex(topic);
-				WikiBase.getSearchEngine().addToIndex(topic, parserDocument.getLinks());
+				WikiBase.getSearchEngine().addToIndex(topic, parserOutput.getLinks());
 			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);

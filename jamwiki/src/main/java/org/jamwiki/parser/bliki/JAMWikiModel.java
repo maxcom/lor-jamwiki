@@ -3,7 +3,7 @@ package org.jamwiki.parser.bliki;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -28,9 +28,9 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	protected ParserInput fParserInput;
 
-	protected ParserDocument fDocument;
+	protected ParserOutput fDocument;
 
-	public JAMWikiModel(ParserInput parserInput, ParserDocument document, String imageBaseURL, String linkBaseURL) {
+	public JAMWikiModel(ParserInput parserInput, ParserOutput document, String imageBaseURL, String linkBaseURL) {
 		super();
 		fParserInput = parserInput;
 		fDocument = document;

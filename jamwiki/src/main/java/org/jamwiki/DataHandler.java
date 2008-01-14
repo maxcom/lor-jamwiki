@@ -28,7 +28,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -630,7 +630,7 @@ public interface DataHandler {
 	 *  performed.
 	 * @param topicVersion A TopicVersion containing the author, date, and
 	 *  other information about the version being added.
-	 * @param parserDocument A ParserDocument object containing metadata about
+	 * @param parserOutput A ParserOutput object containing metadata about
 	 *  the topic being added/updated, or <code>null</code> if no metadata
 	 *  needs to be processed.
 	 * @param userVisible Set to <code>false</code> if no recent change record
@@ -642,8 +642,8 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	// FIXME - should not need ParserDocument here
-	void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception;
+	// FIXME - should not need ParserOutput here
+	void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

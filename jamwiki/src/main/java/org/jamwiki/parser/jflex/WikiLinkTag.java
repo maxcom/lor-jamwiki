@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
@@ -104,13 +104,13 @@ public class WikiLinkTag implements ParserTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		this.processLinkMetadata(parserDocument, raw);
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+		this.processLinkMetadata(parserOutput, raw);
 		if (mode <= JFlexParser.MODE_PREPROCESS) {
 			// do not parse to HTML when in preprocess mode
 			return raw;
 		}
-		return this.processLinkContent(parserInput, parserDocument, mode, raw);
+		return this.processLinkContent(parserInput, parserOutput, mode, raw);
 	}
 
 	/**
@@ -192,7 +192,7 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private String processLinkContent(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) {
+	private String processLinkContent(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
@@ -208,16 +208,16 @@ public class WikiLinkTag implements ParserTag {
 	/**
 	 *
 	 */
-	private void processLinkMetadata(ParserDocument parserDocument, String raw) {
+	private void processLinkMetadata(ParserOutput parserOutput, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
 		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			return;
 		}
 		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
-			parserDocument.addCategory(wikiLink.getDestination(), wikiLink.getText());
+			parserOutput.addCategory(wikiLink.getDestination(), wikiLink.getText());
 		}
 		if (!StringUtils.isBlank(wikiLink.getDestination())) {
-			parserDocument.addLink(wikiLink.getDestination());
+			parserOutput.addLink(wikiLink.getDestination());
 		}
 	}
 }

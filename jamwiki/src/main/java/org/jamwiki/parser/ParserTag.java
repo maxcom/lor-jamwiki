@@ -28,7 +28,7 @@ public interface ParserTag {
 	 *
 	 * @param parserInput The ParserInput object that contains parser configuration
 	 *  settings.
-	 * @param parserDocument The ParserDocument object that holds output metadata and
+	 * @param parserOutput The ParserOutput object that holds output metadata and
 	 *  other values.
 	 * @param mode The parser mode to use when parsing the token.  The return value
 	 *  may be different depending on the parsing mode used.
@@ -36,5 +36,5 @@ public interface ParserTag {
 	 * @return A parsed version of the raw Wiki syntax.
 	 * @throws Exception Thrown if any parsing error occurs.
 	 */
-	String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception;
+	String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception;
 }
