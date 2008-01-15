@@ -19,6 +19,7 @@ package org.jamwiki.utils;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+import org.apache.commons.lang.StringUtils;
 import org.incava.util.diff.Diff;
 import org.incava.util.diff.Difference;
 import org.jamwiki.WikiBase;
@@ -130,6 +131,10 @@ public class DiffUtil {
 		if (newVersion == null) {
 			newVersion = "";
 		}
+		// remove line-feeds to avoid unnecessary noise in the diff due to
+		// cut & paste or other issues
+		oldVersion = StringUtils.remove(oldVersion, '\r');
+		newVersion = StringUtils.remove(newVersion, '\r');
 		if (newVersion.equals(oldVersion)) {
 			return new Vector();
 		}

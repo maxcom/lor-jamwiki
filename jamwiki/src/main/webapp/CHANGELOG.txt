@@ -1,6 +1,11 @@
 ﻿0.6.4
 =====
 
+New Features:
+
+  * Ignore line feeds in diffs to prevent showing changes due only to file
+    format differences.
+
 Translation Updates:
 
   * Updated Dutch translations (Angel).
