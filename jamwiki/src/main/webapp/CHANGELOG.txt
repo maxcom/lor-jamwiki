@@ -1,6 +1,10 @@
 ﻿0.6.4
 =====
 
+Translation Updates:
+
+  * Updated Dutch translations (Angel).
+
 
 0.6.3
 =====
