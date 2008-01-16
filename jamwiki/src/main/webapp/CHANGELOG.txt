@@ -6,6 +6,11 @@ New Features:
   * Ignore line feeds in diffs to prevent showing changes due only to file
     format differences.
 
+Bugfixes:
+
+  * Resolve broken parsing of Javascript tags for wikis that have enabled the
+    "allow Javascript" option.  Reported by ksdprasad.
+
 Translation Updates:
 
   * Updated Dutch translations (Angel).

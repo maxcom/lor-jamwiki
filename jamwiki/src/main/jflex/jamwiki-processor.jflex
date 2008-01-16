@@ -163,7 +163,8 @@ htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
 htmltag            = (<[ ]*[\/]?[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*[\/]?[ ]*>)
 
 /* javascript */
-jsopen             = (<[ ]*) script ({htmlattribute})* ([ ]*[\/]?[ ]*>)
+jsattribute        = ([ ]+) (type|charset|defer|language) ([ ]*=[^>\n\r]+[ ]*)*
+jsopen             = (<[ ]*) script ({jsattribute})* ([ ]*[\/]?[ ]*>)
 jsclose            = (<[ ]*\/[ ]*script[ ]*>)
 
 /* processing commands */
@@ -491,7 +492,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
-        return ParserUtil.sanitizeHtmlTag(yytext());
+        HtmlTag parserTag = new HtmlTag();
+        return this.parseToken(yytext(), parserTag);
     }
     return StringEscapeUtils.escapeHtml(yytext());
 }
@@ -500,7 +502,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         endState();
-        return ParserUtil.sanitizeHtmlTag(yytext());
+        HtmlTag parserTag = new HtmlTag();
+        return this.parseToken(yytext(), parserTag);
     }
     return StringEscapeUtils.escapeHtml(yytext());
 }
@@ -519,8 +522,13 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return this.parseToken(yytext(), parserTag);
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT>. {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>. {
     // no need to log this
     CharacterTag parserTag = new CharacterTag();
     return this.parseToken(yytext(), parserTag);
+}
+
+<JAVASCRIPT>. {
+    // do not escape or otherwise modify Javascript
+    return yytext();
 }
