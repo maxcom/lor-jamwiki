@@ -19,6 +19,8 @@ package org.jamwiki;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.model.WikiConfigurationObject;
@@ -45,13 +47,13 @@ public class WikiConfiguration {
 
 	private static WikiConfiguration instance = null;
 
-	private Vector dataHandlers = null;
-	private HashMap namespaces = null;
-	private Vector parsers = null;
-	private Vector pseudotopics = null;
-	private Vector searchEngines = null;
-	private HashMap translations = null;
-	private Vector userHandlers = null;
+	private List dataHandlers = null;
+	private Map namespaces = null;
+	private List parsers = null;
+	private List pseudotopics = null;
+	private List searchEngines = null;
+	private Map translations = null;
+	private List userHandlers = null;
 
 	/** Name of the configuration file. */
 	public static final String JAMWIKI_CONFIGURATION_FILE = "jamwiki-configuration.xml";
@@ -104,7 +106,7 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public HashMap getNamespaces() {
+	public Map getNamespaces() {
 		return this.namespaces;
 	}
 
@@ -132,7 +134,7 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public HashMap getTranslations() {
+	public Map getTranslations() {
 		return this.translations;
 	}
 
@@ -212,8 +214,8 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	private Vector parseConfigurationObjects(Node node, String name) throws Exception {
-		Vector results = new Vector();
+	private List parseConfigurationObjects(Node node, String name) throws Exception {
+		List results = new Vector();
 		NodeList children = node.getChildNodes();
 		for (int j = 0; j < children.getLength(); j++) {
 			Node child = children.item(j);

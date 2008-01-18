@@ -16,8 +16,8 @@
  */
 package org.jamwiki.utils;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiConfiguration;
 
@@ -65,7 +65,7 @@ public class NamespaceHandler {
 			// main namespace
 			return NAMESPACE_COMMENTS;
 		}
-		HashMap namespaces = WikiConfiguration.getInstance().getNamespaces();
+		Map namespaces = WikiConfiguration.getInstance().getNamespaces();
 		Iterator iterator = namespaces.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String)iterator.next();
@@ -91,7 +91,7 @@ public class NamespaceHandler {
 			// main namespace
 			return "";
 		}
-		HashMap namespaces = WikiConfiguration.getInstance().getNamespaces();
+		Map namespaces = WikiConfiguration.getInstance().getNamespaces();
 		Iterator iterator = namespaces.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String)iterator.next();
@@ -110,7 +110,7 @@ public class NamespaceHandler {
 	 *
 	 */
 	private static final String initializeNamespace(String name, boolean isComments) {
-		HashMap namespaces = WikiConfiguration.getInstance().getNamespaces();
+		Map namespaces = WikiConfiguration.getInstance().getNamespaces();
 		Iterator iterator = namespaces.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String)iterator.next();
