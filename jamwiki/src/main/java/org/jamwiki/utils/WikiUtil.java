@@ -30,6 +30,7 @@ import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
@@ -44,7 +45,6 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.ServletUtil;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -187,7 +187,7 @@ public class WikiUtil {
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		logger.fine("Using data handler: " + dataHandlerClass);
-		Class clazz = ClassUtils.forName(dataHandlerClass);
+		Class clazz = ClassUtils.getClass(dataHandlerClass);
 		Class[] parameterTypes = new Class[0];
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];
@@ -596,7 +596,7 @@ public class WikiUtil {
 	public static SearchEngine searchEngineInstance() throws Exception {
 		String searchEngineClass = Environment.getValue(Environment.PROP_BASE_SEARCH_ENGINE);
 		logger.fine("Search engine: " + searchEngineClass);
-		Class clazz = ClassUtils.forName(searchEngineClass);
+		Class clazz = ClassUtils.getClass(searchEngineClass);
 		Class[] parameterTypes = new Class[0];
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];
@@ -613,7 +613,7 @@ public class WikiUtil {
 	public static UserHandler userHandlerInstance() throws Exception {
 		String userHandlerClass = Environment.getValue(Environment.PROP_BASE_USER_HANDLER);
 		logger.fine("Using user handler: " + userHandlerClass);
-		Class clazz = ClassUtils.forName(userHandlerClass);
+		Class clazz = ClassUtils.getClass(userHandlerClass);
 		Class[] parameterTypes = new Class[0];
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];

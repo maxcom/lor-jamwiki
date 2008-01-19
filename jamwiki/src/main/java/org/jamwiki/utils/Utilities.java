@@ -33,7 +33,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.propertyeditors.LocaleEditor;
-import org.springframework.util.ClassUtils;
 
 /**
  * This class provides a variety of basic utility methods that are not
@@ -240,6 +239,26 @@ public class Utilities {
 	}
 
 	/**
+	 * Return the current ClassLoader.  First try to get the current thread's
+	 * ClassLoader, and if that fails return the ClassLoader that loaded this
+	 * class instance.
+	 *
+	 * @return An instance of the current ClassLoader.
+	 */
+	private static ClassLoader getClassLoader() {
+		ClassLoader loader = null;
+		try {
+			loader = Thread.currentThread().getContextClassLoader();
+		} catch (Exception e) {
+			logger.fine("Unable to retrieve thread class loader, trying default");
+		}
+		if (loader == null) {
+			loader = Utilities.class.getClassLoader();
+		}
+		return loader;
+	}
+
+	/**
 	 * Given a file name for a file that is located somewhere in the application
 	 * classpath, return a File object representing the file.
 	 *
@@ -253,7 +272,7 @@ public class Utilities {
 		// note that this method is used when initializing logging, so it must
 		// not attempt to log anything.
 		File file = null;
-		ClassLoader loader = ClassUtils.getDefaultClassLoader();
+		ClassLoader loader = Utilities.getClassLoader();
 		URL url = loader.getResource(filename);
 		if (url == null) {
 			url = ClassLoader.getSystemResource(filename);
@@ -353,7 +372,7 @@ public class Utilities {
 			return FileUtils.readFileToString(file, "UTF-8");
 		}
 		// look for file in resource directories
-		ClassLoader loader = ClassUtils.getDefaultClassLoader();
+		ClassLoader loader = Utilities.getClassLoader();
 		URL url = loader.getResource(filename);
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {

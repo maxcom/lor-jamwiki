@@ -25,6 +25,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -50,7 +51,6 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -532,8 +532,8 @@ public class ServletUtil {
 			validParser = false;
 		}
 		try {
-			Class parent = ClassUtils.forName(parserClass);
-			Class child = ClassUtils.forName(abstractParserClass);
+			Class parent = ClassUtils.getClass(parserClass);
+			Class child = ClassUtils.getClass(abstractParserClass);
 			if (!child.isAssignableFrom(parent)) {
 				validParser = false;
 			}

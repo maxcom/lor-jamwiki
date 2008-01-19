@@ -18,11 +18,11 @@ package org.jamwiki.parser;
 
 import java.lang.reflect.Constructor;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.ClassUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.ClassUtils;
 
 /**
  * This class provides utility methods for use with the parser functions.
@@ -117,9 +117,9 @@ public class ParserUtil {
 	public static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
-		Class clazz = ClassUtils.forName(parserClass);
+		Class clazz = ClassUtils.getClass(parserClass);
 		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = ClassUtils.forName("org.jamwiki.parser.ParserInput");
+		parameterTypes[0] = ClassUtils.getClass("org.jamwiki.parser.ParserInput");
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[1];
 		initArgs[0] = parserInput;

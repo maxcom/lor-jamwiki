@@ -24,7 +24,6 @@ import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.util.ClassUtils;
 
 /**
  * This class provides a wrapper around the {@link java.util.logging.Logger}
@@ -55,6 +54,29 @@ public class WikiLogger {
 	 */
 	private WikiLogger(Logger logger) {
 		this.logger = logger;
+	}
+
+	/**
+	 * Return the current ClassLoader.  First try to get the current thread's
+	 * ClassLoader, and if that fails return the ClassLoader that loaded this
+	 * class instance.
+	 *
+	 * @return An instance of the current ClassLoader.
+	 */
+	private static ClassLoader getClassLoader() {
+		// NOTE: This method duplicates the Utilities.getClassLoader method, but
+		// is copied here to prevent this class from having any dependencies on
+		// other JAMWiki classes.
+		ClassLoader loader = null;
+		try {
+			loader = Thread.currentThread().getContextClassLoader();
+		} catch (Exception e) {
+			// ignore, try the current class's ClassLoader
+		}
+		if (loader == null) {
+			loader = WikiLogger.class.getClassLoader();
+		}
+		return loader;
 	}
 
 	/**
@@ -129,7 +151,7 @@ public class WikiLogger {
 	 *
 	 */
 	private static File loadProperties() throws Exception {
-		ClassLoader loader = ClassUtils.getDefaultClassLoader();
+		ClassLoader loader = WikiLogger.getClassLoader();
 		URL url = loader.getResource(LOG_PROPERTIES_FILENAME);
 		if (url == null) {
 			throw new Exception("Log initialization file " + LOG_PROPERTIES_FILENAME + " could not be found");
