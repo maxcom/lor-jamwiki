@@ -18,10 +18,12 @@ package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -57,14 +59,9 @@ public class TranslationServlet extends JAMWikiServlet {
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
 		if (!StringUtils.isBlank(function)) {
-			translate(request, next, pageInfo);
-		} else {
-			view(request, next, pageInfo);
+			translate(request);
 		}
-		String language = this.retrieveLanguage(request);
-		next.addObject("language", language);
-		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
-		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
+		view(request, next, pageInfo);
 		return next;
 	}
 
@@ -133,13 +130,17 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void translate(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
-		pageInfo.setAdmin(true);
-		pageInfo.setPageTitle(new WikiMessage("translation.title"));
+	private void translate(HttpServletRequest request) throws Exception {
+		// first load existing translations
+		SortedProperties translations = new SortedProperties();
+		String language = this.retrieveLanguage(request);
+		if (!StringUtils.isBlank(language)) {
+			String filename = filename(language);
+			translations.putAll(Environment.loadProperties(filename));
+		}
+		// now update with translations from the request
 		Enumeration names = request.getParameterNames();
 		String name;
-		SortedProperties translations = new SortedProperties();
 		while (names.hasMoreElements()) {
 			name = (String)names.nextElement();
 			if (!name.startsWith("translations[") || !name.endsWith("]")) {
@@ -149,11 +150,8 @@ public class TranslationServlet extends JAMWikiServlet {
 			String value = request.getParameter(name);
 			translations.setProperty(key, value);
 		}
-		String language = this.retrieveLanguage(request);
 		Environment.saveProperties(filename(language), translations, null);
 		this.writeTopic(request, null);
-		next.addObject("translations", new TreeMap(translations));
-		next.addObject("codes", this.retrieveTranslationCodes());
 	}
 
 	/**
@@ -164,13 +162,25 @@ public class TranslationServlet extends JAMWikiServlet {
 		SortedProperties translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		if (!StringUtils.isBlank(language)) {
 			String filename = filename(language);
+			// add all translated keys to the base translation list
 			translations.putAll(Environment.loadProperties(filename));
+			// if the user wants to see only untranslated values, return the intersection of the base
+			// translation list and the translated file list
+			if (BooleanUtils.toBoolean(request.getParameter("hideTranslated"))) {
+				Map tmp = Utilities.intersect(translations, Environment.loadProperties("ApplicationResources.properties"));
+				translations = new SortedProperties();
+				translations.putAll(tmp);
+				next.addObject("hideTranslated", new Boolean(true));
+			}
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("translation.title"));
 		next.addObject("translations", new TreeMap(translations));
 		next.addObject("codes", this.retrieveTranslationCodes());
+		next.addObject("language", language);
+		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
+		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
 	}
 
 	/**

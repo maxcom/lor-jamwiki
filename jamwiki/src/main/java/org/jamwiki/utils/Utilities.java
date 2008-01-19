@@ -22,11 +22,15 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.ClassUtils;
@@ -291,6 +295,24 @@ public class Utilities {
 	public static File getWebappRoot() throws Exception {
 		// webapp root is two levels above /WEB-INF/classes/
 		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
+	}
+
+	/**
+	 * Utility method for determining common elements in two Map objects.
+	 */
+	public static Map intersect(Map map1, Map map2) {
+		if (map1 == null || map2 == null) {
+			throw new IllegalArgumentException("Utilities.intersection() requires non-null arguments");
+		}
+		Map result = new HashMap();
+		Iterator keys = map1.keySet().iterator();
+		while (keys.hasNext()) {
+			Object key = keys.next();
+			if (ObjectUtils.equals(map1.get(key), map2.get(key))) {
+				result.put(key, map1.get(key));
+			}
+		}
+		return result;
 	}
 
 	/**

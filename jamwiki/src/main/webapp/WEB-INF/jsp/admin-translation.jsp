@@ -31,6 +31,7 @@
 <tr>
 <td>
 <form name="adminTranslation" method="get" action="<jamwiki:link value="Special:Translation" />">
+<input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
 <select name="language" onchange="this.form.submit()">
 <option value=""></option>
 <c:forEach items="${codes}" var="code">
@@ -42,14 +43,22 @@
 <td>&#160;&#160;&#160;&#160;&#160;</td>
 <td>
 <form name="adminTranslation" method="get" action="<jamwiki:link value="Special:Translation" />">
+<input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
 <input type="text" name="language" size="5" value="<c:out value="${language}" />" />&#160;&#160;<input type="submit" name="submit" value="<f:message key="common.change" />" />
 </form>
 </td>
+</tr>
+<tr>
+<form name="adminTranslation" method="post" action="<jamwiki:link value="Special:Translation" />">
+<input type="hidden" name="language" value="<c:out value="${language}" />" />
+<td colspan="3"><input type="checkbox" name="hideTranslated" value="true" onchange="this.form.submit()" <c:if test="${hideTranslated}">checked="checked"</c:if> />&#160;<f:message key="translation.caption.hidetranslated" /></td>
+</form>
 </tr>
 </table>
 
 <form name="adminTranslation" method="post" action="<jamwiki:link value="Special:Translation" />">
 <input type="hidden" name="language" value="<c:out value="${language}" />" />
+<input type="hidden" name="hideTranslated" value="<c:out value="${hideTranslated}" />" />
 <div class="formentry darkbg">
 	<span class="translationElement"><f:message key="translation.caption.key" /></span>
 	<span class="translationElement"><f:message key="translation.caption.translation"><f:param value="${language}" /></f:message></span>
