@@ -390,7 +390,7 @@ public class WikiUtil {
 	 */
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = retrieveDirectoriesFromURI(request, 0);
-		if (uri == null) {
+		if (StringUtils.isBlank(uri)) {
 			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
 			return null;
 		}
@@ -522,6 +522,8 @@ public class WikiUtil {
 		if (StringUtils.isBlank(uri) || contextPath == null) {
 			return null;
 		}
+		// make sure there are no instances of "//" in the URL
+		uri = uri.replaceAll("(/){2,}", "/");
 		uri = uri.substring(contextPath.length() + 1);
 		int i = 0;
 		while (i < skipCount) {

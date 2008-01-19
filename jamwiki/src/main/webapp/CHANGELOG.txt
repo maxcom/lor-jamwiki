@@ -12,6 +12,9 @@ Bugfixes:
 
   * Resolve broken parsing of Javascript tags for wikis that have enabled the
     "allow Javascript" option.  Reported by ksdprasad.
+  * Resolve potential issues with URLs that incorrecting contain multiple "/"
+    characters such as http://example.com/wiki//en/StartingPoints.  Reported
+    with a suggested fix by an anonymous JAMWiki user.
 
 Translation Updates:
 
