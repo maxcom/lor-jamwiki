@@ -19,7 +19,6 @@
 package org.jamwiki.utils;
 
 import junit.framework.TestCase;
-import org.jamwiki.model.WikiImage;
 
 /**
  *
