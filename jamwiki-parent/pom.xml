@@ -11,7 +11,7 @@
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
 	<scm>
-		<connection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
+		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
 		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</developerConnection>
 		<tag>HEAD</tag>
 		<url>http://jamwiki.svn.sourceforge.net/viewvc/jamwiki/</url>
