@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +38,6 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.Watchlist;
@@ -678,68 +676,6 @@ public class WikiUtil {
 			throw new WikiException(new WikiMessage("roles.error.description"));
 		}
 		// FIXME - throw a user-friendly error if the role name is already in use
-	}
-
-	/**
-	 * Validate that vital system properties, such as database connection settings,
-	 * have been specified properly.
-	 *
-	 * @param props The property object to validate against.
-	 * @return A Vector of WikiMessage objects containing any errors encountered,
-	 *  or an empty Vector if no errors are encountered.
-	 */
-	public static Vector validateSystemSettings(Properties props) {
-		Vector errors = new Vector();
-		// test directory permissions & existence
-		WikiMessage baseDirError = WikiUtil.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
-		if (baseDirError != null) {
-			errors.add(baseDirError);
-		}
-		WikiMessage fullDirError = WikiUtil.validateDirectory(props.getProperty(Environment.PROP_FILE_DIR_FULL_PATH));
-		if (fullDirError != null) {
-			errors.add(fullDirError);
-		}
-		String classesDir = null;
-		try {
-			classesDir = Utilities.getClassLoaderRoot().getPath();
-			WikiMessage classesDirError = WikiUtil.validateDirectory(classesDir);
-			if (classesDirError != null) {
-				errors.add(classesDirError);
-			}
-		} catch (Exception e) {
-			errors.add(new WikiMessage("error.directorywrite", classesDir, e.getMessage()));
-		}
-		// test database
-		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
-		String url = props.getProperty(Environment.PROP_DB_URL);
-		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
-		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
-		try {
-			DatabaseConnection.testDatabase(driver, url, userName, password, false);
-		} catch (Exception e) {
-			logger.severe("Invalid database settings", e);
-			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
-		}
-		// verify valid parser class
-		boolean validParser = true;
-		String parserClass = props.getProperty(Environment.PROP_PARSER_CLASS);
-		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
-		if (parserClass == null || parserClass.equals(abstractParserClass)) {
-			validParser = false;
-		}
-		try {
-			Class parent = ClassUtils.forName(parserClass);
-			Class child = ClassUtils.forName(abstractParserClass);
-			if (!child.isAssignableFrom(parent)) {
-				validParser = false;
-			}
-		} catch (Exception e) {
-			validParser = false;
-		}
-		if (!validParser) {
-			errors.add(new WikiMessage("error.parserclass", parserClass));
-		}
-		return errors;
 	}
 
 	/**

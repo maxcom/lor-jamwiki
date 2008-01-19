@@ -163,7 +163,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 					success = false;
 				}
 			}
-			Vector errors = WikiUtil.validateSystemSettings(Environment.getInstance());
+			Vector errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 			if (!errors.isEmpty()) {
 				next.addObject("errors", errors);
 				success = false;

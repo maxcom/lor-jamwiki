@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.FilenameUtils;
@@ -28,6 +30,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
@@ -38,6 +41,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.RequestUtil;
@@ -46,6 +50,7 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -477,6 +482,68 @@ public class ServletUtil {
 			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
 		return virtualWiki;
+	}
+
+	/**
+	 * Validate that vital system properties, such as database connection settings,
+	 * have been specified properly.
+	 *
+	 * @param props The property object to validate against.
+	 * @return A Vector of WikiMessage objects containing any errors encountered,
+	 *  or an empty Vector if no errors are encountered.
+	 */
+	protected static Vector validateSystemSettings(Properties props) {
+		Vector errors = new Vector();
+		// test directory permissions & existence
+		WikiMessage baseDirError = WikiUtil.validateDirectory(props.getProperty(Environment.PROP_BASE_FILE_DIR));
+		if (baseDirError != null) {
+			errors.add(baseDirError);
+		}
+		WikiMessage fullDirError = WikiUtil.validateDirectory(props.getProperty(Environment.PROP_FILE_DIR_FULL_PATH));
+		if (fullDirError != null) {
+			errors.add(fullDirError);
+		}
+		String classesDir = null;
+		try {
+			classesDir = Utilities.getClassLoaderRoot().getPath();
+			WikiMessage classesDirError = WikiUtil.validateDirectory(classesDir);
+			if (classesDirError != null) {
+				errors.add(classesDirError);
+			}
+		} catch (Exception e) {
+			errors.add(new WikiMessage("error.directorywrite", classesDir, e.getMessage()));
+		}
+		// test database
+		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
+		String url = props.getProperty(Environment.PROP_DB_URL);
+		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
+		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
+		try {
+			DatabaseConnection.testDatabase(driver, url, userName, password, false);
+		} catch (Exception e) {
+			logger.severe("Invalid database settings", e);
+			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
+		}
+		// verify valid parser class
+		boolean validParser = true;
+		String parserClass = props.getProperty(Environment.PROP_PARSER_CLASS);
+		String abstractParserClass = "org.jamwiki.parser.AbstractParser";
+		if (parserClass == null || parserClass.equals(abstractParserClass)) {
+			validParser = false;
+		}
+		try {
+			Class parent = ClassUtils.forName(parserClass);
+			Class child = ClassUtils.forName(abstractParserClass);
+			if (!child.isAssignableFrom(parent)) {
+				validParser = false;
+			}
+		} catch (Exception e) {
+			validParser = false;
+		}
+		if (!validParser) {
+			errors.add(new WikiMessage("error.parserclass", parserClass));
+		}
+		return errors;
 	}
 
 	/**

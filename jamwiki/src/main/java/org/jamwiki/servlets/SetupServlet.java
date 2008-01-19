@@ -195,7 +195,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
-		Vector errors = WikiUtil.validateSystemSettings(Environment.getInstance());
+		Vector errors = ServletUtil.validateSystemSettings(Environment.getInstance());
 		if (StringUtils.isBlank(user.getUsername())) {
 			errors.add(new WikiMessage("error.loginempty"));
 		}

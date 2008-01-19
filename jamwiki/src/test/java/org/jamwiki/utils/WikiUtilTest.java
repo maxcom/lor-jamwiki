@@ -20,7 +20,6 @@ package org.jamwiki.utils;
 
 import java.io.FileNotFoundException;
 import java.util.Locale;
-import java.util.Properties;
 import junit.framework.TestCase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -82,33 +81,6 @@ public class WikiUtilTest extends TestCase {
 	public void testValidateDirectory1() throws Throwable {
 		WikiMessage result = WikiUtil.validateDirectory("testUtilitiesName");
 		assertEquals("result.getKey()", "error.directoryinvalid", result.getKey());
-	}
-
-	/**
-	 *
-	 */
-	public void testValidateSystemSettings1() throws Throwable {
-		Properties props = new Properties(new SortedProperties());
-		props.put("file-dir-full-path", ")%2F");
-		props.put("homeDir", "testString");
-		props.put("parser", "org.jamwiki.parser.AbstractParser");
-		props.put("url", "testString");
-		WikiUtil.validateSystemSettings(props);
-		assertTrue("Test completed without Exception", true);
-		// dependencies on static and environment state led to removal of 1 assertion(s)
-	}
-
-	/**
-	 *
-	 */
-	public void testValidateSystemSettings2() throws Throwable {
-		Properties props = new Properties();
-		props.put("file-dir-full-path", "testString");
-		props.put("homeDir", "testString");
-		props.put("url", "testString");
-		WikiUtil.validateSystemSettings(props);
-		assertTrue("Test completed without Exception", true);
-		// dependencies on static and environment state led to removal of 1 assertion(s)
 	}
 
 	/**
@@ -194,18 +166,6 @@ public class WikiUtilTest extends TestCase {
 	public void testValidateDirectoryThrowsNullPointerException() throws Throwable {
 		try {
 			WikiUtil.validateDirectory(null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testValidateSystemSettingsThrowsNullPointerException1() throws Throwable {
-		try {
-			WikiUtil.validateSystemSettings(new Properties());
 			fail("Expected NullPointerException to be thrown");
 		} catch (NullPointerException ex) {
 			assertNull("ex.getMessage()", ex.getMessage());
