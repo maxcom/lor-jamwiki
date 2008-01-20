@@ -44,7 +44,6 @@ import org.jamwiki.model.Topic;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.SearchEngine;
-import org.jamwiki.servlets.ServletUtil;
 
 /**
  * This class provides a variety of general utility methods for handling
@@ -57,6 +56,9 @@ public class WikiUtil {
 	private static Pattern INVALID_ROLE_NAME_PATTERN = null;
 	private static Pattern INVALID_TOPIC_NAME_PATTERN = null;
 	private static Pattern VALID_USER_LOGIN_PATTERN = null;
+	public static final String PARAMETER_TOPIC = "topic";
+	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
+	public static final String PARAMETER_WATCHLIST = "watchlist";
 
 	static {
 		try {
@@ -127,7 +129,7 @@ public class WikiUtil {
 	 */
 	public static Watchlist currentWatchlist(HttpServletRequest request, String virtualWiki) throws Exception {
 		// get watchlist stored in session
-		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(ServletUtil.PARAMETER_WATCHLIST);
+		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(WikiUtil.PARAMETER_WATCHLIST);
 		if (watchlist != null) {
 			return watchlist;
 		}
@@ -138,7 +140,7 @@ public class WikiUtil {
 			return watchlist;
 		}
 		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
-		request.getSession().setAttribute(ServletUtil.PARAMETER_WATCHLIST, watchlist);
+		request.getSession().setAttribute(WikiUtil.PARAMETER_WATCHLIST, watchlist);
 		return watchlist;
 	}
 
@@ -314,7 +316,7 @@ public class WikiUtil {
 	 * @return The decoded topic name retrieved from the request.
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		return WikiUtil.getParameterFromRequest(request, ServletUtil.PARAMETER_TOPIC);
+		return WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC);
 	}
 
 	/**
@@ -363,9 +365,9 @@ public class WikiUtil {
 	 * @return The decoded virtual wiki name retrieved from the request.
 	 */
 	public static String getVirtualWikiFromRequest(HttpServletRequest request) {
-		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
+		String virtualWiki = request.getParameter(WikiUtil.PARAMETER_VIRTUAL_WIKI);
 		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
+			virtualWiki = (String)request.getAttribute(WikiUtil.PARAMETER_VIRTUAL_WIKI);
 		}
 		if (virtualWiki == null) {
 			return null;

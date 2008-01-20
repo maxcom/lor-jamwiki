@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
@@ -79,10 +79,7 @@ public class ImageLinkTag extends TagSupport {
 	 *
 	 */
 	private static String retrieveVirtualWiki(HttpServletRequest request) throws JspException {
-		String virtualWiki = request.getParameter(ServletUtil.PARAMETER_VIRTUAL_WIKI);
-		if (virtualWiki == null) {
-			virtualWiki = (String)request.getAttribute(ServletUtil.PARAMETER_VIRTUAL_WIKI);
-		}
+		String virtualWiki = WikiUtil.getVirtualWikiFromRequest(request);
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for context path: " + request.getContextPath());
 			throw new JspException("No virtual wiki value found");

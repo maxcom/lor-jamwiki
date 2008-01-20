@@ -63,10 +63,7 @@ public class ServletUtil {
 	protected static final String JSP_ERROR = "error-display.jsp";
 	protected static final String JSP_LOGIN = "login.jsp";
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
-	public static final String PARAMETER_TOPIC = "topic";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
-	public static final String PARAMETER_VIRTUAL_WIKI = "virtualWiki";
-	public static final String PARAMETER_WATCHLIST = "watchlist";
 	private static final String SPRING_REDIRECT_PREFIX = "redirect:";
 
 	/**
@@ -98,7 +95,7 @@ public class ServletUtil {
 		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
 		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
 		next.addObject("bottomArea", bottomArea);
-		next.addObject(ServletUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
+		next.addObject(WikiUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
 		Integer cssRevision = new Integer(0);
 		try {
 			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
