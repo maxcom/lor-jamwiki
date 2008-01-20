@@ -29,6 +29,7 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
+import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.WikiUser;
@@ -136,6 +137,7 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 		WikiBase.reset(request.getLocale(), user);
+		JAMWikiAnonymousProcessingFilter.reset();
 		Environment.saveProperties();
 		// force current user credentials to be removed and re-validated.
 		SecurityContextHolder.clearContext();

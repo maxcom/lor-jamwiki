@@ -18,7 +18,6 @@ package org.jamwiki;
 
 import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.InterWikiHandler;
@@ -199,6 +198,5 @@ public class WikiBase {
 		WikiCache.initialize();
 		WikiBase.dataHandler.setup(locale, user);
 		WikiUser.resetDefaultGroupRoles();
-		JAMWikiAnonymousProcessingFilter.reset();
 	}
 }

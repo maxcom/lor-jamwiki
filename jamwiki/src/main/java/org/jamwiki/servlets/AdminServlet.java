@@ -29,6 +29,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -208,6 +209,7 @@ public class AdminServlet extends JAMWikiServlet {
 				// re-initialize to reset database settings (if needed)
 				WikiUser user = WikiUtil.currentUser();
 				WikiBase.reset(request.getLocale(), user);
+				JAMWikiAnonymousProcessingFilter.reset();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {
