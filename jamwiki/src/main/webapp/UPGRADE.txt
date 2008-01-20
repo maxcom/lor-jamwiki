@@ -21,19 +21,23 @@ To upgrade using this automated process follow these steps:
   4.  If you have made any changes to any other files under the /WEB-INF/
       directory be sure that they are backed up as well as they will need to
       be restored after the new JAMWiki WAR file has been deployed.
-  5.  Remove the old JAMWiki installation by deleting your existing JAMWiki
+  5.  (Optional) The default location for uploaded files is in the /upload/
+      directory. If the wiki is using this directory for file uploads then the
+      /upload/ directory should be backed up so that uploaded images are not
+      lost.
+  6.  Remove the old JAMWiki installation by deleting your existing JAMWiki
       web application. For some web application servers you may also want to
       clear the application server's cache.
-  6.  Install the new JAMWiki WAR file.  See your web application server's
+  7.  Install the new JAMWiki WAR file.  See your web application server's
       documentation for instructions.
-  7.  Restore the files that were backed up in steps three and four to their
-      previous locations under the /WEB-INF/ and /WEB-INF/classes/ directories,
-      overwriting any new files.
-  8.  (Optional) If using an external database, make sure that your JDBC
+  8.  Restore the files that were backed up in steps three - five to their
+      previous locations under the /WEB-INF/, /WEB-INF/classes/ and /upload/
+      directories, overwriting any new files.
+  9.  (Optional) If using an external database, make sure that your JDBC
       driver is available in the web application server's classpath.
-  9.  Verify that the web application server process has read and write access
+  10. Verify that the web application server process has read and write access
       to all files in the new JAMWiki installation.
-  10. Restart the web application server and view any page on the Wiki. You
+  11. Restart the web application server and view any page on the Wiki. You
       will be redirected to the upgrade page and any required upgrade steps
       will be automatically performed.
 
