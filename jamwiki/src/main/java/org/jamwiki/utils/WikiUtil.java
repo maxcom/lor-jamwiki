@@ -45,7 +45,6 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.ServletUtil;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This class provides a variety of general utility methods for handling
@@ -79,7 +78,7 @@ public class WikiUtil {
 	 * @return A Pagination object constructed from parameters found in the
 	 *  request object.
 	 */
-	public static Pagination buildPagination(HttpServletRequest request, ModelAndView next) {
+	public static Pagination buildPagination(HttpServletRequest request) {
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
 		if (request.getParameter("num") != null) {
 			try {
@@ -95,10 +94,6 @@ public class WikiUtil {
 			} catch (Exception e) {
 				// invalid number
 			}
-		}
-		if (next != null) {
-			next.addObject("num", new Integer(num));
-			next.addObject("offset", new Integer(offset));
 		}
 		return new Pagination(num, offset);
 	}

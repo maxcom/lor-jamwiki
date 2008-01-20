@@ -45,6 +45,7 @@ import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
@@ -430,6 +431,26 @@ public class ServletUtil {
 		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
 		pageInfo.setTabMenu(ServletUtil.buildTabMenu(request, pageInfo));
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
+	}
+
+	/**
+	 * Create a Pagination object and load all necessary values into the
+	 * request for processing by a JSP.
+	 *
+	 * @param request The servlet request object.
+	 * @param next A ModelAndView object corresponding to the page being
+	 *  constructed.
+	 * @return A Pagination object constructed from parameters found in the
+	 *  request object.
+	 */
+	public static Pagination loadPagination(HttpServletRequest request, ModelAndView next) {
+		if (next != null) {
+			throw new IllegalArgumentException("A non-null ModelAndView object must be specified when loading pagination values");
+		}
+		Pagination pagination = WikiUtil.buildPagination(request);
+		next.addObject("num", new Integer(pagination.getNumResults()));
+		next.addObject("offset", new Integer(pagination.getOffset()));
+		return pagination;
 	}
 
 	/**

@@ -53,7 +53,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * {@link #setDefaultFeedType(String)}) </li>
  * <li><code>minorEdits</code>: set to 'true' to include minor edits </li>
  * <li><code>num</code>: number of entries to return (see
- * {@link Utilities#buildPagination(HttpServletRequest, ModelAndView)})</li>
+ * {@link WikiUtil#buildPagination(HttpServletRequest)})</li>
  * </ul>
  *
  * @author Rainer Schmitz
@@ -238,7 +238,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 */
 	private Collection getChanges(HttpServletRequest request) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		Pagination pagination = WikiUtil.buildPagination(request, null);
+		Pagination pagination = WikiUtil.buildPagination(request);
 		return WikiBase.getDataHandler().getRecentChanges(virtualWiki, pagination, true);
 	}
 

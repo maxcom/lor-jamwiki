@@ -170,7 +170,7 @@ public class PaginationTag extends BodyTagSupport {
 	 */
 	private String pagination(String baseUrl, int count) {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		Pagination pagination = WikiUtil.buildPagination(request, null);
+		Pagination pagination = WikiUtil.buildPagination(request);
 		StringBuffer output = new StringBuffer();
 		output.append(this.nextPage(pagination, baseUrl, count, true));
 		output.append("&#160;|&#160;");
