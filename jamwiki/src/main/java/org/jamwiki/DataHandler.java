@@ -17,7 +17,9 @@
 package org.jamwiki;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Vector;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -28,7 +30,6 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -630,9 +631,11 @@ public interface DataHandler {
 	 *  performed.
 	 * @param topicVersion A TopicVersion containing the author, date, and
 	 *  other information about the version being added.
-	 * @param parserOutput A ParserOutput object containing metadata about
-	 *  the topic being added/updated, or <code>null</code> if no metadata
-	 *  needs to be processed.
+	 * @param categories A mapping of categories and their associated sort keys (if any)
+	 *  for all categories that are associated with the current topic.
+	 * @param links A collection of all topic names that are linked to from the
+	 *  current topic.  These will be passed to the search engine to create
+	 *  searchable metadata.
 	 * @param userVisible Set to <code>false</code> if no recent change record
 	 *  should be created for the topic add/update, <code>true</code>
 	 *  otherwise.
@@ -642,8 +645,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	// FIXME - should not need ParserOutput here
-	void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception;
+	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record

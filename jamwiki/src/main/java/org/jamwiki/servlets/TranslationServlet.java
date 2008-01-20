@@ -202,6 +202,6 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
 		WikiUser user = WikiUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), editComment, contents);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
 	}
 }

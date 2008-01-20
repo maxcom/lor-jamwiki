@@ -318,7 +318,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput, true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
 		// update watchlist
 		if (user.hasRole(Role.ROLE_USER)) {
 			Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);

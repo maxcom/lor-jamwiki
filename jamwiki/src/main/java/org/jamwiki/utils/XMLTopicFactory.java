@@ -25,6 +25,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -208,7 +209,8 @@ public class XMLTopicFactory extends DefaultHandler {
 			topic.setTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 			// Store topic in database
 			try {
-				WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserOutput(pageText, virtualWiki, pageName), true, null);
+				ParserOutput parserOutput = ParserUtil.parserOutput(pageText, virtualWiki, pageName);
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
 				this.processedTopicName = topic.getName();
 			} catch (Exception e) {
 				throw new SAXException(e);

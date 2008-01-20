@@ -24,13 +24,14 @@ import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Vector;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.TestCase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.parser.ParserOutput;
 
 public class TiddlyWikiParserTest extends TestCase {
 
@@ -63,7 +64,7 @@ public class TiddlyWikiParserTest extends TestCase {
 		public ArrayList topics = new ArrayList();
 		public ArrayList versions = new ArrayList();
 
-		public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception {
+		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
 			topics.add(topic);
 			versions.add(topicVersion);
 		}

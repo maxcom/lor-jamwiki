@@ -220,7 +220,7 @@ public class AnsiDataHandler implements DataHandler {
 			// should be empty since nothing to add to search engine.
 			ParserOutput parserOutput = new ParserOutput();
 			topic.setDeleteDate(new Timestamp(System.currentTimeMillis()));
-			this.writeTopic(topic, topicVersion, parserOutput, userVisible, conn);
+			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), userVisible, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -983,14 +983,14 @@ public class AnsiDataHandler implements DataHandler {
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
 			ParserOutput fromParserOutput = ParserUtil.parserOutput(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
-			writeTopic(fromTopic, fromVersion, fromParserOutput, true, conn);
+			writeTopic(fromTopic, fromVersion, fromParserOutput.getCategories(), fromParserOutput.getLinks(), true, conn);
 			// now either create a new topic that is a redirect with the
 			// source topic's old name, or else undelete the new topic and
 			// rename.
 			if (detinationExistsFlag) {
 				// target topic was deleted, so rename and undelete
 				toTopic.setName(fromTopicName);
-				writeTopic(toTopic, null, null, false, conn);
+				writeTopic(toTopic, null, null, null, false, conn);
 				this.undeleteTopic(toTopic, null, false, conn);
 			} else {
 				// create a new topic that redirects to the destination
@@ -1006,7 +1006,7 @@ public class AnsiDataHandler implements DataHandler {
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
 			ParserOutput toParserOutput = ParserUtil.parserOutput(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
-			writeTopic(toTopic, toVersion, toParserOutput, true, conn);
+			writeTopic(toTopic, toVersion, toParserOutput.getCategories(), toParserOutput.getLinks(), true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1085,7 +1085,7 @@ public class AnsiDataHandler implements DataHandler {
 			// also needed.
 			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
 			topic.setDeleteDate(null);
-			this.writeTopic(topic, topicVersion, parserOutput, userVisible, conn);
+			this.writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), userVisible, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1107,7 +1107,8 @@ public class AnsiDataHandler implements DataHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
+			writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1253,16 +1254,18 @@ public class AnsiDataHandler implements DataHandler {
 	 *  being added.  This parameter should never be null UNLESS the change is
 	 *  not user visible, such as when deleting a topic temporarily during
 	 *  page moves.
-	 * @param parserOutput The parserOutput object that contains a list of
-	 *  links in the topic content, categories, etc.  This parameter may be
-	 *  set with the ParserUtil.parserOutput() method.
+	 * @param categories A mapping of categories and their associated sort keys (if any)
+	 *  for all categories that are associated with the current topic.
+	 * @param links A collection of all topic names that are linked to from the
+	 *  current topic.  These will be passed to the search engine to create
+	 *  searchable metadata.
 	 * @param transactionObject Database connection or other parameters
 	 *  required for updates.
 	 * @param userVisible A flag indicating whether or not this change should
 	 *  be visible to Wiki users.  This flag should be true except in rare
 	 *  cases, such as when temporarily deleting a topic during page moves.
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserOutput parserOutput, boolean userVisible, Object transactionObject) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
 		Connection conn = null;
 		try {
 			String key = WikiCache.key(topic.getVirtualWiki(), topic.getName());
@@ -1291,10 +1294,9 @@ public class AnsiDataHandler implements DataHandler {
 				RecentChange change = new RecentChange(topic, topicVersion, authorName);
 				this.addRecentChange(change, conn);
 			}
-			if (parserOutput != null) {
+			if (categories != null) {
 				// add / remove categories associated with the topic
 				this.deleteTopicCategories(topic, conn);
-				LinkedHashMap categories = parserOutput.getCategories();
 				for (Iterator iterator = categories.keySet().iterator(); iterator.hasNext();) {
 					String categoryName = (String)iterator.next();
 					Category category = new Category();
@@ -1305,9 +1307,9 @@ public class AnsiDataHandler implements DataHandler {
 					this.addCategory(category, conn);
 				}
 			}
-			if (parserOutput != null) {
+			if (links != null) {
 				WikiBase.getSearchEngine().deleteFromIndex(topic);
-				WikiBase.getSearchEngine().addToIndex(topic, parserOutput.getLinks());
+				WikiBase.getSearchEngine().addToIndex(topic, links);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
