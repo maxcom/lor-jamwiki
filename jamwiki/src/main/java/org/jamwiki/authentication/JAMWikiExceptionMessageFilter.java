@@ -28,7 +28,6 @@ import org.acegisecurity.AccessDeniedException;
 import org.acegisecurity.AcegiSecurityException;
 import org.acegisecurity.AuthenticationException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -50,7 +49,9 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 	 *
 	 */
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(errorMessageProvider, "errorMessageProvider must be specified");
+		if (errorMessageProvider == null) {
+			throw new IllegalArgumentException("errorMessageProvider must be specified");
+		}
     }
 
 	/**

@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.Assert;
 
 /**
  * Provides an object representing Wiki-specific information about a user of
@@ -229,9 +228,13 @@ public class WikiUser implements UserDetails {
 	}
 
 	protected void setAuthorities(GrantedAuthority[] authorities) {
-		Assert.notNull(authorities, "Cannot pass a null GrantedAuthority array");
+		if (authorities == null) {
+			throw new IllegalArgumentException("Cannot pass a null GrantedAuthority array");
+		}
 		for (int i = 0; i < authorities.length; i++) {
-			Assert.notNull(authorities[i], "Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
+			if (authorities[i] == null) {
+				throw new IllegalArgumentException("Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
+			}
 		}
 		this.authorities = authorities;
 	}

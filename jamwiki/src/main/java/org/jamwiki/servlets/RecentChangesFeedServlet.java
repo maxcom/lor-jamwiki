@@ -39,7 +39,6 @@ import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -112,7 +111,9 @@ public class RecentChangesFeedServlet extends AbstractController {
 	 * @param feedUrlPrefix feed URL prefix to set; may not be null.
 	 */
 	public void setFeedUrlPrefix(String feedUrlPrefix) {
-		Assert.notNull(feedUrlPrefix, "Feed URL prefix may not be null");
+		if (feedUrlPrefix == null) {
+			throw new IllegalArgumentException("Feed URL prefix may not be null");
+		}
 		this.feedUrlPrefix = feedUrlPrefix;
 	}
 

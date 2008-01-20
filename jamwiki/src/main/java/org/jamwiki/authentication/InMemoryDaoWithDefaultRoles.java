@@ -19,7 +19,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.util.Assert;
 
 /**
  * Retrieves user details from an in-memory list created by the bean context. If
@@ -74,10 +73,13 @@ public class InMemoryDaoWithDefaultRoles implements UserDetailsService {
 	 * @param defaultAuthorities To set.
 	 */
 	public void setDefaultAuthorities(GrantedAuthority[] defaultAuthorities) {
-		Assert.notNull(defaultAuthorities, "Cannot pass a null GrantedAuthority array");
+		if (defaultAuthorities == null) {
+			throw new IllegalArgumentException("Cannot pass a null GrantedAuthority array");
+		}
 		for (int i = 0; i < defaultAuthorities.length; i++) {
-			Assert.notNull(defaultAuthorities[i], "Granted authority element " + i
-					+ " is null - GrantedAuthority[] cannot contain any null elements");
+			if (defaultAuthorities[i] == null) {
+				throw new IllegalArgumentException("Granted authority element " + i + " is null - GrantedAuthority[] cannot contain any null elements");
+			}
 		}
 		this.defaultAuthorities = defaultAuthorities;
 	}

@@ -27,7 +27,6 @@ import net.sf.ehcache.Element;
 import org.jamwiki.Environment;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
-import org.springframework.util.Assert;
 
 /**
  * Utility methods for readding images from disk, saving images to disk,
@@ -81,7 +80,9 @@ public class ImageUtil {
 	 *  WikiImage object.
 	 */
 	public static WikiImage initializeImage(WikiFile wikiFile, int maxDimension) throws Exception {
-		Assert.notNull(wikiFile, "wikiFile may not be null");
+		if (wikiFile == null) {
+			throw new IllegalArgumentException("wikiFile may not be null");
+		}
 		WikiImage wikiImage = new WikiImage(wikiFile);
 		BufferedImage imageObject = null;
 		if (maxDimension > 0) {
