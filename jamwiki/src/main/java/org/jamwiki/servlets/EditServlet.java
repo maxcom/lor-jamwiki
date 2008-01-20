@@ -97,7 +97,7 @@ public class EditServlet extends JAMWikiServlet {
 		} else if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = ParserUtil.parseSlice(request, virtualWiki, topicName, section);
+			contents = ParserUtil.parseSlice(request.getContextPath(), request.getLocale(), virtualWiki, topicName, section);
 		} else {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
@@ -277,7 +277,7 @@ public class EditServlet extends JAMWikiServlet {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
 			ParserOutput parserOutput = new ParserOutput();
-			contents = ParserUtil.parseSplice(parserOutput, request, virtualWiki, topicName, section, contents);
+			contents = ParserUtil.parseSplice(parserOutput, request.getContextPath(), request.getLocale(), virtualWiki, topicName, section, contents);
 			sectionName = parserOutput.getSectionName();
 		}
 		if (contents == null) {

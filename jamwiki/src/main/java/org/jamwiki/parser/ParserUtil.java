@@ -17,7 +17,7 @@
 package org.jamwiki.parser;
 
 import java.lang.reflect.Constructor;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 import org.apache.commons.lang.ClassUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -144,21 +144,22 @@ public class ParserUtil {
 	 * When editing a section of a topic, this method provides a way of slicing
 	 * out a given section of the raw topic content.
 	 *
-	 * @param request The servlet request object.
+	 * @param context The servlet context.
+	 * @param locale The locale for which the content is being parsed.
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
 	 * @param targetSection The section to be sliced and returned.
 	 * @return Returns the raw topic content for the target section.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static String parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int section) throws Exception {
+	public static String parseSlice(String context, Locale locale, String virtualWiki, String topicName, int section) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
 		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
+		parserInput.setContext(context);
+		parserInput.setLocale(locale);
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
@@ -172,7 +173,8 @@ public class ParserUtil {
 	 *
 	 * @param parserOutput A ParserOutput object containing parser
 	 *  metadata output.
-	 * @param request The servlet request object.
+	 * @param context The servlet context.
+	 * @param locale The locale for which the content is being parsed.
 	 * @param virtualWiki The virtual wiki for the topic being parsed.
 	 * @param topicName The name of the topic being parsed.
 	 * @param targetSection The section to be sliced and returned.
@@ -181,14 +183,14 @@ public class ParserUtil {
 	 * @return The raw topic content including the new replacement text.
 	 * @throws Exception Thrown if a parser error occurs.
 	 */
-	public static String parseSplice(ParserOutput parserOutput, HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
+	public static String parseSplice(ParserOutput parserOutput, String context, Locale locale, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null || topic.getTopicContent() == null) {
 			return null;
 		}
 		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
+		parserInput.setContext(context);
+		parserInput.setLocale(locale);
 		parserInput.setTopicName(topicName);
 		parserInput.setVirtualWiki(virtualWiki);
 		AbstractParser parser = ParserUtil.parserInstance(parserInput);
