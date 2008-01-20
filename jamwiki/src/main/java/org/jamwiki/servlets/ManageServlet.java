@@ -86,7 +86,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = "";
 		topic.setTopicContent(contents);
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), request.getParameter("deleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
 		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true, null);
@@ -107,7 +107,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		topic.setReadOnly(request.getParameter("readOnly") != null);
 		topic.setAdminOnly(request.getParameter("adminOnly") != null);
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
@@ -151,7 +151,7 @@ public class ManageServlet extends JAMWikiServlet {
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), request.getParameter("undeleteComment"), contents);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
 		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true, null);

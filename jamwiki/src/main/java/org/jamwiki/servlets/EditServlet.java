@@ -114,7 +114,7 @@ public class EditServlet extends JAMWikiServlet {
 			return false;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		if (user.hasRole(Role.ROLE_USER)) {
 			message += user.getUsername() + " / ";
 		}
@@ -162,7 +162,7 @@ public class EditServlet extends JAMWikiServlet {
 			next.addObject("section", request.getParameter("section"));
 		}
 		next.addObject("minorEdit", new Boolean(request.getParameter("minorEdit") != null));
-		Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);
+		Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 		if (request.getParameter("watchTopic") != null || (watchlist.containsTopic(topicName) && !isPreview(request))) {
 			next.addObject("watchTopic", new Boolean(true));
 		}
@@ -187,7 +187,7 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
@@ -293,7 +293,7 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());
@@ -321,7 +321,7 @@ public class EditServlet extends JAMWikiServlet {
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
 		// update watchlist
 		if (user.hasRole(Role.ROLE_USER)) {
-			Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);
+			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {
 				WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);

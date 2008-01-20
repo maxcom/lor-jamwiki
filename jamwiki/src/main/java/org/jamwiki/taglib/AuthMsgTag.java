@@ -21,9 +21,9 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiExceptionMessageFilter;
+import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
@@ -98,7 +98,7 @@ public class AuthMsgTag extends TagSupport {
 			return null;
 		}
 		Object[] params = {uri};
-		String message = Utilities.formatMessage(key, WikiUtil.retrieveUserLocale(request), params);
+		String message = Utilities.formatMessage(key, ServletUtil.retrieveUserLocale(request), params);
 		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY);
 		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_URI_KEY);
 		return formatMessage(message);
@@ -114,7 +114,7 @@ public class AuthMsgTag extends TagSupport {
 			return null;
 		}
 		Object[] params = {uri};
-		String message = Utilities.formatMessage(key, WikiUtil.retrieveUserLocale(request), params);
+		String message = Utilities.formatMessage(key, ServletUtil.retrieveUserLocale(request), params);
 		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY);
 		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY);
 		return formatMessage(message);
@@ -128,7 +128,7 @@ public class AuthMsgTag extends TagSupport {
 		if (key == null) {
 			return null;
 		}
-		String message = Utilities.formatMessage(key, WikiUtil.retrieveUserLocale(request));
+		String message = Utilities.formatMessage(key, ServletUtil.retrieveUserLocale(request));
 		return formatMessage(message);
 	}
 
@@ -140,7 +140,7 @@ public class AuthMsgTag extends TagSupport {
 		if (messageObject == null) {
 			return null;
 		}
-		String message = Utilities.formatMessage(messageObject.getKey(), WikiUtil.retrieveUserLocale(request), messageObject.getParams());
+		String message = Utilities.formatMessage(messageObject.getKey(), ServletUtil.retrieveUserLocale(request), messageObject.getParams());
 		return formatMessage(message);
 	}
 

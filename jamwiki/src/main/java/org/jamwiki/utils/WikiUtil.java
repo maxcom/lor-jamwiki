@@ -25,10 +25,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationCredentialsNotFoundException;
-import org.acegisecurity.context.SecurityContext;
-import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -42,8 +38,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
-import org.jamwiki.model.Watchlist;
-import org.jamwiki.model.WikiUser;
 
 /**
  * This class provides a variety of general utility methods for handling
@@ -98,50 +92,6 @@ public class WikiUtil {
 			}
 		}
 		return new Pagination(num, offset);
-	}
-
-	/**
-	 * Retrieve the current <code>WikiUser</code> from Acegi
-	 * <code>SecurityContextHolder</code>.  If the current user is not
-	 * logged-in then this method will return an empty <code>WikiUser</code>
-	 * object.
-	 *
-	 * @return The current logged-in <code>WikiUser</code>, or an empty
-	 *  <code>WikiUser</code> if there is no user currently logged in.
-	 *  This method will never return <code>null</code>.
-	 * @throws AuthenticationCredentialsNotFoundException If authentication
-	 *  credentials are unavailable.
-	 */
-	public static WikiUser currentUser() throws AuthenticationCredentialsNotFoundException {
-		SecurityContext ctx = SecurityContextHolder.getContext();
-		Authentication auth = ctx.getAuthentication();
-		return WikiUser.initWikiUser(auth);
-	}
-
-	/**
-	 * Retrieve the current logged-in user's watchlist from the session.  If
-	 * there is no watchlist return an empty watchlist.
-	 *
-	 * @param request The servlet request object.
-	 * @param virtualWiki The virtual wiki for the watchlist being parsed.
-	 * @return The current logged-in user's watchlist, or an empty watchlist
-	 *  if there is no watchlist in the session.
-	 */
-	public static Watchlist currentWatchlist(HttpServletRequest request, String virtualWiki) throws Exception {
-		// get watchlist stored in session
-		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(WikiUtil.PARAMETER_WATCHLIST);
-		if (watchlist != null) {
-			return watchlist;
-		}
-		// no watchlist in session, retrieve from database
-		watchlist = new Watchlist();
-		WikiUser user = WikiUtil.currentUser();
-		if (!user.hasRole(Role.ROLE_USER)) {
-			return watchlist;
-		}
-		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
-		request.getSession().setAttribute(WikiUtil.PARAMETER_WATCHLIST, watchlist);
-		return watchlist;
 	}
 
 	/**
@@ -559,28 +509,6 @@ public class WikiUtil {
 			list.add(token.toLowerCase());
 		}
 		return list;
-	}
-
-	/**
-	 * Users can specify a default locale in their preferences, so determine
-	 * if the current user is logged-in and has chosen a locale.  If not, use
-	 * the default locale from the request object.
-	 *
-	 * @param request The request object for the HTTP request.
-	 * @return Either the user's default locale (for logged-in users) or the
-	 *  locale specified in the request if no default locale is available.
-	 */
-	public static Locale retrieveUserLocale(HttpServletRequest request) {
-		WikiUser user = null;
-		try {
-			user = WikiUtil.currentUser();
-			if (user.getDefaultLocale() != null) {
-				return Utilities.buildLocale(user.getDefaultLocale());
-			}
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			// ignore
-		}
-		return request.getLocale();
 	}
 
 	/**

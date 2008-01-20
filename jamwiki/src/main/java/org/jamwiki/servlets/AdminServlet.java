@@ -38,7 +38,6 @@ import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -84,7 +83,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void addVirtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
 			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
@@ -207,7 +206,7 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUser user = WikiUtil.currentUser();
+				WikiUser user = ServletUtil.currentUser();
 				WikiBase.reset(request.getLocale(), user);
 				JAMWikiAnonymousProcessingFilter.reset();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));

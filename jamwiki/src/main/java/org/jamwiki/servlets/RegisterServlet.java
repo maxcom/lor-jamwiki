@@ -237,8 +237,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		// FIXME - i suspect initializing with a null login is bad
 		WikiUser user = new WikiUser("");
 		WikiUserInfo userInfo = new WikiUserInfo();
-		if (WikiUtil.currentUser().hasRole(Role.ROLE_USER)) {
-			user = WikiUtil.currentUser();
+		if (ServletUtil.currentUser().hasRole(Role.ROLE_USER)) {
+			user = ServletUtil.currentUser();
 			userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getUsername());
 		}
 		this.loadDefaults(request, next, pageInfo, user, userInfo);

@@ -69,10 +69,10 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		Iterator iterator = RequestUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when WikiUtil.currentUser()
+			// consistent with how the code behaved when ServletUtil.currentUser()
 			// returned null for non-logged-in users
 			user = null;
 		}

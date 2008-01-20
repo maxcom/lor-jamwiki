@@ -84,7 +84,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	private String retrieveLanguage(HttpServletRequest request) {
 		String language = request.getParameter("language");
 		if (StringUtils.isBlank(language)) {
-			WikiUser user = WikiUtil.currentUser();
+			WikiUser user = ServletUtil.currentUser();
 			if (!StringUtils.isBlank(user.getDefaultLocale())) {
 				language = user.getDefaultLocale().split("_")[0];
 			} else if (request.getLocale() != null) {
@@ -200,7 +200,7 @@ public class TranslationServlet extends JAMWikiServlet {
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), editComment, contents);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
 	}

@@ -24,6 +24,10 @@ import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.ehcache.Element;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.AuthenticationCredentialsNotFoundException;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -109,7 +113,7 @@ public class ServletUtil {
 	 */
 	private static LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		try {
@@ -143,7 +147,7 @@ public class ServletUtil {
 					links.put(moveLink, new WikiMessage("tab.common.move"));
 				}
 				if (user.hasRole(Role.ROLE_USER)) {
-					Watchlist watchlist = WikiUtil.currentWatchlist(request, virtualWiki);
+					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 					boolean watched = (watchlist.containsTopic(pageName));
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
 					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeForURL(pageName);
@@ -175,7 +179,7 @@ public class ServletUtil {
 	 */
 	private static LinkedHashMap buildUserMenu() {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
 			links.put("Special:Login", new WikiMessage("common.login"));
 			links.put("Special:Account", new WikiMessage("usermenu.register"));
@@ -251,6 +255,50 @@ public class ServletUtil {
 			return null;
 		}
 		return content;
+	}
+
+	/**
+	 * Retrieve the current <code>WikiUser</code> from Acegi
+	 * <code>SecurityContextHolder</code>.  If the current user is not
+	 * logged-in then this method will return an empty <code>WikiUser</code>
+	 * object.
+	 *
+	 * @return The current logged-in <code>WikiUser</code>, or an empty
+	 *  <code>WikiUser</code> if there is no user currently logged in.
+	 *  This method will never return <code>null</code>.
+	 * @throws AuthenticationCredentialsNotFoundException If authentication
+	 *  credentials are unavailable.
+	 */
+	public static WikiUser currentUser() throws AuthenticationCredentialsNotFoundException {
+		SecurityContext ctx = SecurityContextHolder.getContext();
+		Authentication auth = ctx.getAuthentication();
+		return WikiUser.initWikiUser(auth);
+	}
+
+	/**
+	 * Retrieve the current logged-in user's watchlist from the session.  If
+	 * there is no watchlist return an empty watchlist.
+	 *
+	 * @param request The servlet request object.
+	 * @param virtualWiki The virtual wiki for the watchlist being parsed.
+	 * @return The current logged-in user's watchlist, or an empty watchlist
+	 *  if there is no watchlist in the session.
+	 */
+	public static Watchlist currentWatchlist(HttpServletRequest request, String virtualWiki) throws Exception {
+		// get watchlist stored in session
+		Watchlist watchlist = (Watchlist)request.getSession().getAttribute(WikiUtil.PARAMETER_WATCHLIST);
+		if (watchlist != null) {
+			return watchlist;
+		}
+		// no watchlist in session, retrieve from database
+		watchlist = new Watchlist();
+		WikiUser user = ServletUtil.currentUser();
+		if (!user.hasRole(Role.ROLE_USER)) {
+			return watchlist;
+		}
+		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
+		request.getSession().setAttribute(WikiUtil.PARAMETER_WATCHLIST, watchlist);
+		return watchlist;
 	}
 
 	/**
@@ -467,6 +515,28 @@ public class ServletUtil {
 		String view = ServletUtil.SPRING_REDIRECT_PREFIX + target;
 		next.clear();
 		next.setViewName(view);
+	}
+
+	/**
+	 * Users can specify a default locale in their preferences, so determine
+	 * if the current user is logged-in and has chosen a locale.  If not, use
+	 * the default locale from the request object.
+	 *
+	 * @param request The request object for the HTTP request.
+	 * @return Either the user's default locale (for logged-in users) or the
+	 *  locale specified in the request if no default locale is available.
+	 */
+	public static Locale retrieveUserLocale(HttpServletRequest request) {
+		WikiUser user = null;
+		try {
+			user = ServletUtil.currentUser();
+			if (user.getDefaultLocale() != null) {
+				return Utilities.buildLocale(user.getDefaultLocale());
+			}
+		} catch (AuthenticationCredentialsNotFoundException e) {
+			// ignore
+		}
+		return request.getLocale();
 	}
 
 	/**
@@ -687,7 +757,7 @@ public class ServletUtil {
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		WikiUser user = WikiUtil.currentUser();
+		WikiUser user = ServletUtil.currentUser();
 		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			sectionEdit = false;
 		}
