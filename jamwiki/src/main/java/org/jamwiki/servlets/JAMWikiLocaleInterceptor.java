@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.apache.commons.lang.LocaleUtils;
 import org.springframework.web.servlet.LocaleResolver;

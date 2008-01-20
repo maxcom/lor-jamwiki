@@ -245,7 +245,7 @@ public class LinkUtil {
 		if (!StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
-			} else if (!WikiBase.exists(virtualWiki, topic)) {
+			} else if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
 				style = "edit";
 			}
 		}
@@ -307,7 +307,7 @@ public class LinkUtil {
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeForURL(section);
 		}
-		if (!WikiBase.exists(virtualWiki, topic)) {
+		if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
 		}
 		String url = "";
@@ -350,6 +350,37 @@ public class LinkUtil {
 		String url = InterWikiHandler.formatInterWiki(namespace, destination);
 		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
 		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
+	}
+
+	/**
+	 * Utility method for determining if an article name corresponds to a valid
+	 * wiki link.  In this case an "article name" could be an existing topic, a
+	 * "Special:" page, a user page, an interwiki link, etc.  This method will
+	 * return true if the given name corresponds to a valid special page, user
+	 * page, topic, or other existing article.
+	 *
+	 * @param virtualWiki The virtual wiki for the topic being checked.
+	 * @param articleName The name of the article that is being checked.
+	 * @return <code>true</code> if there is an article that exists for the given
+	 *  name and virtual wiki.
+	 * @throws Exception Thrown if any error occurs during lookup.
+	 */
+	public static boolean isExistingArticle(String virtualWiki, String articleName) throws Exception {
+		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(articleName)) {
+			return false;
+		}
+		if (PseudoTopicHandler.isPseudoTopic(articleName)) {
+			return true;
+		}
+		if (InterWikiHandler.isInterWiki(articleName)) {
+			return true;
+		}
+		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
+			// not initialized yet
+			return false;
+		}
+		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, articleName, false, null);
+		return (topic != null);
 	}
 
 	/**

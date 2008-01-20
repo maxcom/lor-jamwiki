@@ -20,7 +20,6 @@ import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
@@ -283,7 +282,7 @@ public class JFlexParser extends AbstractParser {
 	private String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
 		String redirect = this.isRedirect(raw);
 		String style = "redirect";
-		if (!WikiBase.exists(this.parserInput.getVirtualWiki(), redirect.trim())) {
+		if (!LinkUtil.isExistingArticle(this.parserInput.getVirtualWiki(), redirect.trim())) {
 			style = "edit redirect";
 		}
 		WikiLink wikiLink = new WikiLink();

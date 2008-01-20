@@ -17,11 +17,7 @@
 package org.jamwiki;
 
 import java.util.Locale;
-import org.apache.commons.lang.StringUtils;
-import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.utils.InterWikiHandler;
-import org.jamwiki.utils.PseudoTopicHandler;
 import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLogger;
@@ -116,35 +112,6 @@ public class WikiBase {
 	 */
 	private WikiBase() throws Exception {
 		this.reload();
-	}
-
-	/**
-	 * Utility method for determining if a topic exists.  This method will
-	 * return true if a method is a special topic (such as the recent changes
-	 * page) or if it is an existing topic.
-	 *
-	 * @param virtualWiki The virtual wiki for the topic being checked.
-	 * @param topicName The name of the topic that is being checked.
-	 * @return <code>true</code> if the topic exists or is a special system topic.
-	 * @throws Exception Thrown if any error occurs during lookup.
-	 */
-	// FIXME - this method isn't really appropriate for this class and should be moved.
-	public static boolean exists(String virtualWiki, String topicName) throws Exception {
-		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
-			return false;
-		}
-		if (PseudoTopicHandler.isPseudoTopic(topicName)) {
-			return true;
-		}
-		if (InterWikiHandler.isInterWiki(topicName)) {
-			return true;
-		}
-		if (StringUtils.isBlank(Environment.getValue(Environment.PROP_BASE_FILE_DIR)) || !Environment.getBooleanValue(Environment.PROP_BASE_INITIALIZED)) {
-			// not initialized yet
-			return false;
-		}
-		Topic topic = WikiBase.dataHandler.lookupTopic(virtualWiki, topicName, false, null);
-		return (topic != null);
 	}
 
 	/**

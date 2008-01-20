@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,7 +56,7 @@ public class SearchServlet extends JAMWikiServlet {
 	private void jumpTo(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String topic = request.getParameter("text");
-		if (WikiBase.exists(virtualWiki, topic)) {
+		if (LinkUtil.isExistingArticle(virtualWiki, topic)) {
 			ServletUtil.redirect(next, virtualWiki, topic);
 		} else {
 			next.addObject("notopic", topic);
