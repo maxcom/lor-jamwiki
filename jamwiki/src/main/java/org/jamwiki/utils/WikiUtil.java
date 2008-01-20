@@ -34,6 +34,7 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
+import org.jamwiki.SearchEngine;
 import org.jamwiki.UserHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -43,7 +44,6 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.search.SearchEngine;
 
 /**
  * This class provides a variety of general utility methods for handling

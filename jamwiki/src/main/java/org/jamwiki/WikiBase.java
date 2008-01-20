@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.search.SearchEngine;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.PseudoTopicHandler;
 import org.jamwiki.utils.WikiUtil;
