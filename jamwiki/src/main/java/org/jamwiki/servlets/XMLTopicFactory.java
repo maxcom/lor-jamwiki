@@ -14,7 +14,8 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.utils;
+// FIXME - moved to the org.jamwiki.servlets package temporarily until a better home is found
+package org.jamwiki.servlets;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -27,6 +28,8 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
+import org.jamwiki.utils.NamespaceHandler;
+import org.jamwiki.utils.WikiLogger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

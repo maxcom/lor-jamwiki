@@ -29,7 +29,6 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.WikiUtil;
-import org.jamwiki.utils.XMLTopicFactory;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
