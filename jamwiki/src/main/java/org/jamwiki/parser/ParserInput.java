@@ -18,7 +18,6 @@ package org.jamwiki.parser;
 
 import java.util.Hashtable;
 import java.util.Locale;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 
 /**
@@ -330,12 +329,6 @@ public class ParserInput {
 	 *  parser input instance.
 	 */
 	public void setWikiUser(WikiUser user) {
-		if (user!=null && !user.hasRole(Role.ROLE_USER)) {
-			// FIXME - setting the user to null may not be necessary, but it is
-			// consistent with how the code behaved when Utilities.currentUser()
-			// returned null for non-logged-in users
-			user = null;
-		}
 		this.wikiUser = user;
 	}
 }

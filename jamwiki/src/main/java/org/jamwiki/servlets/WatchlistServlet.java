@@ -23,9 +23,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Watchlist;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -57,7 +57,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void update(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}
@@ -82,7 +82,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			throw new WikiException(new WikiMessage("watchlist.error.loginrequired"));
 		}

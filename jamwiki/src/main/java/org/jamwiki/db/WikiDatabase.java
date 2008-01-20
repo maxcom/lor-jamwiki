@@ -196,7 +196,7 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupAdminUser(WikiUser user, Connection conn) throws Exception {
-		if (user == null || !user.hasRole(Role.ROLE_USER)) {
+		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {

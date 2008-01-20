@@ -23,11 +23,11 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.Watchlist;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
@@ -114,7 +114,7 @@ public class EditServlet extends JAMWikiServlet {
 			return false;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (user.hasRole(Role.ROLE_USER)) {
 			message += user.getUsername() + " / ";
 		}
@@ -187,7 +187,7 @@ public class EditServlet extends JAMWikiServlet {
 	private ModelAndView loginRequired(HttpServletRequest request, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			return null;
 		}
@@ -293,7 +293,7 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		// parse for signatures and other syntax that should not be saved in raw form
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());

@@ -30,7 +30,9 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.db.WikiDatabase;
+import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
@@ -206,9 +208,13 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUser user = ServletUtil.currentUser();
+				WikiUserAuth user = ServletUtil.currentUser();
+				if (user == null || !user.hasRole(Role.ROLE_USER)) {
+					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
+				}
 				WikiBase.reset(request.getLocale(), user);
 				JAMWikiAnonymousProcessingFilter.reset();
+				WikiUserAuth.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {

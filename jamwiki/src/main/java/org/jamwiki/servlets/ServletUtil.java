@@ -35,6 +35,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.Role;
@@ -113,7 +114,7 @@ public class ServletUtil {
 	 */
 	private static LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		try {
@@ -179,7 +180,7 @@ public class ServletUtil {
 	 */
 	private static LinkedHashMap buildUserMenu() {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
 			links.put("Special:Login", new WikiMessage("common.login"));
 			links.put("Special:Account", new WikiMessage("usermenu.register"));
@@ -258,21 +259,21 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Retrieve the current <code>WikiUser</code> from Acegi
+	 * Retrieve the current <code>WikiUserAuth</code> from Acegi
 	 * <code>SecurityContextHolder</code>.  If the current user is not
-	 * logged-in then this method will return an empty <code>WikiUser</code>
+	 * logged-in then this method will return an empty <code>WikiUserAuth</code>
 	 * object.
 	 *
-	 * @return The current logged-in <code>WikiUser</code>, or an empty
-	 *  <code>WikiUser</code> if there is no user currently logged in.
+	 * @return The current logged-in <code>WikiUserAuth</code>, or an empty
+	 *  <code>WikiUserAuth</code> if there is no user currently logged in.
 	 *  This method will never return <code>null</code>.
 	 * @throws AuthenticationCredentialsNotFoundException If authentication
 	 *  credentials are unavailable.
 	 */
-	public static WikiUser currentUser() throws AuthenticationCredentialsNotFoundException {
+	public static WikiUserAuth currentUser() throws AuthenticationCredentialsNotFoundException {
 		SecurityContext ctx = SecurityContextHolder.getContext();
 		Authentication auth = ctx.getAuthentication();
-		return WikiUser.initWikiUser(auth);
+		return WikiUserAuth.initWikiUserAuth(auth);
 	}
 
 	/**
@@ -292,7 +293,7 @@ public class ServletUtil {
 		}
 		// no watchlist in session, retrieve from database
 		watchlist = new Watchlist();
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			return watchlist;
 		}
@@ -348,7 +349,7 @@ public class ServletUtil {
 	 * @return <code>true</code> if the user is allowed to edit the topic,
 	 *  <code>false</code> otherwise.
 	 */
-	protected static boolean isEditable(String virtualWiki, String topicName, WikiUser user) throws Exception {
+	protected static boolean isEditable(String virtualWiki, String topicName, WikiUserAuth user) throws Exception {
 		if (user == null || !user.hasRole(Role.ROLE_EDIT_EXISTING)) {
 			// user does not have appropriate permissions
 			return false;
@@ -381,7 +382,7 @@ public class ServletUtil {
 	 * @return <code>true</code> if the user is allowed to move the topic,
 	 *  <code>false</code> otherwise.
 	 */
-	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUser user) throws Exception {
+	protected static boolean isMoveable(String virtualWiki, String topicName, WikiUserAuth user) throws Exception {
 		if (user == null || !user.hasRole(Role.ROLE_MOVE)) {
 			// no permission granted to move pages
 			return false;
@@ -757,7 +758,7 @@ public class ServletUtil {
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
 			sectionEdit = false;
 		}

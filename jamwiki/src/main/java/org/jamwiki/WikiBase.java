@@ -197,6 +197,5 @@ public class WikiBase {
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
 		WikiBase.dataHandler.setup(locale, user);
-		WikiUser.resetDefaultGroupRoles();
 	}
 }

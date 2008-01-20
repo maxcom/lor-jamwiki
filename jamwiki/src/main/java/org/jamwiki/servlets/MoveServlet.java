@@ -22,10 +22,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -44,7 +44,7 @@ public class MoveServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_MOVE)) {
 			WikiMessage messageObject = new WikiMessage("login.message.move");
 			return ServletUtil.viewLogin(request, pageInfo, WikiUtil.getTopicFromURI(request), messageObject);
@@ -99,7 +99,7 @@ public class MoveServlet extends JAMWikiServlet {
 			next.addObject("messageObject", new WikiMessage("move.exception.nodestination"));
 			return false;
 		}
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (!ServletUtil.isMoveable(virtualWiki, moveFrom, user)) {
 			pageInfo.setContentJsp(JSP_MOVE);
 			next.addObject("messageObject", new WikiMessage("move.exception.permission", moveFrom));

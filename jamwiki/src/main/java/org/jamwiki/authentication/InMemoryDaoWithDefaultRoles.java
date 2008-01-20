@@ -15,7 +15,6 @@ import org.acegisecurity.userdetails.UsernameNotFoundException;
 import org.acegisecurity.userdetails.memory.UserMap;
 import org.acegisecurity.userdetails.memory.UserMapEditor;
 import org.jamwiki.WikiBase;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -90,41 +89,40 @@ public class InMemoryDaoWithDefaultRoles implements UserDetailsService {
 	 * @see org.acegisecurity.providers.dao.memory.InMemoryDaoImpl#loadUserByUsername(java.lang.String)
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-		WikiUser wikiUser = createWikiUserObject(username);
-		syncWikiUserWithJamWikiDB(username, wikiUser);
-		return wikiUser;
+		WikiUserAuth wikiUserAuth = createWikiUserObject(username);
+		syncWikiUserWithJamWikiDB(username, wikiUserAuth);
+		return wikiUserAuth;
 	}
 
 	/**
 	 *
 	 */
-	private WikiUser createWikiUserObject(String username) {
-		WikiUser wikiUser;
+	private WikiUserAuth createWikiUserObject(String username) {
+		WikiUserAuth wikiUserAuth;
 		if (userMap == null) {
-			wikiUser = newUserWithDefaultAuthorities(username);
+			wikiUserAuth = newUserWithDefaultAuthorities(username);
 		} else {
 			try {
 				UserDetails userDetails = userMap.getUser(username);
-				wikiUser = new WikiUser(userDetails.getUsername(), userDetails.getPassword(), true, true, true, true,
-						userDetails.getAuthorities());
+				wikiUserAuth = new WikiUserAuth(userDetails.getUsername(), userDetails.getPassword(), true, true, true, true, userDetails.getAuthorities());
 			} catch (UsernameNotFoundException e) {
-				wikiUser = newUserWithDefaultAuthorities(username);
+				wikiUserAuth = newUserWithDefaultAuthorities(username);
 			}
 		}
-		return wikiUser;
+		return wikiUserAuth;
 	}
 
 	/**
 	 *
 	 */
-	private WikiUser newUserWithDefaultAuthorities(String username) {
-		return new WikiUser(username, "ignored", true, true, true, true, defaultAuthorities);
+	private WikiUserAuth newUserWithDefaultAuthorities(String username) {
+		return new WikiUserAuth(username, "ignored", true, true, true, true, defaultAuthorities);
 	}
 
 	/**
 	 *
 	 */
-	private void syncWikiUserWithJamWikiDB(String username, WikiUser wikiUser) {
+	private void syncWikiUserWithJamWikiDB(String username, WikiUserAuth wikiUserAuth) {
 		try {
 			WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
 			if (userInfo == null) {
@@ -133,13 +131,12 @@ public class InMemoryDaoWithDefaultRoles implements UserDetailsService {
 				userInfo.setUsername(username);
 				// password will never be used
 				userInfo.setEncodedPassword("kd4%6/tzZh§FGER");
-				WikiBase.getDataHandler().writeWikiUser(wikiUser, userInfo, null);
+				WikiBase.getDataHandler().writeWikiUser(wikiUserAuth, userInfo, null);
 				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
 			}
-			wikiUser.setUserId(userInfo.getUserId());
+			wikiUserAuth.setUserId(userInfo.getUserId());
 		} catch (Exception e) {
 			throw new DataRetrievalFailureException(e.getMessage(), e);
 		}
 	}
-
 }

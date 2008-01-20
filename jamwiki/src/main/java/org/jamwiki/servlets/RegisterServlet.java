@@ -31,6 +31,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -95,7 +96,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void login(HttpServletRequest request, WikiUser user) {
+	private void login(HttpServletRequest request, WikiUserAuth user) {
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -106,7 +107,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-		WikiUser user = this.setWikiUser(request);
+		WikiUserAuth user = this.setWikiUser(request);
 		WikiUserInfo userInfo = this.setWikiUserInfo(request);
 		next.addObject("newuser", user);
 		next.addObject("newuserinfo", userInfo);
@@ -144,14 +145,14 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private WikiUser setWikiUser(HttpServletRequest request) throws Exception {
+	private WikiUserAuth setWikiUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("login");
-		WikiUser user = new WikiUser(username);
+		WikiUserAuth user = new WikiUserAuth(username);
 		String userIdString = request.getParameter("userId");
 		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				user = WikiBase.getDataHandler().lookupWikiUser(userId, null);
+				user = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(userId, null));
 			}
 		}
 		user.setDisplayName(request.getParameter("displayName"));

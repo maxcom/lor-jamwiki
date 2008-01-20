@@ -39,7 +39,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		UserDetails loadedUser;
 		try {
-			loadedUser = WikiBase.getDataHandler().lookupWikiUser(username, null);
+			loadedUser = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(username, null));
 		} catch (Exception e) {
 			// FIXME - for now throw an exception that Acegi can handle, but
 			// this should be handled with the Acegi ExceptionTranslationFilter
@@ -51,5 +51,4 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		}
 		return loadedUser;
 	}
-
 }

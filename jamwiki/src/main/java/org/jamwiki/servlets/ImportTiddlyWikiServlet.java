@@ -23,14 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.TiddlyWikiParser;
+import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -69,7 +69,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		Iterator iterator = RequestUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		WikiUser user = ServletUtil.currentUser();
+		WikiUserAuth user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			// FIXME - setting the user to null may not be necessary, but it is
 			// consistent with how the code behaved when ServletUtil.currentUser()
