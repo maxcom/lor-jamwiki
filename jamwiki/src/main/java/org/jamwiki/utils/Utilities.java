@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.propertyeditors.LocaleEditor;
 
 /**
  * This class provides a variety of basic utility methods that are not
@@ -60,26 +59,6 @@ public class Utilities {
 	 *
 	 */
 	private Utilities() {
-	}
-
-	/**
-	 * Given a string of the form "en_US" or "en_us", build an appropriate
-	 * Locale object.  Note that the Java constructor apparently has some
-	 * problems that cause breakage with Spring request handling.
-	 *
-	 * @param localeString The name of the locale for which an object is being
-	 *  created.
-	 * @return A Locale object matching the given string, or <code>null</code>
-	 *  if a Locale object cannot be created.
-	 */
-	public static Locale buildLocale(String localeString) {
-		if (StringUtils.isBlank(localeString)) {
-			return null;
-		}
-		// use spring voodoo to avoid some weird locale initialization issues
-		LocaleEditor localeEditor = new LocaleEditor();
-		localeEditor.setAsText(localeString);
-		return (Locale)localeEditor.getValue();
 	}
 
 	/**

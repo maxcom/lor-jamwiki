@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
 import org.acegisecurity.ui.WebAuthenticationDetails;
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
@@ -133,7 +134,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			this.login(request, user);
 			// update the locale key since the user may have changed default locale
 			if (!StringUtils.isBlank(user.getDefaultLocale())) {
-				Locale locale = Utilities.buildLocale(user.getDefaultLocale());
+				Locale locale = LocaleUtils.toLocale(user.getDefaultLocale());
 				request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
 			}
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);

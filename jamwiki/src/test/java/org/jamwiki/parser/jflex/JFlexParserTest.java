@@ -17,6 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import junit.framework.TestCase;
+import org.apache.commons.lang.LocaleUtils;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.Utilities;
@@ -41,7 +42,7 @@ public class JFlexParserTest extends TestCase {
 		String topicName = "DUMMY";
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext("/wiki");
-		parserInput.setLocale(Utilities.buildLocale("en_US"));
+		parserInput.setLocale(LocaleUtils.toLocale("en_US"));
 		parserInput.setWikiUser(null);
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress("0.0.0.0");

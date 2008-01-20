@@ -19,28 +19,9 @@
 package org.jamwiki.utils;
 
 import java.io.FileNotFoundException;
-import java.util.Locale;
 import junit.framework.TestCase;
 
 public class UtilitiesTest extends TestCase {
-
-	/**
-	 * Test the buildLocale method from a String of form "fr_FR"
-	 */
-	public void testBuildLocale() throws Throwable {
-		Locale result = Utilities.buildLocale("");
-		assertNull("locale build from empty String", result);
-		result=Utilities.buildLocale("fr_FR");
-		assertEquals(Locale.FRANCE,result);
-	}
-
-	/**
-	 *
-	 */
-	public void testBuildLocale1() throws Throwable {
-		Locale result = Utilities.buildLocale("fr_FR");
-		assertEquals("result.getCountry()", "FR", result.getCountry());
-	}
 
 	public void testConvertEncoding1() throws Throwable {
 		String expected="ça va là?";

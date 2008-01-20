@@ -57,6 +57,7 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.apache.commons.lang.LocaleUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -532,7 +533,7 @@ public class ServletUtil {
 		try {
 			user = ServletUtil.currentUser();
 			if (user.getDefaultLocale() != null) {
-				return Utilities.buildLocale(user.getDefaultLocale());
+				return LocaleUtils.toLocale(user.getDefaultLocale());
 			}
 		} catch (AuthenticationCredentialsNotFoundException e) {
 			// ignore
