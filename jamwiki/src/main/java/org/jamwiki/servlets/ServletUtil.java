@@ -489,7 +489,7 @@ public class ServletUtil {
 	 *  request object.
 	 */
 	public static Pagination loadPagination(HttpServletRequest request, ModelAndView next) {
-		if (next != null) {
+		if (next == null) {
 			throw new IllegalArgumentException("A non-null ModelAndView object must be specified when loading pagination values");
 		}
 		Pagination pagination = WikiUtil.buildPagination(request);
