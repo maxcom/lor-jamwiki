@@ -19,6 +19,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Dutch translations (Angel).
+  * Updated German translations (axelclk).
 
 
 0.6.3
