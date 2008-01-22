@@ -11,8 +11,8 @@
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
 	<modules>
-		<module>jamwiki-core</module>
 		<module>javadiff</module>
+		<module>jamwiki-core</module>
 	</modules>
 	<scm>
 		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
