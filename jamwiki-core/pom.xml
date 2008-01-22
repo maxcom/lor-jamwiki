@@ -6,12 +6,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jamwiki</groupId>
-		<artifactId>jamwiki-parent</artifactId>
+		<artifactId>jamwiki</artifactId>
 		<version>0.6.4-SNAPSHOT</version>
-		<relativePath>../jamwiki-parent</relativePath>
 	</parent>
 	<groupId>org.jamwiki</groupId>
-	<artifactId>jamwiki</artifactId>
+	<artifactId>jamwiki-core</artifactId>
 	<packaging>war</packaging>
 	<name>JAMWiki</name>
 	<version>${jamwiki.version}</version>

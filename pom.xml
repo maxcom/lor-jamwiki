@@ -5,11 +5,15 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jamwiki</groupId>
-	<artifactId>jamwiki-parent</artifactId>
+	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
 	<version>0.6.4-SNAPSHOT</version>
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
+	<modules>
+		<module>jamwiki-core</module>
+		<module>javadiff</module>
+	</modules>
 	<scm>
 		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
 		<developerConnection>scm:svn:https://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</developerConnection>
@@ -27,10 +31,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<!--
-	Dependency management defines the version to use in projects that inherits from the parent.
-	The dependency management does not tell the sub-project to depend from what is listed below.
-	-->
 	<properties>
 		<jamwiki.version>0.6.4-SNAPSHOT</jamwiki.version>
 		<dependency.spring.version>2.5.1</dependency.spring.version>
@@ -39,7 +39,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.jamwiki</groupId>
-				<artifactId>jamwiki</artifactId>
+				<artifactId>jamwiki-core</artifactId>
 				<version>${jamwiki.version}</version>
 			</dependency>
 			<dependency>
