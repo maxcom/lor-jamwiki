@@ -4,10 +4,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
  http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jamwiki</groupId>
+	<groupId>org.incava</groupId>
 	<artifactId>javadiff</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.5</version>
 	<name>Javadiff Project</name>
-	<url>http://www.jamwiki.org</url>
+	<url>http://incava.org/projects/java/java-diff/</url>
 </project>
