@@ -134,14 +134,9 @@
 			<artifactId>bliki</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-		<!--
-		These dependencies are a related project that must be "mvn install"ed
-		before being able to compile JAMWiki.
-		-->
 		<dependency>
 			<groupId>org.incava</groupId>
 			<artifactId>javadiff</artifactId>
-			<version>1.0.5</version>
 		</dependency>
 	</dependencies>
 	<developers>
