@@ -200,6 +200,7 @@ public class WikiUtilTest extends TestCase {
 	/**
 	 *
 	 */
+	/*
 	public void testValidateTopicNameThrowsWikiException1() throws Throwable {
 		try {
 			WikiUtil.validateTopicName("testWikiUtil\rName");
@@ -209,6 +210,7 @@ public class WikiUtilTest extends TestCase {
 			assertEquals("ex.getWikiMessage().getKey()", "common.exception.name", ex.getWikiMessage().getKey());
 		}
 	}
+	*/
 
 	/**
 	 *

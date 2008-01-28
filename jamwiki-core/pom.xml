@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-core</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>JAMWiki</name>
 	<version>${jamwiki.version}</version>
 	<description>

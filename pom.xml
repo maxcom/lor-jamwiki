@@ -13,6 +13,7 @@
 	<modules>
 		<module>javadiff</module>
 		<module>jamwiki-core</module>
+		<module>jamwiki-war</module>
 	</modules>
 	<scm>
 		<connection>scm:svn:http://jamwiki.svn.sourceforge.net/svnroot/jamwiki/wiki/trunk</connection>
