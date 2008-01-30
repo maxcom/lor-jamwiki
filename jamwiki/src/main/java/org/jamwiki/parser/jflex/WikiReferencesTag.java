@@ -23,6 +23,7 @@ import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;references /&gt;</code>.
@@ -63,16 +64,16 @@ public class WikiReferencesTag implements ParserTag {
 				pos++;
 			}
 			if (!citations.isEmpty()) {
-				html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
+				html += "<a href=\"#" + StringEscapeUtils.unescapeHtml(reference.getReferenceName()) + "\" title=\"\">";
 				html += reference.getCitation() + "." + reference.getCount() + "</a>&#160;";
 				while (!citations.isEmpty()) {
 					WikiReference citation = (WikiReference)citations.elementAt(0);
-					html += "&#160;<a href=\"#" + citation.getReferenceName() + "\" title=\"\">";
+					html += "&#160;<a href=\"#" + StringEscapeUtils.unescapeHtml(citation.getReferenceName()) + "\" title=\"\">";
 					html += citation.getCitation() + "." + citation.getCount() + "</a>&#160;";
 					citations.removeElementAt(0);
 				}
 			} else {
-				html += "<a href=\"#" + reference.getReferenceName() + "\" title=\"\">";
+				html += "<a href=\"#" + StringEscapeUtils.unescapeHtml(reference.getReferenceName()) + "\" title=\"\">";
 				html += reference.getCitation() + "</a>&#160;";
 			}
 			html += "</sup>";

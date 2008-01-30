@@ -23,6 +23,7 @@ import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;ref name="name"&gt;content&lt;/ref&gt;</code>.
@@ -77,7 +78,7 @@ public class WikiReferenceTag implements ParserTag {
 		html.append("<sup id=\"");
 		html.append(reference.getReferenceName());
 		html.append("\" class=\"reference\"><a href=\"#");
-		html.append(reference.getNotationName());
+		html.append(StringEscapeUtils.unescapeHtml(reference.getNotationName()));
 		html.append("\" title=\"\">[" + reference.getCitation() + "]</a></sup>");
 		return html.toString();
 	}

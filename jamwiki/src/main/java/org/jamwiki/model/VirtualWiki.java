@@ -39,7 +39,11 @@ public class VirtualWiki implements Serializable {
 	 *
 	 */
 	public String getDefaultTopicName() {
+//	  try {
+//		return new String(this.defaultTopicName.getBytes(),"UTF-8");
+//	  } catch (java.io.UnsupportedEncodingException ex) {
 		return this.defaultTopicName;
+//	  }
 	}
 
 	/**

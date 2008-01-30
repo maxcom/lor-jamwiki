@@ -24,6 +24,8 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.
  */
@@ -55,7 +57,7 @@ public class WikiHeadingTag implements ParserTag {
 		} catch (Exception e) {
 			logger.severe("Failure while building link for topic " + parserInput.getVirtualWiki() + " / " + parserInput.getTopicName(), e);
 		}
-		output += "<a href=\"" + url + "\">";
+		output += "<a href=\"" + StringEscapeUtils.unescapeHtml(url) + "\">";
 		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
 		output += "</a>]</div>";
 		return output;
@@ -91,7 +93,7 @@ public class WikiHeadingTag implements ParserTag {
 		String output = this.updateToc(parserInput, tagName, tocText, level);
 		int nextSection = parserInput.getTableOfContents().size();
 		output += this.buildSectionEditLink(parserInput, nextSection);
-		output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
+		output += "<a name=\"" + StringEscapeUtils.unescapeHtml(tagName) + "\"></a>";
 		output += "<h" + level + ">";
 		output += ParserUtil.parseFragment(parserInput, tagText, mode);
 		output += "</h" + level + ">";

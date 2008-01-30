@@ -153,7 +153,7 @@ public class LinkUtil {
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
 			url = FilenameUtils.separatorsToUnix(url);
-			return "<a href=\"" + url + "\">" + StringEscapeUtils.escapeHtml(caption) + "</a>";
+			return "<a href=\"" + StringEscapeUtils.unescapeHtml(url) + "\">" + StringEscapeUtils.escapeHtml(caption) + "</a>";
 		}
 		String html = "";
 		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
@@ -181,7 +181,7 @@ public class LinkUtil {
 			html += "<div style=\"width:" + (wikiImage.getWidth() + 2) + "px\">";
 		}
 		if (!suppressLink) {
-			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
+			html += "<a class=\"wikiimg\" href=\"" + StringEscapeUtils.unescapeHtml(LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName)) + "\">";
 		}
 		if (!StringUtils.hasText(style)) {
 			style = "wikiimg";
@@ -260,7 +260,7 @@ public class LinkUtil {
 			target = "";
 		}
 		text = StringEscapeUtils.unescapeHtml(text);
-		String html = "<a title=\"" + StringEscapeUtils.escapeHtml(text) + "\" href=\"" + url + "\"" + style + target + ">";
+		String html = "<a title=\"" + StringEscapeUtils.escapeHtml(text) + "\" href=\"" + StringEscapeUtils.unescapeHtml(url) + "\"" + style + target + ">";
 		if (escapeHtml) {
 			html += StringEscapeUtils.escapeHtml(StringEscapeUtils.unescapeHtml(text));
 		} else {
@@ -306,7 +306,7 @@ public class LinkUtil {
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
 		if (!StringUtils.hasText(topic) && StringUtils.hasText(section)) {
-			return "#" + Utilities.encodeForURL(section);
+			return "#" + StringEscapeUtils.unescapeHtml(section);
 		}
 		if (!WikiBase.exists(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
@@ -325,7 +325,7 @@ public class LinkUtil {
 			if (!section.startsWith("#")) {
 				url += "#";
 			}
-			url += Utilities.encodeForURL(section);
+			url += StringEscapeUtils.unescapeHtml(section);
 		}
 		if (StringUtils.hasText(query)) {
 			if (!query.startsWith("?")) {
@@ -350,7 +350,7 @@ public class LinkUtil {
 		destination = destination.substring(wikiLink.getNamespace().length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		String url = InterWikiHandler.formatInterWiki(namespace, destination);
 		String text = (StringUtils.hasText(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
-		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
+		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + StringEscapeUtils.unescapeHtml(url) + "\">" + text + "</a>";
 	}
 
 	/**

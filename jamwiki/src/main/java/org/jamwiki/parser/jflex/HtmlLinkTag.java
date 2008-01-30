@@ -118,7 +118,7 @@ public class HtmlLinkTag implements ParserTag {
 		link = StringUtils.replace(link, "\'", "%27");
 		String target = (Environment.getBooleanValue(Environment.PROP_EXTERNAL_LINK_NEW_WINDOW)) ? " target=\"_blank\"" : "";
 		html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-			 + text + "\" href=\"" + protocol + link + "\"" + target + ">"
+			 + text + "\" href=\"" + protocol + StringEscapeUtils.unescapeHtml(link) + "\"" + target + ">"
 			 + text + "</a>" + punctuation;
 		return html;
 	}

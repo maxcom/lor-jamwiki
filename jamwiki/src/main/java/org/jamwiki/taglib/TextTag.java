@@ -21,6 +21,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Utility tag for creating HTML text inputs.
@@ -54,7 +55,7 @@ public class TextTag extends TagSupport {
 			if (tmp != null) {
 				tagName = tmp.toString();
 			}
-			output += " name=\"" + tagName + "\"";
+			output += " name=\"" + StringEscapeUtils.unescapeHtml(tagName) + "\"";
 			if (StringUtils.hasText(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
 				if (tmp != null) {
