@@ -12,12 +12,16 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-war</artifactId>
 	<packaging>war</packaging>
-	<name>JAMWiki</name>
+	<name>JAMWiki WAR</name>
 	<version>${jamwiki.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.jamwiki</groupId>
 			<artifactId>jamwiki-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jamwiki</groupId>
+			<artifactId>jamwiki-web</artifactId>
 		</dependency>
 	</dependencies>
 </project>

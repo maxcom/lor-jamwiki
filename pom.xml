@@ -13,6 +13,7 @@
 	<modules>
 		<module>javadiff</module>
 		<module>jamwiki-core</module>
+		<module>jamwiki-web</module>
 		<module>jamwiki-war</module>
 	</modules>
 	<scm>
@@ -55,6 +56,11 @@
 			<dependency>
 				<groupId>org.jamwiki</groupId>
 				<artifactId>jamwiki-core</artifactId>
+				<version>${jamwiki.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>jamwiki-web</artifactId>
 				<version>${jamwiki.version}</version>
 			</dependency>
 			<dependency>
