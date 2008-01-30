@@ -14,11 +14,6 @@
 	<packaging>jar</packaging>
 	<name>JAMWiki Core</name>
 	<version>${jamwiki.version}</version>
-	<description>
-		JAMWiki is a Java-based Wiki engine, which offers many of the
-		features of MediaWiki.
-	</description>
-	<url>http://www.jamwiki.org</url>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>jflex</id>
@@ -78,112 +73,7 @@
 			<artifactId>javadiff</artifactId>
 		</dependency>
 	</dependencies>
-	<developers>
-		<!--
-		See http://www.ohloh.net/projects/6482/analyses/latest/contributors
-		 -->
-		<developer>
-			<id>wrh2</id>
-			<name>Ryan Holliday</name>
-			<url>http://mountaininterval.org/</url>
-			<roles>
-				<role>project lead</role>
-				<role>developer</role>
-			</roles>
-			<timezone>-8</timezone>
-		</developer>
-		<developer>
-			<id>rainers</id>
-			<name>Rainer Schmitz</name>
-			<email>rainers at users.sf.net</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>dlpa</id>
-			<name>dlpa</name>
-			<email>dlpa at users.sf.net</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>mikegremi</id>
-			<name>Michael Greifeneder</name>
-			<email>mikegr@gmx.net</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>axelcl</id>
-			<name>Axel C. Kramer</name>
-			<email>axelcl at users.sf.net</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>ncsaba</id>
-			<name>Csaba Nagy</name>
-			<email>ncsaba at users.sf.net</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<id>decamps</id>
-			<name>Régis Décamps</name>
-			<email>decamps@users.sf.net</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-	</developers>
-	<contributors>
-		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
-		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
-		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
-		<contributor><name>Anders Monrad</name><email>g9adm</email><roles><role>translator (Danish)</role></roles></contributor>
-		<contributor><name>Tarik Menbhi</name><roles><role>translator (Dutch)</role></roles></contributor>
-		<contributor><name>Wim Borghs (Angel)</name><roles><role>translator (Dutch)</role></roles></contributor>
-		<contributor><name>Henri Gomez</name><email>hgomez@users.sf.net</email><roles><role>translator (French)</role></roles></contributor>
-		<contributor><name>Manuel Meixide</name><url>http://bagonix.net/</url><organizationUrl>http://ciberirmandade.org/</organizationUrl><roles><role>translator (Galician)</role><role>translator (Spanish)</role><role>translator (Portugese)</role></roles></contributor>
-		<contributor><name>Axel Kramer</name><email>axelclk</email><roles><role>translator (German)</role></roles></contributor>
-		<contributor><name>Frank Reifenstahl (frareinif)</name><roles><role>translator (German)</role></roles></contributor>
-		<contributor><name>Rainer Schmitz (swift)</name><roles><role>translator (German)</role></roles></contributor>
-		<contributor><name>Daniel Tar (bDaneE)</name><roles><role>translator (Hungarian)</role></roles></contributor>
-		<contributor><name>Natto Lover (nattolover)</name><roles><role>translator (Japanese)</role></roles></contributor>
-		<contributor><name>Robert Matyja</name><email>dlpa@users.sf.net</email><roles><role>translator (Polish)</role></roles></contributor>
-		<contributor><name>Angel Luis Pinazo Perpiñán</name><roles><role>translator (Spanish)</role></roles></contributor>
-		<contributor><name>Volodymyr Vlad</name><email>gutsul</email><roles><role>translator (Ukranian)</role></roles></contributor>
-		<!-- TODO indicate roles -->
-		<contributor><name>AleXey "lexis" Rumyantsev</name><email>lexis@mail.ru</email><roles><role>graphics designer</role></roles></contributor>
-		<contributor><name>Luzius Thöny</name><email>luzi</email></contributor>
-		<contributor><name>Oliver</name><email>okohll</email><roles><role>graphics designer</role></roles></contributor>
-		<contributor><name>Carsten Seiffert</name><email>carsten</email><roles><role>bugfixer</role></roles></contributor>
-		<!--  VQWiki developers and contributors -->
-		<contributor><name>Martijn van der Kleijn</name><organization>VQWiki project</organization><email>mvdkleijn at users.sourceforge.net</email><roles><role>VQWiki project lead</role></roles></contributor>
-		<contributor><name>Andreas Studer</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
-		<contributor><name>Colin Jacobs</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
-		<contributor><name>Tobias Schulz-Hess</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
-		<contributor><name>Fritz Freiheit</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
-		<contributor><name>Gareth Cronin</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
-		<contributor><name>HongLiang Bi</name><organization>VQWiki project</organization><roles><role>developer</role></roles></contributor>
-		<contributor><name>Tim Howland</name><organization>VQWiki project</organization><roles><role>documentation</role></roles></contributor>
-		<contributor><name>Marcello Teodori</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Zapo (erzapo)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Nico Jabin</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Johan Lindell</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Erik (xan-)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Sasha Kotlo</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-		<contributor><name>Michael (mindweb)</name><organization>VQWiki project</organization><roles><role>translator</role></roles></contributor>
-	</contributors>
 	<build>
-		<defaultGoal>package</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
