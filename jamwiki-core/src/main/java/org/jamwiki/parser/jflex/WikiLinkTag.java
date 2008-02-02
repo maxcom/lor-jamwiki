@@ -84,10 +84,10 @@ public class WikiLinkTag implements ParserTag {
 			if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getDestination())) {
 				wikiLink.setText(wikiLink.getDestination());
 				if (!StringUtils.isBlank(wikiLink.getSection())) {
-					wikiLink.setText(wikiLink.getText() + "#" + Utilities.decodeFromURL(wikiLink.getSection()));
+					wikiLink.setText(wikiLink.getText() + "#" + Utilities.decodeFromURL(wikiLink.getSection(), true));
 				}
 			} else if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getSection())) {
-				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection()));
+				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection(), true));
 			} else {
 				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}

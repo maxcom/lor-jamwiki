@@ -39,15 +39,17 @@ public class UtilitiesTest extends TestCase {
 	 *
 	 */
 	public void testDecodeFromRequest() throws Throwable {
-		String result = Utilities.decodeFromRequest("Page_requested");
+		String result = Utilities.decodeFromRequest("Page_requested", true);
 		assertEquals("Page requested", result);
+		result = Utilities.decodeFromRequest("Page_requested", false);
+		assertEquals("Page_requested", result);
 	}
 
 	/**
 	 *
 	 */
 	public void testDecodeFromURL() throws Throwable {
-		String result = Utilities.decodeFromURL("\u1342%20");
+		String result = Utilities.decodeFromURL("\u1342%20", true);
 		assertEquals("\u1342 ", result);
 	}
 

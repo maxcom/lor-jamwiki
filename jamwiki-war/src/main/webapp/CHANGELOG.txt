@@ -15,6 +15,8 @@ Bugfixes:
   * Resolve potential issues with invalid URLs that contain multiple "/"
     characters such as http://example.com/wiki//en/StartingPoints.  Reported
     with a suggested fix by an anonymous JAMWiki user.
+  * Resolve an issue that prevented viewing user contributions for users with
+    logins containing underscores.  Reported by yesesnono.
 
 Translation Updates:
 

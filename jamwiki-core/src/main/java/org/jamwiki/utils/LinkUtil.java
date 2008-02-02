@@ -424,9 +424,9 @@ public class LinkUtil {
 		if (namespacePos > 0) {
 			topic = processed.substring(namespacePos + 1);
 		}
-		wikiLink.setArticle(Utilities.decodeFromURL(topic));
+		wikiLink.setArticle(Utilities.decodeFromURL(topic, true));
 		// destination is namespace + topic
-		wikiLink.setDestination(Utilities.decodeFromURL(processed));
+		wikiLink.setDestination(Utilities.decodeFromURL(processed, true));
 		return wikiLink;
 	}
 }

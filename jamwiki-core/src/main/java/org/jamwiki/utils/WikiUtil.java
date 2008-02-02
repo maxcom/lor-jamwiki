@@ -224,9 +224,11 @@ public class WikiUtil {
 	 *
 	 * @param request The servlet request object.
 	 * @param name The parameter name to be retrieved.
+	 * @param decodeUnderlines Set to <code>true</code> if underlines should
+	 *  be automatically converted to spaces.
 	 * @return The decoded parameter value retrieved from the request.
 	 */
-	public static String getParameterFromRequest(HttpServletRequest request, String name) throws Exception {
+	public static String getParameterFromRequest(HttpServletRequest request, String name, boolean decodeUnderlines) throws Exception {
 		String value = null;
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			// parameters passed via the URL are URL encoded, so request.getParameter may
@@ -245,7 +247,7 @@ public class WikiUtil {
 					value = value.substring(0, value.indexOf("&"));
 				}
 			}
-			return Utilities.decodeFromURL(value);
+			return Utilities.decodeFromURL(value, decodeUnderlines);
 		}
 		value = request.getParameter(name);
 		if (value == null) {
@@ -254,7 +256,7 @@ public class WikiUtil {
 		if (value == null) {
 			return null;
 		}
-		return Utilities.decodeFromRequest(value);
+		return Utilities.decodeFromRequest(value, decodeUnderlines);
 	}
 
 	/**
@@ -266,7 +268,7 @@ public class WikiUtil {
 	 * @return The decoded topic name retrieved from the request.
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		return WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC);
+		return WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC, true);
 	}
 
 	/**
@@ -302,7 +304,7 @@ public class WikiUtil {
 			}
 			topic = topic.substring(0, topic.indexOf('#'));
 		}
-		topic = Utilities.decodeFromURL(topic);
+		topic = Utilities.decodeFromURL(topic, true);
 		return topic;
 	}
 
@@ -322,7 +324,7 @@ public class WikiUtil {
 		if (virtualWiki == null) {
 			return null;
 		}
-		return Utilities.decodeFromRequest(virtualWiki);
+		return Utilities.decodeFromRequest(virtualWiki, true);
 	}
 
 	/**
@@ -345,7 +347,7 @@ public class WikiUtil {
 			return null;
 		}
 		String virtualWiki = uri.substring(0, slashIndex);
-		return Utilities.decodeFromURL(virtualWiki);
+		return Utilities.decodeFromURL(virtualWiki, true);
 	}
 
 	/**

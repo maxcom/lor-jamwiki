@@ -189,7 +189,7 @@ public class TranslationServlet extends JAMWikiServlet {
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String language = request.getParameter("language");
-		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(language));
+		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(language), true);
 		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {

@@ -93,7 +93,7 @@ public class JFlexParser extends AbstractParser {
 			return null;
 		}
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
-		return (m.matches()) ? Utilities.decodeFromURL(m.group(1).trim()) : null;
+		return (m.matches()) ? Utilities.decodeFromURL(m.group(1).trim(), true) : null;
 	}
 
 	/**

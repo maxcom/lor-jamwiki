@@ -95,11 +95,12 @@ public class Utilities {
 	 * method will replace any underscores with spaces.
 	 *
 	 * @param url The encoded value that is to be decoded.
+	 * @param decodeUnderlines Set to <code>true</code> if underlines should
+	 *  be automatically converted to spaces.
 	 * @return A decoded value.
 	 */
-	public static String decodeFromRequest(String url) {
-		// convert underscores to spaces
-		return StringUtils.replace(url, "_", " ");
+	public static String decodeFromRequest(String url, boolean decodeUnderlines) {
+		return (decodeUnderlines) ? StringUtils.replace(url, "_", " ") : url;
 	}
 
 	/**
@@ -110,16 +111,18 @@ public class Utilities {
 	 * taken directly from a URL.
 	 *
 	 * @param url The encoded value that is to be decoded.
+	 * @param decodeUnderlines Set to <code>true</code> if underlines should
+	 *  be automatically converted to spaces.
 	 * @return A decoded value.
 	 */
-	public static String decodeFromURL(String url) {
+	public static String decodeFromURL(String url, boolean decodeUnderlines) {
 		String result = url;
 		try {
 			result = URLDecoder.decode(result, "UTF-8");
 		} catch (Exception e) {
 			logger.info("Failure while decoding url " + url + " with charset UTF-8");
 		}
-		return Utilities.decodeFromRequest(result);
+		return Utilities.decodeFromRequest(result, decodeUnderlines);
 	}
 
 	/**
