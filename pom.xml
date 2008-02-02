@@ -43,10 +43,10 @@
 	</properties>
 	<repositories>
 		<repository>
-			<id>.org.jamwiki</id>
+			<id>org.jamwiki</id>
 			<name>Maven Repository for Jamwiki</name>
 			<layout>default</layout>
-			<url>file:///${basedir}/repository</url>
+			<url>file://${basedir}/../repository</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
