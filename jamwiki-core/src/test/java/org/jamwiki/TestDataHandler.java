@@ -14,7 +14,7 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.db;
+package org.jamwiki;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.DataHandler;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
