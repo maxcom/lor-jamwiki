@@ -36,7 +36,6 @@ import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -174,8 +173,8 @@ public class SetupServlet extends JAMWikiServlet {
 		String username = request.getParameter("username");
 		WikiUserAuth user = new WikiUserAuth(username);
 		user.setPassword(Encryption.encrypt(request.getParameter("newPassword")));
-		user.setCreateIpAddress(RequestUtil.getIpAddress(request));
-		user.setLastLoginIpAddress(RequestUtil.getIpAddress(request));
+		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
+		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
 		return user;
 	}
 

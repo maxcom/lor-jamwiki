@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -28,6 +29,8 @@ import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +54,6 @@ import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
@@ -304,6 +306,31 @@ public class ServletUtil {
 	}
 
 	/**
+	 * Duplicate the functionality of the request.getRemoteAddr() method, but
+	 * for IPv6 addresses strip off any local interface information (anything
+	 * following a "%").
+	 *
+	 * @param request the HTTP request object.
+	 * @return The IP address that the request originated from, or 0.0.0.0 if
+	 *  the originating address cannot be determined.
+	 */
+	public static String getIpAddress(HttpServletRequest request) {
+		if (request == null) {
+			throw new IllegalArgumentException("Request object cannot be null");
+		}
+		String ipAddress = request.getRemoteAddr();
+		int pos = ipAddress.indexOf("%");
+		if (pos != -1) {
+			ipAddress = ipAddress.substring(0, pos);
+		}
+		if (!Utilities.isIpAddress(ipAddress)) {
+			logger.info("Invalid IP address found in request: " + ipAddress);
+			ipAddress = "0.0.0.0";
+		}
+		return ipAddress;
+	}
+
+	/**
 	 * Initialize topic values for a Topic object.  This method will check to
 	 * see if a topic with the specified name exists, and if it does exist
 	 * then that topic will be returned.  Otherwise a new topic will be
@@ -498,6 +525,26 @@ public class ServletUtil {
 		next.addObject("num", new Integer(pagination.getNumResults()));
 		next.addObject("offset", new Integer(pagination.getOffset()));
 		return pagination;
+	}
+
+	/**
+	 * Utility method for parsing a multipart servlet request.  This method returns
+	 * an iterator of FileItem objects that corresponds to the request.
+	 *
+	 * @param request The servlet request containing the multipart request.
+	 * @param uploadDirectory The directory into which files will be uploaded.
+	 * @param maxFileSize The maximum allowed file size in bytes.
+	 * @return Returns an iterator of FileItem objects the corresponds to the request.
+	 * @throws Exception Thrown if any problems occur while processing the request.
+	 */
+	public static Iterator processMultipartRequest(HttpServletRequest request, String uploadDirectory, long maxFileSize) throws Exception {
+		// Create a factory for disk-based file items
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		factory.setRepository(new File(uploadDirectory));
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		upload.setHeaderEncoding("UTF-8");
+		upload.setSizeMax(maxFileSize);
+		return upload.parseRequest(request).iterator();
 	}
 
 	/**
@@ -768,7 +815,7 @@ public class ServletUtil {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress(RequestUtil.getIpAddress(request));
+		parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserOutput parserOutput = new ParserOutput();

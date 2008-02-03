@@ -28,7 +28,6 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.TiddlyWikiParser;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -68,7 +67,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 	 */
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		Iterator iterator = RequestUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
+		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		WikiUserAuth user = ServletUtil.currentUser();
 		if (!user.hasRole(Role.ROLE_USER)) {
 			// FIXME - setting the user to null may not be necessary, but it is
@@ -76,7 +75,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 			// returned null for non-logged-in users
 			user = null;
 		}
-		TiddlyWikiParser parser = new TiddlyWikiParser(virtualWiki, user, RequestUtil.getIpAddress(request));
+		TiddlyWikiParser parser = new TiddlyWikiParser(virtualWiki, user, ServletUtil.getIpAddress(request));
 		String topicName = null;
 		while (iterator.hasNext()) {
 			FileItem item = (FileItem)iterator.next();

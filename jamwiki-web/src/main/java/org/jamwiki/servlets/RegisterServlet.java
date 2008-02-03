@@ -38,7 +38,6 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
@@ -162,8 +161,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		}
 		user.setDefaultLocale(request.getParameter("defaultLocale"));
 		// FIXME - need to distinguish between add & update
-		user.setCreateIpAddress(RequestUtil.getIpAddress(request));
-		user.setLastLoginIpAddress(RequestUtil.getIpAddress(request));
+		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
+		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
 		return user;
 	}
 

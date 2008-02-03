@@ -26,7 +26,6 @@ import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -116,7 +115,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("moveComment"))) {
 			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}
-		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent());
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
 		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination, null);
 		return true;

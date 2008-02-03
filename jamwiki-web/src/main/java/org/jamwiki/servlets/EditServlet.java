@@ -34,7 +34,6 @@ import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -118,7 +117,7 @@ public class EditServlet extends JAMWikiServlet {
 		if (user.hasRole(Role.ROLE_USER)) {
 			message += user.getUsername() + " / ";
 		}
-		message += RequestUtil.getIpAddress(request) + "): " + result;
+		message += ServletUtil.getIpAddress(request) + "): " + result;
 		logger.info(message);
 		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
 		next.addObject("spam", spam);
@@ -299,7 +298,7 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setLocale(request.getLocale());
 		parserInput.setWikiUser(user);
 		parserInput.setTopicName(topicName);
-		parserInput.setUserIpAddress(RequestUtil.getIpAddress(request));
+		parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
 		parserInput.setVirtualWiki(virtualWiki);
 		ParserOutput parserOutput = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving
@@ -314,7 +313,7 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setRedirectTo(null);
 			topic.setTopicType(Topic.TYPE_ARTICLE);
 		}
-		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), request.getParameter("editComment"), contents);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents);
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}

@@ -39,7 +39,6 @@ import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.NamespaceHandler;
-import org.jamwiki.utils.RequestUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -160,7 +159,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (!file.exists()) {
 			throw new WikiException(new WikiMessage("upload.error.nodirectory"));
 		}
-		Iterator iterator = RequestUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
+		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		String fileName = null;
 		String url = null;
 		String contentType = null;
@@ -216,14 +215,14 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		WikiFileVersion wikiFileVersion = new WikiFileVersion();
 		wikiFileVersion.setUploadComment(contents);
-		wikiFileVersion.setAuthorIpAddress(RequestUtil.getIpAddress(request));
+		wikiFileVersion.setAuthorIpAddress(ServletUtil.getIpAddress(request));
 		WikiUser user = ServletUtil.currentUser();
 		Integer authorId = null;
 		if (user.getUserId() > 0) {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);
-		TopicVersion topicVersion = new TopicVersion(user, RequestUtil.getIpAddress(request), contents, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent());
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}
