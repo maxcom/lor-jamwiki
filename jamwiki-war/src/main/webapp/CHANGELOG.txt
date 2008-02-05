@@ -7,6 +7,7 @@ New Features:
     format differences.
   * Add an option to view only untranslated keys on the Special:Translation
     page.
+  * Upgrade to Lucene Search 2.3.
 
 Bugfixes:
 
