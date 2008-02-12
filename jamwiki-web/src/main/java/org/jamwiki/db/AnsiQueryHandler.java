@@ -21,6 +21,8 @@ import java.sql.Types;
 import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiException;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
@@ -152,6 +154,15 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected AnsiQueryHandler() {
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME);
 		this.init(props);
+	}
+
+	/**
+	 *
+	 */
+	private static void checkLength(String value, int maxLength) throws WikiException {
+		if (value != null && value.length() > maxLength) {
+			throw new WikiException(new WikiMessage("error.fieldlength", value, new Integer(maxLength).toString()));
+		}
 	}
 
 	/**
@@ -571,6 +582,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void insertCategory(Category category, int virtualWikiId, Connection conn) throws Exception {
 		// FIXME - clean this code up
+		this.validateCategory(category);
 		WikiResultSet rs = this.lookupTopic(virtualWikiId, category.getChildTopicName(), false, conn);
 		int topicId = -1;
 		while (rs.next()) {
@@ -593,6 +605,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception {
+		this.validateRecentChange(change);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
 		stmt.setInt(1, change.getTopicVersionId());
 		if (change.getPreviousTopicVersionId() == null) {
@@ -620,6 +633,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertRole(Role role, Connection conn) throws Exception {
+		this.validateRole(role);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE);
 		stmt.setString(1, role.getAuthority());
 		stmt.setString(2, role.getDescription());
@@ -630,6 +644,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception {
+		this.validateRoleMap(role);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE_MAP);
 		stmt.setString(1, role);
 		if (userId > 0) {
@@ -649,6 +664,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception {
+		this.validateTopic(topic);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC);
 		stmt.setInt(1, topic.getTopicId());
 		stmt.setInt(2, virtualWikiId);
@@ -670,6 +686,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception {
+		this.validateTopicVersion(topicVersion);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_TOPIC_VERSION);
 		stmt.setInt(1, topicVersion.getTopicVersionId());
 		stmt.setInt(2, topicVersion.getTopicId());
@@ -699,6 +716,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
+		this.validateVirtualWiki(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_VIRTUAL_WIKI);
 		stmt.setInt(1, virtualWiki.getVirtualWikiId());
 		stmt.setString(2, virtualWiki.getName());
@@ -710,6 +728,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWatchlistEntry(int virtualWikiId, String topicName, int userId, Connection conn) throws Exception {
+		this.validateWatchlistEntry(topicName);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WATCHLIST_ENTRY);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topicName);
@@ -721,6 +740,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception {
+		this.validateWikiFile(wikiFile);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE);
 		stmt.setInt(1, wikiFile.getFileId());
 		stmt.setInt(2, virtualWikiId);
@@ -739,6 +759,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiFileVersion(WikiFileVersion wikiFileVersion, Connection conn) throws Exception {
+		this.validateWikiFileVersion(wikiFileVersion);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_FILE_VERSION);
 		stmt.setInt(1, wikiFileVersion.getFileVersionId());
 		stmt.setInt(2, wikiFileVersion.getFileId());
@@ -760,6 +781,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiGroup(WikiGroup group, Connection conn) throws Exception {
+		this.validateWikiGroup(group);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP);
 		stmt.setInt(1, group.getGroupId());
 		stmt.setString(2, group.getName());
@@ -771,6 +793,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiUser(WikiUser user, Connection conn) throws Exception {
+		this.validateWikiUser(user);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER);
 		stmt.setInt(1, user.getUserId());
 		stmt.setString(2, user.getUsername());
@@ -788,6 +811,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.validateWikiUserInfo(userInfo);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
 		stmt.setInt(1, userInfo.getUserId());
 		stmt.setString(2, userInfo.getUsername());
@@ -1041,6 +1065,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateRole(Role role, Connection conn) throws Exception {
+		this.validateRole(role);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_ROLE);
 		stmt.setString(1, role.getDescription());
 		stmt.setString(2, role.getAuthority());
@@ -1051,6 +1076,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception {
+		this.validateTopic(topic);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, topic.getName());
@@ -1072,6 +1098,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
+		this.validateVirtualWiki(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
 		stmt.setString(1, virtualWiki.getDefaultTopicName());
 		stmt.setInt(2, virtualWiki.getVirtualWikiId());
@@ -1082,6 +1109,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateWikiFile(WikiFile wikiFile, int virtualWikiId, Connection conn) throws Exception {
+		this.validateWikiFile(wikiFile);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_FILE);
 		stmt.setInt(1, virtualWikiId);
 		stmt.setString(2, wikiFile.getFileName());
@@ -1100,6 +1128,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateWikiGroup(WikiGroup group, Connection conn) throws Exception {
+		this.validateWikiGroup(group);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_GROUP);
 		stmt.setString(1, group.getName());
 		stmt.setString(2, group.getDescription());
@@ -1111,6 +1140,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateWikiUser(WikiUser user, Connection conn) throws Exception {
+		this.validateWikiUser(user);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER);
 		stmt.setString(1, user.getUsername());
 		stmt.setString(2, user.getDisplayName());
@@ -1125,6 +1155,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.validateWikiUserInfo(userInfo);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
 		stmt.setString(1, userInfo.getUsername());
 		stmt.setString(2, userInfo.getEmail());
@@ -1133,5 +1164,125 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(5, userInfo.getEncodedPassword());
 		stmt.setInt(6, userInfo.getUserId());
 		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateCategory(Category category) throws WikiException {
+		checkLength(category.getName(), 200);
+		checkLength(category.getSortKey(), 200);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateRecentChange(RecentChange change) throws WikiException {
+		checkLength(change.getTopicName(), 200);
+		checkLength(change.getAuthorName(), 200);
+		checkLength(change.getVirtualWiki(), 100);
+		change.setEditComment(StringUtils.substring(change.getEditComment(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateRole(Role role) throws WikiException {
+		checkLength(role.getAuthority(), 30);
+		role.setDescription(StringUtils.substring(role.getDescription(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateRoleMap(String role) throws WikiException {
+		checkLength(role, 30);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateTopic(Topic topic) throws WikiException {
+		checkLength(topic.getName(), 200);
+		checkLength(topic.getRedirectTo(), 200);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateTopicVersion(TopicVersion topicVersion) throws WikiException {
+		checkLength(topicVersion.getAuthorIpAddress(), 39);
+		topicVersion.setEditComment(StringUtils.substring(topicVersion.getEditComment(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateVirtualWiki(VirtualWiki virtualWiki) throws WikiException {
+		checkLength(virtualWiki.getName(), 100);
+		checkLength(virtualWiki.getDefaultTopicName(), 200);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateWatchlistEntry(String topicName) throws WikiException {
+		checkLength(topicName, 200);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateWikiFile(WikiFile wikiFile) throws WikiException {
+		checkLength(wikiFile.getFileName(), 200);
+		checkLength(wikiFile.getUrl(), 200);
+		checkLength(wikiFile.getMimeType(), 100);
+	}
+
+	/**
+	 *
+	 */
+	protected void validateWikiFileVersion(WikiFileVersion wikiFileVersion) throws WikiException {
+		checkLength(wikiFileVersion.getUrl(), 200);
+		checkLength(wikiFileVersion.getMimeType(), 100);
+		checkLength(wikiFileVersion.getAuthorIpAddress(), 39);
+		wikiFileVersion.setUploadComment(StringUtils.substring(wikiFileVersion.getUploadComment(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateWikiGroup(WikiGroup group) throws WikiException {
+		checkLength(group.getName(), 30);
+		group.setDescription(StringUtils.substring(group.getDescription(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateWikiUser(WikiUser user) throws WikiException {
+		checkLength(user.getUsername(), 100);
+		checkLength(user.getDisplayName(), 100);
+		checkLength(user.getCreateIpAddress(), 39);
+		checkLength(user.getLastLoginIpAddress(), 39);
+		checkLength(user.getDefaultLocale(), 8);
+		// do not throw exception containing password info
+		if (user.getPassword() != null && user.getPassword().length() > 100) {
+			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected void validateWikiUserInfo(WikiUserInfo userInfo) throws WikiException {
+		checkLength(userInfo.getUsername(), 100);
+		checkLength(userInfo.getEmail(), 100);
+		checkLength(userInfo.getFirstName(), 100);
+		checkLength(userInfo.getLastName(), 100);
+		// do not throw exception containing password info
+		if (userInfo.getEncodedPassword() != null && userInfo.getEncodedPassword().length() > 100) {
+			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
+		}
 	}
 }

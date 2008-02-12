@@ -18,6 +18,8 @@ Bugfixes:
     with a suggested fix by an anonymous JAMWiki user.
   * Resolve an issue that prevented viewing user contributions for users with
     logins containing underscores.  Reported by yesesnono.
+  * Add field-length checks to all database inserts/updates and either trim the
+    field or report an error when a field exceeds the maximum allowed length.
 
 Translation Updates:
 
