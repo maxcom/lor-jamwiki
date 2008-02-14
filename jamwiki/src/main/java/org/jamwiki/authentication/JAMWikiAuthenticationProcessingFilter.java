@@ -21,12 +21,12 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.ui.webapp.AuthenticationProcessingFilter;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * This class is a hack implemented to work around the fact that the default
@@ -55,6 +55,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	 */
 	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
 		String uri = request.getRequestURI();
+		// FIXME - move the "strip after semicolon" code to WikiUtil
 		int pathParamIndex = uri.indexOf(';');
 		if (pathParamIndex > 0) {
 			// strip everything after the first semi-colon
@@ -85,10 +86,10 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 			// ugly, but a hard-coded constant seems to be the only way to
 			// allow a dynamic url value
 			String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-			if (!StringUtils.hasText(virtualWikiName)) {
+			if (StringUtils.isBlank(virtualWikiName)) {
 				virtualWikiName = WikiBase.DEFAULT_VWIKI;
 			}
-			if (!StringUtils.hasText(target)) {
+			if (StringUtils.isBlank(target)) {
 				target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
 				try {
 					VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
@@ -101,7 +102,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 		} else if (!url.startsWith("http://") && !url.startsWith("https://")) {
 			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 			targetUrl = request.getContextPath() + "/" + virtualWiki + url;
-			if (StringUtils.hasText(target)) {
+			if (!StringUtils.isBlank(target)) {
 				targetUrl += (url.indexOf('?') == -1) ? "?" : "&";
 				targetUrl += "target=" + URLEncoder.encode(target, "UTF-8");
 			}

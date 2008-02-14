@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -43,12 +44,11 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.FSDirectory;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
+import org.jamwiki.parser.ParserUtil;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * An implementation of {@link org.jamwiki.search.SearchEngine} that uses
@@ -91,13 +91,9 @@ public class LuceneSearchEngine implements SearchEngine {
 				KeywordAnalyzer keywordAnalyzer = new KeywordAnalyzer();
 				writer.optimize();
 				Document standardDocument = createStandardDocument(topic);
-				if (standardDocument != null) {
-					writer.addDocument(standardDocument);
-				}
+				writer.addDocument(standardDocument);
 				Document keywordDocument = createKeywordDocument(topic, links);
-				if (keywordDocument != null) {
-					writer.addDocument(keywordDocument, keywordAnalyzer);
-				}
+				writer.addDocument(keywordDocument, keywordAnalyzer);
 			} finally {
 				try {
 					if (writer != null) {
@@ -332,16 +328,12 @@ public class LuceneSearchEngine implements SearchEngine {
 					String topicName = (String)iter.next();
 					topic = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), topicName, false, null);
 					Document standardDocument = createStandardDocument(topic);
-					if (standardDocument != null) {
-						writer.addDocument(standardDocument);
-					}
+					writer.addDocument(standardDocument);
 					// FIXME - parsing all documents will be intolerably slow with even a
 					// moderately large Wiki
-					ParserDocument parserDocument = WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki.getName(), topicName);
+					ParserDocument parserDocument = ParserUtil.parserDocument(topic.getTopicContent(), virtualWiki.getName(), topicName);
 					Document keywordDocument = createKeywordDocument(topic, parserDocument.getLinks());
-					if (keywordDocument != null) {
-						writer.addDocument(keywordDocument, keywordAnalyzer);
-					}
+					writer.addDocument(keywordDocument, keywordAnalyzer);
 					count++;
 				}
 			} catch (Exception ex) {
@@ -374,7 +366,7 @@ public class LuceneSearchEngine implements SearchEngine {
 		String content = document.get(ITYPE_CONTENT_PLAIN);
 		TokenStream tokenStream = analyzer.tokenStream(ITYPE_CONTENT_PLAIN, new StringReader(content));
 		String summary = highlighter.getBestFragments(tokenStream, content, 3, "...");
-		if (!StringUtils.hasText(summary) && StringUtils.hasText(content)) {
+		if (StringUtils.isBlank(summary) && !StringUtils.isBlank(content)) {
 			summary = StringEscapeUtils.escapeHtml(content.substring(0, Math.min(200, content.length())));
 			if (Math.min(200, content.length()) == 200) {
 				summary += "...";

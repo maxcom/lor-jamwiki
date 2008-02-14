@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -29,13 +30,13 @@ import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -81,7 +82,7 @@ public class EditServlet extends JAMWikiServlet {
 			return;
 		}
 		pageInfo.setContentJsp(JSP_EDIT);
-		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+		if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 			// editing an older version
 			Integer topicVersionId = new Integer(request.getParameter("topicVersionId"));
 			TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId.intValue(), null);
@@ -92,10 +93,10 @@ public class EditServlet extends JAMWikiServlet {
 			if (!lastTopicVersionId.equals(topicVersionId)) {
 				next.addObject("topicVersionId", topicVersionId);
 			}
-		} else if (StringUtils.hasText(request.getParameter("section"))) {
+		} else if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// editing a section of a topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
-			contents = WikiUtil.parseSlice(request, virtualWiki, topicName, section);
+			contents = ParserUtil.parseSlice(request, virtualWiki, topicName, section);
 		} else {
 			// editing a full new or existing topic
 			contents = (topic == null) ? "" : topic.getTopicContent();
@@ -108,7 +109,7 @@ public class EditServlet extends JAMWikiServlet {
 	 */
 	private boolean handleSpam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName, String contents) throws Exception {
 		String result = org.jamwiki.utils.SpamFilter.containsSpam(contents);
-		if (!StringUtils.hasText(result)) {
+		if (StringUtils.isBlank(result)) {
 			return false;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
@@ -132,14 +133,14 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean isPreview(HttpServletRequest request) {
-		return StringUtils.hasText(request.getParameter("preview"));
+		return !StringUtils.isBlank(request.getParameter("preview"));
 	}
 
 	/**
 	 *
 	 */
 	private boolean isSave(HttpServletRequest request) {
-		return StringUtils.hasText(request.getParameter("save"));
+		return !StringUtils.isBlank(request.getParameter("save"));
 	}
 
 	/**
@@ -253,7 +254,7 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private Integer retrieveLastTopicVersionId(HttpServletRequest request, Topic topic) throws Exception {
-		return (StringUtils.hasText(request.getParameter("lastTopicVersionId"))) ? new Integer(request.getParameter("lastTopicVersionId")) : topic.getCurrentVersionId();
+		return (!StringUtils.isBlank(request.getParameter("lastTopicVersionId"))) ? new Integer(request.getParameter("lastTopicVersionId")) : topic.getCurrentVersionId();
 	}
 
 	/**
@@ -271,11 +272,11 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		String contents = request.getParameter("contents");
 		String sectionName = "";
-		if (StringUtils.hasText(request.getParameter("section"))) {
+		if (!StringUtils.isBlank(request.getParameter("section"))) {
 			// load section of topic
 			int section = (new Integer(request.getParameter("section"))).intValue();
 			ParserDocument parserDocument = new ParserDocument();
-			contents = WikiUtil.parseSplice(parserDocument, request, virtualWiki, topicName, section, contents);
+			contents = ParserUtil.parseSplice(parserDocument, request, virtualWiki, topicName, section, contents);
 			sectionName = parserDocument.getSectionName();
 		}
 		if (contents == null) {
@@ -299,11 +300,11 @@ public class EditServlet extends JAMWikiServlet {
 		parserInput.setTopicName(topicName);
 		parserInput.setUserIpAddress(request.getRemoteAddr());
 		parserInput.setVirtualWiki(virtualWiki);
-		ParserDocument parserDocument = WikiUtil.parseMetadata(parserInput, contents);
+		ParserDocument parserDocument = ParserUtil.parseMetadata(parserInput, contents);
 		// parse signatures and other values that need to be updated prior to saving
-		contents = WikiUtil.parseMinimal(parserInput, contents);
+		contents = ParserUtil.parseMinimal(parserInput, contents);
 		topic.setTopicContent(contents);
-		if (StringUtils.hasText(parserDocument.getRedirect())) {
+		if (!StringUtils.isBlank(parserDocument.getRedirect())) {
 			// set up a redirect
 			topic.setRedirectTo(parserDocument.getRedirect());
 			topic.setTopicType(Topic.TYPE_REDIRECT);
@@ -327,7 +328,7 @@ public class EditServlet extends JAMWikiServlet {
 		}
 		// redirect to prevent user from refreshing and re-submitting
 		String target = topic.getName();
-		if (StringUtils.hasText(sectionName)) {
+		if (!StringUtils.isBlank(sectionName)) {
 			target += "#" + sectionName;
 		}
 		ServletUtil.redirect(next, virtualWiki, target);

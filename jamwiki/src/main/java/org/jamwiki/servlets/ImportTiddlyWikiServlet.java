@@ -22,6 +22,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
@@ -30,7 +31,6 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.TiddlyWikiParser;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -86,7 +86,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 			topicName = parser.parse(xmlFile);
 			xmlFile.delete();
 		}
-		if (StringUtils.hasText(topicName)) {
+		if (!StringUtils.isBlank(topicName)) {
 			ServletUtil.redirect(next, virtualWiki, topicName);
 		} else {
 			next.addObject("error", new WikiMessage("import.caption.failure"));

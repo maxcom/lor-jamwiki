@@ -1,5 +1,6 @@
 package org.jamwiki.parser.bliki;
 
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserDocument;
@@ -8,7 +9,6 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import info.bliki.wiki.filter.AbstractWikiModel;
 import info.bliki.wiki.filter.Encoder;
 import info.bliki.wiki.filter.ImageFormat;

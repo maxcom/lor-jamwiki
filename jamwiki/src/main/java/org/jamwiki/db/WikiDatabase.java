@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
@@ -32,9 +33,9 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * This class contains general database utility methods that are useful for a
@@ -80,14 +81,14 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static String getConnectionValidationQuery() {
-		return (StringUtils.hasText(CONNECTION_VALIDATION_QUERY)) ? CONNECTION_VALIDATION_QUERY : null;
+		return (!StringUtils.isBlank(CONNECTION_VALIDATION_QUERY)) ? CONNECTION_VALIDATION_QUERY : null;
 	}
 
 	/**
 	 *
 	 */
 	protected static String getExistenceValidationQuery() {
-		return (StringUtils.hasText(EXISTENCE_VALIDATION_QUERY)) ? EXISTENCE_VALIDATION_QUERY : null;
+		return (!StringUtils.isBlank(EXISTENCE_VALIDATION_QUERY)) ? EXISTENCE_VALIDATION_QUERY : null;
 	}
 
 	/**
@@ -155,9 +156,7 @@ public class WikiDatabase {
 		try {
 			conn.commit();
 		} finally {
-			if (conn != null) {
-				DatabaseConnection.closeConnection(conn);
-			}
+			DatabaseConnection.closeConnection(conn);
 		}
 	}
 
@@ -326,7 +325,7 @@ public class WikiDatabase {
 		topic.setAdminOnly(adminOnly);
 		// FIXME - hard coding
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 	}
 
 	/**

@@ -18,6 +18,7 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -27,7 +28,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -42,11 +42,11 @@ public class ManageServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (StringUtils.hasText(request.getParameter("delete"))) {
+		if (!StringUtils.isBlank(request.getParameter("delete"))) {
 			delete(request, next, pageInfo);
-		} else if (StringUtils.hasText(request.getParameter("undelete"))) {
+		} else if (!StringUtils.isBlank(request.getParameter("undelete"))) {
 			undelete(request, next, pageInfo);
-		} else if (StringUtils.hasText(request.getParameter("permissions"))) {
+		} else if (!StringUtils.isBlank(request.getParameter("permissions"))) {
 			permissions(request, next, pageInfo);
 		} else {
 			view(request, next, pageInfo);
@@ -63,7 +63,7 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		deletePage(request, next, pageInfo, topicName);
-		if (StringUtils.hasText(request.getParameter("manageCommentsPage"))) {
+		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
 			String manageCommentsPage = Utilities.decodeFromRequest(request.getParameter("manageCommentsPage"));
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				deletePage(request, next, pageInfo, manageCommentsPage);
@@ -123,7 +123,7 @@ public class ManageServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		undeletePage(request, next, pageInfo, topicName);
-		if (StringUtils.hasText(request.getParameter("manageCommentsPage"))) {
+		if (!StringUtils.isBlank(request.getParameter("manageCommentsPage"))) {
 			String manageCommentsPage = Utilities.decodeFromRequest(request.getParameter("manageCommentsPage"));
 			if (WikiUtil.isCommentsPage(manageCommentsPage) && !manageCommentsPage.equals(topicName)) {
 				undeletePage(request, next, pageInfo, manageCommentsPage);

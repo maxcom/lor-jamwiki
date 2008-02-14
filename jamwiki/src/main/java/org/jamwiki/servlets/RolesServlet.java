@@ -23,13 +23,13 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -49,7 +49,7 @@ public class RolesServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
-		if (!StringUtils.hasText(function)) {
+		if (StringUtils.isBlank(function)) {
 			view(request, next, pageInfo);
 		} else if (function.equals("modifyRole")) {
 			modifyRole(request, next, pageInfo);
@@ -73,7 +73,7 @@ public class RolesServlet extends JAMWikiServlet {
 		if (valueArray == null) {
 			return results;
 		}
-		for (int i=0; i < valueArray.length; i++) {
+		for (int i = 0; i < valueArray.length; i++) {
 			StringTokenizer tokens = new StringTokenizer(valueArray[i], "|");
 			String parsedUserId = tokens.nextToken();
 			int userInt = -1;
@@ -108,7 +108,7 @@ public class RolesServlet extends JAMWikiServlet {
 			String[] candidateGroups = request.getParameterValues("candidateGroup");
 			String[] groupRoles = request.getParameterValues("groupRole");
 			if (candidateGroups != null) {
-				for (int i=0; i < candidateGroups.length; i++) {
+				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
 					Collection roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
@@ -119,7 +119,7 @@ public class RolesServlet extends JAMWikiServlet {
 			String[] candidateUsers = request.getParameterValues("candidateUser");
 			String[] userRoles = request.getParameterValues("userRole");
 			if (candidateUsers != null) {
-				for (int i=0; i < candidateUsers.length; i++) {
+				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					Collection roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == WikiUtil.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
@@ -148,17 +148,17 @@ public class RolesServlet extends JAMWikiServlet {
 	private void modifyRole(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String updateRole = request.getParameter("updateRole");
 		Role role = null;
-		if (StringUtils.hasText(request.getParameter("Submit"))) {
+		if (!StringUtils.isBlank(request.getParameter("Submit"))) {
 			try {
 				// once created a role name cannot be modified, so the text field
 				// will be disabled in the form.
-				boolean update = !StringUtils.hasText(request.getParameter("roleName"));
+				boolean update = StringUtils.isBlank(request.getParameter("roleName"));
 				String roleName = (update) ? updateRole : request.getParameter("roleName");
 				role = new Role(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
 				WikiUtil.validateRole(role);
 				WikiBase.getDataHandler().writeRole(role, null, update);
-				if (StringUtils.hasText(updateRole) && updateRole.equals(role.getAuthority())) {
+				if (!StringUtils.isBlank(updateRole) && updateRole.equals(role.getAuthority())) {
 					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getAuthority()));
 				} else {
 					next.addObject("message", new WikiMessage("roles.message.roleadded", role.getAuthority()));
@@ -169,7 +169,7 @@ public class RolesServlet extends JAMWikiServlet {
 				logger.severe("Failure while adding role", e);
 				next.addObject("message", new WikiMessage("roles.message.rolefail", e.getMessage()));
 			}
-		} else if (StringUtils.hasText(updateRole)) {
+		} else if (!StringUtils.isBlank(updateRole)) {
 			// FIXME - use a cached list of roles instead of iterating
 			// load details for the selected role
 			Collection roles = WikiBase.getDataHandler().getAllRoles();
@@ -195,7 +195,7 @@ public class RolesServlet extends JAMWikiServlet {
 		try {
 			String searchLogin = request.getParameter("searchLogin");
 			Collection roleMapUsers = null;
-			if (StringUtils.hasText(searchLogin)) {
+			if (!StringUtils.isBlank(searchLogin)) {
 				roleMapUsers = WikiBase.getDataHandler().getRoleMapByLogin(searchLogin);
 				next.addObject("searchLogin", searchLogin);
 			} else {

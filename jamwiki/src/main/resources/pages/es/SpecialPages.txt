@@ -1,0 +1,24 @@
+
+===Páginas especiales para todos los usuarios===
+
+* [[Special:TopicsAdmin|Solo para Administradores]]
+* [[Special:Categories|Todas las categorías]]
+* [[Special:Filelist|Todos los archivos]]
+* [[Special:Imagelist|Todas las imágenes]]
+* [[Special:Allpages|Todos los temas]]
+* [[Special:Listusers|Todos los usuarios]]
+* [[Special:RecentChanges|Cambios recientes]]
+* [[Special:Search|Buscar]]
+* [[Special:Upload|Subir]]
+* [[Special:Login|Abrir sesión de usuario]]
+* [[Special:Logout|Cerrar sesión de usuario]]
+* [[Special:Account|Registro de usuario]]
+
+===Páginas Administrativas===
+
+* [[Special:Admin|Configuración]]
+* [[Special:Maintenance|Mantenimiento]]
+* [[Special:Roles|Funciones]]
+* [[Special:Translation|Traducciones]]
+* [[Special:Setup|Instalación del Wiki]]
+* [[Special:Upgrade|Actualización del Wiki]]

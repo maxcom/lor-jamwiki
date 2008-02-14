@@ -17,13 +17,13 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * This class provides the capability for parsing HTML links of the form
@@ -106,7 +106,7 @@ public class HtmlLinkTag implements ParserTag {
 		} else {
 			throw new Exception("Invalid protocol in link " + link);
 		}
-		if (!StringUtils.hasText(text)) {
+		if (StringUtils.isBlank(text)) {
 			text = link;
 		}
 		text = StringEscapeUtils.escapeHtml(text);
@@ -128,14 +128,13 @@ public class HtmlLinkTag implements ParserTag {
 	 * "http://www.site.com/" and return the resulting HTML output.
 	 */
 	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception {
-		if (raw == null || !StringUtils.hasText(raw)) {
+		if (raw == null || StringUtils.isBlank(raw)) {
 			// no link to display
 			return raw;
 		}
 		if (raw.startsWith("[") && raw.endsWith("]")) {
 			return this.buildHtmlLink(raw);
-		} else {
-			return this.buildHtmlLinkRaw(raw);
 		}
+		return this.buildHtmlLinkRaw(raw);
 	}
 }

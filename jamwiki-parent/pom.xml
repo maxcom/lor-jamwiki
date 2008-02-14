@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6.2-SNAPSHOT</version>
+	<version>0.6.3-SNAPSHOT</version>
 	<name>Jamwiki Super POM</name>
 	<url>http://www.jamwiki.org</url>
 
@@ -34,8 +34,8 @@
 	<!-- dependency management defines the version to use in projects that inherits from the parent.
 		The dependency management does not tell the sub-project to depend from what is listed bellow.-->
 	<properties>
-		<dependency.spring.version>2.0.7</dependency.spring.version>
-		<jamwiki.version>0.6.2-SNAPSHOT</jamwiki.version>
+		<dependency.spring.version>2.5.1</dependency.spring.version>
+		<jamwiki.version>0.6.3-SNAPSHOT</jamwiki.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -52,7 +52,26 @@
 			<dependency>
 				<groupId>org.acegisecurity</groupId>
 				<artifactId>acegi-security</artifactId>
-				<version>1.0.5</version>
+				<version>1.0.6</version>
+				<!-- FIXME: The Maven dependencies have not been updated for Spring 2.5 -->
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-dao</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-jdbc</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-remoting</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-support</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -194,13 +213,13 @@
 
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-remoting</artifactId>
+				<artifactId>spring-support</artifactId>
 				<version>${dependency.spring.version}</version>
 			</dependency>
 
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-support</artifactId>
+				<artifactId>spring-tx</artifactId>
 				<version>${dependency.spring.version}</version>
 			</dependency>
 

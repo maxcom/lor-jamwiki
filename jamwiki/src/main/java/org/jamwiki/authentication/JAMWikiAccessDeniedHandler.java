@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.AccessDeniedException;
 import org.acegisecurity.ui.AccessDeniedHandler;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * Handle AccessDeniedExceptions thrown by the Acegi security framework.  This
@@ -43,7 +44,15 @@ public class JAMWikiAccessDeniedHandler implements AccessDeniedHandler {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
 		if (this.errorPage != null) {
-			RequestDispatcher rd = request.getRequestDispatcher(this.errorPage);
+			String uri = request.getRequestURI();
+			// FIXME - move the "strip after semicolon" code to WikiUtil
+			int pathParamIndex = uri.indexOf(';');
+			if (pathParamIndex > 0) {
+				// strip everything after the first semi-colon
+				uri = uri.substring(0, pathParamIndex);
+			}
+			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+			RequestDispatcher rd = request.getRequestDispatcher("/" + virtualWiki + this.errorPage);
 			rd.forward(request, response);
 		}
 		if (!response.isCommitted()) {

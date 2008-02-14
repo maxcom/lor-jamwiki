@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -34,12 +35,12 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.ImageUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -78,7 +79,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String buildUniqueFileName(String fileName) {
-		if (!StringUtils.hasText(fileName)) {
+		if (StringUtils.isBlank(fileName)) {
 			return null;
 		}
 		// file is appended with a timestamp of DDHHMMSS
@@ -120,7 +121,7 @@ public class UploadServlet extends JAMWikiServlet {
 		if (blacklistType == WikiBase.UPLOAD_NONE) {
 			return false;
 		}
-		if (!StringUtils.hasText(extension)) {
+		if (StringUtils.isBlank(extension)) {
 			// FIXME - should non-extensions be represented in the whitelist/blacklist?
 			return true;
 		}
@@ -128,7 +129,8 @@ public class UploadServlet extends JAMWikiServlet {
 		List list = WikiUtil.retrieveUploadFileList();
 		if (blacklistType == WikiBase.UPLOAD_BLACKLIST) {
 			return !list.contains(extension);
-		} else if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
+		}
+		if (blacklistType == WikiBase.UPLOAD_WHITELIST) {
 			return list.contains(extension);
 		}
 		return false;
@@ -138,7 +140,7 @@ public class UploadServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static String sanitizeFilename(String filename) {
-		if (!StringUtils.hasText(filename)) {
+		if (StringUtils.isBlank(filename)) {
 			return null;
 		}
 		// some browsers set the full path, so strip to just the file name
@@ -187,7 +189,7 @@ public class UploadServlet extends JAMWikiServlet {
 				fileSize = item.getSize();
 				File directory = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), subdirectory);
 				if (!directory.exists() && !directory.mkdirs()) {
-					throw new WikiException(new WikiMessage("upload.error.directorycreate",  directory.getAbsolutePath()));
+					throw new WikiException(new WikiMessage("upload.error.directorycreate", directory.getAbsolutePath()));
 				}
 				contentType = item.getContentType();
 				url = subdirectory + "/" + url;
@@ -235,7 +237,7 @@ public class UploadServlet extends JAMWikiServlet {
 		wikiFile.setMimeType(contentType);
 		wikiFileVersion.setFileSize(fileSize);
 		wikiFile.setFileSize(fileSize);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, ParserUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, null);
 		wikiFile.setTopicId(topic.getTopicId());
 		WikiBase.getDataHandler().writeFile(wikiFile, wikiFileVersion, null);
 		ServletUtil.redirect(next, virtualWiki, topicName);

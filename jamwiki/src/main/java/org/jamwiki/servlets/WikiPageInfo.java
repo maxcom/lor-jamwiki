@@ -18,13 +18,13 @@ package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * The <code>WikiPageInfo</code> class provides an object containing common
@@ -118,7 +118,7 @@ public class WikiPageInfo {
 	 */
 	public String getMetaDescription() {
 		String pattern = Environment.getValue(Environment.PROP_BASE_META_DESCRIPTION);
-		if (!StringUtils.hasText(pattern)) {
+		if (StringUtils.isBlank(pattern)) {
 			return "";
 		}
 		MessageFormat formatter = new MessageFormat(pattern);

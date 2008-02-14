@@ -6,10 +6,10 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 %%
 
@@ -122,7 +122,7 @@ import org.springframework.util.StringUtils;
         pos = text.indexOf(markup);
         if (pos != -1) text = text.substring(0, pos);
         String attributes = ParserUtil.validateHtmlTagAttributes(text.trim());
-        if (StringUtils.hasText(attributes)) {
+        if (!StringUtils.isBlank(attributes)) {
             return "<" + tag + " " + attributes + ">";
         }
         return "<" + tag + ">";
@@ -298,7 +298,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     beginState(TABLE);
     String attributes = yytext().substring(2).trim();
     attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-    return ((StringUtils.hasText(attributes)) ? "<table " + attributes + ">" : "<table>");
+    return ((!StringUtils.isBlank(attributes)) ? "<table " + attributes + ">" : "<table>");
 }
 
 <TABLE, TD, TH, TC>^{tablecaption} {
@@ -322,7 +322,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         String attributes = yytext().substring(start, end).trim();
         attributes = ParserUtil.validateHtmlTagAttributes(attributes);
         String tag = "<th>";
-        if (StringUtils.hasText(attributes)) {
+        if (!StringUtils.isBlank(attributes)) {
             tag = "<th " + attributes + ">";
         }
         output.append(tag);
@@ -374,7 +374,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         String attributes = yytext().substring(2).trim();
         attributes = ParserUtil.validateHtmlTagAttributes(attributes);
         String tag = "<tr>";
-        if (StringUtils.hasText(attributes)) {
+        if (!StringUtils.isBlank(attributes)) {
             tag = "<tr " + attributes + ">";
         }
         output.append(tag);

@@ -22,6 +22,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -35,7 +36,6 @@ import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -61,7 +61,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 			throw new WikiException(new WikiMessage("upgrade.error.notrequired"));
 		}
 		String function = request.getParameter("function");
-		if (StringUtils.hasText(function) && function.equals("upgrade")) {
+		if (!StringUtils.isBlank(function) && function.equals("upgrade")) {
 			upgrade(request, next, pageInfo);
 		} else {
 			view(request, next, pageInfo);
@@ -145,6 +145,9 @@ public class UpgradeServlet extends JAMWikiServlet {
 				stylesheet = true;
 			}
 			if (oldVersion.before(0, 6, 1)) {
+				stylesheet = true;
+			}
+			if (oldVersion.before(0, 6, 3)) {
 				stylesheet = true;
 			}
 			if (stylesheet) {

@@ -18,10 +18,9 @@ package org.jamwiki.servlets;
 
 import java.text.DateFormat;
 import java.util.Collection;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -30,7 +29,6 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -45,7 +43,7 @@ public class HistoryServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+		if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 			viewVersion(request, next, pageInfo);
 		} else {
 			history(request, next, pageInfo);
@@ -59,7 +57,7 @@ public class HistoryServlet extends JAMWikiServlet {
 	private void history(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		if (!StringUtils.hasText(topicName)) {
+		if (StringUtils.isBlank(topicName)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		pageInfo.setContentJsp(JSP_HISTORY);

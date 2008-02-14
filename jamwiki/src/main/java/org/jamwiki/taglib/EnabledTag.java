@@ -38,9 +38,8 @@ public class EnabledTag extends BodyTagSupport {
 			String propertyName = (String)Environment.class.getField(this.property).get(null);
 			if (Environment.getBooleanValue(propertyName)) {
 				return EVAL_BODY_INCLUDE;
-			} else {
-				return SKIP_BODY;
 			}
+			return SKIP_BODY;
 		} catch (Exception e) {
 			logger.severe("Failure in enabled tag for " + this.property, e);
 			throw new JspException(e);

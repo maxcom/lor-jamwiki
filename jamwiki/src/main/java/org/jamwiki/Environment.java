@@ -50,7 +50,7 @@ public class Environment {
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
 	public static final String PROP_CACHE_MAX_IDLE_AGE = "cache-max-idle-age";
 	public static final String PROP_CACHE_TOTAL_SIZE = "cache-total-size";
-	public static final String PROP_DB_DRIVER= "driver";
+	public static final String PROP_DB_DRIVER = "driver";
 	public static final String PROP_DB_PASSWORD = "db-password";
 	public static final String PROP_DB_TYPE = "database-type";
 	public static final String PROP_DB_URL = "url";
@@ -331,6 +331,7 @@ public class Environment {
 			properties = new SortedProperties(def);
 		}
 		File file = null;
+		FileInputStream fis = null;
 		try {
 			file = findProperties(propertyFile);
 			if (file == null) {
@@ -339,10 +340,19 @@ public class Environment {
 				logger.warning("Property file " + file.getPath() + " does not exist");
 			} else {
 				logger.config("Loading properties from " + file.getPath());
-				properties.load(new FileInputStream(file));
+				fis = new FileInputStream(file);
+				properties.load(fis);
 			}
 		} catch (Exception e) {
 			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					// NOPMD
+				}
+			}
 		}
 		return properties;
 	}

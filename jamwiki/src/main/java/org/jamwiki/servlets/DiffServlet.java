@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.DiffUtil;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -73,11 +73,11 @@ public class DiffServlet extends JAMWikiServlet {
 			}
 		} else {
 			int topicVersionId1 = 0;
-			if (StringUtils.hasText(request.getParameter("version1"))) {
+			if (!StringUtils.isBlank(request.getParameter("version1"))) {
 				topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
 			}
 			int topicVersionId2 = 0;
-			if (StringUtils.hasText(request.getParameter("version2"))) {
+			if (!StringUtils.isBlank(request.getParameter("version2"))) {
 				topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
 			}
 			Collection diffs = DiffUtil.diffTopicVersions(topicName, topicVersionId1, topicVersionId2);

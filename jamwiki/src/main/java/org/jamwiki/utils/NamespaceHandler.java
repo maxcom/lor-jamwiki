@@ -18,8 +18,8 @@ package org.jamwiki.utils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiConfiguration;
-import org.springframework.util.StringUtils;
 
 /**
  * Class for controlling "namespace". Namespaces allow the organization of
@@ -61,7 +61,7 @@ public class NamespaceHandler {
 	 *
 	 */
 	public static String getCommentsNamespace(String namespace) {
-		if (!StringUtils.hasText(namespace)) {
+		if (StringUtils.isBlank(namespace)) {
 			// main namespace
 			return NAMESPACE_COMMENTS;
 		}
@@ -74,7 +74,8 @@ public class NamespaceHandler {
 			String comments = values[1];
 			if (namespace.equals(NAMESPACE_SPECIAL)) {
 				return NAMESPACE_SPECIAL;
-			} else if (namespace.equals(main) || (comments != null && namespace.equals(comments))) {
+			}
+			if (namespace.equals(main) || (comments != null && namespace.equals(comments))) {
 				return comments;
 			}
 		}
@@ -86,7 +87,7 @@ public class NamespaceHandler {
 	 *
 	 */
 	public static String getMainNamespace(String namespace) {
-		if (!StringUtils.hasText(namespace)) {
+		if (StringUtils.isBlank(namespace)) {
 			// main namespace
 			return "";
 		}

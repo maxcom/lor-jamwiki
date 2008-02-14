@@ -36,5 +36,5 @@ public interface ParserTag {
 	 * @return A parsed version of the raw Wiki syntax.
 	 * @throws Exception Thrown if any parsing error occurs.
 	 */
-	public String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception;
+	String parse(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) throws Exception;
 }

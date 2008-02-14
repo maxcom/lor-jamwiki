@@ -26,9 +26,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.propertyeditors.LocaleEditor;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * This class provides a variety of basic utility methods that are not
@@ -55,7 +55,7 @@ public class Utilities {
 	 *  if a Locale object cannot be created.
 	 */
 	public static Locale buildLocale(String localeString) {
-		if (!StringUtils.hasText(localeString)) {
+		if (StringUtils.isBlank(localeString)) {
 			return null;
 		}
 		// use spring voodoo to avoid some weird locale initialization issues
@@ -73,14 +73,14 @@ public class Utilities {
 	 * @return The encoded string.
 	 */
 	public static String convertEncoding(String text, String fromEncoding, String toEncoding) {
-		if (!StringUtils.hasText(text)) {
+		if (StringUtils.isBlank(text)) {
 			return text;
 		}
-		if (!StringUtils.hasText(fromEncoding)) {
+		if (StringUtils.isBlank(fromEncoding)) {
 			logger.warning("No character encoding specified to convert from, using UTF-8");
 			fromEncoding = "UTF-8";
 		}
-		if (!StringUtils.hasText(toEncoding)) {
+		if (StringUtils.isBlank(toEncoding)) {
 			logger.warning("No character encoding specified to convert to, using UTF-8");
 			toEncoding = "UTF-8";
 		}
@@ -292,11 +292,11 @@ public class Utilities {
 		// this, but regular expressions don't handle things like "number between
 		// 0 and 255" very well, so use a heavier approach
 		// if no text, obviously not valid
-		if (!StringUtils.hasText(ipAddress)) {
+		if (StringUtils.isBlank(ipAddress)) {
 			return false;
 		}
 		// must contain three periods
-		if (StringUtils.countOccurrencesOf(ipAddress, ".") != 3) {
+		if (StringUtils.countMatches(ipAddress, ".") != 3) {
 			return false;
 		}
 		// ip addresses must be between seven and 15 characters long

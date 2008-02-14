@@ -54,7 +54,7 @@ public interface DataHandler {
 	 *  <code>false</code> otherwise.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public boolean canMoveTopic(Topic fromTopic, String destination) throws Exception;
+	boolean canMoveTopic(Topic fromTopic, String destination) throws Exception;
 
 	/**
 	 * Mark a topic deleted by setting its delete date to a non-null value.
@@ -75,7 +75,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
+	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
 	 * Return a collection of all Category objects for a given virtual wiki.
@@ -87,7 +87,7 @@ public interface DataHandler {
 	 * @return A collection of all Category objects for a given virutal wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
+	Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
 	 * Return a collection of all Role objects for the wiki.
@@ -95,7 +95,7 @@ public interface DataHandler {
 	 * @return A collection of all Role objects for the wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getAllRoles() throws Exception;
+	Collection getAllRoles() throws Exception;
 
 	/**
 	 * Return a collection of all topic names for all non-deleted topics that
@@ -107,7 +107,7 @@ public interface DataHandler {
 	 *  exist for the virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getAllTopicNames(String virtualWiki) throws Exception;
+	Collection getAllTopicNames(String virtualWiki) throws Exception;
 
 	/**
 	 * Retrieve a collection of all TopicVersions for a given topic, sorted
@@ -122,7 +122,7 @@ public interface DataHandler {
 	 *  If no matching topic exists then an exception is thrown.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a collection of all RecentChange objects for a given virtual
@@ -139,7 +139,7 @@ public interface DataHandler {
 	 *  wiki, sorted chronologically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
+	Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a collection of all RecentChange objects for a given topic,
@@ -156,7 +156,7 @@ public interface DataHandler {
 	 *  sorted chronologically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
+	Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Retrieve a collection of RoleMap objects for all users whose login
@@ -171,7 +171,7 @@ public interface DataHandler {
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getRoleMapByLogin(String loginFragment) throws Exception;
+	Collection getRoleMapByLogin(String loginFragment) throws Exception;
 
 	/**
 	 * Retrieve a collection of RoleMap objects for all users and groups who
@@ -184,7 +184,7 @@ public interface DataHandler {
 	 *  method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getRoleMapByRole(String roleName) throws Exception;
+	Collection getRoleMapByRole(String roleName) throws Exception;
 
 	/**
 	 * Retrieve all roles assigned to a given group.
@@ -195,7 +195,7 @@ public interface DataHandler {
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Role[] getRoleMapGroup(String groupName) throws Exception;
+	Role[] getRoleMapGroup(String groupName) throws Exception;
 
 	/**
 	 * Retrieve a collection of RoleMap objects for all groups.
@@ -205,7 +205,7 @@ public interface DataHandler {
 	 *  collection.  This method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getRoleMapGroups() throws Exception;
+	Collection getRoleMapGroups() throws Exception;
 
 	/**
 	 * Retrieve all roles assigned to a given user.
@@ -216,7 +216,7 @@ public interface DataHandler {
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Role[] getRoleMapUser(String login) throws Exception;
+	Role[] getRoleMapUser(String login) throws Exception;
 
 	/**
 	 * Retrieve a collection of topic names for all admin-only topics, sorted
@@ -230,7 +230,7 @@ public interface DataHandler {
 	 *  alphabetically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
+	Collection getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a collection of RecentChange objects corresponding to all
@@ -250,7 +250,7 @@ public interface DataHandler {
 	 *  changes made by a particular user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
+	Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
 
 	/**
 	 * Return a collection of all VirtualWiki objects that exist for the wiki.
@@ -263,7 +263,7 @@ public interface DataHandler {
 	 *  wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getVirtualWikiList(Object transactionObject) throws Exception;
+	Collection getVirtualWikiList(Object transactionObject) throws Exception;
 
 	/**
 	 * Retrieve a user's watchlist.
@@ -274,7 +274,7 @@ public interface DataHandler {
 	 * @return The Watchlist object for the user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Watchlist getWatchlist(String virtualWiki, int userId) throws Exception;
+	Watchlist getWatchlist(String virtualWiki, int userId) throws Exception;
 
 	/**
 	 * Retrieve a collection of RecentChange objects corresponding to a user's
@@ -290,7 +290,7 @@ public interface DataHandler {
 	 *  watchlist.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
+	Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a collection of Category objects corresponding to all topics
@@ -305,7 +305,7 @@ public interface DataHandler {
 	 *  or category sort key (if specified).
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception;
+	Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception;
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic
@@ -323,7 +323,7 @@ public interface DataHandler {
 	 *  name, or <code>null</code> if no matching topic exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception;
+	Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception;
 
 	/**
 	 * Return a count of all topics, including redirects, comments pages and
@@ -337,7 +337,7 @@ public interface DataHandler {
 	 *  in the count.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int lookupTopicCount(String virtualWiki) throws Exception;
+	int lookupTopicCount(String virtualWiki) throws Exception;
 
 	/**
 	 * Return a collection of topic names for all non-deleted topics in the
@@ -351,7 +351,7 @@ public interface DataHandler {
 	 *  virtual wiki that match a specific topic type.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
+	Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -365,7 +365,7 @@ public interface DataHandler {
 	 *  or <code>null</code> if no matching topic version is found.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public TopicVersion lookupTopicVersion(int topicVersionId, Object transactionObject) throws Exception;
+	TopicVersion lookupTopicVersion(int topicVersionId, Object transactionObject) throws Exception;
 
 	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.
@@ -377,7 +377,7 @@ public interface DataHandler {
 	 *  can be found.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception;
+	VirtualWiki lookupVirtualWiki(String virtualWikiName) throws Exception;
 
 	/**
 	 * Retrieve a WikiFile object for a given virtual wiki and topic name.
@@ -388,7 +388,7 @@ public interface DataHandler {
 	 *  or <code>null</code> if no matching WikiFile exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception;
+	WikiFile lookupWikiFile(String virtualWiki, String topicName) throws Exception;
 
 	/**
 	 * Return a count of all wiki files for the given virtual wiki.  Deleted
@@ -400,7 +400,7 @@ public interface DataHandler {
 	 *  files are not included in the count.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int lookupWikiFileCount(String virtualWiki) throws Exception;
+	int lookupWikiFileCount(String virtualWiki) throws Exception;
 
 	/**
 	 * Retrieve a WikiUser object matching a given user ID.
@@ -414,7 +414,7 @@ public interface DataHandler {
 	 *  <code>null</code> if no matching WikiUser exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception;
+	WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception;
 
 	/**
 	 * Retrieve a WikiUser object matching a given username.
@@ -428,7 +428,7 @@ public interface DataHandler {
 	 *  <code>null</code> if no matching WikiUser exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception;
+	WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception;
 
 	/**
 	 * Return a count of all wiki users.
@@ -436,7 +436,7 @@ public interface DataHandler {
 	 * @return A count of all wiki users.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public int lookupWikiUserCount() throws Exception;
+	int lookupWikiUserCount() throws Exception;
 
 	/**
 	 * Return a collection of user logins for all wiki users.
@@ -446,7 +446,7 @@ public interface DataHandler {
 	 * @return A collection of user logins for all wiki users.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public Collection lookupWikiUsers(Pagination pagination) throws Exception;
+	Collection lookupWikiUsers(Pagination pagination) throws Exception;
 
 	/**
 	 * Move a topic to a new name, creating a redirect topic in the old
@@ -463,7 +463,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception;
+	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception;
 
 	/**
 	 * Delete all existing recent changes and reload the recent changes based
@@ -475,7 +475,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void reloadRecentChanges(Object transactionObject) throws Exception;
+	void reloadRecentChanges(Object transactionObject) throws Exception;
 
 	/**
 	 * Perform any required setup steps for the DataHandler instance.
@@ -487,7 +487,7 @@ public interface DataHandler {
 	 *  other DataHandler parameters.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void setup(Locale locale, WikiUser user) throws Exception;
+	void setup(Locale locale, WikiUser user) throws Exception;
 
 	/**
 	 * Create the special pages used on the wiki, such as the left menu and
@@ -506,7 +506,7 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - move this to another location
-	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception;
+	void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception;
 
 	/**
 	 * Undelete a previously deleted topic by setting its delete date to a
@@ -526,7 +526,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
+	void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
 	 * Update a special page used on the wiki, such as the left menu or
@@ -548,7 +548,7 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - move this to another location
-	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception;
+	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if
@@ -567,7 +567,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception;
+	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a Role object.  This method will add a new record if
@@ -585,7 +585,7 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - the update flag should not be necessary
-	public void writeRole(Role role, Object transactionObject, boolean update) throws Exception;
+	void writeRole(Role role, Object transactionObject, boolean update) throws Exception;
 
 	/**
 	 * Add a set of group role mappings.  This method will first delete all
@@ -601,7 +601,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeRoleMapGroup(int groupId, Collection roles, Object transactionObject) throws Exception;
+	void writeRoleMapGroup(int groupId, Collection roles, Object transactionObject) throws Exception;
 
 	/**
 	 * Add a set of user role mappings.  This method will first delete all
@@ -617,7 +617,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeRoleMapUser(int userId, Collection roles, Object transactionObject) throws Exception;
+	void writeRoleMapUser(int userId, Collection roles, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if
@@ -643,7 +643,7 @@ public interface DataHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - should not need ParserDocument here
-	public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception;
+	void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record
@@ -659,7 +659,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeVirtualWiki(VirtualWiki virtualWiki, Object transactionObject) throws Exception;
+	void writeVirtualWiki(VirtualWiki virtualWiki, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or delete an item from a user's watchlist.  If the topic is
@@ -677,7 +677,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId, Object transactionObject) throws Exception;
+	void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a WikiGroup object.  This method will add a new record if
@@ -692,7 +692,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception;
+	void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a WikiUser object.  This method will add a new record
@@ -710,5 +710,5 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception;
+	void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception;
 }

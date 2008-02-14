@@ -139,9 +139,6 @@ legend {
 	padding: 0.5em;
 	font-weight: bold;
 }
-div.clear {
-	clear: both;
-}
 .red {
 	font-weight: bold;
 	color: #ff0000;
@@ -262,6 +259,7 @@ div.submenu {
 
 .diff-delete {
 	float: left;
+	position: relative;
 	background: #ee7777;
 	font-weight: bold;
 	padding: 0.1em;
@@ -270,6 +268,7 @@ div.submenu {
 }
 .diff-add {
 	float: left;
+	position: relative;
 	background: #77ee77;
 	font-weight: bold;
 	padding: 0.1em;
@@ -278,6 +277,7 @@ div.submenu {
 }
 .diff-unchanged {
 	float: left;
+	position: relative;
 	background: #dddddd;
 	padding: 0.1em;
 	width: 48%;
@@ -285,10 +285,11 @@ div.submenu {
 }
 .diff-indicator {
 	float: left;
+	position: relative;
 	font-weight: bold;
 	padding: 0.1em;
 	text-align: right;
-	width: 10px;
+	width: 7px;
 }
 .diff-line {
 	clear: both;
@@ -394,7 +395,6 @@ li.undeletechange {
 	padding: 10px 0px 10px 0px;
 }
 #content-article pre {
-	width: 98%;
 	overflow: hidden;
 }
 .section-edit {

@@ -18,12 +18,11 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -52,7 +51,7 @@ public class TopicServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topic = WikiUtil.getTopicFromURI(request);
-		if (!StringUtils.hasText(topic)) {
+		if (StringUtils.isBlank(topic)) {
 			String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 			topic = virtualWiki.getDefaultTopicName();

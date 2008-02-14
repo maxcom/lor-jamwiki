@@ -26,7 +26,6 @@ import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.db.DatabaseUserHandler;
 import org.jamwiki.model.Topic;
-import org.jamwiki.parser.ParserInput;
 import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.WikiUtil;
 
@@ -69,72 +68,6 @@ public class WikiUtilTest extends TestCase {
 		parent.setTopicType(2);
 		Topic result = WikiUtil.findRedirectedTopic(parent, 100);
 		assertSame("result", parent, result);
-	}
-
-	/**
-	 *
-	 */
-	public void testParse() throws Throwable {
-		ParserInput parserInput = getParserInput();
-		String result = WikiUtil.parse(parserInput, null, "testWikiUtilContent");
-		//FIXME assertEquals(null,result); //What is the expected behaviour?
-	}
-
-	public void testParse1() throws Throwable {
-		ParserInput parserInput = getParserInput();
-		String result = WikiUtil.parse(parserInput, null, "testWikiUtilContent");
-		assertEquals("paragraph", "<p>testWikiUtilContent\n</p>", result);
-	}
-
-	public void testParse2() throws Throwable {
-		ParserInput parserInput = getParserInput();
-		String result = WikiUtil.parse(parserInput, null, "''it''");
-		assertEquals("italics", "<p><i>it</i>\n</p>", result);
-	}
-
-	public void testParse3() throws Throwable {
-		ParserInput parserInput = getParserInput();
-		String result = WikiUtil.parse(parserInput, null, "'''bold'''");
-		assertEquals("embolden", "<p><b>bold</b>\n</p>", result);
-	}
-
-	public void testParse4() throws Throwable {
-		ParserInput parserInput = getParserInput();
-		String result = WikiUtil.parse(parserInput, null, "'''''bold it'''''");
-		assertEquals("bold+it", "<p><b><i>bold it</i></b>\n</p>", result);
-	}
-
-	public void testParse5() throws Throwable {
-		ParserInput parserInput = getParserInput();
-		String result = WikiUtil.parse(parserInput, null, "testWikiUtilContent");
-		assertEquals("result.getContent()", "<p>testWikiUtilContent\n</p>", result);
-	}
-
-	private ParserInput getParserInput() {
-		ParserInput parserInput = new ParserInput();
-		parserInput.setTopicName("testWikiUtilTopicName");
-		parserInput.setVirtualWiki("testWikiUtilVirtualWiki");
-		parserInput.setContext("testWikiUtilContext");
-		return parserInput;
-	}
-
-	/**
-	 *
-	 */
-	public void testParseMinimal() throws Throwable {
-		ParserInput parserInput = new ParserInput();
-		parserInput.setVirtualWiki("testWikiUtilVirtualWiki");
-		parserInput.setTopicName("testWikiUtilTopicName");
-		String result = WikiUtil.parseMinimal(parserInput, "testWikiUtilContent");
-		assertEquals("result.getContent()", "testWikiUtilContent", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testParserRedirectContent() throws Throwable {
-		String result = WikiUtil.parserRedirectContent("testWikiUtilTopicName");
-		assertEquals("result", "#REDIRECT [[testWikiUtilTopicName]]", result);
 	}
 
 	/**
@@ -218,66 +151,6 @@ public class WikiUtilTest extends TestCase {
 		} catch (ClassNotFoundException ex) {
 			assertTrue("Test completed without Exception", true);
 			// dependencies on static and environment state led to removal of 3 assertion(s)
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParseMetadataThrowsException() throws Throwable {
-		try {
-			WikiUtil.parseMetadata(new ParserInput(), "testWikiUtilContent");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParseMetadataThrowsNullPointerException() throws Throwable {
-		try {
-			WikiUtil.parseMetadata(null, "testWikiUtilContent");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParseThrowsException() throws Throwable {
-		try {
-			WikiUtil.parse(new ParserInput(), null, "testWikiUtilContent");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParseThrowsNullPointerException() throws Throwable {
-		try {
-			WikiUtil.parse(null, null, "testWikiUtilContent");
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			assertNull("ex.getMessage()", ex.getMessage());
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testParserDocumentThrowsException() throws Throwable {
-		try {
-			WikiUtil.parserDocument("testWikiUtilContent", null, "testWikiUtilTopicName");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Parser info not properly initialized", ex.getMessage());
 		}
 	}
 

@@ -19,12 +19,12 @@ package org.jamwiki.utils;
 import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiImage;
-import org.springframework.util.StringUtils;
 
 /**
  * General utility methods for handling both wiki topic links such as
@@ -57,7 +57,7 @@ public class LinkUtil {
 	 */
 	public static String appendQueryParam(String query, String param, String value) {
 		String url = "";
-		if (StringUtils.hasText(query)) {
+		if (!StringUtils.isBlank(query)) {
 			if (!query.startsWith("?")) {
 				query = "?" + query;
 			}
@@ -65,11 +65,11 @@ public class LinkUtil {
 		} else {
 			url = "?";
 		}
-		if (!StringUtils.hasText(param)) {
+		if (StringUtils.isBlank(param)) {
 			return query;
 		}
 		url += Utilities.encodeForURL(param) + "=";
-		if (StringUtils.hasText(value)) {
+		if (!StringUtils.isBlank(value)) {
 			url += Utilities.encodeForURL(value);
 		}
 		return url;
@@ -148,7 +148,7 @@ public class LinkUtil {
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
-			if (!StringUtils.hasText(caption)) {
+			if (StringUtils.isBlank(caption)) {
 				caption = topicName.substring(NamespaceHandler.NAMESPACE_IMAGE.length() + 1);
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
@@ -160,7 +160,7 @@ public class LinkUtil {
 		if (caption == null) {
 			caption = "";
 		}
-		if (frame || thumb || StringUtils.hasText(align)) {
+		if (frame || thumb || !StringUtils.isBlank(align)) {
 			html += "<div class=\"";
 			if (thumb || frame) {
 				html += "imgthumb ";
@@ -183,7 +183,7 @@ public class LinkUtil {
 		if (!suppressLink) {
 			html += "<a class=\"wikiimg\" href=\"" + LinkUtil.buildInternalLinkUrl(context, virtualWiki, topicName) + "\">";
 		}
-		if (!StringUtils.hasText(style)) {
+		if (StringUtils.isBlank(style)) {
 			style = "wikiimg";
 		}
 		html += "<img class=\"" + style + "\" src=\"";
@@ -198,7 +198,7 @@ public class LinkUtil {
 		if (!suppressLink) {
 			html += "</a>";
 		}
-		if (StringUtils.hasText(caption)) {
+		if (!StringUtils.isBlank(caption)) {
 			html += "<div class=\"imgcaption\">";
 			if (escapeHtml) {
 				html += StringEscapeUtils.escapeHtml(caption);
@@ -210,7 +210,7 @@ public class LinkUtil {
 		if (wikiImage.getWidth() > 0) {
 			html += "</div>";
 		}
-		if (frame || thumb || StringUtils.hasText(align)) {
+		if (frame || thumb || !StringUtils.isBlank(align)) {
 			html += "</div>";
 		}
 		return html;
@@ -239,22 +239,22 @@ public class LinkUtil {
 	public static String buildInternalLinkHtml(String context, String virtualWiki, WikiLink wikiLink, String text, String style, String target, boolean escapeHtml) throws Exception {
 		String url = LinkUtil.buildInternalLinkUrl(context, virtualWiki, wikiLink);
 		String topic = wikiLink.getDestination();
-		if (!StringUtils.hasText(text)) {
+		if (StringUtils.isBlank(text)) {
 			text = topic;
 		}
-		if (StringUtils.hasText(topic) && !StringUtils.hasText(style)) {
+		if (!StringUtils.isBlank(topic) && StringUtils.isBlank(style)) {
 			if (InterWikiHandler.isInterWiki(virtualWiki)) {
 				style = "interwiki";
 			} else if (!WikiBase.exists(virtualWiki, topic)) {
 				style = "edit";
 			}
 		}
-		if (StringUtils.hasText(style)) {
+		if (!StringUtils.isBlank(style)) {
 			style = " class=\"" + style + "\"";
 		} else {
 			style = "";
 		}
-		if (StringUtils.hasText(target)) {
+		if (!StringUtils.isBlank(target)) {
 			target = " target=\"" + target + "\"";
 		} else {
 			target = "";
@@ -281,7 +281,7 @@ public class LinkUtil {
 	 *  URL.
 	 */
 	public static String buildInternalLinkUrl(String context, String virtualWiki, String topic) throws Exception {
-		if (!StringUtils.hasText(topic)) {
+		if (StringUtils.isBlank(topic)) {
 			return null;
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topic);
@@ -304,7 +304,7 @@ public class LinkUtil {
 		String topic = wikiLink.getDestination();
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
-		if (!StringUtils.hasText(topic) && StringUtils.hasText(section)) {
+		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
 			return "#" + Utilities.encodeForURL(section);
 		}
 		if (!WikiBase.exists(virtualWiki, topic)) {
@@ -320,13 +320,13 @@ public class LinkUtil {
 		url += Utilities.encodeForURL(virtualWiki);
 		url += "/";
 		url += Utilities.encodeForURL(topic);
-		if (StringUtils.hasText(section)) {
+		if (!StringUtils.isBlank(section)) {
 			if (!section.startsWith("#")) {
 				url += "#";
 			}
 			url += Utilities.encodeForURL(section);
 		}
-		if (StringUtils.hasText(query)) {
+		if (!StringUtils.isBlank(query)) {
 			if (!query.startsWith("?")) {
 				url += "?";
 			}
@@ -348,7 +348,7 @@ public class LinkUtil {
 		String namespace = wikiLink.getNamespace();
 		destination = destination.substring(wikiLink.getNamespace().length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		String url = InterWikiHandler.formatInterWiki(namespace, destination);
-		String text = (StringUtils.hasText(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
+		String text = (!StringUtils.isBlank(wikiLink.getText())) ? wikiLink.getText() : wikiLink.getDestination();
 		return "<a class=\"interwiki\" rel=\"nofollow\" title=\"" + text + "\" href=\"" + url + "\">" + text + "</a>";
 	}
 
@@ -365,7 +365,7 @@ public class LinkUtil {
 		// with topics such as "Urnordisch oder Nordwestgermanisch?"
 		String processed = raw.trim();
 		WikiLink wikiLink = new WikiLink();
-		if (!StringUtils.hasText(processed)) {
+		if (StringUtils.isBlank(processed)) {
 			return new WikiLink();
 		}
 		// first see if the link ends with a query param - "?..."
