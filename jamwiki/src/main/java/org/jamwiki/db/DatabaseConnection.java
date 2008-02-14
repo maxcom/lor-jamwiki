@@ -27,12 +27,12 @@ import javax.naming.InitialContext;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDriver;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.Encryption;
-import org.springframework.util.StringUtils;
 
 /**
  * This class provides methods for retrieving database connections, executing queries,
@@ -285,7 +285,7 @@ public class DatabaseConnection {
 	 */
 	private static void setUpConnectionPool(String url, String userName, String password) throws Exception {
 		closeConnectionPool();
-		if (StringUtils.hasText(Environment.getValue(Environment.PROP_DB_DRIVER))) {
+		if (!StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_DRIVER))) {
 			Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
 		}
 		connectionPool = new GenericObjectPool();
@@ -327,7 +327,7 @@ public class DatabaseConnection {
 	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws Exception {
 		Connection conn = null;
 		try {
-			if (StringUtils.hasText(driver)) {
+			if (!StringUtils.isBlank(driver)) {
 				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
 				if (url.startsWith("jdbc:")) {
 					conn = DriverManager.getConnection(url, user, password);

@@ -45,36 +45,36 @@ public class TiddlyWikiParser {
     //private static final String MODIFIER = "modifier";
     private static final String MODIFIED = "modified";
     //private static final String TAGS = "tags";
-    
+
     private static final SimpleDateFormat formater = new SimpleDateFormat("yyyyMMddHHmm");
     private StringBuffer messages = new StringBuffer();
 
-    
+
     private String virtualWiki;
     private WikiUser user;
     private String authorIpAddress;
-    
+
     /**
-     * Fascade for WikiBase. Used for enable unit testing.  
+     * Fascade for WikiBase. Used for enable unit testing.
      * @author Michael Greifeneder mikegr@gmx.net
      */
     public interface WikiBaseFascade {
             public void writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception;
-    } 
-    
+    }
+
     /**
      * Defaul WikiBaseFascade for production.
      */
     private WikiBaseFascade wikiBase = new WikiBaseFascade() {
             public void   writeTopic(Topic topic, TopicVersion topicVersion, ParserDocument parserDocument, boolean userVisible, Object transactionObject) throws Exception {
-                    WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);            
+                    WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, true, null);
             }
     };
-    
+
     private TiddlyWiki2MediaWikiTranslator translator = new TiddlyWiki2MediaWikiTranslator();
-    
+
     /**
-     * Main constructor 
+     * Main constructor
      * @param virtualWiki virtualWiki
      * @param user user who is currently logged in
      * @param authorIpAddress IP address of uploading user
@@ -86,7 +86,7 @@ public class TiddlyWikiParser {
     }
 
     /**
-     * Use this contructor for test cases 
+     * Use this contructor for test cases
      * @param virtualWiki Name of VirtualWiki
      * @param user User who is logged in.
      * @param authorIpAddress IP address of uploading user.
@@ -146,7 +146,7 @@ public class TiddlyWikiParser {
         }
         return "DefaultTiddlers";
     }
-    
+
     private void proecessContent(String content) throws Exception {
         logger.fine("Content: " + content);
         String name = findName(content, TIDLLER);
@@ -160,14 +160,14 @@ public class TiddlyWikiParser {
             return;
         }
         */
-        Date lastMod = null; 
+        Date lastMod = null;
         try {
             lastMod = formater.parse(findName(content, MODIFIED));
         } catch (Exception e) {
             messages.append("WARNING: corrupt line: " + content);
         }
-        
-        
+
+
         if (lastMod == null) {
             return;
         }
@@ -187,14 +187,14 @@ public class TiddlyWikiParser {
         String wikicode = content.substring(idx +1);
 
         wikicode = translator.translate(wikicode);
-        
+
         messages.append("Adding topic " + name + "\n");
-        
+
         saveTopic(name, lastMod, wikicode);
-        
+
         logger.fine("Code:" + wikicode);
     }
-    
+
     private void saveTopic(String name, Date lastMod, String content) throws Exception {
         Topic topic = new Topic();
         topic.setName(name);
@@ -206,9 +206,9 @@ public class TiddlyWikiParser {
         topic.setTopicType(Topic.TYPE_ARTICLE);
         // Store topic in database
         wikiBase.writeTopic(topic, topicVersion, null, true, null);
-        
+
     }
-    
+
     private String findName(String content, String name) {
         int startIdx = content.indexOf(name);
         if (startIdx == -1) {
@@ -222,7 +222,7 @@ public class TiddlyWikiParser {
         return value;
     }
 
-     public String getOutput() { 
+     public String getOutput() {
          return messages.toString();
      }
 }

@@ -28,6 +28,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -41,6 +42,7 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
@@ -48,7 +50,6 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -131,7 +132,7 @@ public class ServletUtil {
 				links.put(comments, new WikiMessage("tab.common.comments"));
 				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
 					String editLink = "Special:Edit?topic=" + Utilities.encodeForURL(pageName);
-					if (StringUtils.hasText(request.getParameter("topicVersionId"))) {
+					if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
 					}
 					links.put(editLink, new WikiMessage("tab.common.edit"));
@@ -184,10 +185,13 @@ public class ServletUtil {
 			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String username = user.getUsername();
-			if (StringUtils.hasText(user.getDisplayName())) {
+			if (!StringUtils.isBlank(user.getDisplayName())) {
 				username = user.getDisplayName();
 			}
-			links.put(userPage, new WikiMessage("usermenu.user", username));
+			// user name will be escaped by the jamwiki:link tag
+			WikiMessage userMenuMessage = new WikiMessage("usermenu.user");
+			userMenuMessage.setParamsWithoutEscaping(new String[]{username});
+			links.put(userPage, userMenuMessage);
 			links.put(userCommentsPage, new WikiMessage("usermenu.usercomments"));
 			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
 		}
@@ -240,7 +244,7 @@ public class ServletUtil {
 				parserInput.setLocale(locale);
 				parserInput.setVirtualWiki(virtualWiki);
 				parserInput.setTopicName(topicName);
-				content = WikiUtil.parse(parserInput, null, content);
+				content = ParserUtil.parse(parserInput, null, content);
 			}
 			WikiCache.addToCache(WikiBase.CACHE_PARSED_TOPIC_CONTENT, key, content);
 		} catch (Exception e) {
@@ -311,7 +315,7 @@ public class ServletUtil {
 			// new topic, edit away...
 			return true;
 		}
-		if (topic.getAdminOnly() && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
+		if (topic.getAdminOnly() && !user.hasRole(Role.ROLE_ADMIN)) {
 			return false;
 		}
 		if (topic.getReadOnly()) {
@@ -343,7 +347,7 @@ public class ServletUtil {
 		if (topic.getReadOnly()) {
 			return false;
 		}
-		if (topic.getAdminOnly() && (user == null || !user.hasRole(Role.ROLE_ADMIN))) {
+		if (topic.getAdminOnly() && !user.hasRole(Role.ROLE_ADMIN)) {
 			return false;
 		}
 		return true;
@@ -361,7 +365,7 @@ public class ServletUtil {
 	protected static boolean isTopic(HttpServletRequest request, String value) {
 		try {
 			String topic = WikiUtil.getTopicFromURI(request);
-			if (!StringUtils.hasText(topic)) {
+			if (StringUtils.isBlank(topic)) {
 				return false;
 			}
 			if (value != null &&  topic.equals(value)) {
@@ -419,7 +423,7 @@ public class ServletUtil {
 		}
 		// load cached top area, nav bar, etc.
 		ServletUtil.buildLayout(request, next);
-		if (!StringUtils.hasText(pageInfo.getTopicName())) {
+		if (StringUtils.isBlank(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
 		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
@@ -490,6 +494,7 @@ public class ServletUtil {
 		}
 		if (virtualWiki == null) {
 			logger.severe("No virtual wiki found for " + virtualWikiName);
+			virtualWiki = new VirtualWiki();
 			virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 			virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
 		}
@@ -545,13 +550,13 @@ public class ServletUtil {
 		pageInfo.reset();
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		String target = request.getParameter("target");
-		if (!StringUtils.hasText(target)) {
-			if (!StringUtils.hasText(topic)) {
+		if (StringUtils.isBlank(target)) {
+			if (StringUtils.isBlank(topic)) {
 				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
 			target = topic;
-			if (StringUtils.hasText(request.getQueryString())) {
+			if (!StringUtils.isBlank(request.getQueryString())) {
 				target += "?" + request.getQueryString();
 			}
 		}
@@ -578,7 +583,7 @@ public class ServletUtil {
 	 */
 	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		if (!StringUtils.hasText(virtualWiki)) {
+		if (StringUtils.isBlank(virtualWiki)) {
 			virtualWiki = WikiBase.DEFAULT_VWIKI;
 		}
 		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
@@ -632,9 +637,8 @@ public class ServletUtil {
 		parserInput.setVirtualWiki(virtualWiki);
 		parserInput.setAllowSectionEdit(sectionEdit);
 		ParserDocument parserDocument = new ParserDocument();
-		String content = WikiUtil.parse(parserInput, parserDocument, topic.getTopicContent());
-		// FIXME - the null check should be unnecessary
-		if (parserDocument != null && parserDocument.getCategories().size() > 0) {
+		String content = ParserUtil.parse(parserInput, parserDocument, topic.getTopicContent());
+		if (parserDocument.getCategories().size() > 0) {
 			LinkedHashMap categories = new LinkedHashMap();
 			for (Iterator iterator = parserDocument.getCategories().keySet().iterator(); iterator.hasNext();) {
 				String key = (String)iterator.next();

@@ -24,12 +24,12 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.UserHandler;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * Implementation of the {@link org.jamwiki.UserHandler} interface that uses
@@ -82,7 +82,7 @@ public class LdapUserHandler implements UserHandler {
 		// convert single user value to full path
 		value = Environment.getValue(Environment.PROP_LDAP_FIELD_USERID) + "=" + value;
 		String context = Environment.getValue(Environment.PROP_LDAP_CONTEXT);
-		if (StringUtils.hasText(context)) {
+		if (!StringUtils.isBlank(context)) {
 			// add context
 			value += "," + context;
 		}
@@ -99,7 +99,7 @@ public class LdapUserHandler implements UserHandler {
 		Hashtable env = new Hashtable();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, Environment.getValue(Environment.PROP_LDAP_FACTORY_CLASS));
 		env.put(Context.PROVIDER_URL, Environment.getValue(Environment.PROP_LDAP_URL));
-		if (StringUtils.hasText(username)) {
+		if (!StringUtils.isBlank(username)) {
 			// "simple" "DIGEST-MD5"
 			env.put(Context.SECURITY_AUTHENTICATION, Environment.getValue(Environment.PROP_LDAP_SECURITY_AUTHENTICATION));
 			// cn=login, ou=NewHires, o=JNDITutorial

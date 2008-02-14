@@ -18,11 +18,11 @@ package org.jamwiki.parser.jflex;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * Utility methods used with the Mediawiki lexers.
@@ -58,7 +58,7 @@ public class ParserUtil {
 	 * not very efficient.
 	 */
 	protected static String parseFragment(ParserInput parserInput, String raw, int mode) throws Exception {
-		if (!StringUtils.hasText(raw)) {
+		if (StringUtils.isBlank(raw)) {
 			return raw;
 		}
 		JFlexParser parser = new JFlexParser(parserInput);
@@ -72,7 +72,7 @@ public class ParserUtil {
 	 */
 	protected static String sanitizeHtmlTag(String tag) {
 		String result = tag.trim();
-		result = StringUtils.deleteAny(result, " ").toLowerCase();
+		result = StringUtils.remove(result, " ").toLowerCase();
 		if (result.endsWith("/>")) {
 			// spaces were stripped, so make sure tag is of the form "<br />"
 			result = result.substring(0, result.length() - 2) + " />";
@@ -123,7 +123,7 @@ public class ParserUtil {
 			result += "/";
 		}
 		result += tagKeyword.toLowerCase().trim();
-		if (StringUtils.hasText(attributes)) {
+		if (!StringUtils.isBlank(attributes)) {
 			attributes = ParserUtil.validateHtmlTagAttributes(attributes);
 			result += " " + attributes.trim();
 		}
@@ -139,7 +139,7 @@ public class ParserUtil {
 	 * a bad thing, so clean up HTML tags to remove any such attributes.
 	 */
 	protected static String validateHtmlTagAttributes(String attributes) {
-		if (!StringUtils.hasText(attributes)) {
+		if (StringUtils.isBlank(attributes)) {
 			return attributes;
 		}
 		if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT)) {

@@ -40,7 +40,7 @@ public interface UserHandler {
 	 * @throws Exception Thrown if an error occurs while adding the user
 	 *  information, or if the data store is read-only.
 	 */
-	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
+	void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 
 	/**
 	 * Determine if a value matching the given username and password exists in
@@ -53,7 +53,7 @@ public interface UserHandler {
 	 * @throws Exception Thrown if an error occurs while accessing the data
 	 *  store.
 	 */
-	public boolean authenticate(String username, String password) throws Exception;
+	boolean authenticate(String username, String password) throws Exception;
 
 	/**
 	 * This method returns <code>true</code> if the user information data
@@ -62,7 +62,7 @@ public interface UserHandler {
 	 * @return <code>true</code> if the user information data store is
 	 *  writeable, and <code>false</code> if it is read-only.
 	 */
-	public boolean isWriteable();
+	boolean isWriteable();
 
 	/**
 	 * Given a username, retrieving a WikiUserInfo containing values for
@@ -75,7 +75,7 @@ public interface UserHandler {
 	 * @throws Exception Thrown if an error occurs while retrieving user
 	 *  information.
 	 */
-	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception;
+	WikiUserInfo lookupWikiUserInfo(String username) throws Exception;
 
 	/**
 	 *
@@ -88,5 +88,5 @@ public interface UserHandler {
 	 * @throws Exception Thrown if an error occurs while updating the user
 	 *  information, or if the data store is read-only.
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
+	void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 }

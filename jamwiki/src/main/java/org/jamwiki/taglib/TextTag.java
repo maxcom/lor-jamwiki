@@ -18,8 +18,8 @@ package org.jamwiki.taglib;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -56,29 +56,29 @@ public class TextTag extends TagSupport {
 				tagName = tmp.toString();
 			}
 			output += " name=\"" + StringEscapeUtils.unescapeHtml(tagName) + "\"";
-			if (StringUtils.hasText(this.id)) {
+			if (!StringUtils.isBlank(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
 				if (tmp != null) {
 					tagId = tmp.toString();
 				}
 				output += " id=\"" + tagId + "\"";
 			}
-			if (StringUtils.hasText(this.maxlength)) {
+			if (!StringUtils.isBlank(this.maxlength)) {
 				tagMaxlength = ExpressionEvaluationUtils.evaluateInteger("maxlength", this.maxlength, pageContext);
 				output += " maxlength=\"" + tagMaxlength + "\"";
 			}
-			if (StringUtils.hasText(this.size)) {
+			if (!StringUtils.isBlank(this.size)) {
 				tagSize = ExpressionEvaluationUtils.evaluateInteger("size", this.size, pageContext);
 				output += " size=\"" + tagSize + "\"";
 			}
-			if (StringUtils.hasText(this.style)) {
+			if (!StringUtils.isBlank(this.style)) {
 				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
 				if (tmp != null) {
 					tagStyle = tmp.toString();
 				}
 				output += " style=\"" + tagStyle + "\"";
 			}
-			if (StringUtils.hasText(this.value)) {
+			if (!StringUtils.isBlank(this.value)) {
 				tmp = ExpressionEvaluationUtils.evaluate("value", this.value, pageContext);
 				if (tmp != null) {
 					tagValue = tmp.toString();

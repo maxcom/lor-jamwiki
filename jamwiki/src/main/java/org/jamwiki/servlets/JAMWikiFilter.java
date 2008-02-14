@@ -88,7 +88,8 @@ public class JAMWikiFilter implements Filter {
 				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Setup";
 				redirect(request, response, url);
 				return true;
-			} else if (redirectUpgrade(request)) {
+			}
+			if (redirectUpgrade(request)) {
 				// redirect to upgrade page
 				String url = request.getContextPath() + "/" + WikiBase.DEFAULT_VWIKI + "/Special:Upgrade";
 				redirect(request, response, url);

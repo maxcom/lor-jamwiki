@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Vector;
 import net.sf.ehcache.Element;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
@@ -43,6 +44,7 @@ import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserDocument;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
@@ -50,7 +52,6 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * Default implementation of the {@link org.jamwiki.DataHandler} interface for
@@ -735,7 +736,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception {
-		if (!StringUtils.hasText(virtualWiki) || !StringUtils.hasText(topicName)) {
+		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
 		Connection conn = null;
@@ -981,7 +982,7 @@ public class AnsiDataHandler implements DataHandler {
 			// first rename the source topic with the new destination name
 			String fromTopicName = fromTopic.getName();
 			fromTopic.setName(destination);
-			ParserDocument fromParserDocument = WikiUtil.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
+			ParserDocument fromParserDocument = ParserUtil.parserDocument(fromTopic.getTopicContent(), fromTopic.getVirtualWiki(), fromTopic.getName());
 			writeTopic(fromTopic, fromVersion, fromParserDocument, true, conn);
 			// now either create a new topic that is a redirect with the
 			// source topic's old name, or else undelete the new topic and
@@ -997,14 +998,14 @@ public class AnsiDataHandler implements DataHandler {
 				toTopic.setTopicId(-1);
 				toTopic.setName(fromTopicName);
 			}
-			String content = WikiUtil.parserRedirectContent(destination);
+			String content = ParserUtil.parserRedirectContent(destination);
 			toTopic.setRedirectTo(destination);
 			toTopic.setTopicType(Topic.TYPE_REDIRECT);
 			toTopic.setTopicContent(content);
 			TopicVersion toVersion = fromVersion;
 			toVersion.setTopicVersionId(-1);
 			toVersion.setVersionContent(content);
-			ParserDocument toParserDocument = WikiUtil.parserDocument(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
+			ParserDocument toParserDocument = ParserUtil.parserDocument(toTopic.getTopicContent(), toTopic.getVirtualWiki(), toTopic.getName());
 			writeTopic(toTopic, toVersion, toParserDocument, true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
@@ -1082,7 +1083,7 @@ public class AnsiDataHandler implements DataHandler {
 			// update topic to indicate deleted, add delete topic version.  if
 			// topic has categories or other metadata then parser document is
 			// also needed.
-			ParserDocument parserDocument = WikiUtil.parserDocument(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
+			ParserDocument parserDocument = ParserUtil.parserDocument(topic.getTopicContent(), topic.getVirtualWiki(), topic.getName());
 			topic.setDeleteDate(null);
 			this.writeTopic(topic, topicVersion, parserDocument, userVisible, conn);
 		} catch (Exception e) {
@@ -1106,7 +1107,7 @@ public class AnsiDataHandler implements DataHandler {
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
 			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
-			writeTopic(topic, topicVersion, WikiUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
+			writeTopic(topic, topicVersion, ParserUtil.parserDocument(topic.getTopicContent(), virtualWiki, topicName), true, conn);
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
@@ -1254,7 +1255,7 @@ public class AnsiDataHandler implements DataHandler {
 	 *  page moves.
 	 * @param parserDocument The parserDocument object that contains a list of
 	 *  links in the topic content, categories, etc.  This parameter may be
-	 *  set with the WikiUtil.getParserDocument() method.
+	 *  set with the ParserUtil.parserDocument() method.
 	 * @param transactionObject Database connection or other parameters
 	 *  required for updates.
 	 * @param userVisible A flag indicating whether or not this change should

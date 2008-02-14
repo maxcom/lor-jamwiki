@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.jamwiki</groupId>
 		<artifactId>jamwiki-parent</artifactId>
-		<version>0.6.2-SNAPSHOT</version>
+		<version>0.6.3-SNAPSHOT</version>
 		<relativePath>../jamwiki-parent</relativePath>
 	</parent>
 	<groupId>org.jamwiki</groupId>
@@ -146,6 +146,11 @@
 
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 		</dependency>
 
@@ -159,9 +164,7 @@
 			<artifactId>standard</artifactId>
 		</dependency>
 
-
-		<!--  These packages are in /repository
-		-->
+		<!--  These packages are in /repository -->
 		<dependency>
 			<groupId>bliki</groupId>
 			<artifactId>bliki</artifactId>
@@ -252,6 +255,7 @@
 		<contributor><name>Tarik Menbhi</name><roles><role>translator (Dutch)</role></roles></contributor>
 		<contributor><name>Wim Borghs (Angel)</name><roles><role>translator (Dutch)</role></roles></contributor>
 		<contributor><name>Henri Gomez</name><email>hgomez@users.sf.net</email><roles><role>translator (French)</role></roles></contributor>
+		<contributor><name>Manuel Meixide</name><url>http://bagonix.net/</url><organizationUrl>http://ciberirmandade.org/</organizationUrl><roles><role>translator (Galician)</role><role>translator (Spanish)</role><role>translator (Portugese)</role></roles></contributor>
 		<contributor><name>Axel Kramer</name><email>axelclk</email><roles><role>translator (German)</role></roles></contributor>
 		<contributor><name>Frank Reifenstahl (frareinif)</name><roles><role>translator (German)</role></roles></contributor>
 		<contributor><name>Rainer Schmitz (swift)</name><roles><role>translator (German)</role></roles></contributor>

@@ -32,6 +32,7 @@ import org.acegisecurity.AuthenticationCredentialsNotFoundException;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.UserHandler;
@@ -44,13 +45,9 @@ import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.Watchlist;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.parser.AbstractParser;
-import org.jamwiki.parser.ParserDocument;
-import org.jamwiki.parser.ParserInput;
 import org.jamwiki.search.SearchEngine;
 import org.jamwiki.servlets.ServletUtil;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -210,16 +207,16 @@ public class WikiUtil {
 	 * @return The comments article name for the article name.
 	 */
 	public static String extractCommentsLink(String name) throws Exception {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new Exception("Empty topic name " + name);
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+		if (StringUtils.isBlank(wikiLink.getNamespace())) {
 			return NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + name;
 		}
 		String namespace = wikiLink.getNamespace();
 		String commentsNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return (StringUtils.hasText(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
+		return (!StringUtils.isBlank(commentsNamespace)) ? commentsNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : NamespaceHandler.NAMESPACE_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle();
 	}
 
 	/**
@@ -232,16 +229,16 @@ public class WikiUtil {
 	 * @return The topic article name for the article name.
 	 */
 	public static String extractTopicLink(String name) throws Exception {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new Exception("Empty topic name " + name);
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
-		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+		if (StringUtils.isBlank(wikiLink.getNamespace())) {
 			return name;
 		}
 		String namespace = wikiLink.getNamespace();
 		String mainNamespace = NamespaceHandler.getMainNamespace(namespace);
-		return (StringUtils.hasText(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
 	}
 
 	/**
@@ -249,7 +246,7 @@ public class WikiUtil {
 	 */
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
 		int count = attempts;
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || !StringUtils.hasText(parent.getRedirectTo())) {
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(parent.getRedirectTo())) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
@@ -264,7 +261,7 @@ public class WikiUtil {
 			// child being redirected to doesn't exist, return parent
 			return parent;
 		}
-		if (!StringUtils.hasText(child.getRedirectTo())) {
+		if (StringUtils.isBlank(child.getRedirectTo())) {
 			// found a topic that is not a redirect, return
 			return child;
 		}
@@ -277,6 +274,46 @@ public class WikiUtil {
 	}
 
 	/**
+	 * Retrieve a parameter from the servlet request.  This method works around
+	 * some issues encountered when retrieving non-ASCII values from URL
+	 * parameters.
+	 *
+	 * @param request The servlet request object.
+	 * @param name The parameter name to be retrieved.
+	 * @return The decoded parameter value retrieved from the request.
+	 */
+	public static String getParameterFromRequest(HttpServletRequest request, String name) throws Exception {
+		String value = null;
+		if (request.getMethod().equalsIgnoreCase("GET")) {
+			// parameters passed via the URL are URL encoded, so request.getParameter may
+			// not interpret non-ASCII characters properly.  This code attempts to work
+			// around that issue by manually decoding.  yes, this is ugly and it would be
+			// great if someone could eventually make it unnecessary.
+			String query = request.getQueryString();
+			if (StringUtils.isBlank(query)) {
+				return null;
+			}
+			String prefix = name + "=";
+			int pos = query.indexOf(prefix);
+			if (pos != -1 && (pos + prefix.length()) < query.length()) {
+				value = query.substring(pos + prefix.length());
+				if (value.indexOf("&") != -1) {
+					value = value.substring(0, value.indexOf("&"));
+				}
+			}
+			return Utilities.decodeFromURL(value);
+		}
+		value = request.getParameter(name);
+		if (value == null) {
+			value = (String)request.getAttribute(name);
+		}
+		if (value == null) {
+			return null;
+		}
+		return Utilities.decodeFromRequest(value);
+	}
+
+	/**
 	 * Retrieve a topic name from the servlet request.  This method will
 	 * retrieve a request parameter matching the PARAMETER_TOPIC value,
 	 * and will decode it appropriately.
@@ -285,34 +322,7 @@ public class WikiUtil {
 	 * @return The decoded topic name retrieved from the request.
 	 */
 	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
-		String topic = null;
-		if (request.getMethod().equalsIgnoreCase("GET")) {
-			// parameters passed via the URL and URL encoded, so request.getParameter may
-			// not interpret non-ASCII characters properly.  This code attempts to work
-			// around that issue by manually decoding.  yes, this is ugly and it would be
-			// great if someone could eventually make it unnecessary.
-			String query = request.getQueryString();
-			if (!StringUtils.hasText(query)) {
-				return null;
-			}
-			String prefix = ServletUtil.PARAMETER_TOPIC + "=";
-			int pos = query.indexOf(prefix);
-			if (pos != -1 && (pos + prefix.length()) < query.length()) {
-				topic = query.substring(pos + prefix.length());
-				if (topic.indexOf("&") != -1) {
-					topic = topic.substring(0, topic.indexOf("&"));
-				}
-			}
-			return Utilities.decodeFromURL(topic);
-		}
-		topic = request.getParameter(ServletUtil.PARAMETER_TOPIC);
-		if (topic == null) {
-			topic = (String)request.getAttribute(ServletUtil.PARAMETER_TOPIC);
-		}
-		if (topic == null) {
-			return null;
-		}
-		return Utilities.decodeFromRequest(topic);
+		return WikiUtil.getParameterFromRequest(request, ServletUtil.PARAMETER_TOPIC);
 	}
 
 	/**
@@ -405,7 +415,7 @@ public class WikiUtil {
 	 */
 	public static boolean isCommentsPage(String topicName) {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
-		if (!StringUtils.hasText(wikiLink.getNamespace())) {
+		if (StringUtils.isBlank(wikiLink.getNamespace())) {
 			return false;
 		}
 		String namespace = wikiLink.getNamespace();
@@ -445,170 +455,6 @@ public class WikiUtil {
 	}
 
 	/**
-	 * Using the system parser, parse system content.
-	 *
-	 * @param parserInput A ParserInput object that contains parser
-	 *  configuration information.
-	 * @param parserDocument A ParserDocument object that will hold metadata
-	 *  output.  If this parameter is <code>null</code> then metadata generated
-	 *  during parsing will not be available to the calling method.
-	 * @param content The raw topic content that is to be parsed.
-	 * @return The parsed content.
-	 * @throws Exception Thrown if there are any parsing errors.
-	 */
-	public static String parse(ParserInput parserInput, ParserDocument parserDocument, String content) throws Exception {
-		if (content == null) {
-			return null;
-		}
-		if (parserDocument == null) {
-			parserDocument = new ParserDocument();
-		}
-		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseHTML(parserDocument, content);
-	}
-
-	/**
-	 * Retrieve a default ParserDocument object for a given topic name.  Note that
-	 * the content has almost no parsing performed on it other than to generate
-	 * parser output metadata.
-	 *
-	 * @param content The raw topic content.
-	 * @return Returns a minimal ParserDocument object initialized primarily with
-	 *  parser metadata such as links.
-	 * @throws Exception Thrown if a parser error occurs.
-	 */
-	public static ParserDocument parserDocument(String content, String virtualWiki, String topicName) throws Exception {
-		ParserInput parserInput = new ParserInput();
-		parserInput.setVirtualWiki(virtualWiki);
-		parserInput.setTopicName(topicName);
-		parserInput.setAllowSectionEdit(false);
-		return WikiUtil.parseMetadata(parserInput, content);
-	}
-
-	/**
-	 * This method provides a way to parse content and set all output metadata,
-	 * such as link values used by the search engine.
-	 *
-	 * @param parserInput A ParserInput object that contains parser configuration
-	 *  information.
-	 * @param content The raw topic content that is to be parsed.
-	 * @return Returns a ParserDocument object with minimally parsed topic content
-	 *  and other parser output fields set.
-	 * @throws Exception Thrown if there are any parsing errors.
-	 */
-	public static ParserDocument parseMetadata(ParserInput parserInput, String content) throws Exception {
-		AbstractParser parser = parserInstance(parserInput);
-		ParserDocument parserDocument = new ParserDocument();
-		parser.parseMetadata(parserDocument, content);
-		return parserDocument;
-	}
-
-	/**
-	 * Perform a bare minimum of parsing as required prior to saving a topic
-	 * to the database.  In general this method will simply parse signature
-	 * tags are return.
-	 *
-	 * @param parserInput A ParserInput object that contains parser configuration
-	 *  information.
-	 * @param raw The raw Wiki syntax to be converted into HTML.
-	 * @return The parsed content.
-	 * @throws Exception Thrown if any error occurs during parsing.
-	 */
-	public static String parseMinimal(ParserInput parserInput, String raw) throws Exception {
-		AbstractParser parser = parserInstance(parserInput);
-		return parser.parseMinimal(raw);
-	}
-
-	/**
-	 * Utility method to retrieve an instance of the current system parser.
-	 *
-	 * @param parserInput A ParserInput object that contains parser configuration
-	 *  information.
-	 * @return An instance of the system parser.
-	 * @throws Exception Thrown if a parser instance can not be instantiated.
-	 */
-	public static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
-		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
-		logger.fine("Using parser: " + parserClass);
-		Class clazz = ClassUtils.forName(parserClass);
-		Class[] parameterTypes = new Class[1];
-		parameterTypes[0] = ClassUtils.forName("org.jamwiki.parser.ParserInput");
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[1];
-		initArgs[0] = parserInput;
-		return (AbstractParser)constructor.newInstance(initArgs);
-	}
-
-	/**
-	 * Given a topic name, return the parser-specific syntax to indicate a page
-	 * redirect.
-	 *
-	 * @param topicName The name of the topic that is being redirected to.
-	 * @return A string containing the syntax indicating a redirect.
-	 * @throws Exception Thrown if a parser instance cannot be instantiated or
-	 *  if any other parser error occurs.
-	 */
-	public static String parserRedirectContent(String topicName) throws Exception {
-		AbstractParser parser = parserInstance(null);
-		return parser.buildRedirectContent(topicName);
-	}
-
-	/**
-	 * When editing a section of a topic, this method provides a way of slicing
-	 * out a given section of the raw topic content.
-	 *
-	 * @param request The servlet request object.
-	 * @param virtualWiki The virtual wiki for the topic being parsed.
-	 * @param topicName The name of the topic being parsed.
-	 * @param targetSection The section to be sliced and returned.
-	 * @return Returns the raw topic content for the target section.
-	 * @throws Exception Thrown if a parser error occurs.
-	 */
-	public static String parseSlice(HttpServletRequest request, String virtualWiki, String topicName, int section) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null || topic.getTopicContent() == null) {
-			return null;
-		}
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
-		AbstractParser parser = WikiUtil.parserInstance(parserInput);
-		ParserDocument parserDocument = new ParserDocument();
-		return parser.parseSlice(parserDocument, topic.getTopicContent(), section);
-	}
-
-	/**
-	 * When editing a section of a topic, this method provides a way of splicing
-	 * an edited section back into the raw topic content.
-	 *
-	 * @param parserDocument A ParserDocument object containing parser
-	 *  metadata output.
-	 * @param request The servlet request object.
-	 * @param virtualWiki The virtual wiki for the topic being parsed.
-	 * @param topicName The name of the topic being parsed.
-	 * @param targetSection The section to be sliced and returned.
-	 * @param replacementText The edited content that is to be spliced back into
-	 *  the raw topic.
-	 * @return The raw topic content including the new replacement text.
-	 * @throws Exception Thrown if a parser error occurs.
-	 */
-	public static String parseSplice(ParserDocument parserDocument, HttpServletRequest request, String virtualWiki, String topicName, int targetSection, String replacementText) throws Exception {
-		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
-		if (topic == null || topic.getTopicContent() == null) {
-			return null;
-		}
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
-		parserInput.setTopicName(topicName);
-		parserInput.setVirtualWiki(virtualWiki);
-		AbstractParser parser = WikiUtil.parserInstance(parserInput);
-		return parser.parseSplice(parserDocument, topic.getTopicContent(), targetSection, replacementText);
-	}
-
-	/**
 	 * Utility method for reading special topic values from files and returning
 	 * the file contents.
 	 *
@@ -625,7 +471,7 @@ public class WikiUtil {
 			country = locale.getCountry();
 		}
 		String subdirectory = "";
-		if (StringUtils.hasText(language) && StringUtils.hasText(country)) {
+		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
 				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
@@ -634,7 +480,7 @@ public class WikiUtil {
 				logger.info("File " + filename + " does not exist");
 			}
 		}
-		if (contents == null && StringUtils.hasText(language)) {
+		if (contents == null && !StringUtils.isBlank(language)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
 				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
@@ -674,7 +520,7 @@ public class WikiUtil {
 		// FIXME - needs testing on other platforms
 		uri = Utilities.convertEncoding(uri, "ISO-8859-1", "UTF-8");
 		String contextPath = request.getContextPath().trim();
-		if (!StringUtils.hasText(uri) || contextPath == null) {
+		if (StringUtils.isBlank(uri) || contextPath == null) {
 			return null;
 		}
 		uri = uri.substring(contextPath.length() + 1);
@@ -711,7 +557,7 @@ public class WikiUtil {
 		StringTokenizer tokens = new StringTokenizer(listString, "\n\r ,.");
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken();
-			if (!StringUtils.hasText(token)) {
+			if (StringUtils.isBlank(token)) {
 				continue;
 			}
 			list.add(token.toLowerCase());
@@ -827,7 +673,7 @@ public class WikiUtil {
 		if (!m.matches()) {
 			throw new WikiException(new WikiMessage("roles.error.name", role.getAuthority()));
 		}
-		if (StringUtils.hasText(role.getDescription()) && role.getDescription().length() > 200) {
+		if (!StringUtils.isBlank(role.getDescription()) && role.getDescription().length() > 200) {
 			throw new WikiException(new WikiMessage("roles.error.description"));
 		}
 		// FIXME - throw a user-friendly error if the role name is already in use
@@ -903,7 +749,7 @@ public class WikiUtil {
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateTopicName(String name) throws WikiException {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("common.exception.notopic"));
 		}
 		if (PseudoTopicHandler.isPseudoTopic(name)) {
@@ -928,7 +774,7 @@ public class WikiUtil {
 	 * @throws WikiException Thrown if the user name is invalid.
 	 */
 	public static void validateUserName(String name) throws WikiException {
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			throw new WikiException(new WikiMessage("error.loginempty"));
 		}
 		Matcher m = WikiUtil.VALID_USER_LOGIN_PATTERN.matcher(name);

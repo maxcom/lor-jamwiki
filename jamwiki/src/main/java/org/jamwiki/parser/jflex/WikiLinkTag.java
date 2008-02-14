@@ -19,6 +19,7 @@ package org.jamwiki.parser.jflex;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
@@ -29,7 +30,6 @@ import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * This class parses wiki links of the form <code>[[Topic to Link To|Link Text]]</code>.
@@ -64,30 +64,30 @@ public class WikiLinkTag implements ParserTag {
 				// invalid link
 				return raw;
 			}
-			if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
+			if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 				// invalid topic
 				return raw;
 			}
-			if (!wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_IMAGE)) {
+			if (!wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace()) && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_IMAGE)) {
 				// parse as an image
 				return this.parseImageLink(parserInput, mode, wikiLink);
 			}
-			if (StringUtils.hasText(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
+			if (!StringUtils.isBlank(wikiLink.getNamespace()) && InterWikiHandler.isInterWiki(wikiLink.getNamespace())) {
 				// inter-wiki link
 				return LinkUtil.interWiki(wikiLink);
 			}
-			if (wikiLink.getColon() && StringUtils.hasText(wikiLink.getNamespace())) {
+			if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
 				if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
 					virtualWiki = wikiLink.getNamespace();
 					wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
 				}
 			}
-			if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getDestination())) {
+			if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getDestination())) {
 				wikiLink.setText(wikiLink.getDestination());
-				if (StringUtils.hasText(wikiLink.getSection())) {
+				if (!StringUtils.isBlank(wikiLink.getSection())) {
 					wikiLink.setText(wikiLink.getText() + "#" + Utilities.decodeFromURL(wikiLink.getSection()));
 				}
-			} else if (!StringUtils.hasText(wikiLink.getText()) && StringUtils.hasText(wikiLink.getSection())) {
+			} else if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getSection())) {
 				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection()));
 			} else {
 				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
@@ -124,11 +124,11 @@ public class WikiLinkTag implements ParserTag {
 		String caption = null;
 		String align = null;
 		int maxDimension = -1;
-		if (StringUtils.hasText(wikiLink.getText())) {
+		if (!StringUtils.isBlank(wikiLink.getText())) {
 			StringTokenizer tokens = new StringTokenizer(wikiLink.getText(), "|");
 			while (tokens.hasMoreTokens()) {
 				String token = tokens.nextToken();
-				if (!StringUtils.hasText(token)) {
+				if (StringUtils.isBlank(token)) {
 					continue;
 				}
 				if (token.equalsIgnoreCase("noframe")) {
@@ -150,7 +150,7 @@ public class WikiLinkTag implements ParserTag {
 					} else {
 						// FIXME - this is a hack.  images may contain piped links, so if
 						// there was previous caption info append the new info.
-						if (!StringUtils.hasText(caption)) {
+						if (StringUtils.isBlank(caption)) {
 							caption = token;
 						} else {
 							caption += "|" + token;
@@ -175,7 +175,7 @@ public class WikiLinkTag implements ParserTag {
 	 * @return A WikiLink object that represents the link.
 	 */
 	private WikiLink parseWikiLink(String raw) {
-		if (!StringUtils.hasText(raw)) {
+		if (StringUtils.isBlank(raw)) {
 			return new WikiLink();
 		}
 		Matcher m = WIKI_LINK_PATTERN.matcher(raw.trim());
@@ -194,7 +194,7 @@ public class WikiLinkTag implements ParserTag {
 	 */
 	private String processLinkContent(ParserInput parserInput, ParserDocument parserDocument, int mode, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
-		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
+		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			// no destination or section
 			return raw;
 		}
@@ -210,13 +210,13 @@ public class WikiLinkTag implements ParserTag {
 	 */
 	private void processLinkMetadata(ParserDocument parserDocument, String raw) {
 		WikiLink wikiLink = this.parseWikiLink(raw);
-		if (!StringUtils.hasText(wikiLink.getDestination()) && !StringUtils.hasText(wikiLink.getSection())) {
+		if (StringUtils.isBlank(wikiLink.getDestination()) && StringUtils.isBlank(wikiLink.getSection())) {
 			return;
 		}
 		if (!wikiLink.getColon() && wikiLink.getNamespace() != null && wikiLink.getNamespace().equals(NamespaceHandler.NAMESPACE_CATEGORY)) {
 			parserDocument.addCategory(wikiLink.getDestination(), wikiLink.getText());
 		}
-		if (StringUtils.hasText(wikiLink.getDestination())) {
+		if (!StringUtils.isBlank(wikiLink.getDestination())) {
 			parserDocument.addLink(wikiLink.getDestination());
 		}
 	}

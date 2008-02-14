@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
@@ -33,7 +34,6 @@ import org.jamwiki.utils.SortedProperties;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -55,12 +55,12 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String function = request.getParameter("function");
-		if (StringUtils.hasText(function)) {
+		if (!StringUtils.isBlank(function)) {
 			translate(request, next, pageInfo);
 		} else {
 			view(request, next, pageInfo);
 		}
-		String language = (StringUtils.hasText(request.getParameter("language"))) ? request.getParameter("language") : "en";
+		String language = this.retrieveLanguage(request);
 		next.addObject("language", language);
 		SortedProperties defaultTranslations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
 		next.addObject("defaultTranslations", new TreeMap(defaultTranslations));
@@ -70,14 +70,32 @@ public class TranslationServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private String filename(HttpServletRequest request) {
+	private String filename(String language) {
 		String filename = "ApplicationResources.properties";
-		String language = request.getParameter("language");
-		if (StringUtils.hasText(language) && !language.equalsIgnoreCase("en")) {
+		if (!StringUtils.isBlank(language) && !language.equalsIgnoreCase("en")) {
 			// FIXME - should also check for valid language code
 			filename = "ApplicationResources_" + language + ".properties";
 		}
 		return filename;
+	}
+
+	/**
+	 * If a language is specified in the form, use it, other default to default language or
+	 * request language if no default is available.
+	 */
+	private String retrieveLanguage(HttpServletRequest request) {
+		String language = request.getParameter("language");
+		if (StringUtils.isBlank(language)) {
+			WikiUser user = WikiUtil.currentUser();
+			if (!StringUtils.isBlank(user.getDefaultLocale())) {
+				language = user.getDefaultLocale().split("_")[0];
+			} else if (request.getLocale() != null) {
+				language = request.getLocale().getLanguage();
+			} else {
+				language = "en";
+			}
+		}
+		return language;
 	}
 
 	/**
@@ -95,17 +113,19 @@ public class TranslationServlet extends JAMWikiServlet {
 				continue;
 			}
 			filename = file.getName();
-			if (!StringUtils.hasText(filename)) {
+			if (StringUtils.isBlank(filename)) {
 				continue;
 			}
 			if (!filename.startsWith("ApplicationResources_") || !filename.endsWith(".properties")) {
 				continue;
 			}
 			String code = filename.substring("ApplicationResources_".length(), filename.length() - ".properties".length());
-			if (StringUtils.hasText(code)) {
+			if (!StringUtils.isBlank(code)) {
 				codes.add(code);
 			}
 		}
+		// there is no ApplicationResources_en.properties file - only ApplicationResources.properties, so add "en"
+		codes.add("en");
 		return codes;
 	}
 
@@ -128,7 +148,8 @@ public class TranslationServlet extends JAMWikiServlet {
 			String value = request.getParameter(name);
 			translations.setProperty(key, value);
 		}
-		Environment.saveProperties(filename(request), translations, null);
+		String language = this.retrieveLanguage(request);
+		Environment.saveProperties(filename(language), translations, null);
 		this.writeTopic(request, null);
 		next.addObject("translations", new TreeMap(translations));
 		next.addObject("codes", this.retrieveTranslationCodes());
@@ -138,11 +159,10 @@ public class TranslationServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String language = request.getParameter("language");
-		String filename = filename(request);
+		String language = this.retrieveLanguage(request);
 		SortedProperties translations = new SortedProperties(Environment.loadProperties("ApplicationResources.properties"));
-		if (StringUtils.hasText(language)) {
-			filename = filename(request);
+		if (!StringUtils.isBlank(language)) {
+			String filename = filename(language);
 			translations.putAll(Environment.loadProperties(filename));
 		}
 		pageInfo.setContentJsp(JSP_ADMIN_TRANSLATION);
@@ -157,8 +177,9 @@ public class TranslationServlet extends JAMWikiServlet {
 	 */
 	protected void writeTopic(HttpServletRequest request, String editComment) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(request));
-		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(request)) + "\n</nowiki></pre>";
+		String language = request.getParameter("language");
+		String topicName = NamespaceHandler.NAMESPACE_JAMWIKI + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromRequest(filename(language));
+		String contents = "<pre><nowiki>\n" + Utilities.readFile(filename(language)) + "\n</nowiki></pre>";
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();

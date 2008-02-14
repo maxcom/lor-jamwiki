@@ -19,11 +19,11 @@ package org.jamwiki.servlets;
 import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -75,7 +75,7 @@ public class SearchServlet extends JAMWikiServlet {
 			pageInfo.setPageTitle(new WikiMessage("searchresult.title", searchField));
 		}
 		// forward back to the search page if the request is blank or null
-		if (!StringUtils.hasText(searchField)) {
+		if (StringUtils.isBlank(searchField)) {
 			pageInfo.setContentJsp(JSP_SEARCH);
 			pageInfo.setSpecial(true);
 			return;

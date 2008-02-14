@@ -18,8 +18,8 @@ package org.jamwiki.taglib;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 
 /**
@@ -47,14 +47,16 @@ public class AlternateTag extends TagSupport {
 		Object tmp = null;
 		try {
 			tmp = ExpressionEvaluationUtils.evaluate("value1", this.value1, pageContext);
-			if (tmp != null) {
-				tagValue1 = tmp.toString();
+			if (tmp == null) {
+				throw new IllegalArgumentException("value1 '" + ((this.value1 == null) ? "null" : this.value1) + "' evaluated to null in AlternateTag");
 			}
+			tagValue1 = tmp.toString();
 			tmp = ExpressionEvaluationUtils.evaluate("value2", this.value2, pageContext);
-			if (tmp != null) {
-				tagValue2 = tmp.toString();
+			if (tmp == null) {
+				throw new IllegalArgumentException("value2 '" + ((this.value2 == null) ? "null" : this.value2) + "' evaluated to null in AlternateTag");
 			}
-			if (StringUtils.hasText(this.attributeName)) {
+			tagValue2 = tmp.toString();
+			if (!StringUtils.isBlank(this.attributeName)) {
 				tmp = ExpressionEvaluationUtils.evaluate("attributeName", this.attributeName, pageContext);
 				if (tmp != null) {
 					tagAttributeName = tmp.toString();

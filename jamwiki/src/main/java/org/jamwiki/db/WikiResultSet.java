@@ -142,7 +142,8 @@ public class WikiResultSet {
 		if (this.rowPointer < 0) {
 			this.rowPointer = -1;
 			return false;
-		} else if (this.rowPointer >= this.totalRows) {
+		}
+		if (this.rowPointer >= this.totalRows) {
 			this.rowPointer = this.totalRows;
 			return false;
 		}

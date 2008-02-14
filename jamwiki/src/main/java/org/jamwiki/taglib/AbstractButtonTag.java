@@ -18,9 +18,8 @@ package org.jamwiki.taglib;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.ExpressionEvaluationUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -73,27 +72,27 @@ public abstract class AbstractButtonTag extends TagSupport {
 				tagName = tmp.toString();
 			}
 			output += " name=\"" + StringEscapeUtils.unescapeHtml(tagName) + "\"";
-			if (StringUtils.hasText(this.id)) {
+			if (!StringUtils.isBlank(this.id)) {
 				tmp = ExpressionEvaluationUtils.evaluate("id", this.id, pageContext);
 				if (tmp != null) {
 					tagId = tmp.toString();
 				}
 				output += " id=\"" + tagId + "\"";
 			}
-			if (StringUtils.hasText(this.style)) {
+			if (!StringUtils.isBlank(this.style)) {
 				tmp = ExpressionEvaluationUtils.evaluate("style", this.style, pageContext);
 				if (tmp != null) {
 					tagStyle = tmp.toString();
 				}
 				output += " style=\"" + tagStyle + "\"";
 			}
-			if (StringUtils.hasText(this.onchange)) {
+			if (!StringUtils.isBlank(this.onchange)) {
 				output += " onchange=\"" + this.onchange + "\"";
 			}
-			if (StringUtils.hasText(this.onclick)) {
+			if (!StringUtils.isBlank(this.onclick)) {
 				output += " onclick=\"" + this.onclick + "\"";
 			}
-			if (StringUtils.hasText(this.checked)) {
+			if (!StringUtils.isBlank(this.checked)) {
 				tmp = ExpressionEvaluationUtils.evaluate("checked", this.checked, pageContext);
 				if (tmp != null) {
 					tagChecked = tmp.toString();

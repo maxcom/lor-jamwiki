@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Topic;
@@ -38,7 +39,6 @@ import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.springframework.util.StringUtils;
 
 /**
  * <code>TemplateTag</code> parses Mediawiki template syntax, which allows
@@ -349,7 +349,7 @@ public class TemplateTag implements ParserTag {
 			name = raw;
 		}
 		name = name.trim();
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new Exception("No parameter name specified");
 		}
@@ -387,7 +387,7 @@ public class TemplateTag implements ParserTag {
 	 * the template name.
 	 */
 	private String parseTemplateName(String raw) throws Exception {
-		if (!StringUtils.hasText(raw)) {
+		if (StringUtils.isBlank(raw)) {
 			throw new Exception("Empty template text");
 		}
 		if (!raw.startsWith("{{") || !raw.endsWith("}}")) {
@@ -404,7 +404,7 @@ public class TemplateTag implements ParserTag {
 		if (this.isMagicWord(name)) {
 			return name;
 		}
-		if (!StringUtils.hasText(name)) {
+		if (StringUtils.isBlank(name)) {
 			// FIXME - no need for an exception
 			throw new Exception("No template name specified");
 		}
@@ -460,37 +460,48 @@ public class TemplateTag implements ParserTag {
 		if (name.equals(MAGIC_LOCAL_DAY)) {
 			formatter.applyPattern("d");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_DAY2)) {
+		}
+		if (name.equals(MAGIC_LOCAL_DAY2)) {
 			formatter.applyPattern("dd");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_DAY_NAME)) {
+		}
+		if (name.equals(MAGIC_LOCAL_DAY_NAME)) {
 			formatter.applyPattern("EEEE");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_DAY_OF_WEEK)) {
+		}
+		if (name.equals(MAGIC_LOCAL_DAY_OF_WEEK)) {
 			formatter.applyPattern("F");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_MONTH)) {
+		}
+		if (name.equals(MAGIC_LOCAL_MONTH)) {
 			formatter.applyPattern("MM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_MONTH_ABBR)) {
+		}
+		if (name.equals(MAGIC_LOCAL_MONTH_ABBR)) {
 			formatter.applyPattern("MMM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_MONTH_NAME)) {
+		}
+		if (name.equals(MAGIC_LOCAL_MONTH_NAME)) {
 			formatter.applyPattern("MMMM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_TIME)) {
+		}
+		if (name.equals(MAGIC_LOCAL_TIME)) {
 			formatter.applyPattern("HH:mm");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_HOUR)) {
+		}
+		if (name.equals(MAGIC_LOCAL_HOUR)) {
 			formatter.applyPattern("HH");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_WEEK)) {
+		}
+		if (name.equals(MAGIC_LOCAL_WEEK)) {
 			formatter.applyPattern("w");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_YEAR)) {
+		}
+		if (name.equals(MAGIC_LOCAL_YEAR)) {
 			formatter.applyPattern("yyyy");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_LOCAL_TIMESTAMP)) {
+		}
+		if (name.equals(MAGIC_LOCAL_TIMESTAMP)) {
 			formatter.applyPattern("yyyyMMddHHmmss");
 			return formatter.format(current);
 		}
@@ -499,37 +510,48 @@ public class TemplateTag implements ParserTag {
 		if (name.equals(MAGIC_CURRENT_DAY)) {
 			formatter.applyPattern("d");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_DAY2)) {
+		}
+		if (name.equals(MAGIC_CURRENT_DAY2)) {
 			formatter.applyPattern("dd");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_DAY_NAME)) {
+		}
+		if (name.equals(MAGIC_CURRENT_DAY_NAME)) {
 			formatter.applyPattern("EEEE");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_DAY_OF_WEEK)) {
+		}
+		if (name.equals(MAGIC_CURRENT_DAY_OF_WEEK)) {
 			formatter.applyPattern("F");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_MONTH)) {
+		}
+		if (name.equals(MAGIC_CURRENT_MONTH)) {
 			formatter.applyPattern("MM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_MONTH_ABBR)) {
+		}
+		if (name.equals(MAGIC_CURRENT_MONTH_ABBR)) {
 			formatter.applyPattern("MMM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_MONTH_NAME)) {
+		}
+		if (name.equals(MAGIC_CURRENT_MONTH_NAME)) {
 			formatter.applyPattern("MMMM");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_TIME)) {
+		}
+		if (name.equals(MAGIC_CURRENT_TIME)) {
 			formatter.applyPattern("HH:mm");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_HOUR)) {
+		}
+		if (name.equals(MAGIC_CURRENT_HOUR)) {
 			formatter.applyPattern("HH");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_WEEK)) {
+		}
+		if (name.equals(MAGIC_CURRENT_WEEK)) {
 			formatter.applyPattern("w");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_YEAR)) {
+		}
+		if (name.equals(MAGIC_CURRENT_YEAR)) {
 			formatter.applyPattern("yyyy");
 			return formatter.format(current);
-		} else if (name.equals(MAGIC_CURRENT_TIMESTAMP)) {
+		}
+		if (name.equals(MAGIC_CURRENT_TIMESTAMP)) {
 			formatter.applyPattern("yyyyMMddHHmmss");
 			return formatter.format(current);
 		}
@@ -537,97 +559,127 @@ public class TemplateTag implements ParserTag {
 		NumberFormat numFormatter = NumberFormat.getInstance();
 		if (name.equals(MAGIC_CURRENT_VERSION)) {
 			return WikiVersion.CURRENT_WIKI_VERSION;
-		/*
-		} else if (name.equals(MAGIC_NUMBER_ARTICLES)) {
-		} else if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
-		*/
-		} else if (name.equals(MAGIC_NUMBER_PAGES)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
-			return numFormatter.format(results);
-		} else if (name.equals(MAGIC_NUMBER_PAGES_R)) {
-			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
-			return Integer.toString(results);
-		} else if (name.equals(MAGIC_NUMBER_FILES)) {
-			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
-			return numFormatter.format(results);
-		} else if (name.equals(MAGIC_NUMBER_FILES_R)) {
-			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
-			return Integer.toString(results);
-		} else if (name.equals(MAGIC_NUMBER_USERS)) {
-			int results = WikiBase.getDataHandler().lookupWikiUserCount();
-			return numFormatter.format(results);
-		} else if (name.equals(MAGIC_NUMBER_USERS_R)) {
-			int results = WikiBase.getDataHandler().lookupWikiUserCount();
-			return Integer.toString(results);
-		/*
-		} else if (name.equals(MAGIC_NUMBER_ADMINS)) {
-		} else if (name.equals(MAGIC_NUMBER_ADMINS_R)) {
-		} else if (name.equals(MAGIC_PAGES_IN_NAMESPACE)) {
-		} else if (name.equals(MAGIC_PAGES_IN_NAMESPACE_NS)) {
-		} else if (name.equals(MAGIC_PAGES_IN_NAMESPACE_NS_R)) {
-		*/
 		}
+		/*
+		if (name.equals(MAGIC_NUMBER_ARTICLES)) {
+		}
+		if (name.equals(MAGIC_NUMBER_ARTICLES_R)) {
+		}
+		*/
+		if (name.equals(MAGIC_NUMBER_PAGES)) {
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			return numFormatter.format(results);
+		}
+		if (name.equals(MAGIC_NUMBER_PAGES_R)) {
+			int results = WikiBase.getDataHandler().lookupTopicCount(parserInput.getVirtualWiki());
+			return Integer.toString(results);
+		}
+		if (name.equals(MAGIC_NUMBER_FILES)) {
+			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
+			return numFormatter.format(results);
+		}
+		if (name.equals(MAGIC_NUMBER_FILES_R)) {
+			int results = WikiBase.getDataHandler().lookupWikiFileCount(parserInput.getVirtualWiki());
+			return Integer.toString(results);
+		}
+		if (name.equals(MAGIC_NUMBER_USERS)) {
+			int results = WikiBase.getDataHandler().lookupWikiUserCount();
+			return numFormatter.format(results);
+		}
+		if (name.equals(MAGIC_NUMBER_USERS_R)) {
+			int results = WikiBase.getDataHandler().lookupWikiUserCount();
+			return Integer.toString(results);
+		}
+		/*
+		if (name.equals(MAGIC_NUMBER_ADMINS)) {
+		}
+		if (name.equals(MAGIC_NUMBER_ADMINS_R)) {
+		}
+		if (name.equals(MAGIC_PAGES_IN_NAMESPACE)) {
+		}
+		if (name.equals(MAGIC_PAGES_IN_NAMESPACE_NS)) {
+		}
+		if (name.equals(MAGIC_PAGES_IN_NAMESPACE_NS_R)) {
+		}
+		*/
 		// page values
 		WikiLink wikiLink = LinkUtil.parseWikiLink(parserInput.getTopicName());
 		if (name.equals(MAGIC_FULL_PAGE_NAME)) {
 			return parserInput.getTopicName();
-		} else if (name.equals(MAGIC_FULL_PAGE_NAME_E)) {
+		}
+		if (name.equals(MAGIC_FULL_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(parserInput.getTopicName());
-		} else if (name.equals(MAGIC_PAGE_NAME)) {
+		}
+		if (name.equals(MAGIC_PAGE_NAME)) {
 			return wikiLink.getArticle();
-		} else if (name.equals(MAGIC_PAGE_NAME_E)) {
+		}
+		if (name.equals(MAGIC_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(wikiLink.getArticle());
-		} else if (name.equals(MAGIC_SUB_PAGE_NAME)) {
+		}
+		if (name.equals(MAGIC_SUB_PAGE_NAME)) {
 			String topic = wikiLink.getArticle();
 			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(pos + 1);
 			}
 			return topic;
-		} else if (name.equals(MAGIC_SUB_PAGE_NAME_E)) {
+		}
+		if (name.equals(MAGIC_SUB_PAGE_NAME_E)) {
 			String topic = wikiLink.getArticle();
 			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(pos + 1);
 			}
 			return Utilities.encodeForURL(topic);
-		} else if (name.equals(MAGIC_BASE_PAGE_NAME)) {
+		}
+		if (name.equals(MAGIC_BASE_PAGE_NAME)) {
 			String topic = wikiLink.getArticle();
 			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(0, pos);
 			}
 			return topic;
-		} else if (name.equals(MAGIC_BASE_PAGE_NAME_E)) {
+		}
+		if (name.equals(MAGIC_BASE_PAGE_NAME_E)) {
 			String topic = wikiLink.getArticle();
 			int pos = topic.lastIndexOf('/');
 			if (pos != -1 && pos < topic.length()) {
 				topic = topic.substring(0, pos);
 			}
 			return Utilities.encodeForURL(topic);
-		} else if (name.equals(MAGIC_NAMESPACE)) {
+		}
+		if (name.equals(MAGIC_NAMESPACE)) {
 			return wikiLink.getNamespace();
-		} else if (name.equals(MAGIC_NAMESPACE_E)) {
+		}
+		if (name.equals(MAGIC_NAMESPACE_E)) {
 			return Utilities.encodeForURL(wikiLink.getNamespace());
-		} else if (name.equals(MAGIC_TALK_SPACE)) {
+		}
+		if (name.equals(MAGIC_TALK_SPACE)) {
 			String namespace = wikiLink.getNamespace();
 			return NamespaceHandler.getCommentsNamespace(namespace);
-		} else if (name.equals(MAGIC_TALK_SPACE_E)) {
+		}
+		if (name.equals(MAGIC_TALK_SPACE_E)) {
 			String namespace = wikiLink.getNamespace();
 			return Utilities.encodeForURL(NamespaceHandler.getCommentsNamespace(namespace));
-		} else if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
+		}
+		if (name.equals(MAGIC_SUBJECT_SPACE) || name.equals(MAGIC_ARTICLE_SPACE)) {
 			String namespace = wikiLink.getNamespace();
 			return NamespaceHandler.getMainNamespace(namespace);
-		} else if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
+		}
+		if (name.equals(MAGIC_SUBJECT_SPACE_E) || name.equals(MAGIC_ARTICLE_SPACE_E)) {
 			String namespace = wikiLink.getNamespace();
 			return Utilities.encodeForURL(NamespaceHandler.getMainNamespace(namespace));
-		} else if (name.equals(MAGIC_TALK_PAGE_NAME)) {
+		}
+		if (name.equals(MAGIC_TALK_PAGE_NAME)) {
 			return WikiUtil.extractCommentsLink(parserInput.getTopicName());
-		} else if (name.equals(MAGIC_TALK_PAGE_NAME_E)) {
+		}
+		if (name.equals(MAGIC_TALK_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(WikiUtil.extractCommentsLink(parserInput.getTopicName()));
-		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME) || name.equals(MAGIC_ARTICLE_PAGE_NAME)) {
+		}
+		if (name.equals(MAGIC_SUBJECT_PAGE_NAME) || name.equals(MAGIC_ARTICLE_PAGE_NAME)) {
 			return WikiUtil.extractTopicLink(parserInput.getTopicName());
-		} else if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
+		}
+		if (name.equals(MAGIC_SUBJECT_PAGE_NAME_E) || name.equals(MAGIC_ARTICLE_PAGE_NAME_E)) {
 			return Utilities.encodeForURL(WikiUtil.extractTopicLink(parserInput.getTopicName()));
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
@@ -637,26 +689,35 @@ public class TemplateTag implements ParserTag {
 		if (name.equals(MAGIC_REVISION_DAY)) {
 			formatter.applyPattern("d");
 			return formatter.format(revision);
-		} else if (name.equals(MAGIC_REVISION_DAY2)) {
+		}
+		if (name.equals(MAGIC_REVISION_DAY2)) {
 			formatter.applyPattern("dd");
 			return formatter.format(revision);
-		} else if (name.equals(MAGIC_REVISION_MONTH)) {
+		}
+		if (name.equals(MAGIC_REVISION_MONTH)) {
 			formatter.applyPattern("MM");
 			return formatter.format(revision);
-		} else if (name.equals(MAGIC_REVISION_YEAR)) {
+		}
+		if (name.equals(MAGIC_REVISION_YEAR)) {
 			formatter.applyPattern("yyyy");
 			return formatter.format(revision);
-		} else if (name.equals(MAGIC_REVISION_TIMESTAMP)) {
+		}
+		if (name.equals(MAGIC_REVISION_TIMESTAMP)) {
 			formatter.applyPattern("yyyyMMddHHmmss");
 			return formatter.format(revision);
-		/*
-		} else if (name.equals(MAGIC_REVISION_ID)) {
-		} else if (name.equals(MAGIC_SITE_NAME)) {
-		} else if (name.equals(MAGIC_SERVER)) {
-		} else if (name.equals(MAGIC_SCRIPT_PATH)) {
-		} else if (name.equals(MAGIC_SERVER_NAME)) {
-		*/
 		}
+		/*
+		if (name.equals(MAGIC_REVISION_ID)) {
+		}
+		if (name.equals(MAGIC_SITE_NAME)) {
+		}
+		if (name.equals(MAGIC_SERVER)) {
+		}
+		if (name.equals(MAGIC_SCRIPT_PATH)) {
+		}
+		if (name.equals(MAGIC_SERVER_NAME)) {
+		}
+		*/
 		return name;
 	}
 

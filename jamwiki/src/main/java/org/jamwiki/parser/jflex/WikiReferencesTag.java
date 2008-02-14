@@ -17,12 +17,12 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.Vector;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -55,7 +55,7 @@ public class WikiReferencesTag implements ParserTag {
 				WikiReference temp = (WikiReference)references.elementAt(pos);
 				if (temp.getName() != null && reference.getName() != null && reference.getName().equals(temp.getName())) {
 					citations.add(temp);
-					if (!StringUtils.hasText(reference.getContent()) && StringUtils.hasText(temp.getContent())) {
+					if (StringUtils.isBlank(reference.getContent()) && !StringUtils.isBlank(temp.getContent())) {
 						reference.setContent(temp.getContent());
 					}
 					references.removeElementAt(pos);

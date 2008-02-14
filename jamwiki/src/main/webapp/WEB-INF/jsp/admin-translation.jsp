@@ -34,7 +34,7 @@
 <select name="language" onchange="this.form.submit()">
 <option value=""></option>
 <c:forEach items="${codes}" var="code">
-<option value="<c:out value="${code}" />"><c:out value="${code}" /></option>
+<option value="<c:out value="${code}" />" <c:if test="${language == code}">selected="selected"</c:if>><c:out value="${code}" /></option>
 </c:forEach>
 </select>
 </form>

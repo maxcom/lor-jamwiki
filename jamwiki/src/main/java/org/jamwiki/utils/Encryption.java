@@ -25,8 +25,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
-import org.springframework.util.StringUtils;
 
 /**
  * Provide capability for encrypting and decrypting values.  Inspired by an
@@ -51,7 +51,7 @@ public class Encryption {
 	 * @return An encrypted version of the String that was passed to this method.
 	 */
 	public static String encrypt64(String unencryptedString) throws Exception {
-		if (!StringUtils.hasText(unencryptedString)) {
+		if (StringUtils.isBlank(unencryptedString)) {
 			return unencryptedString;
 		}
 		byte[] unencryptedBytes = unencryptedString.getBytes("UTF8");
@@ -148,7 +148,7 @@ public class Encryption {
 	 */
 	private static String bytes2String(byte[] bytes) {
 		StringBuffer buffer = new StringBuffer();
-		for (int i=0; i < bytes.length; i++) {
+		for (int i = 0; i < bytes.length; i++) {
 			buffer.append((char)bytes[i]);
 		}
 		return buffer.toString();

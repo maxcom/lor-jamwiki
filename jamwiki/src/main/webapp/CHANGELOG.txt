@@ -1,3 +1,38 @@
+﻿0.6.3
+=====
+
+New Features:
+
+  * Upgrade to Spring Framework 2.5.1.
+  * The Special:Translation page will now default to the user's default
+    language instead of defaulting to English.
+  * Upgrade to Acegi Security 1.0.6.
+
+Bugfixes:
+
+  * Umlauts, ampersands and other special characters were being double-escaped
+    in the user menu.  Bug reported by Толик.
+  * Resolve a CSS issue that impacted display of diffs.  Reported by legendsen.
+  * When an access denied message is displayed make sure that the login page
+    displayed is in the same virtual wiki as the orginal page request.  Bug
+    reported by Feilong Huang.
+  * Fix several potential (although unlikely) NPE scenarios identified by
+    static code analysis tools.
+  * Update the CSS for pre tags to prevent overflows in tables.  Reported by
+    Michael Habbert.
+  * Fix a bug that broke the Special:Contributions when using a non-ASCII user
+    login.
+
+Translation Updates:
+
+  * Updated Dutch translations (Angel).
+  * Added Galician translations (mmeixide).
+  * Updated German translations (axelclk).
+  * Updated Japanese translations (nattolover).
+  * Added Portugese translations (mmeixide).
+  * Updated Spanish translations (AngelPinazo & mmeixide).
+
+
 0.6.2
 =====
 
@@ -16,6 +51,7 @@ New Features:
   * Make the search engine instance a configurable parameter.
   * Remove the unnecessary "Are you sure" prompt when upgrading.
   * Use JFlex Maven plugin instead of Ant task (RegisDecamps).
+  * Updated spam filter patterns.
 
 Bugfixes:
 
@@ -31,6 +67,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Updated German translations (axelclk).
   * Updated Polish translations (dlpa).
   * Updated Spanish translations (AngelPinazo).
 

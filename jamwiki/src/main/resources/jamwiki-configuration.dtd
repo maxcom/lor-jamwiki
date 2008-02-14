@@ -1,5 +1,5 @@
 
-<!ELEMENT configuration (parsers?, user-handlers?, data-handlers?, search-engines?, namespaces*, pseudotopics*)>
+<!ELEMENT configuration (parsers?, user-handlers?, data-handlers?, search-engines?, namespaces*, pseudotopics*, translations*)>
 
 <!ELEMENT parsers (parser*)>
 <!ELEMENT parser (name, class, key?, state?)>
@@ -20,6 +20,9 @@
 
 <!ELEMENT pseudotopics (pseudotopic*)>
 <!ELEMENT pseudotopic (name)>
+
+<!ELEMENT translations (translation*)>
+<!ELEMENT translation (name, key)>
 
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT class (#PCDATA)>

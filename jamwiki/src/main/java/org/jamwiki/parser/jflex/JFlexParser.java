@@ -19,6 +19,7 @@ package org.jamwiki.parser.jflex;
 import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
@@ -27,7 +28,6 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
-import org.springframework.util.StringUtils;
 
 /**
  * Implementation of {@link org.jamwiki.parser.AbstractParser} that uses
@@ -90,7 +90,7 @@ public class JFlexParser extends AbstractParser {
 	 *
 	 */
 	private String isRedirect(String content) {
-		if (!StringUtils.hasText(content)) {
+		if (StringUtils.isBlank(content)) {
 			return null;
 		}
 		Matcher m = REDIRECT_PATTERN.matcher(content.trim());
@@ -106,7 +106,7 @@ public class JFlexParser extends AbstractParser {
 		this.parserInput.incrementDepth();
 		// avoid infinite loops
 		if (this.parserInput.getDepth() > 100) {
-			String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 			throw new Exception("Infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + topicName);
 		}
 		StringBuffer content = new StringBuffer();
@@ -119,7 +119,7 @@ public class JFlexParser extends AbstractParser {
 		}
 		this.parserInput.decrementDepth();
 		String redirect = this.isRedirect(raw);
-		if (StringUtils.hasText(redirect)) {
+		if (!StringUtils.isBlank(redirect)) {
 			parserDocument.setRedirect(redirect);
 		}
 		return content.toString();
@@ -169,11 +169,11 @@ public class JFlexParser extends AbstractParser {
 		output = this.parsePreProcess(parserDocument, output, JFlexParser.MODE_PREPROCESS);
 		output = this.parseProcess(parserDocument, output, JFlexParser.MODE_PROCESS);
 		output = this.parsePostProcess(parserDocument, output, JFlexParser.MODE_LAYOUT);
-		if (StringUtils.hasText(this.isRedirect(raw))) {
+		if (!StringUtils.isBlank(this.isRedirect(raw))) {
 			// redirects are parsed differently
 			output = this.parseRedirect(parserDocument, raw);
 		}
-		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
@@ -196,7 +196,7 @@ public class JFlexParser extends AbstractParser {
 		String output = raw + '\n';
 		output = this.parsePreProcess(parserDocument, output, JFlexParser.MODE_PREPROCESS);
 		output = this.parseProcess(parserDocument, output, JFlexParser.MODE_PROCESS);
-		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseMetadata) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 	}
 
@@ -214,7 +214,7 @@ public class JFlexParser extends AbstractParser {
 		String output = raw;
 		ParserDocument parserDocument = new ParserDocument();
 		output = this.parsePreProcess(parserDocument, output, JFlexParser.MODE_MINIMAL);
-		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.info("Parse time (parseHTML) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
@@ -313,7 +313,7 @@ public class JFlexParser extends AbstractParser {
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserDocument, JFlexParser.MODE_SLICE);
-		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSlice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
@@ -342,7 +342,7 @@ public class JFlexParser extends AbstractParser {
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserDocument, JFlexParser.MODE_SPLICE);
-		String topicName = (StringUtils.hasText(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
 	}
