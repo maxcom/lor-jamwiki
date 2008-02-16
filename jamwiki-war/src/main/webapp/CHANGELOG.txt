@@ -20,6 +20,9 @@ Bugfixes:
     logins containing underscores.  Reported by yesesnono.
   * Add field-length checks to all database inserts/updates and either trim the
     field or report an error when a field exceeds the maximum allowed length.
+  * Fix an issue that prevented template <noinclude> sections from displaying
+    transcluding templates, signatures, and some other content.  Reported by
+    ean.
 
 Translation Updates:
 
