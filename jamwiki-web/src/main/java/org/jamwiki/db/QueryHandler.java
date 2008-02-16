@@ -514,13 +514,11 @@ public interface QueryHandler {
 	 *  being retrieved.
 	 * @param categoryName The name of the category for which associated topics
 	 *  are to be retrieved.
-	 * @param topicType The topic type (image, normal, etc) for the topics to be
-	 *  retrieved.
 	 * @return A WikiResultSet containing topic name and sort key for all topics
 	 *  associated with a specific category.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName, int topicType) throws Exception;
+	WikiResultSet lookupCategoryTopics(int virtualWikiId, String categoryName) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all topic information for a given topic.

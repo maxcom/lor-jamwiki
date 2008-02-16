@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
@@ -465,19 +466,30 @@ public class ServletUtil {
 	protected static void loadCategoryContent(ModelAndView next, String virtualWiki, String topicName) throws Exception {
 		String categoryName = topicName.substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
 		next.addObject("categoryName", categoryName);
-		Collection categoryTopics = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_ARTICLE);
+		List categoryTopics = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName);
+		List categoryImages = new Vector();
+		LinkedHashMap subCategories = new LinkedHashMap();
+		int i = 0;
+		// loop through the results and split out images and sub-categories
+		while (i < categoryTopics.size()) {
+			Category category = (Category)categoryTopics.get(i);
+			if (category.getTopicType() == Topic.TYPE_IMAGE) {
+				categoryTopics.remove(i);
+				categoryImages.add(category);
+				continue;
+			}
+			if (category.getTopicType() == Topic.TYPE_CATEGORY) {
+				categoryTopics.remove(i);
+				String value = category.getChildTopicName().substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
+				subCategories.put(category.getChildTopicName(), value);
+				continue;
+			}
+			i++;
+		}
 		next.addObject("categoryTopics", categoryTopics);
 		next.addObject("numCategoryTopics", new Integer(categoryTopics.size()));
-		Collection categoryImages = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_IMAGE);
 		next.addObject("categoryImages", categoryImages);
 		next.addObject("numCategoryImages", new Integer(categoryImages.size()));
-		Collection tempSubcategories = WikiBase.getDataHandler().lookupCategoryTopics(virtualWiki, topicName, Topic.TYPE_CATEGORY);
-		LinkedHashMap subCategories = new LinkedHashMap();
-		for (Iterator iterator = tempSubcategories.iterator(); iterator.hasNext();) {
-			Category category = (Category)iterator.next();
-			String value = category.getChildTopicName().substring(NamespaceHandler.NAMESPACE_CATEGORY.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length());
-			subCategories.put(category.getChildTopicName(), value);
-		}
 		next.addObject("subCategories", subCategories);
 		next.addObject("numSubCategories", new Integer(subCategories.size()));
 	}

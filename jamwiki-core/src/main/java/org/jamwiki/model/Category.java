@@ -27,6 +27,7 @@ public class Category {
 	private String childTopicName = null;
 	private String name = null;
 	private String sortKey = null;
+	private int topicType = -1;
 	private String virtualWiki = null;
 
 	/**
@@ -75,6 +76,20 @@ public class Category {
 	 */
 	public void setSortKey(String sortKey) {
 		this.sortKey = sortKey;
+	}
+
+	/**
+	 *
+	 */
+	public int getTopicType() {
+		return this.topicType;
+	}
+
+	/**
+	 *
+	 */
+	public void setTopicType(int topicType) {
+		this.topicType = topicType;
 	}
 
 	/**

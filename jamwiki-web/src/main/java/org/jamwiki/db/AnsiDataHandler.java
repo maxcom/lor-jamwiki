@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import net.sf.ehcache.Element;
@@ -254,9 +255,10 @@ public class AnsiDataHandler implements DataHandler {
 		while (rs.next()) {
 			Category category = new Category();
 			category.setName(rs.getString(DATA_CATEGORY_NAME));
-			// FIXME - child topic name not initialized
+			// child topic name not initialized since it is not needed
 			category.setVirtualWiki(virtualWiki);
 			category.setSortKey(rs.getString("sort_key"));
+			// topic type not initialized since it is not needed
 			results.add(category);
 		}
 		return results;
@@ -718,16 +720,17 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
+	public List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
-		WikiResultSet rs = this.queryHandler().lookupCategoryTopics(virtualWikiId, categoryName, topicType);
+		WikiResultSet rs = this.queryHandler().lookupCategoryTopics(virtualWikiId, categoryName);
 		while (rs.next()) {
 			Category category = new Category();
 			category.setName(categoryName);
 			category.setVirtualWiki(virtualWiki);
 			category.setChildTopicName(rs.getString(DATA_TOPIC_NAME));
 			category.setSortKey(rs.getString("sort_key"));
+			category.setTopicType(rs.getInt("topic_type"));
 			results.add(category);
 		}
 		return results;

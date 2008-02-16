@@ -18,6 +18,7 @@ package org.jamwiki;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import org.jamwiki.model.Role;
@@ -300,13 +301,12 @@ public interface DataHandler {
 	 *
 	 * @param virtualWiki The virtual wiki for the category being queried.
 	 * @param categoryName The name of the category being queried.
-	 * @param topicType The type of topics to retrieve.
 	 * @return A collection of all Category objects corresponding to all
 	 *  topics that belong to the category, sorted by either the topic name,
 	 *  or category sort key (if specified).
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception;
+	List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception;
 
 	/**
 	 * Retrieve a Topic object that matches the given virtual wiki and topic

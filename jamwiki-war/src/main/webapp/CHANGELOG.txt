@@ -23,6 +23,8 @@ Bugfixes:
   * Fix an issue that prevented template <noinclude> sections from displaying
     transcluding templates, signatures, and some other content.  Reported by
     ean.
+  * Category pages were previously displaying only images, articles, and
+    sub-categories, leaving out templates.  Reported by ean.
 
 Translation Updates:
 

@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
@@ -183,7 +184,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection lookupCategoryTopics(String virtualWiki, String categoryName, int topicType) throws Exception {
+	public List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
