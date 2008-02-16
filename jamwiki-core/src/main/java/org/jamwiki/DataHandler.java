@@ -80,39 +80,39 @@ public interface DataHandler {
 	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
 
 	/**
-	 * Return a collection of all Category objects for a given virtual wiki.
+	 * Return a List of all Category objects for a given virtual wiki.
 	 *
 	 * @param virtualWiki The virtual wiki for which categories are being
 	 *  retrieved.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A collection of all Category objects for a given virutal wiki.
+	 * @return A List of all Category objects for a given virutal wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
+	List getAllCategories(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
-	 * Return a collection of all Role objects for the wiki.
+	 * Return a List of all Role objects for the wiki.
 	 *
-	 * @return A collection of all Role objects for the wiki.
+	 * @return A List of all Role objects for the wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getAllRoles() throws Exception;
+	List getAllRoles() throws Exception;
 
 	/**
-	 * Return a collection of all topic names for all non-deleted topics that
+	 * Return a List of all topic names for all non-deleted topics that
 	 * exist for the virtual wiki.
 	 *
 	 * @param virtualWiki The virtual wiki for which topics are being
 	 *  retrieved.
-	 * @return A collection of all topic names for all non-deleted topics that
+	 * @return A List of all topic names for all non-deleted topics that
 	 *  exist for the virtual wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getAllTopicNames(String virtualWiki) throws Exception;
+	List getAllTopicNames(String virtualWiki) throws Exception;
 
 	/**
-	 * Retrieve a collection of all TopicVersions for a given topic, sorted
+	 * Retrieve a List of all TopicVersions for a given topic, sorted
 	 * chronologically.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
@@ -120,14 +120,14 @@ public interface DataHandler {
 	 * @param descending Set to <code>true</code> if the results should be
 	 *  sorted with the most recent version first, <code>false</code> if the
 	 *  results should be sorted with the oldest versions first.
-	 * @return A collection of all TopicVersion objects for the given topic.
+	 * @return A List of all TopicVersion objects for the given topic.
 	 *  If no matching topic exists then an exception is thrown.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
+	List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception;
 
 	/**
-	 * Retrieve a collection of all RecentChange objects for a given virtual
+	 * Retrieve a List of all RecentChange objects for a given virtual
 	 * wiki, sorted chronologically.
 	 *
 	 * @param virtualWiki The virtual wiki for which recent changes are being
@@ -137,14 +137,14 @@ public interface DataHandler {
 	 * @param descending Set to <code>true</code> if the results should be
 	 *  sorted with the most recent changes first, <code>false</code> if the
 	 *  results should be sorted with the oldest changes first.
-	 * @return A collection of all RecentChange objects for a given virtual
+	 * @return A List of all RecentChange objects for a given virtual
 	 *  wiki, sorted chronologically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
+	List getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception;
 
 	/**
-	 * Retrieve a collection of all RecentChange objects for a given topic,
+	 * Retrieve a List of all RecentChange objects for a given topic,
 	 * sorted chronologically.
 	 *
 	 * @param virtualWiki The virtual wiki for the topic being queried.
@@ -154,35 +154,35 @@ public interface DataHandler {
 	 * @param descending Set to <code>true</code> if the results should be
 	 *  sorted with the most recent changes first, <code>false</code> if the
 	 *  results should be sorted with the oldest changes first.
-	 * @return A collection of all RecentChange objects for a given topic,
+	 * @return A List of all RecentChange objects for a given topic,
 	 *  sorted chronologically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
+	List getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception;
 
 	/**
-	 * Retrieve a collection of RoleMap objects for all users whose login
+	 * Retrieve a List of RoleMap objects for all users whose login
 	 * contains the given login fragment.
 	 *
 	 * @param loginFragment A value that must be contained with the user's
 	 *  login.  This method will return partial matches, so "name" will
 	 *  match "name", "firstname" and "namesake".
-	 * @return A collection of RoleMap objects containing all roles for all
+	 * @return A Collection of RoleMap objects containing all roles for all
 	 *  users whose login contains the login fragment.  If no matches are
-	 *  found then this method returns an empty collection.  This method will
+	 *  found then this method returns an empty List.  This method will
 	 *  never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	Collection getRoleMapByLogin(String loginFragment) throws Exception;
 
 	/**
-	 * Retrieve a collection of RoleMap objects for all users and groups who
+	 * Retrieve a Collection of RoleMap objects for all users and groups who
 	 * have been assigned the specified role.
 	 *
 	 * @param roleName The name of the role being queried against.
-	 * @return A collection of RoleMap objects containing all roles for all
+	 * @return A Collection of RoleMap objects containing all roles for all
 	 *  users and groups who have been assigned the specified role.  If no
-	 *  matches are found then this method returns an empty collection.  This
+	 *  matches are found then this method returns an empty List.  This
 	 *  method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
@@ -200,11 +200,11 @@ public interface DataHandler {
 	Role[] getRoleMapGroup(String groupName) throws Exception;
 
 	/**
-	 * Retrieve a collection of RoleMap objects for all groups.
+	 * Retrieve a Collection of RoleMap objects for all groups.
 	 *
-	 * @return A collection of RoleMap objects containing all roles for all
+	 * @return A Collection of RoleMap objects containing all roles for all
 	 *  groups.  If no matches are found then this method returns an empty
-	 *  collection.  This method will never return <code>null</code>.
+	 *  List.  This method will never return <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	Collection getRoleMapGroups() throws Exception;
@@ -221,21 +221,21 @@ public interface DataHandler {
 	Role[] getRoleMapUser(String login) throws Exception;
 
 	/**
-	 * Retrieve a collection of topic names for all admin-only topics, sorted
+	 * Retrieve a List of topic names for all admin-only topics, sorted
 	 * alphabetically.
 	 *
 	 * @param virtualWiki The virtual wiki for which admin-only topics are
 	 *  being retrieved.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A collection of topic names for all admin-only topics, sorted
+	 * @return A List of topic names for all admin-only topics, sorted
 	 *  alphabetically.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
+	List getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception;
 
 	/**
-	 * Retrieve a collection of RecentChange objects corresponding to all
+	 * Retrieve a List of RecentChange objects corresponding to all
 	 * changes made by a particular user.
 	 *
 	 * @param virtualWiki The virtual wiki for which changes are being
@@ -248,24 +248,24 @@ public interface DataHandler {
 	 * @param descending Set to <code>true</code> if the results should be
 	 *  sorted with the most recent changes first, <code>false</code> if the
 	 *  results should be sorted with the oldest changes first.
-	 * @return A collection of RecentChange objects corresponding to all
+	 * @return A List of RecentChange objects corresponding to all
 	 *  changes made by a particular user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
+	List getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception;
 
 	/**
-	 * Return a collection of all VirtualWiki objects that exist for the wiki.
+	 * Return a List of all VirtualWiki objects that exist for the wiki.
 	 *
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
 	 *  such as a database connection.  If this method is not part of a
 	 *  transaction then this value should be <code>null</code>.
-	 * @return A collection of all VirtualWiki objects that exist for the
+	 * @return A List of all VirtualWiki objects that exist for the
 	 *  wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getVirtualWikiList(Object transactionObject) throws Exception;
+	List getVirtualWikiList(Object transactionObject) throws Exception;
 
 	/**
 	 * Retrieve a user's watchlist.
@@ -279,7 +279,7 @@ public interface DataHandler {
 	Watchlist getWatchlist(String virtualWiki, int userId) throws Exception;
 
 	/**
-	 * Retrieve a collection of RecentChange objects corresponding to a user's
+	 * Retrieve a List of RecentChange objects corresponding to a user's
 	 * watchlist.  This method is primarily used to display a user's watchlist
 	 * on the Special:Watchlist page.
 	 *
@@ -288,20 +288,20 @@ public interface DataHandler {
 	 * @param userId The ID of the user whose watchlist is being retrieved.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A collection of RecentChange objects corresponding to a user's
+	 * @return A List of RecentChange objects corresponding to a user's
 	 *  watchlist.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
+	List getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception;
 
 	/**
-	 * Retrieve a collection of Category objects corresponding to all topics
+	 * Retrieve a List of Category objects corresponding to all topics
 	 * that belong to the category, sorted by either the topic name, or
 	 * category sort key (if specified).
 	 *
 	 * @param virtualWiki The virtual wiki for the category being queried.
 	 * @param categoryName The name of the category being queried.
-	 * @return A collection of all Category objects corresponding to all
+	 * @return A List of all Category objects corresponding to all
 	 *  topics that belong to the category, sorted by either the topic name,
 	 *  or category sort key (if specified).
 	 * @throws Exception Thrown if any error occurs during method execution.
@@ -341,18 +341,18 @@ public interface DataHandler {
 	int lookupTopicCount(String virtualWiki) throws Exception;
 
 	/**
-	 * Return a collection of topic names for all non-deleted topics in the
+	 * Return a List of topic names for all non-deleted topics in the
 	 * virtual wiki that match a specific topic type.
 	 *
 	 * @param virtualWiki The virtual wiki for the topics being queried.
 	 * @param topicType The type of topics to return.
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A collection of topic names for all non-deleted topics in the
+	 * @return A List of topic names for all non-deleted topics in the
 	 *  virtual wiki that match a specific topic type.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
+	List lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception;
 
 	/**
 	 * Retrieve a TopicVersion object for a given topic version ID.
@@ -440,14 +440,14 @@ public interface DataHandler {
 	int lookupWikiUserCount() throws Exception;
 
 	/**
-	 * Return a collection of user logins for all wiki users.
+	 * Return a List of user logins for all wiki users.
 	 *
 	 * @param pagination A Pagination object indicating the total number of
 	 *  results and offset for the results to be retrieved.
-	 * @return A collection of user logins for all wiki users.
+	 * @return A List of user logins for all wiki users.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	Collection lookupWikiUsers(Pagination pagination) throws Exception;
+	List lookupWikiUsers(Pagination pagination) throws Exception;
 
 	/**
 	 * Move a topic to a new name, creating a redirect topic in the old
@@ -594,7 +594,7 @@ public interface DataHandler {
 	 * a mapping for each specified role.
 	 *
 	 * @param groupId The group id for whom role mappings are being modified.
-	 * @param roles A Collection of String role names for all roles that are
+	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this group.
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
@@ -602,7 +602,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapGroup(int groupId, Collection roles, Object transactionObject) throws Exception;
+	void writeRoleMapGroup(int groupId, List roles, Object transactionObject) throws Exception;
 
 	/**
 	 * Add a set of user role mappings.  This method will first delete all
@@ -610,7 +610,7 @@ public interface DataHandler {
 	 * a mapping for each specified role.
 	 *
 	 * @param userId The user id for whom role mappings are being modified.
-	 * @param roles A Collection of String role names for all roles that are
+	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this user.
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
@@ -618,7 +618,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapUser(int userId, Collection roles, Object transactionObject) throws Exception;
+	void writeRoleMapUser(int userId, List roles, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if
@@ -633,7 +633,7 @@ public interface DataHandler {
 	 *  other information about the version being added.
 	 * @param categories A mapping of categories and their associated sort keys (if any)
 	 *  for all categories that are associated with the current topic.
-	 * @param links A collection of all topic names that are linked to from the
+	 * @param links A List of all topic names that are linked to from the
 	 *  current topic.  These will be passed to the search engine to create
 	 *  searchable metadata.
 	 * @param userVisible Set to <code>false</code> if no recent change record

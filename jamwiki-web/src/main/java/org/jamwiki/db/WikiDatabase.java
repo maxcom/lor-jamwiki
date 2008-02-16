@@ -18,8 +18,8 @@ package org.jamwiki.db;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
@@ -252,7 +252,7 @@ public class WikiDatabase {
 		// FIXME - use message key
 		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
 		WikiBase.getDataHandler().writeWikiGroup(group, conn);
-		Collection anonymousRoles = new Vector();
+		List anonymousRoles = new Vector();
 		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
@@ -263,7 +263,7 @@ public class WikiDatabase {
 		// FIXME - use message key
 		group.setDescription("All logged in users are automatically assigned to the registered user group.");
 		WikiBase.getDataHandler().writeWikiGroup(group, conn);
-		Collection userRoles = new Vector();
+		List userRoles = new Vector();
 		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		userRoles.add(Role.ROLE_MOVE.getAuthority());
@@ -334,7 +334,7 @@ public class WikiDatabase {
 	 *
 	 */
 	private static void setupSpecialPages(Locale locale, WikiUser user, Connection conn) throws Exception {
-		Collection all = WikiBase.getDataHandler().getVirtualWikiList(conn);
+		List all = WikiBase.getDataHandler().getVirtualWikiList(conn);
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			// create the default topics

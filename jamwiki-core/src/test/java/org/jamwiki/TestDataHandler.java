@@ -72,42 +72,42 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
+	public List getAllCategories(String virtualWiki, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getAllRoles() throws Exception {
+	public List getAllRoles() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getAllTopicNames(String virtualWiki) throws Exception {
+	public List getAllTopicNames(String virtualWiki) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
+	public List getAllWikiFileVersions(String virtualWiki, String topicName, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
+	public List getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
+	public List getRecentChanges(String virtualWiki, String topicName, Pagination pagination, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -149,21 +149,21 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
+	public List getTopicsAdmin(String virtualWiki, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
+	public List getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public Collection getVirtualWikiList(Object transactionObject) throws Exception {
+	public List getVirtualWikiList(Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -177,7 +177,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
+	public List getWatchlist(String virtualWiki, int userId, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -205,7 +205,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
+	public List lookupTopicByType(String virtualWiki, int topicType, Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -261,7 +261,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection lookupWikiUsers(Pagination pagination) throws Exception {
+	public List lookupWikiUsers(Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -324,14 +324,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapGroup(int groupId, Collection roles, Object transactionObject) throws Exception {
+	public void writeRoleMapGroup(int groupId, List roles, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(int userId, Collection roles, Object transactionObject) throws Exception {
+	public void writeRoleMapUser(int userId, List roles, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
