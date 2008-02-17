@@ -1,0 +1,10 @@
+<!-- test a variety of HTML link syntax for https: links -->
+https://www.google.com
+
+[https://www.google.com]
+
+[https://www.google.com Caption]
+
+[https://www.google.com Multiple word caption]
+
+[https://www.google.com '''Bold caption''']
