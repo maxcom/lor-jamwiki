@@ -16,10 +16,7 @@
  */
 package org.jamwiki;
 
-import java.sql.Connection;
-import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,15 +35,8 @@ import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserUtil;
-import org.jamwiki.utils.LinkUtil;
-import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
-import org.jamwiki.utils.WikiCache;
-import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 
 /**
  *
@@ -192,7 +182,15 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public Topic lookupTopic(String virtualWiki, String topicName, boolean deleteOK, Object transactionObject) throws Exception {
-		throw new UnsupportedOperationException();
+		String content = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
+		if (content == null) {
+			return null;
+		}
+		Topic topic = new Topic();
+		topic.setName(topicName);
+		topic.setVirtualWiki(virtualWiki);
+		topic.setTopicContent(content);
+		return topic;
 	}
 
 	/**
