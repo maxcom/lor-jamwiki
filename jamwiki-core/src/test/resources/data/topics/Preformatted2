@@ -1,0 +1,9 @@
+<!-- verify that preformatted text is formatted correctly with wiki syntax -->
+<pre><nowiki>test</nowiki></pre>
+
+<pre>'''bold'''</pre>
+
+ preformatted text
+
+ line 1: multi-line preformatted text
+ line 2: multi-line preformatted text

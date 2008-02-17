@@ -1,0 +1,4 @@
+<!-- verify that valid HTML pre tags are parsed correctly -->
+<pre>test</pre>
+
+<pre><u>test</u></pre>
