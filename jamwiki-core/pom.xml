@@ -109,6 +109,10 @@
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
+			<plugin>
+		        	<groupId>org.apache.maven.plugins</groupId>
+			        <artifactId>maven-site-plugin</artifactId>
+		      </plugin>
 		</plugins>
 	</build>
 	<reporting>
@@ -172,6 +176,10 @@
 					<encoding>ISO-8859-1</encoding>
 				</configuration>
 			</plugin>
+			<plugin>
+			        <groupId>org.codehaus.mojo</groupId>
+			        <artifactId>javancss-maven-plugin</artifactId>
+		        </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>

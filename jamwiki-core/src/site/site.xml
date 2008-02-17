@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Jamwiki-Core Site">
+<project name="Jamwiki-Core Site - from site.xml">
  <body>
    <menu ref="parent"/> <!-- Erzeugt Link zum Parent-Modul-->
    <breadcrumbs>
