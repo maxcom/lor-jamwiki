@@ -1,0 +1,2 @@
+<!-- test a mixture of escaped and unescaped XHTML entities -->
+&lt; > &gt;
