@@ -1,1 +1,2 @@
+<!-- verify that improper HTML with attribute tags will be sanitized and processed correctly -->
 < font   style="test" color="red"  >text<  /  font  >

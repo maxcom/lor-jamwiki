@@ -1,1 +1,2 @@
+<!-- verify that basic HTML with attribute tags will be processed correctly -->
 <font style="test">text</font>
