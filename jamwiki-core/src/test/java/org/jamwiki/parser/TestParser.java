@@ -16,21 +16,30 @@
  */
 package org.jamwiki.parser;
 
+import junit.framework.TestCase;
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.TestFileUtil;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  *
  */
-public class TestParser {
+public abstract class TestParser extends TestCase {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(TestParser.class.getName());
 
 	/**
 	 *
 	 */
-	private static String parse(String topicName, String raw) throws Exception {
+	public TestParser(String name) {
+		super(name);
+	}
+
+	/**
+	 *
+	 */
+	private String parse(String topicName, String raw) throws Exception {
 		// set dummy values for parser input
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext("/wiki");
@@ -47,19 +56,35 @@ public class TestParser {
 	/**
 	 *
 	 */
-	public static String expectedResult(String topicName) throws Exception {
-		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
-		String output = TestParser.parse(topicName, raw);
-		// FIXME - the trim() should be unnecessary
-		return output.trim();
+	protected void executeParserTest(String topicName) throws Exception {
+		String parserResult = this.parserResult(topicName);
+		String expectedResult = this.expectedResult(topicName);
+		assertEquals(parserResult, expectedResult);
 	}
 
 	/**
 	 *
 	 */
-	public static String parserResult(String topicName) throws Exception {
+	private String expectedResult(String topicName) throws Exception {
+		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
+		String output = this.parse(topicName, raw);
+		// FIXME - the sanitize should be unnecessary
+		return this.sanitize(output);
+	}
+
+	/**
+	 *
+	 */
+	private String parserResult(String topicName) throws Exception {
 		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, topicName);
-		// FIXME - the trim() should be unnecessary
-		return result.trim();
+		// FIXME - the sanitize should be unnecessary
+		return this.sanitize(result);
+	}
+
+	/**
+	 *
+	 */
+	private String sanitize(String value) {
+		return StringUtils.remove(value, '\r').trim();
 	}
 }

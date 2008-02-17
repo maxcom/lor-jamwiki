@@ -16,12 +16,10 @@
  */
 package org.jamwiki.parser;
 
-import junit.framework.TestCase;
-
 /**
  *
  */
-public class ParseTemplateTest extends TestCase {
+public class ParseTemplateTest extends TestParser {
 
 	/**
 	 *
@@ -34,9 +32,6 @@ public class ParseTemplateTest extends TestCase {
 	 * Verify that templates containing <noinclude> tags behave as expected.
 	 */
 	public void testNoincludeParse() throws Exception {
-		String topicName = "Noinclude";
-		String parserResult = TestParser.parserResult(topicName);
-		String expectedResult = TestParser.expectedResult(topicName);
-		assertEquals(parserResult, expectedResult);
+		executeParserTest("Noinclude");
 	}
 }
