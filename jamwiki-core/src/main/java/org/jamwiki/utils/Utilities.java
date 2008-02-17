@@ -362,4 +362,16 @@ public class Utilities {
 		}
 		return FileUtils.readFileToString(file, "UTF-8");
 	}
+
+	/**
+	 * Strip all HTML tags from a string.  For example, "A <b>bold</b> word" will be
+	 * returned as "A bold word".  This method treats an tags that are between brackets
+	 * as HTML, whether it is valid HTML or not.
+	 *
+	 * @param value The value that will have HTML stripped from it.
+	 * @return The value submitted to this method with all HTML tags removed from it.
+	 */
+	public static String stripMarkup(String value) {
+		return value.replaceAll("<[^>]+>", "");
+	}
 }

@@ -41,14 +41,14 @@ public class HtmlLinkTag implements ParserTag {
 	 * @param raw The raw Wiki syntax that is to be converted into an HTML link.
 	 * @return A formatted HTML link for the Wiki syntax.
 	 */
-	private String buildHtmlLink(String raw) throws Exception {
+	private String buildHtmlLink(ParserInput parserInput, int mode, String raw) throws Exception {
 		if (raw.length() <= 2) {
 			// no link, display the raw text
 			return raw;
 		}
 		// strip the first and last brackets
 		String link = raw.substring(1, raw.length() - 1).trim();
-		return this.buildHtmlLinkRaw(link);
+		return this.buildHtmlLinkRaw(parserInput, mode, link);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class HtmlLinkTag implements ParserTag {
 	 * @param raw The raw HTML link that is to be converted into an HTML link.
 	 * @return A formatted HTML link.
 	 */
-	private String buildHtmlLinkRaw(String raw) throws Exception {
+	private String buildHtmlLinkRaw(ParserInput parserInput, int mode, String raw) throws Exception {
 		String link = raw.trim();
 		// search for link text (space followed by text)
 		String punctuation = Utilities.extractTrailingPunctuation(link);
@@ -74,14 +74,14 @@ public class HtmlLinkTag implements ParserTag {
 		} else {
 			link = link.substring(0, link.length() - punctuation.length()).trim();
 		}
-		String html = this.linkHtml(link, text, punctuation);
+		String html = this.linkHtml(parserInput, mode, link, text, punctuation);
 		return (html == null) ? raw : html;
 	}
 
 	/**
 	 *
 	 */
-	private String linkHtml(String link, String text, String punctuation) throws Exception {
+	private String linkHtml(ParserInput parserInput, int mode, String link, String text, String punctuation) throws Exception {
 		String html = null;
 		String linkLower = link.toLowerCase();
 		if (linkLower.startsWith("mailto://")) {
@@ -106,10 +106,11 @@ public class HtmlLinkTag implements ParserTag {
 		} else {
 			throw new Exception("Invalid protocol in link " + link);
 		}
-		if (StringUtils.isBlank(text)) {
-			text = link;
+		String caption = link;
+		if (!StringUtils.isBlank(text)) {
+			caption = ParserUtil.parseFragment(parserInput, text, mode);
 		}
-		text = StringEscapeUtils.escapeHtml(text);
+		String title = Utilities.stripMarkup(caption);
 		link = link.substring(protocol.length());
 		// make sure link values are properly escaped.
 		link = StringUtils.replace(link, "<", "%3C");
@@ -118,8 +119,8 @@ public class HtmlLinkTag implements ParserTag {
 		link = StringUtils.replace(link, "\'", "%27");
 		String target = (Environment.getBooleanValue(Environment.PROP_EXTERNAL_LINK_NEW_WINDOW)) ? " target=\"_blank\"" : "";
 		html = "<a class=\"externallink\" rel=\"nofollow\" title=\""
-			 + text + "\" href=\"" + protocol + link + "\"" + target + ">"
-			 + text + "</a>" + punctuation;
+			 + title + "\" href=\"" + protocol + link + "\"" + target + ">"
+			 + caption + "</a>" + punctuation;
 		return html;
 	}
 
@@ -133,8 +134,8 @@ public class HtmlLinkTag implements ParserTag {
 			return raw;
 		}
 		if (raw.startsWith("[") && raw.endsWith("]")) {
-			return this.buildHtmlLink(raw);
+			return this.buildHtmlLink(parserInput, mode, raw);
 		}
-		return this.buildHtmlLinkRaw(raw);
+		return this.buildHtmlLinkRaw(parserInput, mode, raw);
 	}
 }

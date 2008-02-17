@@ -21,10 +21,12 @@ Bugfixes:
   * Add field-length checks to all database inserts/updates and either trim the
     field or report an error when a field exceeds the maximum allowed length.
   * Fix an issue that prevented template <noinclude> and <includeonly> sections
-    from displaying transcluding templates, signatures, and some other content.
-    Reported by ean.
+    from displaying templates, signatures, and other content that requires
+    parser pre-processing.  Reported by ean.
   * Category pages were previously displaying only images, articles, and
     sub-categories, leaving out templates.  Reported by ean.
+  * Links of the form [http://example.com '''Bold text'''] will now properly
+    parse markup for the link caption.
 
 Translation Updates:
 

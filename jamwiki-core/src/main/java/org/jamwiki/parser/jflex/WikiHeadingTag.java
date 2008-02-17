@@ -82,7 +82,8 @@ public class WikiHeadingTag implements ParserTag {
 		}
 		String tagText = raw.substring(level, raw.length() - level).trim();
 		ParserInput tmpParserInput = new ParserInput(parserInput);
-		String tocText = this.stripMarkup(tmpParserInput, tagText);
+		String tocText = ParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
+		tocText = Utilities.stripMarkup(tocText);
 		String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
 		if (mode <= JFlexParser.MODE_SLICE) {
 			parserOutput.setSectionName(Utilities.encodeForURL(tagName));
@@ -96,16 +97,6 @@ public class WikiHeadingTag implements ParserTag {
 		output += ParserUtil.parseFragment(parserInput, tagText, mode);
 		output += "</h" + level + ">";
 		return output.toString();
-	}
-
-	/**
-	 * Strip Wiki markup from text
-	 */
-	private String stripMarkup(ParserInput parserInput, String text) throws Exception {
-		// parse to strip out wiki markup
-		String result = ParserUtil.parseFragment(parserInput, text, JFlexParser.MODE_PROCESS);
-		// now strip out html
-		return result.replaceAll("<[^>]+>", "");
 	}
 
 	/**
