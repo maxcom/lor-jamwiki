@@ -86,7 +86,6 @@
 				<configuration>
 					<excludes>
 						<exclude>org/jamwiki/servlets/WikiPageInfoTest.java</exclude>
-						<exclude>org/jamwiki/parser/jflex/JFlexParserTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
