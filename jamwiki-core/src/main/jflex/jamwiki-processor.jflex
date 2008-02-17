@@ -153,6 +153,7 @@ nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 wikiprestart       = (" ")+ ([^ \t\r\n])
+wikiprecontinue    = (" ") ([ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
@@ -241,6 +242,13 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         return "<pre>";
     }
     return "";
+}
+
+<WIKIPRE>^{wikiprecontinue} {
+    // this is a corner-case.  if there is a blank line within a wikipre rollback the first
+    // character to prevent extra spaces from being added.
+    logger.finer("wikiprecontinue: " + yytext() + " (" + yystate() + ")");
+    yypushback(1);
 }
 
 <WIKIPRE>^{wikipreend} {

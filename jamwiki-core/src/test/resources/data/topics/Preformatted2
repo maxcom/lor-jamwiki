@@ -3,7 +3,15 @@
 
 <pre>'''bold'''</pre>
 
+    preformatted text
+
  preformatted text
 
  line 1: multi-line preformatted text
- line 2: multi-line preformatted text
+ 
+ line 3: multi-line preformatted text
+
+ line 1: multi-line preformatted text
+  line 2: multi-line preformatted text with space
+   
+ line 4: multi-line preformatted text
