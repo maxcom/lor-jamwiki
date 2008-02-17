@@ -19,6 +19,7 @@ package org.jamwiki.servlets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,13 +63,13 @@ public class RolesServlet extends JAMWikiServlet {
 	
 	/**
 	 * Utility method for converting a processing an array of "userid|groupid|role" values
-	 * into a collection of roles for a specific id value.
+	 * into a List of roles for a specific id value.
 	 *
-	 * @return A Collection of role names for the given id, or an empty
-	 *  Collection if no matching values are found.
+	 * @return A List of role names for the given id, or an empty
+	 *  List if no matching values are found.
 	 */
-	private static Collection buildRoleArray(int userId, int groupId, String[] valueArray) {
-		Collection results = new Vector();
+	private static List buildRoleArray(int userId, int groupId, String[] valueArray) {
+		List results = new Vector();
 		if (valueArray == null) {
 			return results;
 		}
@@ -109,7 +110,7 @@ public class RolesServlet extends JAMWikiServlet {
 			if (candidateGroups != null) {
 				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
-					Collection roles = buildRoleArray(-1, groupId, groupRoles);
+					List roles = buildRoleArray(-1, groupId, groupRoles);
 					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
 				}
 				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
@@ -120,7 +121,7 @@ public class RolesServlet extends JAMWikiServlet {
 			if (candidateUsers != null) {
 				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
-					Collection roles = buildRoleArray(userId, -1, userRoles);
+					List roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == ServletUtil.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
