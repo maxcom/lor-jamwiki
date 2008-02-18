@@ -27,6 +27,7 @@ Bugfixes:
     sub-categories, leaving out templates.  Reported by ean.
   * Links of the form [http://example.com '''Bold text'''] will now properly
     parse markup for the link caption.
+  * Wiki table headings failed to include the opening <tr> tag in some cases.
 
 Translation Updates:
 

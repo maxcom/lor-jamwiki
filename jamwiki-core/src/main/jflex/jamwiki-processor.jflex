@@ -324,6 +324,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     StringBuffer output = new StringBuffer();
     // if a column was already open, close it
     output.append(closeTable(TH));
+    output.append("<tr>\n");
     if (yystate() != TH) beginState(TH);
     if (yytext().trim().length() > 1) {
         int start = 1;
