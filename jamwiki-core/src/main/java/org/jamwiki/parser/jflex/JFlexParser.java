@@ -108,20 +108,19 @@ public class JFlexParser extends AbstractParser {
 			String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 			throw new Exception("Infinite parsing loop - over " + this.parserInput.getDepth() + " parser iterations while parsing topic " + topicName);
 		}
-		StringBuffer content = new StringBuffer();
 		while (true) {
 			String line = lexer.yylex();
 			if (line == null) {
 				break;
 			}
-			content.append(line);
+			lexer.append(line);
 		}
 		this.parserInput.decrementDepth();
 		String redirect = this.isRedirect(raw);
 		if (!StringUtils.isBlank(redirect)) {
 			parserOutput.setRedirect(redirect);
 		}
-		return content.toString();
+		return lexer.popAllTags();
 	}
 
 	/**

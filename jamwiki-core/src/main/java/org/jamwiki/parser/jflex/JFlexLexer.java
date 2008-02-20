@@ -38,6 +38,16 @@ public abstract class JFlexLexer {
 	protected ParserOutput parserOutput = null;
 	/** Parser mode, which provides input to the parser about what steps to take. */
 	protected int mode = JFlexParser.MODE_LAYOUT;
+	/** Stack of currently parsed tag content. */
+	protected Stack tagStack = new Stack();
+
+	/**
+	 * Append content to the current tag in the tag stack.
+	 */
+	protected void append(String content) {
+		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+		currentTag.getTagContent().append(content);
+	}
 
 	/**
 	 * Begin a new parser state and store the old state onto the stack.
@@ -110,6 +120,38 @@ public abstract class JFlexLexer {
 			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
+	}
+
+	/**
+	 * Pop a the most recent HTML tag from the lexer stack.
+	 */
+	protected JFlexTagItem popTag(String tagClose) {
+		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
+		currentTag.setTagClose(tagClose);
+		JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
+		previousTag.getTagContent().append(currentTag.toString());
+		return currentTag;
+	}
+
+	/**
+	 * Pop all tags off of the stack and return a string representation.
+	 */
+	protected String popAllTags() {
+		StringBuffer result = new StringBuffer();
+		while (!this.tagStack.empty()) {
+			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
+			result.append(currentTag.toString());
+		}
+		return result.toString();
+	}
+
+	/**
+	 * Push a new HTML tag onto the lexer stack.
+	 */
+	protected void pushTag(String tagOpen) {
+		JFlexTagItem tag = new JFlexTagItem();
+		tag.setTagOpen(tagOpen);
+		this.tagStack.push(tagOpen);
 	}
 
 	/**

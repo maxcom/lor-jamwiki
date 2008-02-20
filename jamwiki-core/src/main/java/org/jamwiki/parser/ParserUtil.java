@@ -114,7 +114,7 @@ public class ParserUtil {
 	 * @return An instance of the system parser.
 	 * @throws Exception Thrown if a parser instance can not be instantiated.
 	 */
-	public static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
+	private static AbstractParser parserInstance(ParserInput parserInput) throws Exception {
 		String parserClass = Environment.getValue(Environment.PROP_PARSER_CLASS);
 		logger.fine("Using parser: " + parserClass);
 		Class clazz = ClassUtils.getClass(parserClass);

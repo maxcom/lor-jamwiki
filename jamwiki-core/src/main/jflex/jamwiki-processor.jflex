@@ -26,6 +26,7 @@ import org.jamwiki.utils.WikiLogger;
     allowJavascript = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
+    tagStack.push(new JFlexTagItem());
 %init}
 
 /* code called after parsing is completed */
