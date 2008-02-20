@@ -15,7 +15,7 @@ import org.jamwiki.utils.WikiLogger;
 
 %public
 %class JAMWikiProcessor
-%extends AbstractLexer
+%extends JFlexLexer
 %type String
 %unicode
 %ignorecase

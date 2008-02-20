@@ -26,9 +26,9 @@ import org.jamwiki.utils.WikiLogger;
  * Abstract class that is extended by the JFlex lexers.  This class primarily
  * contains utility methods useful during parsing.
  */
-public abstract class AbstractLexer {
+public abstract class JFlexLexer {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(AbstractLexer.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JFlexLexer.class.getName());
 
 	/** Member variable used to keep track of the state history for the lexer. */
 	protected Stack states = new Stack();

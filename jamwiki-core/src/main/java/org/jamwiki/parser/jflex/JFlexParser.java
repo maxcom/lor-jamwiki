@@ -99,7 +99,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 * Utility method for executing a lexer parse.
 	 */
-	private String lex(AbstractLexer lexer, String raw, ParserOutput parserOutput, int mode) throws Exception {
+	private String lex(JFlexLexer lexer, String raw, ParserOutput parserOutput, int mode) throws Exception {
 		lexer.init(this.parserInput, parserOutput, mode);
 		validate(lexer);
 		this.parserInput.incrementDepth();
@@ -353,7 +353,7 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if the parser is not initialized properly,
 	 *  usually due to a parser input field not being set.
 	 */
-	private static void validate(AbstractLexer lexer) throws Exception {
+	private static void validate(JFlexLexer lexer) throws Exception {
 		// validate parser settings
 		boolean validated = true;
 		if (lexer.mode == JFlexParser.MODE_SPLICE || lexer.mode == JFlexParser.MODE_SLICE) {

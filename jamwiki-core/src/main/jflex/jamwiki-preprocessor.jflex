@@ -13,7 +13,7 @@ import org.jamwiki.utils.WikiLogger;
 
 %public
 %class JAMWikiPreProcessor
-%extends AbstractLexer
+%extends JFlexLexer
 %type String
 %unicode
 %ignorecase

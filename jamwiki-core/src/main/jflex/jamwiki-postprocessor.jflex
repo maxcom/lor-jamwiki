@@ -9,7 +9,7 @@ import org.jamwiki.utils.WikiLogger;
 
 %public
 %class JAMWikiPostProcessor
-%extends AbstractLexer
+%extends JFlexLexer
 %type String
 %unicode
 %ignorecase
