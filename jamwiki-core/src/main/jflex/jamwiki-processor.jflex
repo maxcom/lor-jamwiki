@@ -163,7 +163,9 @@ htmlkeyword        = br|b|big|blockquote|caption|center|cite|code|del|div|em|fon
 tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|style|valign|width
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
-htmltag            = (<[ ]*[\/]?[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*[\/]?[ ]*>)
+htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
+htmltagopen        = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*>)
+htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
 /* javascript */
 jsattribute        = ([ ]+) (type|charset|defer|language) ([ ]*=[^>\n\r]+[ ]*)*
@@ -505,8 +507,22 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- html ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltag} {
-    logger.finer("htmltag: " + yytext() + " (" + yystate() + ")");
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagopen} {
+    logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
+    HtmlTag parserTag = new HtmlTag();
+    this.pushTag(this.parseToken(yytext(), parserTag));
+    return "";
+}
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagclose} {
+    logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
+    HtmlTag parserTag = new HtmlTag();
+    this.popTag(this.parseToken(yytext(), parserTag), true);
+    return "";
+}
+
+<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagnocontent} {
+    logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
     HtmlTag parserTag = new HtmlTag();
     return this.parseToken(yytext(), parserTag);
 }

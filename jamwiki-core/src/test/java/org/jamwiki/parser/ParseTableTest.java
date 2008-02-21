@@ -53,8 +53,7 @@ public class ParseTableTest extends TestParser {
 	 *
 	 */
 	public void testBasicTables4() throws Exception {
-// FIXME
-//		executeParserTest("Table4");
+		executeParserTest("Table4");
 	}
 
 	/**
