@@ -3,6 +3,13 @@
 
 New Features:
 
+  * Update and reorganize the monolithic jamwiki project structure into the
+    more modular jamwiki-core, jamwiki-web and jamwiki-war sub-projects.  As
+    a result of this change it is now possible to use the JAMWiki parser as a
+    standalone application.
+  * Update the parser to generate syntax that more exactly matches the parsed
+    HTML output of Mediawiki.
+  * Significantly improve the JAMWiki unit-test coverage.
   * Ignore line feeds in diffs to prevent showing changes due only to file
     format differences.
   * Add an option to view only untranslated keys on the Special:Translation
@@ -27,6 +34,8 @@ Bugfixes:
     sub-categories, leaving out templates.  Reported by ean.
   * Links of the form [http://example.com '''Bold text'''] will now properly
     parse markup for the link caption.
+  * Fix a parser issue that could cause wiki tables to be generated with
+    missing opening <tr> tags.
 
 Translation Updates:
 
