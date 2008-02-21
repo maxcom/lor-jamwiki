@@ -51,19 +51,20 @@ import org.jamwiki.utils.WikiLogger;
     }
     // close any open tables
     if (yystate() == TD) {
-        output.append("</td>");
+        this.popTag("</td>\n", true);
         endState();
     }
     if (yystate() == TH) {
-        output.append("</th>");
+        this.popTag("</th>\n", true);
         endState();
     }
     if (yystate() == TC) {
-        output.append("</caption>");
+        this.popTag("</caption>\n", true);
         endState();
     }
     if (yystate() == TABLE) {
-        output.append("</tr></table>");
+        this.popTag("</tr>\n", false);
+        this.popTag("</table>\n", false);
         endState();
     }
     if (yystate() == PRE || yystate() == WIKIPRE) {
@@ -92,13 +93,11 @@ import org.jamwiki.utils.WikiLogger;
     /**
      *
      */
-    protected String closeTable(int currentState) {
-        String output = "";
-        if (yystate() == TC) output = "</caption>";
-        if (yystate() == TH) output = "</th>";
-        if (yystate() == TD) output = "</td>";
+    protected void closeTable(int currentState) {
+        if (yystate() == TC) this.popTag("</caption>\n", true);
+        if (yystate() == TH) this.popTag("</th>\n", true);
+        if (yystate() == TD) this.popTag("</td>\n", true);
         if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
-        return output;
     }
     
     /**
@@ -109,24 +108,26 @@ import org.jamwiki.utils.WikiLogger;
      * @param tag The HTML tag text, either "td" or "th".
      * @param markup The Wiki markup for the tag, either "|" or "!"
      */
-    protected String openTableCell(String text, String tag, char markup) {
-        if (text == null) return "";
+    protected void openTableCell(String text, String tag, char markup) {
+        if (text == null) return;
         text = text.trim();
         int pos = 0;
         while (pos < text.length() && text.charAt(pos) == markup) {
             pos++;
         }
+        String tagString = "<" + tag + ">";
         if (pos >= text.length()) {
-            return "<" + tag + ">";
+            this.pushTag(tagString);
+            return;
         }
         text = text.substring(pos);
         pos = text.indexOf(markup);
         if (pos != -1) text = text.substring(0, pos);
         String attributes = ParserUtil.validateHtmlTagAttributes(text.trim());
         if (!StringUtils.isBlank(attributes)) {
-            return "<" + tag + " " + attributes + ">";
+            tagString = "<" + tag + " " + attributes + ">";
         }
-        return "<" + tag + ">";
+        this.pushTag(tagString);
     }
 %}
 
@@ -308,101 +309,116 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     beginState(TABLE);
     String attributes = yytext().substring(2).trim();
     attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-    return ((!StringUtils.isBlank(attributes)) ? "<table " + attributes + ">" : "<table>");
+    String tagOpen = "<table>\n";
+    if (!StringUtils.isBlank(attributes)) {
+        tagOpen = "<table " + attributes + ">\n";
+    }
+    this.pushTag(tagOpen);
+    return "";
 }
 
 <TABLE, TD, TH, TC>^{tablecaption} {
     logger.finer("tablecaption: " + yytext() + " (" + yystate() + ")");
-    StringBuffer output = new StringBuffer();
-    output.append(closeTable(TC));
+    closeTable(TC);
     beginState(TC);
-    output.append("<caption>");
-    return output.toString();
+    this.pushTag("<caption>");
+    return "";
 }
 
 <TABLE, TD, TH, TC>^{tableheading} {
     logger.finer("tableheading: " + yytext() + " (" + yystate() + ")");
-    StringBuffer output = new StringBuffer();
     // if a column was already open, close it
-    output.append(closeTable(TH));
+    closeTable(TH);
+    // FIXME - hack!  make sure that a table row is open
+    JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
+    if (previousTag.getTagOpen() != null && !previousTag.getTagOpen().startsWith("<tr")) {
+        this.pushTag("<tr>\n");
+    }
     if (yystate() != TH) beginState(TH);
     if (yytext().trim().length() > 1) {
         int start = 1;
         int end = yytext().indexOf("|", start+1);
         String attributes = yytext().substring(start, end).trim();
         attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-        String tag = "<th>";
+        String tagOpen = "<th>";
         if (!StringUtils.isBlank(attributes)) {
-            tag = "<th " + attributes + ">";
+            tagOpen = "<th " + attributes + ">";
         }
-        output.append(tag);
+        this.pushTag(tagOpen);
         // extra character matched by regular expression so push it back
         yypushback(1);
     } else {
-        output.append("<th>");
+        this.pushTag("<th>");
     }
-    return output.toString();
+    return "";
 }
 
 <TH>{tableheadings} {
     logger.finer("tableheadings: " + yytext() + " (" + yystate() + ")");
-    return "</th><th>";
+    this.popTag("</th>\n", true);
+    this.pushTag("<th>");
+    return "";
 }
 
 <TABLE, TD, TH, TC>^{tablecell} {
     logger.finer("tablecell: " + yytext() + " (" + yystate() + ")");
-    StringBuffer output = new StringBuffer();
     // if a column was already open, close it
-    output.append(closeTable(TD));
+    closeTable(TD);
+    // FIXME - hack!  make sure that a table row is open
+    JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
+    if (previousTag.getTagOpen() != null && !previousTag.getTagOpen().startsWith("<tr")) {
+        this.pushTag("<tr>\n");
+    }
     if (yystate() != TD) beginState(TD);
     // extra character matched by both regular expressions so push it back
     yypushback(1);
-    output.append(openTableCell(yytext(), "td", '|'));
-    return output.toString();
+    openTableCell(yytext(), "td", '|');
+    return "";
 }
 
 <TD>{tablecells} {
     logger.finer("tablecells: " + yytext() + " (" + yystate() + ")");
-    return "</td><td>";
+    this.popTag("</td>\n", true);
+    this.pushTag("<td>");
+    return "";
 }
 
 <TD>{tablecellsstyle} {
     logger.finer("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
     // one extra character matched by the pattern, so roll it back
     yypushback(1);
-    return "</td>" + openTableCell(yytext(), "td", '|');
+    this.popTag("</td>\n", true);
+    openTableCell(yytext(), "td", '|');
+    return "";
 }
 
 <TABLE, TD, TH, TC>^{tablerow} {
     logger.finer("tablerow: " + yytext() + " (" + yystate() + ")");
-    StringBuffer output = new StringBuffer();
     // if a column was already open, close it
     int oldState = yystate();
-    output.append(closeTable(TABLE));
-    if (oldState != TABLE) output.append("</tr>");
+    closeTable(TABLE);
+    if (oldState != TABLE && oldState != TC) this.popTag("</tr>\n", false);
+    String tag = "<tr>\n";
     if (yytext().trim().length() > 2) {
         String attributes = yytext().substring(2).trim();
         attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-        String tag = "<tr>";
         if (!StringUtils.isBlank(attributes)) {
-            tag = "<tr " + attributes + ">";
+            tag = "<tr " + attributes + ">\n";
         }
-        output.append(tag);
-    } else {
-        output.append("<tr>");
     }
-    return output.toString();
+    this.pushTag(tag);
+    return "";
 }
 
 <TABLE, TD, TH, TC>^{tableend} {
     logger.finer("tableend: " + yytext() + " (" + yystate() + ")");
-    StringBuffer output = new StringBuffer();
     // if a column was already open, close it
-    output.append(closeTable(TABLE));
+    closeTable(TABLE);
     // end TABLE state
     endState();
-    output.append("</tr></table>\n");
-    return output.toString();
+    this.popTag("</tr>\n", false);
+    this.popTag("</table>\n", false);
+    return "";
 }
 
 /* ----- comments ----- */
