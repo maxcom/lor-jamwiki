@@ -6,10 +6,12 @@
 [0-9]{5,}\.com
 4gem\.info
 adware[ -_\.]freeware
+airline\-cheap\-tickets
 amatorial[ -_\.]sex
 banklife\.ru
 (best|free|super)[ \._\-]porn
 display\:none
+freewebtown\.com
 insgc\.hocom\.by
 israwell\.com
 lavandos\.org
@@ -24,7 +26,9 @@ plantar\-wart
 porn[ -_\.]video
 russianbrides
 seo\-master\.info
+sexjay\.ru
 superche\.info
 theche\.info
 top\-dating
+viagrapills
 xenot\.co\.ua
