@@ -14,30 +14,24 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.jamwiki.parser.jflex;
-
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserTag;
-import org.jamwiki.utils.WikiLogger;
+package org.jamwiki.parser;
 
 /**
- * When parsing wiki syntax, this class is used to remove any HTML comments in
- * the syntax.
+ *
  */
-public class HtmlCommentTag implements ParserTag {
-
-	private static final WikiLogger logger = WikiLogger.getLogger(HtmlCommentTag.class.getName());
+public class ParseHtmlCommentTest extends TestParser {
 
 	/**
 	 *
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		if (mode < JFlexParser.MODE_PREPROCESS) {
-			// return content unchanged
-			return raw;
-		}
-		// otherwise strip comment
-		return "";
+	public ParseHtmlCommentTest(String name) {
+		super(name);
+	}
+
+	/**
+	 *
+	 */
+	public void testBasicHtmlComments() throws Exception {
+		executeParserTest("HtmlCommentTest1");
 	}
 }

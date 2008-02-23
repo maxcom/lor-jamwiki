@@ -177,9 +177,6 @@ notoc              = "__NOTOC__"
 toc                = "__TOC__"
 forcetoc           = "__FORCETOC__"
 
-/* comments */
-htmlcomment        = "<!--" ~"-->"
-
 /* tables */
 tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\r\|]+[ ]*)*
 tablestart         = "{|" {inputcharacter}* {newline}
@@ -421,14 +418,6 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     this.popTag("</tr>\n", false);
     this.popTag("</table>\n", false);
     return "";
-}
-
-/* ----- comments ----- */
-
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmlcomment} {
-    logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    HtmlCommentTag parserTag = new HtmlCommentTag();
-    return this.parseToken(yytext(), parserTag);
 }
 
 /* ----- headings ----- */
