@@ -156,7 +156,7 @@ public class XMLUtil {
 			} catch (SAXException e) {
 				// invalid XML
 				logger.severe("The file " + file.getAbsolutePath() + " contains invalid XML", e);
-				throw new Exception("The file " + file.getAbsolutePath() + " contains invalid XML: " + e.getMessage());
+				throw new Exception("The file " + file.getAbsolutePath() + " contains invalid XML: " + e.getMessage(), e);
 			}
 		} finally {
 			if (stream != null) {

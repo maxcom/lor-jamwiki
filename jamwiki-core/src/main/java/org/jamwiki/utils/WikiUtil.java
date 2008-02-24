@@ -243,8 +243,8 @@ public class WikiUtil {
 			int pos = query.indexOf(prefix);
 			if (pos != -1 && (pos + prefix.length()) < query.length()) {
 				value = query.substring(pos + prefix.length());
-				if (value.indexOf("&") != -1) {
-					value = value.substring(0, value.indexOf("&"));
+				if (value.indexOf('&') != -1) {
+					value = value.substring(0, value.indexOf('&'));
 				}
 			}
 			return Utilities.decodeFromURL(value, decodeUnderlines);
@@ -369,7 +369,7 @@ public class WikiUtil {
 			return false;
 		}
 		String commentNamespace = NamespaceHandler.getCommentsNamespace(namespace);
-		return (namespace.equals(commentNamespace));
+		return namespace.equals(commentNamespace);
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class WikiUtil {
 		}
 		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
 		WikiVersion currentVersion = new WikiVersion(WikiVersion.CURRENT_WIKI_VERSION);
-		return (oldVersion.before(currentVersion));
+		return oldVersion.before(currentVersion);
 	}
 
 	/**

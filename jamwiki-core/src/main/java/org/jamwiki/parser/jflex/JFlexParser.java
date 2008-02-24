@@ -386,16 +386,14 @@ public class JFlexParser extends AbstractParser {
 				logger.info("Failure while initializing parser: virtual wiki is null.");
 				validated = false;
 			}
-		} else if (lexer.mode <= JFlexParser.MODE_PREPROCESS) {
-			if (lexer.mode >= JFlexParser.MODE_MINIMAL) {
-				if (lexer.parserInput.getVirtualWiki() == null) {
-					logger.info("Failure while initializing parser: virtual wiki is null.");
-					validated = false;
-				}
-				if (lexer.parserInput.getTopicName() == null) {
-					logger.info("Failure while initializing parser: topic name is null.");
-					validated = false;
-				}
+		} else if (lexer.mode <= JFlexParser.MODE_PREPROCESS && lexer.mode >= JFlexParser.MODE_MINIMAL) {
+			if (lexer.parserInput.getVirtualWiki() == null) {
+				logger.info("Failure while initializing parser: virtual wiki is null.");
+				validated = false;
+			}
+			if (lexer.parserInput.getTopicName() == null) {
+				logger.info("Failure while initializing parser: topic name is null.");
+				validated = false;
 			}
 		}
 		if (!validated) {

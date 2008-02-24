@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;

@@ -27,7 +27,7 @@ class JFlexTagItem {
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
 	private String tagClose = null;
-	private StringBuffer tagContent = new StringBuffer();
+	private final StringBuffer tagContent = new StringBuffer();
 	private String tagOpen = null;
 
 	/**
@@ -76,7 +76,9 @@ class JFlexTagItem {
 	 */
 	public String toString(boolean trim) {
 		String content = this.tagContent.toString();
-		if (trim) content = content.trim();
+		if (trim) {
+			content = content.trim();
+		}
 		if (this.tagOpen == null || this.tagClose == null) {
 			return content;
 		}
