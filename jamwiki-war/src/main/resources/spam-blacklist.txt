@@ -7,6 +7,7 @@
 4gem\.info
 adware[ -_\.]freeware
 airline\-cheap\-tickets
+airline\-tickets\-cheap
 amatorial[ -_\.]sex
 banklife\.ru
 (best|free|super)[ \._\-]porn
