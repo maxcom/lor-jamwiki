@@ -6,7 +6,7 @@ New Features:
   * Update and reorganize the monolithic jamwiki project structure into the
     more modular jamwiki-core, jamwiki-web and jamwiki-war sub-projects.  As
     a result of this change it is now possible to use the JAMWiki parser as a
-    standalone application.
+    standalone library.
   * Update the parser to generate syntax that more exactly matches the parsed
     HTML output of Mediawiki.
   * Significantly improve the JAMWiki unit-test coverage.
@@ -15,6 +15,7 @@ New Features:
   * Add an option to view only untranslated keys on the Special:Translation
     page.
   * Upgrade to Lucene Search 2.3.
+  * Upgrade to ehcache 1.4.1.
 
 Bugfixes:
 
