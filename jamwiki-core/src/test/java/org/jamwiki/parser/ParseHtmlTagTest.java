@@ -49,6 +49,16 @@ public class ParseHtmlTagTest extends TestParser {
 	/**
 	 *
 	 */
+	public void testHtmlMismatch() throws Exception {
+// FIXME
+//		executeParserTest("HtmlMismatchTest1");
+//		executeParserTest("HtmlMismatchTest2");
+//		executeParserTest("HtmlMismatchTest3");
+	}
+
+	/**
+	 *
+	 */
 	public void testXSS() throws Exception {
 		// FIXME - this test is currently failing
 		// executeParserTest("HtmlXSS1");
