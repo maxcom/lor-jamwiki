@@ -15,7 +15,6 @@ New Features:
   * Add an option to view only untranslated keys on the Special:Translation
     page.
   * Upgrade to Lucene Search 2.3.
-  * Upgrade to ehcache 1.4.1.
 
 Bugfixes:
 
@@ -136,7 +135,7 @@ Bugfixes:
 
   * "Open printable link in new window" functionality was broken in 0.6.0.  Bug
     found and fix suggested by Ernesto Arteaga (arterzatij@radioactivo.com) and
-    Esteban Dueñas (edvjar@hotmail.com).
+    Esteban Dueas (edvjar@hotmail.com).
   * Fix an issue where redirection from index.jsp would lead to the wrong topic
     when the default topic has previously been changed.
   * Allow access to CSS and JAMWiki images even if a user does not have
