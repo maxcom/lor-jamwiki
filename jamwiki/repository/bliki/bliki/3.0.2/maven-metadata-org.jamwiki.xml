@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>bliki</groupId>
+  <artifactId>bliki</artifactId>
+  <version>3.0.2</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20070715140804</lastUpdated>
+  </versioning>
+</metadata>
