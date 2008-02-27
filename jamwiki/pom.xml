@@ -168,7 +168,7 @@
 		<dependency>
 			<groupId>bliki</groupId>
 			<artifactId>bliki</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>3.0.2</version>
 		</dependency>
 
 		<!--  These dependencies are related project.

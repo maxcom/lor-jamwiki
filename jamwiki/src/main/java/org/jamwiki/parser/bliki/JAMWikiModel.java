@@ -1,26 +1,32 @@
 package org.jamwiki.parser.bliki;
 
-import org.apache.commons.lang.StringUtils;
+import info.bliki.wiki.addon.model.AddonConfiguration;
+import info.bliki.wiki.filter.Encoder;
+import info.bliki.wiki.model.AbstractWikiModel;
+import info.bliki.wiki.model.ImageFormat;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.htmlcleaner.ContentToken;
+import org.htmlcleaner.TagNode;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.parser.ParserDocument;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.jflex.WikiHeadingTag;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import info.bliki.wiki.filter.AbstractWikiModel;
-import info.bliki.wiki.filter.Encoder;
-import info.bliki.wiki.filter.ImageFormat;
+import org.springframework.util.StringUtils;
 
 /**
  * Standard model implementation
- *
+ * 
  */
 public class JAMWikiModel extends AbstractWikiModel {
-	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiModel.class.getName());
-
-	private static final int DEFAULT_THUMBNAIL_SIZE = 180;
+	private static WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
 	protected String fExternalImageBaseURL;
 
@@ -31,45 +37,38 @@ public class JAMWikiModel extends AbstractWikiModel {
 	protected ParserDocument fDocument;
 
 	public JAMWikiModel(ParserInput parserInput, ParserDocument document, String imageBaseURL, String linkBaseURL) {
-		super();
+		super(AddonConfiguration.DEFAULT_CONFIGURATION);
 		fParserInput = parserInput;
 		fDocument = document;
 		fExternalImageBaseURL = imageBaseURL;
 		fExternalWikiBaseURL = linkBaseURL;
 	}
 
-	public void parseInternalImageLink(StringBuffer writer, String imageNamespace, String name) {
+	public void parseInternalImageLink(String imageNamespace, String name) {
 		if (fExternalImageBaseURL != null) {
+			// see JAMHTMLConverter#imageNodeToText() for the real conversion
+			// routine!!!
 			ImageFormat imageFormat = ImageFormat.getImageFormat(name, imageNamespace);
-
-			String imageName = imageFormat.getFilename();
-			imageName = imageName.replaceAll("_", " ");
-			int maxDimension = imageFormat.getSize();
-			String type = imageFormat.getType();
-			boolean frame = type == null ? false : type.equals("frame");
-			boolean thumb = type == null ? false : type.equals("thumb");
-			if (thumb && maxDimension <= 0) {
-				maxDimension = DEFAULT_THUMBNAIL_SIZE;
-			}
-			try {
-				writer
-						.append(LinkUtil.buildImageLinkHtml(fParserInput.getContext(), fParserInput.getVirtualWiki(), getImageNamespace() + NamespaceHandler.NAMESPACE_SEPARATOR
-								+ imageName, frame, thumb, imageFormat.getLocation(), imageFormat.getCaption(), maxDimension, false, null, false));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			String imageName = imageFormat.getFilename();
+//			String imageHref = fExternalWikiBaseURL;
+//			String imageSrc = fExternalImageBaseURL;
+//			imageHref = imageHref.replace("${title}", imageNamespace + ':' + imageName);
+//			imageSrc = imageSrc.replace("${image}", imageName);
+			
+			appendInternalImageLink(fExternalWikiBaseURL, fExternalImageBaseURL, imageFormat);
 		}
+
 	}
 
-	public void appendInternalLink(StringBuffer writer, String link, String hashSection, String linkText) {
+	public void appendInternalLink(String link, String hashSection, String linkText) {
 		String hrefLink = fExternalWikiBaseURL;
 		String encodedtopic = Encoder.encodeTitleUrl(link);
 		hrefLink = StringUtils.replace(hrefLink, "${title}", encodedtopic);
-		super.appendInternalLink(writer, hrefLink, hashSection, linkText);
+		super.appendInternalLink(hrefLink, hashSection, linkText);
 	}
 
 	public void addCategory(String categoryName, String sortKey) {
-		fDocument.addCategory(getCategoryNamespace()+NamespaceHandler.NAMESPACE_SEPARATOR+categoryName, sortKey);
+		fDocument.addCategory(getCategoryNamespace() + NamespaceHandler.NAMESPACE_SEPARATOR + categoryName, sortKey);
 	}
 
 	public void addLink(String topic) {
@@ -80,36 +79,31 @@ public class JAMWikiModel extends AbstractWikiModel {
 		fDocument.addTemplate(template);
 	}
 
-	public String getRawWikiContent(String namespace, String topicName) {
-		String result = super.getRawWikiContent(namespace, topicName);
+	public String getRawWikiContent(String namespace, String topicName, Map map) {
+		String result = super.getRawWikiContent(namespace, topicName, map);
 		if (result != null) {
 			return result;
 		}
 		try {
 			topicName = topicName.replaceAll("_", " ");
 			Topic topic = WikiBase.getDataHandler().lookupTopic(fParserInput.getVirtualWiki(), namespace + ':' + topicName, false, null);
-			if (topic==null) {
+			if (topic == null) {
 				return null;
 			}
 			return topic.getTopicContent();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return result;
 	}
 
-	public String buildEditLinkUrl(int section) {
+	public void buildEditLinkUrl(int section) {
 		if (fParserInput.getAllowSectionEdit()) {
+			TagNode divTagNode = new TagNode("div");
+			divTagNode.addAttribute("style", "font-size:90%;float:right;margin-left:5px;");
+			divTagNode.addChild(new ContentToken("["));
+			append(divTagNode);
 
-			// FIXME - template inclusion causes section edits to break, so disable
-			// for now
-			// String inclusion =
-			// (String)fParserInput.getTempParams().get(TemplateTag.TEMPLATE_INCLUSION);
-			// boolean disallowInclusion = (inclusion != null &&
-			// inclusion.equals("true"));
-			// if (disallowInclusion) return "";
-			String output = "<div style=\"font-size:90%;float:right;margin-left:5px;\">[";
 			String url = "";
 			try {
 				url = LinkUtil.buildEditLinkUrl(fParserInput.getContext(), fParserInput.getVirtualWiki(), fParserInput.getTopicName(),
@@ -118,12 +112,12 @@ public class JAMWikiModel extends AbstractWikiModel {
 				logger.severe("Failure while building link for topic " + fParserInput.getVirtualWiki() + " / "
 						+ fParserInput.getTopicName(), e);
 			}
-			output += "<a href=\"" + url + "\">";
-			output += Utilities.formatMessage("common.sectionedit", fParserInput.getLocale());
-			output += "</a>]</div>";
-			return output;
+			TagNode aTagNode = new TagNode("a");
+			aTagNode.addAttribute("href", url);
+			aTagNode.addChild(new ContentToken(Utilities.formatMessage("common.sectionedit", fParserInput.getLocale())));
+			divTagNode.addChild(aTagNode);
+			divTagNode.addChild(new ContentToken("]"));
 		}
-		return "";
 	}
 
 	public boolean parseBBCodes() {
@@ -144,6 +138,38 @@ public class JAMWikiModel extends AbstractWikiModel {
 
 	public String getTemplateNamespace() {
 		return NamespaceHandler.NAMESPACE_TEMPLATE;
+	}
+
+	public Set getLinks() {
+		return null;
+	}
+
+	public void appendInterWikiLink(String namespace, String title, String linkText) {
+		// no interwiki link parsing
+		return;
+//		String hrefLink = (String) getInterwikiMap().get(namespace.toLowerCase());
+//		if (hrefLink == null) {
+//			// shouldn't really happen
+//			return;
+//		} else {
+//			int index = hrefLink.indexOf("wikipedia.org/");
+//			if (index > 0) {
+//				return;
+//			}
+//		}
+//		super.appendInterWikiLink(namespace, title, linkText);
+	}
+
+	public boolean isTemplateTopic() {
+		String topicName = fParserInput.getTopicName();
+		int index = topicName.indexOf(':');
+		if (index > 0) {
+			String namespace = topicName.substring(0, index);
+			if (isTemplateNamespace(namespace)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

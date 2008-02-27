@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><metadata>
   <groupId>bliki</groupId>
   <artifactId>bliki</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>3.0.2</version>
   <versioning>
     <versions>
-      <version>1.0-SNAPSHOT</version>
+      <version>3.0.2</version>
     </versions>
     <lastUpdated>20070715145600</lastUpdated>
   </versioning>
