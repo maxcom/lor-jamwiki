@@ -54,6 +54,7 @@ public class ParseHtmlTagTest extends TestParser {
 //		executeParserTest("HtmlMismatchTest1");
 //		executeParserTest("HtmlMismatchTest2");
 //		executeParserTest("HtmlMismatchTest3");
+//		executeParserTest("HtmlMismatchTest4");
 	}
 
 	/**

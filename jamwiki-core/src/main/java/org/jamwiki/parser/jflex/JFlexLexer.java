@@ -145,7 +145,7 @@ public abstract class JFlexLexer {
 		StringBuffer result = new StringBuffer();
 		while (!this.tagStack.empty()) {
 			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
-			result.append(currentTag.toString(false));
+			result.insert(0, currentTag.toString(false));
 		}
 		return result.toString();
 	}

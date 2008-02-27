@@ -76,12 +76,17 @@ class JFlexTagItem {
 	 */
 	public String toString(boolean trim) {
 		String content = this.tagContent.toString();
+		String result = "";
 		if (trim) {
 			content = content.trim();
 		}
-		if (this.tagOpen == null || this.tagClose == null) {
-			return content;
+		if (this.tagOpen != null) {
+			result += this.tagOpen;
 		}
-		return this.tagOpen + content + this.tagClose;
+		result += content;
+		if (this.tagClose != null) {
+			result += this.tagClose;
+		}
+		return result;
 	}
 }
