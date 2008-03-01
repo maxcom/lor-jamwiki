@@ -11,8 +11,10 @@ airline\-tickets\-cheap
 amatorial[ -_\.]sex
 banklife\.ru
 (best|free|super)[ \._\-]porn
+diplom21\.ru 
 display\:none
 freewebtown\.com
+(http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[ \n\t]+){10,}
 insgc\.hocom\.by
 israwell\.com
 lavandos\.org
@@ -24,6 +26,7 @@ online\-unlock\.com
 payday[ -_\.]loans
 peace\.com
 plantar\-wart
+plus18\.eu
 porn[ -_\.]video
 russianbrides
 seo\-master\.info
