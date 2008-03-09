@@ -37,6 +37,7 @@ Bugfixes:
     parse markup for the link caption.
   * Fix a parser issue that could cause wiki tables to be generated with
     missing opening <tr> tags.
+  * Add topic name validation to uploaded image files.
 
 Translation Updates:
 

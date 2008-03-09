@@ -1165,6 +1165,7 @@ public class AnsiDataHandler implements DataHandler {
 		Connection conn = null;
 		try {
 			conn = WikiDatabase.getConnection(transactionObject);
+			WikiUtil.validateTopicName(wikiFile.getFileName());
 			if (wikiFile.getFileId() <= 0) {
 				addWikiFile(wikiFile, conn);
 			} else {
