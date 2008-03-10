@@ -9,45 +9,57 @@ below, but in the case of errors manual upgrade steps may need to be followed.
 AUTOMATIC UPGRADES
 ==================
 
+IMPORTANT: The upgrade process will overwrite files that you have modified. You
+must backup any files from your /WEB-INF/classes/ that have been changed prior
+to upgrading.
+
 In most cases upgrades can be handled using a mostly-automated wizard process.
 To upgrade using this automated process follow these steps:
 
   1.  Download the latest JAMWiki release from
       http://sourceforge.net/projects/jamwiki/.
-  2.  Back up all database and/or file data prior to upgrading.
-  3.  Back up the jamwiki.properties file and the logging.properties from the
-      the /WEB-INF/classes/ directory.  These files will need to be restored
-      after the new JAMWiki WAR file has been deployed.
-  4.  If you have made any changes to any other files under the /WEB-INF/
-      directory be sure that they are backed up as well as they will need to
-      be restored after the new JAMWiki WAR file has been deployed.
-  5.  (Optional) The default location for uploaded files is in the /upload/
-      directory. If the wiki is using this directory for file uploads then the
-      /upload/ directory should be backed up so that uploaded images are not
-      lost.
-  6.  Remove the old JAMWiki installation by deleting your existing JAMWiki
-      web application. For some web application servers you may also want to
-      clear the application server's cache.
-  7.  Install the new JAMWiki WAR file.  See your web application server's
-      documentation for instructions.
-  8.  Restore the files that were backed up in steps three - five to their
-      previous locations under the /WEB-INF/, /WEB-INF/classes/ and /upload/
+  2.  The following files will need to be backed up from the webapp
+      installation directory:
+        1.  /WEB-INF/classes/jamwiki.properties
+        2.  /WEB-INF/classes/logging.properties
+        3.  (Optional) The content found in the /upload/ directory. This step
+            is necessary only if the default file upload directory is being
+            used.
+        4.  (Optional) Any other files in the /WEB-INF/ directory that have
+            custom modifications. 
+  3.  (Optional) Back up all database data prior to upgrading. This step is
+      optional but highly recommended.
+  4.  Remove the old JAMWiki installation by deleting your existing JAMWiki web
+      application. For some web application servers you may also want to clear
+      the application server's cache.
+  5.  Install the new JAMWiki WAR file. See your web application server's
+      documentation for instructions. Note that WAR files should be deployed as
+      exploded WAR files as some application servers will lose configuration
+      information otherwise.
+  6.  Restore the files that were backed up in steps two and three to their
+      previous locations under the /upload/, /WEB-INF/ and /WEB-INF/classes/
       directories, overwriting any new files.
-  9.  (Optional) If using an external database, make sure that your JDBC
-      driver is available in the web application server's classpath.
-  10. Verify that the web application server process has read and write access
-      to all files in the new JAMWiki installation.
-  11. Restart the web application server and view any page on the Wiki. You
+  7.  (Optional) If using an external database, make sure that your JDBC driver
+      is available in the web application server's classpath.
+  8.  Verify that the web application server process has permisson to read and
+      write all files in the new JAMWiki installation.
+  9.  Restart the web application server and view any page on the Wiki. You
       will be redirected to the upgrade page and any required upgrade steps
       will be automatically performed.
+  10. (Optional) The upgrade process will automatically upgrade the StyleSheet
+      topic if modifications are required, and any customizations will be
+      overwritten. The previous version of the topic can easily be restored by
+      viewing the "History" tab for the topic (for example:
+      http://jamwiki.org/wiki/en/Special:History?topic=StyleSheet), selecting
+      the pre-upgrade version, and then editing and saving that version. 
 
-If the upgrade fails see below for instructions to manually upgrade.  If the
-problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports
-and include any relevant information from your log files with the problem
-report.  Note that some users have reported failures after upgrading, but the
-problem was caused by old JAMWiki files being cached by the application server.
-This problem is particularly common with Tomcat, and can be resolved by
-clearing the application server's cache.
+If the upgrade fails see below for instructions to manually upgrade. If the
+problem persists please report it on http://jamwiki.org/wiki/en/Bug_Reports and
+include any relevant information from your log files with the problem report.
+Note that one of the most common "bugs" encountered when upgrading is actually
+due to old JAMWiki files being cached by the application server; this problem
+is particularly common with Tomcat, and can be resolved by clearing the
+application server's cache.
 
 
 MANUAL UPGRADES
