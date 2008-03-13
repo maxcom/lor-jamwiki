@@ -17,7 +17,7 @@
 
 --%>
 <%@ page import="
-        org.jamwiki.servlets.ServletUtil
+        org.jamwiki.utils.WikiUtil
     "
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
@@ -32,7 +32,7 @@
 <c:if test="${deleted}">
 <a name="undelete"></a>
 <form name="undelete" method="get" action="<jamwiki:link value="Special:Manage" />">
-<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <fieldset>
 <legend><f:message key="manage.caption.undelete"><f:param value="${pageInfo.topicName}" /></f:message></legend>
 <div class="formentry">
@@ -55,7 +55,7 @@
 <c:if test="${!deleted}">
 <a name="delete"></a>
 <form name="delete" method="get" action="<jamwiki:link value="Special:Manage" />">
-<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <fieldset>
 <legend><f:message key="manage.caption.delete"><f:param value="${pageInfo.topicName}" /></f:message></legend>
 <div class="message"><f:message key="manage.delete.warning" /></div>
@@ -77,7 +77,7 @@
 </form>
 <a name="permissions"></a>
 <form name="permissions" method="get" action="<jamwiki:link value="Special:Manage" />">
-<input type="hidden" name="<%= ServletUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
+<input type="hidden" name="<%= WikiUtil.PARAMETER_TOPIC %>" value="<c:out value="${pageInfo.topicName}" />" />
 <fieldset>
 <legend><f:message key="manage.caption.permissions" /></legend>
 <div class="formentry">

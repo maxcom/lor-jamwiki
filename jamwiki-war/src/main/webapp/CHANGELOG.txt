@@ -1,6 +1,10 @@
 ﻿0.6.5
 =====
 
+Bugfixes:
+  * Fix a regression that broke the Special:Manage page.  Bug reported with a
+    suggested fix by tfschueller.
+
 
 0.6.4
 =====
