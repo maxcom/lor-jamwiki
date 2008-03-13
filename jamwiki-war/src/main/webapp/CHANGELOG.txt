@@ -4,6 +4,8 @@
 Bugfixes:
   * Fix a regression that broke the Special:Manage page.  Bug reported with a
     suggested fix by tfschueller.
+  * Resolve a logic error that prevented topics from being retrieved from the
+    cache at appropriate times.  Pointed out by Jim.
 
 
 0.6.4
