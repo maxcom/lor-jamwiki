@@ -62,6 +62,8 @@ public class WikiBase {
 	public static final String DATA_HANDLER_ORACLE = "org.jamwiki.db.OracleDataHandler";
 	/** Postgres data handler class */
 	public static final String DATA_HANDLER_POSTGRES = "org.jamwiki.db.PostgresDataHandler";
+	/** Sybase ASA data handler class */
+	public static final String DATA_HANDLER_ASA = "org.jamwiki.db.SybaseASADataHandler";
 	/** Name of the default wiki */
 	// FIXME - make this configurable
 	public static final String DEFAULT_VWIKI = "en";
