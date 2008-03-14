@@ -112,9 +112,10 @@ public class DatabaseConnection {
 	}
 
 	/**
-	 *
+	 * Close the connection pool, to be called for example in the case
+	 * of the Servlet being shutdown. 
 	 */
-	private static void closeConnectionPool() throws Exception {
+	protected static void closeConnectionPool() throws Exception {
 		if (connectionPool == null) {
 			return;
 		}
