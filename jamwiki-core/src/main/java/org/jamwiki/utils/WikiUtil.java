@@ -131,6 +131,8 @@ public class WikiUtil {
 		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("db2/400")) {
 			Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_DB2400);
 			Environment.saveProperties();
+		} else if (Environment.getValue(Environment.PROP_DB_TYPE).equals("asa")) {
+		    Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ASA);
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
 		logger.fine("Using data handler: " + dataHandlerClass);
