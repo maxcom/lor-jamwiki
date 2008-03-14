@@ -48,10 +48,6 @@ public class WikiDatabase {
 	private static String EXISTENCE_VALIDATION_QUERY = null;
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiDatabase.class.getName());
 
-	static {
-		WikiDatabase.initialize();
-	}
-
 	/**
 	 *
 	 */
@@ -95,7 +91,7 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void initialize() {
+	public synchronized static void initialize() {
 		try {
 			WikiDatabase.CONNECTION_VALIDATION_QUERY = WikiDatabase.queryHandler().connectionValidationQuery();
 			WikiDatabase.EXISTENCE_VALIDATION_QUERY = WikiDatabase.queryHandler().existenceValidationQuery();
@@ -104,6 +100,14 @@ public class WikiDatabase {
 			DatabaseConnection.setPoolInitialized(false);
 		} catch (Exception e) {
 			logger.severe("Unable to initialize database", e);
+		}
+	}
+
+	public synchronized static void shutdown() {
+		try {
+			DatabaseConnection.closeConnectionPool();
+		} catch (Exception e) {
+			logger.severe("Unable to close the connection pool on shutdown", e);
 		}
 	}
 
@@ -229,7 +233,7 @@ public class WikiDatabase {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath();
+		String url = "jdbc:hsqldb:file:" + new File(file.getPath(), "jamwiki").getPath() + ";shutdown=true";
 		props.setProperty(Environment.PROP_DB_URL, url);
 	}
 
