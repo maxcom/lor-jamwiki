@@ -125,6 +125,14 @@ public class WikiCache {
 			logger.severe("Initialization error in WikiCache", e);
 		}
 	}
+	
+	public static void shutdown() {
+        if (WikiCache.cacheManager != null) {
+            WikiCache.cacheManager.shutdown();
+            WikiCache.cacheManager = null;
+        }
+	    
+	}
 
 	/**
 	 * Given a virtual wiki name and a topic name, generate a unique key value
