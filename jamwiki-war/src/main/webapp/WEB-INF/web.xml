@@ -44,6 +44,10 @@
 	</filter-mapping>
 
 	<listener>
+		<listener-class>org.jamwiki.servlets.JAMWikiListener</listener-class>
+	</listener>
+
+	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
