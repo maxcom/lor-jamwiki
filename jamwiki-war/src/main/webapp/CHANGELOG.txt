@@ -10,6 +10,9 @@ New Features:
 Bugfixes:
   * Fix a problem that could cause HSQL to generate locking errors on context
     reload (dallas).
+  * Resolve a problem that could cause database connection lockups during
+    setup on MS SQL and some other databases.  Reported by multiple users, with
+    significant debugging help provided by dallas.
   * Fix a regression that broke the Special:Manage page.  Bug reported with a
     suggested fix by tfschueller.
   * Fix a regression that broke the Special:Move page (dallas).
