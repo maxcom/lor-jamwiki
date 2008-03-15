@@ -1,9 +1,16 @@
 ﻿0.6.5
 =====
 
+New Features:
+
+  * Support added for Sybase ASA (dallas).
+
 Bugfixes:
+  * Fix a problem that could cause HSQL to generate locking errors on context
+    reload (dallas).
   * Fix a regression that broke the Special:Manage page.  Bug reported with a
     suggested fix by tfschueller.
+  * Fix a regression that broke the Special:Move page (dallas).
   * Resolve a logic error that prevented topics from being retrieved from the
     cache at appropriate times.  Pointed out by Jim.
 

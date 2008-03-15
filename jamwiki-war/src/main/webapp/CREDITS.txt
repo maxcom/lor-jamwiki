@@ -10,6 +10,7 @@ JAMWiki Contributors
                             Scott Croco (scroco)
                             Régis Décamps (RegisDecamps)
                             Michael Greifeneder (mikegr)
+                            Dallas Hopewell (dallas)
                             Axel Kramer (axelclk)
                             Robert Matyja (dlpa)
                             Rainer Schmitz (swift)
