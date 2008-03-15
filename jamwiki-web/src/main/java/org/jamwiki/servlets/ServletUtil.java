@@ -133,7 +133,12 @@ public class ServletUtil {
 					links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
 				}
 			} else if (pageInfo.getSpecial()) {
-				links.put(pageName, new WikiMessage("tab.common.special"));
+				// append query params for pages such as Special:Contributions that need it
+				String specialUrl = pageName;
+				if (!StringUtils.isBlank(request.getQueryString())) {
+					specialUrl = pageName + "?" + request.getQueryString();
+				}
+				links.put(specialUrl, new WikiMessage("tab.common.special"));
 			} else {
 				String article = WikiUtil.extractTopicLink(pageName);
 				String comments = WikiUtil.extractCommentsLink(pageName);

@@ -18,6 +18,8 @@ Bugfixes:
   * Fix a regression that broke the Special:Move page (dallas).
   * Resolve a logic error that prevented topics from being retrieved from the
     cache at appropriate times.  Pointed out by Jim.
+  * The "Special" tab on the Special:Contributions page did not have the
+    correct URL.  Reported by yesesnono.
 
 
 0.6.4
