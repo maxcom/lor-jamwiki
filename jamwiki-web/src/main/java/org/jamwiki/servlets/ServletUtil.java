@@ -55,6 +55,7 @@ import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
+import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
@@ -260,6 +261,34 @@ public class ServletUtil {
 			return null;
 		}
 		return content;
+	}
+
+	/**
+	 * This is a utility method that will check topic content for spam, and
+	 * return <code>null</code> if no matching values are found, or if a spam
+	 * pattern is found then that pattern will be returned.  It will also log
+	 * information about the offending spam and user to the logs.
+	 *
+	 * @param request The current servlet request.
+	 * @param topicName The name of the current topic being edited.
+	 * @param contents The text for the current topic that the user is trying to
+	 *  add.
+	 * @return <code>null</code> if nothing in the topic content matches a current
+	 *  spam pattern, or the text that matches a spam pattern if one is found.
+	 */
+	protected static String checkForSpam(HttpServletRequest request, String topicName, String contents) throws Exception {
+		String result = SpamFilter.containsSpam(contents);
+		if (StringUtils.isBlank(result)) {
+			return null;
+		}
+		String message = "SPAM found in topic " + topicName + " (";
+		WikiUserAuth user = ServletUtil.currentUser();
+		if (user.hasRole(Role.ROLE_USER)) {
+			message += user.getUsername() + " / ";
+		}
+		message += ServletUtil.getIpAddress(request) + "): " + result;
+		logger.info(message);
+		return result;
 	}
 
 	/**

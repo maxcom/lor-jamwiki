@@ -4,6 +4,8 @@
 New Features:
 
   * Support added for Sybase ASA (dallas).
+  * The spam filter will now also check descriptions for uploaded files in
+    order to block spam from bots using this path.
 
 Bugfixes:
   * Fix a problem that could cause HSQL to generate locking errors on context

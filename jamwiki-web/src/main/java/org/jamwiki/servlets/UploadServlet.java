@@ -114,6 +114,21 @@ public class UploadServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private boolean handleSpam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName, String contents) throws Exception {
+		String result = ServletUtil.checkForSpam(request, topicName, contents);
+		if (result == null) {
+			return false;
+		}
+		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
+		next.addObject("spam", spam);
+		next.addObject("contents", contents);
+		next.addObject("uploadSpam", "true");
+		return true;
+	}
+
+	/**
+	 *
+	 */
 	private boolean isFileTypeAllowed(String extension) {
 		int blacklistType = Environment.getIntValue(Environment.PROP_FILE_BLACKLIST_TYPE);
 		if (blacklistType == WikiBase.UPLOAD_ALL) {
@@ -201,6 +216,11 @@ public class UploadServlet extends JAMWikiServlet {
 		}
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeFromURL(fileName, true);
+		if (this.handleSpam(request, next, pageInfo, topicName, contents)) {
+			// FIXME - the uploaded content should be deleted
+			this.view(request, next, pageInfo);
+			return;
+		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
 		if (topic == null) {
 			topic = new Topic();

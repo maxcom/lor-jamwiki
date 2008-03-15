@@ -108,17 +108,10 @@ public class EditServlet extends JAMWikiServlet {
 	 *
 	 */
 	private boolean handleSpam(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName, String contents) throws Exception {
-		String result = org.jamwiki.utils.SpamFilter.containsSpam(contents);
-		if (StringUtils.isBlank(result)) {
+		String result = ServletUtil.checkForSpam(request, topicName, contents);
+		if (result == null) {
 			return false;
 		}
-		String message = "SPAM found in topic " + topicName + " (";
-		WikiUserAuth user = ServletUtil.currentUser();
-		if (user.hasRole(Role.ROLE_USER)) {
-			message += user.getUsername() + " / ";
-		}
-		message += ServletUtil.getIpAddress(request) + "): " + result;
-		logger.info(message);
 		WikiMessage spam = new WikiMessage("edit.exception.spam", result);
 		next.addObject("spam", spam);
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
