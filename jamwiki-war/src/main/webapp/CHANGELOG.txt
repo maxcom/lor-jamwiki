@@ -22,6 +22,10 @@ Bugfixes:
   * The "Special" tab on the Special:Contributions page did not have the
     correct URL.  Reported by yesesnono.
 
+Translation Updates:
+
+  * Updated Hungarian translations (bdanee).
+
 
 0.6.4
 =====
