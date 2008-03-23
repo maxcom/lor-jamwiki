@@ -7,7 +7,7 @@
 	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki</artifactId>
 	<packaging>pom</packaging>
-	<version>0.6.5-SNAPSHOT</version>
+	<version>0.6.6-SNAPSHOT</version>
 	<name>Jamwiki Super POM</name>
 	<description>
 		JAMWiki is a Java-based Wiki engine, which offers many of the
@@ -38,7 +38,7 @@
 		</license>
 	</licenses>
 	<properties>
-		<jamwiki.version>0.6.5-SNAPSHOT</jamwiki.version>
+		<jamwiki.version>0.6.6-SNAPSHOT</jamwiki.version>
 		<dependency.spring.version>2.5.1</dependency.spring.version>
 	</properties>
 	<repositories>
