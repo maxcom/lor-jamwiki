@@ -39,7 +39,7 @@
 	</licenses>
 	<properties>
 		<jamwiki.version>0.6.6-SNAPSHOT</jamwiki.version>
-		<dependency.spring.version>2.5.1</dependency.spring.version>
+		<dependency.spring.version>2.5.2</dependency.spring.version>
 	</properties>
 	<repositories>
 		<repository>
