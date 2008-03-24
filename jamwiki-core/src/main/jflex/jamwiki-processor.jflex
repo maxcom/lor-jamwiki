@@ -32,14 +32,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
-    if (wikiitalic) {
-        wikiitalic = false;
-        output.append( "</i>" );
-    }
-    if (wikibold) {
-        wikibold = false;
-        output.append("</b>");
-    }
     if (wikibolditalic) {
         wikibolditalic = false;
         output.append("</i></b>");
@@ -79,9 +71,7 @@ import org.jamwiki.utils.WikiLogger;
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
     protected boolean allowHTML = false;
     protected boolean allowJavascript = false;
-    protected boolean wikibold = false;
     protected boolean wikibolditalic = false;
-    protected boolean wikiitalic = false;
     
     /**
      *
@@ -444,20 +434,35 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
-    wikibold = !wikibold;
-    return (wikibold) ? "<b>" : "</b>";
+    if (this.checkCurrentTagType("b")) {
+        this.popTag("b");
+    } else {
+        this.pushTag("b", null);
+    }
+    return "";
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{bolditalic} {
     logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
+    if (!wikibolditalic) {
+        this.pushTag("b", null);
+        this.pushTag("i", null);
+    } else {
+        this.popTag("i");
+        this.popTag("b");
+    }
     wikibolditalic = !wikibolditalic;
-    return (wikibolditalic) ? "<b><i>" : "</i></b>";
+    return "";
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
-    wikiitalic = !wikiitalic;
-    return (wikiitalic) ? "<i>" : "</i>";
+    if (this.checkCurrentTagType("i")) {
+        this.popTag("i");
+    } else {
+        this.pushTag("i", null);
+    }
+    return "";
 }
 
 /* ----- references ----- */

@@ -86,7 +86,9 @@ class JFlexTagItem {
 			}
 			result.append(">");
 		}
-		if (isTextBodyTag()) {
+		if (isRootTag()) {
+			result.append(content);
+		} else if (isTextBodyTag()) {
 			result.append(content.trim());
 		} else {
 			result.append("\n");
@@ -105,9 +107,17 @@ class JFlexTagItem {
 	/**
 	 *
 	 */
+	private boolean isRootTag() {
+		// FIXME - temporary hack
+		return (this.tagType == null);
+	}
+
+	/**
+	 *
+	 */
 	private boolean isTextBodyTag() {
-		if (this.tagType == null) {
-			return false;
+		if (isRootTag()) {
+			return true;
 		}
 		ArrayList nonTextBodyTagList = new ArrayList();
 		nonTextBodyTagList.add("table");
@@ -124,8 +134,8 @@ class JFlexTagItem {
 	 *
 	 */
 	private boolean isInlineTag() {
-		if (this.tagType == null) {
-			return false;
+		if (isRootTag()) {
+			return true;
 		}
 		ArrayList nonInlineTagList = new ArrayList();
 		nonInlineTagList.add("table");

@@ -35,4 +35,11 @@ public class ParseUnbalancedTagTest extends TestParser {
 // FIXME
 //		executeParserTest("UnbalancedTag1");
 	}
+
+	/**
+	 *
+	 */
+	public void testUnbalancedTag2() throws Exception {
+		executeParserTest("UnbalancedTag2");
+	}
 }

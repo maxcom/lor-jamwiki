@@ -17,6 +17,7 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.Stack;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserTag;
@@ -120,6 +121,14 @@ public abstract class JFlexLexer {
 			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
+	}
+
+	/**
+	 * Peek at the current tag from the lexer stack and see if it matches
+	 * the given tag type.
+	 */
+	protected boolean checkCurrentTagType(String tagType) {
+		return StringUtils.equalsIgnoreCase(((JFlexTagItem)this.tagStack.peek()).getTagType(), tagType);
 	}
 
 	/**
