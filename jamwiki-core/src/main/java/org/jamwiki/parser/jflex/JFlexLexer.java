@@ -135,10 +135,17 @@ public abstract class JFlexLexer {
 	 * Pop the most recent HTML tag from the lexer stack.
 	 */
 	protected JFlexTagItem popTag(String tagType) {
-		if (this.tagStack.size() <= 1) {
-			logger.warning("Attempting to pop the tag stack when size " + this.tagStack.size());
-			this.append("&lt;/" + tagType + "&gt;");
-			return (JFlexTagItem)this.tagStack.peek();
+		if (this.tagStack.size() == 0) {
+			throw new IllegalStateException("popTag called on an empty tag stack");
+		}
+		if (!checkCurrentTagType(tagType)) {
+			// TODO - check to see if the tag is further down the stack and the user
+			// just goofed - "<b><u>text</b></u>"
+			// attempt to pop a tag that isn't currently open, append the close escaped
+			// close tag to the current tag content
+			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+			currentTag.getTagContent().append("&lt;/" + tagType + "&gt;");
+			return null;
 		}
 		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
 		JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
