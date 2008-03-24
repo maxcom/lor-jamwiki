@@ -521,7 +521,9 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
-        return ParserUtil.validateHtmlTag(yytext());
+        String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+        this.pushTag(tagInfo[0], tagInfo[1]);
+        return "";
     }
     return StringEscapeUtils.escapeHtml(yytext());
 }
@@ -530,7 +532,9 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         endState();
-        return ParserUtil.validateHtmlTag(yytext());
+        String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+        this.popTag(tagInfo[0]);
+        return "";
     }
     return StringEscapeUtils.escapeHtml(yytext());
 }
