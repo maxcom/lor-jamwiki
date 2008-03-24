@@ -123,18 +123,17 @@ public abstract class JFlexLexer {
 	}
 
 	/**
-	 * Pop a the most recent HTML tag from the lexer stack.
+	 * Pop the most recent HTML tag from the lexer stack.
 	 */
-	protected JFlexTagItem popTag(String tagClose, boolean trimContent) {
+	protected JFlexTagItem popTag(String tagType) {
 		if (this.tagStack.size() <= 1) {
 			logger.warning("Attempting to pop the tag stack when size " + this.tagStack.size());
-			this.append(tagClose);
+			this.append("&lt;/" + tagType + "&gt;");
 			return (JFlexTagItem)this.tagStack.peek();
 		}
 		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
-		currentTag.setTagClose(tagClose);
 		JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-		previousTag.getTagContent().append(currentTag.toString(trimContent));
+		previousTag.getTagContent().append(currentTag.toHtml());
 		return currentTag;
 	}
 
@@ -145,17 +144,18 @@ public abstract class JFlexLexer {
 		StringBuffer result = new StringBuffer();
 		while (!this.tagStack.empty()) {
 			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
-			result.insert(0, currentTag.toString(false));
+			result.insert(0, currentTag.toHtml());
 		}
-		return result.toString();
+		return result.toString().trim();
 	}
 
 	/**
 	 * Push a new HTML tag onto the lexer stack.
 	 */
-	protected void pushTag(String tagOpen) {
+	protected void pushTag(String tagType, String tagAttributes) {
 		JFlexTagItem tag = new JFlexTagItem();
-		tag.setTagOpen(tagOpen);
+		tag.setTagType(tagType);
+		tag.setTagAttributes(tagAttributes);
 		this.tagStack.push(tag);
 	}
 

@@ -16,6 +16,8 @@
  */
 package org.jamwiki.parser.jflex;
 
+import java.util.ArrayList;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -26,9 +28,9 @@ class JFlexTagItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
-	private String tagClose = null;
+	private String tagType = null;
 	private final StringBuffer tagContent = new StringBuffer();
-	private String tagOpen = null;
+	private String tagAttributes = null;
 
 	/**
 	 *
@@ -39,15 +41,15 @@ class JFlexTagItem {
 	/**
 	 *
 	 */
-	protected String getTagClose() {
-		return this.tagClose;
+	protected String getTagAttributes() {
+		return this.tagAttributes;
 	}
 
 	/**
 	 *
 	 */
-	protected void setTagClose(String tagClose) {
-		this.tagClose = tagClose;
+	protected void setTagAttributes(String tagAttributes) {
+		this.tagAttributes = tagAttributes;
 	}
 
 	/**
@@ -60,33 +62,85 @@ class JFlexTagItem {
 	/**
 	 *
 	 */
-	protected String getTagOpen() {
-		return this.tagOpen;
+	protected String getTagType() {
+		return this.tagType;
 	}
 
 	/**
 	 *
 	 */
-	protected void setTagOpen(String tagOpen) {
-		this.tagOpen = tagOpen;
+	protected void setTagType(String tagType) {
+		this.tagType = tagType;
 	}
 
 	/**
 	 *
 	 */
-	public String toString(boolean trim) {
+	public String toHtml() {
 		String content = this.tagContent.toString();
-		String result = "";
-		if (trim) {
-			content = content.trim();
+		StringBuffer result = new StringBuffer();
+		if (this.tagType != null) {
+			result.append("<").append(this.tagType);
+			if (!StringUtils.isEmpty(this.tagAttributes)) {
+				result.append(" ").append(this.tagAttributes);
+			}
+			result.append(">");
 		}
-		if (this.tagOpen != null) {
-			result += this.tagOpen;
+		if (isTextBodyTag()) {
+			result.append(content.trim());
+		} else {
+			result.append("\n");
+			result.append(content.trim());
+			result.append("\n");
 		}
-		result += content;
-		if (this.tagClose != null) {
-			result += this.tagClose;
+		if (this.tagType != null) {
+			result.append("</").append(this.tagType).append(">");
 		}
-		return result;
+		if (!isInlineTag()) {
+			result.append("\n");
+		}
+		return result.toString();
+	}
+
+	/**
+	 *
+	 */
+	private boolean isTextBodyTag() {
+		if (this.tagType == null) {
+			return false;
+		}
+		ArrayList nonTextBodyTagList = new ArrayList();
+		nonTextBodyTagList.add("table");
+		nonTextBodyTagList.add("tr");
+		/*
+		nonTextBodyTagList.add("dl");
+		nonTextBodyTagList.add("ol");
+		nonTextBodyTagList.add("ul");
+		*/
+		return (nonTextBodyTagList.indexOf(this.tagType) == -1);
+	}
+
+	/**
+	 *
+	 */
+	private boolean isInlineTag() {
+		if (this.tagType == null) {
+			return false;
+		}
+		ArrayList nonInlineTagList = new ArrayList();
+		nonInlineTagList.add("table");
+		nonInlineTagList.add("tr");
+		nonInlineTagList.add("th");
+		nonInlineTagList.add("td");
+		nonInlineTagList.add("caption");
+		/*
+		nonInlineTagList.add("dl");
+		nonInlineTagList.add("ol");
+		nonInlineTagList.add("ul");
+		nonInlineTagList.add("li");
+		nonInlineTagList.add("dt");
+		nonInlineTagList.add("dd");
+		*/
+		return (nonInlineTagList.indexOf(this.tagType) == -1);
 	}
 }

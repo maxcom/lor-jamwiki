@@ -51,20 +51,20 @@ import org.jamwiki.utils.WikiLogger;
     }
     // close any open tables
     if (yystate() == TD) {
-        this.popTag("</td>\n", true);
+        this.popTag("td");
         endState();
     }
     if (yystate() == TH) {
-        this.popTag("</th>\n", true);
+        this.popTag("th");
         endState();
     }
     if (yystate() == TC) {
-        this.popTag("</caption>\n", true);
+        this.popTag("caption");
         endState();
     }
     if (yystate() == TABLE) {
-        this.popTag("</tr>\n", false);
-        this.popTag("</table>\n", false);
+        this.popTag("tr");
+        this.popTag("table");
         endState();
     }
     if (yystate() == PRE || yystate() == WIKIPRE) {
@@ -94,9 +94,9 @@ import org.jamwiki.utils.WikiLogger;
      *
      */
     protected void closeTable(int currentState) {
-        if (yystate() == TC) this.popTag("</caption>\n", true);
-        if (yystate() == TH) this.popTag("</th>\n", true);
-        if (yystate() == TD) this.popTag("</td>\n", true);
+        if (yystate() == TC) this.popTag("caption");
+        if (yystate() == TH) this.popTag("th");
+        if (yystate() == TD) this.popTag("td");
         if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
     }
     
@@ -108,26 +108,22 @@ import org.jamwiki.utils.WikiLogger;
      * @param tag The HTML tag text, either "td" or "th".
      * @param markup The Wiki markup for the tag, either "|" or "!"
      */
-    protected void openTableCell(String text, String tag, char markup) {
+    protected void openTableCell(String text, String tagType, char markup) {
         if (text == null) return;
         text = text.trim();
         int pos = 0;
         while (pos < text.length() && text.charAt(pos) == markup) {
             pos++;
         }
-        String tagString = "<" + tag + ">";
         if (pos >= text.length()) {
-            this.pushTag(tagString);
+            this.pushTag(tagType, null);
             return;
         }
         text = text.substring(pos);
         pos = text.indexOf(markup);
         if (pos != -1) text = text.substring(0, pos);
-        String attributes = ParserUtil.validateHtmlTagAttributes(text.trim());
-        if (!StringUtils.isBlank(attributes)) {
-            tagString = "<" + tag + " " + attributes + ">";
-        }
-        this.pushTag(tagString);
+        String tagAttributes = ParserUtil.validateHtmlTagAttributes(text.trim());
+        this.pushTag(tagType, tagAttributes);
     }
 %}
 
@@ -306,13 +302,9 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <NORMAL, LIST, TABLE, TD, TH, TC>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
-    String attributes = yytext().substring(2).trim();
-    attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-    String tagOpen = "<table>\n";
-    if (!StringUtils.isBlank(attributes)) {
-        tagOpen = "<table " + attributes + ">\n";
-    }
-    this.pushTag(tagOpen);
+    String tagAttributes = yytext().substring(2).trim();
+    tagAttributes = ParserUtil.validateHtmlTagAttributes(tagAttributes);
+    this.pushTag("table", tagAttributes);
     return "";
 }
 
@@ -320,7 +312,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("tablecaption: " + yytext() + " (" + yystate() + ")");
     closeTable(TC);
     beginState(TC);
-    this.pushTag("<caption>");
+    this.pushTag("caption", null);
     return "";
 }
 
@@ -330,32 +322,28 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     closeTable(TH);
     // FIXME - hack!  make sure that a table row is open
     JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-    if (previousTag.getTagOpen() != null && !previousTag.getTagOpen().startsWith("<tr")) {
-        this.pushTag("<tr>\n");
+    if (previousTag.getTagType() != null && !previousTag.getTagType().equalsIgnoreCase("tr")) {
+        this.pushTag("tr", null);
     }
     if (yystate() != TH) beginState(TH);
     if (yytext().trim().length() > 1) {
         int start = 1;
         int end = yytext().indexOf("|", start+1);
-        String attributes = yytext().substring(start, end).trim();
-        attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-        String tagOpen = "<th>";
-        if (!StringUtils.isBlank(attributes)) {
-            tagOpen = "<th " + attributes + ">";
-        }
-        this.pushTag(tagOpen);
+        String tagAttributes = yytext().substring(start, end).trim();
+        tagAttributes = ParserUtil.validateHtmlTagAttributes(tagAttributes);
+        this.pushTag("th", tagAttributes);
         // extra character matched by regular expression so push it back
         yypushback(1);
     } else {
-        this.pushTag("<th>");
+        this.pushTag("th", null);
     }
     return "";
 }
 
 <TH>{tableheadings} {
     logger.finer("tableheadings: " + yytext() + " (" + yystate() + ")");
-    this.popTag("</th>\n", true);
-    this.pushTag("<th>");
+    this.popTag("th");
+    this.pushTag("th", null);
     return "";
 }
 
@@ -365,8 +353,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     closeTable(TD);
     // FIXME - hack!  make sure that a table row is open
     JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-    if (previousTag.getTagOpen() != null && !previousTag.getTagOpen().startsWith("<tr")) {
-        this.pushTag("<tr>\n");
+    if (previousTag.getTagType() != null && !previousTag.getTagType().equalsIgnoreCase("tr")) {
+        this.pushTag("tr", null);
     }
     if (yystate() != TD) beginState(TD);
     // extra character matched by both regular expressions so push it back
@@ -377,8 +365,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <TD>{tablecells} {
     logger.finer("tablecells: " + yytext() + " (" + yystate() + ")");
-    this.popTag("</td>\n", true);
-    this.pushTag("<td>");
+    this.popTag("td");
+    this.pushTag("td", null);
     return "";
 }
 
@@ -386,7 +374,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("tablecellsstyle: " + yytext() + " (" + yystate() + ")");
     // one extra character matched by the pattern, so roll it back
     yypushback(1);
-    this.popTag("</td>\n", true);
+    this.popTag("td");
     openTableCell(yytext(), "td", '|');
     return "";
 }
@@ -396,16 +384,14 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // if a column was already open, close it
     int oldState = yystate();
     closeTable(TABLE);
-    if (oldState != TABLE && oldState != TC) this.popTag("</tr>\n", false);
-    String tag = "<tr>\n";
+    if (oldState != TABLE && oldState != TC) this.popTag("tr");
+    String tagType = "tr";
+    String attributes = null;
     if (yytext().trim().length() > 2) {
-        String attributes = yytext().substring(2).trim();
+        attributes = yytext().substring(2).trim();
         attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-        if (!StringUtils.isBlank(attributes)) {
-            tag = "<tr " + attributes + ">\n";
-        }
     }
-    this.pushTag(tag);
+    this.pushTag(tagType, attributes);
     return "";
 }
 
@@ -415,8 +401,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     closeTable(TABLE);
     // end TABLE state
     endState();
-    this.popTag("</tr>\n", false);
-    this.popTag("</table>\n", false);
+    this.popTag("tr");
+    this.popTag("table");
     return "";
 }
 
@@ -498,22 +484,30 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    HtmlTag parserTag = new HtmlTag();
-    this.pushTag(this.parseToken(yytext(), parserTag));
+    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+    this.pushTag(tagInfo[0], tagInfo[1]);
     return "";
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    HtmlTag parserTag = new HtmlTag();
-    this.popTag(this.parseToken(yytext(), parserTag), true);
+    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+    this.popTag(tagInfo[0]);
     return "";
 }
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
-    HtmlTag parserTag = new HtmlTag();
-    return this.parseToken(yytext(), parserTag);
+    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    return ParserUtil.validateHtmlTag(yytext());
 }
 
 /* ----- javascript ----- */
@@ -522,8 +516,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
-        HtmlTag parserTag = new HtmlTag();
-        return this.parseToken(yytext(), parserTag);
+        return ParserUtil.validateHtmlTag(yytext());
     }
     return StringEscapeUtils.escapeHtml(yytext());
 }
@@ -532,8 +525,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         endState();
-        HtmlTag parserTag = new HtmlTag();
-        return this.parseToken(yytext(), parserTag);
+        return ParserUtil.validateHtmlTag(yytext());
     }
     return StringEscapeUtils.escapeHtml(yytext());
 }

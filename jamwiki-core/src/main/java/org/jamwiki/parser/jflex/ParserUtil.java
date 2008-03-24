@@ -105,27 +105,49 @@ public class ParserUtil {
 	}
 
 	/**
+	 * Given an HTML tag, split it into its tag type and tag attributes,
+	 * cleaning up the attribtues in the process - allowing Javascript
+	 * action tags to be used as attributes (onmouseover, etc) is
+	 * a bad thing, so clean up HTML tags to remove any such attributes.
+	 */
+	protected static String[] parseHtmlTag(String tag) {
+		Matcher m = TAG_PATTERN.matcher(tag);
+		String[] result = new String[4];
+		if (!m.find()) {
+			logger.severe("Failure while attempting to match html tag for pattern " + tag);
+			return result;
+		}
+		String tagType = m.group(2).toLowerCase().trim();
+		String tagAttributes = m.group(3).trim();
+		String tagOpen = m.group(1).trim();
+		String tagClose = m.group(5).trim();
+		if (!StringUtils.isBlank(tagAttributes)) {
+			tagAttributes = ParserUtil.validateHtmlTagAttributes(tagAttributes).trim();
+		}
+		result[0] = tagType;
+		result[1] = tagAttributes;
+		result[2] = tagOpen;
+		result[3] = tagClose;
+		return result;
+	}
+
+	/**
 	 * Allowing Javascript action tags to be used as attributes (onmouseover, etc) is
 	 * a bad thing, so clean up HTML tags to remove any such attributes.
 	 */
 	protected static String validateHtmlTag(String tag) {
-		Matcher m = TAG_PATTERN.matcher(tag);
-		if (!m.find()) {
-			logger.severe("Failure while attempting to match html tag for pattern " + tag);
-			return tag;
-		}
-		String tagOpen = m.group(1);
-		String tagKeyword = m.group(2);
-		String attributes = m.group(3);
-		String tagClose = m.group(5);
+		String[] tagInfo = ParserUtil.parseHtmlTag(tag);
+		String tagOpen = tagInfo[2];
+		String tagKeyword = tagInfo[0];
+		String attributes = tagInfo[1];
+		String tagClose = tagInfo[3];
 		String result = "<";
 		if (tagOpen.indexOf('/') != -1) {
 			result += "/";
 		}
-		result += tagKeyword.toLowerCase().trim();
+		result += tagKeyword;
 		if (!StringUtils.isBlank(attributes)) {
-			attributes = ParserUtil.validateHtmlTagAttributes(attributes);
-			result += " " + attributes.trim();
+			result += " " + attributes;
 		}
 		if (tagClose.indexOf('/') != -1) {
 			tagClose = " />";
