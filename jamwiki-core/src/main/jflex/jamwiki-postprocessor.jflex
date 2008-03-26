@@ -179,7 +179,7 @@ paragraphstart     = ({inputcharacter})
 <P>{paragraphend} {
     logger.finer("end of paragraph: " + yytext() + " (" + yystate() + ")");
     endState();
-    return "</p>" + yytext();
+    return "</p>\n";
 }
 
 /* ----- other ----- */
