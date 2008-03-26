@@ -17,6 +17,8 @@
 package org.jamwiki.parser.jflex;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
@@ -31,6 +33,25 @@ class JFlexTagItem {
 	private String tagType = null;
 	private final StringBuffer tagContent = new StringBuffer();
 	private String tagAttributes = null;
+	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
+	private static Pattern NON_INLINE_TAG_PATTERN = null;
+	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
+	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
+	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
+	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|table|td|th|tr|ul)";
+	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
+	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
+
+	static {
+		try {
+			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
+			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
+			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+			NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+		} catch (Exception e) {
+			logger.severe("Unable to compile pattern", e);
+		}
+	}
 
 	/**
 	 *
@@ -89,7 +110,18 @@ class JFlexTagItem {
 		if (isRootTag()) {
 			result.append(content);
 		} else if (isTextBodyTag()) {
+			Matcher matcher = null;
+			// ugly hack to handle cases such as "<li><ul>" where the "<ul>" should be on its own line
+			matcher = NON_INLINE_TAG_START_PATTERN.matcher(content.trim());
+			if (matcher.matches()) {
+				result.append("\n");
+			}
 			result.append(content.trim());
+			// ugly hack to handle cases such as "</ul></li>" where the "</li>" should be on its own line
+			matcher = NON_INLINE_TAG_END_PATTERN.matcher(content.trim());
+			if (matcher.matches()) {
+				result.append("\n");
+			}
 		} else {
 			result.append("\n");
 			result.append(content.trim());
@@ -119,15 +151,8 @@ class JFlexTagItem {
 		if (isRootTag()) {
 			return true;
 		}
-		ArrayList nonTextBodyTagList = new ArrayList();
-		nonTextBodyTagList.add("table");
-		nonTextBodyTagList.add("tr");
-		/*
-		nonTextBodyTagList.add("dl");
-		nonTextBodyTagList.add("ol");
-		nonTextBodyTagList.add("ul");
-		*/
-		return (nonTextBodyTagList.indexOf(this.tagType) == -1);
+		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(this.tagType);
+		return !matcher.matches();
 	}
 
 	/**
@@ -137,20 +162,7 @@ class JFlexTagItem {
 		if (isRootTag()) {
 			return true;
 		}
-		ArrayList nonInlineTagList = new ArrayList();
-		nonInlineTagList.add("table");
-		nonInlineTagList.add("tr");
-		nonInlineTagList.add("th");
-		nonInlineTagList.add("td");
-		nonInlineTagList.add("caption");
-		/*
-		nonInlineTagList.add("dl");
-		nonInlineTagList.add("ol");
-		nonInlineTagList.add("ul");
-		nonInlineTagList.add("li");
-		nonInlineTagList.add("dt");
-		nonInlineTagList.add("dd");
-		*/
-		return (nonInlineTagList.indexOf(this.tagType) == -1);
+		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(this.tagType);
+		return !matcher.matches();
 	}
 }

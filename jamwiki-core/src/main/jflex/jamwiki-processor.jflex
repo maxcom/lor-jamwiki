@@ -38,8 +38,10 @@ import org.jamwiki.utils.WikiLogger;
     }
     // close any open list tags
     if (yystate() == LIST) {
-        WikiListTag parserTag = new WikiListTag();
-        output.append(this.parseToken(null, parserTag));
+        // FIXME - this is kludgy and needs to be removed
+        // pop list tags currently on the stack
+        int depth = this.currentListDepth();
+        this.popListTags(depth);
     }
     // close any open tables
     if (yystate() == TD) {
@@ -416,8 +418,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     if (yystate() != LIST) beginState(LIST);
     // one non-list character matched, roll it back
     yypushback(1);
-    WikiListTag parserTag = new WikiListTag();
-    return this.parseToken(yytext(), parserTag);
+    this.processListStack(yytext());
+    return "";
 }
 
 <LIST>^{listend} {
@@ -426,8 +428,10 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // roll back any matches to allow re-parsing
     yypushback(raw.length());
     endState();
-    WikiListTag parserTag = new WikiListTag();
-    return this.parseToken(null, parserTag);
+    // pop list tags currently on the stack
+    int depth = this.currentListDepth();
+    this.popListTags(depth);
+    return "";
 }
 
 /* ----- bold / italic ----- */

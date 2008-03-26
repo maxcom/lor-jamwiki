@@ -176,6 +176,136 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 * Utility method used when parsing list tags to determine the current
+	 * list nesting level.
+	 */
+	protected int currentListDepth() {
+		int depth = 0;
+		int currentPos = this.tagStack.size() - 1;
+		while (currentPos >= 0) {
+			JFlexTagItem tag = (JFlexTagItem)this.tagStack.get(currentPos);
+			if (!StringUtils.equals(tag.getTagType(), "li") && !StringUtils.equals(tag.getTagType(), "dd") && !StringUtils.equals(tag.getTagType(), "dt")) {
+				break;
+			}
+			// move back in the stack two since each list item has a parent list type
+			currentPos -= 2;
+			depth++;
+		}
+		return depth;
+	}
+
+	/**
+	 *
+	 */
+	protected String calculateListItemType(char wikiSyntax) {
+		if (wikiSyntax == '*' || wikiSyntax == '#') {
+			return "li";
+		}
+		if (wikiSyntax == ';') {
+			return "dt";
+		}
+		if (wikiSyntax == ':') {
+			return "dd";
+		}
+		throw new IllegalArgumentException("Unrecognized wiki syntax: " + wikiSyntax);
+	}
+
+	/**
+	 *
+	 */
+	protected String calculateListType(char wikiSyntax) {
+		if (wikiSyntax == ';' || wikiSyntax == ':') {
+			return "dl";
+		}
+		if (wikiSyntax == '#') {
+			return "ol";
+		}
+		if (wikiSyntax == '*') {
+			return "ul";
+		}
+		throw new IllegalArgumentException("Unrecognized wiki syntax: " + wikiSyntax);
+	}
+
+	/**
+	 *
+	 */
+	protected void processListStack(String wikiSyntax) {
+		int previousDepth = this.currentListDepth();
+		int currentDepth = wikiSyntax.length();
+		String tagType;
+		// if list was previously open to a greater depth, close the old list down to the
+		// current depth.
+		int tagsToPop = (previousDepth - currentDepth);
+		if (tagsToPop > 0) {
+			this.popListTags(tagsToPop);
+			previousDepth -= tagsToPop;
+		}
+		// now look for differences in the current list stacks.  for example, if
+		// the previous list was "::;" and the current list is "###" then there are
+		// some lists that must be closed.
+		for (int i=0; i < previousDepth; i++) {
+			// get the tagType for the root list ("ul", "dl", etc, NOT "li")
+			int tagPos = this.tagStack.size() - ((previousDepth - i) * 2);
+			tagType = ((JFlexTagItem)this.tagStack.get(tagPos)).getTagType();
+			if (tagType.equals(this.calculateListType(wikiSyntax.charAt(i)))) {
+				continue;
+			}
+			// if the above test did not match, then the stack needs to be popped
+			// to this point.
+			tagsToPop = (previousDepth - i);
+			this.popListTags(tagsToPop);
+			previousDepth -= tagsToPop;
+			break;
+		}
+		if (previousDepth == 0) {
+			// if no list is open, open one
+			this.pushTag(this.calculateListType(wikiSyntax.charAt(0)), null);
+			// add the new list item to the stack
+			this.pushTag(this.calculateListItemType(wikiSyntax.charAt(0)), null);
+		} else if (previousDepth == currentDepth) {
+			// pop the previous list item
+			tagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			popTag(tagType);
+			// add the new list item to the stack
+			this.pushTag(this.calculateListItemType(wikiSyntax.charAt(previousDepth - 1)), null);
+		}
+		// if the new list has additional elements, push them onto the stack
+		int counterStart = (previousDepth > 1) ? previousDepth : 1;
+		for (int i=counterStart; i < wikiSyntax.length(); i++) {
+			String previousTagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			// handle a weird corner case.  if a "dt" is open and there are
+			// sub-lists, close the dt and open a "dd" for the sub-list
+			if (previousTagType.equals("dt")) {
+				this.popTag("dt");
+				if (!this.calculateListType(wikiSyntax.charAt(i)).equals("dl")) {
+					this.popTag("dl");
+					this.pushTag("dl", null);
+				}
+				this.pushTag("dd", null);
+			}
+			this.pushTag(this.calculateListType(wikiSyntax.charAt(i)), null);
+			this.pushTag(this.calculateListItemType(wikiSyntax.charAt(i)), null);
+		}
+	}
+
+	/**
+	 *
+	 */
+	protected void popListTags(int depth) {
+		if (depth < 0) {
+			throw new IllegalArgumentException("Cannot pop a negative number: " + depth);
+		}
+		String tagType;
+		for (int i=0; i < depth; i++) {
+			// pop twice since lists have a list tag and a list item tag ("<ul><li></li></ul>")
+			tagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			popTag(tagType);
+			tagType = ((JFlexTagItem)this.tagStack.peek()).getTagType();
+			popTag(tagType);
+		}
+	}
+
+	/**
 	 * JFlex internal method used to change the lexer state values.
 	 */
 	public abstract void yybegin(int newState);
