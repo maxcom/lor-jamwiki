@@ -4,6 +4,14 @@
 New Features:
 
   * Upgrade to Spring Framework 2.5.2.
+  * Significant modifications to the parser to ensure that output exactly
+    matches Mediawiki, including tag placement and newlines.
+  * Unit test coverage has been significantly improved.
+  * Support added for definition lists of the form "; term : definition".
+
+Bugfixes:
+  * Unbalanced / unclosed HTML tags will now be automatically closed by the
+    parser.  Originally reported by Michael Habbert.
 
 
 0.6.5
