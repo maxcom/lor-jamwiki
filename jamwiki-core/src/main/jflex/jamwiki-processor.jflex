@@ -26,7 +26,6 @@ import org.jamwiki.utils.WikiLogger;
     allowJavascript = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
-    tagStack.push(new JFlexTagItem());
 %init}
 
 /* code called after parsing is completed */
@@ -314,8 +313,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // if a column was already open, close it
     closeTable(TH);
     // FIXME - hack!  make sure that a table row is open
-    JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-    if (previousTag.getTagType() != null && !previousTag.getTagType().equalsIgnoreCase("tr")) {
+    JFlexTagItem previousTag = this.peekTag();
+    if (!previousTag.getTagType().equalsIgnoreCase("tr")) {
         this.pushTag("tr", null);
     }
     if (yystate() != TH) beginState(TH);
@@ -345,8 +344,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // if a column was already open, close it
     closeTable(TD);
     // FIXME - hack!  make sure that a table row is open
-    JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-    if (previousTag.getTagType() != null && !previousTag.getTagType().equalsIgnoreCase("tr")) {
+    JFlexTagItem previousTag = this.peekTag();
+    if (!previousTag.getTagType().equalsIgnoreCase("tr")) {
         this.pushTag("tr", null);
     }
     if (yystate() != TD) beginState(TD);
@@ -437,8 +436,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <LIST>{listdt} {
     logger.finer("listdt: " + yytext() + " (" + yystate() + ")");
-    JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-    if (previousTag.getTagType() != null && previousTag.getTagType().equalsIgnoreCase("dt")) {
+    JFlexTagItem previousTag = this.peekTag();
+    if (previousTag.getTagType().equalsIgnoreCase("dt")) {
         // special case list of the form "; term : definition"
         this.popTag("dt");
         this.pushTag("dd", null);
@@ -451,7 +450,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
-    if (this.checkCurrentTagType("b")) {
+    if (this.peekTag().getTagType().equals("b")) {
         this.popTag("b");
     } else {
         this.pushTag("b", null);
@@ -474,7 +473,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE, TD, TH, TC>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
-    if (this.checkCurrentTagType("i")) {
+    if (this.peekTag().getTagType().equals("i")) {
         this.popTag("i");
     } else {
         this.pushTag("i", null);

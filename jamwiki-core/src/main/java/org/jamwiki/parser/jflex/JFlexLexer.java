@@ -40,7 +40,7 @@ public abstract class JFlexLexer {
 	/** Parser mode, which provides input to the parser about what steps to take. */
 	protected int mode = JFlexParser.MODE_LAYOUT;
 	/** Stack of currently parsed tag content. */
-	protected Stack tagStack = new Stack();
+	private Stack tagStack = new Stack();
 
 	/**
 	 * Append content to the current tag in the tag stack.
@@ -102,6 +102,7 @@ public abstract class JFlexLexer {
 		this.parserInput = parserInput;
 		this.parserOutput = parserOutput;
 		this.mode = mode;
+		this.tagStack.push(new JFlexTagItem(JFlexTagItem.ROOT_TAG));
 	}
 
 	/**
@@ -127,8 +128,8 @@ public abstract class JFlexLexer {
 	 * Peek at the current tag from the lexer stack and see if it matches
 	 * the given tag type.
 	 */
-	protected boolean checkCurrentTagType(String tagType) {
-		return StringUtils.equalsIgnoreCase(((JFlexTagItem)this.tagStack.peek()).getTagType(), tagType);
+	protected JFlexTagItem peekTag() {
+		return (JFlexTagItem)this.tagStack.peek();
 	}
 
 	/**
@@ -138,7 +139,7 @@ public abstract class JFlexLexer {
 		if (this.tagStack.size() == 0) {
 			throw new IllegalStateException("popTag called on an empty tag stack");
 		}
-		if (!checkCurrentTagType(tagType)) {
+		if (!this.peekTag().getTagType().equals(tagType)) {
 			// TODO - check to see if the tag is further down the stack and the user
 			// just goofed - "<b><u>text</b></u>"
 			// attempt to pop a tag that isn't currently open, append the close escaped
@@ -159,9 +160,9 @@ public abstract class JFlexLexer {
 	protected String popAllTags() {
 		StringBuffer result = new StringBuffer();
 		while (!this.tagStack.empty()) {
-			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
+		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
 			result.insert(0, currentTag.toHtml());
-		}
+	}
 		return result.toString().trim();
 	}
 
@@ -169,8 +170,7 @@ public abstract class JFlexLexer {
 	 * Push a new HTML tag onto the lexer stack.
 	 */
 	protected void pushTag(String tagType, String tagAttributes) {
-		JFlexTagItem tag = new JFlexTagItem();
-		tag.setTagType(tagType);
+		JFlexTagItem tag = new JFlexTagItem(tagType);
 		tag.setTagAttributes(tagAttributes);
 		this.tagStack.push(tag);
 	}

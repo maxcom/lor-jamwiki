@@ -23,7 +23,6 @@ import org.jamwiki.utils.WikiLogger;
     allowHtml = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
-    tagStack.push(new JFlexTagItem());
 %init}
 
 /* code called after parsing is completed */

@@ -18,7 +18,6 @@ import org.jamwiki.utils.WikiLogger;
 %init{
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
-    tagStack.push(new JFlexTagItem());
 %init}
 
 /* code called after parsing is completed */

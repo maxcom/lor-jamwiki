@@ -33,6 +33,7 @@ class JFlexTagItem {
 	private String tagType = null;
 	private final StringBuffer tagContent = new StringBuffer();
 	private String tagAttributes = null;
+	protected static final String ROOT_TAG = "jflex-root";
 	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
 	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_PATTERN = null;
@@ -59,7 +60,11 @@ class JFlexTagItem {
 	/**
 	 *
 	 */
-	JFlexTagItem() {
+	JFlexTagItem(String tagType) {
+		if (tagType == null) {
+			throw new IllegalArgumentException("tagType must not be null");
+		}
+		this.tagType = tagType;
 	}
 
 	/**
@@ -93,13 +98,6 @@ class JFlexTagItem {
 	/**
 	 *
 	 */
-	protected void setTagType(String tagType) {
-		this.tagType = tagType;
-	}
-
-	/**
-	 *
-	 */
 	public String toHtml() {
 		String content = this.tagContent.toString();
 		// if no content do not generate a tag
@@ -107,7 +105,7 @@ class JFlexTagItem {
 			return "";
 		}
 		StringBuffer result = new StringBuffer();
-		if (this.tagType != null) {
+		if (!this.isRootTag()) {
 			result.append("<").append(this.tagType);
 			if (!StringUtils.isBlank(this.tagAttributes)) {
 				result.append(" ").append(this.tagAttributes);
@@ -134,7 +132,7 @@ class JFlexTagItem {
 			result.append(content.trim());
 			result.append("\n");
 		}
-		if (this.tagType != null) {
+		if (!this.isRootTag()) {
 			result.append("</").append(this.tagType).append(">");
 		}
 		if (!isInlineTag()) {
@@ -147,8 +145,7 @@ class JFlexTagItem {
 	 *
 	 */
 	private boolean isRootTag() {
-		// FIXME - temporary hack
-		return (this.tagType == null);
+		return this.tagType.equals(JFlexTagItem.ROOT_TAG);
 	}
 
 	/**
