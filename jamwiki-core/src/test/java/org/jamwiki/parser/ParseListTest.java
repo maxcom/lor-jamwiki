@@ -34,6 +34,7 @@ public class ParseListTest extends TestParser {
 	public void testDefinitionList() throws Exception {
 		executeParserTest("DefinitionList1");
 		executeParserTest("DefinitionList2");
+		executeParserTest("DefinitionList3");
 	}
 
 	/**

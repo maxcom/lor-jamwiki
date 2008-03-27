@@ -133,8 +133,9 @@ bolditalic         = "'''''"
 italic             = "''"
 
 /* lists */
-listitem           = [\*#\:;]+ [^\*#\:;\r\n]
+listitem           = [\*#\:;]+ [^\*#\:;]
 listend            = [^\*#\:;\r\n]+ (.)+
+listdt             = ":"
 
 /* nowiki */
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
@@ -432,6 +433,18 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     int depth = this.currentListDepth();
     this.popListTags(depth);
     return "";
+}
+
+<LIST>{listdt} {
+    logger.finer("listdt: " + yytext() + " (" + yystate() + ")");
+    JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
+    if (previousTag.getTagType() != null && previousTag.getTagType().equalsIgnoreCase("dt")) {
+        // special case list of the form "; term : definition"
+        this.popTag("dt");
+        this.pushTag("dd", null);
+        return "";
+    }
+    return yytext();
 }
 
 /* ----- bold / italic ----- */
