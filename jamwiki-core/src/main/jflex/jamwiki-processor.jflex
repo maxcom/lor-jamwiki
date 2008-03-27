@@ -35,31 +35,6 @@ import org.jamwiki.utils.WikiLogger;
         wikibolditalic = false;
         output.append("</i></b>");
     }
-    // close any open list tags
-    if (yystate() == LIST) {
-        // FIXME - this is kludgy and needs to be removed
-        // pop list tags currently on the stack
-        int depth = this.currentListDepth();
-        this.popListTags(depth);
-    }
-    // close any open tables
-    if (yystate() == TD) {
-        this.popTag("td");
-        endState();
-    }
-    if (yystate() == TH) {
-        this.popTag("th");
-        endState();
-    }
-    if (yystate() == TC) {
-        this.popTag("caption");
-        endState();
-    }
-    if (yystate() == TABLE) {
-        this.popTag("tr");
-        this.popTag("table");
-        endState();
-    }
     if (yystate() == PRE || yystate() == WIKIPRE) {
         output.append("</pre>");
         endState();

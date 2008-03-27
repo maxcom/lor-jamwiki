@@ -136,8 +136,8 @@ public abstract class JFlexLexer {
 	 * Pop the most recent HTML tag from the lexer stack.
 	 */
 	protected JFlexTagItem popTag(String tagType) {
-		if (this.tagStack.size() == 0) {
-			throw new IllegalStateException("popTag called on an empty tag stack");
+		if (this.tagStack.size() <= 1) {
+			throw new IllegalStateException("popTag called on an empty tag stack or on the root stack element");
 		}
 		if (!this.peekTag().getTagType().equals(tagType)) {
 			// TODO - check to see if the tag is further down the stack and the user
@@ -158,12 +158,14 @@ public abstract class JFlexLexer {
 	 * Pop all tags off of the stack and return a string representation.
 	 */
 	protected String popAllTags() {
-		StringBuffer result = new StringBuffer();
-		while (!this.tagStack.empty()) {
+		// pop the stack down to (but not including) the root tag
+		while (this.tagStack.size() > 1) {
+			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+			this.popTag(currentTag.getTagType());
+		}
+		// now pop the root tag
 		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
-			result.insert(0, currentTag.toHtml());
-	}
-		return result.toString().trim();
+		return currentTag.toHtml().trim();
 	}
 
 	/**
