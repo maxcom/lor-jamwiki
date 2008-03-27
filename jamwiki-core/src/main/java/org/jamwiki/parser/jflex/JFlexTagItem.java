@@ -33,10 +33,12 @@ class JFlexTagItem {
 	private String tagType = null;
 	private final StringBuffer tagContent = new StringBuffer();
 	private String tagAttributes = null;
+	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
 	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
+	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
 	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
@@ -44,6 +46,7 @@ class JFlexTagItem {
 
 	static {
 		try {
+			EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
 			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
 			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
 			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -99,10 +102,14 @@ class JFlexTagItem {
 	 */
 	public String toHtml() {
 		String content = this.tagContent.toString();
+		// if no content do not generate a tag
+		if (StringUtils.isBlank(content) && !this.isEmptyBodyTag()) {
+			return "";
+		}
 		StringBuffer result = new StringBuffer();
 		if (this.tagType != null) {
 			result.append("<").append(this.tagType);
-			if (!StringUtils.isEmpty(this.tagAttributes)) {
+			if (!StringUtils.isBlank(this.tagAttributes)) {
 				result.append(" ").append(this.tagAttributes);
 			}
 			result.append(">");
@@ -142,6 +149,17 @@ class JFlexTagItem {
 	private boolean isRootTag() {
 		// FIXME - temporary hack
 		return (this.tagType == null);
+	}
+
+	/**
+	 *
+	 */
+	private boolean isEmptyBodyTag() {
+		if (isRootTag()) {
+			return true;
+		}
+		Matcher matcher = EMPTY_BODY_TAG_PATTERN.matcher(this.tagType);
+		return matcher.matches();
 	}
 
 	/**
