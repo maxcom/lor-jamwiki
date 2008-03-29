@@ -308,6 +308,32 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 * Take Wiki text of the form "|" or "| style='foo' |" and convert to
+	 * and HTML <td> or <th> tag.
+	 *
+	 * @param text The text to be parsed.
+	 * @param tag The HTML tag text, either "td" or "th".
+	 * @param markup The Wiki markup for the tag, either "|" or "!"
+	 */
+	protected void parseTableCell(String text, String tagType, String markup) {
+		if (text == null) {
+			throw new IllegalArgumentException("No text specified while parsing table cell");
+		}
+		text = text.trim();
+		String tagAttributes = null;
+		int pos = StringUtils.indexOfAnyBut(text, markup);
+		if (pos != -1) {
+			text = text.substring(pos);
+			pos = text.indexOf(markup);
+			if (pos != -1) {
+				text = text.substring(0, pos);
+			}
+			tagAttributes = ParserUtil.validateHtmlTagAttributes(text.trim());
+		}
+		this.pushTag(tagType, tagAttributes);
+	}
+
+	/**
 	 * JFlex internal method used to change the lexer state values.
 	 */
 	public abstract void yybegin(int newState);

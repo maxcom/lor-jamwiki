@@ -16,7 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;

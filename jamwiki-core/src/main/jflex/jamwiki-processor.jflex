@@ -6,7 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
@@ -64,32 +63,6 @@ import org.jamwiki.utils.WikiLogger;
         if (yystate() == TH) this.popTag("th");
         if (yystate() == TD) this.popTag("td");
         if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
-    }
-    
-    /**
-     * Take Wiki text of the form "|" or "| style='foo' |" and convert to
-     * and HTML <td> or <th> tag.
-     *
-     * @param text The text to be parsed.
-     * @param tag The HTML tag text, either "td" or "th".
-     * @param markup The Wiki markup for the tag, either "|" or "!"
-     */
-    protected void openTableCell(String text, String tagType, char markup) {
-        if (text == null) return;
-        text = text.trim();
-        int pos = 0;
-        while (pos < text.length() && text.charAt(pos) == markup) {
-            pos++;
-        }
-        if (pos >= text.length()) {
-            this.pushTag(tagType, null);
-            return;
-        }
-        text = text.substring(pos);
-        pos = text.indexOf(markup);
-        if (pos != -1) text = text.substring(0, pos);
-        String tagAttributes = ParserUtil.validateHtmlTagAttributes(text.trim());
-        this.pushTag(tagType, tagAttributes);
     }
 %}
 
@@ -288,8 +261,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // if a column was already open, close it
     closeTable(TH);
     // FIXME - hack!  make sure that a table row is open
-    JFlexTagItem previousTag = this.peekTag();
-    if (!previousTag.getTagType().equalsIgnoreCase("tr")) {
+    if (!this.peekTag().getTagType().equalsIgnoreCase("tr")) {
         this.pushTag("tr", null);
     }
     if (yystate() != TH) beginState(TH);
@@ -319,14 +291,13 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // if a column was already open, close it
     closeTable(TD);
     // FIXME - hack!  make sure that a table row is open
-    JFlexTagItem previousTag = this.peekTag();
-    if (!previousTag.getTagType().equalsIgnoreCase("tr")) {
+    if (!this.peekTag().getTagType().equalsIgnoreCase("tr")) {
         this.pushTag("tr", null);
     }
     if (yystate() != TD) beginState(TD);
     // extra character matched by both regular expressions so push it back
     yypushback(1);
-    openTableCell(yytext(), "td", '|');
+    parseTableCell(yytext(), "td", "|");
     return "";
 }
 
@@ -342,7 +313,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     // one extra character matched by the pattern, so roll it back
     yypushback(1);
     this.popTag("td");
-    openTableCell(yytext(), "td", '|');
+    parseTableCell(yytext(), "td", "|");
     return "";
 }
 
@@ -411,8 +382,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <LIST>{listdt} {
     logger.finer("listdt: " + yytext() + " (" + yystate() + ")");
-    JFlexTagItem previousTag = this.peekTag();
-    if (previousTag.getTagType().equalsIgnoreCase("dt")) {
+    if (this.peekTag().getTagType().equalsIgnoreCase("dt")) {
         // special case list of the form "; term : definition"
         this.popTag("dt");
         this.pushTag("dd", null);
