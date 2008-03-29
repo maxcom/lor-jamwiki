@@ -54,16 +54,6 @@ import org.jamwiki.utils.WikiLogger;
     protected boolean allowJavascript() {
         return (allowJavascript && yystate() != PRE && yystate() != WIKIPRE);
     }
-    
-    /**
-     *
-     */
-    protected void closeTable(int currentState) {
-        if (yystate() == TC) this.popTag("caption");
-        if (yystate() == TH) this.popTag("th");
-        if (yystate() == TD) this.popTag("td");
-        if ((yystate() == TC || yystate() == TH || yystate() == TD) && yystate() != currentState) endState();
-    }
 %}
 
 /* character expressions */
@@ -139,13 +129,13 @@ reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*)? ([ ]*>) ~(<[ 
 referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*) ([ ]*\/[ ]*>)
 references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
-%state NORMAL, TABLE, TD, TH, TC, LIST, PRE, JAVASCRIPT, WIKIPRE
+%state NORMAL, TABLE, TD, TH, LIST, PRE, JAVASCRIPT, WIKIPRE
 
 %%
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{nowiki} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     WikiNowikiTag parserTag = new WikiNowikiTag();
     return this.parseToken(yytext(), parserTag);
@@ -153,7 +143,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- pre ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmlprestart} {
+<NORMAL, LIST, TABLE, TD, TH>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHTML) {
         beginState(PRE);
@@ -170,7 +160,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return this.parseToken(yytext(), parserTag);
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC, WIKIPRE>^{wikiprestart} {
+<NORMAL, LIST, TABLE, TD, TH, WIKIPRE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
@@ -198,20 +188,20 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- table of contents ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{notoc} {
+<NORMAL, LIST, TABLE, TD, TH>{notoc} {
     logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{toc} {
+<NORMAL, LIST, TABLE, TD, TH>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     this.parserInput.getTableOfContents().setForceTOC(true);
     return yytext();
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{forcetoc} {
+<NORMAL, LIST, TABLE, TD, TH>{forcetoc} {
     logger.finer("forcetoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setForceTOC(true);
     return "";
@@ -219,19 +209,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- wiki links ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{imagelinkcaption} {
+<NORMAL, LIST, TABLE, TD, TH>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return this.parseToken(yytext(), parserTag);
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{wikilink} {
+<NORMAL, LIST, TABLE, TD, TH>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return this.parseToken(yytext(), parserTag);
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmllink} {
+<NORMAL, LIST, TABLE, TD, TH>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     HtmlLinkTag parserTag = new HtmlLinkTag();
     return this.parseToken(yytext(), parserTag);
@@ -239,7 +229,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- tables ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>^{tablestart} {
+<NORMAL, LIST, TABLE, TD, TH>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
     String tagAttributes = yytext().substring(2).trim();
@@ -248,20 +238,21 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<TABLE, TD, TH, TC>^{tablecaption} {
+<TABLE, TD, TH>^{tablecaption} {
     logger.finer("tablecaption: " + yytext() + " (" + yystate() + ")");
-    closeTable(TC);
-    beginState(TC);
+    processTableStack();
+    if (yystate() == TH || yystate() == TD) endState();
     this.pushTag("caption", null);
     return "";
 }
 
-<TABLE, TD, TH, TC>^{tableheading} {
+<TABLE, TD, TH>^{tableheading} {
     logger.finer("tableheading: " + yytext() + " (" + yystate() + ")");
     // if a column was already open, close it
-    closeTable(TH);
+    processTableStack();
+    if (yystate() == TD) endState();
     // FIXME - hack!  make sure that a table row is open
-    if (!this.peekTag().getTagType().equalsIgnoreCase("tr")) {
+    if (!this.peekTag().getTagType().equals("tr")) {
         this.pushTag("tr", null);
     }
     if (yystate() != TH) beginState(TH);
@@ -280,12 +271,13 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<TABLE, TD, TH, TC>^{tablecell} {
+<TABLE, TD, TH>^{tablecell} {
     logger.finer("tablecell: " + yytext() + " (" + yystate() + ")");
     // if a column was already open, close it
-    closeTable(TD);
+    processTableStack();
+    if (yystate() == TH) endState();
     // FIXME - hack!  make sure that a table row is open
-    if (!this.peekTag().getTagType().equalsIgnoreCase("tr")) {
+    if (!this.peekTag().getTagType().equals("tr")) {
         this.pushTag("tr", null);
     }
     if (yystate() != TD) beginState(TD);
@@ -311,12 +303,15 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<TABLE, TD, TH, TC>^{tablerow} {
+<TABLE, TD, TH>^{tablerow} {
     logger.finer("tablerow: " + yytext() + " (" + yystate() + ")");
     // if a column was already open, close it
+    processTableStack();
     int oldState = yystate();
-    closeTable(TABLE);
-    if (oldState != TABLE && oldState != TC) this.popTag("tr");
+    if (yystate() == TH || yystate() == TD) endState();
+    if (!this.peekTag().getTagType().equals("table") && !this.peekTag().getTagType().equals("caption")) {
+        this.popTag("tr");
+    }
     String tagType = "tr";
     String attributes = null;
     if (yytext().trim().length() > 2) {
@@ -327,10 +322,11 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<TABLE, TD, TH, TC>^{tableend} {
+<TABLE, TD, TH>^{tableend} {
     logger.finer("tableend: " + yytext() + " (" + yystate() + ")");
     // if a column was already open, close it
-    closeTable(TABLE);
+    processTableStack();
+    if (yystate() == TH || yystate() == TD) endState();
     // end TABLE state
     endState();
     this.popTag("tr");
@@ -353,7 +349,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- lists ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>^{listitem} {
+<NORMAL, LIST, TABLE, TD, TH>^{listitem} {
     logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
     if (yystate() != LIST) beginState(LIST);
     // one non-list character matched, roll it back
@@ -376,7 +372,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <LIST>{listdt} {
     logger.finer("listdt: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equalsIgnoreCase("dt")) {
+    if (this.peekTag().getTagType().equals("dt")) {
         // special case list of the form "; term : definition"
         this.popTag("dt");
         this.pushTag("dd", null);
@@ -387,7 +383,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- bold / italic ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{bold} {
+<NORMAL, LIST, TABLE, TD, TH>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("b")) {
         this.popTag("b");
@@ -397,7 +393,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{bolditalic} {
+<NORMAL, LIST, TABLE, TD, TH>{bolditalic} {
     logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
     if (!wikibolditalic) {
         this.pushTag("b", null);
@@ -410,7 +406,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{italic} {
+<NORMAL, LIST, TABLE, TD, TH>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("i")) {
         this.popTag("i");
@@ -422,19 +418,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- references ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{reference} {
+<NORMAL, LIST, TABLE, TD, TH>{reference} {
     logger.finer("reference: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
     return this.parseToken(yytext(), parserTag);
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{referencenocontent} {
+<NORMAL, LIST, TABLE, TD, TH>{referencenocontent} {
     logger.finer("referencenocontent: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
     return this.parseToken(yytext(), parserTag);
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{references} {
+<NORMAL, LIST, TABLE, TD, TH>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return this.parseToken(yytext(), parserTag);
@@ -442,7 +438,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- html ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagopen} {
+<NORMAL, LIST, TABLE, TD, TH>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -452,7 +448,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagclose} {
+<NORMAL, LIST, TABLE, TD, TH>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -462,7 +458,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{htmltagnocontent} {
+<NORMAL, LIST, TABLE, TD, TH>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
     if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -472,7 +468,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- javascript ----- */
 
-<NORMAL, LIST, TABLE, TD, TH, TC>{jsopen} {
+<NORMAL, LIST, TABLE, TD, TH>{jsopen} {
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -496,19 +492,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>{entity} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH>{entity} {
     logger.finer("entity: " + yytext() + " (" + yystate() + ")");
     CharacterTag parserTag = new CharacterTag();
     return this.parseToken(yytext(), parserTag);
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC, JAVASCRIPT>{whitespace} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, JAVASCRIPT>{whitespace} {
     // no need to log this
     CharacterTag parserTag = new CharacterTag();
     return this.parseToken(yytext(), parserTag);
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH, TC>. {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, TD, TH>. {
     // no need to log this
     CharacterTag parserTag = new CharacterTag();
     return this.parseToken(yytext(), parserTag);

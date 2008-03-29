@@ -334,6 +334,19 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 * Make sure any open table tags that need to be closed are closed.
+	 */
+	protected void processTableStack() {
+		String previousTagType = this.peekTag().getTagType();
+		if (!previousTagType.equals("caption") && !previousTagType.equals("th") && !previousTagType.equals("td")) {
+			// no table cell was open, so nothing to close
+			return;
+		}
+		// pop the previous tag
+		this.popTag(previousTagType);
+	}
+
+	/**
 	 * JFlex internal method used to change the lexer state values.
 	 */
 	public abstract void yybegin(int newState);
