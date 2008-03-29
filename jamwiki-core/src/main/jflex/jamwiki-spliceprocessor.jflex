@@ -20,7 +20,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code included in the constructor */
 %init{
-    allowHtml = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
+    allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -34,7 +34,7 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
-    protected boolean allowHtml = false;
+    protected boolean allowHTML = false;
     protected int section = 0;
     protected int sectionDepth = 0;
     protected int targetSection = 0;
@@ -121,18 +121,16 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- nowiki ----- */
 
 <NORMAL>{htmlprestart} {
-    if (allowHtml) {
+    if (allowHTML) {
         beginState(PRE);
     }
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return yytext();
 }
 
 <PRE>{htmlpreend} {
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return yytext();
 }
 
 /* ----- comments ----- */

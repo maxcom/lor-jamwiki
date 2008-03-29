@@ -40,6 +40,7 @@ public class ParsePreTest extends TestParser {
 	 */
 	public void testHtmlPreInvalid() throws Exception {
 		executeParserTest("PreformattedInvalid1");
+		executeParserTest("PreformattedInvalid2");
 	}
 
 	/**

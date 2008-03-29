@@ -84,15 +84,13 @@ paragraphstart     = ({inputcharacter})
 <NORMAL, P, NONPARAGRAPH>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     endState();
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 /* ----- processing commands ----- */

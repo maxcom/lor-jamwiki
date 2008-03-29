@@ -34,7 +34,7 @@ import org.jamwiki.utils.WikiLogger;
         wikibolditalic = false;
         output.append("</i></b>");
     }
-    if (yystate() == PRE || yystate() == WIKIPRE) {
+    if (yystate() == WIKIPRE) {
         output.append("</pre>");
         endState();
     }
@@ -147,16 +147,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     if (allowHTML) {
         beginState(PRE);
     }
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return this.parseToken(yytext(), parserTag);
+    if (!allowHTML) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    this.pushTag("pre", null);
+    return "";
 }
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
     // state only changes to pre if allowHTML is true, so no need to check here
     endState();
-    HtmlPreTag parserTag = new HtmlPreTag();
-    return this.parseToken(yytext(), parserTag);
+    this.popTag("pre");
+    return "";
 }
 
 <NORMAL, LIST, TABLE, WIKIPRE>^{wikiprestart} {
@@ -435,7 +438,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+    if (!allowHTML) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
@@ -445,7 +448,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+    if (!allowHTML) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
@@ -455,7 +458,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
-    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML)) {
+    if (!allowHTML) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     return ParserUtil.validateHtmlTag(yytext());

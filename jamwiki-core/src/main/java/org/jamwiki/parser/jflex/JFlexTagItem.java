@@ -113,6 +113,9 @@ class JFlexTagItem {
 		}
 		if (isRootTag()) {
 			result.append(content);
+		} else if (this.tagType.equals("pre")) {
+			// pre-formatted, no trimming or other modification
+			result.append(content);
 		} else if (isTextBodyTag()) {
 			Matcher matcher = null;
 			// ugly hack to handle cases such as "<li><ul>" where the "<ul>" should be on its own line
