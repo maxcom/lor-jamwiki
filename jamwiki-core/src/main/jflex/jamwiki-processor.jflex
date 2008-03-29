@@ -34,10 +34,6 @@ import org.jamwiki.utils.WikiLogger;
         wikibolditalic = false;
         output.append("</i></b>");
     }
-    if (yystate() == WIKIPRE) {
-        output.append("</pre>");
-        endState();
-    }
     return (output.length() == 0) ? null : output.toString();
 %eofval}
 
@@ -168,7 +164,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     yypushback(yytext().length() - 1);
     if (yystate() != WIKIPRE) {
         beginState(WIKIPRE);
-        return "<pre>";
+        this.pushTag("pre", null);
     }
     return "";
 }
@@ -185,7 +181,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     endState();
     // rollback the one non-pre character so it can be processed
     yypushback(1);
-    return  "</pre>\n";
+    this.popTag("pre");
+    return  "\n";
 }
 
 /* ----- table of contents ----- */
