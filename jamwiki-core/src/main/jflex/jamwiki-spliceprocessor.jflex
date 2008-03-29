@@ -136,8 +136,7 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- comments ----- */
 
 <NORMAL>{htmlcomment} {
-    HtmlCommentTag parserTag = new HtmlCommentTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return yytext();
 }
 
 /* ----- headings ----- */

@@ -230,8 +230,8 @@ wikisignature      = ([~]{3,5})
 
 <NORMAL>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
-    HtmlCommentTag parserTag = new HtmlCommentTag();
-    return this.parseToken(yytext(), parserTag);
+    // strip out the comment
+    return "";
 }
 
 /* ----- other ----- */
