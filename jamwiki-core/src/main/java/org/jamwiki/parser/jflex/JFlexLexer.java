@@ -324,7 +324,7 @@ public abstract class JFlexLexer {
 		int pos = StringUtils.indexOfAnyBut(text, markup);
 		if (pos != -1) {
 			text = text.substring(pos);
-			pos = text.indexOf(markup);
+			pos = text.indexOf("|");
 			if (pos != -1) {
 				text = text.substring(0, pos);
 			}

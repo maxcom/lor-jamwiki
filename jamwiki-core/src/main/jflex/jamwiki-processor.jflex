@@ -265,17 +265,11 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
         this.pushTag("tr", null);
     }
     if (yystate() != TH) beginState(TH);
-    if (yytext().trim().length() > 1) {
-        int start = 1;
-        int end = yytext().indexOf("|", start+1);
-        String tagAttributes = yytext().substring(start, end).trim();
-        tagAttributes = ParserUtil.validateHtmlTagAttributes(tagAttributes);
-        this.pushTag("th", tagAttributes);
-        // extra character matched by regular expression so push it back
+    if (yytext().length() > 1) {
+        // the headings style matches one extra character - push it back
         yypushback(1);
-    } else {
-        this.pushTag("th", null);
     }
+    parseTableCell(yytext(), "th", "!");
     return "";
 }
 
