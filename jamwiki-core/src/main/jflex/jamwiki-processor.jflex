@@ -32,8 +32,7 @@ import org.jamwiki.utils.WikiLogger;
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
     protected boolean allowHTML = false;
     protected boolean allowJavascript = false;
-    protected boolean wikibolditalic = false;
-    
+
     /**
      *
      */
@@ -378,14 +377,27 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{bolditalic} {
     logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
-    if (!wikibolditalic) {
+    if (this.peekTag().getTagType().equals("b")) {
+        // bold tag already opened
+        this.popTag("b");
+        if (this.peekTag().getTagType().equals("i")) {
+            this.popTag("i");
+        } else {
+            this.pushTag("i", null);
+        }
+    } else if (this.peekTag().getTagType().equals("i")) {
+        // italic tag already opened
+        this.popTag("i");
+        if (this.peekTag().getTagType().equals("b")) {
+            this.popTag("b");
+        } else {
+            this.pushTag("b", null);
+        }
+    } else {
+        // open a new bold tag and a new italic tag
         this.pushTag("b", null);
         this.pushTag("i", null);
-    } else {
-        this.popTag("i");
-        this.popTag("b");
     }
-    wikibolditalic = !wikibolditalic;
     return "";
 }
 
