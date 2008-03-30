@@ -27,12 +27,6 @@ import org.jamwiki.utils.WikiLogger;
     states.add(new Integer(yystate()));
 %init}
 
-/* code called after parsing is completed */
-%eofval{
-    StringBuffer output = new StringBuffer();
-    return (output.length() == 0) ? null : output.toString();
-%eofval}
-
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());

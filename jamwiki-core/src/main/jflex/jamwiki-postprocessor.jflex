@@ -20,16 +20,6 @@ import org.jamwiki.utils.WikiLogger;
     states.add(new Integer(yystate()));
 %init}
 
-/* code called after parsing is completed */
-%eofval{
-    StringBuffer output = new StringBuffer();
-    if (yystate() == P) {
-        endState();
-        output.append("</p>");
-    }
-    return (output.length() == 0) ? null : output.toString();
-%eofval}
-
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPostProcessor.class.getName());
@@ -127,7 +117,7 @@ paragraphstart     = ({inputcharacter})
     logger.finer("emptyline: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     if (yystate() == P) {
-        output.append("</p>");
+        this.popTag("p");
         endState();
     }
     return output.toString() + "\n<p><br /></p>";
@@ -150,7 +140,7 @@ paragraphstart     = ({inputcharacter})
     logger.finer("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     if (yystate() == P) {
-        output.append("</p>");
+        this.popTag("p");
         endState();
     }
     beginState(NONPARAGRAPH);
@@ -170,13 +160,15 @@ paragraphstart     = ({inputcharacter})
 <NORMAL>{paragraphstart} {
     logger.finer("paragraphstart: " + yytext() + " (" + yystate() + ")");
     beginState(P);
-    return "<p>" + yytext();
+    this.pushTag("p", null);
+    return yytext();
 }
 
 <P>{paragraphend} {
     logger.finer("end of paragraph: " + yytext() + " (" + yystate() + ")");
     endState();
-    return "</p>\n";
+    this.popTag("p");
+    return "";
 }
 
 /* ----- other ----- */

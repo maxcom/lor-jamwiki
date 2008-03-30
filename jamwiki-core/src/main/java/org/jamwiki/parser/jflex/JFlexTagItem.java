@@ -40,7 +40,7 @@ class JFlexTagItem {
 	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
 	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
-	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|table|td|th|tr|ul)";
+	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|p|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 
