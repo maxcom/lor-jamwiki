@@ -27,7 +27,7 @@
 
 <div class="submenu">
 <a href="#virtualwiki"><f:message key="admin.title.virtualwiki" /></a> | <a href="#search"><f:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><f:message key="admin.title.recentchanges" /></a><br />
-<a href="#cache"><f:message key="admin.title.cache" /></a> | <a href="#spam"><f:message key="admin.title.spamfilter" /></a>
+<a href="#cache"><f:message key="admin.title.cache" /></a> <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">| <a href="#spam"><f:message key="admin.title.spamfilter" /></a> </jamwiki:enabled><c:if test="${allowExportToCsv}">| <a href="#export"><f:message key="admin.title.exportcsv" /></a></c:if>
 </div>
 
 <c:if test="${!empty message}">
@@ -131,3 +131,21 @@
 </fieldset>
 
 </jamwiki:enabled>
+
+<c:if test="${allowExportToCsv}">
+
+<!-- Export to CSV -->
+<a name="export"></a>
+<fieldset>
+<legend><f:message key="admin.title.exportcsv" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="export" />">
+	<span class="formcaption"><f:message key="admin.caption.exportcsv" /></span>
+	<span class="formelement"><input type="submit" value="<f:message key="common.export" />" /></span>
+	<div class="formhelp"><f:message key="admin.help.exportcsv" /></div>
+</div>
+<input type="hidden" name="function" value="exportToCsv" />
+</form>
+</fieldset>
+
+</c:if>

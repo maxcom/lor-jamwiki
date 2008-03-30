@@ -16,6 +16,7 @@
  */
 package org.jamwiki.servlets;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -77,6 +78,8 @@ public class AdminServlet extends JAMWikiServlet {
 			recentChanges(request, next, pageInfo);
 		} else if (function.equals("spamFilter")) {
 			spamFilter(request, next, pageInfo);
+		} else if (function.equals("exportToCsv")) {
+			exportToCsv(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -115,6 +118,21 @@ public class AdminServlet extends JAMWikiServlet {
 		} catch (Exception e) {
 			logger.severe("Failure while clearing cache", e);
 			next.addObject("message", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
+	/**
+	 *
+	 */
+	private void exportToCsv(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		try {
+			WikiDatabase.exportToCsv();
+			String outputDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
+			next.addObject("message", new WikiMessage("admin.message.exportcsv", outputDirectory));
+		} catch (Exception e) {
+			logger.severe("Failure while exporting database data to CSV file", e);
+			next.addObject("message", new WikiMessage("admin.message.exportcsvfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -341,5 +359,7 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
 		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
 		next.addObject("wikis", virtualWikiList);
+		boolean allowExportToCsv = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
+		next.addObject("allowExportToCsv", new Boolean(allowExportToCsv));
 	}
 }

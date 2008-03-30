@@ -55,6 +55,56 @@ public class WikiDatabase {
 	}
 
 	/**
+	 * Dump the database to a CSV file.  This is an HSQL-specific method useful
+	 * for individuals who want to convert from HSQL to another database.
+	 */
+	public static void exportToCsv() throws Exception {
+		if (!(WikiBase.getDataHandler() instanceof HSqlDataHandler)) {
+			throw new IllegalStateException("Exporting to CSV is allowed only when the wiki is configured to use the internal database setting.");
+		}
+		Connection conn = null;
+		WikiPreparedStatement stmt = null;
+		String sql = null;
+		String exportTableName = null;
+		String[] tableNames = {
+				"jam_category",
+				"jam_group",
+				"jam_recent_change",
+				"jam_role_map",
+				"jam_role",
+				"jam_topic",
+				"jam_topic_version",
+				"jam_virtual_wiki",
+				"jam_watchlist",
+				"jam_file",
+				"jam_file_version",
+				"jam_wiki_user",
+				"jam_wiki_user_info"
+		};
+		try {
+			conn = WikiDatabase.getConnection(null);
+			for (int i=0; i < tableNames.length; i++) {
+				// HSQL will not create the CSV file if a file of the same name exists,
+				// so first drop any existing table that may have previously been exported
+				exportTableName = tableNames[i] + "_export";
+				sql = "drop table " + exportTableName + " if exists";
+				stmt = new WikiPreparedStatement(sql);
+				stmt.executeUpdate();
+				// FIXME - if the CSV file already exists then the SQL below appends to it,
+				// which is wrong.
+				sql = "select * into text " + exportTableName + " from " + tableNames[i];
+				stmt = new WikiPreparedStatement(sql);
+				stmt.executeUpdate();
+			}
+		} catch (Exception e) {
+			DatabaseConnection.handleErrors(conn);
+			throw e;
+		} finally {
+			WikiDatabase.releaseConnection(conn);
+		}
+	}
+
+	/**
 	 *
 	 */
 	private static Connection getConnection() throws Exception {
