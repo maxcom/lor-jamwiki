@@ -134,7 +134,7 @@ public class TableOfContents {
 	private void closeList(int level, StringBuffer text) {
 		while (level < currentLevel) {
 			// close lists to current level
-			text.append("</li></ol>");
+			text.append("</li>\n</ol>");
 			currentLevel--;
 		}
 	}
@@ -155,12 +155,12 @@ public class TableOfContents {
 	private void openList(int level, StringBuffer text) {
 		if (level == currentLevel) {
 			// same level as previous item, close previous and open new
-			text.append("</li><li>");
+			text.append("</li>\n<li>");
 			return;
 		}
 		while (level > currentLevel) {
 			// open lists to current level
-			text.append("<ol><li>");
+			text.append("<ol>\n<li>");
 			currentLevel++;
 		}
 	}
@@ -229,7 +229,7 @@ public class TableOfContents {
 			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(entry.text).append("</a>");
 		}
 		closeList(0, text);
-		text.append("</div><div class=\"clear\"></div></div>");
+		text.append("</div><div class=\"clear\"></div></div>\n");
 		return text.toString();
 	}
 

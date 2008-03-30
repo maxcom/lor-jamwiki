@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 /**
  *
  */
-public class TableOfContentsTest extends TestCase {
+public class TableOfContentsTest extends TestParser {
 
 	/**
 	 *
@@ -33,98 +33,28 @@ public class TableOfContentsTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testDuplicateHeadings1() {
-		String input = "";
-		input = "==test==\n"
-		      + "==test==\n"
-		      + "==test==\n"
-		      + "==test==";
-		String output = "";
-		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
-		       + "<li><a href=\"#test\">test</a></li>"
-		       + "<li><a href=\"#test_1\">test</a></li>"
-		       + "<li><a href=\"#test_2\">test</a></li>"
-		       + "<li><a href=\"#test_3\">test</a></li>"
-		       + "</ol></div><div class=\"clear\"></div></div>";
-		TableOfContents toc = new TableOfContents();
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		assertEquals(output, toc.toHTML());
+	public void testDuplicateHeadings1() throws Exception {
+		executeParserTest("TableOfContents1");
 	}
 
 	/**
 	 *
 	 */
-	public void testDuplicateHeadings2() {
-		String input = "";
-		input = "==test==\n"
-		      + "==test_2==\n"
-		      + "==test==\n"
-		      + "==test==";
-		String output = "";
-		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
-		       + "<li><a href=\"#test\">test</a></li>"
-		       + "<li><a href=\"#test_2\">test_2</a></li>"
-		       + "<li><a href=\"#test_1\">test</a></li>"
-		       + "<li><a href=\"#test_3\">test</a></li>"
-		       + "</ol></div><div class=\"clear\"></div></div>";
-		TableOfContents toc = new TableOfContents();
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		toc.addEntry(toc.checkForUniqueName("test_2"), "test_2", 2);
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		toc.addEntry(toc.checkForUniqueName("test"), "test", 2);
-		assertEquals(output, toc.toHTML());
+	public void testDuplicateHeadings2() throws Exception {
+		executeParserTest("TableOfContents2");
 	}
 
 	/**
 	 *
 	 */
-	public void testMultiLevelHeadings1() {
-		String input = "";
-		input = "==1==\n"
-		      + "===1.1===\n"
-		      + "==2==\n"
-		      + "==3==";
-		String output = "";
-		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
-		       + "<li><a href=\"#1\">1</a><ol>"
-		       +   "<li><a href=\"#1.1\">1.1</a></li>"
-		       + "</ol></li>"
-		       + "<li><a href=\"#2\">2</a></li>"
-		       + "<li><a href=\"#3\">3</a></li>"
-		       + "</ol></div><div class=\"clear\"></div></div>";
-		TableOfContents toc = new TableOfContents();
-		toc.addEntry(toc.checkForUniqueName("1"), "1", 2);
-		toc.addEntry(toc.checkForUniqueName("1.1"), "1.1", 3);
-		toc.addEntry(toc.checkForUniqueName("2"), "2", 2);
-		toc.addEntry(toc.checkForUniqueName("3"), "3", 2);
-		assertEquals(output, toc.toHTML());
+	public void testMultiLevelHeadings1() throws Exception {
+		executeParserTest("TableOfContents3");
 	}
 
 	/**
 	 *
 	 */
-	public void testMultiLevelHeadings2() {
-		// cannot increase TOC indentation by more than one level
-		String input = "";
-		input = "====1.1.1====\n"
-		      + "==2==\n"
-		      + "==3==\n"
-		      + "==4==";
-		String output = "";
-		output = "<div class=\"toc-container\"><div class=\"toc-content\"><ol>"
-		       + "<li><a href=\"#1.1.1\">1.1.1</a></li>"
-		       + "<li><a href=\"#2\">2</a></li>"
-		       + "<li><a href=\"#3\">3</a></li>"
-		       + "<li><a href=\"#4\">4</a></li>"
-		       + "</ol></div><div class=\"clear\"></div></div>";
-		TableOfContents toc = new TableOfContents();
-		toc.addEntry(toc.checkForUniqueName("1.1.1"), "1.1.1", 4);
-		toc.addEntry(toc.checkForUniqueName("2"), "2", 2);
-		toc.addEntry(toc.checkForUniqueName("3"), "3", 2);
-		toc.addEntry(toc.checkForUniqueName("4"), "4", 2);
-		assertEquals(output, toc.toHTML());
+	public void testMultiLevelHeadings2() throws Exception {
+		executeParserTest("TableOfContents4");
 	}
 }
