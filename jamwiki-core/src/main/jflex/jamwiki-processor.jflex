@@ -30,10 +30,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
-    if (wikibolditalic) {
-        wikibolditalic = false;
-        output.append("</i></b>");
-    }
     return (output.length() == 0) ? null : output.toString();
 %eofval}
 
@@ -140,12 +136,10 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (allowHTML) {
-        beginState(PRE);
-    }
     if (!allowHTML) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
+    beginState(PRE);
     this.pushTag("pre", null);
     return "";
 }
