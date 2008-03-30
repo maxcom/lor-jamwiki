@@ -114,7 +114,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.cache"));
 		} catch (Exception e) {
 			logger.severe("Failure while clearing cache", e);
-			next.addObject("errors", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
+			next.addObject("message", new WikiMessage("admin.cache.message.clearfailed", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -233,7 +233,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.severe("Failure while loading recent changes", e);
-			next.addObject("errors", new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
+			next.addObject("message", new WikiMessage("admin.message.recentchangesfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
@@ -293,7 +293,7 @@ public class AdminServlet extends JAMWikiServlet {
 			next.addObject("message", new WikiMessage("admin.message.spamfilter"));
 		} catch (Exception e) {
 			logger.severe("Failure while reloading spam filter patterns", e);
-			next.addObject("errors", new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
+			next.addObject("message", new WikiMessage("admin.message.spamfilterfail", e.getMessage()));
 		}
 		viewAdminSystem(request, next, pageInfo);
 	}
