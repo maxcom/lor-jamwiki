@@ -110,8 +110,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    WikiNowikiTag parserTag = new WikiNowikiTag();
-    return this.parseToken(yytext(), parserTag);
+    String content = ParserUtil.tagContent(yytext());
+    return "<nowiki>" + StringEscapeUtils.escapeHtml(content) + "</nowiki>";
 }
 
 /* ----- pre ----- */

@@ -65,8 +65,7 @@ paragraphstart     = ({inputcharacter})
 
 <PRE, NORMAL, P, NONPARAGRAPH>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    WikiNowikiTag parserTag = new WikiNowikiTag();
-    return this.parseToken(yytext(), parserTag);
+    return ParserUtil.tagContent(yytext());
 }
 
 /* ----- pre ----- */

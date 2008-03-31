@@ -83,8 +83,7 @@ wikisignature      = ([~]{3,5})
 
 <WIKIPRE, PRE, NORMAL>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    WikiNowikiTag parserTag = new WikiNowikiTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 /* ----- pre ----- */

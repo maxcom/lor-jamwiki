@@ -105,8 +105,7 @@ htmlcomment        = "<!--" ~"-->"
 
 <PRE, NORMAL>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    WikiNowikiTag parserTag = new WikiNowikiTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return yytext();
 }
 
 /* ----- nowiki ----- */
