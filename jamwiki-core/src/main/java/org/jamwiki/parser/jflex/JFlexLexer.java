@@ -18,6 +18,7 @@ package org.jamwiki.parser.jflex;
 
 import java.util.Stack;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserTag;
@@ -41,6 +42,30 @@ public abstract class JFlexLexer {
 	protected int mode = JFlexParser.MODE_LAYOUT;
 	/** Stack of currently parsed tag content. */
 	private Stack tagStack = new Stack();
+
+	/**
+	 * Utility method used to indicate whether HTML tags are allowed in wiki syntax
+	 * or not.
+	 */
+	protected boolean allowHTML() {
+		return Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
+	}
+
+	/**
+	 * Utility method used to indicate whether Javascript is allowed in wiki syntax
+	 * or not.
+	 */
+	protected boolean allowJavascript() {
+		return Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
+	}
+
+	/**
+	 * Utility method used to indicate whether templates are allowed in wiki syntax
+	 * or not.
+	 */
+	protected boolean allowTemplates() {
+		return Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES);
+	}
 
 	/**
 	 * Append content to the current tag in the tag stack.

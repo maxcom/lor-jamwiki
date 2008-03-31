@@ -6,7 +6,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -20,7 +19,6 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code included in the constructor */
 %init{
-    allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -28,7 +26,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
-    protected boolean allowHTML = false;
     protected int section = 0;
     protected int sectionDepth = 0;
     protected int targetSection = 0;
@@ -115,14 +112,14 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- nowiki ----- */
 
 <NORMAL>{htmlprestart} {
-    if (allowHTML) {
+    if (allowHTML()) {
         beginState(PRE);
     }
     return yytext();
 }
 
 <PRE>{htmlpreend} {
-    // state only changes to pre if allowHTML is true, so no need to check here
+    // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
     return yytext();
 }

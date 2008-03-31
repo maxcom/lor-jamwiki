@@ -6,7 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.jamwiki.Environment;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.WikiLogger;
 
@@ -21,8 +20,6 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code included in the constructor */
 %init{
-    allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
-    allowJavascript = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_JAVASCRIPT);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -30,15 +27,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
-    protected boolean allowHTML = false;
-    protected boolean allowJavascript = false;
-
-    /**
-     *
-     */
-    protected boolean allowJavascript() {
-        return (allowJavascript && yystate() != PRE && yystate() != WIKIPRE);
-    }
 %}
 
 /* character expressions */
@@ -129,7 +117,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML) {
+    if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     beginState(PRE);
@@ -139,7 +127,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
-    // state only changes to pre if allowHTML is true, so no need to check here
+    // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
     this.popTag("pre");
     return "";
@@ -435,7 +423,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML) {
+    if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
@@ -445,7 +433,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML) {
+    if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
@@ -455,7 +443,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML) {
+    if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     return ParserUtil.validateHtmlTag(yytext());

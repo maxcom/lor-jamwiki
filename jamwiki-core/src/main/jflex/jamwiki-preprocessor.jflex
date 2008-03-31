@@ -6,7 +6,6 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.Environment;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -20,7 +19,6 @@ import org.jamwiki.utils.WikiLogger;
 
 /* code included in the constructor */
 %init{
-    allowHTML = Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_HTML);
     yybegin(NORMAL);
     states.add(new Integer(yystate()));
 %init}
@@ -39,7 +37,6 @@ import org.jamwiki.utils.WikiLogger;
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPreProcessor.class.getName());
-    protected boolean allowHTML = false;
     protected int templateCharCount = 0;
     protected String templateString = "";
 %}
@@ -94,7 +91,7 @@ wikisignature      = ([~]{3,5})
 
 <NORMAL>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
-    if (allowHTML) {
+    if (allowHTML()) {
         beginState(PRE);
     }
     return yytext();
@@ -102,7 +99,7 @@ wikisignature      = ([~]{3,5})
 
 <PRE>{htmlpreend} {
     logger.finer("htmlpreend: " + yytext() + " (" + yystate() + ")");
-    // state only changes to pre if allowHTML is true, so no need to check here
+    // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
     return yytext();
 }
@@ -130,7 +127,7 @@ wikisignature      = ([~]{3,5})
 <NORMAL, TEMPLATE>{templatestart} {
     logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
-    if (!Environment.getBooleanValue(Environment.PROP_PARSER_ALLOW_TEMPLATES)) {
+    if (!allowTemplates()) {
         return yytext();
     }
     this.templateString += raw;
