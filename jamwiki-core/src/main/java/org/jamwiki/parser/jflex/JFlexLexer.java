@@ -353,7 +353,7 @@ public abstract class JFlexLexer {
 			if (pos != -1) {
 				text = text.substring(0, pos);
 			}
-			tagAttributes = ParserUtil.validateHtmlTagAttributes(text.trim());
+			tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(text.trim());
 		}
 		this.pushTag(tagType, tagAttributes);
 	}

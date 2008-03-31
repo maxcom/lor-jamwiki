@@ -89,7 +89,7 @@ public class WikiLinkTag implements ParserTag {
 			} else if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getSection())) {
 				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection(), true));
 			} else {
-				wikiLink.setText(ParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
+				wikiLink.setText(JFlexParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
 			// do not escape text html - already done by parser
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, wikiLink, wikiLink.getText(), null, null, false);
@@ -160,7 +160,7 @@ public class WikiLinkTag implements ParserTag {
 			if (thumb && maxDimension <= 0) {
 				maxDimension = DEFAULT_THUMBNAIL_SIZE;
 			}
-			caption = ParserUtil.parseFragment(parserInput, caption, mode);
+			caption = JFlexParserUtil.parseFragment(parserInput, caption, mode);
 		}
 		// do not escape html for caption since parser does it above
 		return LinkUtil.buildImageLinkHtml(context, virtualWiki, wikiLink.getDestination(), frame, thumb, align, caption, maxDimension, false, null, false);

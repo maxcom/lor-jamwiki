@@ -107,7 +107,7 @@ public class HtmlLinkTag implements ParserTag {
 		}
 		String caption = link;
 		if (!StringUtils.isBlank(text)) {
-			caption = ParserUtil.parseFragment(parserInput, text, mode);
+			caption = JFlexParserUtil.parseFragment(parserInput, text, mode);
 		}
 		String title = Utilities.stripMarkup(caption);
 		link = link.substring(protocol.length());

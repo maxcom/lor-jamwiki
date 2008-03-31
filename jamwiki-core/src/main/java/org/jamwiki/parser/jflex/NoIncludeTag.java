@@ -40,7 +40,7 @@ public class NoIncludeTag implements ParserTag {
 			// no content is returned when called from a template
 			return "";
 		}
-		String content = ParserUtil.tagContent(raw);
+		String content = JFlexParserUtil.tagContent(raw);
 		// run the pre-processor against the noinclude content
 		JFlexParser parser = new JFlexParser(parserInput);
 		return parser.parseFragment(parserOutput, content, JFlexParser.MODE_PREPROCESS);

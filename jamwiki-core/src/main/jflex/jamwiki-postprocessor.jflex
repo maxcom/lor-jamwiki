@@ -65,7 +65,7 @@ paragraphstart     = ({inputcharacter})
 
 <PRE, NORMAL, P, NONPARAGRAPH>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    return ParserUtil.tagContent(yytext());
+    return JFlexParserUtil.tagContent(yytext());
 }
 
 /* ----- pre ----- */

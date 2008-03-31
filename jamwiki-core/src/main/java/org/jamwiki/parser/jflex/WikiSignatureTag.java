@@ -75,7 +75,7 @@ public class WikiSignatureTag implements ParserTag {
 				WikiLinkTag wikiLinkTag = new WikiLinkTag();
 				wikiLinkTag.parse(parserInput, parserOutput, mode, signature);
 				if (mode != JFlexParser.MODE_MINIMAL) {
-					signature = ParserUtil.parseFragment(parserInput, signature, mode);
+					signature = JFlexParserUtil.parseFragment(parserInput, signature, mode);
 				}
 			}
 			if (includeUser && includeDate) {

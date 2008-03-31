@@ -110,7 +110,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    String content = ParserUtil.tagContent(yytext());
+    String content = JFlexParserUtil.tagContent(yytext());
     return "<nowiki>" + StringEscapeUtils.escapeHtml(content) + "</nowiki>";
 }
 
@@ -208,7 +208,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
     String tagAttributes = yytext().substring(2).trim();
-    tagAttributes = ParserUtil.validateHtmlTagAttributes(tagAttributes);
+    tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(tagAttributes);
     this.pushTag("table", tagAttributes);
     return "";
 }
@@ -288,7 +288,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     String attributes = null;
     if (yytext().trim().length() > 2) {
         attributes = yytext().substring(2).trim();
-        attributes = ParserUtil.validateHtmlTagAttributes(attributes);
+        attributes = JFlexParserUtil.validateHtmlTagAttributes(attributes);
     }
     this.pushTag(tagType, attributes);
     return "";
@@ -427,7 +427,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
-    String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
     this.pushTag(tagInfo[0], tagInfo[1]);
     return "";
 }
@@ -437,7 +437,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
-    String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
     this.popTag(tagInfo[0]);
     return "";
 }
@@ -447,7 +447,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
-    return ParserUtil.validateHtmlTag(yytext());
+    return JFlexParserUtil.validateHtmlTag(yytext());
 }
 
 /* ----- javascript ----- */
@@ -456,7 +456,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
-        String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+        String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
         this.pushTag(tagInfo[0], tagInfo[1]);
         return "";
     }
@@ -467,7 +467,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     logger.finer("jsclose: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         endState();
-        String[] tagInfo = ParserUtil.parseHtmlTag(yytext());
+        String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
         this.popTag(tagInfo[0]);
         return "";
     }

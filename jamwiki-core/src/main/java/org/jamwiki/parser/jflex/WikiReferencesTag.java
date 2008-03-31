@@ -76,7 +76,7 @@ public class WikiReferencesTag implements ParserTag {
 				html += reference.getCitation() + "</a>&#160;";
 			}
 			html += "</sup>";
-			html += ParserUtil.parseFragment(parserInput, reference.getContent(), JFlexParser.MODE_PROCESS);
+			html += JFlexParserUtil.parseFragment(parserInput, reference.getContent(), JFlexParser.MODE_PROCESS);
 			html += "</li>";
 		}
 		html += (!references.isEmpty()) ? "</ol>" : "";

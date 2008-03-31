@@ -82,7 +82,7 @@ public class WikiHeadingTag implements ParserTag {
 		}
 		String tagText = raw.substring(level, raw.length() - level).trim();
 		ParserInput tmpParserInput = new ParserInput(parserInput);
-		String tocText = ParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
+		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
 		tocText = Utilities.stripMarkup(tocText);
 		String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
 		if (mode <= JFlexParser.MODE_SLICE) {
@@ -94,7 +94,7 @@ public class WikiHeadingTag implements ParserTag {
 		output += this.buildSectionEditLink(parserInput, nextSection);
 		output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
 		output += "<h" + level + ">";
-		output += ParserUtil.parseFragment(parserInput, tagText, mode);
+		output += JFlexParserUtil.parseFragment(parserInput, tagText, mode);
 		output += "</h" + level + ">";
 		return output.toString();
 	}

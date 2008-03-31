@@ -333,7 +333,7 @@ public class TemplateTag implements ParserTag {
 		// the first parameter to avoid having to implement special table logic
 		String param1 = (String)tokens.elementAt(0);
 		String value = raw.substring(param1.length() + 1);
-		return ParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, value, JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
@@ -379,7 +379,7 @@ public class TemplateTag implements ParserTag {
 				pos++;
 			}
 		}
-		return ParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_PREPROCESS);
+		return JFlexParserUtil.parseFragment(parserInput, output.toString(), JFlexParser.MODE_PREPROCESS);
 	}
 
 	/**
@@ -442,7 +442,7 @@ public class TemplateTag implements ParserTag {
 			if (name == null) {
 				name = Integer.toString(count);
 			}
-			String value = (nameValue[1] == null) ? null : ParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_PREPROCESS);
+			String value = (nameValue[1] == null) ? null : JFlexParserUtil.parseFragment(parserInput, nameValue[1].trim(), JFlexParser.MODE_PREPROCESS);
 			this.parameterValues.put(name, value);
 		}
 	}

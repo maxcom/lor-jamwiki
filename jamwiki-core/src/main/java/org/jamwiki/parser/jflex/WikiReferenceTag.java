@@ -37,7 +37,7 @@ public class WikiReferenceTag implements ParserTag {
 	 */
 	private WikiReference buildReference(ParserInput parserInput, String raw) {
 		String name = buildReferenceName(raw);
-		String content = ParserUtil.tagContent(raw);
+		String content = JFlexParserUtil.tagContent(raw);
 		Vector references = this.retrieveReferences(parserInput);
 		int count = 0;
 		int citation = 1;

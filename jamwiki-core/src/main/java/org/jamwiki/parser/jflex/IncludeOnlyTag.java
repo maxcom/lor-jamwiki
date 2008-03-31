@@ -37,7 +37,7 @@ public class IncludeOnlyTag implements ParserTag {
 			return raw;
 		}
 		if (parserInput.getTemplateDepth() > 0) {
-			String content = ParserUtil.tagContent(raw);
+			String content = JFlexParserUtil.tagContent(raw);
 			// run the pre-processor against the includeonly content
 			JFlexParser parser = new JFlexParser(parserInput);
 			return parser.parseFragment(parserOutput, content, JFlexParser.MODE_PREPROCESS);

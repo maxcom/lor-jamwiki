@@ -27,9 +27,9 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * Utility methods used with the Mediawiki lexers.
  */
-public class ParserUtil {
+public class JFlexParserUtil {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(ParserUtil.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
 	private static Pattern TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
@@ -49,7 +49,7 @@ public class ParserUtil {
 	/**
 	 *
 	 */
-	private ParserUtil() {
+	private JFlexParserUtil() {
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class ParserUtil {
 		String tagOpen = m.group(1).trim();
 		String tagClose = m.group(5).trim();
 		if (!StringUtils.isBlank(tagAttributes)) {
-			tagAttributes = ParserUtil.validateHtmlTagAttributes(tagAttributes).trim();
+			tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(tagAttributes).trim();
 		}
 		result[0] = tagType;
 		result[1] = tagAttributes;
@@ -136,7 +136,7 @@ public class ParserUtil {
 	 * a bad thing, so clean up HTML tags to remove any such attributes.
 	 */
 	protected static String validateHtmlTag(String tag) {
-		String[] tagInfo = ParserUtil.parseHtmlTag(tag);
+		String[] tagInfo = JFlexParserUtil.parseHtmlTag(tag);
 		String tagOpen = tagInfo[2];
 		String tagKeyword = tagInfo[0];
 		String attributes = tagInfo[1];
