@@ -7,6 +7,7 @@ package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jamwiki.parser.TableOfContents;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 
 %%
@@ -477,20 +478,21 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE>{entity} {
     logger.finer("entity: " + yytext() + " (" + yystate() + ")");
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    String raw = yytext();
+    if (Utilities.isHtmlEntity(raw)) {
+        return raw;
+    }
+    return StringEscapeUtils.escapeHtml(raw);
 }
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE, JAVASCRIPT>{whitespace} {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 <WIKIPRE, PRE, NORMAL, LIST, TABLE>. {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return StringEscapeUtils.escapeHtml(yytext());
 }
 
 <JAVASCRIPT>. {

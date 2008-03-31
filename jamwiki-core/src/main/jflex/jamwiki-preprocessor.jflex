@@ -235,12 +235,10 @@ wikisignature      = ([~]{3,5})
 
 <WIKIPRE, PRE, NORMAL>{whitespace} {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 <WIKIPRE, PRE, NORMAL>. {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }

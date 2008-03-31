@@ -175,12 +175,10 @@ paragraphstart     = ({inputcharacter})
 
 <PRE, NORMAL, NONPARAGRAPH, P>{whitespace} {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }
 
 <PRE, NORMAL, NONPARAGRAPH, P>. {
     // no need to log this
-    CharacterTag parserTag = new CharacterTag();
-    return this.parseToken(yytext(), parserTag);
+    return yytext();
 }

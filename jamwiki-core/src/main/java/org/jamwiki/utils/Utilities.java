@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -314,6 +315,22 @@ public class Utilities {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Given a string, determine if it is a valid HTML entity (such as &trade; or
+	 * &#160;).
+	 *
+	 * @param text The text that is being examined.
+	 * @return <code>true</code> if the text is a valid HTML entity.
+	 */
+	public static boolean isHtmlEntity(String text) {
+		if (text == null) {
+			return false;
+		}
+		String unescaped = StringEscapeUtils.unescapeHtml(text);
+		// see if it was successfully converted, in which case it is an entity
+		return (!text.equals(unescaped));
 	}
 
 	/**

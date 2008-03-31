@@ -155,11 +155,9 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- default ----- */
 
 <PRE, NORMAL>{whitespace} {
-    CharacterTag parserTag = new CharacterTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return yytext();
 }
 
 <PRE, NORMAL>. {
-    CharacterTag parserTag = new CharacterTag();
-    return returnText(this.parseToken(yytext(), parserTag));
+    return yytext();
 }
