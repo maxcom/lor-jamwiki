@@ -41,7 +41,7 @@ import org.jamwiki.utils.WikiLogger;
             inTargetSection = false;
         } else if (this.targetSection == this.section) {
             WikiHeadingTag parserTag = new WikiHeadingTag();
-            this.parseToken(headingText, parserTag);
+            parserTag.parse(this.parserInput, this.parserOutput, this.mode, headingText);
             inTargetSection = true;
             this.sectionDepth = level;
             if (this.mode == JFlexParser.MODE_SPLICE) return this.replacementText;

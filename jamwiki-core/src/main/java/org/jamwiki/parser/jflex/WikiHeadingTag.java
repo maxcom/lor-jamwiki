@@ -18,7 +18,6 @@ package org.jamwiki.parser.jflex;
 
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
@@ -27,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.
  */
-public class WikiHeadingTag implements ParserTag {
+public class WikiHeadingTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
@@ -65,38 +64,43 @@ public class WikiHeadingTag implements ParserTag {
 	 * Parse a Mediawiki heading of the form "==heading==" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		int level = 0;
-		if (raw.startsWith("=====") && raw.endsWith("=====")) {
-			level = 5;
-		} else if (raw.startsWith("====") && raw.endsWith("====")) {
-			level = 4;
-		} else if (raw.startsWith("===") && raw.endsWith("===")) {
-			level = 3;
-		} else if (raw.startsWith("==") && raw.endsWith("==")) {
-			level = 2;
-		} else if (raw.startsWith("=") && raw.endsWith("=")) {
-			level = 1;
-		} else {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+		try {
+			int level = 0;
+			if (raw.startsWith("=====") && raw.endsWith("=====")) {
+				level = 5;
+			} else if (raw.startsWith("====") && raw.endsWith("====")) {
+				level = 4;
+			} else if (raw.startsWith("===") && raw.endsWith("===")) {
+				level = 3;
+			} else if (raw.startsWith("==") && raw.endsWith("==")) {
+				level = 2;
+			} else if (raw.startsWith("=") && raw.endsWith("=")) {
+				level = 1;
+			} else {
+				return raw;
+			}
+			String tagText = raw.substring(level, raw.length() - level).trim();
+			ParserInput tmpParserInput = new ParserInput(parserInput);
+			String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
+			tocText = Utilities.stripMarkup(tocText);
+			String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
+			if (mode <= JFlexParser.MODE_SLICE) {
+				parserOutput.setSectionName(Utilities.encodeForURL(tagName));
+				return raw;
+			}
+			String output = this.updateToc(parserInput, tagName, tocText, level);
+			int nextSection = parserInput.getTableOfContents().size();
+			output += this.buildSectionEditLink(parserInput, nextSection);
+			output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
+			output += "<h" + level + ">";
+			output += JFlexParserUtil.parseFragment(parserInput, tagText, mode);
+			output += "</h" + level + ">";
+			return output.toString();
+		} catch (Throwable t) {
+			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
-		String tagText = raw.substring(level, raw.length() - level).trim();
-		ParserInput tmpParserInput = new ParserInput(parserInput);
-		String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
-		tocText = Utilities.stripMarkup(tocText);
-		String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
-		if (mode <= JFlexParser.MODE_SLICE) {
-			parserOutput.setSectionName(Utilities.encodeForURL(tagName));
-			return raw;
-		}
-		String output = this.updateToc(parserInput, tagName, tocText, level);
-		int nextSection = parserInput.getTableOfContents().size();
-		output += this.buildSectionEditLink(parserInput, nextSection);
-		output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
-		output += "<h" + level + ">";
-		output += JFlexParserUtil.parseFragment(parserInput, tagText, mode);
-		output += "</h" + level + ">";
-		return output.toString();
 	}
 
 	/**

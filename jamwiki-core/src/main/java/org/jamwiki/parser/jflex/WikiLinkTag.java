@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
@@ -33,7 +32,7 @@ import org.jamwiki.utils.WikiLogger;
 /**
  * This class parses wiki links of the form <code>[[Topic to Link To|Link Text]]</code>.
  */
-public class WikiLinkTag implements ParserTag {
+public class WikiLinkTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiLinkTag.class.getName());
 	private static Pattern WIKI_LINK_PATTERN = null;
@@ -103,13 +102,18 @@ public class WikiLinkTag implements ParserTag {
 	 * Parse a Mediawiki link of the form "[[topic|text]]" and return the
 	 * resulting HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
-		this.processLinkMetadata(parserOutput, raw);
-		if (mode <= JFlexParser.MODE_PREPROCESS) {
-			// do not parse to HTML when in preprocess mode
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
+		try {
+			this.processLinkMetadata(parserOutput, raw);
+			if (mode <= JFlexParser.MODE_PREPROCESS) {
+				// do not parse to HTML when in preprocess mode
+				return raw;
+			}
+			return this.processLinkContent(parserInput, parserOutput, mode, raw);
+		} catch (Throwable t) {
+			logger.info("Unable to parse " + raw, t);
 			return raw;
 		}
-		return this.processLinkContent(parserInput, parserOutput, mode, raw);
 	}
 
 	/**

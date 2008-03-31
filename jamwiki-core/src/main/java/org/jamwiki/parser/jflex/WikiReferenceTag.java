@@ -20,14 +20,12 @@ import java.util.Iterator;
 import java.util.Vector;
 import org.jamwiki.model.WikiReference;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
  * This class parses nowiki tags of the form <code>&lt;ref name="name"&gt;content&lt;/ref&gt;</code>.
  */
-public class WikiReferenceTag implements ParserTag {
+public class WikiReferenceTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiReferenceTag.class.getName());
 	protected static final String REFERENCES_PARAM = "WikiReferenceTag.REFERENCES_PARAM";
@@ -67,7 +65,7 @@ public class WikiReferenceTag implements ParserTag {
 	/**
 	 *
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, int mode, String raw) {
 		if (mode < JFlexParser.MODE_PROCESS) {
 			return raw;
 		}

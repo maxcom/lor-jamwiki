@@ -147,7 +147,7 @@ wikisignature      = ([~]{3,5})
         String value = new String(this.templateString);
         this.templateString = "";
         TemplateTag parserTag = new TemplateTag();
-        return this.parseToken(value, parserTag);
+        return parserTag.parse(this.parserInput, this.parserOutput, this.mode, value);
     }
     return "";
 }
@@ -191,13 +191,13 @@ wikisignature      = ([~]{3,5})
 <NORMAL, TEMPLATE>{includeonly} {
     logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
     IncludeOnlyTag parserTag = new IncludeOnlyTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 <NORMAL, TEMPLATE>{noinclude} {
     logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
     NoIncludeTag parserTag = new NoIncludeTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- wiki links ----- */
@@ -205,13 +205,13 @@ wikisignature      = ([~]{3,5})
 <NORMAL>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 <NORMAL>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- signatures ----- */
@@ -219,7 +219,7 @@ wikisignature      = ([~]{3,5})
 <NORMAL>{wikisignature} {
     logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
     WikiSignatureTag parserTag = new WikiSignatureTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- comments ----- */

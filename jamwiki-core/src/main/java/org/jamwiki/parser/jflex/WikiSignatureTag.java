@@ -25,7 +25,6 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLogger;
 
@@ -33,7 +32,7 @@ import org.jamwiki.utils.WikiLogger;
  * This class parses signature tags of the form <code>~~~</code>,
  * <code>~~~~</code> and <code>~~~~~</code>.
  */
-public class WikiSignatureTag implements ParserTag {
+public class WikiSignatureTag {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiSignatureTag.class.getName());
 
@@ -98,7 +97,7 @@ public class WikiSignatureTag implements ParserTag {
 	 * Parse a Mediawiki signature of the form "~~~~" and return the resulting
 	 * HTML output.
 	 */
-	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) throws Exception {
+	public String parse(ParserInput parserInput, ParserOutput parserOutput, int mode, String raw) {
 		if (raw.equals("~~~")) {
 			return this.buildWikiSignature(parserInput, parserOutput, mode, true, false);
 		}

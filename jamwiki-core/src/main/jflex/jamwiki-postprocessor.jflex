@@ -94,7 +94,7 @@ paragraphstart     = ({inputcharacter})
 <NORMAL, P, NONPARAGRAPH>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
 /* ----- javascript ----- */

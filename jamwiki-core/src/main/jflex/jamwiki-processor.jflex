@@ -187,19 +187,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <NORMAL, LIST, TABLE>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 <NORMAL, LIST, TABLE>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 <NORMAL, LIST, TABLE>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     HtmlLinkTag parserTag = new HtmlLinkTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
 /* ----- tables ----- */
@@ -315,7 +315,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <NORMAL>^{wikiheading} {
     logger.finer("wikiheading: " + yytext() + " (" + yystate() + ")");
     WikiHeadingTag parserTag = new WikiHeadingTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
 /* ----- lists ----- */
@@ -405,19 +405,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <NORMAL, LIST, TABLE>{reference} {
     logger.finer("reference: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
 <NORMAL, LIST, TABLE>{referencenocontent} {
     logger.finer("referencenocontent: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
 <NORMAL, LIST, TABLE>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
-    return this.parseToken(yytext(), parserTag);
+    return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
 /* ----- html ----- */

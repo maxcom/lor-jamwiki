@@ -21,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserTag;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -128,25 +127,6 @@ public abstract class JFlexLexer {
 		this.parserOutput = parserOutput;
 		this.mode = mode;
 		this.tagStack.push(new JFlexTagItem(JFlexTagItem.ROOT_TAG));
-	}
-
-	/**
-	 * Parse a token using the specified parser tag handler.  If an error
-	 * occurs during processing then this method will return the raw text
-	 * that was passed to it.
-	 *
-	 * @param raw The raw token text that is to be parsed.
-	 * @param parserTag The parser tag handler to use when parsing the token.
-	 * @return Returns the parsed text, or if an error occurs returns the raw
-	 *  text that was passed to this method.
-	 */
-	protected String parseToken(String raw, ParserTag parserTag) {
-		try {
-			return parserTag.parse(this.parserInput, this.parserOutput, this.mode, raw);
-		} catch (Throwable t) {
-			logger.info("Unable to parse " + raw, t);
-			return raw;
-		}
 	}
 
 	/**
