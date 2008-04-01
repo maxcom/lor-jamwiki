@@ -81,21 +81,39 @@ public class WikiDatabase {
 				"jam_wiki_user",
 				"jam_wiki_user_info"
 		};
+		String csvDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
+		File csvFile = null;
 		try {
 			conn = WikiDatabase.getConnection(null);
+			// make sure CSV files are encoded UTF-8
+			// TODO: this does not seem to be working currently - HSQL bug?
+			sql = "set property \"textdb.encoding\" 'UTF-8'";
+			stmt = new WikiPreparedStatement(sql);
+			stmt.executeUpdate();
 			for (int i=0; i < tableNames.length; i++) {
-				// HSQL will not create the CSV file if a file of the same name exists,
-				// so first drop any existing table that may have previously been exported
 				exportTableName = tableNames[i] + "_export";
+				// first drop any pre-existing CSV database files.
 				sql = "drop table " + exportTableName + " if exists";
 				stmt = new WikiPreparedStatement(sql);
 				stmt.executeUpdate();
-				// FIXME - if the CSV file already exists then the SQL below appends to it,
-				// which is wrong.
+				// now delete the CSV file if it exists
+				csvFile = new File(csvDirectory, exportTableName + ".csv");
+				if (csvFile.exists()) {
+					if (csvFile.delete()) {
+						logger.info("Deleted existing CSV file: " + csvFile.getPath());
+					} else {
+						logger.warning("Could not delete existing CSV file: " + csvFile.getPath());
+					}
+				}
+				// create the CSV files
 				sql = "select * into text " + exportTableName + " from " + tableNames[i];
 				stmt = new WikiPreparedStatement(sql);
 				stmt.executeUpdate();
 			}
+			// rebuild the data files to make sure everything is committed to disk
+			sql = "checkpoint";
+			stmt = new WikiPreparedStatement(sql);
+			stmt.executeUpdate();
 		} catch (Exception e) {
 			DatabaseConnection.handleErrors(conn);
 			throw e;
