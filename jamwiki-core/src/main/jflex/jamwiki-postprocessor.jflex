@@ -47,7 +47,8 @@ toc                = "__TOC__"
 references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraph */
-noparagraph        = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>))) | "<" [ ]* "hr" ~">"
+noparagraph        = "<hr" ~">"
+noparagraphtd      = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>)))
 emptyline          = ({newline} {newline} {newline})
 nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|span|p
 nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
@@ -107,8 +108,19 @@ paragraphstart     = ({inputcharacter})
 /* ----- layout ----- */
 
 <NORMAL, NONPARAGRAPH>{noparagraph} {
-    // <hr> and <td> tags _with no newlines_ should be ignored for the sake of paragraph parsing
+    // <hr> should be ignored for the sake of paragraph parsing
     logger.finer("noparagraph: " + yytext() + " (" + yystate() + ")");
+    return yytext();
+}
+
+<NORMAL, NONPARAGRAPH>{noparagraphtd} {
+    // <td> tags _with no newlines_ should be ignored for the sake of paragraph parsing
+    logger.finer("noparagraphtd: " + yytext() + " (" + yystate() + ")");
+    beginState(NONPARAGRAPH);
+    // push back to the start of the opening td tag
+    String raw = yytext();
+    int pos = raw.indexOf(">") + 1;
+    yypushback(raw.length() - pos);
     return yytext();
 }
 
