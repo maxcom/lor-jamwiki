@@ -86,7 +86,7 @@ tablecells         = "||" | "!!"
 tablecellsstyle    = "||" ({tableattribute})+ "|" ([^|])
 tableheading       = "!" | "!" ({tableattribute})+ "|" [^\|]
 tablerow           = "|-" [ ]* ({tableattribute})* {newline}
-tablecaption       = "|+"
+tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
 wikilink           = "[[" [^\]\n\r]+ "]]"
@@ -216,7 +216,11 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <TABLE>^{tablecaption} {
     logger.finer("tablecaption: " + yytext() + " (" + yystate() + ")");
     processTableStack();
-    this.pushTag("caption", null);
+    if (yytext().length() > 2) {
+        // for captions with CSS specified an extra character is matched
+        yypushback(1);
+    }
+    parseTableCell(yytext(), "caption", "|+");
     return "";
 }
 
@@ -228,8 +232,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     if (!this.peekTag().getTagType().equals("tr")) {
         this.pushTag("tr", null);
     }
-    if (yytext().length() > 1) {
-        // the headings style matches one extra character - push it back
+    if (yytext().length() > 2) {
+        // for headings with CSS specified an extra character is matched
         yypushback(1);
     }
     parseTableCell(yytext(), "th", "!");

@@ -80,6 +80,20 @@ public class ParseTableTest extends TestParser {
 	/**
 	 *
 	 */
+	public void testBasicTables8() throws Exception {
+		executeParserTest("Table8");
+	}
+
+	/**
+	 *
+	 */
+	public void testBasicTables9() throws Exception {
+		executeParserTest("Table9");
+	}
+
+	/**
+	 *
+	 */
 	public void testNestedTables1() throws Exception {
 // FIXME
 //		executeParserTest("NestedTable1");

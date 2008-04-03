@@ -19,6 +19,10 @@ Bugfixes:
     parser.  Originally reported by Michael Habbert.
   * Fix an issue that prevented error messages from being correctly reported on
     the Special:Maintenance page.
+  * Resolve a problem that prevented __TOC__ tags within tables from being
+    processed.  Reported by an anonymous user.
+  * Wiki table captions now process table CSS such as |+align="bottom"|caption.
+    Reported by an anonymous user.
 
 
 0.6.5
