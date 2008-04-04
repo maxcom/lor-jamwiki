@@ -226,6 +226,9 @@ wikisignature      = ([~]{3,5})
 
 <NORMAL>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
+    if (this.mode < JFlexParser.MODE_PREPROCESS) {
+        return yytext();
+    }
     // strip out the comment
     return "";
 }
