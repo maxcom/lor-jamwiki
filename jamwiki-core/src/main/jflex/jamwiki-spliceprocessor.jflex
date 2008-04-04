@@ -105,7 +105,7 @@ htmlcomment        = "<!--" ~"-->"
 
 <PRE, NORMAL>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
-    return yytext();
+    return returnText(yytext());
 }
 
 /* ----- nowiki ----- */
@@ -114,19 +114,19 @@ htmlcomment        = "<!--" ~"-->"
     if (allowHTML()) {
         beginState(PRE);
     }
-    return yytext();
+    return returnText(yytext());
 }
 
 <PRE>{htmlpreend} {
     // state only changes to pre if allowHTML() is true, so no need to check here
     endState();
-    return yytext();
+    return returnText(yytext());
 }
 
 /* ----- comments ----- */
 
 <NORMAL>{htmlcomment} {
-    return yytext();
+    return returnText(yytext());
 }
 
 /* ----- headings ----- */
@@ -154,9 +154,9 @@ htmlcomment        = "<!--" ~"-->"
 /* ----- default ----- */
 
 <PRE, NORMAL>{whitespace} {
-    return yytext();
+    return returnText(yytext());
 }
 
 <PRE, NORMAL>. {
-    return yytext();
+    return returnText(yytext());
 }
