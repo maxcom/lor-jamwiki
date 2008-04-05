@@ -360,47 +360,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 <NORMAL, LIST, TABLE>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("b")) {
-        this.popTag("b");
-    } else {
-        this.pushTag("b", null);
-    }
+    this.processBoldItalic("b");
     return "";
 }
 
 <NORMAL, LIST, TABLE>{bolditalic} {
     logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("b")) {
-        // bold tag already opened
-        this.popTag("b");
-        if (this.peekTag().getTagType().equals("i")) {
-            this.popTag("i");
-        } else {
-            this.pushTag("i", null);
-        }
-    } else if (this.peekTag().getTagType().equals("i")) {
-        // italic tag already opened
-        this.popTag("i");
-        if (this.peekTag().getTagType().equals("b")) {
-            this.popTag("b");
-        } else {
-            this.pushTag("b", null);
-        }
-    } else {
-        // open a new bold tag and a new italic tag
-        this.pushTag("b", null);
-        this.pushTag("i", null);
-    }
+    this.processBoldItalic(null);
     return "";
 }
 
 <NORMAL, LIST, TABLE>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
-    if (this.peekTag().getTagType().equals("i")) {
-        this.popTag("i");
-    } else {
-        this.pushTag("i", null);
-    }
+    this.processBoldItalic("i");
     return "";
 }
 

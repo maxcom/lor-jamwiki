@@ -95,6 +95,15 @@ class JFlexTagItem {
 	}
 
 	/**
+	 * This method should generally not be called.  It exists primarily to support
+	 * wikibold tags, which generate cases where the bold and italic tags could be
+	 * switched in the stack, such as '''''bold''' then italic''.
+	 */
+	protected void changeTagType(String tagType) {
+		this.tagType = tagType;
+	}
+
+	/**
 	 *
 	 */
 	public String toHtml() {
@@ -136,6 +145,18 @@ class JFlexTagItem {
 		}
 		if (!this.isRootTag()) {
 			result.append("</").append(this.tagType).append(">");
+		}
+		if (isTextBodyTag() && !this.isRootTag() && this.isInlineTag() && !this.tagType.equals("pre")) {
+			// work around issues such as "text''' text'''", where the output should
+			// be "text <b>text</b>", by moving the whitespace to the parent tag
+			int firstWhitespaceIndex = content.indexOf(content.trim());
+			if (firstWhitespaceIndex > 0) {
+				result.insert(0, content.substring(0, firstWhitespaceIndex));
+			}
+			int lastWhitespaceIndex = firstWhitespaceIndex + content.trim().length();
+			if (lastWhitespaceIndex > content.length()) {
+				result.append(content.substring(lastWhitespaceIndex));
+			}
 		}
 		if (!isInlineTag()) {
 			result.append("\n");

@@ -33,7 +33,6 @@ public class ParseWikiSyntaxTest extends TestParser {
 	 */
 	public void testWikiSyntax() throws Exception {
 		executeParserTest("WikiSyntax1");
-// FIXME
-//		executeParserTest("WikiSyntax2");
+		executeParserTest("WikiSyntax2");
 	}
 }

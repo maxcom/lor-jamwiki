@@ -352,6 +352,54 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 * Handle parsing of bold, italic, and bolditalic tags.
+	 *
+	 * @param tagType The tag type being parsed - either "i", "b", or <code>null</code>
+	 *  if a bolditalic tag is being parsed.
+	 */
+	protected void processBoldItalic(String tagType) {
+		if (tagType == null) {
+			// bold-italic
+			if (this.peekTag().getTagType().equals("i")) {
+				// italic tag already opened
+				this.processBoldItalic("i");
+				this.processBoldItalic("b");
+			} else {
+				// standard bold-italic processing
+				this.processBoldItalic("b");
+				this.processBoldItalic("i");
+			}
+			return;
+		}
+		// bold or italic
+		if (this.peekTag().getTagType().equals(tagType)) {
+			// tag was open, close it
+			this.popTag(tagType);
+			return;
+		}
+		// TODO - make this more generic and implement it globally
+		if (tagType.equals("b") && this.peekTag().getTagType().equals("i")) {
+			// since Mediawiki syntax unfortunately chose to use the same character
+			// for bold and italic ('' and '''), see if the syntax is of the form
+			// '''''bold''' then italic'', in which case the current stack contains
+			// "b" followed by "i" when it should be the reverse.
+			int stackLength = this.tagStack.size();
+			if (stackLength > 2) {
+				JFlexTagItem grandparent = (JFlexTagItem)this.tagStack.get(stackLength - 2);
+				if (grandparent.getTagType().equals("b")) {
+					// swap the tag types and close the current tag
+					grandparent.changeTagType("i");
+					this.peekTag().changeTagType("b");
+					this.popTag(tagType);
+					return;
+				}
+			}
+		}
+		// push the new tag onto the stack
+		this.pushTag(tagType, null);
+	}
+
+	/**
 	 * JFlex internal method used to change the lexer state values.
 	 */
 	public abstract void yybegin(int newState);
