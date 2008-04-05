@@ -304,8 +304,13 @@ div.submenu {
 
 /* topic elements */
 
-.toc-container {
-	clear:both;
+.toc-container ul {
+	list-style-type: none;
+	list-style-image: none;
+	margin-left: 0;
+}
+.toc-container ul ul {
+	margin-left: 1em;
 }
 .toc-content {
 	float: left;

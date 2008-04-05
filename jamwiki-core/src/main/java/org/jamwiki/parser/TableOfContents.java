@@ -49,6 +49,20 @@ public class TableOfContents {
 	private int status = STATUS_TOC_UNINITIALIZED;
 	/** The minimum number of headings that must be present for a TOC to appear, unless forceTOC is set to true. */
 	private static final int MINIMUM_HEADINGS = 4;
+	/** Keep track of the TOC prefix to display */
+	private int[] tocNumber = null;
+
+	/**
+	 *
+	 */
+	public TableOfContents() {
+		// initialize the tocNumber value for display
+		int maxDepth = Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH);
+		this.tocNumber = new int[maxDepth];
+		for (int i = 0; i < maxDepth; i++) {
+			this.tocNumber[i] = 0;
+		}
+	}
 
 	/**
 	 * Add a new table of contents entry to the table of contents object.
@@ -134,7 +148,7 @@ public class TableOfContents {
 	private void closeList(int level, StringBuffer text) {
 		while (level < currentLevel) {
 			// close lists to current level
-			text.append("</li>\n</ol>");
+			text.append("</li>\n</ul>");
 			currentLevel--;
 		}
 	}
@@ -150,6 +164,24 @@ public class TableOfContents {
 	}
 
 	/**
+	 *
+	 */
+	private String nextTocNumber(int depth) {
+		// increment current element
+		this.tocNumber[depth] = this.tocNumber[depth] + 1;
+		// clear out all lower elements
+		int maxDepth = Environment.getIntValue(Environment.PROP_PARSER_TOC_DEPTH);
+		for (int i = depth + 1; i < maxDepth; i++) {
+			this.tocNumber[i] = 0;
+		}
+		String prefix = new Integer(this.tocNumber[0]).toString();
+		for (int i = 1; i <= depth; i++) {
+			prefix += "." + this.tocNumber[i];
+		}
+		return prefix;
+	}
+
+	/**
 	 * Internal method to open any list tags prior to adding the next entry.
 	 */
 	private void openList(int level, StringBuffer text) {
@@ -160,7 +192,7 @@ public class TableOfContents {
 		}
 		while (level > currentLevel) {
 			// open lists to current level
-			text.append("<ol>\n<li>");
+			text.append("<ul>\n<li>");
 			currentLevel++;
 		}
 	}
@@ -226,7 +258,9 @@ public class TableOfContents {
 			}
 			closeList(adjustedLevel, text);
 			openList(adjustedLevel, text);
-			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">").append(entry.text).append("</a>");
+			text.append("<a href=\"#").append(Utilities.encodeForURL(entry.name)).append("\">");
+			text.append("<span class=\"tocnumber\">").append(this.nextTocNumber(adjustedLevel - 1)).append("</span> ");
+			text.append("<span class=\"toctext\">").append(entry.text).append("</span></a>");
 		}
 		closeList(0, text);
 		text.append("</div><div class=\"clear\"></div></div>\n");

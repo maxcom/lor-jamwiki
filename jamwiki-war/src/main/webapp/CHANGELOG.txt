@@ -10,6 +10,8 @@ New Features:
   * Support added for definition lists of the form "; term : definition".
   * Utility added to Special:Maintenance to allow exporting internal database
     data to CSV.
+  * Sub-headings in the table of contents should be of the form "1.1.1" to
+    match Mediawiki.  Reported by Sil68.
   * Upgrade to Spring Framework 2.5.2.
   * Upgrade to commons-lang 2.4.
 
