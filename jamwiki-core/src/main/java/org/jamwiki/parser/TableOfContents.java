@@ -244,7 +244,7 @@ public class TableOfContents {
 	 */
 	public String toHTML() {
 		StringBuffer text = new StringBuffer();
-		text.append("<div class=\"toc-container\"><div class=\"toc-content\">");
+		text.append("<table id=\"toc\">\n<tr>\n<td>\n");
 		TableOfContentsEntry entry = null;
 		int adjustedLevel = 0;
 		int previousLevel = 0;
@@ -268,7 +268,7 @@ public class TableOfContents {
 			previousLevel = adjustedLevel;
 		}
 		closeList(0, text, previousLevel);
-		text.append("</div><div class=\"clear\"></div></div>\n");
+		text.append("\n</td>\n</tr>\n</table>\n");
 		return text.toString();
 	}
 

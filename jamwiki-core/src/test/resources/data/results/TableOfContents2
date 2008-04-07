@@ -1,9 +1,15 @@
-<div class="toc-container"><div class="toc-content"><ul>
+<table id="toc">
+<tr>
+<td>
+<ul>
 <li><a href="#test"><span class="tocnumber">1</span> <span class="toctext">test</span></a></li>
 <li><a href="#test_2"><span class="tocnumber">2</span> <span class="toctext">test_2</span></a></li>
 <li><a href="#test_1"><span class="tocnumber">3</span> <span class="toctext">test</span></a></li>
 <li><a href="#test_3"><span class="tocnumber">4</span> <span class="toctext">test</span></a></li>
-</ul></div><div class="clear"></div></div>
+</ul>
+</td>
+</tr>
+</table>
 <div class="section-edit">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=1">Edit</a>]</div><a name="test"></a><h2>test</h2>
 <div class="section-edit">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=2">Edit</a>]</div><a name="test_2"></a><h2>test_2</h2>
 <div class="section-edit">[<a href="/wiki/en/Special:Edit?topic=TableOfContents2&amp;section=3">Edit</a>]</div><a name="test_1"></a><h2>test</h2>
