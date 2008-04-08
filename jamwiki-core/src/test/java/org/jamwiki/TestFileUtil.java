@@ -17,7 +17,9 @@
 package org.jamwiki;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -30,6 +32,18 @@ public class TestFileUtil {
 	private static final WikiLogger logger = WikiLogger.getLogger(TestFileUtil.class.getName());
 	public static final String TEST_TOPICS_DIR = "data/topics/";
 	public static final String TEST_RESULTS_DIR = "data/results/";
+
+	/**
+	 *
+	 */
+	public static File getClassLoaderFile(String fileName) throws Exception {
+		try {
+			return Utilities.getClassLoaderFile(fileName);
+		} catch (Exception e) {
+			// ignore
+		}
+		return new File(Utilities.getClassLoaderRoot(), fileName);
+	}
 
 	/**
 	 *
@@ -50,10 +64,17 @@ public class TestFileUtil {
 	/**
 	 *
 	 */
-	public static String retrieveFileContent(String directory, String fileName) throws Exception {
+	public static String retrieveFileContent(String directory, String fileName) throws IOException, FileNotFoundException {
+		File file = TestFileUtil.retrieveFile(directory, fileName);
+		return TestFileUtil.retrieveFileContent(file);
+	}
+
+	/**
+	 *
+	 */
+	public static String retrieveFileContent(File file) throws IOException, FileNotFoundException {
 		FileReader reader = null;
 		try {
-			File file = TestFileUtil.retrieveFile(directory, fileName);
 			if (file == null) {
 				return null;
 			}
