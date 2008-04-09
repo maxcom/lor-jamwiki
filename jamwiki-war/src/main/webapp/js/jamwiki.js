@@ -137,8 +137,10 @@ function insertTags(tagOpen, tagClose, sampleText) {
 	if (txtarea.createTextRange) txtarea.caretPos = document.selection.createRange().duplicate();
 }
 
-// enable/disable checkboxes before or after the current element
+// enable/disable radio buttons before or after the current element
 function historyRadio(element, siblingName, disableLower) {
+	// since revision numbers are chronological this code compares revision 
+	// numbers to determine whether to display or hide a radio button
 	var revisionId = parseInt(element.value);
 	var siblings = document.getElementsByName(siblingName);
 	for (var i = 0; i < siblings.length; i++) {
