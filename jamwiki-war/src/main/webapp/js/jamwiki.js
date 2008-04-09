@@ -137,3 +137,43 @@ function insertTags(tagOpen, tagClose, sampleText) {
 	if (txtarea.createTextRange) txtarea.caretPos = document.selection.createRange().duplicate();
 }
 
+// enable/disable checkboxes before or after the current element
+function inactive(element) {
+	var found = 0;
+	var totalChecked = 0;
+	for (i=0; i < document.diffForm.length; i++) {
+		if (element.type != document.diffForm.elements[i].type) continue;
+		if (document.diffForm.elements[i].checked) totalChecked++;
+	}
+	for (i=0; i < document.diffForm.length; i++) {
+		if (element.type != document.diffForm.elements[i].type) continue;
+		if (document.diffForm.elements[i].checked && found < 2) {
+			found++;
+			continue;
+		}
+		if (totalChecked == 0) {
+			// enable everything
+			document.diffForm.elements[i].checked = false;
+			document.diffForm.elements[i].disabled = false;
+			continue;
+		}
+		if (found == 0 && totalChecked == 1) {
+			// disable everything up to the first one
+			document.diffForm.elements[i].checked = false;
+			document.diffForm.elements[i].disabled = true;
+			continue;
+		}
+		if (found == 1 && totalChecked >= 1) {
+			// un-select everything after the first one
+			document.diffForm.elements[i].checked = false;
+			document.diffForm.elements[i].disabled = false;
+			continue;
+		}
+		if (found == 2 && totalChecked >= 2) {
+			// disable elements after the second one
+			document.diffForm.elements[i].checked = false;
+			document.diffForm.elements[i].disabled = true;
+			continue;
+		}
+	}
+}
