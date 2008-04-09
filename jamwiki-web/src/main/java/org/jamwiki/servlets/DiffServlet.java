@@ -17,7 +17,6 @@
 package org.jamwiki.servlets;
 
 import java.util.Collection;
-import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
@@ -48,41 +47,16 @@ public class DiffServlet extends JAMWikiServlet {
 	 */
 	protected void diff(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String topicName = WikiUtil.getTopicFromRequest(request);
-		String diffType = request.getParameter("type");
-		if (diffType != null && diffType.equals("arbitrary")) {
-			// FIXME - used with history.jsp, this is ugly
-			int firstVersion = -1;
-			int secondVersion = -1;
-			Enumeration e = request.getParameterNames();
-			while (e.hasMoreElements()) {
-				String name = (String) e.nextElement();
-				if (name.startsWith("diff:")) {
-					int version = Integer.parseInt(name.substring(name.indexOf(':') + 1));
-					if (firstVersion >= 0) {
-						secondVersion = version;
-					} else {
-						firstVersion = version;
-					}
-				}
-			}
-			if (firstVersion == -1 || secondVersion == -1) {
-				next.addObject("badinput", "true");
-			} else {
-				Collection diffs = DiffUtil.diffTopicVersions(topicName, Math.max(firstVersion, secondVersion), Math.min(firstVersion, secondVersion));
-				next.addObject("diffs", diffs);
-			}
-		} else {
-			int topicVersionId1 = 0;
-			if (!StringUtils.isBlank(request.getParameter("version1"))) {
-				topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
-			}
-			int topicVersionId2 = 0;
-			if (!StringUtils.isBlank(request.getParameter("version2"))) {
-				topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
-			}
-			Collection diffs = DiffUtil.diffTopicVersions(topicName, topicVersionId1, topicVersionId2);
-			next.addObject("diffs", diffs);
+		int topicVersionId1 = 0;
+		if (!StringUtils.isBlank(request.getParameter("version1"))) {
+			topicVersionId1 = new Integer(request.getParameter("version1")).intValue();
 		}
+		int topicVersionId2 = 0;
+		if (!StringUtils.isBlank(request.getParameter("version2"))) {
+			topicVersionId2 = new Integer(request.getParameter("version2")).intValue();
+		}
+		Collection diffs = DiffUtil.diffTopicVersions(topicName, topicVersionId1, topicVersionId2);
+		next.addObject("diffs", diffs);
 		pageInfo.setPageTitle(new WikiMessage("diff.title", topicName));
 		pageInfo.setTopicName(topicName);
 		pageInfo.setContentJsp(JSP_DIFF);

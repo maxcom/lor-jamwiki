@@ -138,42 +138,21 @@ function insertTags(tagOpen, tagClose, sampleText) {
 }
 
 // enable/disable checkboxes before or after the current element
-function inactive(element) {
-	var found = 0;
-	var totalChecked = 0;
-	for (i=0; i < document.diffForm.length; i++) {
-		if (element.type != document.diffForm.elements[i].type) continue;
-		if (document.diffForm.elements[i].checked) totalChecked++;
-	}
-	for (i=0; i < document.diffForm.length; i++) {
-		if (element.type != document.diffForm.elements[i].type) continue;
-		if (document.diffForm.elements[i].checked && found < 2) {
-			found++;
+function historyRadio(element, siblingName, disableLower) {
+	var revisionId = parseInt(element.value);
+	var siblings = document.getElementsByName(siblingName);
+	for (var i = 0; i < siblings.length; i++) {
+		// make sure the element is a radio button, if not skip it
+		if (siblings[i].type != 'radio') {
 			continue;
 		}
-		if (totalChecked == 0) {
-			// enable everything
-			document.diffForm.elements[i].checked = false;
-			document.diffForm.elements[i].disabled = false;
-			continue;
-		}
-		if (found == 0 && totalChecked == 1) {
-			// disable everything up to the first one
-			document.diffForm.elements[i].checked = false;
-			document.diffForm.elements[i].disabled = true;
-			continue;
-		}
-		if (found == 1 && totalChecked >= 1) {
-			// un-select everything after the first one
-			document.diffForm.elements[i].checked = false;
-			document.diffForm.elements[i].disabled = false;
-			continue;
-		}
-		if (found == 2 && totalChecked >= 2) {
-			// disable elements after the second one
-			document.diffForm.elements[i].checked = false;
-			document.diffForm.elements[i].disabled = true;
-			continue;
+		// now make the button visible or hidden as appropriate
+		if (disableLower && parseInt(siblings[i].value) <= revisionId) {
+			siblings[i].style.visibility = 'hidden';
+		} else if (!disableLower && parseInt(siblings[i].value) >= revisionId) {
+			siblings[i].style.visibility = 'hidden';
+		} else {
+			siblings[i].style.visibility = 'visible';
 		}
 	}
 }

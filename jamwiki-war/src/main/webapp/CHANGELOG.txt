@@ -6,6 +6,8 @@ New Features:
   * Significant modifications to the parser to simplify the code and ensure
     that output is as close as possible to that of Mediawiki, including tag
     placement, newlines and whitespace.
+  * Implement a Mediawiki-style diff UI that uses radio buttons instead of
+    checkboxes on the Special:History page.
   * Unit test coverage has been significantly improved.
   * Support added for definition lists of the form "; term : definition".
   * Utility added to Special:Maintenance to allow exporting internal database

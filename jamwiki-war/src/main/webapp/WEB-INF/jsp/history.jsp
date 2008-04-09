@@ -32,7 +32,6 @@
 </form>
 
 <form action="<jamwiki:link value="Special:Diff" />" method="get" name="diffForm">
-<input type="hidden" name="type" value="arbitrary"/>
 <input type="hidden" name="topic" value='<c:out value="${pageInfo.topicName}" />' />
 
 <input type="submit" value='<f:message key="history.diff" />' />
@@ -40,10 +39,12 @@
 <br /><br />
 
 <ul>
-<c:forEach items="${changes}" var="change">
+<c:forEach items="${changes}" var="change" varStatus="status">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
 	&#160;
-	<input type="checkbox" name="<c:out value="diff:${change.topicVersionId}" />" onclick="inactive(this)" id="<c:out value="diff:${change.topicVersionId}" />" />
+	<input type="radio" name="version2" onclick="historyRadio(this, 'version1', true)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.index == 1}">checked="checked"</c:if> <c:if test="${status.first}">style="visibility:hidden"</c:if> />
+	&#160;
+	<input type="radio" name="version1" onclick="historyRadio(this, 'version2', false)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.first}">checked="checked"</c:if> <c:if test="${status.last}">style="visibility:hidden"</c:if> />
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
