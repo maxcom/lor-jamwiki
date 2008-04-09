@@ -21,6 +21,7 @@ import org.jamwiki.UserHandler;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.transaction.TransactionStatus;
 
 /**
  * Implementation of the {@link org.jamwiki.UserHandler} interface that uses a
@@ -34,35 +35,41 @@ public class DatabaseUserHandler implements UserHandler {
 	 *
 	 */
 	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiDatabase.queryHandler().insertWikiUserInfo(userInfo, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
 		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
 	 *
 	 */
 	public boolean authenticate(String username, String password) throws Exception {
-		Connection conn = null;
+		boolean result = false;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = DatabaseConnection.getConnection();
+			Connection conn = DatabaseConnection.getConnection();
 			// password is stored encrypted, so encrypt password
 			String encryptedPassword = Encryption.encrypt(password);
 			WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
-			return (rs.size() == 0) ? false : true;
+			result = (rs.size() == 0) ? false : true;
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			DatabaseConnection.closeConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
+		return result;
 	}
 
 	/**
@@ -98,15 +105,17 @@ public class DatabaseUserHandler implements UserHandler {
 	 *
 	 */
 	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(transactionObject);
+			Connection conn = DatabaseConnection.getConnection();
 			WikiDatabase.queryHandler().updateWikiUserInfo(userInfo, conn);
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn, transactionObject);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);
 	}
 }

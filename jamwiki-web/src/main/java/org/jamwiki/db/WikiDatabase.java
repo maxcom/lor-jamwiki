@@ -33,10 +33,9 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.parser.ParserUtil;
-import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.springframework.transaction.TransactionStatus;
 
 /**
  * This class contains general database utility methods that are useful for a
@@ -62,7 +61,6 @@ public class WikiDatabase {
 		if (!(WikiBase.getDataHandler() instanceof HSqlDataHandler)) {
 			throw new IllegalStateException("Exporting to CSV is allowed only when the wiki is configured to use the internal database setting.");
 		}
-		Connection conn = null;
 		WikiPreparedStatement stmt = null;
 		String sql = null;
 		String exportTableName = null;
@@ -83,8 +81,8 @@ public class WikiDatabase {
 		};
 		String csvDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
 		File csvFile = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
-			conn = WikiDatabase.getConnection(null);
 			// make sure CSV files are encoded UTF-8
 			// TODO: this does not seem to be working currently - HSQL bug?
 			sql = "set property \"textdb.encoding\" 'UTF-8'";
@@ -115,31 +113,13 @@ public class WikiDatabase {
 			stmt = new WikiPreparedStatement(sql);
 			stmt.executeUpdate();
 		} catch (Exception e) {
-			DatabaseConnection.handleErrors(conn);
+			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
-		} finally {
-			WikiDatabase.releaseConnection(conn);
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
-	}
-
-	/**
-	 *
-	 */
-	private static Connection getConnection() throws Exception {
-		// add a connection to the conn array.  BE SURE TO RELEASE IT!
-		Connection conn = DatabaseConnection.getConnection();
-		conn.setAutoCommit(false);
-		return conn;
-	}
-
-	/**
-	 *
-	 */
-	protected static Connection getConnection(Object transactionObject) throws Exception {
-		if (transactionObject instanceof Connection) {
-			return (Connection)transactionObject;
-		}
-		return WikiDatabase.getConnection();
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -165,7 +145,8 @@ public class WikiDatabase {
 			WikiDatabase.EXISTENCE_VALIDATION_QUERY = WikiDatabase.queryHandler().existenceValidationQuery();
 			// initialize connection pool in its own try-catch to avoid an error
 			// causing property values not to be saved.
-			DatabaseConnection.setPoolInitialized(false);
+			// this clears out any existing connection pool, so that a new one will be created on first access
+			DatabaseConnection.closeConnectionPool();
 		} catch (Exception e) {
 			logger.severe("Unable to initialize database", e);
 		}
@@ -237,31 +218,35 @@ public class WikiDatabase {
 	 *
 	 */
 	protected static void setup(Locale locale, WikiUser user) throws Exception {
-		Connection conn = null;
+		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
+			Connection conn = DatabaseConnection.getConnection();
+			// set up tables
+			WikiDatabase.queryHandler().createTables(conn);
+
+			WikiDatabase.setupDefaultVirtualWiki(conn);
+			WikiDatabase.setupRoles(conn);
+			WikiDatabase.setupGroups(conn);
+			WikiDatabase.setupAdminUser(user, conn);
+			WikiDatabase.setupSpecialPages(locale, user, conn);
+
+		} catch (Exception e) {
+
+			DatabaseConnection.rollbackOnException(status, e);
+
+			logger.severe("Unable to set up database tables", e);
+			// clean up anything that might have been created
 			try {
-				conn = WikiDatabase.getConnection();
-				// set up tables
-				WikiDatabase.queryHandler().createTables(conn);
-			} catch (Exception e) {
-				logger.severe("Unable to set up database tables", e);
-				// clean up anything that might have been created
+				Connection conn = DatabaseConnection.getConnection();
 				WikiDatabase.queryHandler().dropTables(conn);
-				throw e;
-			}
-			try {
-				WikiDatabase.setupDefaultVirtualWiki(conn);
-				WikiDatabase.setupRoles(conn);
-				WikiDatabase.setupGroups(conn);
-				WikiDatabase.setupAdminUser(user, conn);
-				WikiDatabase.setupSpecialPages(locale, user, conn);
-			} catch (Exception e) {
-				DatabaseConnection.handleErrors(conn);
-				throw e;
-			}
-		} finally {
-			WikiDatabase.releaseConnection(conn);
+			} catch (Exception e2) {}
+
+			throw e;
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
 		}
+		DatabaseConnection.commit(status);		
 	}
 
 	/**

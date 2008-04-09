@@ -16,23 +16,29 @@
  */
 package org.jamwiki.db;
 
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDriver;
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.Environment;
-import org.jamwiki.WikiBase;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.Encryption;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.datasource.DelegatingDataSource;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
  * This class provides methods for retrieving database connections, executing queries,
@@ -40,14 +46,14 @@ import org.jamwiki.utils.Encryption;
  */
 public class DatabaseConnection {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseConnection.class.getName());
+    private static final WikiLogger logger = WikiLogger.getLogger(DatabaseConnection.class.getName());
 	/** Any queries that take longer than this value (specified in milliseconds) will print a warning to the log. */
 	protected static final int SLOW_QUERY_LIMIT = 250;
-	private static boolean poolInitialized = false;
-	private static GenericObjectPool connectionPool = null;
+	private static DataSource dataSource = null;
+	private static DataSourceTransactionManager transactionManager = null;
 
 	/**
-	 *
+	 * This class has only static methods and is never instantiated.
 	 */
 	private DatabaseConnection() {
 	}
@@ -63,7 +69,7 @@ public class DatabaseConnection {
 	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
 	 * @param rs A result set object that is to be closed.  May be <code>null</code>.
 	 */
-	public static void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
+	protected static void closeConnection(Connection conn, Statement stmt, ResultSet rs) {
 		if (rs != null) {
 			try {
 				rs.close();
@@ -82,7 +88,7 @@ public class DatabaseConnection {
 	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
 	 * @param stmt A statement object that is to be closed.  May be <code>null</code>.
 	 */
-	public static void closeConnection(Connection conn, Statement stmt) {
+	protected static void closeConnection(Connection conn, Statement stmt) {
 		if (stmt != null) {
 			try {
 				stmt.close();
@@ -100,33 +106,41 @@ public class DatabaseConnection {
 	 * @param conn A database connection, retrieved using DatabaseConnection.getConnection(),
 	 *  that is to be closed.  This connection SHOULD NOT have been previously closed.
 	 */
-	public static void closeConnection(Connection conn) {
+	protected static void closeConnection(Connection conn) {
 		if (conn == null) {
 			return;
 		}
 		try {
-			conn.close();
+			DataSourceUtils.releaseConnection(conn, dataSource);
 		} catch (Exception e) {
 			logger.severe("Failure while closing connection", e);
 		}
 	}
 
 	/**
-	 * Close the connection pool, to be called for example in the case
-	 * of the Servlet being shutdown. 
+	 * Close the connection pool, to be called for example during Servlet shutdown.
+	 * <p>
+	 * Note that this only applies if the DataSource was created by JAMWiki;
+	 * in the case of a container DataSource obtained via JNDI this method does nothing
+	 * except clear the static reference to the DataSource.
 	 */
-	protected static void closeConnectionPool() throws Exception {
-		if (connectionPool == null) {
-			return;
+	protected static void closeConnectionPool() throws SQLException {
+	    try {
+	    	DataSource testDataSource = dataSource;
+	    	while (testDataSource instanceof DelegatingDataSource) {
+	    		testDataSource = ((DelegatingDataSource) testDataSource).getTargetDataSource();
+	    	}
+	        if (testDataSource instanceof BasicDataSource) {
+	            // required to release any connections e.g. in case of servlet shutdown
+	            ((BasicDataSource) testDataSource).close();
+	        }
+	    } catch (SQLException e) {
+	        logger.severe("Unable to close connection pool", e);
+	        throw e;
 		}
-		connectionPool.clear();
-		try {
-			connectionPool.close();
-		} catch (Exception e) {
-			logger.severe("Unable to close connection pool", e);
-			throw e;
-		}
-		poolInitialized = false;
+	    // clear references to prevent them being reused (& allow garbage collection)
+        dataSource = null;
+        transactionManager = null;
 	}
 
 	/**
@@ -222,136 +236,62 @@ public class DatabaseConnection {
 	 *
 	 */
 	protected static Connection getConnection() throws Exception {
+	    if (dataSource == null) {
+	        // DataSource has not yet been created, obtain it now 
+	        configDataSource();
+	    }
+	    return DataSourceUtils.getConnection(dataSource);
+	}
+	
+	/**
+	 * Static method that will configure a DataSource based on the Environment setup.
+	 */
+	private synchronized static void configDataSource() throws Exception {
+	    if (dataSource != null) {
+	        closeConnectionPool();    // DataSource has already been created so remove it
+	    }
 		String url = Environment.getValue(Environment.PROP_DB_URL);
-		String userName = Environment.getValue(Environment.PROP_DB_USERNAME);
-		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, null);
-		Connection conn = null;
+		
+		DataSource targetDataSource = null;
 		if (url.startsWith("jdbc:")) {
-			if (!poolInitialized) {
-				setUpConnectionPool(url, userName, password);
-			}
-			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
+		    // Use an internal "LocalDataSource" configured from the Environment 
+			targetDataSource = new LocalDataSource();
 		} else {
-			// FIXME - JDK 1.3 is not supported, so update this code
-			// Use Reflection here to avoid a compile time dependency
-			// on the DataSource interface. It's not available by default
-			// on j2se 1.3.
+		    // Use a container DataSource obtained via JNDI lookup
+		    // TODO: Should try prefix java:comp/env/ if not already part of the JNDI name?
 			Context ctx = new InitialContext();
-			Object dataSource = ctx.lookup(url);
-			Method m;
-			Object args[];
-			if (userName.length() == 0) {
-				Class[] parameterTypes = null;
-				m = dataSource.getClass().getMethod("getConnection", parameterTypes);
-				args = new Object[]{};
-			} else {
-				m = dataSource.getClass().getMethod("getConnection", new Class[]{String.class, String.class});
-				args = new Object[]{userName, password};
-			}
-			conn = (Connection)m.invoke(dataSource, args);
+			targetDataSource = (DataSource) ctx.lookup(url);
 		}
-		conn.setAutoCommit(true);
-		return conn;
+		dataSource = new LazyConnectionDataSourceProxy(targetDataSource);
+		transactionManager = new DataSourceTransactionManager(targetDataSource);
 	}
 
 	/**
-	 *
-	 */
-	protected static void handleErrors(Connection conn) {
-		if (conn == null) {
-			return;
-		}
-		try {
-			logger.warning("Rolling back database transactions");
-			conn.rollback();
-		} catch (Exception e) {
-			logger.severe("Unable to rollback connection", e);
-		}
-	}
-
-	/**
-	 *
-	 */
-	protected static void setPoolInitialized(boolean poolInitialized) {
-		DatabaseConnection.poolInitialized = poolInitialized;
-	}
-
-	/**
-	 * Set up the database connection.
-	 *
-	 * @param url The database connection url.
-	 * @param userName The user name to use when connecting to the database.
-	 * @param password The password to use when connecting to the database.
-	 * @throws Exception Thrown if any error occurs while initializing the connection pool.
-	 */
-	private static void setUpConnectionPool(String url, String userName, String password) throws Exception {
-		closeConnectionPool();
-		if (!StringUtils.isBlank(Environment.getValue(Environment.PROP_DB_DRIVER))) {
-			Class.forName(Environment.getValue(Environment.PROP_DB_DRIVER), true, Thread.currentThread().getContextClassLoader());
-		}
-		connectionPool = new GenericObjectPool();
-		connectionPool.setMaxActive(Environment.getIntValue(Environment.PROP_DBCP_MAX_ACTIVE));
-		connectionPool.setMaxIdle(Environment.getIntValue(Environment.PROP_DBCP_MAX_IDLE));
-		connectionPool.setMinEvictableIdleTimeMillis(Environment.getIntValue(Environment.PROP_DBCP_MIN_EVICTABLE_IDLE_TIME) * 1000);
-		connectionPool.setTestOnBorrow(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_BORROW));
-		connectionPool.setTestOnReturn(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_ON_RETURN));
-		connectionPool.setTestWhileIdle(Environment.getBooleanValue(Environment.PROP_DBCP_TEST_WHILE_IDLE));
-		connectionPool.setTimeBetweenEvictionRunsMillis(Environment.getIntValue(Environment.PROP_DBCP_TIME_BETWEEN_EVICTION_RUNS) * 1000);
-		connectionPool.setNumTestsPerEvictionRun(Environment.getIntValue(Environment.PROP_DBCP_NUM_TESTS_PER_EVICTION_RUN));
-		connectionPool.setWhenExhaustedAction((byte) Environment.getIntValue(Environment.PROP_DBCP_WHEN_EXHAUSTED_ACTION));
-		Properties properties = new Properties();
-		properties.setProperty("user", userName);
-		properties.setProperty("password", password);
-		if (Environment.getValue(Environment.PROP_DB_TYPE).equals(WikiBase.DATA_HANDLER_ORACLE)) {
-			// handle clobs as strings, Oracle 10g and higher drivers (ojdbc14.jar)
-			properties.setProperty("SetBigStringTryClob", "true");
-		}
-		DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, properties);
-		new PoolableConnectionFactory(connectionFactory, connectionPool, null, WikiDatabase.getConnectionValidationQuery(), false, true);
-		PoolingDriver driver = new PoolingDriver();
-		driver.registerPool("jamwiki", connectionPool);
-		Connection conn = null;
-		try {
-			// try to get a test connection
-			conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:jamwiki");
-		} finally {
-			if (conn != null) {
-				closeConnection(conn);
-			}
-		}
-		poolInitialized = true;
-	}
-
-	/**
-	 *
+	 * Test whether the database identified by the given parameters can be connected to.
+	 * 
+	 * @param driver
+	 * @param url
+	 * @param user
+	 * @param password
+	 * @param existence
+	 * @throws Exception
 	 */
 	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws Exception {
 		Connection conn = null;
 		try {
-			if (!StringUtils.isBlank(driver)) {
-				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
-				if (url.startsWith("jdbc:")) {
-					conn = DriverManager.getConnection(url, user, password);
-				} else {
-					// FIXME - JDK 1.3 is not supported, so update this code
-					// Use Reflection here to avoid a compile time dependency
-					// on the DataSource interface. It's not available by default
-					// on j2se 1.3.
-					Context ctx = new InitialContext();
-					Object dataSource = ctx.lookup(url);
-					Method m;
-					Object args[];
-					if (user.length() == 0) {
-						Class[] parameterTypes = null;
-						m = dataSource.getClass().getMethod("getConnection", parameterTypes);
-						args = new Object[]{};
-					} else {
-						m = dataSource.getClass().getMethod("getConnection", new Class[]{String.class, String.class});
-						args = new Object[]{user, password};
-					}
-					conn = (Connection)m.invoke(dataSource, args);
-				}
-			}
+            if (url.startsWith("jdbc:")) {
+                if (!StringUtils.isBlank(driver)) {
+                    // ensure that the Driver class has been loaded
+                    Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+                }
+                conn = DriverManager.getConnection(url, user, password);
+            } else {
+                Context ctx = new InitialContext();
+                DataSource testDataSource = null;
+                // TODO: Try appending "java:comp/env/" to the JNDI Name if it is missing?
+                testDataSource = (DataSource) ctx.lookup(url);
+                conn = testDataSource.getConnection();
+            }
 			if (existence) {
 				// test to see if database exists
 				executeQuery(WikiDatabase.getExistenceValidationQuery(), conn);
@@ -360,8 +300,70 @@ public class DatabaseConnection {
 			if (conn != null) {
 				try {
 					conn.close();
-				} catch (Exception e) {}
+				} catch (SQLException e) {}
 			}
 		}
 	}
+		
+	/**
+	 * Starts a transaction using the default settings.
+	 * 
+	 * @return TransactionStatus representing the status of the Transaction
+	 * @throws Exception
+	 */
+	public static TransactionStatus startTransaction() throws Exception {
+		return startTransaction(new DefaultTransactionDefinition());
+	}
+
+	/**
+	 * Starts a transaction, using the given TransactionDefinition
+	 * 
+	 * @param definition TransactionDefinition
+	 * @return TransactionStatus
+	 * @throws Exception
+	 */
+	protected static TransactionStatus startTransaction(TransactionDefinition definition) throws Exception {
+	    if (transactionManager == null || dataSource == null) {
+	        configDataSource();    // this will create both the DataSource and a TransactionManager
+	    }
+	    return transactionManager.getTransaction(definition);
+	}
+		
+	/**
+	 * Perform a rollback, handling rollback exceptions properly.
+	 * @param status object representing the transaction
+	 * @param ex the thrown application exception or error
+	 * @throws TransactionException in case of a rollback error
+	 */
+	protected static void rollbackOnException(TransactionStatus status, Throwable ex) throws TransactionException {
+		logger.fine("Initiating transaction rollback on application exception", ex);
+		try {
+			transactionManager.rollback(status);
+		}
+		catch (TransactionSystemException ex2) {
+			logger.severe("Application exception overridden by rollback exception", ex);
+			ex2.initApplicationException(ex);
+			throw ex2;
+		}
+		catch (RuntimeException ex2) {
+			logger.severe("Application exception overridden by rollback exception", ex);
+			throw ex2;
+		}
+		catch (Error err) {
+			logger.severe("Application exception overridden by rollback error", ex);
+			throw err;
+		}
+	}
+
+	/**
+	 * Commit the current transaction.  
+	 * Note if the transaction has been programmatically marked for rollback then
+	 * a rollback will occur instead.
+	 * 
+	 * @param status TransactionStatus representing the status of the transaction
+	 */
+	protected static void commit(TransactionStatus status) {
+	    transactionManager.commit(status);
+	}
+	
 }
