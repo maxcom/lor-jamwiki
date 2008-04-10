@@ -144,11 +144,33 @@ public abstract class JFlexLexer {
 		if (this.tagStack.size() <= 1) {
 			throw new IllegalStateException("popTag called on an empty tag stack or on the root stack element");
 		}
+		// verify that the tag being closed is the tag that is currently open.  if not
+		// there are two options - first is that the user entered unbalanced HTML such
+		// as "<u><strong>text</u></strong>" and it should be re-balanced, and second
+		// is that this is just a random close tag such as "<div>text</div></div>" and
+		// it should be escaped without modifying the tag stack.
 		if (!this.peekTag().getTagType().equals(tagType)) {
-			// TODO - check to see if the tag is further down the stack and the user
-			// just goofed - "<b><u>text</b></u>"
-			// attempt to pop a tag that isn't currently open, append the close escaped
-			// close tag to the current tag content
+			// check to see if a close tag override was previously set, which happens
+			// from the inner tag of unbalanced HTML.  Example: "<u><strong>text</u></strong>"
+			// would set a close tag override when the "</u>" is parsed to indicate that
+			// the "</strong>" should actually be parsed as a "</u>".
+			if (StringUtils.equals(this.peekTag().getTagType(), this.peekTag().getCloseTagOverride())) {
+				return this.popTag(this.peekTag().getCloseTagOverride());
+			}
+			// check to see if the parent tag matches the current close tag.  if so then
+			// this is unbalanced HTML of the form "<u><strong>text</u></strong>" and
+			// it should be parsed as "<u><strong>text</strong></u>".
+			JFlexTagItem parent = null;
+			if (this.tagStack.size() > 2) {
+				parent = (JFlexTagItem)this.tagStack.get(this.tagStack.size() - 2);
+			}
+			if (parent != null && parent.getTagType().equals(tagType)) {
+				parent.setCloseTagOverride(tagType);
+				return this.popTag(this.peekTag().getTagType());
+			}
+			// if the above checks fail then this is an attempt to pop a tag that is not
+			// currently open, so append the escaped close tag to the current tag
+			// content without modifying the tag stack.
 			JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
 			currentTag.getTagContent().append("&lt;/" + tagType + "&gt;");
 			return null;

@@ -29,9 +29,6 @@ class JFlexTagItem {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
-	private String tagType = null;
-	private final StringBuffer tagContent = new StringBuffer();
-	private String tagAttributes = null;
 	protected static final String ROOT_TAG = "jflex-root";
 	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
 	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
@@ -43,6 +40,10 @@ class JFlexTagItem {
 	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|p|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
+	private String closeTagOverride = null;
+	private String tagAttributes = null;
+	private final StringBuffer tagContent = new StringBuffer();
+	private String tagType = null;
 
 	static {
 		try {
@@ -64,6 +65,32 @@ class JFlexTagItem {
 			throw new IllegalArgumentException("tagType must not be null");
 		}
 		this.tagType = tagType;
+	}
+
+	/**
+	 * This method exists solely for those cases where a mis-matched HTML tag
+	 * is being parsed (<u><strong>text</u></strong>) and the parser closes the
+	 * inner tag and needs to provide an indication on the stack that the next
+	 * tag should ignore the close tag it finds and use an overridden closing tag.
+	 *
+	 * @return A close tag to use that differs from the close tag that will be
+	 *  found by the parser.
+	 */
+	protected String getCloseTagOverride() {
+		return this.closeTagOverride;
+	}
+
+	/**
+	 * This method exists solely for those cases where a mis-matched HTML tag
+	 * is being parsed (<u><strong>text</u></strong>) and the parser closes the
+	 * inner tag and needs to provide an indication on the stack that the next
+	 * tag should ignore the close tag it finds and use an overridden closing tag.
+	 *
+	 * @param closeTagOverride A close tag to use that differs from the close tag
+	 *  that will be found by the parser.
+	 */
+	protected void setCloseTagOverride(String closeTagOverride) {
+		this.closeTagOverride = closeTagOverride;
 	}
 
 	/**
