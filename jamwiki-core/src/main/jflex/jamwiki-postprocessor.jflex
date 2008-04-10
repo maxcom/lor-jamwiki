@@ -50,7 +50,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 noparagraph        = "<hr" ~">"
 noparagraphtd      = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>)))
 emptyline          = ({newline} {newline} {newline})
-nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|span|p
+nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|p
 nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
 nonparagraphend    = ((<[ ]*\/[ ]*) {nonparagraphtag} ([ ]*>)) | ((<[ ]*) td ([^/>]*>))
 anchorname         = (<[ ]*a[ ]*name[ ]*=[^/]+\/[ ]*[a]?[ ]*>)
