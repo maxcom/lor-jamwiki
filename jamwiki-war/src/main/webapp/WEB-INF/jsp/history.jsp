@@ -41,10 +41,12 @@
 <ul>
 <c:forEach items="${changes}" var="change" varStatus="status">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+	<c:if test="${numChanges > 1}">
 	&#160;
-	<input type="radio" name="version2" onclick="historyRadio(this, 'version1', true)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.index == 1}">checked="checked"</c:if> <c:if test="${status.first}">style="visibility:hidden"</c:if> />
+	<input type="radio" name="version2" id="ver2_<c:out value="${change.topicVersionId}" />" onclick="historyRadio(this, 'version1', true)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.index == 1}">checked="checked"</c:if> <c:if test="${status.first}">style="visibility:hidden"</c:if> />
 	&#160;
-	<input type="radio" name="version1" onclick="historyRadio(this, 'version2', false)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.first}">checked="checked"</c:if> <c:if test="${!status.first}">style="visibility:hidden"</c:if> />
+	<input type="radio" name="version1" id="ver1_<c:out value="${change.topicVersionId}" />" onclick="historyRadio(this, 'version2', false)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.first}">checked="checked"</c:if> <c:if test="${status.last}">style="visibility:hidden"</c:if> />
+	</c:if>
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<jamwiki:link value="Special:History"><jamwiki:linkParam key="topicVersionId" value="${change.topicVersionId}" /><jamwiki:linkParam key="topic" value="${pageInfo.topicName}" /><f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" /></jamwiki:link>
@@ -58,6 +60,12 @@
 </li>
 </c:forEach>
 </ul>
+
+<c:if test="${numChanges > 1}">
+<script type="text/javascript">
+historyRadio(document.getElementById('ver2_<c:out value="${changes[1].topicVersionId}" />'), 'version1', true)
+</script>
+</c:if>
 
 <br />
 
