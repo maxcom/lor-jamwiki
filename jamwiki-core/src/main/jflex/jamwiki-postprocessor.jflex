@@ -48,7 +48,8 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraph */
 noparagraph        = "<hr" ~">"
-noparagraphtd      = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>)))
+specialstart       = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>)))
+specialend         = ((<[ ]*\/[ ]*) td ([ ]*>))
 emptyline          = ({newline} {newline} {newline})
 nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|p
 nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
@@ -58,20 +59,20 @@ break              = (<[ ]*) br ([ ]*[\/]?[ ]*>)
 paragraphend       = ({newline} {newline})
 paragraphstart     = ({inputcharacter})
 
-%state PRE, NORMAL, P, NONPARAGRAPH
+%state PRE, NORMAL, P, NONPARAGRAPH, SPECIAL
 
 %%
 
 /* ----- nowiki ----- */
 
-<PRE, NORMAL, P, NONPARAGRAPH>{nowiki} {
+<PRE, NORMAL, P, NONPARAGRAPH, SPECIAL>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return JFlexParserUtil.tagContent(yytext());
 }
 
 /* ----- pre ----- */
 
-<NORMAL, P, NONPARAGRAPH>{htmlprestart} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
     return yytext();
@@ -85,14 +86,14 @@ paragraphstart     = ({inputcharacter})
 
 /* ----- processing commands ----- */
 
-<NORMAL, P, NONPARAGRAPH>{toc} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     return this.parserInput.getTableOfContents().attemptTOCInsertion();
 }
 
 /* ----- references ----- */
 
-<NORMAL, P, NONPARAGRAPH>{references} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
@@ -100,27 +101,36 @@ paragraphstart     = ({inputcharacter})
 
 /* ----- javascript ----- */
 
-<NORMAL, P, NONPARAGRAPH>{javascript} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{javascript} {
     logger.finer("javascript: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- layout ----- */
 
-<NORMAL, NONPARAGRAPH>{noparagraph} {
+<NORMAL, NONPARAGRAPH, SPECIAL>{noparagraph} {
     // <hr> should be ignored for the sake of paragraph parsing
     logger.finer("noparagraph: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
-<NORMAL, NONPARAGRAPH>{noparagraphtd} {
+<NORMAL, NONPARAGRAPH>{specialstart} {
     // <td> tags _with no newlines_ should be ignored for the sake of paragraph parsing
-    logger.finer("noparagraphtd: " + yytext() + " (" + yystate() + ")");
-    beginState(NONPARAGRAPH);
+    logger.finer("specialstart: " + yytext() + " (" + yystate() + ")");
+    beginState(SPECIAL);
     // push back to the start of the opening td tag
     String raw = yytext();
     int pos = raw.indexOf(">") + 1;
     yypushback(raw.length() - pos);
+    return yytext();
+}
+
+<SPECIAL>{specialend} {
+    logger.finer("specialend: " + yytext() + " (" + yystate() + ")");
+    if (yystate() != SPECIAL) {
+        logger.warning("Ending SPECIAL state while current state is not SPECIAL");
+    }
+    endState();
     return yytext();
 }
 
@@ -134,20 +144,20 @@ paragraphstart     = ({inputcharacter})
     return output.toString() + "\n<p><br /></p>";
 }
 
-<NORMAL, P, NONPARAGRAPH>{anchorname} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{anchorname} {
     // for layout purposes and <a name="foo"></a> link should be returned without
     // changes, but should not affect paragraph layout in any way.
     logger.finer("anchorname: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
-<NORMAL, P, NONPARAGRAPH>{break} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{break} {
     // for layout purposes <br> tags should not affect paragraph layout in any way.
     logger.finer("break: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
-<NORMAL, P, NONPARAGRAPH>{nonparagraphstart} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{nonparagraphstart} {
     logger.finer("nonparagraphstart: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     if (yystate() == P) {
@@ -158,7 +168,7 @@ paragraphstart     = ({inputcharacter})
     return output.toString() + yytext();
 }
 
-<NORMAL, P, NONPARAGRAPH>{nonparagraphend} {
+<NORMAL, P, NONPARAGRAPH, SPECIAL>{nonparagraphend} {
     logger.finer("nonparagraphend: " + yytext() + " (" + yystate() + ")");
     if (yystate() == NONPARAGRAPH) {
         endState();
@@ -184,12 +194,12 @@ paragraphstart     = ({inputcharacter})
 
 /* ----- other ----- */
 
-<PRE, NORMAL, NONPARAGRAPH, P>{whitespace} {
+<PRE, NORMAL, NONPARAGRAPH, P, SPECIAL>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NORMAL, NONPARAGRAPH, P>. {
+<PRE, NORMAL, NONPARAGRAPH, P, SPECIAL>. {
     // no need to log this
     return yytext();
 }
