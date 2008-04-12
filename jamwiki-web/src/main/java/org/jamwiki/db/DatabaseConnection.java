@@ -265,7 +265,7 @@ public class DatabaseConnection {
 		dataSource = new LazyConnectionDataSourceProxy(targetDataSource);
 		transactionManager = new DataSourceTransactionManager(targetDataSource);
 	}
-
+	
 	/**
 	 * Test whether the database identified by the given parameters can be connected to.
 	 * 
@@ -279,19 +279,7 @@ public class DatabaseConnection {
 	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws Exception {
 		Connection conn = null;
 		try {
-            if (url.startsWith("jdbc:")) {
-                if (!StringUtils.isBlank(driver)) {
-                    // ensure that the Driver class has been loaded
-                    Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
-                }
-                conn = DriverManager.getConnection(url, user, password);
-            } else {
-                Context ctx = new InitialContext();
-                DataSource testDataSource = null;
-                // TODO: Try appending "java:comp/env/" to the JNDI Name if it is missing?
-                testDataSource = (DataSource) ctx.lookup(url);
-                conn = testDataSource.getConnection();
-            }
+			conn = getTestConnection(driver, url, user, password);
 			if (existence) {
 				// test to see if database exists
 				executeQuery(WikiDatabase.getExistenceValidationQuery(), conn);
@@ -305,6 +293,32 @@ public class DatabaseConnection {
 		}
 	}
 		
+	/**
+	 * Return a connection to the database with the specified parameters.
+	 * The caller <b>must</b> close this connection when finished!
+	 * 
+	 * @param driver
+	 * @param url
+	 * @param user
+	 * @param password
+	 * @throws Exception
+	 */
+	protected static Connection getTestConnection(String driver, String url, String user, String password) throws Exception {
+		if (url.startsWith("jdbc:")) {
+			if (!StringUtils.isBlank(driver)) {
+				// ensure that the Driver class has been loaded
+				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+			}
+			return DriverManager.getConnection(url, user, password);
+		} else {
+			Context ctx = new InitialContext();
+			DataSource testDataSource = null;
+			// TODO: Try appending "java:comp/env/" to the JNDI Name if it is missing?
+			testDataSource = (DataSource) ctx.lookup(url);
+			return testDataSource.getConnection();
+		}
+	}
+	
 	/**
 	 * Starts a transaction using the default settings.
 	 * 

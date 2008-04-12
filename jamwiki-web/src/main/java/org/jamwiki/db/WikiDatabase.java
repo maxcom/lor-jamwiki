@@ -17,15 +17,26 @@
 package org.jamwiki.db;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
+
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -33,6 +44,7 @@ import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.transaction.TransactionStatus;
@@ -121,6 +133,256 @@ public class WikiDatabase {
 		}
 		DatabaseConnection.commit(status);
 	}
+
+	/**
+	 * Migrate from the current database to a new database.
+	 * Tables are created in the new database, and then the contents
+	 * of the existing database are transferred across.
+	 * 
+	 * @param props Properties object containing the new database properties
+	 * @param errors Vector to add error messages to
+	 */
+	public static void migrateDatabase(Properties props, Vector errors) throws Exception {
+		
+		// verify that new database is different from the old database
+		if (StringUtils.equalsIgnoreCase(
+				 Environment.getValue(Environment.PROP_DB_URL)
+				,props.getProperty(Environment.PROP_DB_URL))) {
+			errors.add(new WikiMessage("error.databaseconnection", "Cannot migrate to the same database"));
+			return;
+		}
+
+		// find the DataHandler appropriate to the NEW database
+		DataHandler newDataHandler = null;
+		String handlerClassName = props.getProperty(Environment.PROP_DB_TYPE);
+		if (handlerClassName.equals(Environment.getValue(Environment.PROP_DB_TYPE))) {
+			newDataHandler = WikiBase.getDataHandler();	// use existing DataHandler
+		} else {
+			logger.fine("Using NEW data handler: " + handlerClassName);
+			Class clazz = ClassUtils.getClass(handlerClassName);
+			Class[] parameterTypes = new Class[0];
+			Constructor constructor = clazz.getConstructor(parameterTypes);
+			Object[] initArgs = new Object[0];
+			newDataHandler = (DataHandler)constructor.newInstance(initArgs);				
+		}
+
+		// the QueryHandler appropriate for the NEW database
+		QueryHandler newQueryHandler = null;
+		// FIXME - this is ugly
+		if (newDataHandler instanceof AnsiDataHandler) {
+			AnsiDataHandler dataHandler = (AnsiDataHandler)newDataHandler;
+			newQueryHandler = dataHandler.queryHandler();
+			logger.fine("Using NEW query handler: " + newQueryHandler.getClass().getName());
+		} else {
+			newQueryHandler = queryHandler();
+		}
+		
+		String driver = props.getProperty(Environment.PROP_DB_DRIVER);
+		String url = props.getProperty(Environment.PROP_DB_URL);
+		String userName = props.getProperty(Environment.PROP_DB_USERNAME);
+		String password = Encryption.getEncryptedProperty(Environment.PROP_DB_PASSWORD, props);
+
+		Connection conn = null;
+
+		// test to see if we can connect to the new database
+		try {
+			conn = DatabaseConnection.getTestConnection(driver, url, userName, password);
+			conn.setAutoCommit(false);
+
+			// if this statement succeeds, then the NEW database exists!
+			DatabaseConnection.executeQuery(newQueryHandler.connectionValidationQuery(), conn);
+		} catch (Exception e) {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException ex) {}
+			}
+			errors.add(new WikiMessage("error.databaseconnection", e.getMessage()));
+			return;
+		}
+
+		// test to see if JAMWiki tables already exist (if they do, we can't continue this migration process
+		try {
+			DatabaseConnection.executeQuery(newQueryHandler.existenceValidationQuery(), conn);
+			errors.add(new WikiMessage("setup.error.migrate"));
+			try {
+				conn.close();
+			} catch (SQLException ex) {}
+			return;
+		} catch (Exception ex) {
+			// we expect this exception as the JAMWiki tables don't exist
+			logger.fine("NEW Database does not contain any JAMWiki instance");
+		}
+
+		// create the tables in the NEW database
+		try {
+			newQueryHandler.createTables(conn);
+		} catch (Exception e) {
+			logger.severe("Error attempting to migrate the database", e);
+			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+			
+			conn.rollback();
+			
+			try {
+				newQueryHandler.dropTables(conn);
+			} catch (Exception ex) {
+				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
+			}
+		} finally {			
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+
+		// copy the existing table content from the CURRENT database across to the NEW database
+		try {
+			conn = DatabaseConnection.getTestConnection(driver, url, userName, password);
+			conn.setAutoCommit(false);
+
+			String[] tableNames = {
+					"jam_wiki_user",
+					"jam_wiki_user_info",
+					"jam_group",
+					"jam_category",
+					"jam_virtual_wiki",
+					"jam_topic",
+					"jam_topic_version",
+					"jam_recent_change",
+					"jam_role",
+					"jam_role_map",
+					"jam_file",
+					"jam_file_version",
+					"jam_watchlist",
+			};
+
+			// used to track current_version_id for each jam_topic row inserted
+			List topicVersions = new ArrayList();
+			
+			TransactionStatus status = DatabaseConnection.startTransaction();
+			Connection from = null;
+			try {
+				from = DatabaseConnection.getConnection();
+				
+				for (int i=0; i < tableNames.length; i++) {
+					// these 3 variables are for special handling of the jam_topic.current_version_id field
+					// which cannot be loaded on initial insert due to the jam_f_topic_topicv constraint
+				    boolean isTopicTable = "jam_topic".equals(tableNames[i]);
+				    int topicIdColumn = 0;
+				    int currentVersionColumn = 0;
+
+				    StringBuffer select = new StringBuffer();
+				    StringBuffer insert = new StringBuffer();
+
+				    select.append("SELECT * FROM ");
+				    select.append(tableNames[i]);
+				    Statement stmt = from.createStatement();
+				    logger.info(select.toString());
+				    ResultSet rs = stmt.executeQuery(select.toString());
+				    ResultSetMetaData md = rs.getMetaData();
+				    
+				    insert.append("INSERT INTO ");
+				    insert.append(tableNames[i]);
+				    insert.append("(");
+				    StringBuffer values = new StringBuffer();
+				    for (int j=1; j<=md.getColumnCount(); j++) {
+				    	if (j > 1) {
+				    		insert.append(",");
+				    		values.append(",");
+				    	}
+				    	String columnName = md.getColumnName(j); 
+			    		if (isTopicTable) {
+			    			if ("topic_id".equalsIgnoreCase(columnName)) {
+			    				topicIdColumn = j;
+			    			} else if ("current_version_id".equalsIgnoreCase(columnName)) {
+			    				currentVersionColumn = j;			    			
+			    			}
+			    		}
+			    		// special handling for Sybase ASA, which requires the "login" column name to be quoted
+				    	if (newQueryHandler instanceof org.jamwiki.db.SybaseASAQueryHandler
+				    			&& "login".equalsIgnoreCase(columnName)) {
+				    		columnName = "\"" + columnName + "\"";
+				    	}
+				    	insert.append(columnName);
+				    	values.append("?");
+				    }
+				    insert.append(") VALUES (");
+				    insert.append(values);
+				    insert.append(")");
+				    
+				    logger.info(insert.toString());
+				    PreparedStatement insertStmt = conn.prepareStatement(insert.toString());
+				    while (rs.next()) {
+				    	Object topicId = null;
+				    	Object currentVersionId = null;
+				    	for (int n=1; n<=md.getColumnCount(); n++) {
+				    		Object o = rs.getObject(n);
+				    		if (isTopicTable) {
+				    			if (n == topicIdColumn) {
+					    			topicId = o;
+				    			} else if (n == currentVersionColumn) {
+				    				currentVersionId = o;
+				    			}			    				
+				    		}
+				    		if (rs.wasNull() || (isTopicTable && n == currentVersionColumn)) {
+				    			insertStmt.setNull(n, md.getColumnType(n));
+				    		} else {
+				    			insertStmt.setObject(n, rs.getObject(n));
+				    		}
+				    	}
+				    	insertStmt.execute();
+				    	if (topicId != null && currentVersionId != null) {
+				    		topicVersions.add(new Object[] { currentVersionId, topicId });	// save for later update
+				    	}
+				    }
+				    rs.close();
+				    insertStmt.close();
+				    stmt.close();
+				}
+
+				// update the jam_topic.current_version_id field that we had to leave blank on initial insert
+				if (!topicVersions.isEmpty()) {
+					String updateSql = "UPDATE jam_topic SET current_version_id = ? WHERE topic_id = ?";
+				    logger.info(updateSql);
+					PreparedStatement update = conn.prepareStatement(updateSql); 
+					for (Iterator it = topicVersions.iterator(); it.hasNext(); ) {
+						Object[] params = (Object[]) it.next();
+						update.setObject(1, params[0]);
+						update.setObject(2, params[1]);
+						update.execute();
+					}
+				}
+
+			} catch (Exception e) {
+				DatabaseConnection.rollbackOnException(status, e);
+				throw e;
+			} catch (Error err) {
+				DatabaseConnection.rollbackOnException(status, err);
+				throw err;
+			}
+			DatabaseConnection.commit(status);
+			
+			conn.commit();
+		} catch (Exception e) {
+			logger.severe("Error attempting to migrate the database", e);
+			errors.add(new WikiMessage("error.unknown", e.getMessage()));
+			
+			conn.rollback();
+			
+			try {
+				newQueryHandler.dropTables(conn);
+			} catch (Exception ex) {
+				logger.warning("Unable to drop tables in NEW database following failed migration", ex);
+			}
+		} finally {			
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {}
+			}
+		}		
+    }
 
 	/**
 	 *
