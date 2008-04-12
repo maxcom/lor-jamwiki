@@ -93,6 +93,7 @@ public class ParserTest extends TestCase {
 		failures.add("Paragraph5");
 		failures.add("Paragraph6");
 		failures.add("Paragraph7");
+		failures.add("Paragraph8");
 		return (failures.indexOf(fileName) != -1);
 	}
 
