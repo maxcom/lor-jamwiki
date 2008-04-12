@@ -80,6 +80,8 @@ public class AdminServlet extends JAMWikiServlet {
 			spamFilter(request, next, pageInfo);
 		} else if (function.equals("exportToCsv")) {
 			exportToCsv(request, next, pageInfo);
+		} else if (function.equals("migrateDatabase")) {
+			migrateDatabase(request, next, pageInfo);
 		}
 		return next;
 	}
@@ -140,6 +142,58 @@ public class AdminServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
+	private void migrateDatabase(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		Vector errors = new Vector();
+		Properties props = new Properties();
+		try {
+			setProperty(props, request, Environment.PROP_BASE_PERSISTENCE_TYPE);
+			if (props.getProperty(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_EXTERNAL)) {
+				setProperty(props, request, Environment.PROP_DB_DRIVER);
+				setProperty(props, request, Environment.PROP_DB_TYPE);
+				setProperty(props, request, Environment.PROP_DB_URL);
+				setProperty(props, request, Environment.PROP_DB_USERNAME);
+				setPassword(props, request, next, Environment.PROP_DB_PASSWORD, "dbPassword");
+			} else {
+				// reverting from external database to an internal database
+				props.setProperty(Environment.PROP_BASE_FILE_DIR, Environment.getValue(Environment.PROP_BASE_FILE_DIR));
+				WikiDatabase.setupDefaultDatabase(props);
+			}
+
+			// migrate from the current database to the new database
+			// identified by the properties
+			// Will return errors if the new database cannot be connected to,
+			// if it is already populated, or an error occurs copying the contents
+			WikiDatabase.migrateDatabase(props, errors);
+			if (!errors.isEmpty()) {
+				next.addObject("errors", errors);
+				next.addObject("message", new WikiMessage("admin.message.changesnotsaved"));				
+			}  else {
+				// all is well, save the properties
+				Iterator iterator = props.keySet().iterator();
+				while (iterator.hasNext()) {
+					String key = (String)iterator.next();
+					String value = props.getProperty(key);
+					Environment.setValue(key, value);
+				}
+				Environment.saveProperties();
+				// re-initialize to reset database settings (if needed)
+				WikiUserAuth user = ServletUtil.currentUser();
+				if (user == null || !user.hasRole(Role.ROLE_USER)) {
+					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
+				}
+				WikiBase.reset(request.getLocale(), user);
+				JAMWikiAnonymousProcessingFilter.reset();
+				WikiUserAuth.resetDefaultGroupRoles();
+				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
+			}
+
+		} catch (Exception e) {
+			logger.severe("Failure while migrating to a new database", e);
+			next.addObject("message", new WikiMessage("admin.message.migrationfailure", e.getMessage()));
+		}
+		viewAdminSystem(request, next, pageInfo);
+	}
+
 	private void properties(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		Properties props = new Properties();
 		try {
@@ -361,5 +415,7 @@ public class AdminServlet extends JAMWikiServlet {
 		next.addObject("wikis", virtualWikiList);
 		boolean allowExportToCsv = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
 		next.addObject("allowExportToCsv", new Boolean(allowExportToCsv));
+		Collection dataHandlers = WikiConfiguration.getInstance().getDataHandlers();
+		next.addObject("dataHandlers", dataHandlers);
 	}
 }
