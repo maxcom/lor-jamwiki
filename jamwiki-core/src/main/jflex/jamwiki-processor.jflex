@@ -79,8 +79,8 @@ forcetoc           = "__FORCETOC__"
 
 /* tables */
 tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\r\|]+[ ]*)*
-tablestart         = "{|" {inputcharacter}* {newline}
-tableend           = "|}"
+tablestart         = ({newline})? "{|" {inputcharacter}* {newline}
+tableend           = "|}" ({newline})?
 tablecell          = "|" [^\+\-\}] | "|" ({tableattribute})+ "|" [^\|]
 tablecells         = "||" | "!!"
 tablecellsstyle    = "||" ({tableattribute})+ "|" ([^|])
