@@ -207,7 +207,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 <NORMAL, LIST, TABLE>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     beginState(TABLE);
-    String tagAttributes = yytext().substring(2).trim();
+    String tagAttributes = yytext().trim().substring(2).trim();
     tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(tagAttributes);
     this.pushTag("table", tagAttributes);
     return "";
