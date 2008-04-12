@@ -16,9 +16,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 --%>
-<%@ page import="
-        org.jamwiki.Environment
-    "
+<%@ page import="org.jamwiki.Environment,org.jamwiki.WikiBase"
     errorPage="/WEB-INF/jsp/error.jsp"
     contentType="text/html; charset=utf-8"
 %>
@@ -27,7 +25,7 @@
 
 <div class="submenu">
 <a href="#virtualwiki"><f:message key="admin.title.virtualwiki" /></a> | <a href="#search"><f:message key="admin.title.refresh" /></a> | <a href="#recentchanges"><f:message key="admin.title.recentchanges" /></a><br />
-<a href="#cache"><f:message key="admin.title.cache" /></a> <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">| <a href="#spam"><f:message key="admin.title.spamfilter" /></a> </jamwiki:enabled><c:if test="${allowExportToCsv}">| <a href="#export"><f:message key="admin.title.exportcsv" /></a></c:if>
+<a href="#cache"><f:message key="admin.title.cache" /></a> <jamwiki:enabled property="PROP_TOPIC_SPAM_FILTER">| <a href="#spam"><f:message key="admin.title.spamfilter" /></a> </jamwiki:enabled><c:if test="${allowExportToCsv}">| <a href="#export"><f:message key="admin.title.exportcsv" /></a></c:if>| <a href="#migrate"><f:message key="admin.title.migratedatabase" /></a>
 </div>
 
 <c:if test="${!empty message}">
@@ -149,3 +147,81 @@
 </fieldset>
 
 </c:if>
+
+<!-- Migrate Database -->
+<a name="migrate"></a>
+<fieldset>
+<legend><f:message key="admin.title.migratedatabase" /></legend>
+<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
+
+<div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="migrate" />">
+	<div class="formhelp"><f:message key="admin.help.migratedatabase" /></div>
+<table style="border:none;">
+<tr><td colspan="2">&#160;</td></tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>"><f:message key="admin.persistence.caption" /></label>:</td>
+	<td class="formelement">
+		<select name="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" id="<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>" onchange="onPersistenceType()">
+		<c:set var="persistenceType"><%= Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE) %></c:set>
+		<c:set var="persistenceTypeInternal"><%= WikiBase.PERSISTENCE_INTERNAL %></c:set>
+		<c:set var="persistenceTypeExternal"><%= WikiBase.PERSISTENCE_EXTERNAL %></c:set>
+		<option value="<%= WikiBase.PERSISTENCE_INTERNAL %>"<c:if test="${persistenceType == persistenceTypeInternal}"> selected</c:if>><f:message key="admin.persistencetype.internal"/></option>
+		<option value="<%= WikiBase.PERSISTENCE_EXTERNAL %>"<c:if test="${persistenceType == persistenceTypeExternal}"> selected</c:if>><f:message key="admin.persistencetype.database"/></option>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_DRIVER %>"><f:message key="admin.persistence.caption.driver" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_DRIVER %>" id="<%= Environment.PROP_DB_DRIVER %>" value="<%= Environment.getValue(Environment.PROP_DB_DRIVER) %>" size="50"></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_TYPE %>"><f:message key="admin.persistence.caption.type" /></label>:</td>
+	<td class="formelement">
+		<select name="<%= Environment.PROP_DB_TYPE %>" id="<%= Environment.PROP_DB_TYPE %>">
+		<c:set var="selectedDataHandler"><%= Environment.getValue(Environment.PROP_DB_TYPE) %></c:set>
+		<c:forEach items="${dataHandlers}" var="dataHandler">
+		<option value="<c:out value="${dataHandler.clazz}" />"<c:if test="${selectedDataHandler == dataHandler.clazz}"> selected</c:if>><c:if test="${!empty dataHandler.key}"><f:message key="${dataHandler.key}" /></c:if><c:if test="${empty dataHandler.key}"><c:out value="${dataHandler.name}" /></c:if><c:if test="${dataHandler.experimental}"> (<f:message key="common.caption.experimental" />)</c:if></option>
+		</c:forEach>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_URL %>"><f:message key="admin.persistence.caption.url" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_URL %>" id="<%= Environment.PROP_DB_URL %>" value="<%= Environment.getValue(Environment.PROP_DB_URL) %>" size="50"></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_USERNAME %>"><f:message key="admin.persistence.caption.user" /></label>:</td>
+	<td class="formelement"><input type="text" name="<%= Environment.PROP_DB_USERNAME %>" id="<%= Environment.PROP_DB_USERNAME %>" value="<%= Environment.getValue(Environment.PROP_DB_USERNAME) %>" size="15"></td>
+</tr>
+<tr>
+	<td class="formcaption"><label for="<%= Environment.PROP_DB_PASSWORD %>"><f:message key="admin.persistence.caption.pass" /></label>:</td>
+	<td class="formelement"><input type="password" name="<%= Environment.PROP_DB_PASSWORD %>" id="<%= Environment.PROP_DB_PASSWORD %>" value="<c:out value="${dbPassword}" />" size="15"></td>
+</tr>
+<tr><td colspan="2">&#160;</td></tr>
+<tr>
+ <td><span class="formcaption"><f:message key="admin.caption.migratedatabase" /></span></td>
+ <td><span class="formelement"><input type="submit" value="<f:message key="common.migrate" />" /></span></td></tr>
+</table>
+	
+</div>
+<input type="hidden" name="function" value="migrateDatabase" />
+</form>
+</fieldset>
+
+<script type="text/javascript">
+function onPersistenceType() {
+	if (document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").options[document.getElementById("<%= Environment.PROP_BASE_PERSISTENCE_TYPE %>").selectedIndex].value == "<%= WikiBase.PERSISTENCE_INTERNAL %>") {
+		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=true
+		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=true
+	} else {
+		document.getElementById("<%= Environment.PROP_DB_DRIVER %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_TYPE %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_URL %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_USERNAME %>").disabled=false
+		document.getElementById("<%= Environment.PROP_DB_PASSWORD %>").disabled=false
+	}
+}
+</script>
