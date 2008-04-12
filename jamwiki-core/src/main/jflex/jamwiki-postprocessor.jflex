@@ -50,13 +50,15 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 noparagraph        = "<hr" ~">"
 specialstart       = (((<[ ]*) td ([^/>]*>)) ([^\n])+ ([\n])? ((<[ ]*\/[ ]*) td ([ ]*>)))
 specialend         = ((<[ ]*\/[ ]*) td ([ ]*>))
-emptyline          = ({newline} {newline} {newline})
-nonparagraphtag    = table|div|h1|h2|h3|h4|h5|ul|dl|ol|p
-nonparagraphstart  = ((<[ ]*) {nonparagraphtag} ([^/>]*>)) | ((<[ ]*\/[ ]*) td ([ ]*>))
-nonparagraphend    = ((<[ ]*\/[ ]*) {nonparagraphtag} ([ ]*>)) | ((<[ ]*) td ([^/>]*>))
+noninlinetag       = dl|div|h1|h2|h3|h4|h5|ol|p|table|ul
+noninlinetagstart  = ((<[ ]*) {noninlinetag} ([^/>]*>))
+noninlinetagend    = ((<[ ]*\/[ ]*) {noninlinetag} ([ ]*>))
+emptyline          = ({newline} {newline})
+nonparagraphstart  = ({noninlinetagstart}) | ((<[ ]*\/[ ]*) td ([ ]*>))
+nonparagraphend    = ({noninlinetagend}) | ((<[ ]*) td ([^/>]*>))
 anchorname         = (<[ ]*a[ ]*name[ ]*=[^/]+\/[ ]*[a]?[ ]*>)
 break              = (<[ ]*) br ([ ]*[\/]?[ ]*>)
-paragraphend       = ({newline} {newline})
+paragraphend       = ({newline})
 paragraphstart     = ({inputcharacter})
 
 %state PRE, NORMAL, P, NONPARAGRAPH, SPECIAL
@@ -134,7 +136,7 @@ paragraphstart     = ({inputcharacter})
     return yytext();
 }
 
-<NORMAL, P>{emptyline} {
+<NORMAL, P>^{emptyline} {
     logger.finer("emptyline: " + yytext() + " (" + yystate() + ")");
     StringBuffer output = new StringBuffer();
     if (yystate() == P) {
@@ -185,7 +187,7 @@ paragraphstart     = ({inputcharacter})
     return yytext();
 }
 
-<P>{paragraphend} {
+<P>^{paragraphend} {
     logger.finer("end of paragraph: " + yytext() + " (" + yystate() + ")");
     endState();
     this.popTag("p");
