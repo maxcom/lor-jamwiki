@@ -30,17 +30,32 @@ import org.jamwiki.utils.WikiLogger;
 public class JFlexParserUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexParserUtil.class.getName());
-	private static Pattern TAG_PATTERN = null;
+	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
+	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
+	private static Pattern NON_INLINE_TAG_PATTERN = null;
+	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
+	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
+	private static Pattern TAG_PATTERN = null;
+	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
+	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
+	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|p|table|td|th|tr|ul)";
+	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
+	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 
 	static {
 		try {
-			TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
+			EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
 			// catch script insertions of the form "onsubmit="
 			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
 			// catch script insertions that use a javascript url
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
+			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
+			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
+			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+			NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+			TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -50,6 +65,62 @@ public class JFlexParserUtil {
 	 *
 	 */
 	private JFlexParserUtil() {
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isRootTag(String tagType) {
+		return tagType.equals(JFlexTagItem.ROOT_TAG);
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isEmptyBodyTag(String tagType) {
+		if (isRootTag(tagType)) {
+			return true;
+		}
+		Matcher matcher = EMPTY_BODY_TAG_PATTERN.matcher(tagType);
+		return matcher.matches();
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isTextBodyTag(String tagType) {
+		if (isRootTag(tagType)) {
+			return true;
+		}
+		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(tagType);
+		return !matcher.matches();
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isInlineTag(String tagType) {
+		if (isRootTag(tagType)) {
+			return true;
+		}
+		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(tagType);
+		return !matcher.matches();
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isNonInlineTagEnd(String tagText) {
+		Matcher matcher = NON_INLINE_TAG_END_PATTERN.matcher(tagText);
+		return matcher.matches();
+	}
+
+	/**
+	 *
+	 */
+	protected static boolean isNonInlineTagStart(String tagText) {
+		Matcher matcher = NON_INLINE_TAG_START_PATTERN.matcher(tagText);
+		return matcher.matches();
 	}
 
 	/**

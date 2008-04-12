@@ -16,8 +16,6 @@
  */
 package org.jamwiki.parser.jflex;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.utils.WikiLogger;
 
@@ -30,32 +28,10 @@ class JFlexTagItem {
 	private static final WikiLogger logger = WikiLogger.getLogger(JFlexTagItem.class.getName());
 
 	protected static final String ROOT_TAG = "jflex-root";
-	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
-	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
-	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
-	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
-	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
-	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|p|table|td|th|tr|ul)";
-	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
-	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 	private String closeTagOverride = null;
 	private String tagAttributes = null;
 	private final StringBuffer tagContent = new StringBuffer();
 	private String tagType = null;
-
-	static {
-		try {
-			EMPTY_BODY_TAG_PATTERN = Pattern.compile(emptyBodyTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
-			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-			NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-		} catch (Exception e) {
-			logger.severe("Unable to compile pattern", e);
-		}
-	}
 
 	/**
 	 *
@@ -136,33 +112,30 @@ class JFlexTagItem {
 	public String toHtml() {
 		String content = this.tagContent.toString();
 		// if no content do not generate a tag
-		if (StringUtils.isBlank(content) && !this.isEmptyBodyTag()) {
+		if (StringUtils.isBlank(content) && !JFlexParserUtil.isEmptyBodyTag(this.tagType)) {
 			return "";
 		}
 		StringBuffer result = new StringBuffer();
-		if (!this.isRootTag()) {
+		if (!JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append("<").append(this.tagType);
 			if (!StringUtils.isBlank(this.tagAttributes)) {
 				result.append(" ").append(this.tagAttributes);
 			}
 			result.append(">");
 		}
-		if (isRootTag()) {
+		if (JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append(content);
 		} else if (this.tagType.equals("pre")) {
 			// pre-formatted, no trimming or other modification
 			result.append(content);
-		} else if (isTextBodyTag()) {
-			Matcher matcher = null;
+		} else if (JFlexParserUtil.isTextBodyTag(this.tagType)) {
 			// ugly hack to handle cases such as "<li><ul>" where the "<ul>" should be on its own line
-			matcher = NON_INLINE_TAG_START_PATTERN.matcher(content.trim());
-			if (matcher.matches()) {
+			if (JFlexParserUtil.isNonInlineTagStart(content.trim())) {
 				result.append("\n");
 			}
 			result.append(content.trim());
 			// ugly hack to handle cases such as "</ul></li>" where the "</li>" should be on its own line
-			matcher = NON_INLINE_TAG_END_PATTERN.matcher(content.trim());
-			if (matcher.matches()) {
+			if (JFlexParserUtil.isNonInlineTagEnd(content.trim())) {
 				result.append("\n");
 			}
 		} else {
@@ -170,10 +143,10 @@ class JFlexTagItem {
 			result.append(content.trim());
 			result.append("\n");
 		}
-		if (!this.isRootTag()) {
+		if (!JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append("</").append(this.tagType).append(">");
 		}
-		if (isTextBodyTag() && !this.isRootTag() && this.isInlineTag() && !this.tagType.equals("pre")) {
+		if (JFlexParserUtil.isTextBodyTag(this.tagType) && !JFlexParserUtil.isRootTag(this.tagType) && JFlexParserUtil.isInlineTag(this.tagType) && !this.tagType.equals("pre")) {
 			// work around issues such as "text''' text'''", where the output should
 			// be "text <b>text</b>", by moving the whitespace to the parent tag
 			int firstWhitespaceIndex = content.indexOf(content.trim());
@@ -185,49 +158,9 @@ class JFlexTagItem {
 				result.append(content.substring(lastWhitespaceIndex));
 			}
 		}
-		if (!isInlineTag()) {
+		if (!JFlexParserUtil.isInlineTag(this.tagType)) {
 			result.append("\n");
 		}
 		return result.toString();
-	}
-
-	/**
-	 *
-	 */
-	private boolean isRootTag() {
-		return this.tagType.equals(JFlexTagItem.ROOT_TAG);
-	}
-
-	/**
-	 *
-	 */
-	private boolean isEmptyBodyTag() {
-		if (isRootTag()) {
-			return true;
-		}
-		Matcher matcher = EMPTY_BODY_TAG_PATTERN.matcher(this.tagType);
-		return matcher.matches();
-	}
-
-	/**
-	 *
-	 */
-	private boolean isTextBodyTag() {
-		if (isRootTag()) {
-			return true;
-		}
-		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(this.tagType);
-		return !matcher.matches();
-	}
-
-	/**
-	 *
-	 */
-	private boolean isInlineTag() {
-		if (isRootTag()) {
-			return true;
-		}
-		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(this.tagType);
-		return !matcher.matches();
 	}
 }
