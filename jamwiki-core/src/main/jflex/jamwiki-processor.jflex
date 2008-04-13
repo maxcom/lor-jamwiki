@@ -67,9 +67,8 @@ tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
 inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
-blockleveltagopen  = <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
+blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
-htmltagopen        = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
 /* javascript */
@@ -109,9 +108,9 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ([^<\n\r])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
-/* TODO: add pattern for paragraphs of the form "\n\n\ntext" */
-endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,2} (({blockleveltagopen})|({htmlprestart})))
+startparagraph     = ({newline})? ([^< \n\r])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
+startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
+endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart})))
 
 %state NORMAL, TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
@@ -359,6 +358,18 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
+<NORMAL>^{startparagraphempty} {
+    logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
+    if (this.mode >= JFlexParser.MODE_LAYOUT) {
+        this.pushTag("p", null);
+        this.append("<br />");
+    }
+    beginState(PARAGRAPH);
+    // push back everything except for any opening newlines that were matched
+    yypushback(StringUtils.stripStart(yytext(), null).length());
+    return "";
+}
+
 <PARAGRAPH>{endparagraph} {
     logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
     if (this.mode >= JFlexParser.MODE_LAYOUT) {
@@ -432,12 +443,30 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- html ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagopen} {
-    logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
+    logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
+    if (!allowHTML()) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    return JFlexParserUtil.validateHtmlTag(yytext());
+}
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{inlinetagopen} {
+    logger.finer("inlinetagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
+    this.pushTag(tagInfo[0], tagInfo[1]);
+    return "";
+}
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{blockleveltagopen} {
+    logger.finer("blockleveltagopen: " + yytext() + " (" + yystate() + ")");
+    if (!allowHTML()) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext().trim());
     this.pushTag(tagInfo[0], tagInfo[1]);
     return "";
 }
@@ -450,14 +479,6 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
     this.popTag(tagInfo[0]);
     return "";
-}
-
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
-    logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    return JFlexParserUtil.validateHtmlTag(yytext());
 }
 
 /* ----- javascript ----- */
