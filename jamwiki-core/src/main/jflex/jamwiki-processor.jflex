@@ -52,8 +52,8 @@ listdt             = ":"
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlprestart       = (<[ ]*pre[ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
+htmlprestart       = ({newline})? (<[ ]*pre[ ]*>)
+htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>) ({newline})?
 wikiprestart       = (" ")+ ([^ \t\n])
 wikiprecontinue    = (" ") ([ \t\n])
 wikipreend         = ([^ ]) | ({newline})
@@ -143,7 +143,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<NORMAL, LIST, TABLE, WIKIPRE>^{wikiprestart} {
+<NORMAL, LIST, TABLE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);

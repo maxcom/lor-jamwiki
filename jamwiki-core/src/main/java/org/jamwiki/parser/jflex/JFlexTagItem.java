@@ -126,8 +126,14 @@ class JFlexTagItem {
 		if (JFlexParserUtil.isRootTag(this.tagType)) {
 			result.append(content);
 		} else if (this.tagType.equals("pre")) {
-			// pre-formatted, no trimming or other modification
+			// pre-formatted, no trimming but make sure the open and close tags appear on their own lines
+			if (!content.startsWith("\n")) {
+				result.append("\n");
+			}
 			result.append(content);
+			if (!content.endsWith("\n")) {
+				result.append("\n");
+			}
 		} else if (JFlexParserUtil.isTextBodyTag(this.tagType)) {
 			// ugly hack to handle cases such as "<li><ul>" where the "<ul>" should be on its own line
 			if (JFlexParserUtil.isNonInlineTagStart(content.trim())) {
@@ -158,7 +164,7 @@ class JFlexTagItem {
 				result.append(content.substring(lastWhitespaceIndex));
 			}
 		}
-		if (!JFlexParserUtil.isInlineTag(this.tagType)) {
+		if (!JFlexParserUtil.isInlineTag(this.tagType) || this.tagType.equals("pre")) {
 			result.append("\n");
 		}
 		return result.toString();
