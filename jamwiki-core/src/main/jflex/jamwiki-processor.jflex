@@ -361,7 +361,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
     if (this.mode >= JFlexParser.MODE_LAYOUT) {
         this.pushTag("p", null);
-        this.append("<br />");
+        this.append("<br />\n");
     }
     beginState(PARAGRAPH);
     // push back everything except for any opening newlines that were matched

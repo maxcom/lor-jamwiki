@@ -192,7 +192,7 @@ public abstract class JFlexLexer {
 		}
 		// now pop the root tag
 		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
-		return (this.mode > JFlexParser.MODE_MINIMAL) ? currentTag.toHtml().trim() : currentTag.toHtml();
+		return (this.mode >= JFlexParser.MODE_LAYOUT) ? currentTag.toHtml().trim() : currentTag.toHtml();
 	}
 
 	/**
