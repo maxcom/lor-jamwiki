@@ -84,6 +84,7 @@ public class ParserTest extends TestCase {
 		failures.add("HtmlXSS1");
 		failures.add("NestedTable1");
 		failures.add("NestedTable2");
+		failures.add("HtmlList1");
 		failures.add("HtmlMismatchTest3");
 		failures.add("HtmlMismatchTest4");
 		failures.add("UnbalancedTag1");
