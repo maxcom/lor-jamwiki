@@ -38,7 +38,7 @@ public abstract class JFlexLexer {
 	/** Parser parsing results. */
 	protected ParserOutput parserOutput = null;
 	/** Parser mode, which provides input to the parser about what steps to take. */
-	protected int mode = JFlexParser.MODE_LAYOUT;
+	protected int mode = JFlexParser.MODE_POSTPROCESS;
 	/** Stack of currently parsed tag content. */
 	private Stack tagStack = new Stack();
 

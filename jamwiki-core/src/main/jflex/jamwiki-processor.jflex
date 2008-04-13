@@ -6,6 +6,7 @@
 package org.jamwiki.parser.jflex;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -65,6 +66,8 @@ htmlkeyword        = ({inlinetag}) | ({blockleveltag})
 tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|style|valign|width
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
+inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
+blockleveltagopen  = <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagopen        = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
@@ -104,13 +107,19 @@ reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*)? ([ ]*>) ~(<[ 
 referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*) ([ ]*\/[ ]*>)
 references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
-%state NORMAL, TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE
+/* paragraphs */
+/* TODO: this pattern does not match text such as "< is a less than sign" */
+startparagraph     = ([^<\n\r])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
+/* TODO: add pattern for paragraphs of the form "\n\n\ntext" */
+endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,2} (({blockleveltagopen})|({htmlprestart})))
+
+%state NORMAL, TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
 %%
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE>{nowiki} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, PARAGRAPH>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     String content = JFlexParserUtil.tagContent(yytext());
     return "<nowiki>" + StringEscapeUtils.escapeHtml(content) + "</nowiki>";
@@ -165,43 +174,23 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- table of contents ----- */
 
-<NORMAL, LIST, TABLE>{notoc} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{notoc} {
     logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
-<NORMAL, LIST, TABLE>{toc} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     this.parserInput.getTableOfContents().setForceTOC(true);
     return yytext();
 }
 
-<NORMAL, LIST, TABLE>{forcetoc} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{forcetoc} {
     logger.finer("forcetoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setForceTOC(true);
     return "";
-}
-
-/* ----- wiki links ----- */
-
-<NORMAL, LIST, TABLE>{imagelinkcaption} {
-    logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
-    WikiLinkTag parserTag = new WikiLinkTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
-}
-
-<NORMAL, LIST, TABLE>{wikilink} {
-    logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
-    WikiLinkTag parserTag = new WikiLinkTag();
-    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
-}
-
-<NORMAL, LIST, TABLE>{htmllink} {
-    logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
-    HtmlLinkTag parserTag = new HtmlLinkTag();
-    return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
 /* ----- tables ----- */
@@ -358,21 +347,64 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return yytext();
 }
 
+/* ----- paragraphs ----- */
+
+<NORMAL>^{startparagraph} {
+    logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
+    if (this.mode >= JFlexParser.MODE_LAYOUT) {
+        this.pushTag("p", null);
+    }
+    beginState(PARAGRAPH);
+    yypushback(yytext().length());
+    return "";
+}
+
+<PARAGRAPH>{endparagraph} {
+    logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
+    if (this.mode >= JFlexParser.MODE_LAYOUT) {
+        this.popTag("p");
+    }
+    endState();
+    // push back everything except for any opening newlines that were matched
+    yypushback(StringUtils.stripStart(yytext(), null).length());
+    return "";
+}
+
+/* ----- wiki links ----- */
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{imagelinkcaption} {
+    logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
+    WikiLinkTag parserTag = new WikiLinkTag();
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+}
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{wikilink} {
+    logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
+    WikiLinkTag parserTag = new WikiLinkTag();
+    return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
+}
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmllink} {
+    logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
+    HtmlLinkTag parserTag = new HtmlLinkTag();
+    return parserTag.parse(this.parserInput, this.mode, yytext());
+}
+
 /* ----- bold / italic ----- */
 
-<NORMAL, LIST, TABLE>{bold} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     this.processBoldItalic("b");
     return "";
 }
 
-<NORMAL, LIST, TABLE>{bolditalic} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{bolditalic} {
     logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
     this.processBoldItalic(null);
     return "";
 }
 
-<NORMAL, LIST, TABLE>{italic} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     this.processBoldItalic("i");
     return "";
@@ -380,19 +412,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- references ----- */
 
-<NORMAL, LIST, TABLE>{reference} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{reference} {
     logger.finer("reference: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
-<NORMAL, LIST, TABLE>{referencenocontent} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{referencenocontent} {
     logger.finer("referencenocontent: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
-<NORMAL, LIST, TABLE>{references} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
@@ -400,7 +432,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- html ----- */
 
-<NORMAL, LIST, TABLE>{htmltagopen} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagopen} {
     logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -410,7 +442,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<NORMAL, LIST, TABLE>{htmltagclose} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -420,7 +452,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return "";
 }
 
-<NORMAL, LIST, TABLE>{htmltagnocontent} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -430,7 +462,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- javascript ----- */
 
-<NORMAL, LIST, TABLE>{jsopen} {
+<NORMAL, LIST, TABLE, PARAGRAPH>{jsopen} {
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -454,7 +486,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE>{entity} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, PARAGRAPH>{entity} {
     logger.finer("entity: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (Utilities.isHtmlEntity(raw)) {
@@ -463,12 +495,12 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
     return StringEscapeUtils.escapeHtml(raw);
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, JAVASCRIPT>{whitespace} {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE>. {
+<WIKIPRE, PRE, NORMAL, LIST, TABLE, PARAGRAPH>. {
     // no need to log this
     return StringEscapeUtils.escapeHtml(yytext());
 }

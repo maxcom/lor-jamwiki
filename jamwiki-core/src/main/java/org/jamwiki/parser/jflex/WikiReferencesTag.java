@@ -33,7 +33,7 @@ public class WikiReferencesTag {
 	 *
 	 */
 	public String parse(ParserInput parserInput, int mode, String raw) {
-		if (mode < JFlexParser.MODE_LAYOUT) {
+		if (mode < JFlexParser.MODE_POSTPROCESS) {
 			return raw;
 		}
 		try {
