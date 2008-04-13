@@ -59,7 +59,9 @@ wikiprecontinue    = (" ") ([ \t\r\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
-htmlkeyword        = br|b|big|blockquote|caption|center|cite|code|del|div|em|font|hr|i|ins|p|s|small|span|strike|strong|sub|sup|table|td|th|tr|tt|u|var
+inlinetag          = br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
+blockleveltag      = blockquote|caption|center|div|hr|p|table|tbody|td|tfoot|th|thead|tr
+htmlkeyword        = ({inlinetag}) | ({blockleveltag})
 tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|style|valign|width
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
