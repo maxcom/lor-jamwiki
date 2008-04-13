@@ -62,8 +62,8 @@ import org.jamwiki.utils.WikiLogger;
     public void setReplacementText(String replacementText) {
         // replacementText must end with a newline, otherwise sections get spliced together
         if (replacementText == null) return;
-        if (!replacementText.endsWith("\n") && !replacementText.endsWith("\r")) {
-            replacementText += "\r\n";
+        if (!replacementText.endsWith("\n")) {
+            replacementText += "\n";
         }
         this.replacementText = replacementText;
     }
@@ -77,7 +77,7 @@ import org.jamwiki.utils.WikiLogger;
 %}
 
 /* character expressions */
-newline            = \r|\n|\r\n
+newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* non-container expressions */

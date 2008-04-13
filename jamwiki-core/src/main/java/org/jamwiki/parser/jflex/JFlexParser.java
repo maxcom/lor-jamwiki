@@ -230,7 +230,7 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parsePreProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiPreProcessor lexer = new JAMWikiPreProcessor(reader);
 		int preMode = (mode > JFlexParser.MODE_PREPROCESS) ? JFlexParser.MODE_PREPROCESS : mode;
 		return this.lex(lexer, raw, parserOutput, preMode);
@@ -247,7 +247,7 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parseProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiProcessor lexer = new JAMWikiProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
 	}
@@ -264,7 +264,7 @@ public class JFlexParser extends AbstractParser {
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
 	private String parsePostProcess(ParserOutput parserOutput, String raw, int mode) throws Exception {
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiPostProcessor lexer = new JAMWikiPostProcessor(reader);
 		return this.lex(lexer, raw, parserOutput, mode);
 	}
@@ -309,7 +309,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	public String parseSlice(ParserOutput parserOutput, String raw, int targetSection) throws Exception {
 		long start = System.currentTimeMillis();
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
 		lexer.setTargetSection(targetSection);
 		String output = this.lex(lexer, raw, parserOutput, JFlexParser.MODE_SLICE);
@@ -337,7 +337,7 @@ public class JFlexParser extends AbstractParser {
 	 */
 	public String parseSplice(ParserOutput parserOutput, String raw, int targetSection, String replacementText) throws Exception {
 		long start = System.currentTimeMillis();
-		StringReader reader = new StringReader(raw);
+		StringReader reader = toStringReader(raw);
 		JAMWikiSpliceProcessor lexer = new JAMWikiSpliceProcessor(reader);
 		lexer.setReplacementText(replacementText);
 		lexer.setTargetSection(targetSection);
@@ -345,6 +345,14 @@ public class JFlexParser extends AbstractParser {
 		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
 		logger.fine("Parse time (parseSplice) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
 		return output;
+	}
+
+	/**
+	 * Convert a string of text to be parsed into a StringReader, performing any
+	 * preprocessing, such as removing linefeeds, in the process.
+	 */
+	private StringReader toStringReader(String raw) {
+		return new StringReader(StringUtils.remove(raw, '\r'));
 	}
 
 	/**

@@ -26,7 +26,7 @@ import org.jamwiki.utils.WikiLogger;
 %}
 
 /* character expressions */
-newline            = ((\r\n) | (\n))
+newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */

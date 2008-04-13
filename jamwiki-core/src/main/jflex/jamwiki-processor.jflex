@@ -32,9 +32,8 @@ import org.jamwiki.utils.WikiLogger;
 %}
 
 /* character expressions */
-newline            = ((\r\n) | (\n))
+newline            = "\n"
 whitespace         = {newline} | [ \t\f]
-inputcharacter     = [^\r\n]
 entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 
 /* non-container expressions */
@@ -46,7 +45,7 @@ italic             = "''"
 
 /* lists */
 listitem           = [\*#\:;]+ [^\*#\:;]
-listend            = [^\*#\:;\r\n]+ (.)+
+listend            = [^\*#\:;\n]+ (.)+
 listdt             = ":"
 
 /* nowiki */
@@ -55,8 +54,8 @@ nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
-wikiprestart       = (" ")+ ([^ \t\r\n])
-wikiprecontinue    = (" ") ([ \t\r\n])
+wikiprestart       = (" ")+ ([^ \t\n])
+wikiprecontinue    = (" ") ([ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* allowed html */
@@ -65,14 +64,14 @@ blockleveltag      = blockquote|caption|center|div|hr|p|table|tbody|td|tfoot|th|
 htmlkeyword        = ({inlinetag}) | ({blockleveltag})
 tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|style|valign|width
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
-htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n\r]+[ ]*)*
+htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n]+[ ]*)*
 inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
 blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
 /* javascript */
-jsattribute        = ([ ]+) (type|charset|defer|language) ([ ]*=[^>\n\r]+[ ]*)*
+jsattribute        = ([ ]+) (type|charset|defer|language) ([ ]*=[^>\n]+[ ]*)*
 jsopen             = (<[ ]*) script ({jsattribute})* ([ ]*[\/]?[ ]*>)
 jsclose            = (<[ ]*\/[ ]*script[ ]*>)
 
@@ -82,8 +81,8 @@ toc                = "__TOC__"
 forcetoc           = "__FORCETOC__"
 
 /* tables */
-tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\r\|]+[ ]*)*
-tablestart         = ({newline})? "{|" {inputcharacter}* {newline}
+tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\|]+[ ]*)*
+tablestart         = ({newline})? "{|" (.)* {newline}
 tableend           = "|}" ({newline})?
 tablecell          = "|" [^\+\-\}] | "|" ({tableattribute})+ "|" [^\|]
 tablecells         = "||" | "!!"
@@ -93,22 +92,22 @@ tablerow           = "|-" [ ]* ({tableattribute})* {newline}
 tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
-wikilink           = "[[" [^\]\n\r]+ "]]"
+wikilink           = "[[" [^\]\n]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
-htmllinkwiki       = "[" ({protocol}) ([^\]\n\r]+) "]"
-htmllinkraw        = ({protocol}) ([^ \n\r\t]+)
+htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
+htmllinkraw        = ({protocol}) ([^ \n\t]+)
 htmllink           = ({htmllinkwiki}) | ({htmllinkraw})
 /* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
+imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
 
 /* references */
-reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
-referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n\r]+[ ]*) ([ ]*\/[ ]*>)
+reference          = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*)? ([ ]*>) ~(<[ ]*\/[ ]*ref[ ]*>)
+referencenocontent = (<[ ]*) "ref" ([ ]+name[ ]*=[^>\/\n]+[ ]*) ([ ]*\/[ ]*>)
 references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ({newline})? ([^< \n\r])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
+startparagraph     = ({newline})? ([^< \n])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
 endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart})))
 

@@ -72,9 +72,7 @@ public class ParserTest extends TestCase {
 	 */
 	private String expectedResult(String topicName) throws Exception {
 		String raw = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_TOPICS_DIR, topicName);
-		String output = this.parse(topicName, raw);
-		// FIXME - the sanitize should be unnecessary
-		return this.sanitize(output);
+		return this.parse(topicName, raw);
 	}
 
 	/**
@@ -123,7 +121,6 @@ public class ParserTest extends TestCase {
 	 */
 	private String parserResult(String topicName) throws Exception {
 		String result = TestFileUtil.retrieveFileContent(TestFileUtil.TEST_RESULTS_DIR, topicName);
-		// FIXME - the sanitize should be unnecessary
 		return this.sanitize(result);
 	}
 

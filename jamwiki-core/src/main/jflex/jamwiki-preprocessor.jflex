@@ -42,7 +42,7 @@ import org.jamwiki.utils.WikiLogger;
 %}
 
 /* character expressions */
-newline            = ((\r\n) | (\n))
+newline            = "\n"
 whitespace         = {newline} | [ \t\f]
 
 /* nowiki */
@@ -51,24 +51,24 @@ nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 /* pre */
 htmlprestart       = (<[ ]*pre[ ]*>)
 htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
-wikiprestart       = (" ")+ ([^ \t\r\n])
+wikiprestart       = (" ")+ ([^ \t\n])
 wikipreend         = ([^ ]) | ({newline})
 
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
 /* wiki links */
-wikilink           = "[[" [^\]\n\r]+ "]]"
+wikilink           = "[[" [^\]\n]+ "]]"
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
-htmllinkwiki       = "[" ({protocol}) ([^\]\n\r]+) "]"
+htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
 /* FIXME - hard-coding of image namespace */
-imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\r\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\r\]\[]*)+ "]]"
+imagelinkcaption   = "[[" ([ ]*) "Image:" ([^\n\]\[]* ({wikilink} | {htmllinkwiki}) [^\n\]\[]*)+ "]]"
 
 /* templates */
 templatestart      = "{{"
 templatestartchar  = "{"
 templateendchar    = "}"
-templateparam      = "{{{" [^\{\}\r\n]+ "}}}"
+templateparam      = "{{{" [^\{\}\n]+ "}}}"
 includeonly        = (<[ ]*includeonly[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*includeonly[ ]*>)
 noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 
