@@ -65,8 +65,9 @@ htmlkeyword        = ({inlinetag}) | ({blockleveltag})
 tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|style|valign|width
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n]+[ ]*)*
-inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
-blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)* [ ]*>
+htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
+inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
+blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
@@ -441,6 +442,16 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 }
 
 /* ----- html ----- */
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmlbr} {
+    logger.finer("htmlbr: " + yytext() + " (" + yystate() + ")");
+    if (!allowHTML()) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    // <br> may have attributes, so check for them
+    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
+    return (tagInfo[1].length() > 0) ? "<br " + tagInfo[1] + " />\n" : "<br />\n";
+}
 
 <NORMAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
