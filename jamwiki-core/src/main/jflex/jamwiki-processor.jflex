@@ -66,6 +66,8 @@ tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|
 htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n]+[ ]*)*
 htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
+htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
+htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
 inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
@@ -361,6 +363,10 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 <NORMAL>^{startparagraphempty} {
     logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
     if (this.mode >= JFlexParser.MODE_LAYOUT) {
+        if (this.peekTag().getTagType().equals("p")) {
+            // if a paragraph is already opened, close it before opening a new paragraph
+            this.popTag("p");
+        }
         this.pushTag("p", null);
         this.append("<br />\n");
     }
@@ -372,7 +378,9 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 <PARAGRAPH>{endparagraph} {
     logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
-    if (this.mode >= JFlexParser.MODE_LAYOUT) {
+    if (this.mode >= JFlexParser.MODE_LAYOUT && this.peekTag().getTagType().equals("p")) {
+        // only perform processing if a paragraph is open - tag may have been already been
+        // closed explicitly with a "</p>".
         this.popTag("p");
     }
     endState();
@@ -451,6 +459,36 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     // <br> may have attributes, so check for them
     String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
     return (tagInfo[1].length() > 0) ? "<br " + tagInfo[1] + " />\n" : "<br />\n";
+}
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmlparagraphopen} {
+    logger.finer("htmlparagraphopen: " + yytext() + " (" + yystate() + ")");
+    if (!allowHTML()) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    if (this.peekTag().getTagType().equals("p")) {
+        // if a paragraph is already opened, close it before opening a new paragraph
+        this.popTag("p");
+    }
+    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
+    this.pushTag("p", tagInfo[1]);
+    beginState(PARAGRAPH);
+    return "";
+}
+
+<NORMAL, LIST, TABLE, PARAGRAPH>{htmlparagraphclose} {
+    logger.finer("htmlparagraphclose: " + yytext() + " (" + yystate() + ")");
+    if (!allowHTML()) {
+        return StringEscapeUtils.escapeHtml(yytext());
+    }
+    if (this.peekTag().getTagType().equals("p")) {
+        // only perform processing if a paragraph is open.  otherwise just suppress this tag.
+        this.popTag("p");
+    }
+    if (yystate() == PARAGRAPH) {
+        endState();
+    }
+    return "";
 }
 
 <NORMAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
