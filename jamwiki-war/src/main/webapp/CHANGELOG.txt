@@ -28,6 +28,8 @@ Bugfixes:
     processed.  Reported by an anonymous user.
   * Wiki table captions now process table CSS such as |+align="bottom"|caption.
     Reported by an anonymous user.
+  * Image files were being cached unnecessarily, leading to excessive memory
+    use.  Reported by Jim.
 
 
 0.6.5
