@@ -164,9 +164,6 @@ class JFlexTagItem {
 				result.append(content.substring(lastWhitespaceIndex));
 			}
 		}
-		if (!JFlexParserUtil.isInlineTag(this.tagType) || this.tagType.equals("pre")) {
-			result.append("\n");
-		}
 		return result.toString();
 	}
 }

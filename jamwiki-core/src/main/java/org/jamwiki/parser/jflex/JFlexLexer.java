@@ -177,7 +177,16 @@ public abstract class JFlexLexer {
 		}
 		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
 		JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
-		previousTag.getTagContent().append(currentTag.toHtml());
+		if (!JFlexParserUtil.isInlineTag(currentTag.getTagType()) || currentTag.getTagType().equals("pre")) {
+			// if the current tag is an inline tag, make sure it is on its own lines
+			String trimmedContent = StringUtils.stripEnd(previousTag.getTagContent().toString(), null);
+			previousTag.getTagContent().replace(0, previousTag.getTagContent().length(), trimmedContent);
+			previousTag.getTagContent().append('\n');
+			previousTag.getTagContent().append(currentTag.toHtml());
+			previousTag.getTagContent().append('\n');
+		} else {
+			previousTag.getTagContent().append(currentTag.toHtml());
+		}
 		return currentTag;
 	}
 
