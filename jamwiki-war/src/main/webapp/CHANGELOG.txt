@@ -30,6 +30,8 @@ Bugfixes:
     Reported by an anonymous user.
   * Image files were being cached unnecessarily, leading to excessive memory
     use.  Reported by Jim.
+  * Underscores in template names should be ignored so that {{Template Name}}
+    and {{Template_Name}} are seen as equivalent.  Reported by yesesnono.
 
 
 0.6.5

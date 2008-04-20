@@ -50,7 +50,10 @@ public class TestFileUtil {
 	 */
 	private static File retrieveFile(String directory, String fileName) {
 		// files containing colons aren't allowed, so replace with "_-_"
-		String fullName = directory + StringUtils.replace(fileName, ":", "_-_");
+		fileName = StringUtils.replace(fileName, ":", "_-_");
+		// replace spaces with underscores
+		fileName = StringUtils.replace(fileName, " ", "_");
+		String fullName = directory + fileName;
 		File file = null;
 		try {
 			return Utilities.getClassLoaderFile(fullName);
