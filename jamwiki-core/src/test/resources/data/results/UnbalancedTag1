@@ -1,7 +1,5 @@
-<p>hello <b>i say <i>to</i></b><i> the</i> world
-</p><p>hello <i>to&lt;/b&gt; the</i> world
-</p><p>hello <i>&lt;i&gt;world!</i>&lt;/i&gt;
-</p><p>hello <i><b>to the&lt;/i&gt;</b> world
-</p><p>hello &lt;i&gt;world
-</p><p></i>
-</p>
+<p>hello <b>i say <i>to</i></b> <i>the</i> world</p>
+<p>hello <i>to</i> the world</p>
+<p>hello <i>world!</i></p>
+<p>hello <i><b>to the</b></i> world</p>
+<p>hello <i>world</i></p>
