@@ -70,6 +70,7 @@ htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
 inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
+blockleveltagclose = (<[ ]*\/[ ]*) {blockleveltag} ([ ]*>)
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
@@ -112,7 +113,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* TODO: this pattern does not match text such as "< is a less than sign" */
 startparagraph     = ({newline})? ([^< \n])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
-endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart})))
+endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart}))) | ({blockleveltagclose})
 
 %state NORMAL, TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
