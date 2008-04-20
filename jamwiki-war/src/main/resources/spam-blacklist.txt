@@ -4,9 +4,11 @@
 (asian|black|ebony|latina|lesbian|mature|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
 (best|free|super)[ \._\-]porn
 (buy|cheap|online)[ \._\-](adipex|albuterol|alprazolam|ativan|carisoprodol|celexa|cialis|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)
-(http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[ \n\t]+){10,}
+([\[]?http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[\]]?[ \n\t]+){10,}
 [0-9]{5,}\.com
+\.bj\.cn
 2008healthinsurance\.com
+247ihost\.com
 4gem\.info
 adware[ -_\.]freeware
 airline\-cheap\-tickets
@@ -33,9 +35,11 @@ peace\.com
 plantar\-wart
 plus18\.eu
 porn[ -_\.]video
+replica[-_]?watches
 russianbrides
 seo\-master\.info
 sexjay\.ru
+shop\-shine\.ru
 superche\.info
 theche\.info
 top\-dating
