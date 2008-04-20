@@ -196,8 +196,12 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- tables ----- */
 
-<NORMAL, LIST, TABLE>^{tablestart} {
+<NORMAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
+    if (yystate() == PARAGRAPH) {
+        popTag("p");
+        endState();
+    }
     beginState(TABLE);
     String tagAttributes = yytext().trim().substring(2).trim();
     tagAttributes = JFlexParserUtil.validateHtmlTagAttributes(tagAttributes);
@@ -316,8 +320,12 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- lists ----- */
 
-<NORMAL, LIST, TABLE>^{listitem} {
+<NORMAL, LIST, TABLE, PARAGRAPH>^{listitem} {
     logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
+    if (yystate() == PARAGRAPH) {
+        popTag("p");
+        endState();
+    }
     if (yystate() != LIST) beginState(LIST);
     // one non-list character matched, roll it back
     yypushback(1);
@@ -369,7 +377,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
         }
         this.pushTag("p", null);
         this.append("<br />\n");
-    }
+            }
     beginState(PARAGRAPH);
     // push back everything except for any opening newlines that were matched
     yypushback(StringUtils.stripStart(yytext(), null).length());
