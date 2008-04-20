@@ -466,7 +466,9 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     }
     String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
     this.pushTag("p", tagInfo[1]);
-    beginState(PARAGRAPH);
+    if (yystate() != PARAGRAPH) {
+        beginState(PARAGRAPH);
+    }
     return "";
 }
 
