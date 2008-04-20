@@ -198,8 +198,10 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 <NORMAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
-    if (yystate() == PARAGRAPH) {
+    if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
+    }
+    if (yystate() == PARAGRAPH) {
         endState();
     }
     beginState(TABLE);
@@ -322,8 +324,10 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 <NORMAL, LIST, TABLE, PARAGRAPH>^{listitem} {
     logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
-    if (yystate() == PARAGRAPH) {
+    if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
+    }
+    if (yystate() == PARAGRAPH) {
         endState();
     }
     if (yystate() != LIST) beginState(LIST);
@@ -360,53 +364,22 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 <NORMAL>^{startparagraph} {
     logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
-    if (this.mode >= JFlexParser.MODE_LAYOUT) {
-        this.pushTag("p", null);
-    }
+    this.parseParagraphStart(yytext());
     beginState(PARAGRAPH);
-    yypushback(yytext().length());
     return "";
 }
 
 <NORMAL>^{startparagraphempty} {
     logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
-    String raw = yytext();
-    if (this.mode >= JFlexParser.MODE_LAYOUT) {
-        if (this.peekTag().getTagType().equals("p")) {
-            // if a paragraph is already opened, close it before opening a new paragraph
-            this.popTag("p");
-        }
-        this.pushTag("p", null);
-        this.append("<br />\n");
-        for (int i = 0; i < raw.length(); i++) {
-            // if more than three newlines start this pattern create additional empty paragraphs
-            if (raw.charAt(i) != '\n') {
-                break;
-            }
-            if (i < 4) {
-                continue;
-            }
-            this.popTag("p");
-            this.pushTag("p", null);
-            this.append("<br />\n");
-        }
-    }
+    this.parseParagraphStartEmpty(yytext());
     beginState(PARAGRAPH);
-    // push back everything except for any opening newlines that were matched
-    yypushback(StringUtils.stripStart(raw, null).length());
     return "";
 }
 
 <PARAGRAPH>{endparagraph} {
     logger.finer("endparagraph: " + yytext() + " (" + yystate() + ")");
-    if (this.mode >= JFlexParser.MODE_LAYOUT && this.peekTag().getTagType().equals("p")) {
-        // only perform processing if a paragraph is open - tag may have been already been
-        // closed explicitly with a "</p>".
-        this.popTag("p");
-    }
+    this.parseParagraphEnd(yytext());
     endState();
-    // push back everything except for any opening newlines that were matched
-    yypushback(StringUtils.stripStart(yytext(), null).length());
     return "";
 }
 

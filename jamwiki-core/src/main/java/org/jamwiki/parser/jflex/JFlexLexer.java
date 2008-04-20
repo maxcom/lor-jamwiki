@@ -431,6 +431,58 @@ public abstract class JFlexLexer {
 	}
 
 	/**
+	 *
+	 */
+	protected void parseParagraphEnd(String raw) {
+		if (this.mode >= JFlexParser.MODE_LAYOUT && this.peekTag().getTagType().equals("p")) {
+			// only perform processing if a paragraph is open - tag may have been already been
+			// closed explicitly with a "</p>".
+			this.popTag("p");
+		}
+		// push back everything except for any opening newlines that were matched
+		yypushback(StringUtils.stripStart(raw, null).length());
+	}
+
+	/**
+	 *
+	 */
+	protected void parseParagraphStart(String raw) {
+		if (this.mode >= JFlexParser.MODE_LAYOUT) {
+			this.pushTag("p", null);
+		}
+		yypushback(yytext().length());
+	}
+
+	/**
+	 *
+	 */
+	protected void parseParagraphStartEmpty(String raw) {
+		// push back everything except for any opening newlines that were matched
+		yypushback(StringUtils.stripStart(raw, null).length());
+		if (this.mode < JFlexParser.MODE_LAYOUT) {
+			return;
+		}
+		if (this.peekTag().getTagType().equals("p")) {
+			// if a paragraph is already opened, close it before opening a new paragraph
+			this.popTag("p");
+		}
+		this.pushTag("p", null);
+		this.append("<br />\n");
+		for (int i = 0; i < raw.length(); i++) {
+			// if more than three newlines start this pattern create additional empty paragraphs
+			if (raw.charAt(i) != '\n') {
+				break;
+			}
+			if (i < 4) {
+				continue;
+			}
+			this.popTag("p");
+			this.pushTag("p", null);
+			this.append("<br />\n");
+		}
+	}
+
+	/**
 	 * JFlex internal method used to change the lexer state values.
 	 */
 	public abstract void yybegin(int newState);
@@ -439,6 +491,11 @@ public abstract class JFlexLexer {
 	 * JFlex internal method used to parse the next token.
 	 */
 	public abstract String yylex() throws Exception;
+
+	/**
+	 * JFlex internal method used to push text back onto the parser stack.
+	 */
+	public abstract void yypushback(int number);
 
 	/**
 	 * JFlex internal method used to retrieve the current lexer state value.
