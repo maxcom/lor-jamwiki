@@ -370,6 +370,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 <NORMAL>^{startparagraphempty} {
     logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
+    String raw = yytext();
     if (this.mode >= JFlexParser.MODE_LAYOUT) {
         if (this.peekTag().getTagType().equals("p")) {
             // if a paragraph is already opened, close it before opening a new paragraph
@@ -377,10 +378,22 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
         }
         this.pushTag("p", null);
         this.append("<br />\n");
+        for (int i = 0; i < raw.length(); i++) {
+            // if more than three newlines start this pattern create additional empty paragraphs
+            if (raw.charAt(i) != '\n') {
+                break;
             }
+            if (i < 4) {
+                continue;
+            }
+            this.popTag("p");
+            this.pushTag("p", null);
+            this.append("<br />\n");
+        }
+    }
     beginState(PARAGRAPH);
     // push back everything except for any opening newlines that were matched
-    yypushback(StringUtils.stripStart(yytext(), null).length());
+    yypushback(StringUtils.stripStart(raw, null).length());
     return "";
 }
 
