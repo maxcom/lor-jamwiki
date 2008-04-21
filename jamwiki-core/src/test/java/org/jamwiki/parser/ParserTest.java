@@ -89,7 +89,6 @@ public class ParserTest extends TestCase {
 		failures.add("Paragraph6");
 		failures.add("PreformattedInvalid1");
 		failures.add("HtmlList1");
-		failures.add("Preformatted2");
 		failures.add("Paragraph9");
 		return (failures.indexOf(fileName) != -1);
 	}

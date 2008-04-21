@@ -147,7 +147,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<NORMAL, LIST, TABLE>^{wikiprestart} {
+<WIKIPRE, NORMAL, LIST, TABLE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
