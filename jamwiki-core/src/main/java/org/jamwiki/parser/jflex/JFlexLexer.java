@@ -210,6 +210,17 @@ public abstract class JFlexLexer {
 	protected void pushTag(String tagType, String tagAttributes) {
 		JFlexTagItem tag = new JFlexTagItem(tagType);
 		tag.setTagAttributes(tagAttributes);
+		// if a list was opened using an HTML tag the list item may need to be closed
+		// TODO - clean this up
+		if (tagType.equals("li") && this.peekTag().getTagType().equals("li")) {
+			this.popTag("li");
+		}
+		if (tagType.equals("dt") && this.peekTag().getTagType().equals("dt")) {
+			this.popTag("dt");
+		}
+		if (tagType.equals("dd") && this.peekTag().getTagType().equals("dd")) {
+			this.popTag("dd");
+		}
 		this.tagStack.push(tag);
 	}
 
