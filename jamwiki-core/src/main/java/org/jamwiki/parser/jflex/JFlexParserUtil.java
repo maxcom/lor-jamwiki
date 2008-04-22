@@ -33,12 +33,14 @@ public class JFlexParserUtil {
 	private static Pattern EMPTY_BODY_TAG_PATTERN = null;
 	private static Pattern JAVASCRIPT_PATTERN1 = null;
 	private static Pattern JAVASCRIPT_PATTERN2 = null;
+	private static Pattern NESTING_TAG_PATTERN = null;
 	private static Pattern NON_TEXT_BODY_TAG_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
 	private static Pattern TAG_PATTERN = null;
 	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
+	private static final String nestingTagPattern = "(div|font|span)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
 	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|p|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
@@ -51,6 +53,7 @@ public class JFlexParserUtil {
 			JAVASCRIPT_PATTERN1 = Pattern.compile("( on[^=]{3,}=)+", Pattern.CASE_INSENSITIVE);
 			// catch script insertions that use a javascript url
 			JAVASCRIPT_PATTERN2 = Pattern.compile("(javascript[ ]*\\:)+", Pattern.CASE_INSENSITIVE);
+			NESTING_TAG_PATTERN = Pattern.compile(nestingTagPattern, Pattern.CASE_INSENSITIVE);
 			NON_TEXT_BODY_TAG_PATTERN = Pattern.compile(nonTextBodyTagPattern, Pattern.CASE_INSENSITIVE);
 			NON_INLINE_TAG_PATTERN = Pattern.compile(nonInlineTagPattern, Pattern.CASE_INSENSITIVE);
 			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
@@ -68,14 +71,7 @@ public class JFlexParserUtil {
 	}
 
 	/**
-	 *
-	 */
-	protected static boolean isRootTag(String tagType) {
-		return tagType.equals(JFlexTagItem.ROOT_TAG);
-	}
-
-	/**
-	 *
+	 * An empty body tag is one that contains no content, such as "br".
 	 */
 	protected static boolean isEmptyBodyTag(String tagType) {
 		if (isRootTag(tagType)) {
@@ -86,18 +82,9 @@ public class JFlexParserUtil {
 	}
 
 	/**
-	 *
-	 */
-	protected static boolean isTextBodyTag(String tagType) {
-		if (isRootTag(tagType)) {
-			return true;
-		}
-		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(tagType);
-		return !matcher.matches();
-	}
-
-	/**
-	 *
+	 * An inline tag is a tag that does not affect page flow such as
+	 * "b" or "i".  A non-inline tag such as "div" is one that creates
+	 * its own display box.
 	 */
 	protected static boolean isInlineTag(String tagType) {
 		if (isRootTag(tagType)) {
@@ -105,6 +92,15 @@ public class JFlexParserUtil {
 		}
 		Matcher matcher = NON_INLINE_TAG_PATTERN.matcher(tagType);
 		return !matcher.matches();
+	}
+
+	/**
+	 * A nesting tag is a tag such as "div" which can be nested within
+	 * another "div" tag.  Most tags do not allow direct nesting.
+	 */
+	protected static boolean isNestingTag(String tagType) {
+		Matcher matcher = NESTING_TAG_PATTERN.matcher(tagType);
+		return matcher.matches();
 	}
 
 	/**
@@ -121,6 +117,26 @@ public class JFlexParserUtil {
 	protected static boolean isNonInlineTagStart(String tagText) {
 		Matcher matcher = NON_INLINE_TAG_START_PATTERN.matcher(tagText);
 		return matcher.matches();
+	}
+
+	/**
+	 * Evaluate the tag to determine whether it is the parser root tag
+	 * that indicates the bottom of the parser tag stack.
+	 */
+	protected static boolean isRootTag(String tagType) {
+		return tagType.equals(JFlexTagItem.ROOT_TAG);
+	}
+
+	/**
+	 * Determine whether the tag allows text body content.  Some tags, such
+	 * as "table", allow only tag content and no text content.
+	 */
+	protected static boolean isTextBodyTag(String tagType) {
+		if (isRootTag(tagType)) {
+			return true;
+		}
+		Matcher matcher = NON_TEXT_BODY_TAG_PATTERN.matcher(tagType);
+		return !matcher.matches();
 	}
 
 	/**

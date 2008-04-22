@@ -210,16 +210,10 @@ public abstract class JFlexLexer {
 	protected void pushTag(String tagType, String tagAttributes) {
 		JFlexTagItem tag = new JFlexTagItem(tagType);
 		tag.setTagAttributes(tagAttributes);
-		// if a list was opened using an HTML tag the list item may need to be closed
-		// TODO - clean this up
-		if (tagType.equals("li") && this.peekTag().getTagType().equals("li")) {
-			this.popTag("li");
-		}
-		if (tagType.equals("dt") && this.peekTag().getTagType().equals("dt")) {
-			this.popTag("dt");
-		}
-		if (tagType.equals("dd") && this.peekTag().getTagType().equals("dd")) {
-			this.popTag("dd");
+		// many HTML tags cannot nest (ie "<li><li></li></li>" is invalid), so if a non-nesting
+		// tag is being added and the previous tag is of the same type, close the previous tag
+		if (!JFlexParserUtil.isNestingTag(tagType) && this.peekTag().getTagType().equals(tagType)) {
+			this.popTag(tagType);
 		}
 		this.tagStack.push(tag);
 	}
