@@ -216,12 +216,10 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		if (!StringUtils.isBlank(newPassword) || !StringUtils.isBlank(confirmPassword)) {
-			if (StringUtils.isBlank(newPassword)) {
-				errors.add(new WikiMessage("error.newpasswordempty"));
-			} else if (WikiBase.getUserHandler().isWriteable() && StringUtils.isBlank(confirmPassword)) {
-				errors.add(new WikiMessage("error.passwordconfirm"));
-			} else if (WikiBase.getUserHandler().isWriteable() && !newPassword.equals(confirmPassword)) {
-				errors.add(new WikiMessage("admin.message.passwordsnomatch"));
+			try {
+				WikiUtil.validatePassword(newPassword, confirmPassword);
+			} catch (WikiException e) {
+				errors.add(e.getWikiMessage());
 			}
 		}
 		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername(), null) != null) {

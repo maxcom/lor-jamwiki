@@ -3,16 +3,21 @@
 
 New Features:
 
-  * Significant modifications to the parser to simplify the code and ensure
-    that output is as close as possible to that of Mediawiki, including tag
-    placement, newlines and whitespace.
-  * Implement a Mediawiki-style diff UI that uses radio buttons instead of
-    checkboxes on the Special:History page.
+  * Significant modifications to the parser to simplify the code, fix
+    bugs, and ensure that output is as close as possible to that of Mediawiki.
   * Use Spring-managed transactions for database connections (dallas).
+  * Utility added to Special:Maintenance to allow administrators to reset user
+    passwords.
+  * Utility added to Special:Maintenance to allow administrators to export
+    internal database data to CSV.
+  * Utility added to Special:Maintenance to allow administartors to migrate
+    data from one database to another (dallas).
+  * The Special:History page now implements the same UI as Mediawiki with radio
+    buttons instead of checkboxes.
   * Unit test coverage has been significantly improved.
   * Support added for definition lists of the form "; term : definition".
-  * Utility added to Special:Maintenance to allow exporting internal database
-    data to CSV.
+  * Support added to allow use of HTML list tags ("ol", "dl", "dt", "li", and
+    "ul").
   * Sub-headings in the table of contents should be of the form "1.1.1" to
     match Mediawiki.  Reported by Sil68.
   * Upgrade to Spring Framework 2.5.3.
