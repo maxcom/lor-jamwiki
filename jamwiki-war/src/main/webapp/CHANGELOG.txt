@@ -37,6 +37,12 @@ Bugfixes:
     use.  Reported by Jim.
   * Underscores in template names should be ignored so that {{Template Name}}
     and {{Template_Name}} are seen as equivalent.  Reported by yesesnono.
+  * Fix an issue where in some cases (most commonly after server restarts) a
+    remembered user could be incorrectly loaded as a null user.
+
+Translation Updates:
+
+  * Updated Japanese translations (nattolover).
 
 
 0.6.5
