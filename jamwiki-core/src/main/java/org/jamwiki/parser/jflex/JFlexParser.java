@@ -90,7 +90,7 @@ public class JFlexParser extends AbstractParser {
 	/**
 	 *
 	 */
-	private String isRedirect(String content) {
+	protected String isRedirect(String content) {
 		if (StringUtils.isBlank(content)) {
 			return null;
 		}
@@ -280,7 +280,7 @@ public class JFlexParser extends AbstractParser {
 	 * @return The parsed content.
 	 * @throws Exception Thrown if any error occurs during parsing.
 	 */
-	private String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
+	protected String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
 		String redirect = this.isRedirect(raw);
 		String style = "redirect";
 		if (!LinkUtil.isExistingArticle(this.parserInput.getVirtualWiki(), redirect.trim())) {
