@@ -315,8 +315,14 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "<hr />\n";
 }
 
-<NORMAL>^{wikiheading} {
+<NORMAL, PARAGRAPH>^{wikiheading} {
     logger.finer("wikiheading: " + yytext() + " (" + yystate() + ")");
+    if (this.peekTag().getTagType().equals("p")) {
+        popTag("p");
+    }
+    if (yystate() == PARAGRAPH) {
+        endState();
+    }
     WikiHeadingTag parserTag = new WikiHeadingTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
