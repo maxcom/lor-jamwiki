@@ -72,6 +72,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Hungarian translations (bdanee).
+  * Updated German translations (axelclk).
 
 
 0.6.4
