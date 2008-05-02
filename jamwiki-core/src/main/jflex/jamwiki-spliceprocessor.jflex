@@ -17,12 +17,6 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code included in the constructor */
-%init{
-    yybegin(NORMAL);
-    states.add(new Integer(yystate()));
-%init}
-
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiSpliceProcessor.class.getName());
@@ -97,20 +91,20 @@ htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 /* comments */
 htmlcomment        = "<!--" ~"-->"
 
-%state NORMAL, PRE
+%state PRE
 
 %%
 
 /* ----- parsing tags ----- */
 
-<PRE, NORMAL>{nowiki} {
+<YYINITIAL, PRE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return returnText(yytext());
 }
 
 /* ----- nowiki ----- */
 
-<NORMAL>{htmlprestart} {
+<YYINITIAL>{htmlprestart} {
     if (allowHTML()) {
         beginState(PRE);
     }
@@ -125,38 +119,38 @@ htmlcomment        = "<!--" ~"-->"
 
 /* ----- comments ----- */
 
-<NORMAL>{htmlcomment} {
+<YYINITIAL>{htmlcomment} {
     return returnText(yytext());
 }
 
 /* ----- headings ----- */
 
-<NORMAL>^{h1} {
+<YYINITIAL>^{h1} {
     return processHeading(1, yytext());
 }
 
-<NORMAL>^{h2} {
+<YYINITIAL>^{h2} {
     return processHeading(2, yytext());
 }
 
-<NORMAL>^{h3} {
+<YYINITIAL>^{h3} {
     return processHeading(3, yytext());
 }
 
-<NORMAL>^{h4} {
+<YYINITIAL>^{h4} {
     return processHeading(4, yytext());
 }
 
-<NORMAL>^{h5} {
+<YYINITIAL>^{h5} {
     return processHeading(5, yytext());
 }
 
 /* ----- default ----- */
 
-<PRE, NORMAL>{whitespace} {
+<YYINITIAL, PRE>{whitespace} {
     return returnText(yytext());
 }
 
-<PRE, NORMAL>. {
+<YYINITIAL, PRE>. {
     return returnText(yytext());
 }

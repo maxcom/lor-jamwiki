@@ -20,12 +20,6 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code included in the constructor */
-%init{
-    yybegin(NORMAL);
-    states.add(new Integer(yystate()));
-%init}
-
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiProcessor.class.getName());
@@ -115,13 +109,13 @@ startparagraph     = ({newline})? ([^< \n])|({inlinetagopen})|({imagelinkcaption
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
 endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart}))) | ({blockleveltagclose})
 
-%state NORMAL, TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
+%state TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
 %%
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, PARAGRAPH>{nowiki} {
+<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     String content = JFlexParserUtil.tagContent(yytext());
     return "<nowiki>" + StringEscapeUtils.escapeHtml(content) + "</nowiki>";
@@ -129,7 +123,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- pre ----- */
 
-<NORMAL, LIST, TABLE>{htmlprestart} {
+<YYINITIAL, LIST, TABLE>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -147,7 +141,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<WIKIPRE, NORMAL, LIST, TABLE>^{wikiprestart} {
+<YYINITIAL, WIKIPRE, LIST, TABLE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
@@ -176,20 +170,20 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- table of contents ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{notoc} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{notoc} {
     logger.finer("notoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_NO_TOC);
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{toc} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setStatus(TableOfContents.STATUS_TOC_INITIALIZED);
     this.parserInput.getTableOfContents().setForceTOC(true);
     return yytext();
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{forcetoc} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{forcetoc} {
     logger.finer("forcetoc: " + yytext() + " (" + yystate() + ")");
     this.parserInput.getTableOfContents().setForceTOC(true);
     return "";
@@ -197,7 +191,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- tables ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>^{tablestart} {
     logger.finer("tablestart: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
@@ -310,12 +304,12 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- headings ----- */
 
-<NORMAL>^{hr} {
+<YYINITIAL>^{hr} {
     logger.finer("hr: " + yytext() + " (" + yystate() + ")");
     return "<hr />\n";
 }
 
-<NORMAL, PARAGRAPH>^{wikiheading} {
+<YYINITIAL, PARAGRAPH>^{wikiheading} {
     logger.finer("wikiheading: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
@@ -329,7 +323,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- lists ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>^{listitem} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>^{listitem} {
     logger.finer("listitem: " + yytext() + " (" + yystate() + ")");
     if (this.peekTag().getTagType().equals("p")) {
         popTag("p");
@@ -369,14 +363,14 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- paragraphs ----- */
 
-<NORMAL>^{startparagraph} {
+<YYINITIAL>^{startparagraph} {
     logger.finer("startparagraph: " + yytext() + " (" + yystate() + ")");
     this.parseParagraphStart(yytext());
     beginState(PARAGRAPH);
     return "";
 }
 
-<NORMAL>^{startparagraphempty} {
+<YYINITIAL>^{startparagraphempty} {
     logger.finer("startparagraphempty: " + yytext() + " (" + yystate() + ")");
     this.parseParagraphStartEmpty(yytext());
     beginState(PARAGRAPH);
@@ -392,19 +386,19 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- wiki links ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{imagelinkcaption} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{wikilink} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmllink} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmllink} {
     logger.finer("htmllink: " + yytext() + " (" + yystate() + ")");
     HtmlLinkTag parserTag = new HtmlLinkTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
@@ -412,19 +406,19 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- bold / italic ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{bold} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{bold} {
     logger.finer("bold: " + yytext() + " (" + yystate() + ")");
     this.processBoldItalic("b");
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{bolditalic} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{bolditalic} {
     logger.finer("bolditalic: " + yytext() + " (" + yystate() + ")");
     this.processBoldItalic(null);
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{italic} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{italic} {
     logger.finer("italic: " + yytext() + " (" + yystate() + ")");
     this.processBoldItalic("i");
     return "";
@@ -432,19 +426,19 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- references ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{reference} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{reference} {
     logger.finer("reference: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{referencenocontent} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{referencenocontent} {
     logger.finer("referencenocontent: " + yytext() + " (" + yystate() + ")");
     WikiReferenceTag parserTag = new WikiReferenceTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{references} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
@@ -452,7 +446,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- html ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmlbr} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlbr} {
     logger.finer("htmlbr: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -462,7 +456,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return (tagInfo[1].length() > 0) ? "<br " + tagInfo[1] + " />\n" : "<br />\n";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmlparagraphopen} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlparagraphopen} {
     logger.finer("htmlparagraphopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -479,7 +473,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmlparagraphclose} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmlparagraphclose} {
     logger.finer("htmlparagraphclose: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -494,7 +488,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagnocontent} {
     logger.finer("htmltagnocontent: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -502,7 +496,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return JFlexParserUtil.validateHtmlTag(yytext());
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{inlinetagopen} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{inlinetagopen} {
     logger.finer("inlinetagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -512,7 +506,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{blockleveltagopen} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{blockleveltagopen} {
     logger.finer("blockleveltagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -522,7 +516,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return "";
 }
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{htmltagclose} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagclose} {
     logger.finer("htmltagclose: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
@@ -534,7 +528,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- javascript ----- */
 
-<NORMAL, LIST, TABLE, PARAGRAPH>{jsopen} {
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{jsopen} {
     logger.finer("jsopen: " + yytext() + " (" + yystate() + ")");
     if (allowJavascript()) {
         beginState(JAVASCRIPT);
@@ -558,7 +552,7 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, PARAGRAPH>{entity} {
+<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>{entity} {
     logger.finer("entity: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (Utilities.isHtmlEntity(raw)) {
@@ -567,12 +561,12 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return StringEscapeUtils.escapeHtml(raw);
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {
+<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, JAVASCRIPT, PARAGRAPH>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NORMAL, LIST, TABLE, PARAGRAPH>. {
+<YYINITIAL, WIKIPRE, PRE, LIST, TABLE, PARAGRAPH>. {
     // no need to log this
     return StringEscapeUtils.escapeHtml(yytext());
 }

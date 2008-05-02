@@ -14,12 +14,6 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code included in the constructor */
-%init{
-    yybegin(NORMAL);
-    states.add(new Integer(yystate()));
-%init}
-
 /* code copied verbatim into the generated .java file */
 %{
     protected static WikiLogger logger = WikiLogger.getLogger(JAMWikiPostProcessor.class.getName());
@@ -45,20 +39,20 @@ toc                = "__TOC__"
 /* references */
 references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
-%state PRE, NORMAL
+%state PRE
 
 %%
 
 /* ----- nowiki ----- */
 
-<PRE, NORMAL>{nowiki} {
+<YYINITIAL, PRE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return JFlexParserUtil.tagContent(yytext());
 }
 
 /* ----- pre ----- */
 
-<NORMAL>{htmlprestart} {
+<YYINITIAL>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     beginState(PRE);
     return yytext();
@@ -72,14 +66,14 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- processing commands ----- */
 
-<NORMAL>{toc} {
+<YYINITIAL>{toc} {
     logger.finer("toc: " + yytext() + " (" + yystate() + ")");
     return this.parserInput.getTableOfContents().attemptTOCInsertion();
 }
 
 /* ----- references ----- */
 
-<NORMAL>{references} {
+<YYINITIAL>{references} {
     logger.finer("references: " + yytext() + " (" + yystate() + ")");
     WikiReferencesTag parserTag = new WikiReferencesTag();
     return parserTag.parse(this.parserInput, this.mode, yytext());
@@ -87,19 +81,19 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* ----- javascript ----- */
 
-<NORMAL>{javascript} {
+<YYINITIAL>{javascript} {
     logger.finer("javascript: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- other ----- */
 
-<PRE, NORMAL>{whitespace} {
+<YYINITIAL, PRE>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<PRE, NORMAL>. {
+<YYINITIAL, PRE>. {
     // no need to log this
     return yytext();
 }

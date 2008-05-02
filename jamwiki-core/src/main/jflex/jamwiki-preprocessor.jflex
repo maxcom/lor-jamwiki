@@ -17,12 +17,6 @@ import org.jamwiki.utils.WikiLogger;
 %unicode
 %ignorecase
 
-/* code included in the constructor */
-%init{
-    yybegin(NORMAL);
-    states.add(new Integer(yystate()));
-%init}
-
 /* code called after parsing is completed */
 %eofval{
     StringBuffer output = new StringBuffer();
@@ -75,20 +69,20 @@ noinclude          = (<[ ]*noinclude[ ]*[\/]?[ ]*>) ~(<[ ]*\/[ ]*noinclude[ ]*>)
 /* signatures */
 wikisignature      = ([~]{3,5})
 
-%state NORMAL, PRE, WIKIPRE, TEMPLATE
+%state PRE, WIKIPRE, TEMPLATE
 
 %%
 
 /* ----- nowiki ----- */
 
-<WIKIPRE, PRE, NORMAL>{nowiki} {
+<YYINITIAL, WIKIPRE, PRE>{nowiki} {
     logger.finer("nowiki: " + yytext() + " (" + yystate() + ")");
     return yytext();
 }
 
 /* ----- pre ----- */
 
-<NORMAL>{htmlprestart} {
+<YYINITIAL>{htmlprestart} {
     logger.finer("htmlprestart: " + yytext() + " (" + yystate() + ")");
     if (allowHTML()) {
         beginState(PRE);
@@ -103,7 +97,7 @@ wikisignature      = ([~]{3,5})
     return yytext();
 }
 
-<NORMAL, WIKIPRE>^{wikiprestart} {
+<YYINITIAL, WIKIPRE>^{wikiprestart} {
     logger.finer("wikiprestart: " + yytext() + " (" + yystate() + ")");
     // rollback the one non-pre character so it can be processed
     yypushback(yytext().length() - 1);
@@ -123,7 +117,7 @@ wikisignature      = ([~]{3,5})
 
 /* ----- templates ----- */
 
-<NORMAL, TEMPLATE>{templatestart} {
+<YYINITIAL, TEMPLATE>{templatestart} {
     logger.finer("templatestart: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     if (!allowTemplates()) {
@@ -168,7 +162,7 @@ wikisignature      = ([~]{3,5})
     return "";
 }
 
-<NORMAL>{templateparam} {
+<YYINITIAL>{templateparam} {
     logger.finer("templateparam: " + yytext() + " (" + yystate() + ")");
     String raw = yytext();
     return raw;
@@ -188,13 +182,13 @@ wikisignature      = ([~]{3,5})
     return "";
 }
 
-<NORMAL, TEMPLATE>{includeonly} {
+<YYINITIAL, TEMPLATE>{includeonly} {
     logger.finer("includeonly: " + yytext() + " (" + yystate() + ")");
     IncludeOnlyTag parserTag = new IncludeOnlyTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
-<NORMAL, TEMPLATE>{noinclude} {
+<YYINITIAL, TEMPLATE>{noinclude} {
     logger.finer("noinclude: " + yytext() + " (" + yystate() + ")");
     NoIncludeTag parserTag = new NoIncludeTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
@@ -202,13 +196,13 @@ wikisignature      = ([~]{3,5})
 
 /* ----- wiki links ----- */
 
-<NORMAL>{imagelinkcaption} {
+<YYINITIAL>{imagelinkcaption} {
     logger.finer("imagelinkcaption: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
 }
 
-<NORMAL>{wikilink} {
+<YYINITIAL>{wikilink} {
     logger.finer("wikilink: " + yytext() + " (" + yystate() + ")");
     WikiLinkTag parserTag = new WikiLinkTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
@@ -216,7 +210,7 @@ wikisignature      = ([~]{3,5})
 
 /* ----- signatures ----- */
 
-<NORMAL>{wikisignature} {
+<YYINITIAL>{wikisignature} {
     logger.finer("wikisignature: " + yytext() + " (" + yystate() + ")");
     WikiSignatureTag parserTag = new WikiSignatureTag();
     return parserTag.parse(this.parserInput, this.parserOutput, this.mode, yytext());
@@ -224,7 +218,7 @@ wikisignature      = ([~]{3,5})
 
 /* ----- comments ----- */
 
-<NORMAL>{htmlcomment} {
+<YYINITIAL>{htmlcomment} {
     logger.finer("htmlcomment: " + yytext() + " (" + yystate() + ")");
     if (this.mode < JFlexParser.MODE_PREPROCESS) {
         return yytext();
@@ -235,12 +229,12 @@ wikisignature      = ([~]{3,5})
 
 /* ----- other ----- */
 
-<WIKIPRE, PRE, NORMAL>{whitespace} {
+<YYINITIAL, WIKIPRE, PRE>{whitespace} {
     // no need to log this
     return yytext();
 }
 
-<WIKIPRE, PRE, NORMAL>. {
+<YYINITIAL, WIKIPRE, PRE>. {
     // no need to log this
     return yytext();
 }
