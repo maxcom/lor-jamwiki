@@ -27,7 +27,7 @@ import org.jamwiki.utils.WikiLogger;
 
 /* character expressions */
 newline            = "\n"
-whitespace         = {newline} | [ \t\f]
+whitespace         = [ \n\t\f]
 entity             = (&#([0-9]{2,4});) | (&[A-Za-z]{2,6};)
 
 /* non-container expressions */
@@ -55,9 +55,9 @@ wikipreend         = ([^ ]) | ({newline})
 /* allowed html */
 inlinetag          = br|b|big|cite|code|del|em|font|i|ins|s|small|span|strike|strong|sub|sup|tt|u|var
 blockleveltag      = blockquote|caption|center|dd|div|dl|dt|hr|li|ol|p|table|tbody|td|tfoot|th|thead|tr|ul
-htmlkeyword        = ({inlinetag}) | ({blockleveltag})
+htmlkeyword        = {inlinetag}|{blockleveltag}
 tableattributes    = align|bgcolor|border|cellpadding|cellspacing|class|colspan|height|nowrap|rowspan|start|style|valign|width
-htmlattributes     = ({tableattributes}) | align|alt|background|bgcolor|border|class|clear|color|face|height|id|size|style|valign|width
+htmlattributes     = {tableattributes}|alt|background|clear|color|face|id|size|valign
 htmlattribute      = ([ ]+) {htmlattributes} ([ ]*=[^>\n]+[ ]*)*
 htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
@@ -106,13 +106,12 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ([^< \n])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
+startparagraph     = ([^< \n])|{inlinetagopen}|{imagelinkcaption}|{wikilink}|{htmllink}|{bold}|{bolditalic}|{italic}|{entity}
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
 endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
 endparagraph2      = ({newline}){2}
-endparagraph3      = ({newline}){0,1} ({blockleveltagopen}|{htmlprestart})
-endparagraph4      = {blockleveltagclose}
-endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}|{endparagraph4}
+endparagraph3      = {blockleveltagopen}|{htmlprestart}|{blockleveltagclose}
+endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}
 
 %state TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
