@@ -65,6 +65,7 @@ htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
 inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 blockleveltagopen  = <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 blockleveltagclose = (<[ ]*\/[ ]*) {blockleveltag} ([ ]*>)
+htmltagopen        = <[ ]* ({htmlkeyword}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
 
@@ -107,7 +108,11 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 /* TODO: this pattern does not match text such as "< is a less than sign" */
 startparagraph     = ([^< \n])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
-endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart}))) | ({blockleveltagclose})
+endparagraph1      = ({newline}){1,2} ({hr}|{wikiheading}|{listitem}|{wikiprestart}|{tablestart})
+endparagraph2      = ({newline}){2}
+endparagraph3      = ({newline}){0,1} ({blockleveltagopen}|{htmlprestart})
+endparagraph4      = {blockleveltagclose}
+endparagraph       = {endparagraph1}|{endparagraph2}|{endparagraph3}|{endparagraph4}
 
 %state TABLE, LIST, PRE, JAVASCRIPT, WIKIPRE, PARAGRAPH
 
@@ -496,22 +501,12 @@ endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wi
     return JFlexParserUtil.validateHtmlTag(yytext());
 }
 
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{inlinetagopen} {
-    logger.finer("inlinetagopen: " + yytext() + " (" + yystate() + ")");
+<YYINITIAL, LIST, TABLE, PARAGRAPH>{htmltagopen} {
+    logger.finer("htmltagopen: " + yytext() + " (" + yystate() + ")");
     if (!allowHTML()) {
         return StringEscapeUtils.escapeHtml(yytext());
     }
     String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext());
-    this.pushTag(tagInfo[0], tagInfo[1]);
-    return "";
-}
-
-<YYINITIAL, LIST, TABLE, PARAGRAPH>{blockleveltagopen} {
-    logger.finer("blockleveltagopen: " + yytext() + " (" + yystate() + ")");
-    if (!allowHTML()) {
-        return StringEscapeUtils.escapeHtml(yytext());
-    }
-    String[] tagInfo = JFlexParserUtil.parseHtmlTag(yytext().trim());
     this.pushTag(tagInfo[0], tagInfo[1]);
     return "";
 }
