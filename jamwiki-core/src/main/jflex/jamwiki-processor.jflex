@@ -46,8 +46,8 @@ listdt             = ":"
 nowiki             = (<[ ]*nowiki[ ]*>) ~(<[ ]*\/[ ]*nowiki[ ]*>)
 
 /* pre */
-htmlprestart       = ({newline})? (<[ ]*pre[ ]*>)
-htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>) ({newline})?
+htmlprestart       = (<[ ]*pre[ ]*>)
+htmlpreend         = (<[ ]*\/[ ]*pre[ ]*>)
 wikiprestart       = (" ")+ ([^ \t\n])
 wikiprecontinue    = (" ") ([ \t\n])
 wikipreend         = ([^ ]) | ({newline})
@@ -63,7 +63,7 @@ htmlbr             = <[ ]* (\/)? [ ]* br ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphopen  = <[ ]* p ({htmlattribute})* [ ]* (\/)? [ ]*>
 htmlparagraphclose = (<[ ]*\/[ ]*) p ([ ]*>)
 inlinetagopen      = <[ ]* ({inlinetag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
-blockleveltagopen  = ({newline})? <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
+blockleveltagopen  = <[ ]* ({blockleveltag}) ({htmlattribute})* [ ]* (\/)? [ ]*>
 blockleveltagclose = (<[ ]*\/[ ]*) {blockleveltag} ([ ]*>)
 htmltagclose       = (<[ ]*\/[ ]*) {htmlkeyword} ([ ]*>)
 htmltagnocontent   = (<[ ]*) {htmlkeyword} ({htmlattribute})* ([ ]*\/[ ]*>)
@@ -80,7 +80,7 @@ forcetoc           = "__FORCETOC__"
 
 /* tables */
 tableattribute     = ([ ]*) {tableattributes} ([ ]*=[^>\n\|]+[ ]*)*
-tablestart         = ({newline})? "{|" (.)* {newline}
+tablestart         = "{|" (.)* {newline}
 tableend           = "|}" ({newline})?
 tablecell          = "|" [^\+\-\}] | "|" ({tableattribute})+ "|" [^\|]
 tablecells         = "||" | "!!"
@@ -105,7 +105,7 @@ references         = (<[ ]*) "references" ([ ]*[\/]?[ ]*>)
 
 /* paragraphs */
 /* TODO: this pattern does not match text such as "< is a less than sign" */
-startparagraph     = ({newline})? ([^< \n])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
+startparagraph     = ([^< \n])|({inlinetagopen})|({imagelinkcaption})|({wikilink})|({htmllink})|({bold})|({bolditalic})|({italic})|({entity})
 startparagraphempty = ({newline}) ({newline})+ ({startparagraph})
 endparagraph       = (({newline}){1,2} (({hr})|({wikiheading})|({listitem})|({wikiprestart})|({tablestart}))) | ({newline}){2} | (({newline}){0,1} (({blockleveltagopen})|({htmlprestart}))) | ({blockleveltagclose})
 

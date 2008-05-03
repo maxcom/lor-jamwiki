@@ -42,7 +42,7 @@ public class JFlexParserUtil {
 	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
 	private static final String nestingTagPattern = "(div|font|span)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
-	private static final String nonInlineTagPattern = "(caption|dd|dl|dt|li|ol|p|table|td|th|tr|ul)";
+	private static final String nonInlineTagPattern = "(caption|dd|div|dl|dt|hr|li|ol|p|table|td|th|tr|ul)";
 	private static final String nonInlineTagStartPattern = "<" + nonInlineTagPattern + ">.*";
 	private static final String nonInlineTagEndPattern = ".*</" + nonInlineTagPattern + ">";
 
