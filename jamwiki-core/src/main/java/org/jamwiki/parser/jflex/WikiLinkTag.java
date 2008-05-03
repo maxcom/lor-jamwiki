@@ -42,7 +42,7 @@ public class WikiLinkTag {
 
 	static {
 		try {
-			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]");
+			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
 			// look for image size info in image tags
 			IMAGE_SIZE_PATTERN = Pattern.compile("([0-9]+)[ ]*px", Pattern.CASE_INSENSITIVE);
 		} catch (Exception e) {
@@ -189,6 +189,14 @@ public class WikiLinkTag {
 		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
 		wikiLink.setColon((m.group(1) != null));
 		wikiLink.setText(m.group(4));
+		String suffix = m.group(5);
+		if (!StringUtils.isBlank(suffix)) {
+			if (StringUtils.isBlank(wikiLink.getText())) {
+				wikiLink.setText(wikiLink.getDestination() + suffix);
+			} else {
+				wikiLink.setText(wikiLink.getText() + suffix);
+			}
+		}
 		return wikiLink;
 	}
 

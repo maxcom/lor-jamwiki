@@ -91,7 +91,7 @@ tablerow           = "|-" [ ]* ({tableattribute})* {newline}
 tablecaption       = "|+" | "|+" ({tableattribute})+ "|" [^\|]
 
 /* wiki links */
-wikilink           = "[[" [^\]\n]+ "]]"
+wikilink           = "[[" [^\]\n]+ "]]" [a-z]*
 protocol           = "http://" | "https://" | "mailto:" | "mailto://" | "ftp://" | "file://"
 htmllinkwiki       = "[" ({protocol}) ([^\]\n]+) "]"
 htmllinkraw        = ({protocol}) ([^ \n\t]+)

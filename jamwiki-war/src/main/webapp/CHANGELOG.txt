@@ -18,6 +18,8 @@ New Features:
   * Support added for definition lists of the form "; term : definition".
   * Support added to allow use of HTML list tags ("ol", "dl", "dt", "li", and
     "ul").
+  * Support added for plural wiki links of the form [[Topic]]s.  Suggested by
+    axelck.
   * Sub-headings in the table of contents should be of the form "1.1.1" to
     match Mediawiki.  Reported by Sil68.
   * Upgrade to Spring Framework 2.5.3.
@@ -43,6 +45,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Japanese translations (nattolover).
+  * Updated German translations (axelclk).
 
 
 0.6.5
@@ -72,7 +75,6 @@ Bugfixes:
 Translation Updates:
 
   * Updated Hungarian translations (bdanee).
-  * Updated German translations (axelclk).
 
 
 0.6.4

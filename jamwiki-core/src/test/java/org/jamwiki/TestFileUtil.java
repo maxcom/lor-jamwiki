@@ -78,7 +78,7 @@ public class TestFileUtil {
 	public static String retrieveFileContent(File file) throws IOException, FileNotFoundException {
 		FileReader reader = null;
 		try {
-			if (file == null) {
+			if (file == null || !file.exists()) {
 				return null;
 			}
 			reader = new FileReader(file);

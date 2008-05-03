@@ -259,7 +259,7 @@ public class LinkUtil {
 		} else {
 			target = "";
 		}
-		String html = "<a title=\"" + StringEscapeUtils.escapeHtml(text) + "\" href=\"" + url + "\"" + style + target + ">";
+		String html = "<a href=\"" + url + "\"" + style + " title=\"" + StringEscapeUtils.escapeHtml(topic) + "\"" + target + ">";
 		if (escapeHtml) {
 			html += StringEscapeUtils.escapeHtml(text);
 		} else {
