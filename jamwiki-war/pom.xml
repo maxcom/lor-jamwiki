@@ -9,11 +9,9 @@
 		<artifactId>jamwiki</artifactId>
 		<version>0.6.6-SNAPSHOT</version>
 	</parent>
-	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-war</artifactId>
 	<packaging>war</packaging>
 	<name>JAMWiki WAR</name>
-	<version>${jamwiki.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>org.jamwiki</groupId>
@@ -22,6 +20,11 @@
 		<dependency>
 			<groupId>org.jamwiki</groupId>
 			<artifactId>jamwiki-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jamwiki</groupId>
+			<artifactId>bliki-parser</artifactId>
+			<version>${jamwiki.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -18,6 +18,7 @@
 		<module>javadiff</module>
 		<module>jamwiki-core</module>
 		<module>jamwiki-web</module>
+		<module>addons</module>
 		<module>jamwiki-war</module>
 	</modules>
 	<scm>
@@ -57,6 +58,11 @@
 	</repositories>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.jamwiki</groupId>
+				<artifactId>addons</artifactId>
+				<version>${jamwiki.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.jamwiki</groupId>
 				<artifactId>jamwiki-core</artifactId>

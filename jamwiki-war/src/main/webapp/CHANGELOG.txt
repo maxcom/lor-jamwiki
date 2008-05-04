@@ -19,7 +19,7 @@ New Features:
   * Support added to allow use of HTML list tags ("ol", "dl", "dt", "li", and
     "ul").
   * Support added for plural wiki links of the form [[Topic]]s.  Suggested by
-    axelck.
+    axelclk.
   * Sub-headings in the table of contents should be of the form "1.1.1" to
     match Mediawiki.  Reported by Sil68.
   * Upgrade to Spring Framework 2.5.3.

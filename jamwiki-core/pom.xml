@@ -9,11 +9,9 @@
 		<artifactId>jamwiki</artifactId>
 		<version>0.6.6-SNAPSHOT</version>
 	</parent>
-	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-core</artifactId>
 	<packaging>jar</packaging>
 	<name>JAMWiki Core</name>
-	<version>${jamwiki.version}</version>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>jflex</id>
@@ -56,15 +54,6 @@
 			<groupId>org.acegisecurity</groupId>
 			<artifactId>acegi-security</artifactId>
 		</dependency>
-		<!--
-		This package is in /repository
-		-->
-		<dependency>
-			<groupId>bliki</groupId>
-			<artifactId>bliki</artifactId>
-			<version>3.0-SNAPSHOT</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.incava</groupId>
 			<artifactId>javadiff</artifactId>
@@ -110,9 +99,9 @@
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<plugin>
-		        	<groupId>org.apache.maven.plugins</groupId>
-			        <artifactId>maven-site-plugin</artifactId>
-		      </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 	<reporting>

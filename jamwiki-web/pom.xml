@@ -9,11 +9,9 @@
 		<artifactId>jamwiki</artifactId>
 		<version>0.6.6-SNAPSHOT</version>
 	</parent>
-	<groupId>org.jamwiki</groupId>
 	<artifactId>jamwiki-web</artifactId>
 	<packaging>jar</packaging>
 	<name>JAMWiki Web</name>
-	<version>${jamwiki.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
