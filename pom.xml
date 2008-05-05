@@ -10,7 +10,7 @@
 	<version>0.6.6-SNAPSHOT</version>
 	<name>Jamwiki Super POM</name>
 	<description>
-		JAMWiki is a Java-based Wiki engine, which offers many of the
+		JAMWiki is a Java-based Wiki engine which offers many of the
 		features of MediaWiki.
 	</description>
 	<url>http://www.jamwiki.org</url>
@@ -58,11 +58,6 @@
 	</repositories>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.jamwiki</groupId>
-				<artifactId>addons</artifactId>
-				<version>${jamwiki.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.jamwiki</groupId>
 				<artifactId>jamwiki-core</artifactId>
