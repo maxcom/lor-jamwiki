@@ -44,6 +44,11 @@
 	</properties>
 	<repositories>
 		<repository>
+			<id>java.net</id>
+			<url>http://download.java.net/maven/1</url>
+			<layout>legacy</layout>
+		</repository>
+		<repository>
 			<id>org.jamwiki</id>
 			<name>Maven Repository for Jamwiki</name>
 			<layout>default</layout>
@@ -135,7 +140,7 @@
 			<dependency>
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
-				<version>1.4</version>
+				<version>1.4.1</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
