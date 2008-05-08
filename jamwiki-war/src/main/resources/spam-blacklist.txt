@@ -1,4 +1,4 @@
-\<a\ href\=
+\<a[ ]+h[a]?ref\=
 \[url\=
 (adipex|albuterol|alprazolam|ativan|carisoprodol|celexa|cialis|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)[ \._\-](drug|online)
 (asian|black|ebony|latina|lesbian|mature|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
@@ -7,23 +7,27 @@
 ([\[]?http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[\]]?[ \n\t]+){10,}
 [0-9]{5,}\.com
 \.bj\.cn
+1\-hyip\.com
 2008healthinsurance\.com
 247ihost\.com
 4gem\.info
 adware[ -_\.]freeware
-airline\-cheap\-tickets
 airline\-tickets\-cheap
 amatorial[ -_\.]sex
 banklife\.ru
+cheap[\-\.]+tickets
 diplom21\.ru 
 display\:none
 flingdesire\.com
+freepages\.at
 freewebtown\.com
+free\-site\-host
 futaji\.com
 insgc\.hocom\.by
 israwell\.com
 lavandos\.org
 lenaperova\.ucoz\.ru
+louis[\-_\.]?vuitton
 mega\-life\-health\.cn
 naked[ -_\.]teen
 news_[0-9]+\.htm
