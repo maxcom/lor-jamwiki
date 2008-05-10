@@ -15,13 +15,39 @@ public class BlikiParser extends JFlexParser {
 	}
 
 	/**
-	 * Returns a HTML representation of the given wiki raw text for online representation.
-	 *
-	 * @param parserOutput A ParserOutput object containing parser
-	 *  metadata output.
-	 * @param raw The raw Wiki syntax to be converted into HTML.
+	 * Perform a bare minimum of parsing as required prior to saving a topic to
+	 * the database. In general this method will simply parse signature tags are
+	 * return.
+	 * 
+	 * @param raw
+	 *          The raw Wiki syntax to be converted into HTML.
 	 * @return The parsed content.
-	 * @throws Exception Thrown if any error occurs during parsing.
+	 * @throws Exception
+	 *           Thrown if any error occurs during parsing.
+	 */
+	public String parseMinimal(String raw) throws Exception {
+		long start = System.currentTimeMillis();
+		String output = raw;
+		ParserOutput parserOutput = new ParserOutput();
+		JAMWikiModel wikiModel = new JAMWikiModel(parserInput, parserOutput, "");
+		output = wikiModel.parseTemplates(raw, true);
+		output = output == null ? "" : output;
+		String topicName = (!StringUtils.isBlank(this.parserInput.getTopicName())) ? this.parserInput.getTopicName() : null;
+		logger.info("Parse time (parseMinimal) for " + topicName + " (" + ((System.currentTimeMillis() - start) / 1000.000) + " s.)");
+		return output;
+	}
+
+	/**
+	 * Returns a HTML representation of the given wiki raw text for online
+	 * representation.
+	 * 
+	 * @param parserOutput
+	 *          A ParserOutput object containing parser metadata output.
+	 * @param raw
+	 *          The raw Wiki syntax to be converted into HTML.
+	 * @return The parsed content.
+	 * @throws Exception
+	 *           Thrown if any error occurs during parsing.
 	 */
 	public String parseHTML(ParserOutput parserOutput, String raw) throws Exception {
 		long start = System.currentTimeMillis();
@@ -37,10 +63,9 @@ public class BlikiParser extends JFlexParser {
 			}
 			// context never ends with a "/" per servlet specification
 			baseURL += "/";
-			// get the virtual wiki, which should have been set by the parent servlet
 			baseURL += Utilities.encodeForURL(parserInput.getVirtualWiki());
 			baseURL += "/";
-			JAMWikiModel wikiModel = new JAMWikiModel(parserInput, parserOutput, baseURL + "${image}", baseURL + "${title}");
+			JAMWikiModel wikiModel = new JAMWikiModel(parserInput, parserOutput, baseURL);
 			output = wikiModel.render(new JAMHTMLConverter(parserInput), raw);
 			output = output == null ? "" : output;
 		}

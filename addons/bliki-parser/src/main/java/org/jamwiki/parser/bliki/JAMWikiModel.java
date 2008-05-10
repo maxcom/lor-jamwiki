@@ -1,10 +1,13 @@
 package org.jamwiki.parser.bliki;
 
-import info.bliki.wiki.addon.model.AddonConfiguration;
-import info.bliki.wiki.filter.Encoder;
+import info.bliki.wiki.filter.TemplateParser;
+import info.bliki.wiki.filter.WikipediaParser;
 import info.bliki.wiki.model.AbstractWikiModel;
+import info.bliki.wiki.model.Configuration;
 import info.bliki.wiki.model.ImageFormat;
+import info.bliki.wiki.tags.util.TagStack;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,14 +15,15 @@ import org.htmlcleaner.ContentToken;
 import org.htmlcleaner.TagNode;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
-import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.jflex.WikiHeadingTag;
+import org.jamwiki.parser.jflex.WikiSignatureTag;
+import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
-import org.springframework.util.StringUtils;
 
 /**
  * An IWikiModel model implementation for JAMWiki
@@ -28,42 +32,99 @@ import org.springframework.util.StringUtils;
 public class JAMWikiModel extends AbstractWikiModel {
 	private static WikiLogger logger = WikiLogger.getLogger(WikiHeadingTag.class.getName());
 
-	protected String fExternalImageBaseURL;
-
-	protected String fExternalWikiBaseURL;
+	protected String fBaseURL;
 
 	protected ParserInput fParserInput;
 
-	protected ParserOutput fDocument; 
- 
-	static { 
+	protected ParserOutput fDocument;
+
+	static {
+
 		TagNode.addAllowedAttribute("style");
 	}
 
-	public JAMWikiModel(ParserInput parserInput, ParserOutput document, String imageBaseURL, String linkBaseURL) {
-		super(AddonConfiguration.DEFAULT_CONFIGURATION);
+	public JAMWikiModel(ParserInput parserInput, ParserOutput document, String baseURL) {
+		super(Configuration.DEFAULT_CONFIGURATION);
 
 		fParserInput = parserInput;
 		fDocument = document;
-		fExternalImageBaseURL = imageBaseURL;
-		fExternalWikiBaseURL = linkBaseURL;
+		fBaseURL = baseURL;
 	}
 
 	public void parseInternalImageLink(String imageNamespace, String name) {
-		if (fExternalImageBaseURL != null) {
-			// see JAMHTMLConverter#imageNodeToText() for the real conversion routine!!!
-			ImageFormat imageFormat = ImageFormat.getImageFormat(name, imageNamespace);
+		// see JAMHTMLConverter#imageNodeToText() for the real HTML conversion
+		// routine!!!
+		ImageFormat imageFormat = ImageFormat.getImageFormat(name, imageNamespace);
 
-			appendInternalImageLink(fExternalWikiBaseURL, fExternalImageBaseURL, imageFormat);
+		int pxSize = imageFormat.getSize();
+		String caption = imageFormat.getCaption();
+		TagNode divTagNode = new TagNode("div");
+		divTagNode.addAttribute("id", "image", false);
+		// divTagNode.addAttribute("href", hrefImageLink, false);
+		// divTagNode.addAttribute("src", srcImageLink, false);
+		divTagNode.addObjectAttribute("wikiobject", imageFormat);
+		if (pxSize != -1) {
+			divTagNode.addAttribute("style", "width:" + pxSize + "px", false);
 		}
+		pushNode(divTagNode);
+
+		if (caption != null && caption.length() > 0) {
+
+			TagNode captionTagNode = new TagNode("div");
+			String clazzValue = "caption";
+			String type = imageFormat.getType();
+			if (type != null) {
+				clazzValue = type + clazzValue;
+			}
+			captionTagNode.addAttribute("class", clazzValue, false);
+
+			TagStack localStack = WikipediaParser.parseRecursive(caption, this, true, true);
+			captionTagNode.addChildren(localStack.getNodeList());
+			String altAttribute = captionTagNode.getBodyString();
+			imageFormat.setAlt(altAttribute);
+			pushNode(captionTagNode);
+			// WikipediaParser.parseRecursive(caption, this);
+			popNode();
+		}
+
+		popNode(); // div
 
 	}
 
-	public void appendInternalLink(String link, String hashSection, String linkText) {
-		String hrefLink = fExternalWikiBaseURL;
-		String encodedtopic = Encoder.encodeTitleUrl(link);
-		hrefLink = StringUtils.replace(hrefLink, "${title}", encodedtopic);
-		super.appendInternalLink(hrefLink, hashSection, linkText);
+	public void appendSignature(Appendable writer, int numberOfTildes) throws IOException {
+		WikiSignatureTag parserTag;
+		switch (numberOfTildes) {
+		case 3:
+			parserTag = new WikiSignatureTag();
+			writer.append(parserTag.parse(fParserInput, fDocument, 3, "~~~"));
+			break;
+		case 4:
+			parserTag = new WikiSignatureTag();
+			writer.append(parserTag.parse(fParserInput, fDocument, 3, "~~~~"));
+			break;
+		case 5:
+			parserTag = new WikiSignatureTag();
+			writer.append(parserTag.parse(fParserInput, fDocument, 3, "~~~~~"));
+			break;
+		}
+	}
+
+	public void appendInternalLink(String topic, String hashSection, String linkText, String cssStyle) {
+		String encodedtopic = Utilities.encodeForFilename(topic);
+		String topicURL = fBaseURL + encodedtopic;
+		String style = null;
+		try {
+			if (InterWikiHandler.isInterWiki(fParserInput.getVirtualWiki())) {
+				style = "interwiki";
+			} else if (!LinkUtil.isExistingArticle(fParserInput.getVirtualWiki(), topic)) {
+				style = "edit";
+				topicURL = fBaseURL + "Special:Edit?topic=" + encodedtopic;
+			}
+		} catch (Exception e) {
+
+		}
+
+		super.appendInternalLink(topicURL, hashSection, linkText, style);
 	}
 
 	public void addCategory(String categoryName, String sortKey) {
@@ -163,4 +224,22 @@ public class JAMWikiModel extends AbstractWikiModel {
 	public boolean isMathtranRenderer() {
 		return true;
 	}
+
+	public String parseTemplates(String rawWikiText, boolean parseOnlySignature) {
+		if (rawWikiText == null) {
+			return "";
+		}
+		if (!parseOnlySignature) {
+			initialize();
+		}
+		StringBuilder buf = new StringBuilder(rawWikiText.length() + rawWikiText.length() / 10);
+		try {
+			TemplateParser.parse(rawWikiText, this, buf, parseOnlySignature);
+		} catch (Exception ioe) {
+			ioe.printStackTrace();
+			buf.append("<span class=\"error\">TemplateParser exception: " + ioe.getClass().getSimpleName() + "</span>");
+		}
+		return buf.toString();
+	}
+
 }
