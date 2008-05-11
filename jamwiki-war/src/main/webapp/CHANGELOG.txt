@@ -23,6 +23,7 @@ New Features:
   * Sub-headings in the table of contents should be of the form "1.1.1" to
     match Mediawiki.  Reported by Sil68.
   * Upgrade to Spring Framework 2.5.3.
+  * Upgrade to Lucene Search 2.3.2.
   * Upgrade to commons-lang 2.4.
 
 Bugfixes:
