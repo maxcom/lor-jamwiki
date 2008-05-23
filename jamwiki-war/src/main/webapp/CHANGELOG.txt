@@ -22,7 +22,10 @@ New Features:
     axelclk.
   * Sub-headings in the table of contents should be of the form "1.1.1" to
     match Mediawiki.  Reported by Sil68.
-  * Upgrade to Spring Framework 2.5.3.
+  * Updated spam filter patterns.
+  * Upgrade to the Bliki 3.0 parser (axelclk).
+  * Upgrade to Spring Framework 2.5.4.
+  * Upgrade to Spring Security 1.0.7.
   * Upgrade to Lucene Search 2.3.2.
   * Upgrade to commons-lang 2.4.
 
