@@ -142,7 +142,7 @@ public abstract class JFlexLexer {
 	 */
 	protected JFlexTagItem popTag(String tagType) {
 		if (this.tagStack.size() <= 1) {
-			throw new IllegalStateException("popTag called on an empty tag stack or on the root stack element");
+			logger.warning("popTag called on an empty tag stack or on the root stack element.  Please report this error on jamwiki.org, and provide the wiki syntax for the topic being parsed.");
 		}
 		// verify that the tag being closed is the tag that is currently open.  if not
 		// there are two options - first is that the user entered unbalanced HTML such
@@ -175,7 +175,11 @@ public abstract class JFlexLexer {
 			currentTag.getTagContent().append("&lt;/" + tagType + "&gt;");
 			return null;
 		}
-		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.pop();
+		JFlexTagItem currentTag = (JFlexTagItem)this.tagStack.peek();
+		if (this.tagStack.size() > 1) {
+			// only pop if not the root tag
+			currentTag = (JFlexTagItem)this.tagStack.pop();
+		}
 		JFlexTagItem previousTag = (JFlexTagItem)this.tagStack.peek();
 		if (!JFlexParserUtil.isInlineTag(currentTag.getTagType()) || currentTag.getTagType().equals("pre")) {
 			// if the current tag is not an inline tag, make sure it is on its own lines
