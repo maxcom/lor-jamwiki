@@ -29,7 +29,6 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter;
 import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
@@ -141,7 +140,7 @@ public class SetupServlet extends JAMWikiServlet {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUserAuth object to setupAdminUser");
 		}
 		WikiBase.reset(request.getLocale(), user);
-		JAMWikiAnonymousProcessingFilter.reset();
+		WikiUserAuth.resetAnonymousGroupRoles();
 		WikiUserAuth.resetDefaultGroupRoles();
 		Environment.saveProperties();
 		// the setup process does not add new topics to the index (currently)

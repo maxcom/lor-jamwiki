@@ -24,11 +24,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import org.acegisecurity.providers.anonymous.AnonymousProcessingFilter;
 import org.acegisecurity.userdetails.memory.UserAttribute;
-import org.jamwiki.WikiBase;
-import org.jamwiki.model.Role;
-import org.jamwiki.model.WikiGroup;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 
 /**
  * This class allows anonymous users to be provided default roles from the
@@ -38,67 +34,23 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAnonymousProcessingFilter.class.getName());
-	/** Default roles for anonymous users */
-	private static Role[] groupRoles = null;
-
-	/**
-	 * Set default roles for anonymous users.
-	 */
-	public void afterPropertiesSet() throws Exception {
-		super.afterPropertiesSet();
-		this.initRoles();
-	}
 
 	/**
 	 * Override the parent method to ensure that default roles for anonymous
 	 * users have been retrieved.
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if (groupRoles == null) {
-			// during setup and upgrade roles would not have been initialized, so
-			// initialize now.
-			this.initRoles();
+		WikiUserAuth user = WikiUserAuth.initAnonymousWikiUserAuth();
+		UserAttribute userAttribute = this.getUserAttribute();
+		if (userAttribute == null) {
+			logger.warning("No user attribute available in JAMWikiAnonymousProcessingFilter.  Please verify the Acegi configuration settings.");
+		} else {
+			ArrayList userAuthorities = new ArrayList();
+			for (int i = 0; i < user.getAuthorities().length; i++) {
+				userAuthorities.add(user.getAuthorities()[i]);
+			}
+			userAttribute.setAuthorities(userAuthorities);
 		}
 		super.doFilter(request, response, chain);
-	}
-
-	/**
-	 * Retrieve the default roles for anonymous users.
-	 */
-	private void initRoles() {
-		try {
-			if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
-				// wiki is not yet setup
-				return;
-			}
-		} catch (Exception e) {
-			logger.info("Failure while determining first use / upgrade status of the wiki", e);
-		}
-		UserAttribute user = this.getUserAttribute();
-		if (user == null) {
-			logger.warning("No user attribute available in JAMWikiAnonymousProcessingFilter.  Please verify the Acegi configuration settings.");
-		}
-		groupRoles = new Role[0];
-		try {
-			groupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
-		} catch (Exception e) {
-			// FIXME - without default roles bad things happen, so should this throw the
-			// error to the calling method?
-			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
-		}
-		ArrayList anonymousRoles = new ArrayList();
-		anonymousRoles.add(Role.ROLE_ANONYMOUS);
-		for (int i = 0; i < groupRoles.length; i++) {
-			anonymousRoles.add(groupRoles[i]);
-		}
-		user.setAuthorities(anonymousRoles);
-	}
-
-	/**
-	 * Force a reset of the default role object.  This method should be called
-	 * if the roles allowed to anonymous users are changed.
-	 */
-	public static void reset() {
-		JAMWikiAnonymousProcessingFilter.groupRoles = null;
 	}
 }

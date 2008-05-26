@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN/EN" "http://www.springframework.org/dtd/spring-beans.dtd" >
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN/EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <!-- Default security configuration.
    - User accounts and roles are handled by JAMWiki
@@ -11,47 +11,33 @@
 
 	<bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
 		<property name="filterInvocationDefinitionSource">
-			<value>
+			<value><![CDATA[
 				PATTERN_TYPE_APACHE_ANT
-				/**=httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,exceptionMessageFilter,filterInvocationInterceptor
-			</value>
+				/**=httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,exceptionMessageFilter,filterInvocationInterceptor
+			]]></value>
 		</property>
 	</bean>
-
 
 	<!-- ======================== HTTP Session integration ======================== -->
 
-	<bean id="httpSessionContextIntegrationFilter"
-		class="org.acegisecurity.context.HttpSessionContextIntegrationFilter">
-		<property name="context">
-			<value>org.acegisecurity.context.SecurityContextImpl</value>
-		</property>
-	</bean>
+	<bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter" />
 
 	<!-- ======================== Authentication ======================== -->
 
 	<!-- +++++++++ Filter to process authentication +++++++++ -->
 
 	<bean id="authenticationProcessingFilter" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilter">
-		<property name="authenticationManager">
-			<ref bean="authenticationManager" />
-		</property>
-		<property name="authenticationFailureUrl">
-			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
-			<value>/Special:Login?message=error.login</value>
-		</property>
-		<property name="defaultTargetUrl">
-			<!-- special hard-coded constant indicating default for virtual wiki -->
-			<value>/DEFAULT_VIRTUAL_WIKI</value>
-		</property>
-		<property name="filterProcessesUrl">
-			<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
-			<value>/j_acegi_security_check</value>
-		</property>
-		<property name="rememberMeServices">
-			<ref local="rememberMeServices" />
-		</property>
+		<property name="authenticationManager" ref="authenticationManager" />
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+		<property name="authenticationFailureUrl" value="/Special:Login?message=error.login" />
+		<!-- special hard-coded constant indicating default for virtual wiki -->
+		<property name="defaultTargetUrl" value="/DEFAULT_VIRTUAL_WIKI" />
+		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
+		<property name="filterProcessesUrl" value="/j_acegi_security_check" />
+		<property name="rememberMeServices" ref="rememberMeServices" />
 	</bean>
+
+	<bean id="securityContextHolderAwareRequestFilter" class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
 
 	<bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
 		<property name="providers">
@@ -69,28 +55,20 @@
 	<!-- +++++++++ Authenticate from JAMWiki database +++++++++ -->
 
 	<bean id="daoAuthenticationProvider" class="org.jamwiki.authentication.JAMWikiDaoAuthenticationProvider">
-		<property name="userDetailsService">
-			<ref local="jamWikiAuthenticationDao" />
-		</property>
-		<property name="userCache">
-			<ref local="userCache" />
-		</property>
+		<property name="userDetailsService" ref="jamWikiAuthenticationDao" />
+		<property name="userCache" ref="userCache" />
 	</bean>
 
-	<bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl"></bean>
+	<bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
 
 	<!-- +++++++++ User cache +++++++++ -->
 
 	<bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
-		<property name="cache">
-			<ref local="userCacheBackend" />
-		</property>
+		<property name="cache" ref="userCacheBackend" />
 	</bean>
 
 	<bean id="userCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<property name="cacheManager">
-			<ref local="cacheManager" />
-		</property>
+		<property name="cacheManager" ref="cacheManager" />
 		<property name="cacheName" value="userCache" />
 	</bean>
 
@@ -111,23 +89,16 @@
 	<!-- +++++++++ RememberMe service +++++++++ -->
 
 	<bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter">
-		<property name="authenticationManager">
-			<ref local="authenticationManager" />
-		</property>
-		<property name="rememberMeServices">
-			<ref local="rememberMeServices" />
-		</property>
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="rememberMeServices" ref="rememberMeServices" />
 	</bean>
 
 	<bean id="rememberMeServices" class="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices">
-		<property name="userDetailsService">
-			<ref local="jamWikiAuthenticationDao" />
-		</property>
+		<property name="userDetailsService" ref="jamWikiAuthenticationDao" />
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
-	<bean id="rememberMeAuthenticationProvider"
-		class="org.acegisecurity.providers.rememberme.RememberMeAuthenticationProvider">
+	<bean id="rememberMeAuthenticationProvider" class="org.acegisecurity.providers.rememberme.RememberMeAuthenticationProvider">
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
@@ -151,9 +122,7 @@
 	<bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter" />
 
 	<bean id="accessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
-		<property name="allowIfAllAbstainDecisions">
-			<value>false</value>
-		</property>
+		<property name="allowIfAllAbstainDecisions" value="false" />
 		<property name="decisionVoters">
 			<list>
 				<ref local="roleVoter" />
@@ -166,7 +135,7 @@
 	<!-- specify default error messages when access is denied to a specific URL -->
 	<bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
 		<property name="urlPatterns">
-			<value>
+			<value><![CDATA[
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=login.message.admin
 				/**/Special:Edit=login.message.edit
@@ -176,23 +145,19 @@
 				/**/Special:Roles=login.message.admin
 				/**/Special:Translation=login.message.admin
 				/**/*=login.message.default
-			</value>
+			]]></value>
 		</property>
 	</bean>
 
 	<!-- add exception message to the request -->
 	<bean id="exceptionMessageFilter" class="org.jamwiki.authentication.JAMWikiExceptionMessageFilter">
-		<property name="errorMessageProvider">
-			<ref bean="errorMessageProvider" />
-		</property>
+		<property name="errorMessageProvider" ref="errorMessageProvider" />
 	</bean>
 
 	<!-- +++++++++ Enforce Security based on URLs  +++++++++ -->
 
 	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
-		<property name="authenticationEntryPoint">
-			<ref bean="authenticationEntryPoint" />
-		</property>
+		<property name="authenticationEntryPoint" ref="authenticationEntryPoint" />
 		<property name="accessDeniedHandler">
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
 				<!-- do not include virtual wiki in the url, JAMWikiAccessDeniedHandler adds it -->
@@ -210,14 +175,10 @@
 	</bean>
 	
 	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
-		<property name="authenticationManager">
-			<ref local="authenticationManager" />
-		</property>
-		<property name="accessDecisionManager">
-			<ref local="accessDecisionManager" />
-		</property>
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="accessDecisionManager" ref="accessDecisionManager" />
 		<property name="objectDefinitionSource">
-			<value>
+			<value><![CDATA[
 				PATTERN_TYPE_APACHE_ANT
 				/**/Special:Admin=ROLE_SYSADMIN
 				/**/Special:Edit=ROLE_EDIT_EXISTING,ROLE_EDIT_NEW
@@ -236,7 +197,7 @@
 				/images/**=ROLE_ANONYMOUS,ROLE_USER
 				/upload/**=ROLE_ANONYMOUS,ROLE_USER
 				/**=ROLE_VIEW
-			</value>
+			]]></value>
 		</property>
 	</bean>
 

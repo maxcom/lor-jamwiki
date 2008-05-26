@@ -38,6 +38,8 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserAuth.class.getName());
 	private static final long serialVersionUID = -2818435399240684581L;
+	/** Default roles for anonymous users */
+	private static Role[] anonymousGroupRoles = null;
 	/** Default roles for logged-in users */
 	private static Role[] defaultGroupRoles = null;
 	/**
@@ -204,6 +206,28 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	/**
 	 *
 	 */
+	private void addAnonymousGroupRoles() {
+		if (WikiUserAuth.anonymousGroupRoles == null) {
+			try {
+				Role[] tempRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
+				WikiUserAuth.anonymousGroupRoles = new Role[tempRoles.length + 1];
+				WikiUserAuth.anonymousGroupRoles[0] = Role.ROLE_ANONYMOUS;
+				for (int i = 0; i < tempRoles.length; i++) {
+					WikiUserAuth.anonymousGroupRoles[i + 1] = tempRoles[i];
+				}
+			} catch (Exception e) {
+				// FIXME - without default roles bad things happen, so should this throw the
+				// error to the calling method?
+				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
+				return;
+			}
+		}
+		this.setAuthorities(WikiUserAuth.anonymousGroupRoles);
+	}
+
+	/**
+	 *
+	 */
 	private void addDefaultGroupRoles() {
 		if (WikiUserAuth.defaultGroupRoles == null) {
 			try {
@@ -255,6 +279,16 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	}
 
 	/**
+	 * This method is a (hopefully) temporary workaround for an annoying issue where a user
+	 * can be auto-logged in without a user name.
+	 */
+	public static WikiUserAuth initAnonymousWikiUserAuth() {
+		WikiUserAuth user = new WikiUserAuth();
+		user.addAnonymousGroupRoles();
+		return user;
+	}
+
+	/**
 	 * Utility method for converting an Acegi <code>Authentication</code>
 	 * object into a <code>WikiUserAuth</code>.  If the user is logged-in then the
 	 * <code>Authentication</code> object will have the <code>WikiUserAuth</code>
@@ -283,6 +317,14 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 		WikiUserAuth user = new WikiUserAuth();
 		user.setAuthorities(auth.getAuthorities());
 		return user;
+	}
+
+	/**
+	 * Force a reset of the default role object.  This method should be called
+	 * if the roles allowed to anonymous users are changed.
+	 */
+	public static void resetAnonymousGroupRoles() {
+		WikiUserAuth.anonymousGroupRoles = null;
 	}
 
 	/**
