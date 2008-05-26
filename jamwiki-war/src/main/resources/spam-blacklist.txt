@@ -1,7 +1,7 @@
 \<a[ ]+h[a]?ref\=
 \[url\=
 (adipex|albuterol|allegra|alprazolam|ativan|carisoprodol|celexa|cialis|claritin|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)[ \._\-](drug|generic|online)
-(asian|black|ebony|latina|lesbian|mature|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
+(asian|black|ebony|latina|lesbian|mature|porno|teen)[ \._\-](anal|ass|bdsm|blowjob|cock|cunt|fuck|lesbian|orgy|porn|pussy|sex|tit|video|xxx)
 (best|free|super)[ \._\-]porn
 (buy|cheap|generic|online)[ \._\-](adipex|albuterol|allegra|alprazolam|ativan|carisoprodol|celexa|cialis|claritin|clomid|clonazepam|diazepam|didrex|flexeril|hoodia|hydrocodone|levitra|lipitor|lisinopril|lorazepam|meridia|nexium|norco|paxil|phentermine|propecia|prozac|rivotril|sildenafil|soma|tenuate|tramadol|ultracet|ultram|valium|viagra|vicodin|wellbutrin|xanax|xenical|zanaflex|zoloft|zyban)
 ([\[]?http[s]?\://[^ \n\t\.]+\.[^ \n\t]+[\]]?[ \n\t]+){10,}
