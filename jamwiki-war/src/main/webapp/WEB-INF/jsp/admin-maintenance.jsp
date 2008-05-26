@@ -151,7 +151,7 @@
 
 <fieldset>
 <legend><f:message key="admin.title.spamfilter" /></legend>
-<form action="<jamwiki:link value="Special:Maintenance" />" method="post">
+<form action="<jamwiki:link value="Special:Maintenance" />#spam" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="spam" />">
 	<span class="formcaption"><f:message key="admin.caption.spamfilter" /></span>
 	<span class="formelement"><input type="submit" value="<f:message key="admin.caption.reset" />" /></span>
