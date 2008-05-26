@@ -31,6 +31,7 @@
 </c:forEach>
 <c:if test="${empty results}">
 <div class="message"><f:message key="searchresult.notfound"><f:param value="${searchField}" /></f:message></div>
+<div class="message"><f:message key="topic.notcreated"><f:param value="${searchField}" /><f:param><jamwiki:link value="${searchField}" text="${searchField}" /></f:param></f:message></div>
 </c:if>
 <br /><br /><br />
 <font size="-1"><i><f:message key="search.poweredby" /></i></font>
