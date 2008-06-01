@@ -276,7 +276,10 @@ public class EditServlet extends JAMWikiServlet {
 			logger.warning("The topic " + topicName + " has no content");
 			throw new WikiException(new WikiMessage("edit.exception.nocontent", topicName));
 		}
-		if (lastTopic != null && lastTopic.getTopicContent().equals(contents)) {
+		// strip line feeds
+		contents = StringUtils.remove(contents, '\r');
+		String lastTopicContent = (lastTopic != null) ? StringUtils.remove(lastTopic.getTopicContent(), '\r') : "";
+		if (StringUtils.equals(lastTopicContent, contents)) {
 			// topic hasn't changed. redirect to prevent user from refreshing and re-submitting
 			ServletUtil.redirect(next, virtualWiki, topic.getName());
 			return;
