@@ -21,14 +21,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -46,7 +45,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  */
 public class DatabaseConnection {
 
-    private static final WikiLogger logger = WikiLogger.getLogger(DatabaseConnection.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(DatabaseConnection.class.getName());
 	/** Any queries that take longer than this value (specified in milliseconds) will print a warning to the log. */
 	protected static final int SLOW_QUERY_LIMIT = 250;
 	private static DataSource dataSource = null;
@@ -125,22 +124,22 @@ public class DatabaseConnection {
 	 * except clear the static reference to the DataSource.
 	 */
 	protected static void closeConnectionPool() throws SQLException {
-	    try {
-	    	DataSource testDataSource = dataSource;
-	    	while (testDataSource instanceof DelegatingDataSource) {
-	    		testDataSource = ((DelegatingDataSource) testDataSource).getTargetDataSource();
-	    	}
-	        if (testDataSource instanceof BasicDataSource) {
-	            // required to release any connections e.g. in case of servlet shutdown
-	            ((BasicDataSource) testDataSource).close();
-	        }
-	    } catch (SQLException e) {
-	        logger.severe("Unable to close connection pool", e);
-	        throw e;
+		try {
+			DataSource testDataSource = dataSource;
+			while (testDataSource instanceof DelegatingDataSource) {
+				testDataSource = ((DelegatingDataSource) testDataSource).getTargetDataSource();
+			}
+			if (testDataSource instanceof BasicDataSource) {
+				// required to release any connections e.g. in case of servlet shutdown
+				((BasicDataSource) testDataSource).close();
+			}
+		} catch (SQLException e) {
+			logger.severe("Unable to close connection pool", e);
+			throw e;
 		}
-	    // clear references to prevent them being reused (& allow garbage collection)
-        dataSource = null;
-        transactionManager = null;
+		// clear references to prevent them being reused (& allow garbage collection)
+		dataSource = null;
+		transactionManager = null;
 	}
 
 	/**
@@ -236,39 +235,39 @@ public class DatabaseConnection {
 	 *
 	 */
 	protected static Connection getConnection() throws Exception {
-	    if (dataSource == null) {
-	        // DataSource has not yet been created, obtain it now 
-	        configDataSource();
-	    }
-	    return DataSourceUtils.getConnection(dataSource);
+		if (dataSource == null) {
+			// DataSource has not yet been created, obtain it now
+			configDataSource();
+		}
+		return DataSourceUtils.getConnection(dataSource);
 	}
-	
+
 	/**
 	 * Static method that will configure a DataSource based on the Environment setup.
 	 */
 	private synchronized static void configDataSource() throws Exception {
-	    if (dataSource != null) {
-	        closeConnectionPool();    // DataSource has already been created so remove it
-	    }
+		if (dataSource != null) {
+			closeConnectionPool(); // DataSource has already been created so remove it
+		}
 		String url = Environment.getValue(Environment.PROP_DB_URL);
-		
+
 		DataSource targetDataSource = null;
 		if (url.startsWith("jdbc:")) {
-		    // Use an internal "LocalDataSource" configured from the Environment 
+			// Use an internal "LocalDataSource" configured from the Environment
 			targetDataSource = new LocalDataSource();
 		} else {
-		    // Use a container DataSource obtained via JNDI lookup
-		    // TODO: Should try prefix java:comp/env/ if not already part of the JNDI name?
+			// Use a container DataSource obtained via JNDI lookup
+			// TODO: Should try prefix java:comp/env/ if not already part of the JNDI name?
 			Context ctx = new InitialContext();
 			targetDataSource = (DataSource) ctx.lookup(url);
 		}
 		dataSource = new LazyConnectionDataSourceProxy(targetDataSource);
 		transactionManager = new DataSourceTransactionManager(targetDataSource);
 	}
-	
+
 	/**
 	 * Test whether the database identified by the given parameters can be connected to.
-	 * 
+	 *
 	 * @param driver
 	 * @param url
 	 * @param user
@@ -292,11 +291,11 @@ public class DatabaseConnection {
 			}
 		}
 	}
-		
+
 	/**
 	 * Return a connection to the database with the specified parameters.
 	 * The caller <b>must</b> close this connection when finished!
-	 * 
+	 *
 	 * @param driver
 	 * @param url
 	 * @param user
@@ -307,7 +306,7 @@ public class DatabaseConnection {
 		if (url.startsWith("jdbc:")) {
 			if (!StringUtils.isBlank(driver)) {
 				// ensure that the Driver class has been loaded
-				Class.forName(driver, true, Thread.currentThread().getContextClassLoader());
+				Utilities.forName(driver);
 			}
 			return DriverManager.getConnection(url, user, password);
 		} else {
@@ -318,10 +317,10 @@ public class DatabaseConnection {
 			return testDataSource.getConnection();
 		}
 	}
-	
+
 	/**
 	 * Starts a transaction using the default settings.
-	 * 
+	 *
 	 * @return TransactionStatus representing the status of the Transaction
 	 * @throws Exception
 	 */
@@ -331,18 +330,18 @@ public class DatabaseConnection {
 
 	/**
 	 * Starts a transaction, using the given TransactionDefinition
-	 * 
+	 *
 	 * @param definition TransactionDefinition
 	 * @return TransactionStatus
 	 * @throws Exception
 	 */
 	protected static TransactionStatus startTransaction(TransactionDefinition definition) throws Exception {
-	    if (transactionManager == null || dataSource == null) {
-	        configDataSource();    // this will create both the DataSource and a TransactionManager
-	    }
-	    return transactionManager.getTransaction(definition);
+		if (transactionManager == null || dataSource == null) {
+			configDataSource(); // this will create both the DataSource and a TransactionManager
+		}
+		return transactionManager.getTransaction(definition);
 	}
-		
+
 	/**
 	 * Perform a rollback, handling rollback exceptions properly.
 	 * @param status object representing the transaction
@@ -370,14 +369,13 @@ public class DatabaseConnection {
 	}
 
 	/**
-	 * Commit the current transaction.  
+	 * Commit the current transaction.
 	 * Note if the transaction has been programmatically marked for rollback then
 	 * a rollback will occur instead.
-	 * 
+	 *
 	 * @param status TransactionStatus representing the status of the transaction
 	 */
 	protected static void commit(TransactionStatus status) {
-	    transactionManager.commit(status);
+		transactionManager.commit(status);
 	}
-	
 }

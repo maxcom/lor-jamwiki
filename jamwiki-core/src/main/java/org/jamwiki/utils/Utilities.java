@@ -190,6 +190,27 @@ public class Utilities {
 	}
 
 	/**
+	 * This method is a wrapper for Class.forName that will attempt to load a
+	 * class from both the current thread context class loader and the default
+	 * class loader.
+	 *
+	 * @param className The full class name that is to be initialized with the
+	 *  <code>Class.forName</code> call.
+	 * @throws ClassNotFoundException Thrown if the class cannot be initialized
+	 *  from any class loader.
+	 */
+	public static void forName(String className) throws ClassNotFoundException {
+		try {
+			// first try using the current thread's class loader
+			Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+			return;
+		} catch (ClassNotFoundException e) {
+			logger.info("Unable to load class " + className + " using the thread class loader, now trying the default class loader");
+		}
+		Class.forName(className);
+	}
+
+	/**
 	 * Given a message key and locale return a locale-specific message.
 	 *
 	 * @param key The message key that corresponds to the formatted message
