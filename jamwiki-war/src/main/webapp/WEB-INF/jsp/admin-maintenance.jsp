@@ -210,7 +210,7 @@
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.exportcsv" /></legend>
+<legend><f:message key="admin.title.exportcsv" /> (<f:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#export" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="export" />">
 	<span class="formcaption"><f:message key="admin.caption.exportcsv" /></span>
@@ -234,7 +234,7 @@
 </c:if>
 
 <fieldset>
-<legend><f:message key="admin.title.migratedatabase" /></legend>
+<legend><f:message key="admin.title.migratedatabase" /> (<f:message key="common.caption.experimental" />)</legend>
 <form action="<jamwiki:link value="Special:Maintenance" />#migrate" method="post">
 <div class="formentry <jamwiki:alternate value1="mediumbg" value2="lightbg" attributeName="migrate" />">
 	<div class="formhelp"><f:message key="admin.help.migratedatabase" /></div>
