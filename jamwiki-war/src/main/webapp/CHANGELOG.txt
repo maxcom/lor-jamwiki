@@ -1,6 +1,10 @@
 ﻿0.7.0
 =====
 
+New Features:
+
+  * Remove ability to automatically upgrade from versions prior to 0.5.0.
+
 
 0.6.6
 =====

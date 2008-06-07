@@ -58,6 +58,18 @@ body, input, select {
 <p class="red"><f:message key="${error.key}" /></p>
 </c:if>
 
+<c:if test="${!empty errors}">
+<c:forEach items="${errors}" var="message">
+<p class="red"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message></p>
+</c:forEach>
+</c:if>
+
+<c:if test="${!empty messages}">
+<c:forEach items="${messages}" var="message">
+<p class="green"><c:out value="${message}" /></p>
+</c:forEach>
+</c:if>
+
 <c:if test="${empty message && empty failure}">
 <form name="adminUpgrade" method="post">
 <input type="hidden" name="function" value="upgrade" />
@@ -74,22 +86,6 @@ body, input, select {
 <tr><td colspan="2" align="center"><input type="submit" name="button" value="Submit" /></td></tr>
 </table>
 </form>
-</c:if>
-
-<c:if test="${!empty errors}">
-<br />
-<table>
-<tr><td class="red" colspan="2" align="center"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /><f:param value="${message.params[1]}" /></f:message><br /></c:forEach></td></tr>
-</table>
-</c:if>
-
-<c:if test="${!empty messages}">
-<br />
-<table>
-	<c:forEach items="${messages}" var="message">
-<tr><td><c:out value="${message}" /></td></tr>
-	</c:forEach>
-</table>
 </c:if>
 
 </body>
