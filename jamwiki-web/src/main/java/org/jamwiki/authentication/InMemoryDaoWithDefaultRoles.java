@@ -8,12 +8,12 @@ package org.jamwiki.authentication;
 
 import java.util.Properties;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
-import org.acegisecurity.userdetails.memory.UserMap;
-import org.acegisecurity.userdetails.memory.UserMapEditor;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.userdetails.memory.UserMap;
+import org.springframework.security.userdetails.memory.UserMapEditor;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUserInfo;
 import org.springframework.dao.DataAccessException;
@@ -32,7 +32,7 @@ import org.springframework.dao.DataRetrievalFailureException;
  *
  * @author Rainer Schmitz
  * @since 05.12.2006
- * @see org.acegisecurity.userdetails.memory.InMemoryDaoImpl
+ * @see org.springframework.security.userdetails.memory.InMemoryDaoImpl
  *
  */
 public class InMemoryDaoWithDefaultRoles implements UserDetailsService {
@@ -86,7 +86,7 @@ public class InMemoryDaoWithDefaultRoles implements UserDetailsService {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.acegisecurity.providers.dao.memory.InMemoryDaoImpl#loadUserByUsername(java.lang.String)
+	 * @see org.springframework.security.providers.dao.memory.InMemoryDaoImpl#loadUserByUsername(java.lang.String)
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		WikiUserAuth wikiUserAuth = createWikiUserObject(username);

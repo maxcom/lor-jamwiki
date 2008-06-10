@@ -28,7 +28,7 @@
 	<!-- ======================== FILTER CHAIN ======================= -->
 
 	<bean id="filterChainProxy"
-		class="org.acegisecurity.util.FilterChainProxy">
+		class="org.springframework.security.util.FilterChainProxy">
 		<property name="filterInvocationDefinitionSource">
 			<value>
 				PATTERN_TYPE_APACHE_ANT
@@ -40,15 +40,15 @@
 	<!-- ======================== HTTP Session integration ======================== -->
 
 	<bean id="httpSessionContextIntegrationFilter"
-		class="org.acegisecurity.context.HttpSessionContextIntegrationFilter">
+		class="org.springframework.security.context.HttpSessionContextIntegrationFilter">
 		<property name="context">
-			<value>org.acegisecurity.context.SecurityContextImpl</value>
+			<value>org.springframework.security.context.SecurityContextImpl</value>
 		</property>
 	</bean>
 
 	<!-- ========================= CAS Service Provider ========================= -->
 
-	<bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties">
+	<bean id="serviceProperties" class="org.springframework.security.ui.cas.ServiceProperties">
 		<property name="service"><value>${jamwiki.base.url}/j_acegi_cas_security_check</value></property>
 		<property name="sendRenew"><value>false</value></property>
 	</bean>
@@ -81,14 +81,14 @@
 
 	<!-- ======================== CAS Processing Filter ======================== -->
 
-	<bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter">
+	<bean id="casProcessingFilter" class="org.springframework.security.ui.cas.CasProcessingFilter">
 		<property name="authenticationManager"><ref local="authenticationManager"/></property>
 		<property name="authenticationFailureUrl"><value>/casfailed.jsp</value></property>
 		<property name="defaultTargetUrl"><value>/</value></property>
 		<property name="filterProcessesUrl"><value>/j_acegi_cas_security_check</value></property>
 	</bean>
 
-	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
+	<bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint"><ref bean="casProcessingFilterEntryPoint"/></property>
 		<property name="accessDeniedHandler">
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
@@ -98,7 +98,7 @@
 		</property>
 	</bean>
 
-	<bean id="casProcessingFilterEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint">
+	<bean id="casProcessingFilterEntryPoint" class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint">
 		<property name="loginUrl"><value>${cas.base.url}/login</value></property>
 		<property name="serviceProperties"><ref bean="serviceProperties"/></property>
 	</bean>
@@ -106,7 +106,7 @@
 
 	<!-- ======================== AUTHENTICATION ======================= -->
 
-	<bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+	<bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
 		<property name="providers">
 			<list>
 				<ref local="casAuthenticationProvider"/>
@@ -115,7 +115,7 @@
 		</property>
 	</bean>
 
-	<bean id="casAuthenticationProvider" class="org.acegisecurity.providers.cas.CasAuthenticationProvider">
+	<bean id="casAuthenticationProvider" class="org.springframework.security.providers.cas.CasAuthenticationProvider">
 		<property name="casAuthoritiesPopulator"><ref local="casAuthoritiesPopulator"/></property>
 		<property name="casProxyDecider"><ref local="casProxyDecider"/></property>
 		<property name="ticketValidator"><ref local="casProxyTicketValidator"/></property>
@@ -123,7 +123,7 @@
 		<property name="key"><value>k7oihd§()8</value></property>
 	</bean>
 
-	<bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator">
+	<bean id="casProxyTicketValidator" class="org.springframework.security.providers.cas.ticketvalidator.CasProxyTicketValidator">
 		<property name="casValidate"><value>${cas.base.url}/proxyValidate</value></property>
 		<property name="proxyCallbackUrl"><value>${cas.proxy.callback.base.url}/casProxy/receptor</value></property>
 		<property name="serviceProperties"><ref local="serviceProperties"/></property>
@@ -141,21 +141,21 @@
 		</property>
 	</bean>
 
-	<bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.EhCacheBasedTicketCache">
+	<bean id="statelessTicketCache" class="org.springframework.security.providers.cas.cache.EhCacheBasedTicketCache">
 		<property name="cache"><ref local="ticketCacheBackend"/></property>
 	</bean>
 
-	<bean id="casAuthoritiesPopulator" class="org.acegisecurity.providers.cas.populator.DaoCasAuthoritiesPopulator">
+	<bean id="casAuthoritiesPopulator" class="org.springframework.security.providers.cas.populator.DaoCasAuthoritiesPopulator">
 		<property name="userDetailsService"><ref local="memoryAuthenticationDaoWithDefaultRoles"/></property>
 	</bean>
 
 	<bean id="memoryAuthenticationDaoWithDefaultRoles" class="org.jamwiki.authentication.InMemoryDaoWithDefaultRoles">
 		<property name="defaultAuthorities">
 			<list>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="ROLE_USER"/>
 				</bean>
-				<bean class="org.acegisecurity.GrantedAuthorityImpl">
+				<bean class="org.springframework.security.GrantedAuthorityImpl">
 					<constructor-arg value="ROLE_NO_ACCOUNT"/>
 				</bean>
 			</list>
@@ -167,18 +167,18 @@
 		</property>
 	</bean>
 
-	<bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets"/>
+	<bean id="casProxyDecider" class="org.springframework.security.providers.cas.proxy.RejectProxyTickets"/>
 
 	<!-- +++++++++ Anonymous authentication +++++++++ -->
 	<!-- Anonymous users are assigned ROLE_ANONYMOUS to be able to allow exceptions to general access rules -->
 
-	<bean id="anonymousProcessingFilter" class="org.acegisecurity.providers.anonymous.AnonymousProcessingFilter">
+	<bean id="anonymousProcessingFilter" class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
 		<property name="key" value="jam35Wiki" />
 		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
 	</bean>
 
 	<bean id="anonymousAuthenticationProvider"
-		class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
+		class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
@@ -189,7 +189,7 @@
 		<constructor-arg value="${cas.base.url}/logout" />
 		<constructor-arg>
 			<list>
-				<bean class="org.acegisecurity.ui.logout.SecurityContextLogoutHandler" />
+				<bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler" />
 			</list>
 		</constructor-arg>
 		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
@@ -200,10 +200,10 @@
 
 	<!-- +++++++++ Access Decision: is access allowed? +++++++++ -->
 
-	<bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter" />
+	<bean id="roleVoter" class="org.springframework.security.vote.RoleVoter" />
 
 	<bean id="accessDecisionManager"
-		class="org.acegisecurity.vote.AffirmativeBased">
+		class="org.springframework.security.vote.AffirmativeBased">
 		<property name="allowIfAllAbstainDecisions">
 			<value>false</value>
 		</property>
@@ -219,7 +219,7 @@
 
 	<!-- Intercept access to specified URLs and enforce security -->
 	<bean id="filterInvocationInterceptor"
-		class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
+		class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
 		<property name="authenticationManager">
 			<ref local="authenticationManager" />
 		</property>
@@ -248,8 +248,8 @@
 
 	<!-- +++++++++ Logging  +++++++++ -->
 
-	<bean id="authenticationLoggerListener" class="org.acegisecurity.event.authentication.LoggerListener"/>
-	<bean id="authorizationLoggerListener" class="org.acegisecurity.event.authorization.LoggerListener"/>
+	<bean id="authenticationLoggerListener" class="org.springframework.security.event.authentication.LoggerListener"/>
+	<bean id="authorizationLoggerListener" class="org.springframework.security.event.authorization.LoggerListener"/>
 
 
 </beans>

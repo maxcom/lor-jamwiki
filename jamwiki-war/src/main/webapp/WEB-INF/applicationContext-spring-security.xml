@@ -9,7 +9,7 @@
 
 	<!-- ======================== FILTER CHAIN ======================= -->
 
-	<bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
+	<bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
 		<property name="filterInvocationDefinitionSource">
 			<value><![CDATA[
 				PATTERN_TYPE_APACHE_ANT
@@ -20,7 +20,7 @@
 
 	<!-- ======================== HTTP Session integration ======================== -->
 
-	<bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter" />
+	<bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter" />
 
 	<!-- ======================== Authentication ======================== -->
 
@@ -37,9 +37,9 @@
 		<property name="rememberMeServices" ref="rememberMeServices" />
 	</bean>
 
-	<bean id="securityContextHolderAwareRequestFilter" class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
+	<bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter"/>
 
-	<bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+	<bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
 		<property name="providers">
 			<list>
 				<ref local="daoAuthenticationProvider" />
@@ -50,7 +50,7 @@
 	</bean>
 
 	<!-- Automatically receives AuthenticationEvent messages -->
-	<bean id="loggerListener" class="org.acegisecurity.event.authentication.LoggerListener" />
+	<bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" />
 
 	<!-- +++++++++ Authenticate from JAMWiki database +++++++++ -->
 
@@ -63,7 +63,7 @@
 
 	<!-- +++++++++ User cache +++++++++ -->
 
-	<bean id="userCache" class="org.acegisecurity.providers.dao.cache.EhCacheBasedUserCache">
+	<bean id="userCache" class="org.springframework.security.providers.dao.cache.EhCacheBasedUserCache">
 		<property name="cache" ref="userCacheBackend" />
 	</bean>
 
@@ -82,23 +82,23 @@
 		<property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
 	</bean>
 
-	<bean id="anonymousAuthenticationProvider" class="org.acegisecurity.providers.anonymous.AnonymousAuthenticationProvider">
+	<bean id="anonymousAuthenticationProvider" class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
 	<!-- +++++++++ RememberMe service +++++++++ -->
 
-	<bean id="rememberMeProcessingFilter" class="org.acegisecurity.ui.rememberme.RememberMeProcessingFilter">
+	<bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="rememberMeServices" ref="rememberMeServices" />
 	</bean>
 
-	<bean id="rememberMeServices" class="org.acegisecurity.ui.rememberme.TokenBasedRememberMeServices">
+	<bean id="rememberMeServices" class="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices">
 		<property name="userDetailsService" ref="jamWikiAuthenticationDao" />
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
-	<bean id="rememberMeAuthenticationProvider" class="org.acegisecurity.providers.rememberme.RememberMeAuthenticationProvider">
+	<bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
 		<property name="key" value="jam35Wiki" />
 	</bean>
 
@@ -108,7 +108,7 @@
 		<constructor-arg>
 			<list>
 				<ref bean="rememberMeServices" />
-				<bean class="org.acegisecurity.ui.logout.SecurityContextLogoutHandler" />
+				<bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler" />
 			</list>
 		</constructor-arg>
 		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
@@ -119,9 +119,9 @@
 
 	<!-- +++++++++ Access Decision: is access allowed? +++++++++ -->
 
-	<bean id="roleVoter" class="org.acegisecurity.vote.RoleVoter" />
+	<bean id="roleVoter" class="org.springframework.security.vote.RoleVoter" />
 
-	<bean id="accessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
+	<bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
 		<property name="allowIfAllAbstainDecisions" value="false" />
 		<property name="decisionVoters">
 			<list>
@@ -156,7 +156,7 @@
 
 	<!-- +++++++++ Enforce Security based on URLs  +++++++++ -->
 
-	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
+	<bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
 		<property name="authenticationEntryPoint" ref="authenticationEntryPoint" />
 		<property name="accessDeniedHandler">
 			<bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
@@ -174,7 +174,7 @@
 		<property name="forceHttps" value="false" />
 	</bean>
 	
-	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
+	<bean id="filterInvocationInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="accessDecisionManager" ref="accessDecisionManager" />
 		<property name="objectDefinitionSource">

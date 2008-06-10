@@ -16,20 +16,20 @@
  */
 package org.jamwiki.authentication;
 
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.AuthenticationServiceException;
-import org.acegisecurity.BadCredentialsException;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
-import org.acegisecurity.providers.dao.DaoAuthenticationProvider;
-import org.acegisecurity.userdetails.UserDetails;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.AuthenticationServiceException;
+import org.springframework.security.BadCredentialsException;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.providers.dao.DaoAuthenticationProvider;
+import org.springframework.security.userdetails.UserDetails;
 import org.jamwiki.WikiBase;
 
 /**
  * AuthenticationProvider to use with JAMWiki database.
  *
  * Extends DaoAuthenticationProvider to use JAMWiki password authentication.
- * It's not possible to use {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}
- * with a {@link org.acegisecurity.providers.encoding.PasswordEncoder} because
+ * It's not possible to use {@link org.springframework.security.providers.dao.DaoAuthenticationProvider}
+ * with a {@link org.springframework.security.providers.encoding.PasswordEncoder} because
  * JAMWiki stores passwords encoded and not only hashed.
  *
  * @author Rainer Schmitz

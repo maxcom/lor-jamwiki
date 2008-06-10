@@ -41,6 +41,7 @@
 	<properties>
 		<jamwiki.version>0.7.0-SNAPSHOT</jamwiki.version>
 		<dependency.spring.version>2.5.4</dependency.spring.version>
+		<dependency.spring.security.version>2.0.2</dependency.spring.security.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -79,28 +80,14 @@
 				<version>1.0.5</version>
 			</dependency>
 			<dependency>
-				<groupId>org.acegisecurity</groupId>
-				<artifactId>acegi-security</artifactId>
-				<version>1.0.7</version>
-				<!-- FIXME: The Maven dependencies have not been updated for Spring 2.5 -->
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-dao</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-jdbc</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-remoting</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-support</artifactId>
-					</exclusion>
-				</exclusions>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${dependency.spring.security.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-taglibs</artifactId>
+				<version>${dependency.spring.security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-codec</groupId>
@@ -208,11 +195,6 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
-				<version>${dependency.spring.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-support</artifactId>
 				<version>${dependency.spring.version}</version>
 			</dependency>
 			<dependency>

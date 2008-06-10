@@ -19,8 +19,8 @@
 package org.jamwiki.servlets;
 
 import junit.framework.TestCase;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.GrantedAuthority;
 import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.WikiUser;
 

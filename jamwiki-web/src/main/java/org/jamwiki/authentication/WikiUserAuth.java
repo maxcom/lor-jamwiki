@@ -19,10 +19,10 @@ package org.jamwiki.authentication;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationCredentialsNotFoundException;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.userdetails.UserDetails;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
@@ -82,7 +82,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 
 	/**
 	 * Construct the <code>User</code> with the details required by
-	 * {@link org.acegisecurity.providers.dao.DaoAuthenticationProvider}.  This
+	 * {@link org.springframework.security.providers.dao.DaoAuthenticationProvider}.  This
 	 * method should be used by systems that do NOT use the default JAMWiki
 	 * user and group roles.  This method will NOT assign default roles to the
 	 * user, and as a result the Special:Roles functionality will be ignored.

@@ -18,8 +18,8 @@ package org.jamwiki.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.ui.webapp.AuthenticationProcessingFilterEntryPoint;
+import org.springframework.security.AuthenticationException;
+import org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 

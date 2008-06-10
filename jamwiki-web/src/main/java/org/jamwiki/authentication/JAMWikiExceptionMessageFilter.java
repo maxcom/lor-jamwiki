@@ -24,10 +24,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.AcegiSecurityException;
-import org.acegisecurity.AuthenticationException;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.AuthenticationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.SpringSecurityException;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
@@ -69,12 +69,12 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 		}
 		try {
 			chain.doFilter(request, response);
-		} catch (AcegiSecurityException ex) {
+		} catch (SpringSecurityException ex) {
 			handleException(request, ex);
 			throw ex;
 		} catch (ServletException ex) {
-			if (ex.getRootCause() instanceof AcegiSecurityException) {
-				handleException(request, (AcegiSecurityException)ex.getRootCause());
+			if (ex.getRootCause() instanceof SpringSecurityException) {
+				handleException(request, (SpringSecurityException)ex.getRootCause());
 			}
 			throw ex;
 		}
@@ -90,7 +90,7 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 	/**
 	 *
 	 */
-	private void handleException(ServletRequest servletRequest, AcegiSecurityException exception) {
+	private void handleException(ServletRequest servletRequest, SpringSecurityException exception) {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));

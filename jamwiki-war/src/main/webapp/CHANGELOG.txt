@@ -4,6 +4,7 @@
 New Features:
 
   * Remove ability to automatically upgrade from versions prior to 0.5.0.
+  * Upgrade to Spring Security 2.0.2.
 
 
 0.6.6

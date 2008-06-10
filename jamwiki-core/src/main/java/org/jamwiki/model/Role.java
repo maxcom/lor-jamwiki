@@ -16,7 +16,7 @@
  */
 package org.jamwiki.model;
 
-import org.acegisecurity.GrantedAuthorityImpl;
+import org.springframework.security.GrantedAuthorityImpl;
 import org.jamwiki.utils.WikiLogger;
 
 /**

@@ -21,6 +21,10 @@
 			<groupId>org.jamwiki</groupId>
 			<artifactId>jamwiki-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+		</dependency>
 	</dependencies>
 	<!-- FIXME - this code is messy.  there must be a better way to test for JDK 1.5+ -->
 	<profiles>

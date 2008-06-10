@@ -14,7 +14,7 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext-acegi-security.xml</param-value>
+		<param-value>/WEB-INF/applicationContext-spring-security.xml</param-value>
 	</context-param>
 
 	<!-- set encoding, cache headers, etc. -->
@@ -28,10 +28,10 @@
 	</filter>
 	<filter>
 		<filter-name>Acegi Filter Chain Proxy</filter-name>
-		<filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
+		<filter-class>org.springframework.security.util.FilterToBeanProxy</filter-class>
 		<init-param>
 			<param-name>targetClass</param-name>
-			<param-value>org.acegisecurity.util.FilterChainProxy</param-value>
+			<param-value>org.springframework.security.util.FilterChainProxy</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
@@ -85,8 +85,8 @@
 			<taglib-location>/WEB-INF/jamwiki.tld</taglib-location>
 		</taglib>
 		<taglib>
-			<taglib-uri>http://acegisecurity.org/authz</taglib-uri>
-			<taglib-location>/WEB-INF/authz.tld</taglib-location>
+			<taglib-uri>http://www.springframework.org/security/tags</taglib-uri>
+			<taglib-location>/WEB-INF/security.tld</taglib-location>
 		</taglib>
 	</jsp-config>
 

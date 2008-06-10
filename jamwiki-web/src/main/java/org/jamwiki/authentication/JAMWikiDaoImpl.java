@@ -16,9 +16,9 @@
  */
 package org.jamwiki.authentication;
 
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
+import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.jamwiki.WikiBase;
 import org.springframework.dao.DataAccessException;
 
@@ -34,7 +34,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.acegisecurity.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
+	 * @see org.springframework.security.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		UserDetails loadedUser;

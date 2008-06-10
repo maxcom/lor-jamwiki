@@ -23,14 +23,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.acegisecurity.AccessDeniedException;
-import org.acegisecurity.ui.AccessDeniedHandler;
+import org.springframework.security.AccessDeniedException;
+import org.springframework.security.ui.AccessDeniedHandler;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
 /**
  * Handle AccessDeniedExceptions thrown by the Acegi security framework.  This
- * class is based on the org.acegisecurity.ui.AccessDeniedHandler class.
+ * class is based on the org.springframework.security.ui.AccessDeniedHandler class.
  */
 public class JAMWikiAccessDeniedHandler implements AccessDeniedHandler {
 

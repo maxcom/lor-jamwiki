@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import org.acegisecurity.providers.anonymous.AnonymousProcessingFilter;
-import org.acegisecurity.userdetails.memory.UserAttribute;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.providers.anonymous.AnonymousProcessingFilter;
+import org.springframework.security.userdetails.memory.UserAttribute;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -39,7 +39,7 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 	 * Override the parent method to ensure that default roles for anonymous
 	 * users have been retrieved.
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 		WikiUserAuth user = WikiUserAuth.initAnonymousWikiUserAuth();
 		UserAttribute userAttribute = this.getUserAttribute();
 		if (userAttribute == null) {
@@ -51,6 +51,6 @@ public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter 
 			}
 			userAttribute.setAuthorities(userAuthorities);
 		}
-		super.doFilter(request, response, chain);
+		super.doFilterHttp(request, response, chain);
 	}
 }
