@@ -10,8 +10,7 @@
 		<webtest name="check that jamwiki is running">
 			<steps>
 			
-				<invoke url="http://aragon.kelikami.de:8180/jamwiki/de/" 
-					username="mhabbert" password="key-worK-jamwikI" 
+				<invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/"  
 					description="Call jamwiki lokal page"/>
 				<verifyTitle text="StartingPoints - JAMWiki.*" regex="true" />
 			
