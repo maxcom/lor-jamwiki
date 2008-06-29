@@ -33,6 +33,7 @@ JAMWiki Contributors
      Portugese:             Manuel Meixide - bagonix.net (mmeixide)
      Spanish:               Angel Luis Pinazo Perpiñán (AngelPinazo)
                             Manuel Meixide - bagonix.net (mmeixide)
+     Swedish:               Martin (martin)
      Ukranian:              Volodymyr Vlad (gutsul)
   Other Contributors:       AleXey "lexis" Rumyantsev (lexis@mail.ru)
                             Luzius Thöny (luzi)
