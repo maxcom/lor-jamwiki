@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<import file="../definitions.xml" />
+
+	<target name="test">
+
+		<webtest name="check that jamwiki is running">
+			<steps>
+			
+				<invoke url="http://aragon.kelikami.de:8180/jamwiki/de/" 
+					username="mhabbert" password="key-worK-jamwikI" 
+					description="Call jamwiki lokal page"/>
+				<verifyTitle text="StartingPoints - JAMWiki.*" regex="true" />
+			
+				<clickLink label="Aktuelle Todos" />
+				<verifyText description="Verify that text is contained in the page" text="Todos" />
+				<verifyTitle text="Todos - JAMWiki" />
+				<verifyText description="Verify that text is contained in the page" text="Sudoku" />
+
+				<clickLink label="Links zu Arbeitsthemen" />
+				<verifyTitle text="LinksZuArbeitsthemen - JAMWiki" />
+				<verifyText description="Verify that text is contained in the page" text="ContinuousIntegration" />
+
+				<clickLink label="ContinuousIntegration" />
+				<verifyTitle text="ContinuousIntegration - JAMWiki" />
+
+				<clickLink label="StartingPoints" />
+				<setInputField name="text" value="webtest" />
+				<clickButton label="Suche" />
+				<verifyTitle text="Suche nach &#34;webtest&#34; - JAMWiki" />
+				<clickLink label="Webtest" />
+				<clickLink label="ssl with webtests" />
+				<verifyText description="Verify that text is contained in the page" text="ssl with webtests" />
+			</steps>
+		</webtest>
+
+	</target>
+</project>

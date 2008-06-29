@@ -31,6 +31,12 @@
 		<system>Wiki</system>
 		<url>http://jamwiki.org/wiki/en/Bug_Reports</url>
 	</issueManagement>
+        <distributionManagement>
+          <site>
+            <id>test-site</id>
+	    <url>file:/var/www/jamwiki</url>
+          </site>
+        </distributionManagement>
 	<licenses>
 		<license>
 			<name>LGPL</name>

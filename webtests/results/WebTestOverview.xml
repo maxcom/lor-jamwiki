@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overview Implementation-Title="Canoo Webtest" Implementation-Version="R_1710">
+	<folder name="001_CheckThatJamwiki">
+<summary duration='4639' starttime='Sun Jun 29 19:54:20 CEST 2008' name='check that jamwiki.org is Google&apos;s top &apos;jamwiki&apos; result' successful='yes'><topsteps total='5' notexecuted='0' failed='0' successful='5'></topsteps><steps total='5' notexecuted='0' failed='0' successful='5'></steps><timingprofile number='2' average='2291'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="002_SearchSomeJamwik">
+<summary duration='4732' starttime='Sun Jun 29 19:54:25 CEST 2008' name='Search some jamwiki pages using Google restricted to jamwiki.org' successful='yes'><topsteps total='3' notexecuted='0' failed='0' successful='3'></topsteps><steps total='24' notexecuted='0' failed='0' successful='24'></steps><timingprofile number='9' average='502'><range to='1' number='8' from='0'></range><range to='3' number='1' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="003_shouldFailExampl">
+<summary duration='36' starttime='Sun Jun 29 19:54:30 CEST 2008' name='[should fail!] Example of WebTest usage in TDD for a not yet existing website' successful='no'><topsteps total='5' notexecuted='4' failed='1' successful='0'></topsteps><steps total='13' notexecuted='12' failed='1' successful='0'></steps><timingprofile number='1' average='36'><range to='1' number='1' from='0'></range><range to='3' number='0' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile><failingstep description='Go to the conference site' name='invoke'></failingstep></summary>
+</folder>
+<folder name="004_CheckThatJamwiki">
+<summary duration='1651' starttime='Sun Jun 29 19:54:31 CEST 2008' name='check that jamwiki.org is Google&apos;s top &apos;jamwiki&apos; result [test written as Groovy code]' successful='yes'><topsteps total='5' notexecuted='0' failed='0' successful='5'></topsteps><steps total='5' notexecuted='0' failed='0' successful='5'></steps><timingprofile number='2' average='817'><range to='1' number='1' from='0'></range><range to='3' number='1' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="005_SearchSomeJamwik">
+<summary duration='3153' starttime='Sun Jun 29 19:54:33 CEST 2008' name='Search some jamwiki pages using Google restricted to jamwiki.org [test written as Groovy code]' successful='yes'><topsteps total='3' notexecuted='0' failed='0' successful='3'></topsteps><steps total='21' notexecuted='0' failed='0' successful='21'></steps><timingprofile number='9' average='340'><range to='1' number='9' from='0'></range><range to='3' number='0' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="006_shouldFailExampl">
+<summary duration='7' starttime='Sun Jun 29 19:54:37 CEST 2008' name='[should fail!] Example of WebTest usage in TDD for a not yet existing website [test written as Groovy code]' successful='no'><topsteps total='5' notexecuted='4' failed='1' successful='0'></topsteps><steps total='13' notexecuted='12' failed='1' successful='0'></steps><timingprofile number='1' average='7'><range to='1' number='1' from='0'></range><range to='3' number='0' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile><failingstep description='Go to the conference site' name='invoke'></failingstep></summary>
+</folder>
+
+</overview>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <summary successful="no" name="[should fail!] Example of WebTest usage in TDD for a not yet existing website [test written as Groovy code]" duration="7" starttime="Sun Jun 29 19:54:37 CEST 2008">
+<topsteps total="5" successful="0" failed="1" notexecuted="4"/>
+<steps total="13" successful="0" failed="1" notexecuted="12"/>
+<timingprofile average="7" number="1">
+<range from="0" to="1" number="1"/>
+<range from="1" to="3" number="0"/>
+<range from="3" to="5" number="0"/>
+<range from="5" to="10" number="0"/>
+<range from="10" to="30" number="0"/>
+<range from="30" number="0"/>
+</timingprofile>
+<failingstep name="invoke" description="Go to the conference site"/>
+</summary>

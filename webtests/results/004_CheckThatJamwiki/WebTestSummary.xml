@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <summary successful="yes" name="check that jamwiki.org is Google's top 'jamwiki' result [test written as Groovy code]" duration="1651" starttime="Sun Jun 29 19:54:31 CEST 2008">
+<topsteps total="5" successful="5" failed="0" notexecuted="0"/>
+<steps total="5" successful="5" failed="0" notexecuted="0"/>
+<timingprofile average="817" number="2">
+<range from="0" to="1" number="1"/>
+<range from="1" to="3" number="1"/>
+<range from="3" to="5" number="0"/>
+<range from="5" to="10" number="0"/>
+<range from="10" to="30" number="0"/>
+<range from="30" number="0"/>
+</timingprofile>
+</summary>
