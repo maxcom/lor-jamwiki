@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite errors="2" failures="0" name="WebTest" tests="6" time="14.218">
+<testsuite errors="2" failures="0" name="WebTest" tests="6" time="17.65">
 <!--
 			This is an overview of the WebTest results in JUnit "standard" format.
 			It doesn't present all the information available in WebTest reports but can be easily be integrated
 			in reports of continuous integration tools like Cruise Control.
 			-->
-<testcase classname="WebTest" name="check that jamwiki.org is Google's top 'jamwiki' result" time="4.639"/>
-<testcase classname="WebTest" name="Search some jamwiki pages using Google restricted to jamwiki.org" time="4.732"/>
-<testcase classname="WebTest" name="[should fail!] Example of WebTest usage in TDD for a not yet existing website" time="0.036">
+<testcase classname="WebTest" name="check that jamwiki.org is Google's top 'jamwiki' result" time="6.205"/>
+<testcase classname="WebTest" name="Search some jamwiki pages using Google restricted to jamwiki.org" time="5.864"/>
+<testcase classname="WebTest" name="[should fail!] Example of WebTest usage in TDD for a not yet existing website" time="0.067">
 <failure message="Failing step: [should fail!] Example of WebTest usage in TDD for a not yet existing website ()" type="Failed test"/>
 </testcase>
-<testcase classname="WebTest" name="check that jamwiki.org is Google's top 'jamwiki' result [test written as Groovy code]" time="1.651"/>
-<testcase classname="WebTest" name="Search some jamwiki pages using Google restricted to jamwiki.org [test written as Groovy code]" time="3.153"/>
-<testcase classname="WebTest" name="[should fail!] Example of WebTest usage in TDD for a not yet existing website [test written as Groovy code]" time="0.0070">
+<testcase classname="WebTest" name="check that jamwiki.org is Google's top 'jamwiki' result [test written as Groovy code]" time="1.673"/>
+<testcase classname="WebTest" name="Search some jamwiki pages using Google restricted to jamwiki.org [test written as Groovy code]" time="3.831"/>
+<testcase classname="WebTest" name="[should fail!] Example of WebTest usage in TDD for a not yet existing website [test written as Groovy code]" time="0.01">
 <failure message="Failing step: [should fail!] Example of WebTest usage in TDD for a not yet existing website [test written as Groovy code] ()" type="Failed test"/>
 </testcase>
 </testsuite>
