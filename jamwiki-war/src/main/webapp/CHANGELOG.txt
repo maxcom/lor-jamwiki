@@ -8,6 +8,7 @@ New Features:
 
 Translation Updates:
 
+  * Updated Chinese translations (hfl).
   * Updated Swedish translations (martin).
 
 

@@ -308,6 +308,7 @@
 		</developer>
 	</developers>
 	<contributors>
+		<contributor><name>Martin Östmark</name><email>Martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
