@@ -31,12 +31,12 @@
 		<system>Wiki</system>
 		<url>http://jamwiki.org/wiki/en/Bug_Reports</url>
 	</issueManagement>
-        <distributionManagement>
-          <site>
-            <id>test-site</id>
-	    <url>file:/var/www/jamwiki</url>
-          </site>
-        </distributionManagement>
+	<distributionManagement>
+		<site>
+			<id>test-site</id>
+			<url>file:/var/www/jamwiki</url>
+		</site>
+	</distributionManagement>
 	<licenses>
 		<license>
 			<name>LGPL</name>
@@ -46,8 +46,8 @@
 	</licenses>
 	<properties>
 		<jamwiki.version>0.7.0-SNAPSHOT</jamwiki.version>
-		<dependency.spring.version>2.5.4</dependency.spring.version>
-		<dependency.spring.security.version>2.0.2</dependency.spring.security.version>
+		<dependency.spring.version>2.5.5</dependency.spring.version>
+		<dependency.spring.security.version>2.0.3</dependency.spring.security.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -308,7 +308,7 @@
 		</developer>
 	</developers>
 	<contributors>
-		<contributor><name>Martin Östmark</name><email>Martin</email><roles><role>translator (Swedish)</role></roles></contributor>
+		<contributor><name>Martin Östmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Marija Susovic</name><roles><role>translator (Croatian)</role></roles></contributor>
