@@ -7,6 +7,7 @@
 * [[Special:Filelist|All files]]
 * [[Special:Imagelist|All images]]
 * [[Special:Listusers|All users]]
+* [[Special:OrphanedPages|Orphaned pages]]
 * [[Special:RecentChanges|Friss változások]]
 * [[Special:Search|Keresés]]
 * [[Special:Upload|Feltöltés]]

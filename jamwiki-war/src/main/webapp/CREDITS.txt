@@ -11,6 +11,7 @@ JAMWiki Contributors
                             Régis Décamps (RegisDecamps)
                             Michael Greifeneder (mikegr)
                             Dallas Hopewell (dallas)
+                            Hanspeter Klapf (hanspeterklapf)
                             Axel Kramer (axelclk)
                             Robert Matyja (dlpa)
                             Rainer Schmitz (swift)

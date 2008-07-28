@@ -6,6 +6,7 @@
 * [[Special:Imagelist|Liste der Bilder]]
 * [[Special:Allpages|Alle Seiten]]
 * [[Special:Listusers|Alle Benutzer]]
+* [[Special:OrphanedPages|Orphaned pages]]
 * [[Special:RecentChanges|Letzte Änderungen]]
 * [[Special:Search|Suche]]
 * [[Special:Upload|Hochladen]]

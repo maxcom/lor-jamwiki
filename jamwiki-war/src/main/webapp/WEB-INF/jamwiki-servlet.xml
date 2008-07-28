@@ -31,6 +31,7 @@
 				<prop key="/**/Special:Maintenance">Admin</prop>
 				<prop key="/**/Special:Manage">Manage</prop>
 				<prop key="/**/Special:Move">Move</prop>
+				<prop key="/**/Special:OrphanedPages">Items</prop>
 				<prop key="/**/Special:Print">Printable</prop>
 				<prop key="/**/Special:RecentChanges">RecentChanges</prop>
 				<prop key="/**/Special:RecentChangesFeed">RecentChangesFeed</prop>

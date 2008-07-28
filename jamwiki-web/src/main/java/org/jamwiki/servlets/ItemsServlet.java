@@ -18,14 +18,16 @@ package org.jamwiki.servlets;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.model.Topic;
+import org.jamwiki.parser.ParserInput;
+import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
@@ -57,6 +59,8 @@ public class ItemsServlet extends JAMWikiServlet {
 			viewFiles(request, next, pageInfo);
 		} else if (ServletUtil.isTopic(request, "Special:Listusers")) {
 			viewUsers(request, next, pageInfo);
+		} else if (ServletUtil.isTopic(request, "Special:OrphanedPages")) {
+			viewOrphanedPages(request, next, pageInfo);
 		} else if (ServletUtil.isTopic(request, "Special:TopicsAdmin")) {
 			viewTopicsAdmin(request, next, pageInfo);
 		} else {
@@ -76,6 +80,48 @@ public class ItemsServlet extends JAMWikiServlet {
 		next.addObject("items", items);
 		next.addObject("rootUrl", "Special:Filelist");
 		pageInfo.setPageTitle(new WikiMessage("allfiles.title"));
+		pageInfo.setContentJsp(JSP_ITEMS);
+		pageInfo.setSpecial(true);
+	}
+
+	/**
+	 *
+	 */
+	private void viewOrphanedPages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		// FIXME - integrate pagination
+		Pagination pagination = ServletUtil.loadPagination(request, next);
+		Collection items = new TreeSet();
+		Collection unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
+		for (Iterator iterator = unlinkedTopics.iterator(); iterator.hasNext();) {
+			String topicName = (String)iterator.next();
+			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
+			if (topic.getTopicType() != Topic.TYPE_ARTICLE) {
+				continue;
+			}
+			// only mark them orphaned if there is neither category defined in it, nor a link to it!
+			Collection topicLinks = WikiBase.getSearchEngine().findLinkedTo(virtualWiki, topicName);
+			if (topicLinks.size() != 0) {
+				continue;
+			}
+			ParserInput parserInput = new ParserInput();
+			parserInput.setContext(request.getContextPath());
+			parserInput.setLocale(request.getLocale());
+			parserInput.setWikiUser(ServletUtil.currentUser());
+			parserInput.setTopicName(topicName);
+			parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
+			parserInput.setVirtualWiki(virtualWiki);
+			parserInput.setAllowSectionEdit(false);
+			ParserOutput parserOutput = new ParserOutput();
+			ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
+			if (parserOutput.getCategories().size() == 0) {
+				items.add(topic.getName());
+			}
+		}
+		next.addObject("itemCount", new Integer(items.size()));
+		next.addObject("items", items);
+		next.addObject("rootUrl", "Special:OrphanedPages");
+		pageInfo.setPageTitle(new WikiMessage("orphaned.title"));
 		pageInfo.setContentJsp(JSP_ITEMS);
 		pageInfo.setSpecial(true);
 	}

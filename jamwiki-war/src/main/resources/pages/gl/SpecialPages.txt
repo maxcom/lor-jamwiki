@@ -7,6 +7,7 @@
 * [[Special:Imagelist|Todas as imaxes]]
 * [[Special:Allpages|Todos os temas]]
 * [[Special:Listusers|Todos os usuarios]]
+* [[Special:OrphanedPages|Orphaned pages]]
 * [[Special:RecentChanges|Cambios recentes]]
 * [[Special:Search|Procurar]]
 * [[Special:Upload|Subir]]

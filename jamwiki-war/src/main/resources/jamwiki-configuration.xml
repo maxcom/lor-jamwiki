@@ -276,6 +276,9 @@
 		<name>Special:Move</name>
 	</pseudotopic>
 	<pseudotopic>
+		<name>Special:OrphanedPages</name>
+	</pseudotopic>
+	<pseudotopic>
 		<name>Special:Print</name>
 	</pseudotopic>
 	<pseudotopic>

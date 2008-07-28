@@ -3,6 +3,7 @@
 
 New Features:
 
+  * Special:OrphanedPages added to display un-linked pages (hanspeterklapf).
   * Remove ability to automatically upgrade from versions prior to 0.5.0.
   * Upgrade to Spring Framework 2.5.5.
   * Upgrade to Spring Security 2.0.3.
