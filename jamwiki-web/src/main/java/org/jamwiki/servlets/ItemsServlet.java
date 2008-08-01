@@ -89,9 +89,8 @@ public class ItemsServlet extends JAMWikiServlet {
 	 */
 	private void viewOrphanedPages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		// FIXME - integrate pagination
 		Pagination pagination = ServletUtil.loadPagination(request, next);
-		Collection items = new TreeSet();
+		Collection allItems = new TreeSet();
 		Collection unlinkedTopics = WikiBase.getDataHandler().getAllTopicNames(virtualWiki);
 		for (Iterator iterator = unlinkedTopics.iterator(); iterator.hasNext();) {
 			String topicName = (String)iterator.next();
@@ -115,8 +114,22 @@ public class ItemsServlet extends JAMWikiServlet {
 			ParserOutput parserOutput = new ParserOutput();
 			ParserUtil.parse(parserInput, parserOutput, topic.getTopicContent());
 			if (parserOutput.getCategories().size() == 0) {
-				items.add(topic.getName());
+				allItems.add(topic.getName());
 			}
+		}
+		// FIXME - this is a nasty hack until data can be retrieved properly for pagination
+		Collection items = new TreeSet();
+		int count = 0;
+		for (Iterator iterator = allItems.iterator(); iterator.hasNext();) {
+			String topicName = (String)iterator.next();
+			count++;
+			if (count < (pagination.getOffset() + 1)) {
+				continue;
+			}
+			if (count > (pagination.getOffset() + pagination.getNumResults())) {
+				break;
+			}
+			items.add(topicName);
 		}
 		next.addObject("itemCount", new Integer(items.size()));
 		next.addObject("items", items);
