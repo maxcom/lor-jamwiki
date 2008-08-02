@@ -8,6 +8,11 @@ New Features:
   * Upgrade to Spring Framework 2.5.5.
   * Upgrade to Spring Security 2.0.3.
 
+Bugfixes:
+
+  * JDK 1.6 and greater changed the behavior of the JDBC getColumnName() method
+    causing the watchlist tab to break.  Fix suggested by Luc.
+
 Translation Updates:
 
   * Updated Chinese translations (hfl).
