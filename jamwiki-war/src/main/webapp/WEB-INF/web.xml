@@ -14,7 +14,7 @@
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext-spring-security.xml</param-value>
+		<param-value>/WEB-INF/applicationContext-security.xml</param-value>
 	</context-param>
 
 	<!-- set encoding, cache headers, etc. -->
