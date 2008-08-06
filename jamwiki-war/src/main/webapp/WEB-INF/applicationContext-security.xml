@@ -10,20 +10,26 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
 
-	<!-- ======================== FILTER CHAIN ======================= -->
-
-	<b:bean id="filterChainProxy" class="org.springframework.security.util.FilterChainProxy">
-		<b:property name="filterInvocationDefinitionSource">
-			<b:value><![CDATA[
-				PATTERN_TYPE_APACHE_ANT
-				/**=httpSessionContextIntegrationFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeProcessingFilter,anonymousProcessingFilter,exceptionTranslationFilter,exceptionMessageFilter,filterInvocationInterceptor
-			]]></b:value>
-		</b:property>
-	</b:bean>
-
-	<!-- ======================== HTTP Session integration ======================== -->
-
-	<b:bean id="httpSessionContextIntegrationFilter" class="org.springframework.security.context.HttpSessionContextIntegrationFilter" />
+	<http auto-config="false" entry-point-ref="authenticationEntryPoint">
+		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
+		<intercept-url pattern="/**/Special:Login" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />
+		<intercept-url pattern="/**/Special:Move" access="ROLE_MOVE" />
+		<intercept-url pattern="/**/Special:RecentChangesFeed" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:Roles" access="ROLE_SYSADMIN" />
+		<intercept-url pattern="/**/Special:Setup" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:Translation" access="ROLE_TRANSLATE" />
+		<intercept-url pattern="/**/Special:Upload" access="ROLE_UPLOAD" />
+		<intercept-url pattern="/**/Special:Upgrade" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/*.jsp" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/*.css" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/images/**" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/js/**" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/upload/**" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**" access="ROLE_VIEW" />
+	</http>
 
 	<!-- ======================== Authentication ======================== -->
 
@@ -38,9 +44,8 @@
 		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
 		<b:property name="filterProcessesUrl" value="/j_acegi_security_check" />
 		<b:property name="rememberMeServices" ref="rememberMeServices" />
+		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
 	</b:bean>
-
-	<b:bean id="securityContextHolderAwareRequestFilter" class="org.springframework.security.wrapper.SecurityContextHolderAwareRequestFilter"/>
 
 	<b:bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
 		<b:property name="providers">
@@ -60,6 +65,7 @@
 	<b:bean id="daoAuthenticationProvider" class="org.jamwiki.authentication.JAMWikiDaoAuthenticationProvider">
 		<b:property name="userDetailsService" ref="jamWikiAuthenticationDao" />
 		<b:property name="userCache" ref="userCache" />
+		<custom-authentication-provider />
 	</b:bean>
 
 	<b:bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
@@ -83,6 +89,7 @@
 	<b:bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
 		<b:property name="key" value="jam35Wiki" />
 		<b:property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
+		<custom-filter position="ANONYMOUS_FILTER" />
 	</b:bean>
 
 	<b:bean id="anonymousAuthenticationProvider" class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
@@ -94,6 +101,7 @@
 	<b:bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
 		<b:property name="authenticationManager" ref="authenticationManager" />
 		<b:property name="rememberMeServices" ref="rememberMeServices" />
+		<custom-filter position="REMEMBER_ME_FILTER" />
 	</b:bean>
 
 	<b:bean id="rememberMeServices" class="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices">
@@ -116,21 +124,7 @@
 		</b:constructor-arg>
 		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
 		<b:property name="filterProcessesUrl" value="/Special:Logout" />
-	</b:bean>
-
-	<!-- ======================== Authorization ======================== -->
-
-	<!-- +++++++++ Access Decision: is access allowed? +++++++++ -->
-
-	<b:bean id="roleVoter" class="org.springframework.security.vote.RoleVoter" />
-
-	<b:bean id="accessDecisionManager" class="org.springframework.security.vote.AffirmativeBased">
-		<b:property name="allowIfAllAbstainDecisions" value="false" />
-		<b:property name="decisionVoters">
-			<b:list>
-				<b:ref local="roleVoter" />
-			</b:list>
-		</b:property>
+		<custom-filter position="LOGOUT_FILTER" />
 	</b:bean>
 
 	<!-- +++++++++ Error Message Provider +++++++++ -->
@@ -152,21 +146,12 @@
 		</b:property>
 	</b:bean>
 
-	<!-- add exception message to the request -->
+	<!-- redirect to the appropriate error page and add exception message to the request -->
 	<b:bean id="exceptionMessageFilter" class="org.jamwiki.authentication.JAMWikiExceptionMessageFilter">
 		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
-	</b:bean>
-
-	<!-- +++++++++ Enforce Security based on URLs  +++++++++ -->
-
-	<b:bean id="exceptionTranslationFilter" class="org.springframework.security.ui.ExceptionTranslationFilter">
-		<b:property name="authenticationEntryPoint" ref="authenticationEntryPoint" />
-		<b:property name="accessDeniedHandler">
-			<b:bean class="org.jamwiki.authentication.JAMWikiAccessDeniedHandler">
-				<!-- do not include virtual wiki in the url, JAMWikiAccessDeniedHandler adds it -->
-				<b:property name="errorPage" value="/Special:Login" />
-			</b:bean>
-		</b:property>
+		<!-- do not include virtual wiki in the url, JAMWikiAccessDeniedHandler adds it -->
+		<b:property name="errorPage" value="/Special:Login" />
+		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" />
 	</b:bean>
 
 	<!-- Redirection of user login -->
@@ -175,34 +160,6 @@
 		<b:property name="loginFormUrl" value="/Special:Login" />
 		<!-- a PortMapper has to be configured if this is true and we are not using default ports -->
 		<b:property name="forceHttps" value="false" />
-	</b:bean>
-	
-	<b:bean id="filterInvocationInterceptor" class="org.springframework.security.intercept.web.FilterSecurityInterceptor">
-		<b:property name="authenticationManager" ref="authenticationManager" />
-		<b:property name="accessDecisionManager" ref="accessDecisionManager" />
-		<b:property name="objectDefinitionSource">
-			<b:value><![CDATA[
-				PATTERN_TYPE_APACHE_ANT
-				/**/Special:Admin=ROLE_SYSADMIN
-				/**/Special:Edit=ROLE_EDIT_EXISTING,ROLE_EDIT_NEW
-				/**/Special:Login=ROLE_ANONYMOUS,ROLE_USER
-				/**/Special:Maintenance=ROLE_SYSADMIN
-				/**/Special:Manage=ROLE_ADMIN
-				/**/Special:Move=ROLE_MOVE
-				/**/Special:RecentChangesFeed=ROLE_ANONYMOUS,ROLE_USER
-				/**/Special:Roles=ROLE_SYSADMIN
-				/**/Special:Setup=ROLE_ANONYMOUS,ROLE_USER
-				/**/Special:Translation=ROLE_TRANSLATE
-				/**/Special:Upload=ROLE_UPLOAD
-				/**/Special:Upgrade=ROLE_ANONYMOUS,ROLE_USER
-				/**/*.jsp=ROLE_ANONYMOUS,ROLE_USER
-				/**/*.css=ROLE_ANONYMOUS,ROLE_USER
-				/images/**=ROLE_ANONYMOUS,ROLE_USER
-				/js/**=ROLE_ANONYMOUS,ROLE_USER
-				/upload/**=ROLE_ANONYMOUS,ROLE_USER
-				/**=ROLE_VIEW
-			]]></b:value>
-		</b:property>
 	</b:bean>
 
 </b:beans>

@@ -20,12 +20,15 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.AuthenticationException;
+import org.springframework.security.ui.AccessDeniedHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.SpringSecurityException;
 import org.jamwiki.utils.WikiLogger;
@@ -43,6 +46,7 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 	public static final String JAMWIKI_ACCESS_DENIED_URI_KEY = "JAMWIKI_403_URI_KEY";
 	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_KEY";
 	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY";
+	private String errorPage;
 	private JAMWikiErrorMessageProvider errorMessageProvider;
 
 	/**
@@ -70,11 +74,11 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 		try {
 			chain.doFilter(request, response);
 		} catch (SpringSecurityException ex) {
-			handleException(request, ex);
+			handleException(request, response, ex);
 			throw ex;
 		} catch (ServletException ex) {
 			if (ex.getRootCause() instanceof SpringSecurityException) {
-				handleException(request, (SpringSecurityException)ex.getRootCause());
+				handleException(request, response, (SpringSecurityException)ex.getRootCause());
 			}
 			throw ex;
 		}
@@ -90,11 +94,13 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 	/**
 	 *
 	 */
-	private void handleException(ServletRequest servletRequest, SpringSecurityException exception) {
+	private void handleException(ServletRequest servletRequest, ServletResponse servletResponse, SpringSecurityException exception) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
+		HttpServletResponse response = (HttpServletResponse)servletResponse;
 		if (exception instanceof AccessDeniedException) {
 			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
+			this.handleAccessDenied(request, response, (AccessDeniedException)exception);
 		} else if (exception instanceof AuthenticationException) {
 			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
 			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
@@ -104,7 +110,45 @@ public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
 	/**
 	 *
 	 */
+	public void handleAccessDenied(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+		if (this.errorPage != null) {
+			String uri = request.getRequestURI();
+			// FIXME - move the "strip after semicolon" code to WikiUtil
+			int pathParamIndex = uri.indexOf(';');
+			if (pathParamIndex > 0) {
+				// strip everything after the first semi-colon
+				uri = uri.substring(0, pathParamIndex);
+			}
+			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+			RequestDispatcher rd = request.getRequestDispatcher("/" + virtualWiki + this.errorPage);
+			rd.forward(request, response);
+		}
+		if (!response.isCommitted()) {
+			// send 403 after response has been written
+			response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
+		}
+	}
+
+	/**
+	 *
+	 */
 	public void init(FilterConfig filterConfig) throws ServletException {
+	}
+
+	/**
+	 * The error page to use. Must begin with a "/" and is interpreted relative to
+	 * the current context root.
+	 *
+	 * @param errorPage the dispatcher path to display
+	 *
+	 * @throws IllegalArgumentException if the argument doesn't comply with the above
+	 *  limitations
+	 */
+	public void setErrorPage(String errorPage) {
+		if (errorPage != null && !errorPage.startsWith("/")) {
+			throw new IllegalArgumentException("ErrorPage must begin with '/'");
+		}
+		this.errorPage = errorPage;
 	}
 
 	/**
