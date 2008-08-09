@@ -16,6 +16,7 @@ Bugfixes:
 Translation Updates:
 
   * Updated Chinese translations (hfl).
+  * Updated Japanese translations (nattolover).
   * Added Slovakian translations (aryan).
   * Updated Swedish translations (martin).
 
