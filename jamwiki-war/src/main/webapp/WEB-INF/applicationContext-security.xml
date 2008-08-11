@@ -8,7 +8,7 @@
     xmlns:b="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd">
 
 	<http auto-config="false" entry-point-ref="authenticationEntryPoint">
 		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
@@ -47,18 +47,7 @@
 		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
 	</b:bean>
 
-	<b:bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
-		<b:property name="providers">
-			<b:list>
-				<b:ref local="daoAuthenticationProvider" />
-				<b:ref local="anonymousAuthenticationProvider" />
-				<b:ref local="rememberMeAuthenticationProvider" />
-			</b:list>
-		</b:property>
-	</b:bean>
-
-	<!-- Automatically receives AuthenticationEvent messages -->
-	<b:bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener" />
+	<authentication-manager alias="authenticationManager" />
 
 	<!-- +++++++++ Authenticate from JAMWiki database +++++++++ -->
 
@@ -94,6 +83,7 @@
 
 	<b:bean id="anonymousAuthenticationProvider" class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
 		<b:property name="key" value="jam35Wiki" />
+		<custom-authentication-provider />
 	</b:bean>
 
 	<!-- +++++++++ RememberMe service +++++++++ -->
@@ -111,6 +101,7 @@
 
 	<b:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
 		<b:property name="key" value="jam35Wiki" />
+		<custom-authentication-provider />
 	</b:bean>
 
 	<b:bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
