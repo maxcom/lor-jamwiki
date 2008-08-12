@@ -27,6 +27,15 @@
 		</dependency>
 	</dependencies>
 	<!-- FIXME - this code is messy.  there must be a better way to test for JDK 1.5+ -->
+ <build>
+   <finalName>jamwiki-war</finalName>
+   <plugins>
+     <plugin>
+       <groupId>org.mortbay.jetty</groupId>
+       <artifactId>maven-jetty-plugin</artifactId>
+     </plugin>
+   </plugins>
+ </build>
 	<profiles>
 		<profile>
 			<id>jdk-1.5</id>
