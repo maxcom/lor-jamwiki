@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<import file="../definitions.xml" />
+
+	<target name="test">
+
+		<webtest name="configure jamwiki - clean build version. Only set path to file-db and admin stuff.">
+			
+			<steps>
+			
+				<!-- invoke url="http://localhost:8080/jamwiki-war/en/Special:Setup"/ -->
+				
+				<invoke url="http://localhost:8080/jamwiki-war/" />
+				<verifyText description="Verify that text is contained in the page" text="Verzeichnis für das Dateisystem"/>
+				<setInputField htmlId="homeDir" value="target/test/path/to/db"/>
+				
+				<setInputField htmlId="setupLogin" value="${jamwiki.admin.name}"/>
+				<setInputField description="Set password field newPassword: ${jamwiki.admin.passwd}" 
+					htmlId="setupNewPassword" value="${jamwiki.admin.passwd}"/>
+				<setInputField description="Set password field confirmPassword: ${jamwiki.admin.passwd}" 
+					htmlId="setupConfirmPassword" value="${jamwiki.admin.passwd}"/>
+
+				<clickButton label="Änderungen speichern"/>				
+
+				<verifyTitle text="StartingPoints - JAMWiki"/>
+				<verifyText description="Verify that text is contained in the page" 
+					text="StartingPoints"/>
+				<verifyText description="Verify that text is contained in the page" 
+					text="JAMWiki wurde erfolgreich installiert!"/>
+				
+			</steps>
+		</webtest>
+
+	</target>
+</project>

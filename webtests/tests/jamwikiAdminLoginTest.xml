@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<import file="../definitions.xml" />
+
+	<target name="test">
+
+		<webtest name="check admin login - login as admin to the new site.">
+			
+			<steps>
+			
+				<invoke url="http://localhost:8080/jamwiki-war/en/StartingPoints"/>
+				<clickLink label="${common.login}"/>
+
+				<setInputField htmlId="loginUsername" value="${jamwiki.admin.name}"/>
+				<setInputField description="Set password field j_password: ${jamwiki.admin.passwd}" 
+					htmlId="loginPassword" value="${jamwiki.admin.passwd}"/>
+				<clickButton label="${common.login}"/>
+
+				<clickLink label="admin"/>
+				<verifyText description="Verify that text is contained in the page" 
+					text="Bearbeite User:${jamwiki.admin.name}"/>
+				
+				<clickLink label="Benutzerkonto"/>
+				<verifyText description="Verify that text is contained in the page" 
+					text="${common.login}"/>
+				
+				<setInputField htmlId="registerFirstName" value="Peter"/>
+				<setInputField htmlId="registerLastName" value="Pan"/>
+				<setInputField htmlId="registerDisplayName" value="pepa"/>
+				
+				<clickButton label="Speichern"/>
+				<verifyText description="Verify that text is contained in the page" text="StartingPoints"/>
+				
+			</steps>
+		</webtest>
+
+	</target>
+</project>

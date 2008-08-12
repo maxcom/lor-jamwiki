@@ -2,8 +2,9 @@
 
 <project default="test">
 	<target name="test" description="runs all the tests">
-		<ant antfile="googleJamwikiTest.xml"/>
-		<ant antfile="googleWebTestSteps.xml"/>
-		<ant antfile="webTestConference.xml"/>
+		
+		<ant antfile="jamwikiConfigurationTest.xml"/>
+		<ant antfile="jamwikiAdminLoginTest.xml"/>
+		
 	</target>
 </project>

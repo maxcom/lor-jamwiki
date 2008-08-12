@@ -6,19 +6,23 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
 
 <project name="example" default="wt.full">
 
-	<property name="webtest.home" value="/home/michael/projekte/webtest-snapshot"/>
+	<!-- load the language specific properties file -->
+	<property file="../jamwiki-war/src/main/resources/ApplicationResources_de.properties" />
+	
+	<property name="webtest.home" value="lib/webtest"/>
 
+	<!-- this is working when you start jamwiki by calling: 
+	     mvn jetty:run-exploded in the jamwiki-war directory. -->
 	<property name="jamwiki.host" value="localhost" />
-	<property name="jamwiki.port" value="8180" />
-	<property name="jamwiki.context" value="jamwiki/de" />
-	<property name="" value="" />
+	<property name="jamwiki.port" value="8080" />
 
-
-	<import file="${webtest.home}/lib/taskdef.xml"/>
-
+	<property name="jamwiki.admin.name" value="admin" />
+	<property name="jamwiki.admin.passwd" value="nimda" />
+	
 	<import file="definitions.xml" description="Import custom definitions (if any)"/>
 	<import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
 	
+	<!-- all test are listed here. Order is relevant --> 
 	<property name="wt.testInWork" value="tests/allTests.xml"/>
 
 <!--
