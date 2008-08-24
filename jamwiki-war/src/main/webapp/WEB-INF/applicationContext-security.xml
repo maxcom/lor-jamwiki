@@ -29,6 +29,7 @@
 		<intercept-url pattern="/js/**" access="ROLE_ANONYMOUS,ROLE_USER" />
 		<intercept-url pattern="/upload/**" access="ROLE_ANONYMOUS,ROLE_USER" />
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
+		<remember-me key="jam35Wiki" user-service-ref="jamWikiAuthenticationDao" />
 	</http>
 
 	<!-- ======================== Authentication ======================== -->
@@ -43,7 +44,7 @@
 		<b:property name="defaultTargetUrl" value="/DEFAULT_VIRTUAL_WIKI" />
 		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
 		<b:property name="filterProcessesUrl" value="/j_acegi_security_check" />
-		<b:property name="rememberMeServices" ref="rememberMeServices" />
+		<b:property name="rememberMeServices" ref="_rememberMeServices" />
 		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
 	</b:bean>
 
@@ -51,16 +52,16 @@
 
 	<!-- +++++++++ Authenticate from JAMWiki database +++++++++ -->
 
-	<b:bean id="daoAuthenticationProvider" class="org.jamwiki.authentication.JAMWikiDaoAuthenticationProvider">
-		<b:property name="userDetailsService" ref="jamWikiAuthenticationDao" />
-		<b:property name="userCache" ref="userCache" />
-		<custom-authentication-provider />
-	</b:bean>
+	<authentication-provider user-service-ref="jamWikiAuthenticationDao">
+		<password-encoder ref="jamwikiPasswordEncoder" />
+	</authentication-provider>
 
 	<b:bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
 
-	<!-- +++++++++ User cache +++++++++ -->
+	<b:bean id="jamwikiPasswordEncoder" class="org.jamwiki.authentication.JAMWikiPasswordEncoder" />
 
+	<!-- +++++++++ User cache +++++++++ -->
+	<!-- disable for now
 	<b:bean id="userCache" class="org.springframework.security.providers.dao.cache.EhCacheBasedUserCache">
 		<b:property name="cache" ref="userCacheBackend" />
 	</b:bean>
@@ -71,6 +72,7 @@
 	</b:bean>
 
 	<b:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+	-->
 
 	<!-- +++++++++ Anonymous authentication +++++++++ -->
 	<!-- Anonymous users are assigned ROLE_ANONYMOUS to be able to allow exceptions to general access rules -->
@@ -86,30 +88,12 @@
 		<custom-authentication-provider />
 	</b:bean>
 
-	<!-- +++++++++ RememberMe service +++++++++ -->
-
-	<b:bean id="rememberMeProcessingFilter" class="org.springframework.security.ui.rememberme.RememberMeProcessingFilter">
-		<b:property name="authenticationManager" ref="authenticationManager" />
-		<b:property name="rememberMeServices" ref="rememberMeServices" />
-		<custom-filter position="REMEMBER_ME_FILTER" />
-	</b:bean>
-
-	<b:bean id="rememberMeServices" class="org.springframework.security.ui.rememberme.TokenBasedRememberMeServices">
-		<b:property name="userDetailsService" ref="jamWikiAuthenticationDao" />
-		<b:property name="key" value="jam35Wiki" />
-	</b:bean>
-
-	<b:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.providers.rememberme.RememberMeAuthenticationProvider">
-		<b:property name="key" value="jam35Wiki" />
-		<custom-authentication-provider />
-	</b:bean>
-
 	<b:bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
 		<!-- special hard-coded constant indicating default for virtual wiki -->
 		<b:constructor-arg value="/DEFAULT_VIRTUAL_WIKI" />
 		<b:constructor-arg>
 			<b:list>
-				<b:ref bean="rememberMeServices" />
+				<b:ref bean="_rememberMeServices" />
 				<b:bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler" />
 			</b:list>
 		</b:constructor-arg>
