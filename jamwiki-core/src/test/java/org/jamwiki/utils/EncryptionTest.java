@@ -29,38 +29,6 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testDecrypt64() throws Throwable {
-		String result = Encryption.decrypt64("");
-		assertEquals("result", "", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testDecrypt641() throws Throwable {
-		String result = Encryption.decrypt64(null);
-		assertNull("result", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testEncrypt64() throws Throwable {
-		String result = Encryption.encrypt64((String) null);
-		assertNull("result", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testEncrypt641() throws Throwable {
-		String result = Encryption.encrypt64("");
-		assertEquals("result", "", result);
-	}
-
-	/**
-	 *
-	 */
 	public void testGetEncryptedProperty() throws Throwable {
 		Encryption.getEncryptedProperty("", null);
 		assertTrue("Test completed without Exception", true);
@@ -124,23 +92,11 @@ public class EncryptionTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testEncrypt64ThrowsNullPointerException() throws Throwable {
-		try {
-			Encryption.encrypt64((byte[]) null);
-			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
-			// FIXME - do something here
-		}
-	}
-
-	/**
-	 *
-	 */
 	public void testEncryptThrowsNullPointerException() throws Throwable {
 		try {
 			Encryption.encrypt(null);
 			fail("Expected NullPointerException to be thrown");
-		} catch (NullPointerException ex) {
+		} catch (IllegalArgumentException ex) {
 			// FIXME - do something here
 		}
 	}
