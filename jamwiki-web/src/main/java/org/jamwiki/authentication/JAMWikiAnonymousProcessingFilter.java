@@ -17,40 +17,79 @@
 package org.jamwiki.authentication;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.providers.anonymous.AnonymousProcessingFilter;
-import org.springframework.security.userdetails.memory.UserAttribute;
+import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 
 /**
  * This class allows anonymous users to be provided default roles from the
  * JAMWiki database.
  */
-public class JAMWikiAnonymousProcessingFilter extends AnonymousProcessingFilter {
+public class JAMWikiAnonymousProcessingFilter implements Filter, InitializingBean {
 
 	/** Standard logger. */
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiAnonymousProcessingFilter.class.getName());
+	private String key;
+
+	/**
+	 *
+	 */
+	public void afterPropertiesSet() {
+    }
+
+	/**
+	 *
+	 */
+	public void destroy() {
+	}
+
 
 	/**
 	 * Override the parent method to ensure that default roles for anonymous
 	 * users have been retrieved.
 	 */
-	public void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		WikiUserAuth user = WikiUserAuth.initAnonymousWikiUserAuth();
-		UserAttribute userAttribute = this.getUserAttribute();
-		if (userAttribute == null) {
-			logger.warning("No user attribute available in JAMWikiAnonymousProcessingFilter.  Please verify the Acegi configuration settings.");
-		} else {
-			ArrayList userAuthorities = new ArrayList();
-			for (int i = 0; i < user.getAuthorities().length; i++) {
-				userAuthorities.add(user.getAuthorities()[i]);
-			}
-			userAttribute.setAuthorities(userAuthorities);
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		if (!(request instanceof HttpServletRequest)) {
+			throw new ServletException("HttpServletRequest required");
 		}
-		super.doFilterHttp(request, response, chain);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth instanceof AnonymousAuthenticationToken) {
+			AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), WikiUserAuth.getAnonymousGroupRoles());
+			jamwikiAuth.setDetails(auth.getDetails());
+			jamwikiAuth.setAuthenticated(auth.isAuthenticated());
+			SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
+		}
+		chain.doFilter(request, response);
+	}
+
+	/**
+	 *
+	 */
+	public String getKey() {
+		return key;
+	}
+
+	/**
+	 *
+	 */
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	/**
+	 *
+	 */
+	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 }

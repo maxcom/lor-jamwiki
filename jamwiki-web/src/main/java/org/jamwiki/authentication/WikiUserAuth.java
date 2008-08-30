@@ -212,21 +212,13 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 				// wiki is not yet setup
 				return;
 			}
-			if (WikiUserAuth.anonymousGroupRoles == null) {
-				Role[] tempRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
-				WikiUserAuth.anonymousGroupRoles = new Role[tempRoles.length + 1];
-				WikiUserAuth.anonymousGroupRoles[0] = Role.ROLE_ANONYMOUS;
-				for (int i = 0; i < tempRoles.length; i++) {
-					WikiUserAuth.anonymousGroupRoles[i + 1] = tempRoles[i];
-				}
-			}
 		} catch (Exception e) {
 			// FIXME - without default roles bad things happen, so should this throw the
 			// error to the calling method?
 			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
 			return;
 		}
-		this.setAuthorities(WikiUserAuth.anonymousGroupRoles);
+		this.setAuthorities(WikiUserAuth.getAnonymousGroupRoles());
 	}
 
 	/**
@@ -263,6 +255,27 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 			logger.severe("Unable to retrieve default roles for " + this.getUsername(), e);
 		}
 		this.addRoles(userRoles);
+	}
+
+	/**
+	 *
+	 */
+	public static Role[] getAnonymousGroupRoles() {
+		if (WikiUserAuth.anonymousGroupRoles == null) {
+			try {
+				Role[] tempRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
+				WikiUserAuth.anonymousGroupRoles = new Role[tempRoles.length + 1];
+				WikiUserAuth.anonymousGroupRoles[0] = Role.ROLE_ANONYMOUS;
+				for (int i = 0; i < tempRoles.length; i++) {
+					WikiUserAuth.anonymousGroupRoles[i + 1] = tempRoles[i];
+				}
+			} catch (Exception e) {
+				// FIXME - without default roles bad things happen, so should this throw the
+				// error to the calling method?
+				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
+			}
+		}
+		return WikiUserAuth.anonymousGroupRoles;
 	}
 
 	/**

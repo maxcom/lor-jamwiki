@@ -30,6 +30,7 @@
 		<intercept-url pattern="/upload/**" access="ROLE_ANONYMOUS,ROLE_USER" />
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
 		<remember-me key="jam35Wiki" user-service-ref="jamWikiAuthenticationDao" />
+		<anonymous key="jam35Wiki" />
 	</http>
 
 	<!-- ======================== Authentication ======================== -->
@@ -74,18 +75,13 @@
 	<b:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
 	-->
 
-	<!-- +++++++++ Anonymous authentication +++++++++ -->
-	<!-- Anonymous users are assigned ROLE_ANONYMOUS to be able to allow exceptions to general access rules -->
-
+	<!--
+	In addition to the standard Spring Security anonymous processing filter, add JAMWiki-specific anonymous
+	roles.
+	-->
 	<b:bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
 		<b:property name="key" value="jam35Wiki" />
-		<b:property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS" />
-		<custom-filter position="ANONYMOUS_FILTER" />
-	</b:bean>
-
-	<b:bean id="anonymousAuthenticationProvider" class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
-		<b:property name="key" value="jam35Wiki" />
-		<custom-authentication-provider />
+		<custom-filter after="ANONYMOUS_FILTER" />
 	</b:bean>
 
 	<b:bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
