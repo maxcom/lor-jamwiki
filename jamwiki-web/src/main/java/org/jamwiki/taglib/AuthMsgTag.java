@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.JAMWikiExceptionMessageFilter;
+import org.jamwiki.authentication.JAMWikiExceptionTranslationFilter;
 import org.jamwiki.servlets.ServletUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -73,10 +73,10 @@ public class AuthMsgTag extends TagSupport {
 	 */
 	private String processAcegiException() throws JspException {
 		HttpServletRequest request = (HttpServletRequest)this.pageContext.getRequest();
-		if (request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY) != null) {
+		if (request.getSession().getAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY) != null) {
 			return this.processAccessDeniedException(request);
 		}
-		if (request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY) != null) {
+		if (request.getSession().getAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY) != null) {
 			return this.processAuthenticationRequiredException(request);
 		}
 		if (request.getParameter("message") != null) {
@@ -92,15 +92,15 @@ public class AuthMsgTag extends TagSupport {
 	 *
 	 */
 	private String processAccessDeniedException(HttpServletRequest request) throws JspException {
-		String key = (String)request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY);
-		String uri = (String)request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_URI_KEY);
+		String key = (String)request.getSession().getAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY);
+		String uri = (String)request.getSession().getAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_ACCESS_DENIED_URI_KEY);
 		if (key == null) {
 			return null;
 		}
 		Object[] params = {uri};
 		String message = Utilities.formatMessage(key, ServletUtil.retrieveUserLocale(request), params);
-		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY);
-		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_ACCESS_DENIED_URI_KEY);
+		request.getSession().removeAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_ACCESS_DENIED_ERROR_KEY);
+		request.getSession().removeAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_ACCESS_DENIED_URI_KEY);
 		return formatMessage(message);
 	}
 
@@ -108,15 +108,15 @@ public class AuthMsgTag extends TagSupport {
 	 *
 	 */
 	private String processAuthenticationRequiredException(HttpServletRequest request) throws JspException {
-		String key = (String)request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY);
-		String uri = (String)request.getSession().getAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY);
+		String key = (String)request.getSession().getAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY);
+		String uri = (String)request.getSession().getAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY);
 		if (key == null) {
 			return null;
 		}
 		Object[] params = {uri};
 		String message = Utilities.formatMessage(key, ServletUtil.retrieveUserLocale(request), params);
-		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY);
-		request.getSession().removeAttribute(JAMWikiExceptionMessageFilter.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY);
+		request.getSession().removeAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_AUTHENTICATION_REQUIRED_KEY);
+		request.getSession().removeAttribute(JAMWikiExceptionTranslationFilter.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY);
 		return formatMessage(message);
 	}
 

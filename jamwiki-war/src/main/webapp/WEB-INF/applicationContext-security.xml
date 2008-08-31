@@ -10,6 +10,13 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd">
 
+	<!--
+	This section contains the basic Spring Security configuration settings.  The intercept-url elements
+	define what URLs are protected and what permission is required to access those URLs.  The remember-me
+	element enables a cookie to be stored to remember user logins across sessions, and the anonymous
+	element implements Spring Security's basic anonymous user permissions - note that these will be updated
+	by the JAMWikiAnonymousProcessingFilter.
+	-->
 	<http auto-config="false" entry-point-ref="authenticationEntryPoint">
 		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
@@ -33,10 +40,10 @@
 		<anonymous key="jam35Wiki" />
 	</http>
 
-	<!-- ======================== Authentication ======================== -->
-
-	<!-- +++++++++ Filter to process authentication +++++++++ -->
-
+	<!--
+	The authentication processing filter controls where a user will be sent when he tries to
+	access a protected URL and how that user will be authenticated after trying to login.
+	-->
 	<b:bean id="authenticationProcessingFilter" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilter">
 		<b:property name="authenticationManager" ref="authenticationManager" />
 		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
@@ -48,42 +55,31 @@
 		<b:property name="rememberMeServices" ref="_rememberMeServices" />
 		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
 	</b:bean>
-
 	<authentication-manager alias="authenticationManager" />
 
-	<!-- +++++++++ Authenticate from JAMWiki database +++++++++ -->
-
+	<!--
+	The authentication provider is the element which is passed user login attempts for verification.
+	-->
 	<authentication-provider user-service-ref="jamWikiAuthenticationDao">
 		<password-encoder ref="jamwikiPasswordEncoder" />
 	</authentication-provider>
-
 	<b:bean id="jamWikiAuthenticationDao" class="org.jamwiki.authentication.JAMWikiDaoImpl" />
-
 	<b:bean id="jamwikiPasswordEncoder" class="org.jamwiki.authentication.JAMWikiPasswordEncoder" />
 
-	<!-- +++++++++ User cache +++++++++ -->
-	<!-- disable for now
-	<b:bean id="userCache" class="org.springframework.security.providers.dao.cache.EhCacheBasedUserCache">
-		<b:property name="cache" ref="userCacheBackend" />
-	</b:bean>
-
-	<b:bean id="userCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<b:property name="cacheManager" ref="cacheManager" />
-		<b:property name="cacheName" value="userCache" />
-	</b:bean>
-
-	<b:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
-	-->
-
 	<!--
-	In addition to the standard Spring Security anonymous processing filter, add JAMWiki-specific anonymous
-	roles.
+	In addition to the standard Spring Security anonymous processing filter a custom anonymous
+	processing filter is used to add JAMWiki-specific anonymous roles to the user authentication
+	object.  These roles can be configured from the Special:Roles page in the JAMWiki admin.
 	-->
 	<b:bean id="anonymousProcessingFilter" class="org.jamwiki.authentication.JAMWikiAnonymousProcessingFilter">
 		<b:property name="key" value="jam35Wiki" />
 		<custom-filter after="ANONYMOUS_FILTER" />
 	</b:bean>
 
+	<!--
+	A custom logout handler is used so that a user who logs out can be redirected to the appropriate
+	virtual wiki.
+	-->
 	<b:bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
 		<!-- special hard-coded constant indicating default for virtual wiki -->
 		<b:constructor-arg value="/DEFAULT_VIRTUAL_WIKI" />
@@ -97,10 +93,12 @@
 		<b:property name="filterProcessesUrl" value="/Special:Logout" />
 		<custom-filter position="LOGOUT_FILTER" />
 	</b:bean>
-
-	<!-- +++++++++ Error Message Provider +++++++++ -->
 	
-	<!-- specify default error messages when access is denied to a specific URL -->
+	<!--
+	The error message provider adds a page-specific error message to be used when a user is denied
+	access to a page.  For example, a different error is shown to users who are not allowed to edit
+	a page than to those who are denied access to the admin pages.
+	-->
 	<b:bean id="errorMessageProvider" class="org.jamwiki.authentication.JAMWikiErrorMessageProvider">
 		<b:property name="urlPatterns">
 			<b:value><![CDATA[
@@ -117,15 +115,22 @@
 		</b:property>
 	</b:bean>
 
-	<!-- redirect to the appropriate error page and add exception message to the request -->
-	<b:bean id="exceptionMessageFilter" class="org.jamwiki.authentication.JAMWikiExceptionMessageFilter">
+	<!--
+	This method executes after the default Spring exception translation filter and controls where
+	users are redirected to when they attempt to access a page and access is denied.  This custom
+	filter is needed in order to add virtual wiki and any message from the errorMessageProvider to
+	the redirect.
+	-->
+	<b:bean id="exceptionTranslationFilter" class="org.jamwiki.authentication.JAMWikiExceptionTranslationFilter">
 		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
 		<!-- do not include virtual wiki in the url, JAMWikiAccessDeniedHandler adds it -->
 		<b:property name="errorPage" value="/Special:Login" />
 		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" />
 	</b:bean>
 
-	<!-- Redirection of user login -->
+	<!--
+	The entry point is the page to which users are redirected when login is required.
+	-->
 	<b:bean id="authenticationEntryPoint" class="org.jamwiki.authentication.JAMWikiAuthenticationProcessingFilterEntryPoint">
 		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilterEntryPoint adds it -->
 		<b:property name="loginFormUrl" value="/Special:Login" />
@@ -133,4 +138,17 @@
 		<b:property name="forceHttps" value="false" />
 	</b:bean>
 
+	<!--
+	Standard Spring Security integration with EhCache is available to implement object caching.
+	-->
+	<!-- disable for now until configuration issues are resolved
+	<b:bean id="userCache" class="org.springframework.security.providers.dao.cache.EhCacheBasedUserCache">
+		<b:property name="cache" ref="userCacheBackend" />
+	</b:bean>
+	<b:bean id="userCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<b:property name="cacheManager" ref="cacheManager" />
+		<b:property name="cacheName" value="userCache" />
+	</b:bean>
+	<b:bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+	-->
 </b:beans>

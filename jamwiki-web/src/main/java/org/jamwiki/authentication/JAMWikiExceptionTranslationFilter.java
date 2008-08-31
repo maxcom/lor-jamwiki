@@ -39,9 +39,9 @@ import org.jamwiki.utils.WikiUtil;
  * configuration for adding messages to the session about why a login is
  * required.
  */
-public class JAMWikiExceptionMessageFilter implements Filter, InitializingBean {
+public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBean {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiExceptionMessageFilter.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiExceptionTranslationFilter.class.getName());
 	public static final String JAMWIKI_ACCESS_DENIED_ERROR_KEY = "JAMWIKI_403_ERROR_KEY";
 	public static final String JAMWIKI_ACCESS_DENIED_URI_KEY = "JAMWIKI_403_URI_KEY";
 	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_KEY";
