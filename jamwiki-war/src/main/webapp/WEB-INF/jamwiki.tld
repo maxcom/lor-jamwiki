@@ -38,7 +38,7 @@
 		<tag-class>org.jamwiki.taglib.AuthMsgTag</tag-class>
 		<body-content>empty</body-content>
 		<description>
-			Process an Acegi AccessDeniedException and present the
+			Process a Spring Security AccessDeniedException and present the
 			resulting message to the user.
 		</description>
 		<attribute>

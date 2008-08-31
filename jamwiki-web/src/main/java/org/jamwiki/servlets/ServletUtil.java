@@ -297,7 +297,7 @@ public class ServletUtil {
 	}
 
 	/**
-	 * Retrieve the current <code>WikiUserAuth</code> from Acegi
+	 * Retrieve the current <code>WikiUserAuth</code> from Spring Security
 	 * <code>SecurityContextHolder</code>.  If the current user is not
 	 * logged-in then this method will return an empty <code>WikiUserAuth</code>
 	 * object.
@@ -311,7 +311,7 @@ public class ServletUtil {
 	public static WikiUserAuth currentUser() throws AuthenticationCredentialsNotFoundException {
 		SecurityContext ctx = SecurityContextHolder.getContext();
 		Authentication auth = ctx.getAuthentication();
-		// FIXME - hopefully this workaround is unneeded after Acegi 2.0 upgrade
+		// FIXME - hopefully this workaround is unneeded after Spring Security 2.0 upgrade
 		// this conditional is a workaround for a bug that's proving difficult to track down.
 		// the problem is that the authentication credential returned has the proper
 		// authorities, but a null username.  the steps to reproduce:

@@ -27,7 +27,7 @@
 <fieldset>
 <legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
 
-<form method="post" action="<c:url value="/${virtualWiki}/j_acegi_security_check" />">
+<form method="post" action="<c:url value="/${virtualWiki}/j_spring_security_check" />">
 <input type="hidden" name="target" value="<c:out value="${target}"/>" />
 <div class="formentry">
 	<span class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></span>

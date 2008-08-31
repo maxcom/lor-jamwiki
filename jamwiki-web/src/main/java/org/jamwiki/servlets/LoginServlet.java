@@ -24,13 +24,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Used to handle requests or redirects to the login page.
+ * Used to handle requests or redirects to the login page, as well as requests to logout.
  */
 public class LoginServlet extends JAMWikiServlet {
 
@@ -48,10 +49,11 @@ public class LoginServlet extends JAMWikiServlet {
 		}
 		return ServletUtil.viewLogin(request, pageInfo, null, null);
 	}
-	
+
 	/**
 	 * Redirect to the default Spring Security logout URL after adding a "successful logout"
-	 * URL to the request.
+	 * URL to the request.  See the Spring Security LogoutFilter.determineTargetUrl() for
+	 * further details.
 	 */
 	private void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
@@ -76,8 +78,9 @@ public class LoginServlet extends JAMWikiServlet {
 		if (StringUtils.equals(request.getContextPath(), "/")) {
 			springSecurityLogoutUrl = "";
 		}
-		// FIXME - do not hard code spring logout URL
-		springSecurityLogoutUrl += "/j_spring_security_logout?filterProcessesUrl=" + logoutSuccessUrl;
+		springSecurityLogoutUrl += JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_URL;
+		springSecurityLogoutUrl += "?" + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM;
+		springSecurityLogoutUrl += "=" + logoutSuccessUrl;
 		response.sendRedirect(springSecurityLogoutUrl);
 	}
 }

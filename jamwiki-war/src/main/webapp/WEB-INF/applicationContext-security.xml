@@ -53,7 +53,7 @@
 		<!-- special hard-coded constant indicating default for virtual wiki -->
 		<b:property name="defaultTargetUrl" value="/DEFAULT_VIRTUAL_WIKI" />
 		<!-- do not include virtual wiki in the url, JAMWikiAuthenticationProcessingFilter adds it -->
-		<b:property name="filterProcessesUrl" value="/j_acegi_security_check" />
+		<b:property name="filterProcessesUrl" value="/j_spring_security_check" />
 		<b:property name="rememberMeServices" ref="_rememberMeServices" />
 		<custom-filter position="AUTHENTICATION_PROCESSING_FILTER" />
 	</b:bean>
@@ -107,7 +107,7 @@
 	-->
 	<b:bean id="exceptionTranslationFilter" class="org.jamwiki.authentication.JAMWikiExceptionTranslationFilter">
 		<b:property name="errorMessageProvider" ref="errorMessageProvider" />
-		<!-- do not include virtual wiki in the url, JAMWikiAccessDeniedHandler adds it -->
+		<!-- do not include virtual wiki in the url, JAMWikiExceptionTranslationFilter adds it -->
 		<b:property name="errorPage" value="/Special:Login" />
 		<custom-filter after="EXCEPTION_TRANSLATION_FILTER" />
 	</b:bean>

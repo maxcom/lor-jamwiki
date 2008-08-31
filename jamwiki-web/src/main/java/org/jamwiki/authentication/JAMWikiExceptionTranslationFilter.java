@@ -35,17 +35,13 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
 /**
- * This class provides an additional filter that is added to the Acegi
+ * This class provides an additional filter that is added to the Spring Security
  * configuration for adding messages to the session about why a login is
  * required.
  */
 public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBean {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(JAMWikiExceptionTranslationFilter.class.getName());
-	public static final String JAMWIKI_ACCESS_DENIED_ERROR_KEY = "JAMWIKI_403_ERROR_KEY";
-	public static final String JAMWIKI_ACCESS_DENIED_URI_KEY = "JAMWIKI_403_URI_KEY";
-	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_KEY";
-	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY";
 	private String errorPage;
 	private JAMWikiErrorMessageProvider errorMessageProvider;
 
@@ -98,12 +94,12 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 		HttpServletRequest request = (HttpServletRequest)servletRequest;
 		HttpServletResponse response = (HttpServletResponse)servletResponse;
 		if (exception instanceof AccessDeniedException) {
-			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
-			request.getSession().setAttribute(JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
+			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_ERROR_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
+			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_ACCESS_DENIED_URI_KEY, WikiUtil.getTopicFromURI(request));
 			this.handleAccessDenied(request, response, (AccessDeniedException)exception);
 		} else if (exception instanceof AuthenticationException) {
-			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
-			request.getSession().setAttribute(JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
+			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_KEY, this.getErrorMessageProvider().getErrorMessageKey(request));
+			request.getSession().setAttribute(JAMWikiAuthenticationConstants.JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY, WikiUtil.getTopicFromURI(request));
 		}
 	}
 

@@ -30,10 +30,10 @@ import org.jamwiki.utils.WikiUtil;
 
 /**
  * This class is a hack implemented to work around the fact that the default
- * Acegi classes can only redirect to a single, hard-coded URL.  Due to the
+ * Spring Security classes can only redirect to a single, hard-coded URL.  Due to the
  * fact that JAMWiki may have multiple virtual wikis this class overrides some
- * of the default Acegi behavior to allow additional flexibility.  Hopefully
- * future versions of Acegi will add additional flexibility and this class
+ * of the default Spring Security behavior to allow additional flexibility.  Hopefully
+ * future versions of Spring Security will add additional flexibility and this class
  * can be removed.
  */
 public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
@@ -76,7 +76,7 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 	protected void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
 		// FIXME - this method is a mess.  clean it up.
 		if (!url.equals(this.getAuthenticationFailureUrl()) && !url.equals("/DEFAULT_VIRTUAL_WIKI")) {
-			// if Acegi has saved a redirect URL then use that
+			// if Spring Security has saved a redirect URL then use that
 			super.sendRedirect(request, response, url);
 			return;
 		}

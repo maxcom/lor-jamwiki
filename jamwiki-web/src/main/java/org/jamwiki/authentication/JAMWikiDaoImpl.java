@@ -41,8 +41,8 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		try {
 			loadedUser = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(username, null));
 		} catch (Exception e) {
-			// FIXME - for now throw an exception that Acegi can handle, but
-			// this should be handled with the Acegi ExceptionTranslationFilter
+			// FIXME - for now throw an exception that Spring Security can handle, but
+			// this should be handled with the Spring Security ExceptionTranslationFilter
 //			throw new DataAccessResourceFailureException(e.getMessage(), e);
 			throw new UsernameNotFoundException("Failure retrieving user information for " + username, e);
 		}

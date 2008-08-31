@@ -43,7 +43,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	/** Default roles for logged-in users */
 	private static Role[] defaultGroupRoles = null;
 	/**
-	 * GrantedAuthority is used by Acegi Security to support several authorities
+	 * GrantedAuthority is used by Spring Security to support several authorities
 	 * (roles). A logged user always has ROLE_USER and may have other roles,
 	 * e.g. ROLE_ADMIN.
 	 */
@@ -121,7 +121,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 		this.addRoles(authorities);
 	}
 
-	// Acegi Security: UserDetails contract
+	// Spring Security: UserDetails contract
 
 	/**
 	 * Returns granted authorites.
@@ -306,17 +306,17 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	}
 
 	/**
-	 * Utility method for converting an Acegi <code>Authentication</code>
+	 * Utility method for converting a Spring Security <code>Authentication</code>
 	 * object into a <code>WikiUserAuth</code>.  If the user is logged-in then the
 	 * <code>Authentication</code> object will have the <code>WikiUserAuth</code>
 	 * as its principal.  If the user is not logged in then create an empty
 	 * <code>WikiUserAuth</code> object and assign it the same authorities as the
 	 * <code>Authentication</code> object.
 	 *
-	 * @param auth The Acegi <code>Authentication</code> object that is being
+	 * @param auth The Spring Security <code>Authentication</code> object that is being
 	 *  converted into a <code>WikiUserAuth</code> object.
 	 * @return Returns a <code>WikiUserAuth</code> object that corresponds to the
-	 *  Acegi <code>Authentication</code> object.  If the user is not currently
+	 *  Spring Security <code>Authentication</code> object.  If the user is not currently
 	 *  logged-in then an empty <code>WikiUserAuth</code> with the same authorities
 	 *  as the <code>Authentication</code> object is returned.  This method
 	 *  will never return <code>null</code>.

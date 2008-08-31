@@ -25,10 +25,10 @@ import org.jamwiki.utils.WikiUtil;
 
 /**
  * This class is a hack implemented to work around the fact that the default
- * Acegi classes can only redirect to a single, hard-coded URL.  Due to the
+ * Spring Security classes can only redirect to a single, hard-coded URL.  Due to the
  * fact that JAMWiki may have multiple virtual wikis this class overrides some
- * of the default Acegi behavior to allow additional flexibility.  Hopefully
- * future versions of Acegi will add additional flexibility and this class
+ * of the default Spring Security behavior to allow additional flexibility.  Hopefully
+ * future versions of Spring Security will add additional flexibility and this class
  * can be removed.
  */
 public class JAMWikiAuthenticationProcessingFilterEntryPoint extends AuthenticationProcessingFilterEntryPoint {

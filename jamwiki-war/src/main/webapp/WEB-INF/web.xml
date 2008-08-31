@@ -27,7 +27,7 @@
 		</init-param>
 	</filter>
 	<filter>
-		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<filter-name>Spring Security Filter Chain Proxy</filter-name>
 		<filter-class>org.springframework.security.util.FilterToBeanProxy</filter-class>
 		<init-param>
 			<param-name>targetClass</param-name>
@@ -39,7 +39,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
-		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<filter-name>Spring Security Filter Chain Proxy</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 

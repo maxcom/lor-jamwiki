@@ -20,7 +20,7 @@ import org.springframework.security.GrantedAuthorityImpl;
 import org.jamwiki.utils.WikiLogger;
 
 /**
- * Provides an object representing a Wiki role and implementing the Acegi
+ * Provides an object representing a Wiki role and implementing the Spring Security
  * <code>GrantedAuthority</code> interface.
  */
 public class Role extends GrantedAuthorityImpl {
