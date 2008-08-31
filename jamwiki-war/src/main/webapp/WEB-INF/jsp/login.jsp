@@ -39,7 +39,7 @@
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>
-	<span class="formelement"><input type="checkbox" value="true" name="_acegi_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></span>
+	<span class="formelement"><input type="checkbox" value="true" name="_spring_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>
