@@ -24,7 +24,7 @@ public interface JAMWikiAuthenticationConstants {
 	/** The default Spring Security logout URL. */
 	public static final String SPRING_SECURITY_LOGOUT_URL = "/j_spring_security_logout";
 	/** Query parameter which stores the default Spring Security logout redirection URL as defined in LogoutFilter.determineTargetUrl(). */
-	public static final String SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM = "filterProcessesUrl";
+	public static final String SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM = "logoutSuccessUrl";
 
 	/** Key used to store access denied message key in the session. */
 	public static final String JAMWIKI_ACCESS_DENIED_ERROR_KEY = "JAMWIKI_403_ERROR_KEY";
