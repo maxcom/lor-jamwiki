@@ -38,6 +38,8 @@
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
 		<remember-me key="jam35Wiki" user-service-ref="jamWikiAuthenticationDao" />
 		<anonymous key="jam35Wiki" />
+		<!-- note that the JAMWiki LoginServlet will add the appropriate logout success URL to the request during logout -->
+		<logout />
 	</http>
 
 	<!--
@@ -76,24 +78,6 @@
 		<custom-filter after="ANONYMOUS_FILTER" />
 	</b:bean>
 
-	<!--
-	A custom logout handler is used so that a user who logs out can be redirected to the appropriate
-	virtual wiki.
-	-->
-	<b:bean id="logoutFilter" class="org.jamwiki.authentication.JAMWikiLogoutFilter">
-		<!-- special hard-coded constant indicating default for virtual wiki -->
-		<b:constructor-arg value="/DEFAULT_VIRTUAL_WIKI" />
-		<b:constructor-arg>
-			<b:list>
-				<b:ref bean="_rememberMeServices" />
-				<b:bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler" />
-			</b:list>
-		</b:constructor-arg>
-		<!-- do not include virtual wiki in the url, JAMWikiLogoutFilter adds it -->
-		<b:property name="filterProcessesUrl" value="/Special:Logout" />
-		<custom-filter position="LOGOUT_FILTER" />
-	</b:bean>
-	
 	<!--
 	The error message provider adds a page-specific error message to be used when a user is denied
 	access to a page.  For example, a different error is shown to users who are not allowed to edit
