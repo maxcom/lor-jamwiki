@@ -34,4 +34,9 @@ public interface JAMWikiAuthenticationConstants {
 	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_KEY";
 	/** Key used to store authentication required redirection URL in the session. */
 	public static final String JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY = "JAMWIKI_AUTHENTICATION_REQUIRED_URI_KEY";
+
+	/** Default hard-coded URL value that is used as a stand-in for the default virtual wiki and topic. */
+	public static final String JAMWIKI_DEFAULT_VIRTUAL_WIKI_URL = "/DEFAULT_VIRTUAL_WIKI";
+	/** Query parameter used to indicate a URL to redirect to. */
+	public static final String JAMWIKI_REDIRECTION_TARGET_QUERY_PARAM = "target";
 }

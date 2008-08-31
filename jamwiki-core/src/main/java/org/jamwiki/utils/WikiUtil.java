@@ -38,6 +38,7 @@ import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.Topic;
+import org.jamwiki.model.VirtualWiki;
 
 /**
  * This class provides a variety of general utility methods for handling
@@ -185,6 +186,23 @@ public class WikiUtil {
 		String namespace = wikiLink.getNamespace();
 		String mainNamespace = NamespaceHandler.getMainNamespace(namespace);
 		return (!StringUtils.isBlank(mainNamespace)) ? mainNamespace + NamespaceHandler.NAMESPACE_SEPARATOR + wikiLink.getArticle() : wikiLink.getArticle();
+	}
+
+	/**
+	 * Determine the URL for the default virtual wiki topic, not including the application server context.
+	 */
+	public static String findDefaultVirtualWikiUrl(String virtualWikiName) {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			virtualWikiName = WikiBase.DEFAULT_VWIKI;
+		}
+		String target = Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC);
+		try {
+			VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
+			target = virtualWiki.getDefaultTopicName();
+		} catch (Exception e) {
+			logger.warning("Unable to retrieve default topic for virtual wiki", e);
+		}
+		return "/" + virtualWikiName + "/" + target;
 	}
 
 	/**

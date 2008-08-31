@@ -72,7 +72,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		WikiPageInfo pageInfo = new WikiPageInfo();
 		try {
 			next = this.handleJAMWikiRequest(request, response, next, pageInfo);
-			if (this.layout) {
+			if (next != null && this.layout) {
 				ServletUtil.loadDefaults(request, next, pageInfo);
 			}
 		} catch (Throwable t) {
