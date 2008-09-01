@@ -27,19 +27,19 @@
 <fieldset>
 <legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
 
-<form method="post" action="<c:url value="/${virtualWiki}/j_spring_security_check" />">
+<form method="post" action="<c:url value="${springSecurityLoginUrl}" />">
 <input type="hidden" name="target" value="<c:out value="${target}"/>" />
 <div class="formentry">
 	<span class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></span>
-	<span class="formelement"><input type="text" name="j_username" value="<c:out value="${param.username}" />" id="loginUsername" /></span>
+	<span class="formelement"><input type="text" name="<c:out value="${springSecurityUsernameField}" />" value="<c:out value="${param.username}" />" id="loginUsername" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-small"><label for="loginPassword"><f:message key="login.password"/></label></span>
-	<span class="formelement"><input type="password" name="j_password" id="loginPassword" /></span>
+	<span class="formelement"><input type="password" name="<c:out value="${springSecurityPasswordField}" />" id="loginPassword" /></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>
-	<span class="formelement"><input type="checkbox" value="true" name="_spring_security_remember_me" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></span>
+	<span class="formelement"><input type="checkbox" value="true" name="<c:out value="${springSecurityRememberMeField}" />" id="loginRemember" />&#160;<label for="loginRemember"><f:message key="login.rememberme" /></label></span>
 </div>
 <div class="formentry">
 	<span class="formcaption-small">&#160;</span>

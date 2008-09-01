@@ -26,19 +26,17 @@ import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import net.sf.ehcache.Element;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
 import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.model.Category;
@@ -61,7 +59,10 @@ import org.jamwiki.utils.WikiCache;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
-import org.apache.commons.lang.LocaleUtils;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -805,6 +806,11 @@ public class ServletUtil {
 			}
 		}
 		next.addObject("target", target);
+		String springSecurityLoginUrl = "/" + virtualWikiName + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_URL;
+		next.addObject("springSecurityLoginUrl", springSecurityLoginUrl);
+		next.addObject("springSecurityUsernameField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_USERNAME_FIELD_NAME);
+		next.addObject("springSecurityPasswordField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_PASSWORD_FIELD_NAME);
+		next.addObject("springSecurityRememberMeField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_REMEMBER_ME_FIELD_NAME);
 		pageInfo.setPageTitle(new WikiMessage("login.title"));
 		pageInfo.setContentJsp(JSP_LOGIN);
 		pageInfo.setSpecial(true);
