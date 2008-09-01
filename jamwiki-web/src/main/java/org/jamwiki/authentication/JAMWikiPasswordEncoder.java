@@ -35,6 +35,9 @@ public class JAMWikiPasswordEncoder implements PasswordEncoder {
 	 * @return encoded password
 	 */
 	public String encodePassword(String rawPass, Object salt) {
+		if (StringUtils.isBlank(rawPass)) {
+			throw new IllegalArgumentException("Password cannot be empty");
+		}
 		return Encryption.encrypt(rawPass);
 	}
 
@@ -48,6 +51,9 @@ public class JAMWikiPasswordEncoder implements PasswordEncoder {
 	 * @return true if the password is valid , false otherwise
 	 */
 	public boolean isPasswordValid(String encPass, String rawPass, Object salt) {
+		if (StringUtils.isBlank(rawPass)) {
+			return false;
+		}
 		return StringUtils.equals(encPass, Encryption.encrypt(rawPass));
 	}
 }
