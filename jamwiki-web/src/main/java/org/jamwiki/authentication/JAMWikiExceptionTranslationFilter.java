@@ -106,15 +106,8 @@ public class JAMWikiExceptionTranslationFilter implements Filter, InitializingBe
 	/**
 	 *
 	 */
-	public void handleAccessDenied(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+	private void handleAccessDenied(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		if (this.errorPage != null) {
-			String uri = request.getRequestURI();
-			// FIXME - move the "strip after semicolon" code to WikiUtil
-			int pathParamIndex = uri.indexOf(';');
-			if (pathParamIndex > 0) {
-				// strip everything after the first semi-colon
-				uri = uri.substring(0, pathParamIndex);
-			}
 			String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 			RequestDispatcher rd = request.getRequestDispatcher("/" + virtualWiki + this.errorPage);
 			rd.forward(request, response);
