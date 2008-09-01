@@ -39,9 +39,10 @@ public class LoginServlet extends JAMWikiServlet {
 	 *
 	 */
 	protected ModelAndView handleJAMWikiRequest(HttpServletRequest request, HttpServletResponse response, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
+		// FIXME - hard coding
 		if (ServletUtil.isTopic(request, "Special:Logout")) {
 			// redirect to the Spring Security logout
-			handleLogout(request, response);
+			viewLogout(request, response);
 			return null;
 		}
 		return ServletUtil.viewLogin(request, pageInfo, null, null);
@@ -52,7 +53,7 @@ public class LoginServlet extends JAMWikiServlet {
 	 * URL to the request.  See the Spring Security LogoutFilter.determineTargetUrl() for
 	 * further details.
 	 */
-	private void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void viewLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
 		String logoutSuccessUrl = WikiUtil.findDefaultVirtualWikiUrl(virtualWikiName);
 		try {
@@ -68,6 +69,6 @@ public class LoginServlet extends JAMWikiServlet {
 		springSecurityLogoutUrl += JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_URL;
 		springSecurityLogoutUrl += "?" + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM;
 		springSecurityLogoutUrl += "=" + logoutSuccessUrl;
-		response.sendRedirect(springSecurityLogoutUrl);
+		response.sendRedirect(response.encodeRedirectURL(springSecurityLogoutUrl));
 	}
 }

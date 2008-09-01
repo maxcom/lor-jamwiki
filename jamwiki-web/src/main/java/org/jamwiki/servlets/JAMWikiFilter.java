@@ -70,7 +70,7 @@ public class JAMWikiFilter implements Filter {
 	 *
 	 */
 	private void redirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException, ServletException {
-		response.sendRedirect(url);
+		response.sendRedirect(response.encodeRedirectURL(url));
 	}
 
 	/**

@@ -74,37 +74,17 @@ public class JAMWikiAuthenticationProcessingFilter extends AuthenticationProcess
 		if (StringUtils.isBlank(virtualWikiName)) {
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
 		}
-		String targetUrl = "/" + virtualWikiName + "/" + this.getAuthenticationFailureUrl();
-		String target = request.getParameter(JAMWikiAuthenticationConstants.JAMWIKI_REDIRECTION_TARGET_QUERY_PARAM);
+		String targetUrl = "/" + virtualWikiName + this.getAuthenticationFailureUrl();
+		String target = request.getParameter(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
 		if (!StringUtils.isBlank(target)) {
 			targetUrl += (targetUrl.indexOf('?') == -1) ? "?" : "&";
 			try {
-				targetUrl += JAMWikiAuthenticationConstants.JAMWIKI_REDIRECTION_TARGET_QUERY_PARAM + "=" + URLEncoder.encode(target, "UTF-8");
+				targetUrl += JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME + "=" + URLEncoder.encode(target, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				// this should never happen
 				throw new IllegalStateException("Unsupporting encoding UTF-8");
 			}
 		}
-		return targetUrl;
-	}
-
-	/**
-	 *
-	 */
-	protected String determineTargetUrl(HttpServletRequest request) {
-		String targetUrl = super.determineTargetUrl(request);
-		if (!StringUtils.equals(targetUrl, JAMWikiAuthenticationConstants.JAMWIKI_DEFAULT_VIRTUAL_WIKI_URL)) {
-			return targetUrl;
-		}
-		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-		if (StringUtils.isBlank(virtualWikiName)) {
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
-		}
-		String target = request.getParameter(JAMWikiAuthenticationConstants.JAMWIKI_REDIRECTION_TARGET_QUERY_PARAM);
-		if (!StringUtils.isBlank(target)) {
-			return "/" + virtualWikiName + "/" + target;
-		}
-		targetUrl = WikiUtil.findDefaultVirtualWikiUrl(virtualWikiName);
 		return targetUrl;
 	}
 }

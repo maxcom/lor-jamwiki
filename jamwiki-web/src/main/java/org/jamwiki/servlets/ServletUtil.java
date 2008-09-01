@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import net.sf.ehcache.Element;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -794,18 +795,29 @@ public class ServletUtil {
 		ModelAndView next = new ModelAndView("wiki");
 		pageInfo.reset();
 		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-		String target = request.getParameter("target");
+		String target = request.getParameter(JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
 		if (StringUtils.isBlank(target)) {
 			if (StringUtils.isBlank(topic)) {
 				VirtualWiki virtualWiki = WikiBase.getDataHandler().lookupVirtualWiki(virtualWikiName);
 				topic = virtualWiki.getDefaultTopicName();
 			}
-			target = topic;
+			target = "/" + virtualWikiName + "/" + topic;
 			if (!StringUtils.isBlank(request.getQueryString())) {
 				target += "?" + request.getQueryString();
 			}
 		}
-		next.addObject("target", target);
+		next.addObject("springSecurityTargetUrlField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME);
+		HttpSession session = request.getSession(false);
+		if (request.getRequestURL().indexOf(request.getRequestURI()) != -1 && (session == null || session.getAttribute(JAMWikiAuthenticationConstants.SPRING_SECURITY_SAVED_REQUEST_SESSION_KEY) == null)) {
+			// Only add a target URL if Spring Security has not saved a request in the session.  The request
+			// URL vs URI check is needed due to the fact that the first time a user is redirected by Spring
+			// Security to the login page the saved request attribute is not yet available in the session
+			// due to weirdness and magic which I've thus far been unable to track down, so comparing the URI
+			// to the URL provides a way of determining if the user was redirected.  Anyone who can create
+			// a check that reliably captures whether or not Spring Security has a saved request should
+			// feel free to modify the conditional above.
+			next.addObject("springSecurityTargetUrl", target);
+		}
 		String springSecurityLoginUrl = "/" + virtualWikiName + JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_URL;
 		next.addObject("springSecurityLoginUrl", springSecurityLoginUrl);
 		next.addObject("springSecurityUsernameField", JAMWikiAuthenticationConstants.SPRING_SECURITY_LOGIN_USERNAME_FIELD_NAME);

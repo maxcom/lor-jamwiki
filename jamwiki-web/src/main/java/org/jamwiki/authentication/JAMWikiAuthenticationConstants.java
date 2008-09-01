@@ -16,6 +16,8 @@
  */
 package org.jamwiki.authentication;
 
+import org.springframework.security.ui.AbstractProcessingFilter;
+import org.springframework.security.ui.TargetUrlResolverImpl;
 import org.springframework.security.ui.rememberme.AbstractRememberMeServices;
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 
@@ -28,6 +30,7 @@ public interface JAMWikiAuthenticationConstants {
 	public static final String SPRING_SECURITY_LOGOUT_URL = "/j_spring_security_logout";
 	/** Query parameter which stores the default Spring Security logout redirection URL as defined in LogoutFilter.determineTargetUrl(). */
 	public static final String SPRING_SECURITY_LOGOUT_REDIRECT_QUERY_PARAM = "logoutSuccessUrl";
+
 	/** Default Spring Security login URL */
 	public static final String SPRING_SECURITY_LOGIN_URL = "/j_spring_security_check";
 	/** The default Spring Security remember me login form field name. */
@@ -36,6 +39,11 @@ public interface JAMWikiAuthenticationConstants {
 	public static final String SPRING_SECURITY_LOGIN_PASSWORD_FIELD_NAME = AuthenticationProcessingFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
 	/** The default Spring Security username login form field name. */
 	public static final String SPRING_SECURITY_LOGIN_USERNAME_FIELD_NAME = AuthenticationProcessingFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
+	/** The default Spring Security target URL login form hidden field name. */
+	public static final String SPRING_SECURITY_LOGIN_TARGET_URL_FIELD_NAME = TargetUrlResolverImpl.DEFAULT_TARGET_PARAMETER;
+
+	/** When forcing a user to login, the previous request is saved in the session under this key. */
+	public static final String SPRING_SECURITY_SAVED_REQUEST_SESSION_KEY = AbstractProcessingFilter.SPRING_SECURITY_SAVED_REQUEST_KEY;
 
 	/** Key used to store access denied message key in the session. */
 	public static final String JAMWIKI_ACCESS_DENIED_ERROR_KEY = "JAMWIKI_403_ERROR_KEY";
@@ -48,6 +56,4 @@ public interface JAMWikiAuthenticationConstants {
 
 	/** Default hard-coded URL value that is used as a stand-in for the default virtual wiki and topic. */
 	public static final String JAMWIKI_DEFAULT_VIRTUAL_WIKI_URL = "/DEFAULT_VIRTUAL_WIKI";
-	/** Query parameter used to indicate a URL to redirect to. */
-	public static final String JAMWIKI_REDIRECTION_TARGET_QUERY_PARAM = "target";
 }

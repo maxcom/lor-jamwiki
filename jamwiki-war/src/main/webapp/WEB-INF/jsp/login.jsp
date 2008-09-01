@@ -28,7 +28,7 @@
 <legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
 
 <form method="post" action="<c:url value="${springSecurityLoginUrl}" />">
-<input type="hidden" name="target" value="<c:out value="${target}"/>" />
+<input type="hidden" name="<c:out value="${springSecurityTargetUrlField}" />" value="<c:out value="${springSecurityTargetUrl}"/>" />
 <div class="formentry">
 	<span class="formcaption-small"><label for="loginUsername"><f:message key="login.username"/></label></span>
 	<span class="formelement"><input type="text" name="<c:out value="${springSecurityUsernameField}" />" value="<c:out value="${param.username}" />" id="loginUsername" /></span>
