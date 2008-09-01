@@ -41,13 +41,6 @@ public class JAMWikiAuthenticationProcessingFilterEntryPoint extends Authenticat
 	 * uses the configured login URL and prepends the virtual wiki.
 	 */
 	protected String determineUrlToUseForThisRequest(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
-		String uri = request.getRequestURI();
-		// FIXME - move the "strip after semicolon" code to WikiUtil
-		int pathParamIndex = uri.indexOf(';');
-		if (pathParamIndex > 0) {
-			// strip everything after the first semi-colon
-			uri = uri.substring(0, pathParamIndex);
-		}
 		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
 		return "/" + virtualWiki + this.getLoginFormUrl();
 	}
