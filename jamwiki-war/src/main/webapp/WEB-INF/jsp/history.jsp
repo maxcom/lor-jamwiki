@@ -39,8 +39,14 @@
 <br /><br />
 
 <ul>
+<c:set var="nextTopicVersionId" value="" />
 <c:forEach items="${changes}" var="change" varStatus="status">
 <li<c:if test="${change.delete}"> class="deletechange"</c:if><c:if test="${change.minor}"> class="minorchange"</c:if><c:if test="${change.undelete}"> class="undeletechange"</c:if><c:if test="${change.move}"> class="movechange"</c:if><c:if test="${change.normal}"> class="standardchange"</c:if>>
+	<c:if test="${!empty nextTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.topicVersionId}" /><jamwiki:linkParam key="version1" value="${nextTopicVersionId}" /><f:message key="history.caption.diffnext" /></jamwiki:link>)</c:if>
+	<c:if test="${empty nextTopicVersionId}">(<f:message key="history.caption.diffnext" />)</c:if>
+	<c:if test="${!empty change.previousTopicVersionId}">(<jamwiki:link value="Special:Diff"><jamwiki:linkParam key="topic" value="${change.topicName}" /><jamwiki:linkParam key="version2" value="${change.previousTopicVersionId}" /><jamwiki:linkParam key="version1" value="${change.topicVersionId}" /><f:message key="history.caption.diffprevious" /></jamwiki:link>)</c:if>
+	<c:if test="${empty change.previousTopicVersionId}">(<f:message key="history.caption.diffprevious" />)</c:if>
+	<c:set var="nextTopicVersionId" value="${change.topicVersionId}" />
 	<c:if test="${numChanges > 1}">
 	&#160;
 	<input type="radio" name="version2" id="ver2_<c:out value="${change.topicVersionId}" />" onclick="historyRadio(this, 'version1', true)" value="<c:out value="${change.topicVersionId}" />" <c:if test="${status.index == 1}">checked="checked"</c:if> <c:if test="${status.first}">style="visibility:hidden"</c:if> />
