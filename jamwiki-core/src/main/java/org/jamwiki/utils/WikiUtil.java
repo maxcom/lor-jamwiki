@@ -358,15 +358,16 @@ public class WikiUtil {
 	public static String getVirtualWikiFromURI(HttpServletRequest request) {
 		String uri = retrieveDirectoriesFromURI(request, 0);
 		if (StringUtils.isBlank(uri)) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
+			logger.info("No virtual wiki found in URL: " + request.getRequestURI());
 			return null;
 		}
+		// default the virtual wiki to the URI since the user may have accessed a URL of
+		// the form /context/virtualwiki with no trailing slash
+		String virtualWiki = uri;
 		int slashIndex = uri.indexOf('/');
-		if (slashIndex == -1) {
-			logger.warning("No virtual wiki found in URL: " + request.getRequestURI());
-			return null;
+		if (slashIndex != -1) {
+			virtualWiki = uri.substring(0, slashIndex);
 		}
-		String virtualWiki = uri.substring(0, slashIndex);
 		return Utilities.decodeFromURL(virtualWiki, true);
 	}
 

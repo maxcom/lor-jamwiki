@@ -15,6 +15,8 @@ Bugfixes:
     causing the watchlist tab to break.  Fix suggested by Luc.
   * Virtual wiki default topics with spaces were incorrectly being stored with
     spaces converted to underscores ("Main_Page" instead of "Main Page").
+  * Null pointer exception when viewing URLs with no topic and no trailing
+    slash of the form "/context/virtual".
 
 Translation Updates:
 
