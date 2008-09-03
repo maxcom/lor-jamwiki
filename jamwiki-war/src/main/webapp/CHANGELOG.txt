@@ -13,6 +13,8 @@ Bugfixes:
 
   * JDK 1.6 and greater changed the behavior of the JDBC getColumnName() method
     causing the watchlist tab to break.  Fix suggested by Luc.
+  * Virtual wiki default topics with spaces were incorrectly being stored with
+    spaces converted to underscores ("Main_Page" instead of "Main Page").
 
 Translation Updates:
 
