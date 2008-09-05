@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.imageio.ImageIO;
+import net.sf.ehcache.Element;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiImage;
 import org.jamwiki.model.WikiFile;
 
@@ -40,6 +42,29 @@ public class ImageUtil {
 	 *
 	 */
 	private ImageUtil() {
+	}
+
+	/**
+	 *
+	 */
+	private static void addToCache(File file, int width, int height) {
+		ImageDimensions dimensions = new ImageDimensions(width, height);
+		String key = file.getPath();
+		WikiCache.addToCache(WikiBase.CACHE_IMAGE_DIMENSIONS, key, dimensions);
+	}
+
+	/**
+	 * Given a file URL and a maximum dimension, return a path for the file.
+	 */
+	private static String buildImagePath(String currentUrl, int maxDimension) {
+		String path = currentUrl;
+		int pos = path.lastIndexOf('.');
+		if (pos != -1) {
+			path = path.substring(0, pos) + "-" + maxDimension + "px" + path.substring(pos);
+		} else {
+			path += "-" + maxDimension + "px";
+		}
+		return path;
 	}
 
 	/**
@@ -82,15 +107,21 @@ public class ImageUtil {
 			throw new IllegalArgumentException("wikiFile may not be null");
 		}
 		WikiImage wikiImage = new WikiImage(wikiFile);
-		BufferedImage imageObject = null;
 		if (maxDimension > 0) {
-			imageObject = ImageUtil.resizeImage(wikiImage, maxDimension);
-			setScaledDimensions(imageObject, wikiImage, maxDimension);
+			ImageDimensions dimensions = ImageUtil.resizeImage(wikiImage, maxDimension);
+			setScaledDimensions(dimensions.getWidth(), dimensions.getHeight(), wikiImage, maxDimension);
 		} else {
-			File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
-			imageObject = ImageUtil.loadImage(imageFile);
-			wikiImage.setWidth(imageObject.getWidth());
-			wikiImage.setHeight(imageObject.getHeight());
+			File file = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
+			ImageDimensions dimensions = retrieveFromCache(file);
+			if (dimensions != null) {
+				wikiImage.setWidth(dimensions.getWidth());
+				wikiImage.setHeight(dimensions.getHeight());
+			} else {
+				BufferedImage imageObject = ImageUtil.loadImage(file);
+				wikiImage.setWidth(imageObject.getWidth());
+				wikiImage.setHeight(imageObject.getHeight());
+				addToCache(file, imageObject.getWidth(), imageObject.getHeight());
+			}
 		}
 		return wikiImage;
 	}
@@ -131,26 +162,27 @@ public class ImageUtil {
 	 * be constrained so that the proportions are the same, but neither the width
 	 * or height exceeds the value specified.
 	 */
-	private static BufferedImage resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
+	private static ImageDimensions resizeImage(WikiImage wikiImage, int maxDimension) throws Exception {
+		String newUrl = buildImagePath(wikiImage.getUrl(), maxDimension);
+		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
+		ImageDimensions dimensions = retrieveFromCache(newImageFile);
+		if (dimensions != null) {
+			return dimensions;
+		}
 		File imageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), wikiImage.getUrl());
 		BufferedImage original = ImageUtil.loadImage(imageFile);
 		maxDimension = calculateImageIncrement(maxDimension);
 		int increment = Environment.getIntValue(Environment.PROP_IMAGE_RESIZE_INCREMENT);
 		if (increment <= 0 || (maxDimension > original.getWidth() && maxDimension > original.getHeight())) {
 			// let the browser scale the image
-			return original;
-		}
-		String newUrl = wikiImage.getUrl();
-		int pos = newUrl.lastIndexOf('.');
-		if (pos > -1) {
-			newUrl = newUrl.substring(0, pos) + "-" + maxDimension + "px" + newUrl.substring(pos);
-		} else {
-			newUrl += "-" + maxDimension + "px";
+			addToCache(imageFile, original.getWidth(), original.getHeight());
+			return new ImageDimensions(original.getWidth(), original.getHeight());
 		}
 		wikiImage.setUrl(newUrl);
-		File newImageFile = new File(Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), newUrl);
 		if (newImageFile.exists()) {
-			return ImageUtil.loadImage(newImageFile);
+			BufferedImage result = ImageUtil.loadImage(newImageFile);
+			addToCache(newImageFile, result.getWidth(), result.getHeight());
+			return new ImageDimensions(result.getWidth(), result.getHeight());
 		}
 		int width = -1;
 		int height = -1;
@@ -173,7 +205,18 @@ public class ImageUtil {
 			bufferedImage = ImageUtil.imageToBufferedImage(resized);
 		}
 		ImageUtil.saveImage(bufferedImage, newImageFile);
-		return bufferedImage;
+		addToCache(newImageFile, bufferedImage.getWidth(), bufferedImage.getHeight());
+		return new ImageDimensions(bufferedImage.getWidth(), bufferedImage.getHeight());
+	}
+
+	/**
+	 * Determine if image information is available in the cache.  If so return it,
+	 * otherwise return <code>null</code>.
+	 */
+	private static ImageDimensions retrieveFromCache(File file) {
+		String key = file.getPath();
+		Element cachedDimensions = WikiCache.retrieveFromCache(WikiBase.CACHE_IMAGE_DIMENSIONS, key);
+		return (cachedDimensions != null) ? (ImageDimensions)cachedDimensions.getObjectValue() : null;
 	}
 
 	/**
@@ -201,11 +244,11 @@ public class ImageUtil {
 	}
 
 	/**
-	 *
+	 * Set the width and height of a WikiImage to match the specified dimensions, with a
+	 * maximum width/height value specified by maxDimension.  Thus if an image is
+	 * 800x400 and maxDimension is 200 the result will be 200x100.
 	 */
-	private static void setScaledDimensions(BufferedImage bufferedImage, WikiImage wikiImage, int maxDimension) {
-		int width = bufferedImage.getWidth();
-		int height = bufferedImage.getHeight();
+	private static void setScaledDimensions(int width, int height, WikiImage wikiImage, int maxDimension) {
 		if (width >= height) {
 			height = (int)Math.floor(((double)maxDimension / (double)width) * (double)height);
 			width = maxDimension;
