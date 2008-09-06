@@ -21,6 +21,8 @@ Bugfixes:
     spaces converted to underscores ("Main_Page" instead of "Main Page").
   * Null pointer exception when viewing URLs with no topic and no trailing
     slash of the form "/context/virtual".
+  * A bug introduced in a previous release prevented empty topics from being
+    saved - this is now fixed.
 
 Translation Updates:
 
