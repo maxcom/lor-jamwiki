@@ -119,7 +119,6 @@ public class DatabaseUpgrades {
 			messages.add("Converted admin users to new role structure.");
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
-
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_MAP_TABLE);
 			} catch (Exception ex) {}
@@ -227,6 +226,70 @@ public class DatabaseUpgrades {
 		if (status != null) {
 			DatabaseConnection.commit(status);
 		}
+		return messages;
+	}
+
+	/**
+	 *
+	 */
+	public static Vector upgrade070(Vector messages) throws Exception {
+		TransactionStatus status = DatabaseConnection.startTransaction(getTransactionDefinition());
+		try {
+			String sql = null;
+			Connection conn = DatabaseConnection.getConnection();
+			String dbType = Environment.getValue(Environment.PROP_DB_TYPE);
+			// add characters_changed column to jam_topic_version
+			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_topic_version add (characters_changed INTEGER) ";
+			} else {
+				sql = "alter table jam_topic_version add column characters_changed INTEGER ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added characters_changed column to jam_topic_version");
+			// add characters_changed column to jam_recent_change
+			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_recent_change add (characters_changed INTEGER) ";
+			} else {
+				sql = "alter table jam_recent_change add column characters_changed INTEGER ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added characters_changed column to jam_recent_change");
+		} catch (Exception e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		DatabaseConnection.commit(status);
+		// perform a second transaction to populate the new columns.  this code is in its own
+		// transaction since if it fails the upgrade can still be considered successful.
+		status = DatabaseConnection.startTransaction(getTransactionDefinition());
+		try {
+			String sql = "update jam_topic_version set characters_changed = ( "
+			           +   "select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) "
+			           +   "from jam_topic_version current_version "
+			           +   "left outer join jam_topic_version previous_version "
+			           +   "on current_version.previous_topic_version_id = previous_version.topic_version_id "
+			           +   "where jam_topic_version.topic_version_id = current_version.topic_version_id "
+			           + ") ";
+			Connection conn = DatabaseConnection.getConnection();
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Populated characters_changed column in jam_topic_version");
+		} catch (Exception e) {
+			messages.add("Unable to populate characters_changed colum in jam_topic_version.  Please see UPGRADE.txt for further details on this optional modification." + e.getMessage());
+			// do not throw this error and halt the upgrade process - populating the field
+			// is not required for existing systems.
+			logger.info("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
+			DatabaseConnection.rollbackOnException(status, e);
+			status = null;	// so we do not try to commit
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		DatabaseConnection.commit(status);
+		WikiBase.getDataHandler().reloadRecentChanges(null);
+		messages.add("Populated characters_changed column in jam_recent_change");
 		return messages;
 	}
 }

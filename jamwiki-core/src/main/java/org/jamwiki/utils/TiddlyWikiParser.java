@@ -14,7 +14,6 @@
  * along with this program (LICENSE.txt); if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package org.jamwiki.utils;
 
 import java.io.BufferedReader;
@@ -27,6 +26,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Topic;
 import org.jamwiki.model.TopicVersion;
@@ -189,7 +189,8 @@ public class TiddlyWikiParser {
 		topic.setName(name);
 		topic.setVirtualWiki(virtualWiki);
 		topic.setTopicContent(content);
-		TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", content);
+		int charactersChanged = StringUtils.length(content);
+		TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", content, charactersChanged);
 		topicVersion.setEditDate(new Timestamp(lastMod.getTime()));
 		// manage mapping bitween MediaWiki and JAMWiki namespaces
 		topic.setTopicType(Topic.TYPE_ARTICLE);

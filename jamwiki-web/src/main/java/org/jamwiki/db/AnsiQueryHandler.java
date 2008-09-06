@@ -626,6 +626,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setInt(9, change.getEditType());
 		stmt.setInt(10, virtualWikiId);
 		stmt.setString(11, change.getVirtualWiki());
+		stmt.setInt(12, change.getCharactersChanged());
 		stmt.executeUpdate(conn);
 	}
 
@@ -705,6 +706,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		} else {
 			stmt.setInt(9, topicVersion.getPreviousTopicVersionId().intValue());
 		}
+		stmt.setInt(10, topicVersion.getCharactersChanged());
 		stmt.executeUpdate(conn);
 		stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
 		stmt.setInt(1, topicVersion.getTopicId());

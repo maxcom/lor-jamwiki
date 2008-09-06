@@ -33,6 +33,7 @@ public class TopicVersion {
 	public static final int EDIT_UNDELETE = 7;
 	private Integer authorId = null;
 	private String authorIpAddress = null;
+	private int charactersChanged = 0;
 	private String editComment = null;
 	private Timestamp editDate = new Timestamp(System.currentTimeMillis());
 	private int editType = EDIT_NORMAL;
@@ -51,13 +52,14 @@ public class TopicVersion {
 	/**
 	 *
 	 */
-	public TopicVersion(WikiUser user, String authorIpAddress, String editComment, String versionContent) {
+	public TopicVersion(WikiUser user, String authorIpAddress, String editComment, String versionContent, int charactersChanged) {
 		if (user != null && user.getUserId() > 0) {
 			this.authorId = new Integer(user.getUserId());
 		}
 		this.authorIpAddress = authorIpAddress;
 		this.editComment = editComment;
 		this.versionContent = versionContent;
+		this.charactersChanged = charactersChanged;
 	}
 
 	/**
@@ -86,6 +88,20 @@ public class TopicVersion {
 	 */
 	public void setAuthorIpAddress(String authorIpAddress) {
 		this.authorIpAddress = authorIpAddress;
+	}
+
+	/**
+	 *
+	 */
+	public int getCharactersChanged() {
+		return this.charactersChanged;
+	}
+
+	/**
+	 *
+	 */
+	public void setCharactersChanged(int charactersChanged) {
+		this.charactersChanged = charactersChanged;
 	}
 
 	/**

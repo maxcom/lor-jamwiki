@@ -196,11 +196,12 @@ public class TranslationServlet extends JAMWikiServlet {
 			topic.setVirtualWiki(virtualWiki);
 			topic.setName(topicName);
 		}
+		int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 		topic.setTopicContent(contents);
 		topic.setReadOnly(true);
 		topic.setTopicType(Topic.TYPE_SYSTEM_FILE);
 		WikiUser user = ServletUtil.currentUser();
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), editComment, contents);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), editComment, contents, charactersChanged);
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
 	}
 }

@@ -77,6 +77,25 @@ followed by 0.5.3.
 
   1. Update the /WEB-INF/classes/jamwiki.properties file by changing the
      "wiki-version" property to "0.7.0".
+  2. Update the database schema by executing the following SQL statements:
+       a) Add the characters_changed column to the jam_topic_version and
+          jam_recent_change tables.
+            Oracle:
+              alter table jam_recent_change add (characters_changed INTEGER);
+              alter table jam_topic_version add (characters_changed INTEGER);
+            Other Databases:
+              alter table jam_recent_change add column characters_changed INTEGER;
+              alter table jam_topic_version add column characters_changed INTEGER;
+       b) Populate the new characters_changed column for topic versions.
+              update jam_topic_version set characters_changed = (
+                select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) 
+                from jam_topic_version current_version 
+                left outer join jam_topic_version previous_version 
+                on current_version.previous_topic_version_id = previous_version.topic_version_id 
+                where jam_topic_version.topic_version_id = current_version.topic_version_id
+              );
+       c) Populate the new characters_changed column for recent changes by
+          reloading recent changes from the Special:Maintenance page.
 
 
   JAMWiki 0.6.6

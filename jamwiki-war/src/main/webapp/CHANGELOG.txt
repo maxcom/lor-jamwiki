@@ -6,6 +6,8 @@ New Features:
   * Special:OrphanedPages added to display un-linked pages (hanspeterklapf).
   * Remove ability to automatically upgrade from versions prior to 0.5.0.
   * "Next" and "prev" diff links added to Special:History to match Mediawiki.
+  * Number of characters changed in a diff is now displayed on recent changes,
+    history and other pages to match Mediawiki.
   * Signficant (5-10x or more) performance improvement of image rendering by
     making better use of cache.  Suggestions from Jim.
   * Upgrade to Spring Framework 2.5.5.

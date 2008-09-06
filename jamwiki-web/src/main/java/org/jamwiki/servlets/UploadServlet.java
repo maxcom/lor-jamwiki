@@ -222,11 +222,13 @@ public class UploadServlet extends JAMWikiServlet {
 			return;
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, false, null);
+		int charactersChanged = 0;
 		if (topic == null) {
 			topic = new Topic();
 			topic.setVirtualWiki(virtualWiki);
 			topic.setName(topicName);
 			topic.setTopicContent(contents);
+			charactersChanged = StringUtils.length(contents);
 		}
 		if (isImage) {
 			topic.setTopicType(Topic.TYPE_IMAGE);
@@ -242,7 +244,7 @@ public class UploadServlet extends JAMWikiServlet {
 			authorId = new Integer(user.getUserId());
 		}
 		wikiFileVersion.setAuthorId(authorId);
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), contents, topic.getTopicContent(), charactersChanged);
 		if (fileName == null) {
 			throw new WikiException(new WikiMessage("upload.error.filenotfound"));
 		}

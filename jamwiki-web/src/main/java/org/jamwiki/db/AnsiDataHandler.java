@@ -529,6 +529,7 @@ public class AnsiDataHandler implements DataHandler {
 			}
 			change.setTopicId(rs.getInt(DATA_TOPIC_ID));
 			change.setTopicName(rs.getString(DATA_TOPIC_NAME));
+			change.setCharactersChanged(rs.getInt("characters_changed"));
 			change.setEditDate(rs.getTimestamp("edit_date"));
 			change.setEditComment(rs.getString("edit_comment"));
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
@@ -623,6 +624,7 @@ public class AnsiDataHandler implements DataHandler {
 			if (userId > 0) {
 				topicVersion.setAuthorId(new Integer(userId));
 			}
+			topicVersion.setCharactersChanged(rs.getInt("characters_changed"));
 			topicVersion.setEditDate(rs.getTimestamp("edit_date"));
 			topicVersion.setEditType(rs.getInt("edit_type"));
 			topicVersion.setAuthorIpAddress(rs.getString("wiki_user_ip_address"));
@@ -1141,9 +1143,10 @@ public class AnsiDataHandler implements DataHandler {
 			Connection conn = DatabaseConnection.getConnection();
 			String contents = WikiUtil.readSpecialPage(locale, topicName);
 			Topic topic = this.lookupTopic(virtualWiki, topicName, false, conn);
+			int charactersChanged = StringUtils.length(contents) - StringUtils.length(topic.getTopicContent());
 			topic.setTopicContent(contents);
 			// FIXME - hard coding
-			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents);
+			TopicVersion topicVersion = new TopicVersion(user, ipAddress, "Automatically updated by system upgrade", contents, charactersChanged);
 			ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
 			writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, conn);
 		} catch (Exception e) {

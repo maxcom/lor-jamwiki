@@ -207,7 +207,8 @@ public class XMLTopicFactory extends DefaultHandler {
 			topic.setName(convertArticleNameFromWikipediaToJAMWiki(pageName));
 			topic.setVirtualWiki(virtualWiki);
 			topic.setTopicContent(pageText);
-			TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", pageText);
+			int charactersChanged = StringUtils.length(pageText);
+			TopicVersion topicVersion = new TopicVersion(user, authorIpAddress, "imported", pageText, charactersChanged);
 			// manage mapping bitween MediaWiki and JAMWiki namespaces
 			topic.setTopicType(convertNamespaceFromMediaWikiToJAMWiki(namespace));
 			// Store topic in database

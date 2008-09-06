@@ -115,7 +115,7 @@ public class MoveServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(request.getParameter("moveComment"))) {
 			moveComment += " (" + request.getParameter("moveComment") + ")";
 		}
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent());
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
 		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination, null);
 		return true;

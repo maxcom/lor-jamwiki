@@ -39,7 +39,10 @@
 	&#160;
 	<%-- FIXME: do not hardcode date pattern --%>
 	<f:formatDate value="${change.editDate}" type="both" pattern="dd-MMM-yyyy HH:mm" />
-	&#160;
+	&#160;.&#160;.&#160;
+	<%-- the "+" symbol could be added using a pattern attribute, but there does not seem to be a way to avoid having "+0" show up when that approach is used. --%>
+	(<c:if test="${change.charactersChanged > 0}">+</c:if><f:formatNumber value="${change.charactersChanged}" />)
+	&#160;.&#160;.&#160;
 	<jamwiki:watchlist topic="${change.topicName}">
 	<c:if test="${!change.delete}"><jamwiki:link value="${change.topicName}" text="${change.topicName}" /></c:if>
 	<c:if test="${change.delete}"><c:out value="${change.topicName}" /></c:if>

@@ -309,7 +309,8 @@ public class EditServlet extends JAMWikiServlet {
 			topic.setRedirectTo(null);
 			topic.setTopicType(Topic.TYPE_ARTICLE);
 		}
-		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents);
+		int charactersChanged = StringUtils.length(contents) - StringUtils.length(lastTopicContent);
+		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("editComment"), contents, charactersChanged);
 		if (request.getParameter("minorEdit") != null) {
 			topicVersion.setEditType(TopicVersion.EDIT_MINOR);
 		}
