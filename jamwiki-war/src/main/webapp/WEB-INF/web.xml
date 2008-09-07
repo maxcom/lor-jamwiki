@@ -12,10 +12,29 @@
 	page-init.jsp.
 	-->
 
+	<!--
+		- Location of the XML file that defines the root application context.
+		- Applied by ContextLoaderServlet.
+	-->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/applicationContext-security.xml</param-value>
 	</context-param>
+
+	<!--
+		- Loads the root application context of this web app at startup,
+		- by default from "/WEB-INF/applicationContext.xml".
+		-
+		- Use WebApplicationContextUtils.getWebApplicationContext(servletContext)
+		- to access it anywhere in the web application, outside of the framework.
+		-
+		- The root context is the parent of all servlet-specific contexts.
+		- This means that its beans are automatically available in these child contexts,
+		- both for getBean(name) calls and (external) bean references.
+	-->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 
 	<!-- set encoding, cache headers, etc. -->
 	<filter>
@@ -47,10 +66,15 @@
 		<listener-class>org.jamwiki.servlets.JAMWikiListener</listener-class>
 	</listener>
 
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-
+	<!--
+		- Spring web MVC servlet that dispatches requests to registered handlers.
+		- Has its own application context, by default defined in "{servlet-name}-servlet.xml",
+		- i.e. "jamwiki-servlet.xml" in this case.
+		-
+		- A web app can contain any number of such servlets.
+		- Note that this web app has a shared root application context, serving as parent
+		- of all DispatcherServlet contexts.
+	-->
 	<servlet>
 		<servlet-name>jamwiki</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
