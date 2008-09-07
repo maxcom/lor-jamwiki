@@ -7,7 +7,7 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
 <project name="example" default="wt.full">
 
 	<!-- load the language specific properties file -->
-	<property file="../jamwiki-war/src/main/resources/ApplicationResources_de.properties" />
+	<property file="../jamwiki-war/src/main/resources/ApplicationResources_${user.language}.properties" />
 	
 	<property name="webtest.home" value="lib/webtest"/>
 
