@@ -7,3 +7,5 @@
 <p><a href="/wiki/en/Example" title="Example">Example</a>9</p>
 <p><a href="/wiki/en/Example" title="Example">text</a>9</p>
 <p><a href="/wiki/en/Special:Edit?topic=Comments:Example" class="edit" title="Comments:Example">Comments:Example</a>9</p>
+<p><a href="#Section" title="Section">#Section</a></p>
+<p><a href="#Section" title="Section">text</a></p>

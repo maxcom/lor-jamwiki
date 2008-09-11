@@ -23,6 +23,8 @@ Bugfixes:
     slash of the form "/context/virtual".
   * A bug introduced in a previous release prevented empty topics from being
     saved - this is now fixed.
+  * Links of the form [[#section]] and [[#section|text]] will now be parsed
+    correctly.
 
 Translation Updates:
 

@@ -259,6 +259,9 @@ public class LinkUtil {
 		} else {
 			target = "";
 		}
+		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(wikiLink.getSection())) {
+			topic = wikiLink.getSection();
+		}
 		String html = "<a href=\"" + url + "\"" + style + " title=\"" + StringEscapeUtils.escapeHtml(topic) + "\"" + target + ">";
 		if (escapeHtml) {
 			html += StringEscapeUtils.escapeHtml(text);
@@ -399,19 +402,23 @@ public class LinkUtil {
 		if (StringUtils.isBlank(processed)) {
 			return new WikiLink();
 		}
-		// first see if the link ends with a query param - "?..."
+		// first look for a section param - "#..."
+		int sectionPos = processed.indexOf('#');
+		if (sectionPos != -1 && sectionPos < processed.length()) {
+			String sectionString = processed.substring(sectionPos + 1);
+			wikiLink.setSection(sectionString);
+			if (sectionPos == 0) {
+				// link is of the form #section, no more to process
+				return wikiLink;
+			}
+			processed = processed.substring(0, sectionPos);
+		}
+		// now see if the link ends with a query param - "?..."
 		int queryPos = processed.indexOf('?', 1);
 		if (queryPos != -1 && queryPos < processed.length()) {
 			String queryString = processed.substring(queryPos + 1);
 			wikiLink.setQuery(queryString);
 			processed = processed.substring(0, queryPos);
-		}
-		// now look for a section param - "#..."
-		int sectionPos = processed.indexOf('#', 1);
-		if (sectionPos != -1 && sectionPos < processed.length()) {
-			String sectionString = processed.substring(sectionPos + 1);
-			wikiLink.setSection(sectionString);
-			processed = processed.substring(0, sectionPos);
 		}
 		// since we're having so much fun, let's find a namespace (default empty).
 		String namespaceString = "";

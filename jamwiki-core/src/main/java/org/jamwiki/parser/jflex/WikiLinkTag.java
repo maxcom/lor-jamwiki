@@ -86,7 +86,7 @@ public class WikiLinkTag {
 					wikiLink.setText(wikiLink.getText() + "#" + Utilities.decodeFromURL(wikiLink.getSection(), true));
 				}
 			} else if (StringUtils.isBlank(wikiLink.getText()) && !StringUtils.isBlank(wikiLink.getSection())) {
-				wikiLink.setText(Utilities.decodeFromURL(wikiLink.getSection(), true));
+				wikiLink.setText(Utilities.decodeFromURL("#" + wikiLink.getSection(), true));
 			} else {
 				wikiLink.setText(JFlexParserUtil.parseFragment(parserInput, wikiLink.getText(), mode));
 			}
