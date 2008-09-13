@@ -25,6 +25,8 @@ Bugfixes:
     saved - this is now fixed.
   * Links of the form [[#section]] and [[#section|text]] will now be parsed
     correctly.
+  * Fix broken parsing of links containing + such as [[start + end]].  Reported
+    by MarioF.
 
 Translation Updates:
 

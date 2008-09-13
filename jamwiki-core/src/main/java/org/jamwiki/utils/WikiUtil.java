@@ -306,16 +306,7 @@ public class WikiUtil {
 			logger.warning("No topic in URL: " + request.getRequestURI());
 			return null;
 		}
-		int pos = topic.indexOf('?');
-		if (pos != -1) {
-			// strip everything after and including '?'
-			if (pos == 0) {
-				logger.warning("No topic in URL: " + request.getRequestURI());
-				return null;
-			}
-			topic = topic.substring(0, topic.indexOf('?'));
-		}
-		pos = topic.indexOf('#');
+		int pos = topic.indexOf('#');
 		if (pos != -1) {
 			// strip everything after and including '#'
 			if (pos == 0) {
@@ -324,7 +315,16 @@ public class WikiUtil {
 			}
 			topic = topic.substring(0, topic.indexOf('#'));
 		}
-		topic = Utilities.decodeFromURL(topic, true);
+		pos = topic.indexOf('?');
+		if (pos != -1) {
+			// strip everything after and including '?'
+			if (pos == 0) {
+				logger.warning("No topic in URL: " + request.getRequestURI());
+				return null;
+			}
+			topic = topic.substring(0, topic.indexOf('?'));
+		}
+		topic = Utilities.decodeFromRequest(topic, true);
 		return topic;
 	}
 

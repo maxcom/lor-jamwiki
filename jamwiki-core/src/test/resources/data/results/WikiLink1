@@ -9,3 +9,8 @@
 <p><a href="/wiki/en/Special:Edit?topic=Comments:Example" class="edit" title="Comments:Example">Comments:Example</a>9</p>
 <p><a href="#Section" title="Section">#Section</a></p>
 <p><a href="#Section" title="Section">text</a></p>
+<p><a href="/wiki/en/Special:Upload" title="Special:Upload">Special:Upload</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=%2B" class="edit" title="+">+</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=%2B_start" class="edit" title="+ start">+ start</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=end_%2B" class="edit" title="end +">end +</a></p>
+<p><a href="/wiki/en/Special:Edit?topic=at_the_%2B_middle" class="edit" title="at the + middle">at the + middle</a></p>
