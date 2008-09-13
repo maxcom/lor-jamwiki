@@ -267,7 +267,7 @@ public class WikiUtil {
 					value = value.substring(0, value.indexOf('&'));
 				}
 			}
-			return Utilities.decodeFromURL(value, decodeUnderlines);
+			return Utilities.decodeAndEscapeTopicName(value, decodeUnderlines);
 		}
 		value = request.getParameter(name);
 		if (value == null) {
@@ -276,7 +276,7 @@ public class WikiUtil {
 		if (value == null) {
 			return null;
 		}
-		return Utilities.decodeFromRequest(value, decodeUnderlines);
+		return Utilities.decodeTopicName(value, decodeUnderlines);
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class WikiUtil {
 			}
 			topic = topic.substring(0, topic.indexOf('?'));
 		}
-		topic = Utilities.decodeFromRequest(topic, true);
+		topic = Utilities.decodeTopicName(topic, true);
 		return topic;
 	}
 
@@ -344,7 +344,7 @@ public class WikiUtil {
 		if (virtualWiki == null) {
 			return null;
 		}
-		return Utilities.decodeFromRequest(virtualWiki, true);
+		return Utilities.decodeTopicName(virtualWiki, true);
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class WikiUtil {
 		if (slashIndex != -1) {
 			virtualWiki = uri.substring(0, slashIndex);
 		}
-		return Utilities.decodeFromURL(virtualWiki, true);
+		return Utilities.decodeAndEscapeTopicName(virtualWiki, true);
 	}
 
 	/**

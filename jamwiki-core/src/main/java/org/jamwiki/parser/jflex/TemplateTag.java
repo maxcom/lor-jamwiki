@@ -404,7 +404,7 @@ public class TemplateTag {
 		} else {
 			name = raw.substring("{{".length(), raw.length() - "}}".length());
 		}
-		name = Utilities.decodeFromRequest(name.trim(), true);
+		name = Utilities.decodeTopicName(name.trim(), true);
 		if (this.isMagicWord(name)) {
 			return name;
 		}
