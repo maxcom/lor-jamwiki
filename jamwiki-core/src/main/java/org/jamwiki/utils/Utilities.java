@@ -18,6 +18,7 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -101,6 +102,9 @@ public class Utilities {
 	 * @return A decoded value.
 	 */
 	public static String decodeTopicName(String url, boolean decodeUnderlines) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in decodeTopicName");
+		}
 		return (decodeUnderlines) ? StringUtils.replace(url, "_", " ") : url;
 	}
 
@@ -117,11 +121,15 @@ public class Utilities {
 	 * @return A decoded value.
 	 */
 	public static String decodeAndEscapeTopicName(String url, boolean decodeUnderlines) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in decodeAndEscapeTopicName");
+		}
 		String result = url;
 		try {
 			result = URLDecoder.decode(result, "UTF-8");
-		} catch (Exception e) {
-			logger.info("Failure while decoding url " + url + " with charset UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
 		return Utilities.decodeTopicName(result, decodeUnderlines);
 	}
@@ -135,13 +143,17 @@ public class Utilities {
 	 * @return The encoded value.
 	 */
 	public static String encodeForFilename(String name) {
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException("File name not specified in encodeForFilename");
+		}
 		// replace spaces with underscores
 		String result = StringUtils.replace(name, " ", "_");
 		// URL encode the rest of the name
 		try {
 			result = URLEncoder.encode(result, "UTF-8");
-		} catch (Exception e) {
-			logger.warning("Failure while encoding " + name + " with charset UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
 		}
 		return result;
 	}

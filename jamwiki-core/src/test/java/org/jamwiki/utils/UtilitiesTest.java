@@ -56,6 +56,30 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
+	public void testdecodeAndEscapeTopicName2() throws Throwable {
+		try {
+			String result = Utilities.decodeAndEscapeTopicName(null, true);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void testdecodeAndEscapeTopicName3() throws Throwable {
+		try {
+			String result = Utilities.decodeAndEscapeTopicName(" ", true);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
 	public void testEncodeForFilename() throws Throwable {
 		//TODO
 		String result = Utilities.encodeForFilename("testUtilitiesName");
@@ -65,10 +89,37 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
+	public void testEncodeForFilename2() throws Throwable {
+		try {
+			String result = Utilities.encodeForFilename(null);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
+	public void testEncodeForFilename3() throws Throwable {
+		try {
+			String result = Utilities.encodeForFilename(" ");
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
+	}
+
+	/**
+	 *
+	 */
 	public void testEncodeForURL() throws Throwable {
-		//TODO
-		String result = Utilities.encodeForURL(null);
-		assertNull("result", result);
+		try {
+			String result = Utilities.encodeForURL(null);
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			// exception thrown as expected
+		}
 	}
 
 	/**
