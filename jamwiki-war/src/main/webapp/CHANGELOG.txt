@@ -27,6 +27,8 @@ Bugfixes:
     correctly.
   * Fix broken parsing of links containing + such as [[start + end]].  Reported
     by MarioF.
+  * Fix broken parsing of wiki preformatted text that follows a paragraph.
+    Reported by tfschueller.
 
 Translation Updates:
 
@@ -48,7 +50,7 @@ New Features:
     passwords.
   * Utility added to Special:Maintenance to allow administrators to export
     internal database data to CSV.
-  * Utility added to Special:Maintenance to allow administartors to migrate
+  * Utility added to Special:Maintenance to allow administrators to migrate
     data from one database to another (dallas).
   * The Special:History page now implements the same UI as Mediawiki with radio
     buttons instead of checkboxes.
