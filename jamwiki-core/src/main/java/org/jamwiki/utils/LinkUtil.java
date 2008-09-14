@@ -428,7 +428,8 @@ public class LinkUtil {
 		}
 		wikiLink.setNamespace(namespaceString);
 		String topic = processed;
-		if (namespacePos > 0) {
+		if (namespacePos > 0 && (namespacePos + 1) < processed.length()) {
+			// get namespace, unless topic ends with a colon
 			topic = processed.substring(namespacePos + 1);
 		}
 		wikiLink.setArticle(Utilities.decodeTopicName(topic, true));

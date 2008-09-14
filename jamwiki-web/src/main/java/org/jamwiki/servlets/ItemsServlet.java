@@ -95,6 +95,10 @@ public class ItemsServlet extends JAMWikiServlet {
 		for (Iterator iterator = unlinkedTopics.iterator(); iterator.hasNext();) {
 			String topicName = (String)iterator.next();
 			Topic topic = WikiBase.getDataHandler().lookupTopic(virtualWiki, topicName, true, new Object());
+			if (topic == null) {
+				logger.warning("No topic found: " + virtualWiki + " / " + topicName);
+				continue;
+			}
 			if (topic.getTopicType() != Topic.TYPE_ARTICLE) {
 				continue;
 			}
