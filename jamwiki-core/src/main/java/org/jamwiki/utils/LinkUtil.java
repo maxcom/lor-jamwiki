@@ -28,7 +28,7 @@ import org.jamwiki.model.WikiImage;
 
 /**
  * General utility methods for handling both wiki topic links such as
- * "Topic#Section?query=param", as well as HTML links of the form
+ * "Topic?query=param#Section", as well as HTML links of the form
  * http://example.com/.
  */
 public class LinkUtil {
@@ -323,17 +323,17 @@ public class LinkUtil {
 		url += Utilities.encodeAndEscapeTopicName(virtualWiki);
 		url += "/";
 		url += Utilities.encodeAndEscapeTopicName(topic);
-		if (!StringUtils.isBlank(section)) {
-			if (!section.startsWith("#")) {
-				url += "#";
-			}
-			url += Utilities.encodeAndEscapeTopicName(section);
-		}
 		if (!StringUtils.isBlank(query)) {
 			if (!query.startsWith("?")) {
 				url += "?";
 			}
 			url += query;
+		}
+		if (!StringUtils.isBlank(section)) {
+			if (!section.startsWith("#")) {
+				url += "#";
+			}
+			url += Utilities.encodeAndEscapeTopicName(section);
 		}
 		return url;
 	}
@@ -387,7 +387,7 @@ public class LinkUtil {
 	}
 
 	/**
-	 * Parse a topic name of the form "Topic#Section?Query", and return a WikiLink
+	 * Parse a topic name of the form "Topic?Query#Section", and return a WikiLink
 	 * object representing the link.
 	 *
 	 * @param raw The raw topic link text.

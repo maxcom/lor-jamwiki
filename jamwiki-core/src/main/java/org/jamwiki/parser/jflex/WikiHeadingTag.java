@@ -22,6 +22,7 @@ import org.jamwiki.parser.TableOfContents;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * This class parses wiki headings of the form <code>==heading content==</code>.
@@ -85,6 +86,8 @@ public class WikiHeadingTag {
 			String tocText = JFlexParserUtil.parseFragment(tmpParserInput, tagText, JFlexParser.MODE_PROCESS);
 			tocText = Utilities.stripMarkup(tocText);
 			String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
+			// re-convert any &uuml; or other (converted by the parser) entities back
+			tagName = StringEscapeUtils.unescapeHtml(tagName);
 			if (mode <= JFlexParser.MODE_SLICE) {
 				parserOutput.setSectionName(Utilities.encodeAndEscapeTopicName(tagName));
 				return raw;

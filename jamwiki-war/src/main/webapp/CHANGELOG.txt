@@ -29,6 +29,8 @@ Bugfixes:
     by MarioF.
   * Fix broken parsing of wiki preformatted text that follows a paragraph.
     Reported by tfschueller.
+  * Section links containing umlauts or values normally escaped into HTML
+    entities did not work properly.  Reported by ihbrune.
 
 Translation Updates:
 
