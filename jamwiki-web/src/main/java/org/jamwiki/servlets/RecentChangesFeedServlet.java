@@ -210,14 +210,14 @@ public class RecentChangesFeedServlet extends AbstractController {
 			if (linkToVersion) {
 				try {
 				String url = feedURL + URLEncoder.encode("Special:History?topicVersionId=" + change.getTopicVersionId() + "&topic="
-						+ Utilities.encodeForURL(change.getTopicName()), "UTF-8");
+						+ Utilities.encodeAndEscapeTopicName(change.getTopicName()), "UTF-8");
 					entry.setLink(url);
 				} catch (UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else {
-				entry.setLink(feedURL + Utilities.encodeForURL(change.getTopicName()));
+				entry.setLink(feedURL + Utilities.encodeAndEscapeTopicName(change.getTopicName()));
 			}
 		}
 		if (change.getUndelete()) {
@@ -230,7 +230,7 @@ public class RecentChangesFeedServlet extends AbstractController {
 		entry.setDescription(description);
 		// URI is used as GUID in RSS 2.0 and should therefore contain the
 		// version id
-		entry.setUri(feedURL + Utilities.encodeForURL(change.getTopicName()) + "#" + change.getTopicVersionId());
+		entry.setUri(feedURL + Utilities.encodeAndEscapeTopicName(change.getTopicName()) + "#" + change.getTopicVersionId());
 		return entry;
 	}
 

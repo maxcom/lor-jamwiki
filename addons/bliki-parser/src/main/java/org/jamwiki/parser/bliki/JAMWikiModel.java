@@ -23,6 +23,7 @@ import org.jamwiki.utils.InterWikiHandler;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
+import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -110,7 +111,7 @@ public class JAMWikiModel extends AbstractWikiModel {
 	}
 
 	public void appendInternalLink(String topic, String hashSection, String linkText, String cssStyle) {
-		String encodedtopic = Utilities.encodeForFilename(topic);
+		String encodedtopic = WikiUtil.encodeForFilename(topic);
 		String topicURL = fBaseURL + encodedtopic;
 		String style = null;
 		try {

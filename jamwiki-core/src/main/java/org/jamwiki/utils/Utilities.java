@@ -135,27 +135,17 @@ public class Utilities {
 	}
 
 	/**
-	 * Convert a topic name or other value into a value suitable for use as a
-	 * file name.  This method replaces spaces with underscores, and then URL
-	 * encodes the value.
+	 * Encode a value for use a topic name.  This method will replace any
+	 * spaces with underscores.
 	 *
-	 * @param name The value that is to be encoded for use as a file name.
-	 * @return The encoded value.
+	 * @param url The decoded value that is to be encoded.
+	 * @return An encoded value.
 	 */
-	public static String encodeForFilename(String name) {
-		if (StringUtils.isBlank(name)) {
-			throw new IllegalArgumentException("File name not specified in encodeForFilename");
+	public static String encodeTopicName(String url) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in encodeTopicName");
 		}
-		// replace spaces with underscores
-		String result = StringUtils.replace(name, " ", "_");
-		// URL encode the rest of the name
-		try {
-			result = URLEncoder.encode(result, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// this should never happen
-			throw new IllegalStateException("Unsupporting encoding UTF-8");
-		}
-		return result;
+		return StringUtils.replace(url, " ", "_");
 	}
 
 	/**
@@ -166,8 +156,17 @@ public class Utilities {
 	 * @param url The topic name to be encoded for use in a URL.
 	 * @return The encoded topic name value.
 	 */
-	public static String encodeForURL(String url) {
-		String result = Utilities.encodeForFilename(url);
+	public static String encodeAndEscapeTopicName(String url) {
+		if (StringUtils.isBlank(url)) {
+			throw new IllegalArgumentException("Topic name not specified in encodeAndEscapeTopicName");
+		}
+		String result = Utilities.encodeTopicName(url);
+		try {
+			result = URLEncoder.encode(result, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		}
 		// un-encode colons
 		result = StringUtils.replace(result, "%3A", ":");
 		// un-encode forward slashes

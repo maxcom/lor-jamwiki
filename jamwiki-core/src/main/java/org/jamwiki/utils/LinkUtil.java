@@ -68,9 +68,9 @@ public class LinkUtil {
 		if (StringUtils.isBlank(param)) {
 			return query;
 		}
-		url += Utilities.encodeForURL(param) + "=";
+		url += Utilities.encodeAndEscapeTopicName(param) + "=";
 		if (!StringUtils.isBlank(value)) {
-			url += Utilities.encodeForURL(value);
+			url += Utilities.encodeAndEscapeTopicName(value);
 		}
 		return url;
 	}
@@ -308,7 +308,7 @@ public class LinkUtil {
 		String section = wikiLink.getSection();
 		String query = wikiLink.getQuery();
 		if (StringUtils.isBlank(topic) && !StringUtils.isBlank(section)) {
-			return "#" + Utilities.encodeForURL(section);
+			return "#" + Utilities.encodeAndEscapeTopicName(section);
 		}
 		if (!LinkUtil.isExistingArticle(virtualWiki, topic)) {
 			return LinkUtil.buildEditLinkUrl(context, virtualWiki, topic, query, -1);
@@ -320,14 +320,14 @@ public class LinkUtil {
 		// context never ends with a "/" per servlet specification
 		url += "/";
 		// get the virtual wiki, which should have been set by the parent servlet
-		url += Utilities.encodeForURL(virtualWiki);
+		url += Utilities.encodeAndEscapeTopicName(virtualWiki);
 		url += "/";
-		url += Utilities.encodeForURL(topic);
+		url += Utilities.encodeAndEscapeTopicName(topic);
 		if (!StringUtils.isBlank(section)) {
 			if (!section.startsWith("#")) {
 				url += "#";
 			}
-			url += Utilities.encodeForURL(section);
+			url += Utilities.encodeAndEscapeTopicName(section);
 		}
 		if (!StringUtils.isBlank(query)) {
 			if (!query.startsWith("?")) {

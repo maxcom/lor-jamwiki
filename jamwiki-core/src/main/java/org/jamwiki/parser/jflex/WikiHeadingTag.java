@@ -86,13 +86,13 @@ public class WikiHeadingTag {
 			tocText = Utilities.stripMarkup(tocText);
 			String tagName = parserInput.getTableOfContents().checkForUniqueName(tocText);
 			if (mode <= JFlexParser.MODE_SLICE) {
-				parserOutput.setSectionName(Utilities.encodeForURL(tagName));
+				parserOutput.setSectionName(Utilities.encodeAndEscapeTopicName(tagName));
 				return raw;
 			}
 			String output = this.updateToc(parserInput, tagName, tocText, level);
 			int nextSection = parserInput.getTableOfContents().size();
 			output += this.buildSectionEditLink(parserInput, nextSection);
-			output += "<a name=\"" + Utilities.encodeForURL(tagName) + "\"></a>";
+			output += "<a name=\"" + Utilities.encodeAndEscapeTopicName(tagName) + "\"></a>";
 			output += "<h" + level + ">";
 			output += JFlexParserUtil.parseFragment(parserInput, tagText, mode);
 			output += "</h" + level + ">";

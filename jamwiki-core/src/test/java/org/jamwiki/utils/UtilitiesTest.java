@@ -80,42 +80,9 @@ public class UtilitiesTest extends TestCase {
 	/**
 	 *
 	 */
-	public void testEncodeForFilename() throws Throwable {
-		//TODO
-		String result = Utilities.encodeForFilename("testUtilitiesName");
-		assertEquals("result", "testUtilitiesName", result);
-	}
-
-	/**
-	 *
-	 */
-	public void testEncodeForFilename2() throws Throwable {
+	public void testEncodeAndEscapeTopicName() throws Throwable {
 		try {
-			String result = Utilities.encodeForFilename(null);
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testEncodeForFilename3() throws Throwable {
-		try {
-			String result = Utilities.encodeForFilename(" ");
-			fail("Expected IllegalArgumentException to be thrown");
-		} catch (IllegalArgumentException ex) {
-			// exception thrown as expected
-		}
-	}
-
-	/**
-	 *
-	 */
-	public void testEncodeForURL() throws Throwable {
-		try {
-			String result = Utilities.encodeForURL(null);
+			String result = Utilities.encodeAndEscapeTopicName(null);
 			fail("Expected IllegalArgumentException to be thrown");
 		} catch (IllegalArgumentException ex) {
 			// exception thrown as expected

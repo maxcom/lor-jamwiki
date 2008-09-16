@@ -18,7 +18,9 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
@@ -142,6 +144,30 @@ public class WikiUtil {
 		Constructor constructor = clazz.getConstructor(parameterTypes);
 		Object[] initArgs = new Object[0];
 		return (DataHandler)constructor.newInstance(initArgs);
+	}
+
+	/**
+	 * Convert a topic name or other value into a value suitable for use as a
+	 * file name.  This method replaces spaces with underscores, and then URL
+	 * encodes the value.
+	 *
+	 * @param name The value that is to be encoded for use as a file name.
+	 * @return The encoded value.
+	 */
+	public static String encodeForFilename(String name) {
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException("File name not specified in encodeForFilename");
+		}
+		// replace spaces with underscores
+		String result = Utilities.encodeTopicName(name);
+		// URL encode the rest of the name
+		try {
+			result = URLEncoder.encode(result, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// this should never happen
+			throw new IllegalStateException("Unsupporting encoding UTF-8");
+		}
+		return result;
 	}
 
 	/**
@@ -441,7 +467,7 @@ public class WikiUtil {
 		if (!StringUtils.isBlank(language) && !StringUtils.isBlank(country)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
-				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.info("File " + filename + " does not exist");
@@ -450,7 +476,7 @@ public class WikiUtil {
 		if (contents == null && !StringUtils.isBlank(language)) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
-				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.info("File " + filename + " does not exist");
@@ -459,7 +485,7 @@ public class WikiUtil {
 		if (contents == null) {
 			try {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
-				filename = new File(subdirectory, Utilities.encodeForFilename(pageName) + ".txt").getPath();
+				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
 			} catch (Exception e) {
 				logger.warning("File " + filename + " could not be read", e);
