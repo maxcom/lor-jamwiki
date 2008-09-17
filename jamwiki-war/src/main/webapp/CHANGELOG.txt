@@ -10,6 +10,7 @@ New Features:
     history and other pages to match Mediawiki.
   * Signficant (5-10x or more) performance improvement of image rendering by
     making better use of cache.  Suggestions from Jim.
+  * Updated spam filter patterns.
   * Upgrade to Spring Framework 2.5.5.
   * Upgrade to Spring Security 2.0.3.
 
