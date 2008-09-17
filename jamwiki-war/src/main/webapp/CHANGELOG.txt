@@ -31,6 +31,9 @@ Bugfixes:
     Reported by tfschueller.
   * Section links containing umlauts or values normally escaped into HTML
     entities did not work properly.  Reported by ihbrune.
+  * Editing a section of a topic did not always redirect back to that section
+    after saving the topic in cases of section names with umlauts or other
+    special characters.
 
 Translation Updates:
 

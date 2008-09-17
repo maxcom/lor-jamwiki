@@ -89,7 +89,7 @@ public class WikiHeadingTag {
 			// re-convert any &uuml; or other (converted by the parser) entities back
 			tagName = StringEscapeUtils.unescapeHtml(tagName);
 			if (mode <= JFlexParser.MODE_SLICE) {
-				parserOutput.setSectionName(Utilities.encodeAndEscapeTopicName(tagName));
+				parserOutput.setSectionName(tagName);
 				return raw;
 			}
 			String output = this.updateToc(parserInput, tagName, tocText, level);
