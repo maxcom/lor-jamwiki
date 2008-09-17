@@ -30,8 +30,8 @@ Bugfixes:
     by MarioF.
   * Fix broken parsing of wiki preformatted text that follows a paragraph.
     Reported by tfschueller.
-  * Section links containing umlauts or values normally escaped into HTML
-    entities did not work properly.  Reported by ihbrune.
+  * Numerous fixes for issues related to umlauts (ü) and other special
+    characters in topic and section names.  Reported by ihbrune.
   * Editing a section of a topic did not always redirect back to that section
     after saving the topic in cases of section names with umlauts or other
     special characters.
