@@ -36,6 +36,7 @@ Translation Updates:
 
   * Updated Chinese translations (hfl).
   * Updated Japanese translations (nattolover).
+  * Updated Polish translations (dlpa).
   * Added Slovakian translations (aryan).
   * Updated Swedish translations (martin).
 
