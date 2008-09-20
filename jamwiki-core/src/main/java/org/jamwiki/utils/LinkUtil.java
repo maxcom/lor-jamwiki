@@ -146,6 +146,7 @@ public class LinkUtil {
 			return LinkUtil.buildInternalLinkHtml(context, virtualWiki, uploadLink, topicName, "edit", null, true);
 		}
 		WikiFile wikiFile = WikiBase.getDataHandler().lookupWikiFile(virtualWiki, topicName);
+		String html = "";
 		if (topic.getTopicType() == Topic.TYPE_FILE) {
 			// file, not an image
 			if (StringUtils.isBlank(caption)) {
@@ -153,9 +154,15 @@ public class LinkUtil {
 			}
 			String url = FilenameUtils.normalize(Environment.getValue(Environment.PROP_FILE_DIR_RELATIVE_PATH) + "/" + wikiFile.getUrl());
 			url = FilenameUtils.separatorsToUnix(url);
-			return "<a href=\"" + url + "\">" + StringEscapeUtils.escapeHtml(caption) + "</a>";
+			html += "<a href=\"" + url + "\">";
+			if (escapeHtml) {
+				html += StringEscapeUtils.escapeHtml(caption);
+			} else {
+				html += caption;
+			}
+			html += "</a>";
+			return html;
 		}
-		String html = "";
 		WikiImage wikiImage = ImageUtil.initializeImage(wikiFile, maxDimension);
 		if (caption == null) {
 			caption = "";
