@@ -401,10 +401,10 @@ li.undeletechange {
 #content-article pre {
 	overflow: hidden;
 }
-.section-edit {
-	font-size: 90%;
+.editsection {
+	font-size: 67%;
 	float: right;
-	padding: 15px 0px 0px 5px;
+	margin-left: 5px;
 }
 
 /* images */

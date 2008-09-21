@@ -48,7 +48,7 @@ public class WikiHeadingTag {
 		if (disallowInclusion) {
 			return "";
 		}
-		String output = "<div class=\"section-edit\">[";
+		String output = "<span class=\"editsection\">[";
 		String url = "";
 		try {
 			url = LinkUtil.buildEditLinkUrl(parserInput.getContext(), parserInput.getVirtualWiki(), parserInput.getTopicName(), null, section);
@@ -57,7 +57,7 @@ public class WikiHeadingTag {
 		}
 		output += "<a href=\"" + url + "\">";
 		output += Utilities.formatMessage("common.sectionedit", parserInput.getLocale());
-		output += "</a>]</div>";
+		output += "</a>]</span>";
 		return output;
 	}
 
@@ -94,10 +94,10 @@ public class WikiHeadingTag {
 			}
 			String output = this.updateToc(parserInput, tagName, tocText, level);
 			int nextSection = parserInput.getTableOfContents().size();
-			output += this.buildSectionEditLink(parserInput, nextSection);
 			output += "<a name=\"" + Utilities.encodeAndEscapeTopicName(tagName) + "\"></a>";
 			output += "<h" + level + ">";
-			output += JFlexParserUtil.parseFragment(parserInput, tagText, mode);
+			output += this.buildSectionEditLink(parserInput, nextSection);
+			output += "<span>" + JFlexParserUtil.parseFragment(parserInput, tagText, mode) + "</span>";
 			output += "</h" + level + ">";
 			return output.toString();
 		} catch (Throwable t) {
