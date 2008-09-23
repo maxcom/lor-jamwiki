@@ -440,7 +440,7 @@ public class WikiUtil {
 	 * @return <code>true</code> if the system has been upgraded, <code>false</code>
 	 *  otherwise.
 	 */
-	public static boolean isUpgrade() throws Exception {
+	public static boolean isUpgrade() {
 		if (WikiUtil.isFirstUse()) {
 			return false;
 		}

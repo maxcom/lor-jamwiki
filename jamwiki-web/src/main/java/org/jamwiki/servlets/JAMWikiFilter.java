@@ -123,7 +123,7 @@ public class JAMWikiFilter implements Filter {
 	/**
 	 * Determine whether or not to redirect to the upgrade page.
 	 */
-	private boolean redirectUpgrade(HttpServletRequest request) throws Exception {
+	private boolean redirectUpgrade(HttpServletRequest request) {
 		if (!WikiUtil.isUpgrade()) {
 			return false;
 		}

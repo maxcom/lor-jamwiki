@@ -147,7 +147,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-	private void init() throws Exception {
+	private void init() {
 		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
 			return;
 		}
@@ -207,15 +207,8 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	 *
 	 */
 	private void addAnonymousGroupRoles() {
-		try {
-			if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
-				// wiki is not yet setup
-				return;
-			}
-		} catch (Exception e) {
-			// FIXME - without default roles bad things happen, so should this throw the
-			// error to the calling method?
-			logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
+		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
+			// wiki is not yet setup
 			return;
 		}
 		this.setAuthorities(WikiUserAuth.getAnonymousGroupRoles());
