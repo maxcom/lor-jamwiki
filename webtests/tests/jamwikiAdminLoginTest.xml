@@ -27,13 +27,23 @@
 				<verifyText description="Verify that text is contained in the page" 
 					text="${common.login}"/>
 				
+				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="nimda"/>
+				<setInputField description="Set password field newPassword: admin2" htmlId="registerNewPassword" value="admin2"/>
+				<setInputField description="Set password field confirmPassword: admin2" name="confirmPassword" value="admin2"/>
 				<setInputField htmlId="registerFirstName" value="Peter"/>
 				<setInputField htmlId="registerLastName" value="Pan"/>
 				<setInputField htmlId="registerDisplayName" value="pepa"/>
+				<setInputField name="email" value="bla@jamwiki.org"/>
 				
 				<clickButton label="Speichern"/>
 				<verifyText description="Verify that text is contained in the page" text="StartingPoints"/>
 				
+				<not>		
+					<verifyXPath description="simple match"
+				        xpath="/html/body/div/div[2]/div[5]/div[2]/div" 
+						text="Ein Systemfehler ist aufgetreten. Die Fehlermeldung lautet:" />
+				</not>
+					
 			</steps>
 		</webtest>
 
