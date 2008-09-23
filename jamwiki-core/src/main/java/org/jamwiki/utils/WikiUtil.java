@@ -350,7 +350,9 @@ public class WikiUtil {
 			}
 			topic = topic.substring(0, topic.indexOf('?'));
 		}
-		topic = Utilities.decodeAndEscapeTopicName(topic, true);
+		if (!StringUtils.isBlank(topic)) {
+			topic = Utilities.decodeAndEscapeTopicName(topic, true);
+		}
 		return topic;
 	}
 

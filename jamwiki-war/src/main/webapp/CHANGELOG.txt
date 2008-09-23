@@ -75,6 +75,8 @@ Bugfixes:
     special characters.
   * Resolve a CSS issue that impacted edit links on IE6.  Reported by an
     anonymous user.
+  * Resolve a CSS issue that impacted images with frames on IE6.  Reported by
+    an anonymous user.
 
 Translation Updates:
 
