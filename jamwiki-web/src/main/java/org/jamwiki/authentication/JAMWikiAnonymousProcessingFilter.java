@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -63,12 +64,15 @@ public class JAMWikiAnonymousProcessingFilter implements Filter, InitializingBea
 		if (!(request instanceof HttpServletRequest)) {
 			throw new ServletException("HttpServletRequest required");
 		}
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth instanceof AnonymousAuthenticationToken) {
-			AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), WikiUserAuth.getAnonymousGroupRoles());
-			jamwikiAuth.setDetails(auth.getDetails());
-			jamwikiAuth.setAuthenticated(auth.isAuthenticated());
-			SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
+		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
+			// only process authentication if wiki is fully setup
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth instanceof AnonymousAuthenticationToken) {
+				AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), WikiUserAuth.getAnonymousGroupRoles());
+				jamwikiAuth.setDetails(auth.getDetails());
+				jamwikiAuth.setAuthenticated(auth.isAuthenticated());
+				SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
+			}
 		}
 		chain.doFilter(request, response);
 	}
