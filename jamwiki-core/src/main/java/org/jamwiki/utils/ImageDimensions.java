@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * Utility class for storing key-value pairs.
  */
-public class ImageDimensions {
+public class ImageDimensions implements Serializable {
 
 	int width = 0;
 	int height = 0;

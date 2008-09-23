@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.AccessDeniedException;
 import org.springframework.security.AuthenticationException;
-import org.springframework.security.ui.AccessDeniedHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.SpringSecurityException;
 import org.jamwiki.utils.WikiLogger;

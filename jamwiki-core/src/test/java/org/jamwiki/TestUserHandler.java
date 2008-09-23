@@ -16,9 +16,7 @@
  */
 package org.jamwiki;
 
-import java.sql.Connection;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 
 /**

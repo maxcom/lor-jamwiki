@@ -24,8 +24,6 @@ import org.springframework.security.AuthenticationException;
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
-import org.jamwiki.authentication.JAMWikiAuthenticationConstants;
-import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
