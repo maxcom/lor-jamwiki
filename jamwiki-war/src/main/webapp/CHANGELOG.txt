@@ -16,33 +16,11 @@ New Features:
 
 Bugfixes:
 
-  * JDK 1.6 and greater changed the behavior of the JDBC getColumnName() method
-    causing the watchlist tab to break.  Fix suggested by Luc.
-  * Virtual wiki default topics with spaces were incorrectly being stored with
-    spaces converted to underscores ("Main_Page" instead of "Main Page").
-  * Null pointer exception when viewing URLs with no topic and no trailing
-    slash of the form "/context/virtual".
-  * A bug introduced in a previous release prevented empty topics from being
-    saved - this is now fixed.
-  * Links of the form [[#section]] and [[#section|text]] will now be parsed
-    correctly.
-  * Fix broken parsing of links containing + such as [[start + end]].  Reported
-    by MarioF.
-  * Fix broken parsing of wiki preformatted text that follows a paragraph.
-    Reported by tfschueller.
-  * Numerous fixes for issues related to umlauts (ü) and other special
-    characters in topic and section names.  Reported by ihbrune.
-  * Editing a section of a topic did not always redirect back to that section
-    after saving the topic in cases of section names with umlauts or other
-    special characters.
+  * None
 
 Translation Updates:
 
-  * Updated Chinese translations (hfl).
-  * Updated Japanese translations (nattolover).
-  * Updated Polish translations (dlpa).
-  * Added Slovakian translations (aryan).
-  * Updated Swedish translations (martin).
+  * None
 
 
 0.6.7
