@@ -350,8 +350,8 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private static void setPassword(Properties props, HttpServletRequest request, ModelAndView next, String parameter, String passwordParam) throws Exception {
-		if (!StringUtils.isBlank(request.getParameter(parameter))) {
-			String value = request.getParameter(parameter);
+		String value = request.getParameter(parameter);
+		if (!StringUtils.isBlank(value)) {
 			Encryption.setEncryptedProperty(parameter, value, props);
 			next.addObject(passwordParam, request.getParameter(parameter));
 		} else {
