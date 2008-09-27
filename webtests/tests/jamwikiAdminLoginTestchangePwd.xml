@@ -7,7 +7,7 @@
 
 	<target name="test">
 		
-		<webtest name="check admin login - login as admin and add firstName, lastName ...">
+		<webtest name="check admin login - login as admin and change the password.">
 					
 			<steps>
 			
@@ -27,11 +27,10 @@
 				<verifyText description="Verify that text is contained in the page" 
 					text="${common.login}"/>
 				
-				<setInputField htmlId="registerFirstName" value="Peter"/>
-				<setInputField htmlId="registerLastName" value="Pan"/>
-				<setInputField htmlId="registerDisplayName" value="pepa"/>
-				<setInputField name="email" value="info@jamwiki.org"/>
-				
+				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="nimda"/>
+				<setInputField description="Set password field newPassword: admin2" htmlId="registerNewPassword" value="admin2"/>
+				<setInputField description="Set password field confirmPassword: admin2" name="confirmPassword" value="admin2"/>
+	
 				<clickButton label="${common.save}"/>
 				<verifyText description="Verify that text is contained in the page" text="StartingPoints"/>
 				

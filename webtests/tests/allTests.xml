@@ -4,6 +4,7 @@
 	<target name="test" description="runs all the tests">
 		
 		<ant antfile="jamwikiConfigurationTest.xml"/>
+		<ant antfile="jamwikiAdminLoginTestchangePwd.xml"/>
 		<ant antfile="jamwikiAdminLoginTest.xml"/>
 		
 	</target>
