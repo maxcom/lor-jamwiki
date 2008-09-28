@@ -59,12 +59,11 @@ public class DatabaseUserHandler implements UserHandler {
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			// password is stored encrypted, so encrypt password
-			if (StringUtils.isBlank(password)) {
-				return false;
+			if (!StringUtils.isBlank(password)) {
+				String encryptedPassword = Encryption.encrypt(password);
+				WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
+				result = (rs.size() == 0) ? false : true;
 			}
-			String encryptedPassword = Encryption.encrypt(password);
-			WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
-			result = (rs.size() == 0) ? false : true;
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;
