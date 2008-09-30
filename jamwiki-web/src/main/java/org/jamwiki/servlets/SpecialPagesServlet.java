@@ -18,12 +18,8 @@ package org.jamwiki.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.parser.ParserInput;
-import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -52,17 +48,6 @@ public class SpecialPagesServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void specialPages(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		String contents = WikiUtil.readSpecialPage(request.getLocale(), WikiBase.SPECIAL_PAGE_SPECIAL_PAGES);
-		ParserInput parserInput = new ParserInput();
-		parserInput.setContext(request.getContextPath());
-		parserInput.setLocale(request.getLocale());
-		parserInput.setAllowSectionEdit(false);
-		// FIXME - hard coding
-		parserInput.setTopicName("Special:Specialpages");
-		parserInput.setVirtualWiki(virtualWiki);
-		String content = ParserUtil.parse(parserInput, null, contents);
-		next.addObject("pageContent", content);
 		pageInfo.setPageTitle(new WikiMessage("specialpages.title"));
 		pageInfo.setContentJsp(JSP_SPECIAL_PAGES);
 		pageInfo.setSpecial(true);

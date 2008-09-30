@@ -84,8 +84,6 @@ public class WikiBase {
 	/** Name of the default footer topic. */
 	public static final String SPECIAL_PAGE_BOTTOM_AREA = "BottomArea";
 	/** Name of the default jamwiki.css topic. */
-	public static final String SPECIAL_PAGE_SPECIAL_PAGES = "SpecialPages";
-	/** Name of the default jamwiki.css topic. */
 	public static final String SPECIAL_PAGE_STYLESHEET = "StyleSheet";
 	/** Allow file uploads of any file type. */
 	public static final int UPLOAD_ALL = 0;
