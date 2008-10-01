@@ -22,6 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
+import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
 
 /**
@@ -39,6 +41,7 @@ public class JFlexParserUtil {
 	private static Pattern NON_INLINE_TAG_START_PATTERN = null;
 	private static Pattern NON_INLINE_TAG_END_PATTERN = null;
 	private static Pattern TAG_PATTERN = null;
+	private static Pattern WIKI_LINK_PATTERN = null;
 	private static final String emptyBodyTagPattern = "(br|div|hr|td|th)";
 	private static final String nestingTagPattern = "(div|font|span)";
 	private static final String nonTextBodyTagPattern = "(dl|ol|table|tr|ul)";
@@ -59,6 +62,7 @@ public class JFlexParserUtil {
 			NON_INLINE_TAG_START_PATTERN = Pattern.compile(nonInlineTagStartPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 			NON_INLINE_TAG_END_PATTERN = Pattern.compile(nonInlineTagEndPattern, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 			TAG_PATTERN = Pattern.compile("(<[ ]*[/]?[ ]*)([^\\ />]+)([ ]*(.*?))([/]?[ ]*>)");
+			WIKI_LINK_PATTERN = Pattern.compile("\\[\\[[ ]*(\\:[ ]*)?[ ]*([^\\n\\r\\|]+)([ ]*\\|[ ]*([^\\n\\r]+))?[ ]*\\]\\]([a-z]*)");
 		} catch (Exception e) {
 			logger.severe("Unable to compile pattern", e);
 		}
@@ -151,6 +155,36 @@ public class JFlexParserUtil {
 		JFlexParser parser = new JFlexParser(parserInput);
 		ParserOutput parserOutput = new ParserOutput();
 		return parser.parseFragment(parserOutput, raw, mode);
+	}
+
+	/**
+	 * Parse a raw Wiki link of the form "[[link|text]]", and return a WikiLink
+	 * object representing the link.
+	 *
+	 * @param raw The raw Wiki link text.
+	 * @return A WikiLink object that represents the link.
+	 */
+	protected static WikiLink parseWikiLink(String raw) {
+		if (StringUtils.isBlank(raw)) {
+			return new WikiLink();
+		}
+		Matcher m = WIKI_LINK_PATTERN.matcher(raw.trim());
+		if (!m.matches()) {
+			return new WikiLink();
+		}
+		String url = m.group(2);
+		WikiLink wikiLink = LinkUtil.parseWikiLink(url);
+		wikiLink.setColon((m.group(1) != null));
+		wikiLink.setText(m.group(4));
+		String suffix = m.group(5);
+		if (!StringUtils.isBlank(suffix)) {
+			if (StringUtils.isBlank(wikiLink.getText())) {
+				wikiLink.setText(wikiLink.getDestination() + suffix);
+			} else {
+				wikiLink.setText(wikiLink.getText() + suffix);
+			}
+		}
+		return wikiLink;
 	}
 
 	/**

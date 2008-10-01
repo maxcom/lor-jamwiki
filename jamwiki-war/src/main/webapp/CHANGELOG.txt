@@ -12,6 +12,8 @@ New Features:
     making better use of cache.  Suggestions from Jim.
   * Modify Special:Specialpages so that it is localized for each visitor,
     rather than always defaulting to the language for which the wiki was setup.
+  * Provide the capability to redirect to a virtual wiki using syntax of the
+    form "#REDIRECT [[:virtual:Topic]].  Requested by tfschueller.
   * Updated spam filter patterns.
   * Upgrade to Spring Framework 2.5.5.
   * Upgrade to Spring Security 2.0.3.

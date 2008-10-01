@@ -236,7 +236,8 @@ public class WikiUtil {
 	 */
 	public static Topic findRedirectedTopic(Topic parent, int attempts) throws Exception {
 		int count = attempts;
-		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(parent.getRedirectTo())) {
+		String target = parent.getRedirectTo();
+		if (parent.getTopicType() != Topic.TYPE_REDIRECT || StringUtils.isBlank(target)) {
 			logger.severe("getRedirectTarget() called for non-redirect topic " + parent.getName());
 			return parent;
 		}
@@ -244,9 +245,18 @@ public class WikiUtil {
 		count++;
 		if (count > 10) {
 			//TODO throw new WikiException(new WikiMessage("topic.redirect.infinite"));
+			return parent;
+		}
+		String virtualWiki = parent.getVirtualWiki();
+		WikiLink wikiLink = LinkUtil.parseWikiLink(target);
+		if (!StringUtils.isBlank(wikiLink.getNamespace())) {
+			if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+				virtualWiki = wikiLink.getNamespace();
+				wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
+			}
 		}
 		// get the topic that is being redirected to
-		Topic child = WikiBase.getDataHandler().lookupTopic(parent.getVirtualWiki(), parent.getRedirectTo(), false, null);
+		Topic child = WikiBase.getDataHandler().lookupTopic(virtualWiki, wikiLink.getDestination(), false, null);
 		if (child == null) {
 			// child being redirected to doesn't exist, return parent
 			return parent;
@@ -255,11 +265,7 @@ public class WikiUtil {
 			// found a topic that is not a redirect, return
 			return child;
 		}
-		if (WikiBase.getDataHandler().lookupTopic(child.getVirtualWiki(), child.getRedirectTo(), false, null) == null) {
-			// child is a redirect, but its target does not exist
-			return child;
-		}
-		// topic is a redirect, keep looking
+		// child is a redirect, keep looking
 		return findRedirectedTopic(child, count);
 	}
 

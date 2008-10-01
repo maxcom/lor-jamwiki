@@ -20,13 +20,15 @@ import java.io.StringReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.jamwiki.WikiBase;
 import org.jamwiki.parser.AbstractParser;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
-import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.LinkUtil;
+import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLink;
+import org.jamwiki.utils.WikiLogger;
 
 /**
  * Implementation of {@link org.jamwiki.parser.AbstractParser} that uses
@@ -118,8 +120,13 @@ public class JFlexParser extends AbstractParser {
 			lexer.append(line);
 		}
 		this.parserInput.decrementDepth();
+		// if the topic is a redirect store the redirect target
 		String redirect = this.isRedirect(raw);
 		if (!StringUtils.isBlank(redirect)) {
+			boolean colon = (redirect.length() > 1 && redirect.startsWith(":"));
+			if (colon) {
+				redirect = redirect.substring(1);
+			}
 			parserOutput.setRedirect(redirect);
 		}
 		return lexer.popAllTags();
@@ -282,13 +289,20 @@ public class JFlexParser extends AbstractParser {
 	 */
 	protected String parseRedirect(ParserOutput parserOutput, String raw) throws Exception {
 		String redirect = this.isRedirect(raw);
+		WikiLink wikiLink = JFlexParserUtil.parseWikiLink("[[" + redirect + "]]");
 		String style = "redirect";
-		if (!LinkUtil.isExistingArticle(this.parserInput.getVirtualWiki(), redirect.trim())) {
+		String virtualWiki = this.parserInput.getVirtualWiki();
+		// see if the redirect link starts with a virtual wiki
+		if (wikiLink.getColon() && !StringUtils.isBlank(wikiLink.getNamespace())) {
+			if (WikiBase.getDataHandler().lookupVirtualWiki(wikiLink.getNamespace()) != null) {
+				virtualWiki = wikiLink.getNamespace();
+				wikiLink.setDestination(wikiLink.getDestination().substring(virtualWiki.length() + NamespaceHandler.NAMESPACE_SEPARATOR.length()));
+			}
+		}
+		if (!LinkUtil.isExistingArticle(virtualWiki, wikiLink.getDestination())) {
 			style = "edit redirect";
 		}
-		WikiLink wikiLink = new WikiLink();
-		wikiLink.setDestination(redirect);
-		return LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), this.parserInput.getVirtualWiki(), wikiLink, null, style, null, false);
+		return LinkUtil.buildInternalLinkHtml(this.parserInput.getContext(), virtualWiki, wikiLink, null, style, null, false);
 	}
 
 	/**
