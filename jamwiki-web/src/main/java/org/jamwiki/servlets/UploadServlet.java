@@ -214,7 +214,7 @@ public class UploadServlet extends JAMWikiServlet {
 				isImage = ImageUtil.isImage(uploadedFile);
 			}
 		}
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		String topicName = NamespaceHandler.NAMESPACE_IMAGE + NamespaceHandler.NAMESPACE_SEPARATOR + Utilities.decodeAndEscapeTopicName(fileName, true);
 		if (this.handleSpam(request, next, pageInfo, topicName, contents)) {
 			// FIXME - the uploaded content should be deleted

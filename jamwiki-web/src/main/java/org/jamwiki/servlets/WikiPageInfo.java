@@ -18,13 +18,16 @@ package org.jamwiki.servlets;
 
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
+import org.jamwiki.WikiBase;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.WikiLink;
 import org.jamwiki.utils.WikiLogger;
+import org.jamwiki.utils.WikiUtil;
 
 /**
  * The <code>WikiPageInfo</code> class provides an object containing common
@@ -42,11 +45,17 @@ public class WikiPageInfo {
 	private LinkedHashMap tabMenu = new LinkedHashMap();
 	private String topicName = "";
 	private LinkedHashMap userMenu = new LinkedHashMap();
+	private String virtualWikiName = null;
 
 	/**
 	 *
 	 */
-	protected WikiPageInfo() {
+	protected WikiPageInfo(HttpServletRequest request) {
+		this.virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
+		if (this.virtualWikiName == null) {
+			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
+			this.virtualWikiName = WikiBase.DEFAULT_VWIKI;
+		}
 	}
 
 	/**
@@ -302,6 +311,34 @@ public class WikiPageInfo {
 	 */
 	public void setUserMenu(LinkedHashMap userMenu) {
 		this.userMenu = userMenu;
+	}
+
+	/**
+	 * Return the name of the virtual wiki associated with the page info being
+	 * created.  This will normally be taken directly from the request and default
+	 * to the wiki default virtual wiki, although in rare cases (such as redirects
+	 * to other virtual wikis) it may differ.
+	 *
+	 * @param virtualWikiName The name of the virtual wiki currently associated
+	 *  with this page info object.
+	 */
+	public String getVirtualWikiName() {
+		if (StringUtils.isBlank(virtualWikiName)) {
+			throw new IllegalArgumentException("Cannot pass a null or empty virtual wiki name");
+		}
+		return this.virtualWikiName;
+	}
+
+	/**
+	 * Return the name of the virtual wiki associated with the page info being
+	 * created.  This will normally be taken directly from the request and default
+	 * to the wiki default virtual wiki, although in rare cases (such as redirects
+	 * to other virtual wikis) it may differ.
+	 *
+	 * @param virtualWikiName The name of the virtual wiki to set.
+	 */
+	public void setVirtualWikiName(String virtualWikiName) {
+		this.virtualWikiName = virtualWikiName;
 	}
 
 	/**

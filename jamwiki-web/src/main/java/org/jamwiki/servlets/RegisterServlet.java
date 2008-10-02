@@ -105,7 +105,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWikiName = pageInfo.getVirtualWikiName();
 		WikiUserAuth user = this.setWikiUser(request);
 		WikiUserInfo userInfo = this.setWikiUserInfo(request);
 		next.addObject("newuser", user);

@@ -62,8 +62,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * @param next A ModelAndView object corresponding to the page being
 	 *  constructed.
 	 */
-	private void buildLayout(HttpServletRequest request, ModelAndView next) {
-		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
+	private void buildLayout(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) {
+		String virtualWikiName = pageInfo.getVirtualWikiName();
 		if (virtualWikiName == null) {
 			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
 			virtualWikiName = WikiBase.DEFAULT_VWIKI;
@@ -93,7 +93,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		LinkedHashMap links = new LinkedHashMap();
 		WikiUserAuth user = ServletUtil.currentUser();
 		String pageName = pageInfo.getTopicName();
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
+		String virtualWiki = pageInfo.getVirtualWikiName();
 		try {
 			if (pageInfo.getAdmin()) {
 				if (user.hasRole(Role.ROLE_SYSADMIN)) {
@@ -226,7 +226,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		long start = System.currentTimeMillis();
 		initParams();
 		ModelAndView next = new ModelAndView(this.displayJSP);
-		WikiPageInfo pageInfo = new WikiPageInfo();
+		WikiPageInfo pageInfo = new WikiPageInfo(request);
 		try {
 			next = this.handleJAMWikiRequest(request, response, next, pageInfo);
 			if (next != null && this.layout) {
@@ -270,7 +270,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			return;
 		}
 		// load cached top area, nav bar, etc.
-		this.buildLayout(request, next);
+		this.buildLayout(request, next, pageInfo);
 		if (StringUtils.isBlank(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
@@ -291,7 +291,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			logger.severe("Servlet error", t);
 		}
 		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
+		WikiPageInfo pageInfo = new WikiPageInfo(request);
 		pageInfo.setPageTitle(new WikiMessage("error.title"));
 		pageInfo.setContentJsp(JSP_ERROR);
 		pageInfo.setSpecial(true);

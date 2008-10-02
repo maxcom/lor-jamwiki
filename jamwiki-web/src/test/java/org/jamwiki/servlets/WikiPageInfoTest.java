@@ -19,14 +19,32 @@
 package org.jamwiki.servlets;
 
 import junit.framework.TestCase;
+import org.jamwiki.WikiBase;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockServletContext;
 
 public class WikiPageInfoTest extends TestCase {
 
 	/**
 	 *
 	 */
+	public void testGetVirtualWiki() {
+		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
+		WikiPageInfo p = new WikiPageInfo(mockRequest);
+		assertEquals(p.getVirtualWikiName(),"virtual",p.getVirtualWikiName());
+		p.setVirtualWikiName("en");
+		assertEquals(p.getVirtualWikiName(),"en",p.getVirtualWikiName());
+		mockRequest = this.getMockHttpServletRequest("/");
+		p = new WikiPageInfo(mockRequest);
+		assertEquals(p.getVirtualWikiName(),WikiBase.DEFAULT_VWIKI,p.getVirtualWikiName());
+	}
+
+	/**
+	 *
+	 */
 	public void testGetNamespace() {
-		WikiPageInfo p = new WikiPageInfo();
+		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
+		WikiPageInfo p = new WikiPageInfo(mockRequest);
 		assertEquals(p.getTopicName(),"",p.getTopicName());
 		p.setTopicName("Main");
 		assertEquals("", p.getNamespace());
@@ -41,8 +59,9 @@ public class WikiPageInfoTest extends TestCase {
 	 *
 	 */
 	public void testGetPagename() {
-		WikiPageInfo p = new WikiPageInfo();
-		assertEquals(p.getTopicName(),"",p.getPagename());
+		MockHttpServletRequest mockRequest = this.getMockHttpServletRequest("/virtual/Topic");
+		WikiPageInfo p = new WikiPageInfo(mockRequest);
+		assertEquals(p.getTopicName(),null,p.getPagename());
 		p.setTopicName("Main");
 		assertEquals("Main", p.getPagename());
 		p.setTopicName("User:FooBar");
@@ -50,5 +69,13 @@ public class WikiPageInfoTest extends TestCase {
 		p.setTopicName("Special:Contributions");
 		p.setSpecial(true);
 		assertEquals("Contributions", p.getPagename());
+	}
+	
+	/**
+	 *
+	 */
+	private MockHttpServletRequest getMockHttpServletRequest(String url) {
+		MockServletContext mockContext = new MockServletContext("context");
+		return new MockHttpServletRequest(mockContext, "GET", url);
 	}
 }
