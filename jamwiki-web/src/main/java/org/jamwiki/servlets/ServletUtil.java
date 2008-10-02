@@ -647,31 +647,6 @@ public class ServletUtil {
 	 * @param next The current Spring ModelAndView object.
 	 * @param pageInfo The current WikiPageInfo object, which contains
 	 *  information needed for rendering the final JSP page.
-	 * @param topicName The topic being viewed.  This value must be a valid
-	 *  topic that can be loaded as a org.jamwiki.model.Topic object.
-	 * @throws Exception Thrown if any error occurs during processing.
-	 */
-	protected static void viewTopic(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, String topicName) throws Exception {
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		if (StringUtils.isBlank(virtualWiki)) {
-			virtualWiki = WikiBase.DEFAULT_VWIKI;
-		}
-		Topic topic = ServletUtil.initializeTopic(virtualWiki, topicName);
-		if (topic.getTopicId() <= 0) {
-			// topic does not exist, display empty page
-			next.addObject("notopic", new WikiMessage("topic.notcreated", topicName));
-		}
-		WikiMessage pageTitle = new WikiMessage("topic.title", topicName);
-		viewTopic(request, next, pageInfo, pageTitle, topic, true);
-	}
-
-	/**
-	 * Utility method used when viewing a topic.
-	 *
-	 * @param request The current servlet request object.
-	 * @param next The current Spring ModelAndView object.
-	 * @param pageInfo The current WikiPageInfo object, which contains
-	 *  information needed for rendering the final JSP page.
 	 * @param pageTitle The title of the page being rendered.
 	 * @param topic The Topic object for the topic being displayed.
 	 * @param sectionEdit Set to <code>true</code> if edit links should be displayed
