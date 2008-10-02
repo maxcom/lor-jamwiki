@@ -72,157 +72,15 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServletUtil {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(ServletUtil.class.getName());
-	protected static final String JSP_ERROR = "error-display.jsp";
 	protected static final String JSP_LOGIN = "login.jsp";
 	public static final String PARAMETER_PAGE_INFO = "pageInfo";
 	public static final String PARAMETER_TOPIC_OBJECT = "topicObject";
-	private static final String SPRING_REDIRECT_PREFIX = "redirect:";
+	protected static final String SPRING_REDIRECT_PREFIX = "redirect:";
 
 	/**
 	 *
 	 */
 	private ServletUtil() {
-	}
-
-	/**
-	 * This method ensures that the left menu, logo, and other required values
-	 * have been loaded into the session object.
-	 *
-	 * @param request The servlet request object.
-	 * @param next A ModelAndView object corresponding to the page being
-	 *  constructed.
-	 */
-	private static void buildLayout(HttpServletRequest request, ModelAndView next) {
-		String virtualWikiName = WikiUtil.getVirtualWikiFromURI(request);
-		if (virtualWikiName == null) {
-			logger.severe("No virtual wiki available for page request " + request.getRequestURI());
-			virtualWikiName = WikiBase.DEFAULT_VWIKI;
-		}
-		VirtualWiki virtualWiki = retrieveVirtualWiki(virtualWikiName);
-		// build the layout contents
-		String leftMenu = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWikiName, WikiBase.SPECIAL_PAGE_LEFT_MENU, true);
-		next.addObject("leftMenu", leftMenu);
-		next.addObject("defaultTopic", virtualWiki.getDefaultTopicName());
-		next.addObject("virtualWiki", virtualWiki.getName());
-		next.addObject("logo", Environment.getValue(Environment.PROP_BASE_LOGO_IMAGE));
-		String bottomArea = ServletUtil.cachedContent(request.getContextPath(), request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, true);
-		next.addObject("bottomArea", bottomArea);
-		next.addObject(WikiUtil.PARAMETER_VIRTUAL_WIKI, virtualWiki.getName());
-		Integer cssRevision = new Integer(0);
-		try {
-			cssRevision = WikiBase.getDataHandler().lookupTopic(virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, false, null).getCurrentVersionId();
-		} catch (Exception e) {}
-		next.addObject("cssRevision", cssRevision);
-	}
-
-	/**
-	 * Build a map of links and the corresponding link text to be used as the
-	 * tab menu links for the WikiPageInfo object.
-	 */
-	private static LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
-		LinkedHashMap links = new LinkedHashMap();
-		WikiUserAuth user = ServletUtil.currentUser();
-		String pageName = pageInfo.getTopicName();
-		String virtualWiki = WikiUtil.getVirtualWikiFromURI(request);
-		try {
-			if (pageInfo.getAdmin()) {
-				if (user.hasRole(Role.ROLE_SYSADMIN)) {
-					links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
-					links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
-					links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
-				}
-				if (user.hasRole(Role.ROLE_TRANSLATE)) {
-					links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
-				}
-			} else if (pageInfo.getSpecial()) {
-				// append query params for pages such as Special:Contributions that need it
-				String specialUrl = pageName;
-				if (!StringUtils.isBlank(request.getQueryString())) {
-					specialUrl = pageName + "?" + request.getQueryString();
-				}
-				links.put(specialUrl, new WikiMessage("tab.common.special"));
-			} else {
-				String article = WikiUtil.extractTopicLink(pageName);
-				String comments = WikiUtil.extractCommentsLink(pageName);
-				links.put(article, new WikiMessage("tab.common.article"));
-				links.put(comments, new WikiMessage("tab.common.comments"));
-				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
-					String editLink = "Special:Edit?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-					if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
-						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
-					}
-					links.put(editLink, new WikiMessage("tab.common.edit"));
-				}
-				String historyLink = "Special:History?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-				links.put(historyLink, new WikiMessage("tab.common.history"));
-				if (ServletUtil.isMoveable(virtualWiki, pageName, user)) {
-					String moveLink = "Special:Move?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-					links.put(moveLink, new WikiMessage("tab.common.move"));
-				}
-				if (user.hasRole(Role.ROLE_USER)) {
-					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
-					boolean watched = (watchlist.containsTopic(pageName));
-					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
-					String watchlistLink = "Special:Watchlist?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-					links.put(watchlistLink, new WikiMessage(watchlistLabel));
-				}
-				if (pageInfo.isUserPage()) {
-					WikiLink wikiLink = LinkUtil.parseWikiLink(pageName);
-					String contributionsLink = "Special:Contributions?contributor=" + Utilities.encodeAndEscapeTopicName(wikiLink.getArticle());
-					links.put(contributionsLink, new WikiMessage("tab.common.contributions"));
-				}
-				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-				links.put(linkToLink, new WikiMessage("tab.common.links"));
-				if (user.hasRole(Role.ROLE_ADMIN)) {
-					String manageLink = "Special:Manage?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-					links.put(manageLink, new WikiMessage("tab.common.manage"));
-				}
-				String printLink = "Special:Print?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
-				links.put(printLink, new WikiMessage("tab.common.print"));
-			}
-		} catch (Exception e) {
-			logger.severe("Unable to build tabbed menu links", e);
-		}
-		return links;
-	}
-
-	/**
-	 * Build a map of links and the corresponding link text to be used as the
-	 * user menu links for the WikiPageInfo object.
-	 */
-	private static LinkedHashMap buildUserMenu() {
-		LinkedHashMap links = new LinkedHashMap();
-		WikiUserAuth user = ServletUtil.currentUser();
-		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
-			links.put("Special:Login", new WikiMessage("common.login"));
-			links.put("Special:Account", new WikiMessage("usermenu.register"));
-		}
-		if (user.hasRole(Role.ROLE_USER)) {
-			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
-			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
-			String username = user.getUsername();
-			if (!StringUtils.isBlank(user.getDisplayName())) {
-				username = user.getDisplayName();
-			}
-			// user name will be escaped by the jamwiki:link tag
-			WikiMessage userMenuMessage = new WikiMessage("usermenu.user");
-			userMenuMessage.setParamsWithoutEscaping(new String[]{username});
-			links.put(userPage, userMenuMessage);
-			links.put(userCommentsPage, new WikiMessage("usermenu.usercomments"));
-			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
-		}
-		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_NO_ACCOUNT)) {
-			links.put("Special:Account", new WikiMessage("usermenu.account"));
-		}
-		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_EMBEDDED)) {
-			links.put("Special:Logout", new WikiMessage("common.logout"));
-		}
-		if (user.hasRole(Role.ROLE_SYSADMIN)) {
-			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
-		} else if (user.hasRole(Role.ROLE_TRANSLATE)) {
-			links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
-		}
-		return links;
 	}
 
 	/**
@@ -552,31 +410,6 @@ public class ServletUtil {
 	}
 
 	/**
-	 * This method ensures that values required for rendering a JSP page have
-	 * been loaded into the ModelAndView object.  Examples of values that
-	 * may be handled by this method include topic name, username, etc.
-	 *
-	 * @param request The current servlet request object.
-	 * @param next The current ModelAndView object.
-	 * @param pageInfo The current WikiPageInfo object, containing basic page
-	 *  rendering information.
-	 */
-	protected static void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		if (next.getViewName() != null && next.getViewName().startsWith(ServletUtil.SPRING_REDIRECT_PREFIX)) {
-			// if this is a redirect, no need to load anything
-			return;
-		}
-		// load cached top area, nav bar, etc.
-		ServletUtil.buildLayout(request, next);
-		if (StringUtils.isBlank(pageInfo.getTopicName())) {
-			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
-		}
-		pageInfo.setUserMenu(ServletUtil.buildUserMenu());
-		pageInfo.setTabMenu(ServletUtil.buildTabMenu(request, pageInfo));
-		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
-	}
-
-	/**
 	 * Create a Pagination object and load all necessary values into the
 	 * request for processing by a JSP.
 	 *
@@ -750,36 +583,6 @@ public class ServletUtil {
 			errors.add(new WikiMessage("error.parserclass", parserClass));
 		}
 		return errors;
-	}
-
-	/**
-	 * Utility method used when redirecting to an error page.
-	 *
-	 * @param request The servlet request object.
-	 * @param t The exception that is the source of the error.
-	 * @return Returns a ModelAndView object corresponding to the error page display.
-	 */
-	protected static ModelAndView viewError(HttpServletRequest request, Throwable t) {
-		if (!(t instanceof WikiException)) {
-			logger.severe("Servlet error", t);
-		}
-		ModelAndView next = new ModelAndView("wiki");
-		WikiPageInfo pageInfo = new WikiPageInfo();
-		pageInfo.setPageTitle(new WikiMessage("error.title"));
-		pageInfo.setContentJsp(JSP_ERROR);
-		pageInfo.setSpecial(true);
-		if (t instanceof WikiException) {
-			WikiException we = (WikiException)t;
-			next.addObject("messageObject", we.getWikiMessage());
-		} else {
-			next.addObject("messageObject", new WikiMessage("error.unknown", t.toString()));
-		}
-		try {
-			ServletUtil.loadDefaults(request, next, pageInfo);
-		} catch (Exception err) {
-			logger.severe("Unable to load default layout", err);
-		}
-		return next;
 	}
 
 	/**
