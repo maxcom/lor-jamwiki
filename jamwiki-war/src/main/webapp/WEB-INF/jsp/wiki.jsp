@@ -50,9 +50,8 @@
 	<%@ include file="top-menu.jsp"%>
 	<div id="contents" >
 	<div id="contents-header"><f:message key="${pageInfo.pageTitle.key}"><f:param value="${pageInfo.pageTitle.params[0]}" /></f:message></div>
-	<c:if test="${!empty pageInfo.redirectName}">
-	<c:set var="redirectUrl"><jamwiki:link value="${pageInfo.redirectName}"><jamwiki:linkParam key="redirect" value="no" /><c:out value="${pageInfo.redirectName}" /></jamwiki:link></c:set>
-	<div id="contents-subheader"><f:message key="topic.redirect.from"><f:param value="${redirectUrl}" /></f:message></div>
+	<c:if test="${!empty pageInfo.redirectUrl}">
+	<div id="contents-subheader"><f:message key="topic.redirect.from"><f:param><a href="<c:out value="${pageInfo.redirectUrl}" />"><c:out value="${pageInfo.redirectName}" /></a></f:param></f:message></div>
 	</c:if>
 <c:set var="contentJsp" scope="page" value="${pageInfo.contentJsp}" />
 <%

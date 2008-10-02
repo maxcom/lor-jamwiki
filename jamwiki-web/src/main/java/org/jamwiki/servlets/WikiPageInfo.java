@@ -41,6 +41,7 @@ public class WikiPageInfo {
 	private String contentJsp = JSP_TOPIC;
 	private WikiMessage pageTitle = null;
 	private String redirectName = null;
+	private String redirectUrl = null;
 	private boolean special = false;
 	private LinkedHashMap tabMenu = new LinkedHashMap();
 	private String topicName = "";
@@ -181,14 +182,29 @@ public class WikiPageInfo {
 
 	/**
 	 * If the topic currently being displayed is the result of a redirect from
-	 * another topic, set the name of the topic that is being redirected
-	 * from.
+	 * another topic, return the full (relative) URL back to the redirection
+	 * topic.
 	 *
+	 * @return The full (relative) URL of the topic being redirected from, or
+	 *  <code>null</code> if the current page is not the result of a redirect.
+	 */
+	public String getRedirectUrl() {
+		return this.redirectUrl;
+	}
+
+	/**
+	 * If the topic currently being displayed is the result of a redirect from
+	 * another topic, set the name and full (relative) URL of the topic that is
+	 * being redirected from.
+	 *
+	 * @param redirectUrl The full (relative) URL of the topic being redirected
+	 *  from, or <code>null</code> if the current page is not the result of a redirect.
 	 * @param redirectName The name of the topic being redirected from, or
 	 *  <code>null</code> if the current page is not the result of a redirect.
 	 */
-	public void setRedirectName(String redirectName) {
+	public void setRedirectInfo(String redirectUrl, String redirectName) {
 		this.redirectName = redirectName;
+		this.redirectUrl = redirectUrl;
 	}
 
 	/**

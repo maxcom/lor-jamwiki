@@ -662,9 +662,15 @@ public class ServletUtil {
 		if (topic.getTopicType() == Topic.TYPE_REDIRECT && (request.getParameter("redirect") == null || !request.getParameter("redirect").equalsIgnoreCase("no"))) {
 			Topic child = WikiUtil.findRedirectedTopic(topic, 0);
 			if (!child.getName().equals(topic.getName())) {
-				pageInfo.setRedirectName(topic.getName());
+				String redirectUrl = LinkUtil.buildInternalLinkUrl(request.getContextPath(), topic.getVirtualWiki(), topic.getName());
+				// FIXME - hard coding
+				redirectUrl += LinkUtil.appendQueryParam("", "redirect", "no");
+				String redirectName = topic.getName();
+				pageInfo.setRedirectInfo(redirectUrl, redirectName);
 				pageTitle = new WikiMessage("topic.title", child.getName());
 				topic = child;
+				// update the page info's virtual wiki in case this redirect is to another virtual wiki
+				pageInfo.setVirtualWikiName(topic.getVirtualWiki());
 			}
 		}
 		String virtualWiki = topic.getVirtualWiki();
