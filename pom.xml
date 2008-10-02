@@ -308,6 +308,7 @@
 		</developer>
 	</developers>
 	<contributors>
+		<contributor><name>Fernando Fernandes</name><email>leandes</email><roles><role>translator (Portugese - Brazilian)</role></roles></contributor>
 		<contributor><name>Martin Östmark</name><email>martin</email><roles><role>translator (Swedish)</role></roles></contributor>
 		<contributor><name>Jiading</name><email>ewen0930</email><roles><role>translator (Chinese)</role></roles></contributor>
 		<contributor><name>Feilong Huang</name><email>hfl</email><roles><role>translator (Chinese)</role></roles></contributor>
