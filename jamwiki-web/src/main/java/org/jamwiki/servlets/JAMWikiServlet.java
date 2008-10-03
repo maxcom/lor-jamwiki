@@ -53,6 +53,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	private static final String JSP_ERROR = "error-display.jsp";
 	/** Any page that take longer than this value (specified in milliseconds) will print a warning to the log. */
 	protected static final int SLOW_PAGE_LIMIT = 1000;
+	/** Parameter used to indicate that a topic should be the target of a successful login. */
+	protected static final String PARAM_LOGIN_SUCCESS_TARGET = "returnto";
 
 	/**
 	 * This method ensures that the left menu, logo, and other required values
@@ -160,11 +162,16 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 * Build a map of links and the corresponding link text to be used as the
 	 * user menu links for the WikiPageInfo object.
 	 */
-	private LinkedHashMap buildUserMenu() {
+	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
 		WikiUserAuth user = ServletUtil.currentUser();
 		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
-			links.put("Special:Login", new WikiMessage("common.login"));
+			// include the current page in the login link 
+			String loginLink = "Special:Login";
+			if (!StringUtils.startsWith(pageInfo.getTopicName(), "Special:Login")) {
+				loginLink += LinkUtil.appendQueryParam("", PARAM_LOGIN_SUCCESS_TARGET, pageInfo.getTopicName());
+			}
+			links.put(loginLink, new WikiMessage("common.login"));
 			links.put("Special:Account", new WikiMessage("usermenu.register"));
 		}
 		if (user.hasRole(Role.ROLE_USER)) {
@@ -274,7 +281,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		if (StringUtils.isBlank(pageInfo.getTopicName())) {
 			pageInfo.setTopicName(WikiUtil.getTopicFromURI(request));
 		}
-		pageInfo.setUserMenu(this.buildUserMenu());
+		pageInfo.setUserMenu(this.buildUserMenu(pageInfo));
 		pageInfo.setTabMenu(this.buildTabMenu(request, pageInfo));
 		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 	}

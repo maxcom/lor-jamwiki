@@ -45,7 +45,9 @@ public class LoginServlet extends JAMWikiServlet {
 			viewLogout(request, response, pageInfo);
 			return null;
 		}
-		return ServletUtil.viewLogin(request, pageInfo, null, null);
+		// retrieve the URL to redirect to after successful login (if one is defined)
+		String loginSuccessTarget = request.getParameter(PARAM_LOGIN_SUCCESS_TARGET);
+		return ServletUtil.viewLogin(request, pageInfo, loginSuccessTarget, null);
 	}
 
 	/**

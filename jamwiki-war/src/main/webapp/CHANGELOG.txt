@@ -14,6 +14,8 @@ New Features:
     rather than always defaulting to the language for which the wiki was setup.
   * Provide the capability to redirect to a virtual wiki using syntax of the
     form "#REDIRECT [[:virtual:Topic]].  Requested by tfschueller.
+  * Login will now always take the user back to the page from which 'login' was
+    clicked, as requested by many users and as implemented by Mediawiki.
   * Updated spam filter patterns.
   * Upgrade to Spring Framework 2.5.5.
   * Upgrade to Spring Security 2.0.3.
