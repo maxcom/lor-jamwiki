@@ -49,12 +49,10 @@
 	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></span>
 </div>
 </c:if>
-<c:if test="${newuser.userId < 1}">
 <div class="formentry">
 	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
 	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
 </div>
-</c:if>
 <div class="formentry">
 	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
 	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
