@@ -23,9 +23,6 @@ import java.util.Locale;
 import junit.framework.TestCase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-/* FIXME - re-enable
-import org.jamwiki.db.DatabaseUserHandler;
-*/
 import org.jamwiki.model.Topic;
 
 public class WikiUtilTest extends TestCase {
@@ -103,16 +100,6 @@ public class WikiUtilTest extends TestCase {
 		Topic result = WikiUtil.findRedirectedTopic(parent, 100);
 		assertSame("result", parent, result);
 	}
-
-	/**
-	 *
-	 */
-	/* FIXME - re-enable
-	public void testUserHandlerInstance() throws Throwable {
-		DatabaseUserHandler result = (DatabaseUserHandler) WikiUtil.userHandlerInstance();
-		assertTrue("result.isWriteable()", result.isWriteable());
-	}
-	*/
 
 	/**
 	 *

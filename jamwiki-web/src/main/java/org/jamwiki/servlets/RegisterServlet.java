@@ -176,11 +176,8 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(username);
+				userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(username);
 			}
-		}
-		if (!WikiBase.getUserHandler().isWriteable()) {
-			return userInfo;
 		}
 		userInfo.setUsername(username);
 		userInfo.setEmail(request.getParameter("email"));
@@ -212,9 +209,6 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (user.getUserId() < 1 && StringUtils.isBlank(newPassword)) {
 			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
-		if (!WikiBase.getUserHandler().isWriteable() && !WikiBase.getDataHandler().authenticate(user.getUsername(), newPassword)) {
-			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
-		}
 		if (!StringUtils.isBlank(newPassword) || !StringUtils.isBlank(confirmPassword)) {
 			try {
 				WikiUtil.validatePassword(newPassword, confirmPassword);
@@ -237,7 +231,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		WikiUserInfo userInfo = new WikiUserInfo();
 		if (ServletUtil.currentUser().hasRole(Role.ROLE_USER)) {
 			user = ServletUtil.currentUser();
-			userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(user.getUsername());
+			userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(user.getUsername());
 		}
 		this.loadDefaults(request, next, pageInfo, user, userInfo);
 	}

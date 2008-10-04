@@ -33,7 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
 import org.jamwiki.SearchEngine;
-import org.jamwiki.UserHandler;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
@@ -586,23 +585,6 @@ public class WikiUtil {
 	}
 
 	/**
-	 * Utility method to retrieve an instance of the current user handler.
-	 *
-	 * @return An instance of the current user handler.
-	 * @throws Exception Thrown if a user handler instance can not be
-	 *  instantiated.
-	 */
-	public static UserHandler userHandlerInstance() throws Exception {
-		String userHandlerClass = Environment.getValue(Environment.PROP_BASE_USER_HANDLER);
-		logger.fine("Using user handler: " + userHandlerClass);
-		Class clazz = ClassUtils.getClass(userHandlerClass);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (UserHandler)constructor.newInstance(initArgs);
-	}
-
-	/**
 	 * Verify that a directory exists and is writable.
 	 *
 	 * @param name The full name (including the path) for the directory being tested.
@@ -695,10 +677,10 @@ public class WikiUtil {
 		if (StringUtils.isBlank(password)) {
 			throw new WikiException(new WikiMessage("error.newpasswordempty"));
 		}
-		if (WikiBase.getUserHandler().isWriteable() && StringUtils.isBlank(confirmPassword)) {
+		if (StringUtils.isBlank(confirmPassword)) {
 			throw new WikiException(new WikiMessage("error.passwordconfirm"));
 		}
-		if (WikiBase.getUserHandler().isWriteable() && !password.equals(confirmPassword)) {
+		if (!password.equals(confirmPassword)) {
 			throw new WikiException(new WikiMessage("admin.message.passwordsnomatch"));
 		}
 	}

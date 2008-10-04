@@ -44,7 +44,6 @@ public class Environment {
 	public static final String PROP_BASE_META_DESCRIPTION = "meta-description";
 	public static final String PROP_BASE_PERSISTENCE_TYPE = "persistenceType";
 	public static final String PROP_BASE_SEARCH_ENGINE = "search-engine";
-	public static final String PROP_BASE_USER_HANDLER = "user-handler";
 	public static final String PROP_BASE_WIKI_VERSION = "wiki-version";
 	public static final String PROP_CACHE_INDIVIDUAL_SIZE = "cache-individual-size";
 	public static final String PROP_CACHE_MAX_AGE = "cache-max-age";
@@ -168,7 +167,6 @@ public class Environment {
 		defaults.setProperty(PROP_BASE_META_DESCRIPTION, "");
 		defaults.setProperty(PROP_BASE_PERSISTENCE_TYPE, WikiBase.PERSISTENCE_INTERNAL);
 		defaults.setProperty(PROP_BASE_SEARCH_ENGINE, WikiBase.SEARCH_ENGINE_LUCENE);
-		defaults.setProperty(PROP_BASE_USER_HANDLER, WikiBase.USER_HANDLER_DATABASE);
 		defaults.setProperty(PROP_BASE_WIKI_VERSION, "0.0.0");
 		defaults.setProperty(PROP_CACHE_INDIVIDUAL_SIZE, "500");
 		defaults.setProperty(PROP_CACHE_MAX_AGE, "300");

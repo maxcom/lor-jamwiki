@@ -28,7 +28,6 @@ import org.jamwiki.utils.WikiLogger;
  * for resetting core structures including caches and permissions.
  *
  * @see org.jamwiki.DataHandler
- * @see org.jamwiki.UserHandler
  * @see org.jamwiki.search.SearchEngine
  */
 public class WikiBase {
@@ -39,8 +38,6 @@ public class WikiBase {
 	private static WikiBase instance = null;
 	/** The data handler that looks after read/write operations. */
 	private static DataHandler dataHandler = null;
-	/** The handler for user login/authentication. */
-	private static UserHandler userHandler = null;
 	/** The search engine instance. */
 	private static SearchEngine searchEngine = null;
 
@@ -93,10 +90,6 @@ public class WikiBase {
 	public static final int UPLOAD_NONE = 1;
 	/** Use a whitelist to determine what file types can be uploaded. */
 	public static final int UPLOAD_WHITELIST = 3;
-	/** Database user handler class */
-	public static final String USER_HANDLER_DATABASE = "org.jamwiki.db.DatabaseUserHandler";
-	/** LDAP user handler class */
-	public static final String USER_HANDLER_LDAP = "org.jamwiki.ldap.LdapUserHandler";
 
 	static {
 		try {
@@ -136,19 +129,11 @@ public class WikiBase {
 	}
 
 	/**
-	 *
-	 */
-	public static UserHandler getUserHandler() {
-		return WikiBase.userHandler;
-	}
-
-	/**
 	 * Reload the data handler, user handler, and other basic wiki
 	 * data structures.
 	 */
 	public static void reload() throws Exception {
 		WikiBase.dataHandler = WikiUtil.dataHandlerInstance();
-		WikiBase.userHandler = WikiUtil.userHandlerInstance();
 		WikiBase.searchEngine = WikiUtil.searchEngineInstance();
 	}
 

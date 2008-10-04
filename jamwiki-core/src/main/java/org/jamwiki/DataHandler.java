@@ -45,6 +45,22 @@ import org.jamwiki.utils.Pagination;
 public interface DataHandler {
 
 	/**
+	 * Add new user information to the user information data store.  If the
+	 * data store is write-only then this method should throw an
+	 * OperationNotSupportedException.
+	 *
+	 * @param userInfo The WikiUserInfo object that is to be added to the
+	 *  data store.
+	 * @param transactionObject If the user information is being added to the
+	 *  data store as part of a transaction then this parameter should contain
+	 *  the transaction object, such as a database connection.  If no
+	 *  transaction is being used then this value should be <code>null</code>.
+	 * @throws Exception Thrown if an error occurs while adding the user
+	 *  information, or if the data store is read-only.
+	 */
+	void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
+
+	/**
 	 * Determine if a value matching the given username and password exists in
 	 * the data store.
 	 *
@@ -453,6 +469,19 @@ public interface DataHandler {
 	int lookupWikiUserCount() throws Exception;
 
 	/**
+	 * Given a username, retrieving a WikiUserInfo containing values for
+	 * the specified user.
+	 *
+	 * @param username The username for the user information being retrieved.
+	 * @return A WikiUserInfo object containing user information matching the
+	 *  the username, or <code>null</code> if no record matching the username
+	 *  can be found.
+	 * @throws Exception Thrown if an error occurs while retrieving user
+	 *  information.
+	 */
+	WikiUserInfo lookupWikiUserInfo(String username) throws Exception;
+
+	/**
 	 * Return a List of user logins for all wiki users.
 	 *
 	 * @param pagination A Pagination object indicating the total number of
@@ -563,6 +592,19 @@ public interface DataHandler {
 	 */
 	// FIXME - move this to another location
 	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception;
+
+	/**
+	 *
+	 * @param userInfo The WikiUserInfo object that is to be updated in the
+	 *  data store.
+	 * @param transactionObject If the user information is being updated in
+	 *  the data store as part of a transaction then this parameter should
+	 *  contain the transaction object, such as a database connection.  If no
+	 *  transaction is being used then this value should be <code>null</code>.
+	 * @throws Exception Thrown if an error occurs while updating the user
+	 *  information, or if the data store is read-only.
+	 */
+	void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if

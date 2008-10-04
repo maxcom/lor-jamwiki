@@ -44,6 +44,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public boolean authenticate(String username, String password) throws Exception {
 		throw new UnsupportedOperationException();
 	}
@@ -262,6 +269,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public List lookupWikiUsers(Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
@@ -305,6 +319,13 @@ public class TestDataHandler implements DataHandler {
 	 *
 	 */
 	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 

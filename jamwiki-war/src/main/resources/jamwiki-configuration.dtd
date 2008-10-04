@@ -1,11 +1,8 @@
 
-<!ELEMENT configuration (parsers?, user-handlers?, data-handlers?, search-engines?, namespaces*, pseudotopics*, translations*)>
+<!ELEMENT configuration (parsers?, data-handlers?, search-engines?, namespaces*, pseudotopics*, translations*)>
 
 <!ELEMENT parsers (parser*)>
 <!ELEMENT parser (name, class, key?, state?)>
-
-<!ELEMENT user-handlers (user-handler*)>
-<!ELEMENT user-handler (name, class, key?, state?)>
 
 <!ELEMENT data-handlers (data-handler*)>
 <!ELEMENT data-handler (name, class, key?, state?)>

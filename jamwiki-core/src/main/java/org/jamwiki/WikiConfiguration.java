@@ -53,7 +53,6 @@ public class WikiConfiguration {
 	private List pseudotopics = null;
 	private List searchEngines = null;
 	private Map translations = null;
-	private List userHandlers = null;
 
 	/** Name of the configuration file. */
 	public static final String JAMWIKI_CONFIGURATION_FILE = "jamwiki-configuration.xml";
@@ -76,8 +75,6 @@ public class WikiConfiguration {
 	private static final String XML_SEARCH_ENGINE_ROOT = "search-engines";
 	private static final String XML_TRANSLATION = "translation";
 	private static final String XML_TRANSLATION_ROOT = "translations";
-	private static final String XML_USER_HANDLER = "user-handler";
-	private static final String XML_USER_HANDLER_ROOT = "user-handlers";
 
 	/**
 	 *
@@ -141,13 +138,6 @@ public class WikiConfiguration {
 	/**
 	 *
 	 */
-	public Collection getUserHandlers() {
-		return this.userHandlers;
-	}
-
-	/**
-	 *
-	 */
 	private void initialize() {
 		try {
 			this.dataHandlers = new Vector();
@@ -156,7 +146,6 @@ public class WikiConfiguration {
 			this.pseudotopics = new Vector();
 			this.searchEngines = new Vector();
 			this.translations = new HashMap();
-			this.userHandlers = new Vector();
 			File file = Utilities.getClassLoaderFile(JAMWIKI_CONFIGURATION_FILE);
 			Document document = XMLUtil.parseXML(file, false);
 			Node node = document.getElementsByTagName(XML_CONFIGURATION_ROOT).item(0);
@@ -170,8 +159,6 @@ public class WikiConfiguration {
 					this.dataHandlers = this.parseConfigurationObjects(child, XML_DATA_HANDLER);
 				} else if (child.getNodeName().equals(XML_SEARCH_ENGINE_ROOT)) {
 					this.searchEngines = this.parseConfigurationObjects(child, XML_SEARCH_ENGINE);
-				} else if (child.getNodeName().equals(XML_USER_HANDLER_ROOT)) {
-					this.userHandlers = this.parseConfigurationObjects(child, XML_USER_HANDLER);
 				} else if (child.getNodeName().equals(XML_NAMESPACE_ROOT)) {
 					this.parseNamespaces(child);
 				} else if (child.getNodeName().equals(XML_PSEUDOTOPIC_ROOT)) {

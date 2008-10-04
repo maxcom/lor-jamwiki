@@ -51,7 +51,7 @@ public class WikiSignatureTag {
 				if (user != null && !StringUtils.isBlank(user.getUsername())) {
 					login = user.getUsername();
 					displayName = (!StringUtils.isBlank(user.getDisplayName())) ? user.getDisplayName() : login;
-					WikiUserInfo userInfo = WikiBase.getUserHandler().lookupWikiUserInfo(login);
+					WikiUserInfo userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(login);
 					email = userInfo.getEmail();
 					userId = Integer.toString(user.getUserId());
 				}

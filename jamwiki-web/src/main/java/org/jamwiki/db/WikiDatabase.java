@@ -495,13 +495,10 @@ public class WikiDatabase {
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {
 			logger.warning("Admin user already exists");
 		}
-		WikiUserInfo userInfo = null;
-		if (WikiBase.getUserHandler().isWriteable()) {
-			userInfo = new WikiUserInfo();
-			userInfo.setEncodedPassword(user.getPassword());
-			userInfo.setUsername(user.getUsername());
-			userInfo.setUserId(user.getUserId());
-		}
+		WikiUserInfo userInfo = new WikiUserInfo();
+		userInfo.setEncodedPassword(user.getPassword());
+		userInfo.setUsername(user.getUsername());
+		userInfo.setUserId(user.getUserId());
 		WikiBase.getDataHandler().writeWikiUser(user, userInfo, conn);
 		Vector roles = new Vector();
 		roles.add(Role.ROLE_ADMIN.getAuthority());

@@ -188,6 +188,24 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
+		TransactionStatus status = DatabaseConnection.startTransaction();
+		try {
+			Connection conn = DatabaseConnection.getConnection();
+			WikiDatabase.queryHandler().insertWikiUserInfo(userInfo, conn);
+		} catch (Exception e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (Error e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		}
+		DatabaseConnection.commit(status);
+	}
+
+	/**
+	 *
+	 */
 	public boolean authenticate(String username, String password) throws Exception {
 		boolean result = false;
 		TransactionStatus status = DatabaseConnection.startTransaction();
@@ -752,6 +770,20 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private WikiUserInfo initWikiUserInfo(WikiResultSet rs) throws Exception {
+		WikiUserInfo userInfo = new WikiUserInfo();
+		userInfo.setUserId(rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID));
+		userInfo.setUsername(rs.getString("login"));
+		userInfo.setEmail(rs.getString("email"));
+		userInfo.setFirstName(rs.getString("first_name"));
+		userInfo.setLastName(rs.getString("last_name"));
+		userInfo.setEncodedPassword(rs.getString("encoded_password"));
+		return userInfo;
+	}
+
+	/**
+	 *
+	 */
 	public List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
@@ -775,7 +807,6 @@ public class AnsiDataHandler implements DataHandler {
 		if (StringUtils.isBlank(virtualWiki) || StringUtils.isBlank(topicName)) {
 			return null;
 		}
-
 		String key = WikiCache.key(virtualWiki, topicName);
 		if (transactionObject == null) {
 			// retrieve topic from the cache only if this call is not currently a part
@@ -787,7 +818,6 @@ public class AnsiDataHandler implements DataHandler {
 				return (cacheTopic == null || (!deleteOK && cacheTopic.getDeleteDate() != null)) ? null : new Topic(cacheTopic);
 			}
 		}
-
 		WikiLink wikiLink = LinkUtil.parseWikiLink(topicName);
 		String namespace = wikiLink.getNamespace();
 		boolean caseSensitive = true;
@@ -801,7 +831,6 @@ public class AnsiDataHandler implements DataHandler {
 				caseSensitive = false;
 			}
 		}
-
 		Topic topic = null;
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
@@ -1005,6 +1034,14 @@ public class AnsiDataHandler implements DataHandler {
 		// FIXME - handle LDAP
 		WikiResultSet rs = this.queryHandler().lookupWikiUserCount();
 		return rs.getInt("user_count");
+	}
+
+	/**
+	 *
+	 */
+	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
+		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUserInfo(username);
+		return (rs.size() == 0) ? null : initWikiUserInfo(rs);
 	}
 
 	/**
@@ -1220,6 +1257,24 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		this.queryHandler().updateWikiUser(user, conn);
+	}
+
+	/**
+	 *
+	 */
+	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
+		TransactionStatus status = DatabaseConnection.startTransaction();
+		try {
+			Connection conn = DatabaseConnection.getConnection();
+			WikiDatabase.queryHandler().updateWikiUserInfo(userInfo, conn);
+		} catch (Exception e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		DatabaseConnection.commit(status);
 	}
 
 	/**
@@ -1492,15 +1547,11 @@ public class AnsiDataHandler implements DataHandler {
 			Connection conn = DatabaseConnection.getConnection();
 			if (user.getUserId() <= 0) {
 				this.addWikiUser(user, conn);
-				if (WikiBase.getUserHandler().isWriteable()) {
-					userInfo.setUserId(user.getUserId());
-					WikiBase.getUserHandler().addWikiUserInfo(userInfo, conn);
-				}
+				userInfo.setUserId(user.getUserId());
+				this.addWikiUserInfo(userInfo, conn);
 			} else {
 				this.updateWikiUser(user, conn);
-				if (WikiBase.getUserHandler().isWriteable()) {
-					WikiBase.getUserHandler().updateWikiUserInfo(userInfo, conn);
-				}
+				this.updateWikiUserInfo(userInfo, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
