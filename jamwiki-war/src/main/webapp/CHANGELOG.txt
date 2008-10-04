@@ -18,7 +18,7 @@ New Features:
     clicked, as requested by many users and as implemented by Mediawiki.
   * Updated spam filter patterns.
   * Upgrade to Spring Framework 2.5.5.
-  * Upgrade to Spring Security 2.0.3.
+  * Upgrade to Spring Security 2.0.4.
 
 Bugfixes:
 
