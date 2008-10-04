@@ -45,6 +45,19 @@ import org.jamwiki.utils.Pagination;
 public interface DataHandler {
 
 	/**
+	 * Determine if a value matching the given username and password exists in
+	 * the data store.
+	 *
+	 * @param username The username that is being validated against.
+	 * @param password The password that is being validated against.
+	 * @return <code>true</code> if the username / password combination matches
+	 *  an existing record in the data store, <code>false</code> otherwise.
+	 * @throws Exception Thrown if an error occurs while accessing the data
+	 *  store.
+	 */
+	boolean authenticate(String username, String password) throws Exception;
+
+	/**
 	 * Determine if a topic can be moved to a new location.  If the
 	 * destination is not an existing topic, is a topic that has been deleted,
 	 * or is a topic that redirects to the source topic then this method

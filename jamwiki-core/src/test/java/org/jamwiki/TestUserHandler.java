@@ -37,13 +37,6 @@ public class TestUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public boolean authenticate(String username, String password) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 *
-	 */
 	public boolean isWriteable() {
 		throw new UnsupportedOperationException();
 	}

@@ -44,6 +44,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public boolean authenticate(String username, String password) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public boolean canMoveTopic(Topic fromTopic, String destination) throws Exception {
 		throw new UnsupportedOperationException();
 	}

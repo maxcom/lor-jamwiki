@@ -46,6 +46,7 @@ import org.jamwiki.model.WikiUser;
 import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Pagination;
@@ -182,6 +183,31 @@ public class AnsiDataHandler implements DataHandler {
 			user.setUserId(nextUserId);
 		}
 		this.queryHandler().insertWikiUser(user, conn);
+	}
+
+	/**
+	 *
+	 */
+	public boolean authenticate(String username, String password) throws Exception {
+		boolean result = false;
+		TransactionStatus status = DatabaseConnection.startTransaction();
+		try {
+			Connection conn = DatabaseConnection.getConnection();
+			// password is stored encrypted, so encrypt password
+			if (!StringUtils.isBlank(password)) {
+				String encryptedPassword = Encryption.encrypt(password);
+				WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
+				result = (rs.size() == 0) ? false : true;
+			}
+		} catch (Exception e) {
+			DatabaseConnection.rollbackOnException(status, e);
+			throw e;
+		} catch (Error err) {
+			DatabaseConnection.rollbackOnException(status, err);
+			throw err;
+		}
+		DatabaseConnection.commit(status);
+		return result;
 	}
 
 	/**

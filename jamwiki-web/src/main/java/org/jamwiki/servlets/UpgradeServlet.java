@@ -85,7 +85,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
 		WikiUser user = null;
-		if (!WikiBase.getUserHandler().authenticate(username, password)) {
+		if (!WikiBase.getDataHandler().authenticate(username, password)) {
 			return false;
 		}
 		user = DatabaseUpgrades.getWikiUser(username);

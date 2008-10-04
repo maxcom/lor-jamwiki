@@ -59,25 +59,6 @@ public class LdapUserHandler implements UserHandler {
 	/**
 	 *
 	 */
-	public boolean authenticate(String username, String password) throws Exception {
-		InitialDirContext ctx = null;
-		try {
-			username = this.fullDirectoryPath(username);
-			ctx = getContext(username, password);
-			return true;
-		} catch (Exception e) {
-			// could not authenticate, return false
-			return false;
-		} finally {
-			try {
-				ctx.close();
-			} catch (Exception e) {}
-		}
-	}
-
-	/**
-	 *
-	 */
 	private String fullDirectoryPath(String value) {
 		// convert single user value to full path
 		value = Environment.getValue(Environment.PROP_LDAP_FIELD_USERID) + "=" + value;

@@ -43,19 +43,6 @@ public interface UserHandler {
 	void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception;
 
 	/**
-	 * Determine if a value matching the given username and password exists in
-	 * the data store.
-	 *
-	 * @param username The username that is being validated against.
-	 * @param password The password that is being validated against.
-	 * @return <code>true</code> if the username / password combination matches
-	 *  an existing record in the data store, <code>false</code> otherwise.
-	 * @throws Exception Thrown if an error occurs while accessing the data
-	 *  store.
-	 */
-	boolean authenticate(String username, String password) throws Exception;
-
-	/**
 	 * This method returns <code>true</code> if the user information data
 	 * store is writeable, and <code>false</code> if it is read-only.
 	 *

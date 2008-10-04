@@ -19,7 +19,6 @@ package org.jamwiki.db;
 import java.sql.Connection;
 import org.jamwiki.UserHandler;
 import org.jamwiki.model.WikiUserInfo;
-import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.transaction.TransactionStatus;
@@ -48,31 +47,6 @@ public class DatabaseUserHandler implements UserHandler {
 			throw e;
 		}
 		DatabaseConnection.commit(status);
-	}
-
-	/**
-	 *
-	 */
-	public boolean authenticate(String username, String password) throws Exception {
-		boolean result = false;
-		TransactionStatus status = DatabaseConnection.startTransaction();
-		try {
-			Connection conn = DatabaseConnection.getConnection();
-			// password is stored encrypted, so encrypt password
-			if (!StringUtils.isBlank(password)) {
-				String encryptedPassword = Encryption.encrypt(password);
-				WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
-				result = (rs.size() == 0) ? false : true;
-			}
-		} catch (Exception e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
-		} catch (Error err) {
-			DatabaseConnection.rollbackOnException(status, err);
-			throw err;
-		}
-		DatabaseConnection.commit(status);
-		return result;
 	}
 
 	/**
