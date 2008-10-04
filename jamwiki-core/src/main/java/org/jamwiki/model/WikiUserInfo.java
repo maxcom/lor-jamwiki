@@ -24,7 +24,6 @@ import org.jamwiki.utils.WikiLogger;
  */
 public class WikiUserInfo {
 
-	private String email = null;
 	private String encodedPassword = null;
 	private String firstName = null;
 	private String lastName = null;
@@ -36,20 +35,6 @@ public class WikiUserInfo {
 	 *
 	 */
 	public WikiUserInfo() {
-	}
-
-	/**
-	 *
-	 */
-	public String getEmail() {
-		return this.email;
-	}
-
-	/**
-	 *
-	 */
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	/**

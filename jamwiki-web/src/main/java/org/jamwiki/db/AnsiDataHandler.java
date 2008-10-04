@@ -760,6 +760,7 @@ public class AnsiDataHandler implements DataHandler {
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
 			user.setPassword(rs.getString("remember_key"));
 			user.setDefaultLocale(rs.getString("default_locale"));
+			user.setEmail(rs.getString("email"));
 			return user;
 		} catch (Exception e) {
 			logger.severe("Failure while initializing user", e);
@@ -774,7 +775,6 @@ public class AnsiDataHandler implements DataHandler {
 		WikiUserInfo userInfo = new WikiUserInfo();
 		userInfo.setUserId(rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID));
 		userInfo.setUsername(rs.getString("login"));
-		userInfo.setEmail(rs.getString("email"));
 		userInfo.setFirstName(rs.getString("first_name"));
 		userInfo.setLastName(rs.getString("last_name"));
 		userInfo.setEncodedPassword(rs.getString("encoded_password"));

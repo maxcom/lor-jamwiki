@@ -806,6 +806,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(7, user.getLastLoginIpAddress());
 		stmt.setString(8, user.getPassword());
 		stmt.setString(9, user.getDefaultLocale());
+		stmt.setString(10, user.getEmail());
 		stmt.executeUpdate(conn);
 	}
 
@@ -817,10 +818,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
 		stmt.setInt(1, userInfo.getUserId());
 		stmt.setString(2, userInfo.getUsername());
-		stmt.setString(3, userInfo.getEmail());
-		stmt.setString(4, userInfo.getFirstName());
-		stmt.setString(5, userInfo.getLastName());
-		stmt.setString(6, userInfo.getEncodedPassword());
+		stmt.setString(3, userInfo.getFirstName());
+		stmt.setString(4, userInfo.getLastName());
+		stmt.setString(5, userInfo.getEncodedPassword());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1148,7 +1148,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setTimestamp(3, user.getLastLoginDate());
 		stmt.setString(4, user.getLastLoginIpAddress());
 		stmt.setString(5, user.getDefaultLocale());
-		stmt.setInt(6, user.getUserId());
+		stmt.setString(6, user.getEmail());
+		stmt.setInt(7, user.getUserId());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1159,11 +1160,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		this.validateWikiUserInfo(userInfo);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
 		stmt.setString(1, userInfo.getUsername());
-		stmt.setString(2, userInfo.getEmail());
-		stmt.setString(3, userInfo.getFirstName());
-		stmt.setString(4, userInfo.getLastName());
-		stmt.setString(5, userInfo.getEncodedPassword());
-		stmt.setInt(6, userInfo.getUserId());
+		stmt.setString(2, userInfo.getFirstName());
+		stmt.setString(3, userInfo.getLastName());
+		stmt.setString(4, userInfo.getEncodedPassword());
+		stmt.setInt(5, userInfo.getUserId());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1267,6 +1267,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		checkLength(user.getCreateIpAddress(), 39);
 		checkLength(user.getLastLoginIpAddress(), 39);
 		checkLength(user.getDefaultLocale(), 8);
+		checkLength(user.getEmail(), 100);
 		// do not throw exception containing password info
 		if (user.getPassword() != null && user.getPassword().length() > 100) {
 			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
@@ -1278,7 +1279,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	protected void validateWikiUserInfo(WikiUserInfo userInfo) throws WikiException {
 		checkLength(userInfo.getUsername(), 100);
-		checkLength(userInfo.getEmail(), 100);
 		checkLength(userInfo.getFirstName(), 100);
 		checkLength(userInfo.getLastName(), 100);
 		// do not throw exception containing password info

@@ -96,6 +96,18 @@ followed by 0.5.3.
               );
        c) Populate the new characters_changed column for recent changes by
           reloading recent changes from the Special:Maintenance page.
+       d) Add the email column to the jam_wiki_user table.
+            Oracle:
+              alter table jam_wiki_user add (email VARCHAR(100));
+            Other Databases:
+              alter table jam_wiki_user add column email VARCHAR(100);
+       e) Populate the new email column for the jam_wiki_user table.
+              update jam_wiki_user set email = (
+                select email from jam_wiki_user_info
+                where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+              );
+       f) Add the missing unique (login) constraint to jam_wiki_user:
+              alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
 
 
   JAMWiki 0.6.7

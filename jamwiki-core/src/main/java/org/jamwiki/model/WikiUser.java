@@ -30,6 +30,7 @@ public class WikiUser {
 	private String createIpAddress = "0.0.0.0";
 	private String defaultLocale = null;
 	private String displayName = null;
+	private String email = null;
 	private Timestamp lastLoginDate = new Timestamp(System.currentTimeMillis());
 	private String lastLoginIpAddress = "0.0.0.0";
 	private String username = null;
@@ -103,6 +104,20 @@ public class WikiUser {
 	 */
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+
+	/**
+	 *
+	 */
+	public String getEmail() {
+		return this.email;
+	}
+
+	/**
+	 *
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	/**

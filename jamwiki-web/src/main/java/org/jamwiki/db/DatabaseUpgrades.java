@@ -49,12 +49,6 @@ public class DatabaseUpgrades {
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		return def;
 	}
-	/**
-	 *
-	 */
-	public static WikiUser getWikiUser(String username) throws Exception {
-		return WikiBase.getDataHandler().lookupWikiUser(username, null);
-	}
 
 	/**
 	 *
@@ -254,6 +248,23 @@ public class DatabaseUpgrades {
 			}
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added characters_changed column to jam_recent_change");
+			// copy columns from jam_wiki_user_info into jam_wiki_user
+			if (dbType.equals(WikiBase.DATA_HANDLER_ORACLE)) {
+				sql = "alter table jam_wiki_user add (email VARCHAR(100)) ";
+			} else {
+				sql = "alter table jam_wiki_user add column email VARCHAR(100) ";
+			}
+			DatabaseConnection.executeUpdate(sql, conn);
+			sql = "update jam_wiki_user set email = ( "
+			    +   "select email "
+			    +   "from jam_wiki_user_info "
+			    +   "where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id "
+			    + ") ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added email column to jam_wiki_user");
+			sql = "alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login)";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added constraint unique (login) to jam_wiki_user");
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			throw e;

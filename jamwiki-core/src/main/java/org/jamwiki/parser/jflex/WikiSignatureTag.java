@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserInput;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.utils.NamespaceHandler;
@@ -51,8 +50,7 @@ public class WikiSignatureTag {
 				if (user != null && !StringUtils.isBlank(user.getUsername())) {
 					login = user.getUsername();
 					displayName = (!StringUtils.isBlank(user.getDisplayName())) ? user.getDisplayName() : login;
-					WikiUserInfo userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(login);
-					email = userInfo.getEmail();
+					email = user.getEmail();
 					userId = Integer.toString(user.getUserId());
 				}
 				if (login == null || email == null || displayName == null) {

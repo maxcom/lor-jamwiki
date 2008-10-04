@@ -65,6 +65,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 		this.setCreateDate(wikiUser.getCreateDate());
 		this.setCreateIpAddress(wikiUser.getCreateIpAddress());
 		this.setDefaultLocale(wikiUser.getDefaultLocale());
+		this.setEmail(wikiUser.getEmail());
 		this.setDisplayName(wikiUser.getDisplayName());
 		this.setLastLoginDate(wikiUser.getLastLoginDate());
 		this.setLastLoginIpAddress(wikiUser.getLastLoginIpAddress());

@@ -160,6 +160,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			user.setPassword(Encryption.encrypt(newPassword));
 		}
 		user.setDefaultLocale(request.getParameter("defaultLocale"));
+		user.setEmail(request.getParameter("email"));
 		// FIXME - need to distinguish between add & update
 		user.setCreateIpAddress(ServletUtil.getIpAddress(request));
 		user.setLastLoginIpAddress(ServletUtil.getIpAddress(request));
@@ -180,7 +181,6 @@ public class RegisterServlet extends JAMWikiServlet {
 			}
 		}
 		userInfo.setUsername(username);
-		userInfo.setEmail(request.getParameter("email"));
 		userInfo.setFirstName(request.getParameter("firstName"));
 		userInfo.setLastName(request.getParameter("lastName"));
 		String newPassword = request.getParameter("newPassword");

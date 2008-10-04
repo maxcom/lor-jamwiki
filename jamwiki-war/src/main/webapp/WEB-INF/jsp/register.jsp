@@ -74,7 +74,7 @@
 </div>
 <div class="formentry">
 	<span class="formcaption"><label for="registerEmail"><f:message key="register.caption.email" /></label>:</span>
-	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></span>
+	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuser.email}" />" id="registerEmail" /></span>
 	<div class="formhelp"><f:message key="register.help.email" /></div>
 </div>
 <div class="formentry">
