@@ -21,7 +21,9 @@
 
 				<clickLink label="admin"/>
 				<verifyText description="Verify that text is contained in the page"
-					text="${common.sectionedit} User:${jamwiki.admin.name}"/>
+					text="User:${jamwiki.admin.name}"/>
+				<verifyText description="Verify that text is contained in the page"
+					text="${topic.caption.editlegend}"/>
 
 				<clickLink label="${usermenu.account}"/>
 				<verifyText description="Verify that text is contained in the page"
