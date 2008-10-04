@@ -49,13 +49,12 @@
 	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></span>
 </div>
 </c:if>
-<c:if test="${newuserinfo.writeable || newuser.userId < 1}">
+<c:if test="${newuser.userId < 1}">
 <div class="formentry">
 	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
 	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
 </div>
 </c:if>
-<c:if test="${newuserinfo.writeable}">
 <div class="formentry">
 	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
 	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
@@ -70,35 +69,16 @@
 	<span class="formelement"><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></span>
 	<div class="formhelp"><f:message key="register.help.lastname" /></div>
 </div>
-</c:if>
-<c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
-<div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.firstname" />:</span>
-	<span class="formelement"><c:out value="${newuserinfo.firstName}" /></span>
-</div>
-<div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.lastname" />:</span>
-	<span class="formelement"><c:out value="${newuserinfo.lastName}" /></span>
-</div>
-</c:if>
 <div class="formentry">
 	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
 	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
 	<div class="formhelp"><f:message key="register.help.displayname" /></div>
 </div>
-<c:if test="${newuserinfo.writeable}">
 <div class="formentry">
 	<span class="formcaption"><label for="registerEmail"><f:message key="register.caption.email" /></label>:</span>
 	<span class="formelement"><input type="text" name="email" value="<c:out value="${newuserinfo.email}" />" id="registerEmail" /></span>
 	<div class="formhelp"><f:message key="register.help.email" /></div>
 </div>
-</c:if>
-<c:if test="${!newuserinfo.writeable && newuser.userId > 0}">
-<div class="formentry">
-	<span class="formcaption"><f:message key="register.caption.email" />:</span>
-	<span class="formelement"><c:out value="${newuserinfo.email}" /></span>
-</div>
-</c:if>
 <div class="formentry">
 	<span class="formcaption"><f:message key="register.caption.locale" />:</span>
 	<span class="formelement">
