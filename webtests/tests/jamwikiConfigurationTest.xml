@@ -11,9 +11,9 @@
 			
 			<steps>
 			
-				<!-- invoke url="http://localhost:8080/jamwiki-war/en/Special:Setup"/ -->
+				<!-- invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/en/Special:Setup"/ -->
 				
-				<invoke url="http://localhost:8080/jamwiki-war/" />
+				<invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/" />
 				<verifyText description="Verify that text is contained in the page" text="Verzeichnis für das Dateisystem"/>
 				<setInputField htmlId="homeDir" value="target/test/path/to/db"/>
 				

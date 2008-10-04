@@ -11,7 +11,7 @@
 					
 			<steps>
 			
-				<invoke url="http://localhost:8080/jamwiki-war/en/StartingPoints"/>
+				<invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/en/StartingPoints"/>
 				<clickLink label="${common.login}"/>
 
 				<setInputField htmlId="loginUsername" value="${jamwiki.admin.name}"/>
