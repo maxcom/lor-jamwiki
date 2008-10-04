@@ -6,42 +6,42 @@
 	<import file="../definitions.xml" />
 
 	<target name="test">
-		
+
 		<webtest name="check admin login - login as admin and change the password.">
-					
+
 			<steps>
-			
+
 				<invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/en/StartingPoints"/>
 				<clickLink label="${common.login}"/>
 
 				<setInputField htmlId="loginUsername" value="${jamwiki.admin.name}"/>
-				<setInputField description="Set password field j_password: ${jamwiki.admin.passwd}" 
+				<setInputField description="Set password field j_password: ${jamwiki.admin.passwd}"
 					htmlId="loginPassword" value="${jamwiki.admin.passwd}"/>
 				<clickButton label="${common.login}"/>
 
 				<clickLink label="admin"/>
-				<verifyText description="Verify that text is contained in the page" 
-					text="Bearbeite User:${jamwiki.admin.name}"/>
-				
+				<verifyText description="Verify that text is contained in the page"
+					text="${common.sectionedit} User:${jamwiki.admin.name}"/>
+
 				<clickLink label="${usermenu.account}"/>
-				<verifyText description="Verify that text is contained in the page" 
+				<verifyText description="Verify that text is contained in the page"
 					text="${common.login}"/>
-				
+
 				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="nimda"/>
 				<setInputField description="Set password field newPassword: admin2" htmlId="registerNewPassword" value="admin2"/>
 				<setInputField description="Set password field confirmPassword: admin2" name="confirmPassword" value="admin2"/>
-	
+
 				<clickButton label="${common.save}"/>
 				<verifyText description="Verify that text is contained in the page" text="StartingPoints"/>
-				
-				<not>		
+
+				<not>
 					<verifyXPath description="simple match a system error."
-				        xpath="/html/body/div/div[2]/div[5]/div[2]/div" 
+				        xpath="/html/body/div/div[2]/div[5]/div[2]/div"
 						text="${error.caption}" />
 				</not>
-					
+
  			</steps>
 		</webtest>
 	</target>
-	
+
 </project>

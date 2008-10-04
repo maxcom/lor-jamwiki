@@ -8,29 +8,29 @@
 	<target name="test">
 
 		<webtest name="configure jamwiki - clean build version. Only set path to file-db and admin stuff.">
-			
+
 			<steps>
-			
+
 				<!-- invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/en/Special:Setup"/ -->
-				
+
 				<invoke url="http://${jamwiki.host}:${jamwiki.port}/${jamwiki.context}/" />
-				<verifyText description="Verify that text is contained in the page" text="Verzeichnis für das Dateisystem"/>
+				<verifyText description="Verify that text is contained in the page" text="${admin.caption.filedir}"/>
 				<setInputField htmlId="homeDir" value="target/test/path/to/db"/>
-				
+
 				<setInputField htmlId="setupLogin" value="${jamwiki.admin.name}"/>
-				<setInputField description="Set password field newPassword: ${jamwiki.admin.passwd}" 
+				<setInputField description="Set password field newPassword: ${jamwiki.admin.passwd}"
 					htmlId="setupNewPassword" value="${jamwiki.admin.passwd}"/>
-				<setInputField description="Set password field confirmPassword: ${jamwiki.admin.passwd}" 
+				<setInputField description="Set password field confirmPassword: ${jamwiki.admin.passwd}"
 					htmlId="setupConfirmPassword" value="${jamwiki.admin.passwd}"/>
 
-				<clickButton label="Änderungen speichern"/>				
+				<clickButton label="${admin.action.save}"/>
 
 				<verifyTitle text="StartingPoints - JAMWiki"/>
-				<verifyText description="Verify that text is contained in the page" 
+				<verifyText description="Verify that text is contained in the page"
 					text="StartingPoints"/>
-				<verifyText description="Verify that text is contained in the page" 
+				<verifyText description="Verify that text is contained in the page"
 					text="JAMWiki wurde erfolgreich installiert!"/>
-				
+
 			</steps>
 		</webtest>
 

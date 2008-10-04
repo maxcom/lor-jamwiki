@@ -8,7 +8,9 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
 
 	<property file="webtest.properties" />
 
-	<!-- load the language specific properties file -->
+	<!-- load the default translations file -->
+	<property file="../jamwiki-war/src/main/resources/ApplicationResources.properties" />
+	<!-- load the locale-specific translations file (if available) -->
 	<property file="../jamwiki-war/src/main/resources/ApplicationResources_${user.language}.properties" />
 
 	<import file="definitions.xml" description="Import custom definitions (if any)"/>
