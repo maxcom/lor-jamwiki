@@ -276,6 +276,9 @@ public class DatabaseUpgrades {
 				+ "from jam_wiki_user_info ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_users table");
+			sql = "drop table jam_wiki_user_info";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Dropped jam_wiki_user_info table");
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			try {

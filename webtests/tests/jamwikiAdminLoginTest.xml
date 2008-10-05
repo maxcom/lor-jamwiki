@@ -7,7 +7,7 @@
 
 	<target name="test">
 
-		<webtest name="check admin login - login as admin and add firstName, lastName ...">
+		<webtest name="check admin login - login as admin and add email, display name ...">
 
 			<steps>
 
@@ -29,8 +29,6 @@
 				<verifyText description="Verify that text is contained in the page"
 					text="${common.login}"/>
 
-				<setInputField htmlId="registerFirstName" value="Peter"/>
-				<setInputField htmlId="registerLastName" value="Pan"/>
 				<setInputField htmlId="registerDisplayName" value="pepa"/>
 				<setInputField name="email" value="info@jamwiki.org"/>
 

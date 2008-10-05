@@ -117,7 +117,9 @@ followed by 0.5.3.
               insert into jam_users ( username, password )
                     select login, encoded_password
                     from jam_wiki_user_info
-       h) Add required constraints to jam_wiki_user:
+       h) Drop the obsolete jam_wiki_user_info table.
+              drop table jam_wiki_user_info;
+       i) Add required constraints to jam_wiki_user.
               alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
               alter table jam_wiki_user add constraint jam_u_wuser_users
                     foreign key (login) references jam_users (username)

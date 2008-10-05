@@ -58,16 +58,6 @@
 	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
 </div>
 <div class="formentry">
-	<span class="formcaption"><label for="registerFirstName"><f:message key="register.caption.firstname" /></label>:</span>
-	<span class="formelement"><input type="text" name="firstName" value="<c:out value="${newuserinfo.firstName}" />" id="registerFirstName" /></span>
-	<div class="formhelp"><f:message key="register.help.firstname" /></div>
-</div>
-<div class="formentry">
-	<span class="formcaption"><label for="registerLastName"><f:message key="register.caption.lastname" /></label>:</span>
-	<span class="formelement"><input type="text" name="lastName" value="<c:out value="${newuserinfo.lastName}" />" id="registerLastName" /></span>
-	<div class="formhelp"><f:message key="register.help.lastname" /></div>
-</div>
-<div class="formentry">
 	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
 	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
 	<div class="formhelp"><f:message key="register.help.displayname" /></div>

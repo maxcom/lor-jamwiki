@@ -36,7 +36,6 @@ import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.SpamFilter;
 import org.jamwiki.utils.Utilities;
@@ -183,14 +182,12 @@ public class AdminServlet extends JAMWikiServlet {
 		String confirmPassword = request.getParameter("passwordPasswordConfirm");
 		try {
 			WikiUser user = WikiBase.getDataHandler().lookupWikiUser(userLogin, null);
-			WikiUserInfo userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(userLogin);
-			if (user == null || userInfo == null) {
+			if (user == null) {
 				throw new WikiException(new WikiMessage("admin.password.message.invalidlogin", userLogin));
 			}
 			WikiUtil.validatePassword(newPassword, confirmPassword);
 			user.setPassword(Encryption.encrypt(newPassword));
-			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
-			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
+			WikiBase.getDataHandler().writeWikiUser(user, null);
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {

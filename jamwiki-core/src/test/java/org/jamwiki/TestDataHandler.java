@@ -30,7 +30,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.WikiLogger;
 
@@ -262,13 +261,6 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 *
-	 */
 	public List lookupWikiUsers(Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
@@ -374,7 +366,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception {
+	public void writeWikiUser(WikiUser user, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

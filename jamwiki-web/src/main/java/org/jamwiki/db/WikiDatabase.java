@@ -43,7 +43,6 @@ import org.jamwiki.model.TopicVersion;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -89,7 +88,7 @@ public class WikiDatabase {
 				"jam_file",
 				"jam_file_version",
 				"jam_wiki_user",
-				"jam_wiki_user_info"
+				"jam_users"
 		};
 		String csvDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
 		File csvFile = null;
@@ -228,8 +227,8 @@ public class WikiDatabase {
 			conn = DatabaseConnection.getTestConnection(driver, url, userName, password);
 			conn.setAutoCommit(false);
 			String[] tableNames = {
+					"jam_users",
 					"jam_wiki_user",
-					"jam_wiki_user_info",
 					"jam_group",
 					"jam_category",
 					"jam_virtual_wiki",
@@ -495,11 +494,7 @@ public class WikiDatabase {
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {
 			logger.warning("Admin user already exists");
 		}
-		WikiUserInfo userInfo = new WikiUserInfo();
-		userInfo.setEncodedPassword(user.getPassword());
-		userInfo.setUsername(user.getUsername());
-		userInfo.setUserId(user.getUserId());
-		WikiBase.getDataHandler().writeWikiUser(user, userInfo, conn);
+		WikiBase.getDataHandler().writeWikiUser(user, conn);
 		Vector roles = new Vector();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());

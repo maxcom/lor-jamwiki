@@ -43,7 +43,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.parser.ParserOutput;
 import org.jamwiki.parser.ParserUtil;
 import org.jamwiki.utils.Encryption;
@@ -121,8 +120,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addUser(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.queryHandler().insertUser(userInfo, conn);
+	private void addUser(WikiUser user, Connection conn) throws Exception {
+		this.queryHandler().insertUser(user, conn);
 	}
 
 	/**
@@ -190,13 +189,6 @@ public class AnsiDataHandler implements DataHandler {
 			user.setUserId(nextUserId);
 		}
 		this.queryHandler().insertWikiUser(user, conn);
-	}
-
-	/**
-	 *
-	 */
-	private void addWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.queryHandler().insertWikiUserInfo(userInfo, conn);
 	}
 
 	/**
@@ -766,19 +758,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private WikiUserInfo initWikiUserInfo(WikiResultSet rs) throws Exception {
-		WikiUserInfo userInfo = new WikiUserInfo();
-		userInfo.setUserId(rs.getInt(AnsiDataHandler.DATA_WIKI_USER_ID));
-		userInfo.setUsername(rs.getString("login"));
-		userInfo.setFirstName(rs.getString("first_name"));
-		userInfo.setLastName(rs.getString("last_name"));
-		userInfo.setEncodedPassword(rs.getString("encoded_password"));
-		return userInfo;
-	}
-
-	/**
-	 *
-	 */
 	public List lookupCategoryTopics(String virtualWiki, String categoryName) throws Exception {
 		Vector results = new Vector();
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
@@ -1034,14 +1013,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public WikiUserInfo lookupWikiUserInfo(String username) throws Exception {
-		WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUserInfo(username);
-		return (rs.size() == 0) ? null : initWikiUserInfo(rs);
-	}
-
-	/**
-	 *
-	 */
 	public List lookupWikiUsers(Pagination pagination) throws Exception {
 		Vector results = new Vector();
 		WikiResultSet rs = this.queryHandler().lookupWikiUsers(pagination);
@@ -1228,8 +1199,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void updateUser(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.queryHandler().updateUser(userInfo, conn);
+	private void updateUser(WikiUser user, Connection conn) throws Exception {
+		this.queryHandler().updateUser(user, conn);
 	}
 
 	/**
@@ -1259,13 +1230,6 @@ public class AnsiDataHandler implements DataHandler {
 	 */
 	private void updateWikiUser(WikiUser user, Connection conn) throws Exception {
 		this.queryHandler().updateWikiUser(user, conn);
-	}
-
-	/**
-	 *
-	 */
-	private void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.queryHandler().updateWikiUserInfo(userInfo, conn);
 	}
 
 	/**
@@ -1531,20 +1495,17 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception {
+	public void writeWikiUser(WikiUser user, Object transactionObject) throws Exception {
 		WikiUtil.validateUserName(user.getUsername());
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			if (user.getUserId() <= 0) {
-				this.addUser(userInfo, conn);
+				this.addUser(user, conn);
 				this.addWikiUser(user, conn);
-				userInfo.setUserId(user.getUserId());
-				this.addWikiUserInfo(userInfo, conn);
 			} else {
-				this.updateUser(userInfo, conn);
+				this.updateUser(user, conn);
 				this.updateWikiUser(user, conn);
-				this.updateWikiUserInfo(userInfo, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);

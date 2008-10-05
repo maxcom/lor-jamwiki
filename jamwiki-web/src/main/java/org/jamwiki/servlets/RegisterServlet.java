@@ -36,7 +36,6 @@ import org.jamwiki.authentication.WikiUserAuth;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
@@ -66,7 +65,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiUser user, WikiUserInfo userInfo) throws Exception {
+	private void loadDefaults(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo, WikiUser user) throws Exception {
 		if (StringUtils.isBlank(user.getDefaultLocale()) && request.getLocale() != null) {
 			user.setDefaultLocale(request.getLocale().toString());
 		}
@@ -86,7 +85,6 @@ public class RegisterServlet extends JAMWikiServlet {
 		}
 		next.addObject("locales", locales);
 		next.addObject("newuser", user);
-		next.addObject("newuserinfo", userInfo);
 		pageInfo.setSpecial(true);
 		pageInfo.setContentJsp(JSP_REGISTER);
 		pageInfo.setPageTitle(new WikiMessage("register.title"));
@@ -107,9 +105,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
 		WikiUserAuth user = this.setWikiUser(request);
-		WikiUserInfo userInfo = this.setWikiUserInfo(request);
 		next.addObject("newuser", user);
-		next.addObject("newuserinfo", userInfo);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			next.addObject("errors", errors);
@@ -125,9 +121,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (confirmPassword != null) {
 				next.addObject("confirmPassword", confirmPassword);
 			}
-			this.loadDefaults(request, next, pageInfo, user, userInfo);
+			this.loadDefaults(request, next, pageInfo, user);
 		} else {
-			WikiBase.getDataHandler().writeWikiUser(user, userInfo, null);
+			WikiBase.getDataHandler().writeWikiUser(user, null);
 			// login the user
 			this.login(request, user);
 			// update the locale key since the user may have changed default locale
@@ -170,29 +166,6 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private WikiUserInfo setWikiUserInfo(HttpServletRequest request) throws Exception {
-		WikiUserInfo userInfo = new WikiUserInfo();
-		String username = request.getParameter("login");
-		String userIdString = request.getParameter("userId");
-		if (!StringUtils.isBlank(userIdString)) {
-			int userId = new Integer(userIdString).intValue();
-			if (userId > 0) {
-				userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(username);
-			}
-		}
-		userInfo.setUsername(username);
-		userInfo.setFirstName(request.getParameter("firstName"));
-		userInfo.setLastName(request.getParameter("lastName"));
-		String newPassword = request.getParameter("newPassword");
-		if (!StringUtils.isBlank(newPassword)) {
-			userInfo.setEncodedPassword(Encryption.encrypt(newPassword));
-		}
-		return userInfo;
-	}
-
-	/**
-	 *
-	 */
 	private Vector validate(HttpServletRequest request, WikiUser user) throws Exception {
 		Vector errors = new Vector();
 		try {
@@ -228,11 +201,9 @@ public class RegisterServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - i suspect initializing with a null login is bad
 		WikiUser user = new WikiUser("");
-		WikiUserInfo userInfo = new WikiUserInfo();
 		if (ServletUtil.currentUser().hasRole(Role.ROLE_USER)) {
 			user = ServletUtil.currentUser();
-			userInfo = WikiBase.getDataHandler().lookupWikiUserInfo(user.getUsername());
 		}
-		this.loadDefaults(request, next, pageInfo, user, userInfo);
+		this.loadDefaults(request, next, pageInfo, user);
 	}
 }

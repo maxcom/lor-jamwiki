@@ -27,7 +27,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -438,12 +437,12 @@ public interface QueryHandler {
 	 * Add a new user authentication credential to the database.  The user authentication
 	 * credential must not already exist in the database or else an error will be thrown.
 	 *
-	 * @param userInfo The user authentication credential that is to be added to the database.
+	 * @param user The user authentication credential that is to be added to the database.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void insertUser(WikiUserInfo userInfo, Connection conn) throws Exception;
+	void insertUser(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 * Add a new virtual wiki record to the database.  The virtual wiki must
@@ -518,18 +517,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void insertWikiUser(WikiUser user, Connection conn) throws Exception;
-
-	/**
-	 * Add a new user information record to the database.  The user information
-	 * must not already exist in the database or else an error will be thrown.
-	 *
-	 * @param userInfo The WikiUserInfo record that is to be added to the
-	 *  database.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
 
 	/**
 	 * Retrieve a result set containing the topic name and sort key for all
@@ -651,17 +638,6 @@ public interface QueryHandler {
 	WikiResultSet lookupWikiUserCount() throws Exception;
 
 	/**
-	 * Retrieve a result set containing all user information for a given
-	 * WikiUserInfo.
-	 *
-	 * @param login The login of the user record being retrieved.
-	 * @return A WikiResultSet containing all information for the given user, or
-	 *  an empty result set if no matching user exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	WikiResultSet lookupWikiUserInfo(String login) throws Exception;
-
-	/**
 	 * Retrieve a result set of all logins for every wiki user.
 	 *
 	 * @param pagination A Pagination object that specifies the number of results
@@ -777,12 +753,12 @@ public interface QueryHandler {
 	/**
 	 * Update user authentication credentials.
 	 *
-	 * @param userInfo The user authentication credentials to update.
+	 * @param user The user authentication credentials to update.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateUser(WikiUserInfo userInfo, Connection conn) throws Exception;
+	public void updateUser(WikiUser user, Connection conn) throws Exception;
 
 	/**
 	 * Update a virtual wiki record in the database.
@@ -824,15 +800,4 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void updateWikiUser(WikiUser user, Connection conn) throws Exception;
-
-	/**
-	 * Update a wiki user information record in the database.
-	 *
-	 * @param userInfo The WikiUserInfo record that is to be updated in the
-	 *  database.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception;
 }

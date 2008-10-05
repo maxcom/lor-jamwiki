@@ -33,7 +33,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 import org.jamwiki.utils.Utilities;
 import org.jamwiki.utils.WikiLogger;
@@ -54,7 +53,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_ROLE_TABLE = null;
 	protected static String STATEMENT_CREATE_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_TABLE = null;
-	protected static String STATEMENT_CREATE_WIKI_USER_INFO_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX = null;
 	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_CREATE_TOPIC_TABLE = null;
@@ -77,7 +75,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_USERS_TABLE = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
-	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_LOGIN_INDEX = null;
 	protected static String STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_DROP_TOPIC_TABLE = null;
@@ -101,7 +98,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_WIKI_FILE = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
 	protected static String STATEMENT_INSERT_WIKI_USER = null;
-	protected static String STATEMENT_INSERT_WIKI_USER_INFO = null;
 	protected static String STATEMENT_SELECT_CATEGORIES = null;
 	protected static String STATEMENT_SELECT_CATEGORY_TOPICS = null;
 	protected static String STATEMENT_SELECT_GROUP_SEQUENCE = null;
@@ -136,7 +132,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_COUNT = null;
-	protected static String STATEMENT_SELECT_WIKI_USER_INFO = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WIKI_USERS = null;
@@ -149,7 +144,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
 	protected static String STATEMENT_UPDATE_WIKI_USER = null;
-	protected static String STATEMENT_UPDATE_WIKI_USER_INFO = null;
 	private static Properties props = null;
 
 	/**
@@ -193,7 +187,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_USERS_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_TOPIC_VERSION_TABLE, conn);
@@ -298,9 +291,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_LOGIN_INDEX, conn);
-		} catch (Exception e) { logger.severe(e.getMessage()); }
-		try {
-			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_INFO_TABLE, conn);
 		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE, conn);
@@ -501,7 +491,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_ROLE_TABLE              = props.getProperty("STATEMENT_CREATE_ROLE_TABLE");
 		STATEMENT_CREATE_VIRTUAL_WIKI_TABLE      = props.getProperty("STATEMENT_CREATE_VIRTUAL_WIKI_TABLE");
 		STATEMENT_CREATE_WIKI_USER_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_USER_TABLE");
-		STATEMENT_CREATE_WIKI_USER_INFO_TABLE    = props.getProperty("STATEMENT_CREATE_WIKI_USER_INFO_TABLE");
 		STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX   = props.getProperty("STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX");
 		STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT");
 		STATEMENT_CREATE_TOPIC_TABLE             = props.getProperty("STATEMENT_CREATE_TOPIC_TABLE");
@@ -525,7 +514,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WIKI_USER_LOGIN_INDEX     = props.getProperty("STATEMENT_DROP_WIKI_USER_LOGIN_INDEX");
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
-		STATEMENT_DROP_WIKI_USER_INFO_TABLE      = props.getProperty("STATEMENT_DROP_WIKI_USER_INFO_TABLE");
 		STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT");
 		STATEMENT_DROP_TOPIC_TABLE               = props.getProperty("STATEMENT_DROP_TOPIC_TABLE");
 		STATEMENT_DROP_TOPIC_VERSION_TABLE       = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TABLE");
@@ -548,7 +536,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
 		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
 		STATEMENT_INSERT_WIKI_USER               = props.getProperty("STATEMENT_INSERT_WIKI_USER");
-		STATEMENT_INSERT_WIKI_USER_INFO          = props.getProperty("STATEMENT_INSERT_WIKI_USER_INFO");
 		STATEMENT_SELECT_CATEGORIES              = props.getProperty("STATEMENT_SELECT_CATEGORIES");
 		STATEMENT_SELECT_CATEGORY_TOPICS         = props.getProperty("STATEMENT_SELECT_CATEGORY_TOPICS");
 		STATEMENT_SELECT_GROUP_SEQUENCE          = props.getProperty("STATEMENT_SELECT_GROUP_SEQUENCE");
@@ -583,7 +570,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS");
 		STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_USER_COUNT");
-		STATEMENT_SELECT_WIKI_USER_INFO          = props.getProperty("STATEMENT_SELECT_WIKI_USER_INFO");
 		STATEMENT_SELECT_WIKI_USER_LOGIN         = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_USER_SEQUENCE");
 		STATEMENT_SELECT_WIKI_USERS              = props.getProperty("STATEMENT_SELECT_WIKI_USERS");
@@ -596,7 +582,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
-		STATEMENT_UPDATE_WIKI_USER_INFO          = props.getProperty("STATEMENT_UPDATE_WIKI_USER_INFO");
 	}
 
 	/**
@@ -739,11 +724,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertUser(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.validateUser(userInfo);
+	public void insertUser(WikiUser user, Connection conn) throws Exception {
+		this.validateUser(user);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_USER);
-		stmt.setString(1, userInfo.getUsername());
-		stmt.setString(2, userInfo.getEncodedPassword());
+		stmt.setString(1, user.getUsername());
+		stmt.setString(2, user.getPassword());
 		stmt.executeUpdate(conn);
 	}
 
@@ -840,20 +825,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(8, user.getPassword());
 		stmt.setString(9, user.getDefaultLocale());
 		stmt.setString(10, user.getEmail());
-		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
-	public void insertWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.validateWikiUserInfo(userInfo);
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_WIKI_USER_INFO);
-		stmt.setInt(1, userInfo.getUserId());
-		stmt.setString(2, userInfo.getUsername());
-		stmt.setString(3, userInfo.getFirstName());
-		stmt.setString(4, userInfo.getLastName());
-		stmt.setString(5, userInfo.getEncodedPassword());
 		stmt.executeUpdate(conn);
 	}
 
@@ -965,15 +936,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public WikiResultSet lookupWikiUserCount() throws Exception {
 		return DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_COUNT);
-	}
-
-	/**
-	 *
-	 */
-	public WikiResultSet lookupWikiUserInfo(String username) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_INFO);
-		stmt.setString(1, username);
-		return stmt.executeQuery();
 	}
 
 	/**
@@ -1121,12 +1083,12 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateUser(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.validateUser(userInfo);
+	public void updateUser(WikiUser user, Connection conn) throws Exception {
+		this.validateUser(user);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_USER);
-		stmt.setString(1, userInfo.getEncodedPassword());
+		stmt.setString(1, user.getPassword());
 		stmt.setInt(2, 1);
-		stmt.setString(3, userInfo.getUsername());
+		stmt.setString(3, user.getUsername());
 	}
 
 	/**
@@ -1190,20 +1152,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
-		this.validateWikiUserInfo(userInfo);
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_WIKI_USER_INFO);
-		stmt.setString(1, userInfo.getUsername());
-		stmt.setString(2, userInfo.getFirstName());
-		stmt.setString(3, userInfo.getLastName());
-		stmt.setString(4, userInfo.getEncodedPassword());
-		stmt.setInt(5, userInfo.getUserId());
-		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
 	protected void validateCategory(Category category) throws WikiException {
 		checkLength(category.getName(), 200);
 		checkLength(category.getSortKey(), 200);
@@ -1253,10 +1201,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected void validateUser(WikiUserInfo userInfo) throws WikiException {
-		checkLength(userInfo.getUsername(), 100);
+	protected void validateUser(WikiUser user) throws WikiException {
+		checkLength(user.getUsername(), 100);
 		// do not throw exception containing password info
-		if (userInfo.getEncodedPassword() != null && userInfo.getEncodedPassword().length() > 100) {
+		if (user.getPassword() != null && user.getPassword().length() > 100) {
 			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
 		}
 	}
@@ -1315,19 +1263,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		checkLength(user.getEmail(), 100);
 		// do not throw exception containing password info
 		if (user.getPassword() != null && user.getPassword().length() > 100) {
-			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
-		}
-	}
-
-	/**
-	 *
-	 */
-	protected void validateWikiUserInfo(WikiUserInfo userInfo) throws WikiException {
-		checkLength(userInfo.getUsername(), 100);
-		checkLength(userInfo.getFirstName(), 100);
-		checkLength(userInfo.getLastName(), 100);
-		// do not throw exception containing password info
-		if (userInfo.getEncodedPassword() != null && userInfo.getEncodedPassword().length() > 100) {
 			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
 		}
 	}

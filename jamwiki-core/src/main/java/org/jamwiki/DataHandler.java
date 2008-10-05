@@ -30,7 +30,6 @@ import org.jamwiki.model.WikiFile;
 import org.jamwiki.model.WikiFileVersion;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
-import org.jamwiki.model.WikiUserInfo;
 import org.jamwiki.utils.Pagination;
 
 /**
@@ -453,19 +452,6 @@ public interface DataHandler {
 	int lookupWikiUserCount() throws Exception;
 
 	/**
-	 * Given a username, retrieving a WikiUserInfo containing values for
-	 * the specified user.
-	 *
-	 * @param username The username for the user information being retrieved.
-	 * @return A WikiUserInfo object containing user information matching the
-	 *  the username, or <code>null</code> if no record matching the username
-	 *  can be found.
-	 * @throws Exception Thrown if an error occurs while retrieving user
-	 *  information.
-	 */
-	WikiUserInfo lookupWikiUserInfo(String username) throws Exception;
-
-	/**
 	 * Return a List of user logins for all wiki users.
 	 *
 	 * @param pagination A Pagination object indicating the total number of
@@ -730,13 +716,11 @@ public interface DataHandler {
 	 * @param user The WikiUser being added or updated.  If the WikiUser does
 	 *  not have a user ID then a new record is created, otherwise an update
 	 *  is performed.
-	 * @param userInfo The WikiUserInfo object for the WikiUser being added or
-	 *  updated.
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
 	 *  such as a database connection.  If this method is not part of a
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeWikiUser(WikiUser user, WikiUserInfo userInfo, Object transactionObject) throws Exception;
+	void writeWikiUser(WikiUser user, Object transactionObject) throws Exception;
 }
