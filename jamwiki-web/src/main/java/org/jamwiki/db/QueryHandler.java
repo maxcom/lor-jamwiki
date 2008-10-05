@@ -37,6 +37,20 @@ import org.jamwiki.utils.Pagination;
 public interface QueryHandler {
 
 	/**
+	 * Retrieve a result set containing all user information for a given WikiUser.
+	 *
+	 * @param login The login of the user record being retrieved.
+	 * @param encryptedPassword The encrypted password for the user record being
+	 *  retrieved.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return <code>true</code> if the login and password matches an existing
+	 *  user, <code>false</code> otherwise.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	boolean authenticateUser(String login, String encryptedPassword, Connection conn) throws Exception;
+
+	/**
 	 * Returns the simplest possible query that can be used to validate
 	 * whether or not a database connection is valid.  Note that the query
 	 * returned MUST NOT query any JAMWiki tables since it will be used prior
@@ -630,20 +644,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	WikiResultSet lookupWikiUser(String login, Connection conn) throws Exception;
-
-	/**
-	 * Retrieve a result set containing all user information for a given WikiUser.
-	 *
-	 * @param login The login of the user record being retrieved.
-	 * @param encryptedPassword The encrypted password for the user record being
-	 *  retrieved.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @return A WikiResultSet containing all information for the given user, or
-	 *  an empty result set if no matching user exists.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	WikiResultSet lookupWikiUser(String login, String encryptedPassword, Connection conn) throws Exception;
 
 	/**
 	 * Return a count of all wiki users.

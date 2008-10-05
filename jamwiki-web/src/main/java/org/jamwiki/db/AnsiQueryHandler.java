@@ -122,6 +122,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_TOPIC_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION = null;
 	protected static String STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE = null;
+	protected static String STATEMENT_SELECT_USERS_AUTHENTICATION = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKIS = null;
 	protected static String STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WATCHLIST = null;
@@ -137,7 +138,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USER_COUNT = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_INFO = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGIN = null;
-	protected static String STATEMENT_SELECT_WIKI_USER_PASSWORD = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WIKI_USERS = null;
 	protected static String STATEMENT_UPDATE_GROUP = null;
@@ -158,6 +158,16 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected AnsiQueryHandler() {
 		props = Environment.loadProperties(SQL_PROPERTY_FILE_NAME);
 		this.init(props);
+	}
+
+	/**
+	 *
+	 */
+	public boolean authenticateUser(String username, String encryptedPassword, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_USERS_AUTHENTICATION);
+		stmt.setString(1, username);
+		stmt.setString(2, encryptedPassword);
+		return (stmt.executeQuery(conn).size() != 0);
 	}
 
 	/**
@@ -559,6 +569,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_TOPIC_SEQUENCE          = props.getProperty("STATEMENT_SELECT_TOPIC_SEQUENCE");
 		STATEMENT_SELECT_TOPIC_VERSION           = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION");
 		STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE  = props.getProperty("STATEMENT_SELECT_TOPIC_VERSION_SEQUENCE");
+		STATEMENT_SELECT_USERS_AUTHENTICATION    = props.getProperty("STATEMENT_SELECT_USERS_AUTHENTICATION");
 		STATEMENT_SELECT_VIRTUAL_WIKIS           = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKIS");
 		STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE   = props.getProperty("STATEMENT_SELECT_VIRTUAL_WIKI_SEQUENCE");
 		STATEMENT_SELECT_WATCHLIST               = props.getProperty("STATEMENT_SELECT_WATCHLIST");
@@ -574,7 +585,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_USER_COUNT");
 		STATEMENT_SELECT_WIKI_USER_INFO          = props.getProperty("STATEMENT_SELECT_WIKI_USER_INFO");
 		STATEMENT_SELECT_WIKI_USER_LOGIN         = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGIN");
-		STATEMENT_SELECT_WIKI_USER_PASSWORD      = props.getProperty("STATEMENT_SELECT_WIKI_USER_PASSWORD");
 		STATEMENT_SELECT_WIKI_USER_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_USER_SEQUENCE");
 		STATEMENT_SELECT_WIKI_USERS              = props.getProperty("STATEMENT_SELECT_WIKI_USERS");
 		STATEMENT_UPDATE_GROUP                   = props.getProperty("STATEMENT_UPDATE_GROUP");
@@ -947,16 +957,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	public WikiResultSet lookupWikiUser(String username, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_LOGIN);
 		stmt.setString(1, username);
-		return stmt.executeQuery(conn);
-	}
-
-	/**
-	 *
-	 */
-	public WikiResultSet lookupWikiUser(String username, String encryptedPassword, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_PASSWORD);
-		stmt.setString(1, username);
-		stmt.setString(2, encryptedPassword);
 		return stmt.executeQuery(conn);
 	}
 

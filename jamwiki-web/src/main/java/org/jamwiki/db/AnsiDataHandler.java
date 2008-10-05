@@ -210,8 +210,7 @@ public class AnsiDataHandler implements DataHandler {
 			// password is stored encrypted, so encrypt password
 			if (!StringUtils.isBlank(password)) {
 				String encryptedPassword = Encryption.encrypt(password);
-				WikiResultSet rs = WikiDatabase.queryHandler().lookupWikiUser(username, encryptedPassword, conn);
-				result = (rs.size() == 0) ? false : true;
+				return this.queryHandler().authenticateUser(username, encryptedPassword, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
