@@ -29,7 +29,7 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
@@ -116,7 +116,7 @@ public class SetupServlet extends JAMWikiServlet {
 	 */
 	private boolean initialize(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		setProperties(request, next);
-		WikiUserAuth user = setAdminUser(request);
+		WikiUserDetails user = setAdminUser(request);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
 			this.view(request, next, pageInfo);
@@ -137,11 +137,11 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 		if (user == null || !user.hasRole(Role.ROLE_USER)) {
-			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUserAuth object to setupAdminUser");
+			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUserDetails object to setupAdminUser");
 		}
 		WikiBase.reset(request.getLocale(), user);
-		WikiUserAuth.resetAnonymousGroupRoles();
-		WikiUserAuth.resetDefaultGroupRoles();
+		WikiUserDetails.resetAnonymousGroupRoles();
+		WikiUserDetails.resetDefaultGroupRoles();
 		Environment.saveProperties();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling
@@ -171,9 +171,9 @@ public class SetupServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private WikiUserAuth setAdminUser(HttpServletRequest request) throws Exception {
+	private WikiUserDetails setAdminUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("username");
-		WikiUserAuth user = new WikiUserAuth(username);
+		WikiUserDetails user = new WikiUserDetails(username);
 		String newPassword = request.getParameter("newPassword");
 		if (!StringUtils.isBlank(newPassword)) {
 			user.setPassword(Encryption.encrypt(newPassword));

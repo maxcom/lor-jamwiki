@@ -32,7 +32,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -93,7 +93,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void login(HttpServletRequest request, WikiUserAuth user) {
+	private void login(HttpServletRequest request, WikiUserDetails user) {
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -104,7 +104,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
-		WikiUserAuth user = this.setWikiUser(request);
+		WikiUserDetails user = this.setWikiUser(request);
 		next.addObject("newuser", user);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
@@ -140,14 +140,14 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private WikiUserAuth setWikiUser(HttpServletRequest request) throws Exception {
+	private WikiUserDetails setWikiUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("login");
-		WikiUserAuth user = new WikiUserAuth(username);
+		WikiUserDetails user = new WikiUserDetails(username);
 		String userIdString = request.getParameter("userId");
 		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				user = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(userId, null));
+				user = new WikiUserDetails(WikiBase.getDataHandler().lookupWikiUser(userId, null));
 			}
 		}
 		user.setDisplayName(request.getParameter("displayName"));

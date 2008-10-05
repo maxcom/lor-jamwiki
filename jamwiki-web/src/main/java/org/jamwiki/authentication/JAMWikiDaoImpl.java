@@ -39,7 +39,7 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		UserDetails loadedUser;
 		try {
-			loadedUser = new WikiUserAuth(WikiBase.getDataHandler().lookupWikiUser(username, null));
+			loadedUser = new WikiUserDetails(WikiBase.getDataHandler().lookupWikiUser(username, null));
 		} catch (Exception e) {
 			// FIXME - for now throw an exception that Spring Security can handle, but
 			// this should be handled with the Spring Security ExceptionTranslationFilter

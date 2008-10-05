@@ -24,7 +24,7 @@ import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
@@ -93,7 +93,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUserAuth user = ServletUtil.currentUser();
+		WikiUserDetails user = ServletUtil.currentUser();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		try {
@@ -164,7 +164,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUserAuth user = ServletUtil.currentUser();
+		WikiUserDetails user = ServletUtil.currentUser();
 		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
 			// include the current page in the login link 
 			String loginLink = "Special:Login";

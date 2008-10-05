@@ -31,7 +31,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
-import org.jamwiki.authentication.WikiUserAuth;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
@@ -156,13 +156,13 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUserAuth user = ServletUtil.currentUser();
+				WikiUserDetails user = ServletUtil.currentUser();
 				if (user == null || !user.hasRole(Role.ROLE_USER)) {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiBase.reset(request.getLocale(), user);
-				WikiUserAuth.resetAnonymousGroupRoles();
-				WikiUserAuth.resetDefaultGroupRoles();
+				WikiUserDetails.resetAnonymousGroupRoles();
+				WikiUserDetails.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
@@ -290,13 +290,13 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUserAuth user = ServletUtil.currentUser();
+				WikiUserDetails user = ServletUtil.currentUser();
 				if (user == null || !user.hasRole(Role.ROLE_USER)) {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiBase.reset(request.getLocale(), user);
-				WikiUserAuth.resetAnonymousGroupRoles();
-				WikiUserAuth.resetDefaultGroupRoles();
+				WikiUserDetails.resetAnonymousGroupRoles();
+				WikiUserDetails.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {

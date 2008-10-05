@@ -34,9 +34,9 @@ import org.jamwiki.utils.WikiUtil;
 /**
  * 
  */
-public class WikiUserAuth extends WikiUser implements UserDetails {
+public class WikiUserDetails extends WikiUser implements UserDetails {
 
-	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserAuth.class.getName());
+	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetails.class.getName());
 	private static final long serialVersionUID = -2818435399240684581L;
 	/** Default roles for anonymous users */
 	private static Role[] anonymousGroupRoles = null;
@@ -52,14 +52,14 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-	private WikiUserAuth() {
+	private WikiUserDetails() {
 		super();
 	}
 
 	/**
 	 *
 	 */
-	public WikiUserAuth(WikiUser wikiUser) throws Exception {
+	public WikiUserDetails(WikiUser wikiUser) throws Exception {
 		super(wikiUser.getUsername());
 		this.init();
 		this.setCreateDate(wikiUser.getCreateDate());
@@ -76,7 +76,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	/**
 	 *
 	 */
-	public WikiUserAuth(String username) throws Exception {
+	public WikiUserDetails(String username) throws Exception {
 		super(username);
 		this.init();
 	}
@@ -106,7 +106,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	 *  either as a parameter or as an element in the
 	 *  <code>GrantedAuthority[]</code> array.
 	 */
-	public WikiUserAuth(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities) {
+	public WikiUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities) {
 		super(username);
 		if (StringUtils.isBlank(username) || password == null) {
 			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
@@ -212,16 +212,16 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 			// wiki is not yet setup
 			return;
 		}
-		this.setAuthorities(WikiUserAuth.getAnonymousGroupRoles());
+		this.setAuthorities(WikiUserDetails.getAnonymousGroupRoles());
 	}
 
 	/**
 	 *
 	 */
 	private void addDefaultGroupRoles() {
-		if (WikiUserAuth.defaultGroupRoles == null) {
+		if (WikiUserDetails.defaultGroupRoles == null) {
 			try {
-				WikiUserAuth.defaultGroupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
+				WikiUserDetails.defaultGroupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
 			} catch (Exception e) {
 				// FIXME - without default roles bad things happen, so should this throw the
 				// error to the calling method?
@@ -229,7 +229,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 				return;
 			}
 		}
-		this.addRoles(WikiUserAuth.defaultGroupRoles);
+		this.addRoles(WikiUserDetails.defaultGroupRoles);
 	}
 
 	/**
@@ -255,13 +255,13 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	 *
 	 */
 	public static Role[] getAnonymousGroupRoles() {
-		if (WikiUserAuth.anonymousGroupRoles == null) {
+		if (WikiUserDetails.anonymousGroupRoles == null) {
 			try {
 				Role[] tempRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
-				WikiUserAuth.anonymousGroupRoles = new Role[tempRoles.length + 1];
-				WikiUserAuth.anonymousGroupRoles[0] = Role.ROLE_ANONYMOUS;
+				WikiUserDetails.anonymousGroupRoles = new Role[tempRoles.length + 1];
+				WikiUserDetails.anonymousGroupRoles[0] = Role.ROLE_ANONYMOUS;
 				for (int i = 0; i < tempRoles.length; i++) {
-					WikiUserAuth.anonymousGroupRoles[i + 1] = tempRoles[i];
+					WikiUserDetails.anonymousGroupRoles[i + 1] = tempRoles[i];
 				}
 			} catch (Exception e) {
 				// FIXME - without default roles bad things happen, so should this throw the
@@ -269,7 +269,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
 			}
 		}
-		return WikiUserAuth.anonymousGroupRoles;
+		return WikiUserDetails.anonymousGroupRoles;
 	}
 
 	/**
@@ -293,39 +293,39 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	 * This method is a (hopefully) temporary workaround for an annoying issue where a user
 	 * can be auto-logged in without a user name.
 	 */
-	public static WikiUserAuth initAnonymousWikiUserAuth() {
-		WikiUserAuth user = new WikiUserAuth();
+	public static WikiUserDetails initAnonymousWikiUserDetails() {
+		WikiUserDetails user = new WikiUserDetails();
 		user.addAnonymousGroupRoles();
 		return user;
 	}
 
 	/**
 	 * Utility method for converting a Spring Security <code>Authentication</code>
-	 * object into a <code>WikiUserAuth</code>.  If the user is logged-in then the
-	 * <code>Authentication</code> object will have the <code>WikiUserAuth</code>
+	 * object into a <code>WikiUserDetails</code>.  If the user is logged-in then the
+	 * <code>Authentication</code> object will have the <code>WikiUserDetails</code>
 	 * as its principal.  If the user is not logged in then create an empty
-	 * <code>WikiUserAuth</code> object and assign it the same authorities as the
+	 * <code>WikiUserDetails</code> object and assign it the same authorities as the
 	 * <code>Authentication</code> object.
 	 *
 	 * @param auth The Spring Security <code>Authentication</code> object that is being
-	 *  converted into a <code>WikiUserAuth</code> object.
-	 * @return Returns a <code>WikiUserAuth</code> object that corresponds to the
+	 *  converted into a <code>WikiUserDetails</code> object.
+	 * @return Returns a <code>WikiUserDetails</code> object that corresponds to the
 	 *  Spring Security <code>Authentication</code> object.  If the user is not currently
-	 *  logged-in then an empty <code>WikiUserAuth</code> with the same authorities
+	 *  logged-in then an empty <code>WikiUserDetails</code> with the same authorities
 	 *  as the <code>Authentication</code> object is returned.  This method
 	 *  will never return <code>null</code>.
 	 * @throws AuthenticationCredentialsNotFoundException If authentication
 	 *  credentials are unavailable.
 	 */
-	public static WikiUserAuth initWikiUserAuth(Authentication auth) throws AuthenticationCredentialsNotFoundException {
+	public static WikiUserDetails initWikiUserDetails(Authentication auth) throws AuthenticationCredentialsNotFoundException {
 		if (auth == null) {
 			throw new AuthenticationCredentialsNotFoundException("No authentication credential available");
 		}
-		if (auth.getPrincipal() instanceof WikiUserAuth) {
+		if (auth.getPrincipal() instanceof WikiUserDetails) {
 			// logged-in user
-			return (WikiUserAuth)auth.getPrincipal();
+			return (WikiUserDetails)auth.getPrincipal();
 		}
-		WikiUserAuth user = new WikiUserAuth();
+		WikiUserDetails user = new WikiUserDetails();
 		user.setAuthorities(auth.getAuthorities());
 		return user;
 	}
@@ -335,7 +335,7 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	 * if the roles allowed to anonymous users are changed.
 	 */
 	public static void resetAnonymousGroupRoles() {
-		WikiUserAuth.anonymousGroupRoles = null;
+		WikiUserDetails.anonymousGroupRoles = null;
 	}
 
 	/**
@@ -343,6 +343,6 @@ public class WikiUserAuth extends WikiUser implements UserDetails {
 	 * be called if the roles allowed to logged-in users are changed.
 	 */
 	public static void resetDefaultGroupRoles() {
-		WikiUserAuth.defaultGroupRoles = null;
+		WikiUserDetails.defaultGroupRoles = null;
 	}
 }

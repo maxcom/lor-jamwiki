@@ -66,7 +66,7 @@ public class JAMWikiAnonymousProcessingFilter implements Filter, InitializingBea
 			// only process authentication if wiki is fully setup
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			if (auth instanceof AnonymousAuthenticationToken) {
-				AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), WikiUserAuth.getAnonymousGroupRoles());
+				AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), WikiUserDetails.getAnonymousGroupRoles());
 				jamwikiAuth.setDetails(auth.getDetails());
 				jamwikiAuth.setAuthenticated(auth.isAuthenticated());
 				SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
