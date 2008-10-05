@@ -109,7 +109,7 @@ public class ItemsServlet extends JAMWikiServlet {
 			ParserInput parserInput = new ParserInput();
 			parserInput.setContext(request.getContextPath());
 			parserInput.setLocale(request.getLocale());
-			parserInput.setWikiUser(ServletUtil.currentUser());
+			parserInput.setWikiUser(ServletUtil.currentWikiUser());
 			parserInput.setTopicName(topicName);
 			parserInput.setUserIpAddress(ServletUtil.getIpAddress(request));
 			parserInput.setVirtualWiki(virtualWiki);

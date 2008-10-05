@@ -147,13 +147,43 @@ public class ServletUtil {
 			return null;
 		}
 		String message = "SPAM found in topic " + topicName + " (";
-		WikiUserDetails user = ServletUtil.currentUser();
+		WikiUserDetails user = ServletUtil.currentUserDetails();
 		if (user.hasRole(Role.ROLE_USER)) {
 			message += user.getUsername() + " / ";
 		}
 		message += ServletUtil.getIpAddress(request) + "): " + result;
 		logger.info(message);
 		return result;
+	}
+
+	/**
+	 * Retrieve the current <code>WikiUser</code> using the <code>WikiUserDetails</code>
+	 * from Spring Security <code>SecurityContextHolder</code>.  If there is no current
+	 * user (the user is not logged in) then this method will return an empty WikiUser.
+	 * The method will never return <code>null</code>.
+	 *
+	 * @return The current logged-in <code>WikiUser</code>, or an empty WikiUser if
+	 *  there is no user currently logged in.
+	 */
+	public static WikiUser currentWikiUser() {
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		WikiUser user = new WikiUser();
+		String username = userDetails.getUsername();
+		if (StringUtils.isBlank(username)) {
+			return user;
+		}
+		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
+			try {
+				user = WikiBase.getDataHandler().lookupWikiUser(username, null);
+				if (user == null) {
+					logger.warning("No user exists for principal found in security context authentication: " + username);
+					user = new WikiUser();
+				}
+			} catch (Exception e) {
+				logger.severe("Failure while retrieving user from database with login: " + username, e);
+			}
+		}
+		return user;
 	}
 
 	/**
@@ -168,7 +198,7 @@ public class ServletUtil {
 	 * @throws AuthenticationCredentialsNotFoundException If authentication
 	 *  credentials are unavailable.
 	 */
-	public static WikiUserDetails currentUser() throws AuthenticationCredentialsNotFoundException {
+	public static WikiUserDetails currentUserDetails() throws AuthenticationCredentialsNotFoundException {
 		SecurityContext ctx = SecurityContextHolder.getContext();
 		Authentication auth = ctx.getAuthentication();
 		// FIXME - hopefully this workaround is unneeded after Spring Security 2.0 upgrade
@@ -208,11 +238,12 @@ public class ServletUtil {
 			}
 		}
 		// no watchlist in session, retrieve from database
-		WikiUserDetails user = ServletUtil.currentUser();
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		Watchlist watchlist = new Watchlist();
-		if (!user.hasRole(Role.ROLE_USER)) {
+		if (!userDetails.hasRole(Role.ROLE_USER)) {
 			return watchlist;
 		}
+		WikiUser user = ServletUtil.currentWikiUser();
 		watchlist = WikiBase.getDataHandler().getWatchlist(virtualWiki, user.getUserId());
 		if (request.getSession(false) != null) {
 			// add watchlist to session
@@ -478,9 +509,8 @@ public class ServletUtil {
 	 *  locale specified in the request if no default locale is available.
 	 */
 	public static Locale retrieveUserLocale(HttpServletRequest request) {
-		WikiUser user = null;
 		try {
-			user = ServletUtil.currentUser();
+			WikiUser user = ServletUtil.currentWikiUser();
 			if (user.getDefaultLocale() != null) {
 				return LocaleUtils.toLocale(user.getDefaultLocale());
 			}
@@ -675,10 +705,11 @@ public class ServletUtil {
 		}
 		String virtualWiki = topic.getVirtualWiki();
 		String topicName = topic.getName();
-		WikiUserDetails user = ServletUtil.currentUser();
-		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, user)) {
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (sectionEdit && !ServletUtil.isEditable(virtualWiki, topicName, userDetails)) {
 			sectionEdit = false;
 		}
+		WikiUser user = ServletUtil.currentWikiUser();
 		ParserInput parserInput = new ParserInput();
 		parserInput.setContext(request.getContextPath());
 		parserInput.setLocale(request.getLocale());

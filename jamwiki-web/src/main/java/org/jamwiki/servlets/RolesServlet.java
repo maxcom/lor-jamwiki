@@ -122,7 +122,7 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
 					List roles = buildRoleArray(userId, -1, userRoles);
-					if (userId == ServletUtil.currentUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
+					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}

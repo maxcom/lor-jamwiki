@@ -40,7 +40,7 @@ public class WikiUser {
 	/**
 	 *
 	 */
-	protected WikiUser() {
+	public WikiUser() {
 	}
 
 	/**

@@ -93,8 +93,9 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private void login(HttpServletRequest request, WikiUserDetails user) {
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+	private void login(HttpServletRequest request, String username, String password) {
+		WikiUserDetails userDetails = new WikiUserDetails(username, password);
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
@@ -104,7 +105,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void register(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWikiName = pageInfo.getVirtualWikiName();
-		WikiUserDetails user = this.setWikiUser(request);
+		WikiUser user = this.setWikiUser(request);
 		next.addObject("newuser", user);
 		Vector errors = validate(request, user);
 		if (!errors.isEmpty()) {
@@ -125,7 +126,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		} else {
 			WikiBase.getDataHandler().writeWikiUser(user, null);
 			// login the user
-			this.login(request, user);
+			this.login(request, user.getUsername(), user.getPassword());
 			// update the locale key since the user may have changed default locale
 			if (!StringUtils.isBlank(user.getDefaultLocale())) {
 				Locale locale = LocaleUtils.toLocale(user.getDefaultLocale());
@@ -140,14 +141,14 @@ public class RegisterServlet extends JAMWikiServlet {
 	/**
 	 *
 	 */
-	private WikiUserDetails setWikiUser(HttpServletRequest request) throws Exception {
+	private WikiUser setWikiUser(HttpServletRequest request) throws Exception {
 		String username = request.getParameter("login");
-		WikiUserDetails user = new WikiUserDetails(username);
+		WikiUser user = new WikiUser(username);
 		String userIdString = request.getParameter("userId");
 		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				user = new WikiUserDetails(WikiBase.getDataHandler().lookupWikiUser(userId, null));
+				user = WikiBase.getDataHandler().lookupWikiUser(userId, null);
 			}
 		}
 		user.setDisplayName(request.getParameter("displayName"));
@@ -200,9 +201,9 @@ public class RegisterServlet extends JAMWikiServlet {
 	 */
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - i suspect initializing with a null login is bad
-		WikiUser user = new WikiUser("");
-		if (ServletUtil.currentUser().hasRole(Role.ROLE_USER)) {
-			user = ServletUtil.currentUser();
+		WikiUser user = new WikiUser();
+		if (ServletUtil.currentUserDetails().hasRole(Role.ROLE_USER)) {
+			user = ServletUtil.currentWikiUser();
 		}
 		this.loadDefaults(request, next, pageInfo, user);
 	}

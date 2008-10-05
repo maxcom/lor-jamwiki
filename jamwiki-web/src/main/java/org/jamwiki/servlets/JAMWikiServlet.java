@@ -28,6 +28,7 @@ import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.Watchlist;
+import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.LinkUtil;
 import org.jamwiki.utils.NamespaceHandler;
 import org.jamwiki.utils.Utilities;
@@ -93,7 +94,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUserDetails user = ServletUtil.currentUser();
+		WikiUserDetails user = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		try {
@@ -164,8 +165,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private LinkedHashMap buildUserMenu(WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUserDetails user = ServletUtil.currentUser();
-		if (user.hasRole(Role.ROLE_ANONYMOUS) && !user.hasRole(Role.ROLE_EMBEDDED)) {
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			// include the current page in the login link 
 			String loginLink = "Special:Login";
 			if (!StringUtils.startsWith(pageInfo.getTopicName(), "Special:Login")) {
@@ -174,7 +175,8 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(loginLink, new WikiMessage("common.login"));
 			links.put("Special:Account", new WikiMessage("usermenu.register"));
 		}
-		if (user.hasRole(Role.ROLE_USER)) {
+		if (userDetails.hasRole(Role.ROLE_USER)) {
+			WikiUser user = ServletUtil.currentWikiUser();
 			String userPage = NamespaceHandler.NAMESPACE_USER + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String userCommentsPage = NamespaceHandler.NAMESPACE_USER_COMMENTS + NamespaceHandler.NAMESPACE_SEPARATOR + user.getUsername();
 			String username = user.getUsername();
@@ -188,15 +190,15 @@ public abstract class JAMWikiServlet extends AbstractController {
 			links.put(userCommentsPage, new WikiMessage("usermenu.usercomments"));
 			links.put("Special:Watchlist", new WikiMessage("usermenu.watchlist"));
 		}
-		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_NO_ACCOUNT)) {
+		if (userDetails.hasRole(Role.ROLE_USER) && !userDetails.hasRole(Role.ROLE_NO_ACCOUNT)) {
 			links.put("Special:Account", new WikiMessage("usermenu.account"));
 		}
-		if (user.hasRole(Role.ROLE_USER) && !user.hasRole(Role.ROLE_EMBEDDED)) {
+		if (userDetails.hasRole(Role.ROLE_USER) && !userDetails.hasRole(Role.ROLE_EMBEDDED)) {
 			links.put("Special:Logout", new WikiMessage("common.logout"));
 		}
-		if (user.hasRole(Role.ROLE_SYSADMIN)) {
+		if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
 			links.put("Special:Admin", new WikiMessage("usermenu.admin"));
-		} else if (user.hasRole(Role.ROLE_TRANSLATE)) {
+		} else if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
 			links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
 		}
 		return links;

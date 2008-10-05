@@ -61,7 +61,7 @@ public class ImportServlet extends JAMWikiServlet {
 	private void importFile(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
-		WikiUser user = ServletUtil.currentUser();
+		WikiUser user = ServletUtil.currentWikiUser();
 		XMLTopicFactory importer = new XMLTopicFactory(virtualWiki, user, ServletUtil.getIpAddress(request));
 		String topicName = null;
 		while (iterator.hasNext()) {

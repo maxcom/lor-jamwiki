@@ -156,10 +156,11 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUserDetails user = ServletUtil.currentUser();
-				if (user == null || !user.hasRole(Role.ROLE_USER)) {
+				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+				if (!userDetails.hasRole(Role.ROLE_USER)) {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
+				WikiUser user = ServletUtil.currentWikiUser();
 				WikiBase.reset(request.getLocale(), user);
 				WikiUserDetails.resetAnonymousGroupRoles();
 				WikiUserDetails.resetDefaultGroupRoles();
@@ -290,10 +291,11 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
-				WikiUserDetails user = ServletUtil.currentUser();
-				if (user == null || !user.hasRole(Role.ROLE_USER)) {
+				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
+				if (!userDetails.hasRole(Role.ROLE_USER)) {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
+				WikiUser user = ServletUtil.currentWikiUser();
 				WikiBase.reset(request.getLocale(), user);
 				WikiUserDetails.resetAnonymousGroupRoles();
 				WikiUserDetails.resetDefaultGroupRoles();
@@ -431,7 +433,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void virtualWiki(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
-		WikiUser user = ServletUtil.currentUser();
+		WikiUser user = ServletUtil.currentWikiUser();
 		try {
 			VirtualWiki virtualWiki = new VirtualWiki();
 			if (!StringUtils.isBlank(request.getParameter("virtualWikiId"))) {

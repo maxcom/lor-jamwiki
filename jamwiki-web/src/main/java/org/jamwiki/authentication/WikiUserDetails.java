@@ -27,14 +27,13 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 
 /**
  * 
  */
-public class WikiUserDetails extends WikiUser implements UserDetails {
+public class WikiUserDetails implements UserDetails {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetails.class.getName());
 	private static final long serialVersionUID = -2818435399240684581L;
@@ -42,6 +41,9 @@ public class WikiUserDetails extends WikiUser implements UserDetails {
 	private static Role[] anonymousGroupRoles = null;
 	/** Default roles for logged-in users */
 	private static Role[] defaultGroupRoles = null;
+	private String username = null;
+	private String password = null;
+
 	/**
 	 * GrantedAuthority is used by Spring Security to support several authorities
 	 * (roles). A logged user always has ROLE_USER and may have other roles,
@@ -53,31 +55,14 @@ public class WikiUserDetails extends WikiUser implements UserDetails {
 	 *
 	 */
 	private WikiUserDetails() {
-		super();
 	}
 
 	/**
 	 *
 	 */
-	public WikiUserDetails(WikiUser wikiUser) throws Exception {
-		super(wikiUser.getUsername());
-		this.init();
-		this.setCreateDate(wikiUser.getCreateDate());
-		this.setCreateIpAddress(wikiUser.getCreateIpAddress());
-		this.setDefaultLocale(wikiUser.getDefaultLocale());
-		this.setEmail(wikiUser.getEmail());
-		this.setDisplayName(wikiUser.getDisplayName());
-		this.setLastLoginDate(wikiUser.getLastLoginDate());
-		this.setLastLoginIpAddress(wikiUser.getLastLoginIpAddress());
-		this.setUserId(wikiUser.getUserId());
-		this.setPassword(wikiUser.getPassword());
-	}
-
-	/**
-	 *
-	 */
-	public WikiUserDetails(String username) throws Exception {
-		super(username);
+	public WikiUserDetails(String username, String password) {
+		this.username = username;
+		this.password = password;
 		this.init();
 	}
 
@@ -107,10 +92,10 @@ public class WikiUserDetails extends WikiUser implements UserDetails {
 	 *  <code>GrantedAuthority[]</code> array.
 	 */
 	public WikiUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, GrantedAuthority[] authorities) {
-		super(username);
 		if (StringUtils.isBlank(username) || password == null) {
 			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
 		}
+		this.setUsername(username);
 		this.setPassword(password);
 //		this.enabled = enabled;
 //		this.accountNonExpired = accountNonExpired;
@@ -186,6 +171,34 @@ public class WikiUserDetails extends WikiUser implements UserDetails {
 	public boolean isEnabled() {
 		// TODO Not yet implemented
 		return true;
+	}
+
+	/**
+	 *
+	 */
+	public String getPassword() {
+		return this.password;
+	}
+
+	/**
+	 *
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 *
+	 */
+	public String getUsername() {
+		return this.username;
+	}
+
+	/**
+	 *
+	 */
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**

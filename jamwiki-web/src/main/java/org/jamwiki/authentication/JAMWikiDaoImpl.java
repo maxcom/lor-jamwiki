@@ -20,6 +20,7 @@ import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.jamwiki.WikiBase;
+import org.jamwiki.model.WikiUser;
 import org.springframework.dao.DataAccessException;
 
 /**
@@ -37,18 +38,17 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 	 * @see org.springframework.security.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
 	 */
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-		UserDetails loadedUser;
 		try {
-			loadedUser = new WikiUserDetails(WikiBase.getDataHandler().lookupWikiUser(username, null));
+			WikiUser user = WikiBase.getDataHandler().lookupWikiUser(username, null);
+			if (user == null) {
+				throw new UsernameNotFoundException("User with name '" + username + "' not found in JAMWiki database.");
+			}
+			return new WikiUserDetails(username, user.getPassword());
 		} catch (Exception e) {
 			// FIXME - for now throw an exception that Spring Security can handle, but
 			// this should be handled with the Spring Security ExceptionTranslationFilter
 //			throw new DataAccessResourceFailureException(e.getMessage(), e);
 			throw new UsernameNotFoundException("Failure retrieving user information for " + username, e);
 		}
-		if (loadedUser == null) {
-			throw new UsernameNotFoundException("User with name '" + username + "' not found in JAMWiki database.");
-		}
-		return loadedUser;
 	}
 }
