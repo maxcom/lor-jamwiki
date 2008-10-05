@@ -88,11 +88,11 @@ followed by 0.5.3.
               alter table jam_topic_version add column characters_changed INTEGER;
        b) Populate the new characters_changed column for topic versions.
               update jam_topic_version set characters_changed = (
-                select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) 
-                from jam_topic_version current_version 
-                left outer join jam_topic_version previous_version 
-                on current_version.previous_topic_version_id = previous_version.topic_version_id 
-                where jam_topic_version.topic_version_id = current_version.topic_version_id
+                    select (char_length(current_version.version_content) - char_length(coalesce(previous_version.version_content, ''))) 
+                    from jam_topic_version current_version 
+                    left outer join jam_topic_version previous_version 
+                    on current_version.previous_topic_version_id = previous_version.topic_version_id 
+                    where jam_topic_version.topic_version_id = current_version.topic_version_id
               );
        c) Populate the new characters_changed column for recent changes by
           reloading recent changes from the Special:Maintenance page.
@@ -103,11 +103,24 @@ followed by 0.5.3.
               alter table jam_wiki_user add column email VARCHAR(100);
        e) Populate the new email column for the jam_wiki_user table.
               update jam_wiki_user set email = (
-                select email from jam_wiki_user_info
-                where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
+                    select email from jam_wiki_user_info
+                    where jam_wiki_user.wiki_user_id = jam_wiki_user_info.wiki_user_id
               );
-       f) Add the missing unique (login) constraint to jam_wiki_user:
+       f) Create the jam_users table.
+              CREATE TABLE jam_users (
+                    username varchar(100) NOT NULL,
+                    password varchar(100) NOT NULL,
+                    enabled INTEGER DEFAULT 1 NOT NULL,
+                    CONSTRAINT jam_p_users PRIMARY KEY (username)
+              )
+       g) Populate the jam_users table.
+              insert into jam_users ( username, password )
+                    select login, encoded_password
+                    from jam_wiki_user_info
+       h) Add required constraints to jam_wiki_user:
               alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
+              alter table jam_wiki_user add constraint jam_u_wuser_users
+                    foreign key (login) references jam_users (username)
 
 
   JAMWiki 0.6.7

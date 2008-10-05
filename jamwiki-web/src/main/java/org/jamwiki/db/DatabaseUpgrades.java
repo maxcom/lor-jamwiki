@@ -122,7 +122,6 @@ public class DatabaseUpgrades {
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_TABLE);
 			} catch (Exception ex) {}
-
 			throw e;
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);
@@ -265,8 +264,23 @@ public class DatabaseUpgrades {
 			sql = "alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login)";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added constraint unique (login) to jam_wiki_user");
+			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_USERS_TABLE, conn);
+			} else {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_USERS_TABLE, conn);
+			}
+			sql = "insert into jam_users ( "
+			    +    "username, password "
+				+ ") "
+				+ "select login, encoded_password "
+				+ "from jam_wiki_user_info ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Added jam_users table");
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_USERS_TABLE);
+			} catch (Exception ex) {}
 			throw e;
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);

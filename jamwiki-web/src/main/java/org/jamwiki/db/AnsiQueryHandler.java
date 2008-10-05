@@ -59,6 +59,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_CREATE_TOPIC_TABLE = null;
 	protected static String STATEMENT_CREATE_TOPIC_VERSION_TABLE = null;
+	protected static String STATEMENT_CREATE_USERS_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_FILE_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = null;
 	protected static String STATEMENT_CREATE_CATEGORY_TABLE = null;
@@ -73,6 +74,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
 	protected static String STATEMENT_DROP_ROLE_TABLE = null;
 	protected static String STATEMENT_DROP_ROLE_MAP_TABLE = null;
+	protected static String STATEMENT_DROP_USERS_TABLE = null;
 	protected static String STATEMENT_DROP_VIRTUAL_WIKI_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_INFO_TABLE = null;
@@ -93,6 +95,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_ROLE_MAP = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
+	protected static String STATEMENT_INSERT_USER = null;
 	protected static String STATEMENT_INSERT_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_INSERT_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE = null;
@@ -142,6 +145,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_UPDATE_TOPIC = null;
 	protected static String STATEMENT_UPDATE_TOPIC_CURRENT_VERSION = null;
 	protected static String STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS = null;
+	protected static String STATEMENT_UPDATE_USER = null;
 	protected static String STATEMENT_UPDATE_VIRTUAL_WIKI = null;
 	protected static String STATEMENT_UPDATE_WIKI_FILE = null;
 	protected static String STATEMENT_UPDATE_WIKI_USER = null;
@@ -177,6 +181,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public void createTables(Connection conn) throws Exception {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_VIRTUAL_WIKI_TABLE, conn);
+		DatabaseConnection.executeUpdate(STATEMENT_CREATE_USERS_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_INFO_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX, conn);
@@ -289,6 +294,9 @@ public class AnsiQueryHandler implements QueryHandler {
 		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_WIKI_USER_TABLE, conn);
+		} catch (Exception e) { logger.severe(e.getMessage()); }
+		try {
+			DatabaseConnection.executeUpdate(STATEMENT_DROP_USERS_TABLE, conn);
 		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_VIRTUAL_WIKI_TABLE, conn);
@@ -488,6 +496,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT");
 		STATEMENT_CREATE_TOPIC_TABLE             = props.getProperty("STATEMENT_CREATE_TOPIC_TABLE");
 		STATEMENT_CREATE_TOPIC_VERSION_TABLE     = props.getProperty("STATEMENT_CREATE_TOPIC_VERSION_TABLE");
+		STATEMENT_CREATE_USERS_TABLE             = props.getProperty("STATEMENT_CREATE_USERS_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_FILE_TABLE");
 		STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = props.getProperty("STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE");
 		STATEMENT_CREATE_CATEGORY_TABLE          = props.getProperty("STATEMENT_CREATE_CATEGORY_TABLE");
@@ -502,6 +511,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
 		STATEMENT_DROP_ROLE_TABLE                = props.getProperty("STATEMENT_DROP_ROLE_TABLE");
 		STATEMENT_DROP_ROLE_MAP_TABLE            = props.getProperty("STATEMENT_DROP_ROLE_MAP_TABLE");
+		STATEMENT_DROP_USERS_TABLE               = props.getProperty("STATEMENT_DROP_USERS_TABLE");
 		STATEMENT_DROP_VIRTUAL_WIKI_TABLE        = props.getProperty("STATEMENT_DROP_VIRTUAL_WIKI_TABLE");
 		STATEMENT_DROP_WIKI_USER_LOGIN_INDEX     = props.getProperty("STATEMENT_DROP_WIKI_USER_LOGIN_INDEX");
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
@@ -522,6 +532,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_ROLE_MAP                = props.getProperty("STATEMENT_INSERT_ROLE_MAP");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
+		STATEMENT_INSERT_USER                    = props.getProperty("STATEMENT_INSERT_USER");
 		STATEMENT_INSERT_VIRTUAL_WIKI            = props.getProperty("STATEMENT_INSERT_VIRTUAL_WIKI");
 		STATEMENT_INSERT_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_INSERT_WATCHLIST_ENTRY");
 		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
@@ -571,6 +582,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_UPDATE_TOPIC                   = props.getProperty("STATEMENT_UPDATE_TOPIC");
 		STATEMENT_UPDATE_TOPIC_CURRENT_VERSION   = props.getProperty("STATEMENT_UPDATE_TOPIC_CURRENT_VERSION");
 		STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS  = props.getProperty("STATEMENT_UPDATE_TOPIC_CURRENT_VERSIONS");
+		STATEMENT_UPDATE_USER                    = props.getProperty("STATEMENT_UPDATE_USER");
 		STATEMENT_UPDATE_VIRTUAL_WIKI            = props.getProperty("STATEMENT_UPDATE_VIRTUAL_WIKI");
 		STATEMENT_UPDATE_WIKI_FILE               = props.getProperty("STATEMENT_UPDATE_WIKI_FILE");
 		STATEMENT_UPDATE_WIKI_USER               = props.getProperty("STATEMENT_UPDATE_WIKI_USER");
@@ -711,6 +723,17 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt = new WikiPreparedStatement(STATEMENT_UPDATE_TOPIC_CURRENT_VERSION);
 		stmt.setInt(1, topicVersion.getTopicId());
 		stmt.setInt(2, topicVersion.getTopicId());
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void insertUser(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.validateUser(userInfo);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_USER);
+		stmt.setString(1, userInfo.getUsername());
+		stmt.setString(2, userInfo.getEncodedPassword());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1098,6 +1121,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public void updateUser(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.validateUser(userInfo);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_USER);
+		stmt.setString(1, userInfo.getEncodedPassword());
+		stmt.setInt(2, 1);
+		stmt.setString(3, userInfo.getUsername());
+	}
+
+	/**
+	 *
+	 */
 	public void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		this.validateVirtualWiki(virtualWiki);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_VIRTUAL_WIKI);
@@ -1214,6 +1248,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected void validateTopicVersion(TopicVersion topicVersion) throws WikiException {
 		checkLength(topicVersion.getAuthorIpAddress(), 39);
 		topicVersion.setEditComment(StringUtils.substring(topicVersion.getEditComment(), 0, 200));
+	}
+
+	/**
+	 *
+	 */
+	protected void validateUser(WikiUserInfo userInfo) throws WikiException {
+		checkLength(userInfo.getUsername(), 100);
+		// do not throw exception containing password info
+		if (userInfo.getEncodedPassword() != null && userInfo.getEncodedPassword().length() > 100) {
+			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
+		}
 	}
 
 	/**

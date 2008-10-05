@@ -421,6 +421,17 @@ public interface QueryHandler {
 	void insertTopicVersion(TopicVersion topicVersion, Connection conn) throws Exception;
 
 	/**
+	 * Add a new user authentication credential to the database.  The user authentication
+	 * credential must not already exist in the database or else an error will be thrown.
+	 *
+	 * @param userInfo The user authentication credential that is to be added to the database.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	void insertUser(WikiUserInfo userInfo, Connection conn) throws Exception;
+
+	/**
 	 * Add a new virtual wiki record to the database.  The virtual wiki must
 	 * not already exist in the database or else an error will be thrown.
 	 *
@@ -762,6 +773,16 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void updateTopic(Topic topic, int virtualWikiId, Connection conn) throws Exception;
+
+	/**
+	 * Update user authentication credentials.
+	 *
+	 * @param userInfo The user authentication credentials to update.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void updateUser(WikiUserInfo userInfo, Connection conn) throws Exception;
 
 	/**
 	 * Update a virtual wiki record in the database.

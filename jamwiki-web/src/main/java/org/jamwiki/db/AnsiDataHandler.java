@@ -121,6 +121,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private void addUser(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.queryHandler().insertUser(userInfo, conn);
+	}
+
+	/**
+	 *
+	 */
 	private void addVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		if (virtualWiki.getVirtualWikiId() < 1) {
 			int virtualWikiId = this.queryHandler().nextVirtualWikiId(conn);
@@ -177,7 +184,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	protected void addWikiUser(WikiUser user, Connection conn) throws Exception {
+	private void addWikiUser(WikiUser user, Connection conn) throws Exception {
 		if (user.getUserId() < 1) {
 			int nextUserId = this.queryHandler().nextWikiUserId(conn);
 			user.setUserId(nextUserId);
@@ -188,19 +195,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void addWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
-		TransactionStatus status = DatabaseConnection.startTransaction();
-		try {
-			Connection conn = DatabaseConnection.getConnection();
-			WikiDatabase.queryHandler().insertWikiUserInfo(userInfo, conn);
-		} catch (Exception e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
-		} catch (Error e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
-		}
-		DatabaseConnection.commit(status);
+	private void addWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.queryHandler().insertWikiUserInfo(userInfo, conn);
 	}
 
 	/**
@@ -1233,6 +1229,13 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private void updateUser(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.queryHandler().updateUser(userInfo, conn);
+	}
+
+	/**
+	 *
+	 */
 	private void updateVirtualWiki(VirtualWiki virtualWiki, Connection conn) throws Exception {
 		this.queryHandler().updateVirtualWiki(virtualWiki, conn);
 	}
@@ -1262,19 +1265,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void updateWikiUserInfo(WikiUserInfo userInfo, Object transactionObject) throws Exception {
-		TransactionStatus status = DatabaseConnection.startTransaction();
-		try {
-			Connection conn = DatabaseConnection.getConnection();
-			WikiDatabase.queryHandler().updateWikiUserInfo(userInfo, conn);
-		} catch (Exception e) {
-			DatabaseConnection.rollbackOnException(status, e);
-			throw e;
-		} catch (Error err) {
-			DatabaseConnection.rollbackOnException(status, err);
-			throw err;
-		}
-		DatabaseConnection.commit(status);
+	private void updateWikiUserInfo(WikiUserInfo userInfo, Connection conn) throws Exception {
+		this.queryHandler().updateWikiUserInfo(userInfo, conn);
 	}
 
 	/**
@@ -1546,10 +1538,12 @@ public class AnsiDataHandler implements DataHandler {
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			if (user.getUserId() <= 0) {
+				this.addUser(userInfo, conn);
 				this.addWikiUser(user, conn);
 				userInfo.setUserId(user.getUserId());
 				this.addWikiUserInfo(userInfo, conn);
 			} else {
+				this.updateUser(userInfo, conn);
 				this.updateWikiUser(user, conn);
 				this.updateWikiUserInfo(userInfo, conn);
 			}
