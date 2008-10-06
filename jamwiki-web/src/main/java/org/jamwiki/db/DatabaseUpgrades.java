@@ -292,11 +292,26 @@ public class DatabaseUpgrades {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
 			}
 			messages.add("Added jam_group_authorities table");
+			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
+			} else {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
+			}
+			messages.add("Added jam_group_members table");
 			sql = "drop table jam_wiki_user_info";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped jam_wiki_user_info table");
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_MEMBERS_TABLE);
+			} catch (Exception ex) {}
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_GROUP_AUTHORITIES_TABLE);
+			} catch (Exception ex) {}
+			try {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_AUTHORITIES_TABLE);
+			} catch (Exception ex) {}
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_USERS_TABLE);
 			} catch (Exception ex) {}

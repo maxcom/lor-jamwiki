@@ -127,7 +127,16 @@ followed by 0.5.3.
                    CONSTRAINT jam_f_auth_username FOREIGN KEY (username) REFERENCES jam_users(username),
                    CONSTRAINT jam_f_auth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
               );
-       j) Create the jam_group_authorities table:
+       j) Create the jam_group_members table:
+              CREATE TABLE jam_group_members (
+                   id INTEGER NOT NULL,
+                   username VARCHAR(100) NOT NULL,
+                   group_id INTEGER NOT NULL,
+                   CONSTRAINT jam_p_gmemb PRIMARY KEY (id),
+                   CONSTRAINT jam_f_gmemb_username FOREIGN KEY (username) REFERENCES jam_users(username),
+                   CONSTRAINT jam_f_gmemb_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id)
+              );
+       k) Create the jam_group_authorities table:
               CREATE TABLE jam_group_authorities (
                    group_id INTEGER NOT NULL,
                    authority VARCHAR(30) NOT NULL,
@@ -135,7 +144,7 @@ followed by 0.5.3.
                    CONSTRAINT jam_f_gauth_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id),
                    CONSTRAINT jam_f_gauth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
               );
-       k) Add required constraints to jam_wiki_user.
+       l) Add required constraints to jam_wiki_user.
               alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
               alter table jam_wiki_user add constraint jam_u_wuser_users
                     foreign key (login) references jam_users (username)
