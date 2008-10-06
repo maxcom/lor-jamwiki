@@ -117,16 +117,18 @@ public class RolesServlet extends JAMWikiServlet {
 			}
 			// now do the same for user roles.
 			String[] candidateUsers = request.getParameterValues("candidateUser");
+			String[] candidateUsernames = request.getParameterValues("candidateUsername");
 			String[] userRoles = request.getParameterValues("userRole");
 			if (candidateUsers != null) {
 				for (int i = 0; i < candidateUsers.length; i++) {
 					int userId = Integer.parseInt(candidateUsers[i]);
+					String username = candidateUsernames[i];
 					List roles = buildRoleArray(userId, -1, userRoles);
 					if (userId == ServletUtil.currentWikiUser().getUserId() && !roles.contains(Role.ROLE_SYSADMIN)) {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}
-					WikiBase.getDataHandler().writeRoleMapUser(userId, roles, null);
+					WikiBase.getDataHandler().writeRoleMapUser(username, userId, roles, null);
 				}
 				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}

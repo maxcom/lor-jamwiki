@@ -104,6 +104,7 @@
 <tr class="<jamwiki:alternate value1="lightbg" value2="mediumbg" attributeName="userList" />">
 	<td>
 		<input type="hidden" name="candidateUser" value="<c:out value="${roleMap.userId}" />" />
+		<input type="hidden" name="candidateUsername" value="<c:out value="${roleMap.userLogin}" />" />
 		<c:out value="${roleMap.userLogin}" />
 	</td>
 		<c:forEach items="${roles}" var="role" varStatus="status">

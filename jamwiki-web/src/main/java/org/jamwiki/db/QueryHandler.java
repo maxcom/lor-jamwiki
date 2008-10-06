@@ -95,12 +95,13 @@ public interface QueryHandler {
 	/**
 	 * Delete all role records for a specific user.
 	 *
+	 * @param username The username for which role records are being deleted.
 	 * @param userId The user id for which role records are being deleted.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void deleteRoleMapUser(int userId, Connection conn) throws Exception;
+	void deleteRoleMapUser(String username, int userId, Connection conn) throws Exception;
 
 	/**
 	 * Delete all categories associated with a topic.
@@ -399,6 +400,8 @@ public interface QueryHandler {
 	 * mapping must not already exist in the database or else an error will
 	 * be thrown.
 	 *
+	 * @param username The username for the user being assigned a role, or null
+	 *  if a group is being assigned a role.
 	 * @param userId The user id for the user being assigned a role, or -1 if
 	 *  a group is being assigned a role.
 	 * @param groupId The group id for the group being assigned a role, or -1
@@ -408,7 +411,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception;
+	void insertRoleMap(String username, int userId, int groupId, String role, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic record to the database.  The topic must not already exist

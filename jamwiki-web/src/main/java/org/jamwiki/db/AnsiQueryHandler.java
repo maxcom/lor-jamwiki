@@ -66,6 +66,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WIKI_FILE_VERSION_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX = null;
+	protected static String STATEMENT_DELETE_AUTHORITIES = null;
+	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_ROLE_MAP_GROUP = null;
@@ -90,8 +92,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_WIKI_FILE_VERSION_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_TABLE = null;
 	protected static String STATEMENT_DROP_WIKI_USER_LOGIN_INDEX = null;
+	protected static String STATEMENT_INSERT_AUTHORITY = null;
 	protected static String STATEMENT_INSERT_CATEGORY = null;
 	protected static String STATEMENT_INSERT_GROUP = null;
+	protected static String STATEMENT_INSERT_GROUP_AUTHORITY = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
 	protected static String STATEMENT_INSERT_ROLE = null;
@@ -226,14 +230,20 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_ROLE_MAP_GROUP);
 		stmt.setInt(1, groupId);
 		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
+		stmt.setInt(1, groupId);
+		stmt.executeUpdate(conn);
 	}
 
 	/**
 	 *
 	 */
-	public void deleteRoleMapUser(int userId, Connection conn) throws Exception {
+	public void deleteRoleMapUser(String username, int userId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_ROLE_MAP_USER);
 		stmt.setInt(1, userId);
+		stmt.executeUpdate(conn);
+		stmt = new WikiPreparedStatement(STATEMENT_DELETE_AUTHORITIES);
+		stmt.setString(1, username);
 		stmt.executeUpdate(conn);
 	}
 
@@ -522,6 +532,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_GROUP_MEMBERS_TABLE     = props.getProperty("STATEMENT_CREATE_GROUP_MEMBERS_TABLE");
 		STATEMENT_CREATE_RECENT_CHANGE_TABLE     = props.getProperty("STATEMENT_CREATE_RECENT_CHANGE_TABLE");
 		STATEMENT_CREATE_WATCHLIST_TABLE         = props.getProperty("STATEMENT_CREATE_WATCHLIST_TABLE");
+		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
+		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_ROLE_MAP_GROUP          = props.getProperty("STATEMENT_DELETE_ROLE_MAP_GROUP");
@@ -546,8 +558,10 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_WIKI_USER_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_USER_TABLE");
 		STATEMENT_DROP_WIKI_FILE_TABLE           = props.getProperty("STATEMENT_DROP_WIKI_FILE_TABLE");
 		STATEMENT_DROP_WIKI_FILE_VERSION_TABLE   = props.getProperty("STATEMENT_DROP_WIKI_FILE_VERSION_TABLE");
+		STATEMENT_INSERT_AUTHORITY               = props.getProperty("STATEMENT_INSERT_AUTHORITY");
 		STATEMENT_INSERT_CATEGORY                = props.getProperty("STATEMENT_INSERT_CATEGORY");
 		STATEMENT_INSERT_GROUP                   = props.getProperty("STATEMENT_INSERT_GROUP");
+		STATEMENT_INSERT_GROUP_AUTHORITY         = props.getProperty("STATEMENT_INSERT_GROUP_AUTHORITY");
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
@@ -675,7 +689,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertRoleMap(int userId, int groupId, String role, Connection conn) throws Exception {
+	public void insertRoleMap(String username, int userId, int groupId, String role, Connection conn) throws Exception {
 		this.validateRoleMap(role);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE_MAP);
 		stmt.setString(1, role);
@@ -690,6 +704,18 @@ public class AnsiQueryHandler implements QueryHandler {
 			stmt.setNull(3, Types.INTEGER);
 		}
 		stmt.executeUpdate(conn);
+		if (username != null) {
+			stmt = new WikiPreparedStatement(STATEMENT_INSERT_AUTHORITY);
+			stmt.setString(1, username);
+			stmt.setString(2, role);
+			stmt.executeUpdate(conn);
+		}
+		if (groupId != -1) {
+			stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
+			stmt.setInt(1, groupId);
+			stmt.setString(2, role);
+			stmt.executeUpdate(conn);
+		}
 	}
 
 	/**

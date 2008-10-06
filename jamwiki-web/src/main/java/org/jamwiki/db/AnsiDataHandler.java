@@ -1292,7 +1292,7 @@ public class AnsiDataHandler implements DataHandler {
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				String role = (String)roleIterator.next();
-				this.queryHandler().insertRoleMap(-1, groupId, role, conn);
+				this.queryHandler().insertRoleMap(null, -1, groupId, role, conn);
 			}
 			// refresh the current role requirements
 			WikiUserDetails.resetAnonymousGroupRoles();
@@ -1310,15 +1310,15 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(int userId, List roles, Object transactionObject) throws Exception {
+	public void writeRoleMapUser(String username, int userId, List roles, Object transactionObject) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().deleteRoleMapUser(userId, conn);
+			this.queryHandler().deleteRoleMapUser(username, userId, conn);
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				String role = (String)roleIterator.next();
-				this.queryHandler().insertRoleMap(userId, -1, role, conn);
+				this.queryHandler().insertRoleMap(username, userId, -1, role, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);

@@ -306,6 +306,13 @@ public class DatabaseUpgrades {
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
 			}
+			sql = "insert into jam_authorities ( "
+			    +    "username, authority "
+				+ ") "
+				+ "select jam_wiki_user.login, jam_role_map.role_name "
+				+ "from jam_wiki_user, jam_role_map "
+				+ "where jam_wiki_user.wiki_user_id = jam_role_map.wiki_user_id ";
+			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_authorities table");
 			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
@@ -314,6 +321,13 @@ public class DatabaseUpgrades {
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
 			}
+			sql = "insert into jam_group_authorities ( "
+			    +    "group_id, authority "
+				+ ") "
+				+ "select jam_group.group_id, jam_role_map.role_name "
+				+ "from jam_group, jam_role_map "
+				+ "where jam_group.group_id = jam_role_map.group_id ";
+			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_group_authorities table");
 			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
