@@ -18,11 +18,14 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import java.util.Vector;
+import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
+import org.jamwiki.WikiVersion;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
+import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -48,6 +51,26 @@ public class DatabaseUpgrades {
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 		return def;
+	}
+
+	/**
+	 * Special login method - it cannot be assumed that the database schema
+	 * is unchanged, so do not use standard methods.
+	 */
+	public static boolean login(String username, String password) throws Exception {
+		WikiVersion oldVersion = new WikiVersion(Environment.getValue(Environment.PROP_BASE_WIKI_VERSION));
+		if (!oldVersion.before(0, 7, 0)) {
+			return (WikiBase.getDataHandler().authenticate(username, password));
+		}
+		Connection conn = DatabaseConnection.getConnection();
+		WikiPreparedStatement stmt = new WikiPreparedStatement("select 1 from jam_wiki_user_info where login = ? and encoded_password = ?");
+		if (!StringUtils.isBlank(password)) {
+			password = Encryption.encrypt(password);
+		}
+		stmt.setString(1, username);
+		stmt.setString(2, password);
+		WikiResultSet rs = stmt.executeQuery(conn);
+		return (rs.size() > 0);
 	}
 
 	/**

@@ -84,7 +84,7 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean login(HttpServletRequest request) throws Exception {
 		String password = request.getParameter("password");
 		String username = request.getParameter("username");
-		return (WikiBase.getDataHandler().authenticate(username, password));
+		return DatabaseUpgrades.login(username, password);
 	}
 
 	/**
