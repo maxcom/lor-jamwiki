@@ -119,7 +119,23 @@ followed by 0.5.3.
                     from jam_wiki_user_info
        h) Drop the obsolete jam_wiki_user_info table.
               drop table jam_wiki_user_info;
-       i) Add required constraints to jam_wiki_user.
+       i) Create the jam_authorities table:
+              CREATE TABLE jam_authorities (
+                   username VARCHAR(100) NOT NULL,
+                   authority VARCHAR(30) NOT NULL,
+                   CONSTRAINT jam_u_auth UNIQUE (username, authority),
+                   CONSTRAINT jam_f_auth_username FOREIGN KEY (username) REFERENCES jam_users(username),
+                   CONSTRAINT jam_f_auth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
+              );
+       j) Create the jam_group_authorities table:
+              CREATE TABLE jam_group_authorities (
+                   group_id INTEGER NOT NULL,
+                   authority VARCHAR(30) NOT NULL,
+                   CONSTRAINT jam_u_gauth UNIQUE (group_id, authority),
+                   CONSTRAINT jam_f_gauth_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id),
+                   CONSTRAINT jam_f_gauth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
+              );
+       k) Add required constraints to jam_wiki_user.
               alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
               alter table jam_wiki_user add constraint jam_u_wuser_users
                     foreign key (login) references jam_users (username)

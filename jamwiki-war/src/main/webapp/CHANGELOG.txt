@@ -3,6 +3,8 @@
 
 New Features:
 
+  * Login and authentication completely rewritten to take better advantage
+    of Spring Security capabilities.
   * Special:OrphanedPages added to display un-linked pages (hanspeterklapf).
   * Remove ability to automatically upgrade from versions prior to 0.5.0.
   * "Next" and "prev" diff links added to Special:History to match Mediawiki.

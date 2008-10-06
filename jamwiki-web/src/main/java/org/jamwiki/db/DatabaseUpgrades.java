@@ -276,6 +276,22 @@ public class DatabaseUpgrades {
 				+ "from jam_wiki_user_info ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_users table");
+			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL)) {
+				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
+			} else {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
+			}
+			messages.add("Added jam_authorities table");
+			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
+				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
+			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL)) {
+				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
+			} else {
+				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
+			}
+			messages.add("Added jam_group_authorities table");
 			sql = "drop table jam_wiki_user_info";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Dropped jam_wiki_user_info table");
