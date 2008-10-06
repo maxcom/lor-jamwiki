@@ -76,19 +76,22 @@ public class WikiDatabase {
 		String sql = null;
 		String exportTableName = null;
 		String[] tableNames = {
-				"jam_category",
-				"jam_group",
-				"jam_recent_change",
-				"jam_role_map",
-				"jam_role",
+				"jam_virtual_wiki",
+				"jam_users",
+				"jam_wiki_user",
 				"jam_topic",
 				"jam_topic_version",
-				"jam_virtual_wiki",
-				"jam_watchlist",
 				"jam_file",
 				"jam_file_version",
-				"jam_wiki_user",
-				"jam_users"
+				"jam_category",
+				"jam_group",
+				"jam_group_members",
+				"jam_role",
+				"jam_authorities",
+				"jam_group_authorities",
+				"jam_role_map",
+				"jam_recent_change",
+				"jam_watchlist"
 		};
 		String csvDirectory = new File(Environment.getValue(Environment.PROP_BASE_FILE_DIR), "database").getPath();
 		File csvFile = null;
@@ -227,19 +230,22 @@ public class WikiDatabase {
 			conn = DatabaseConnection.getTestConnection(driver, url, userName, password);
 			conn.setAutoCommit(false);
 			String[] tableNames = {
+					"jam_virtual_wiki",
 					"jam_users",
 					"jam_wiki_user",
-					"jam_group",
-					"jam_category",
-					"jam_virtual_wiki",
 					"jam_topic",
 					"jam_topic_version",
-					"jam_recent_change",
-					"jam_role",
-					"jam_role_map",
 					"jam_file",
 					"jam_file_version",
-					"jam_watchlist",
+					"jam_category",
+					"jam_group",
+					"jam_group_members",
+					"jam_role",
+					"jam_authorities",
+					"jam_group_authorities",
+					"jam_role_map",
+					"jam_recent_change",
+					"jam_watchlist"
 			};
 			// used to track current_version_id for each jam_topic row inserted
 			List topicVersions = new ArrayList();
@@ -499,7 +505,7 @@ public class WikiDatabase {
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
-		WikiBase.getDataHandler().writeRoleMapUser(user.getUserId(), roles, conn);
+		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), user.getUserId(), roles, conn);
 	}
 
 	/**
