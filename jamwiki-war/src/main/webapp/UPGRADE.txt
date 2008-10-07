@@ -127,7 +127,14 @@ followed by 0.5.3.
                    CONSTRAINT jam_f_auth_username FOREIGN KEY (username) REFERENCES jam_users(username),
                    CONSTRAINT jam_f_auth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
               );
-       j) Create the jam_group_members table:
+       j) Populate the jam_group_authorities table.
+              insert into jam_authorities (
+                   username, authority
+              )
+              select jam_wiki_user.login, jam_role_map.role_name
+              from jam_wiki_user, jam_role_map
+              where jam_wiki_user.wiki_user_id = jam_role_map.wiki_user_id;
+       k) Create the jam_group_members table.
               CREATE TABLE jam_group_members (
                    id INTEGER NOT NULL,
                    username VARCHAR(100) NOT NULL,
@@ -136,7 +143,7 @@ followed by 0.5.3.
                    CONSTRAINT jam_f_gmemb_username FOREIGN KEY (username) REFERENCES jam_users(username),
                    CONSTRAINT jam_f_gmemb_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id)
               );
-       k) Create the jam_group_authorities table:
+       l) Create the jam_group_authorities table.
               CREATE TABLE jam_group_authorities (
                    group_id INTEGER NOT NULL,
                    authority VARCHAR(30) NOT NULL,
@@ -144,7 +151,16 @@ followed by 0.5.3.
                    CONSTRAINT jam_f_gauth_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id),
                    CONSTRAINT jam_f_gauth_authority FOREIGN KEY (authority) REFERENCES jam_role(role_name)
               );
-       l) Add required constraints to jam_wiki_user.
+       m) Populate the jam_group_authorities table.
+              insert into jam_group_authorities (
+                   group_id, authority
+              )
+              select jam_group.group_id, jam_role_map.role_name
+              from jam_group, jam_role_map
+              where jam_group.group_id = jam_role_map.group_id;
+       n) Drop the obsolete jam_role_map table.
+              drop table jam_role_map;
+       o) Add required constraints to jam_wiki_user.
               alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
               alter table jam_wiki_user add constraint jam_u_wuser_users
                     foreign key (login) references jam_users (username)

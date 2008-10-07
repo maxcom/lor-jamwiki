@@ -622,7 +622,6 @@ public interface DataHandler {
 	 * a mapping for each specified role.
 	 *
 	 * @param username The username for whom role mappings are being modified.
-	 * @param userId The user id for whom role mappings are being modified.
 	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this user.
 	 * @param transactionObject If this method is being called as part of a
@@ -631,7 +630,7 @@ public interface DataHandler {
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapUser(String username, int userId, List roles, Object transactionObject) throws Exception;
+	void writeRoleMapUser(String username, List roles, Object transactionObject) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if

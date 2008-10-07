@@ -381,9 +381,9 @@ public class AnsiDataHandler implements DataHandler {
 				roleMap = (RoleMap)roleMaps.get(userId);
 			} else {
 				roleMap.setUserId(userId);
-				roleMap.setUserLogin(rs.getString("login"));
+				roleMap.setUserLogin(rs.getString("username"));
 			}
-			roleMap.addRole(rs.getString("role_name"));
+			roleMap.addRole(rs.getString("authority"));
 			roleMaps.put(userId, roleMap);
 		}
 		return roleMaps.values();
@@ -392,9 +392,9 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public Collection getRoleMapByRole(String roleName) throws Exception {
+	public Collection getRoleMapByRole(String authority) throws Exception {
 		LinkedHashMap roleMaps = new LinkedHashMap();
-		WikiResultSet rs = this.queryHandler().getRoleMapByRole(roleName);
+		WikiResultSet rs = this.queryHandler().getRoleMapByRole(authority);
 		while (rs.next()) {
 			int userId = rs.getInt(DATA_WIKI_USER_ID);
 			int groupId = rs.getInt(DATA_GROUP_ID);
@@ -405,14 +405,14 @@ public class AnsiDataHandler implements DataHandler {
 			} else {
 				if (userId > 0) {
 					roleMap.setUserId(new Integer(userId));
-					roleMap.setUserLogin(rs.getString("login"));
+					roleMap.setUserLogin(rs.getString("username"));
 				}
 				if (groupId > 0) {
 					roleMap.setGroupId(new Integer(groupId));
 					roleMap.setGroupName(rs.getString("group_name"));
 				}
 			}
-			roleMap.addRole(rs.getString("role_name"));
+			roleMap.addRole(rs.getString("authority"));
 			roleMaps.put(key, roleMap);
 		}
 		return roleMaps.values();
@@ -446,7 +446,7 @@ public class AnsiDataHandler implements DataHandler {
 				roleMap.setGroupId(groupId);
 				roleMap.setGroupName(rs.getString("group_name"));
 			}
-			roleMap.addRole(rs.getString("role_name"));
+			roleMap.addRole(rs.getString("authority"));
 			roleMaps.put(groupId, roleMap);
 		}
 		return roleMaps.values();
@@ -1292,7 +1292,7 @@ public class AnsiDataHandler implements DataHandler {
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				String role = (String)roleIterator.next();
-				this.queryHandler().insertRoleMap(null, -1, groupId, role, conn);
+				this.queryHandler().insertRoleMap(null, groupId, role, conn);
 			}
 			// refresh the current role requirements
 			WikiUserDetails.resetAnonymousGroupRoles();
@@ -1310,15 +1310,15 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(String username, int userId, List roles, Object transactionObject) throws Exception {
+	public void writeRoleMapUser(String username, List roles, Object transactionObject) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().deleteRoleMapUser(username, userId, conn);
+			this.queryHandler().deleteRoleMapUser(username, conn);
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				String role = (String)roleIterator.next();
-				this.queryHandler().insertRoleMap(username, userId, -1, role, conn);
+				this.queryHandler().insertRoleMap(username, -1, role, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);

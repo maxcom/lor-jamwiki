@@ -89,7 +89,6 @@ public class WikiDatabase {
 				"jam_role",
 				"jam_authorities",
 				"jam_group_authorities",
-				"jam_role_map",
 				"jam_recent_change",
 				"jam_watchlist"
 		};
@@ -243,7 +242,6 @@ public class WikiDatabase {
 					"jam_role",
 					"jam_authorities",
 					"jam_group_authorities",
-					"jam_role_map",
 					"jam_recent_change",
 					"jam_watchlist"
 			};
@@ -505,7 +503,7 @@ public class WikiDatabase {
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
-		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), user.getUserId(), roles, conn);
+		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), roles, conn);
 	}
 
 	/**

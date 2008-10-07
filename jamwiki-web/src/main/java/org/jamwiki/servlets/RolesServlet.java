@@ -128,7 +128,7 @@ public class RolesServlet extends JAMWikiServlet {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}
-					WikiBase.getDataHandler().writeRoleMapUser(username, userId, roles, null);
+					WikiBase.getDataHandler().writeRoleMapUser(username, roles, null);
 				}
 				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}

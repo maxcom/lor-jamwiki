@@ -54,7 +54,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_GROUP_MEMBERS_TABLE = null;
 	protected static String STATEMENT_CREATE_GROUP_TABLE = null;
 	protected static String STATEMENT_CREATE_RECENT_CHANGE_TABLE = null;
-	protected static String STATEMENT_CREATE_ROLE_MAP_TABLE = null;
 	protected static String STATEMENT_CREATE_ROLE_TABLE = null;
 	protected static String STATEMENT_CREATE_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_CREATE_TOPIC_TABLE = null;
@@ -70,8 +69,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
-	protected static String STATEMENT_DELETE_ROLE_MAP_GROUP = null;
-	protected static String STATEMENT_DELETE_ROLE_MAP_USER = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
 	protected static String STATEMENT_DELETE_WATCHLIST_ENTRY = null;
 	protected static String STATEMENT_DROP_AUTHORITIES_TABLE = null;
@@ -81,7 +78,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_DROP_GROUP_TABLE = null;
 	protected static String STATEMENT_DROP_RECENT_CHANGE_TABLE = null;
 	protected static String STATEMENT_DROP_ROLE_TABLE = null;
-	protected static String STATEMENT_DROP_ROLE_MAP_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = null;
 	protected static String STATEMENT_DROP_TOPIC_TABLE = null;
 	protected static String STATEMENT_DROP_TOPIC_VERSION_TABLE = null;
@@ -99,7 +95,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_RECENT_CHANGE = null;
 	protected static String STATEMENT_INSERT_RECENT_CHANGES = null;
 	protected static String STATEMENT_INSERT_ROLE = null;
-	protected static String STATEMENT_INSERT_ROLE_MAP = null;
 	protected static String STATEMENT_INSERT_TOPIC = null;
 	protected static String STATEMENT_INSERT_TOPIC_VERSION = null;
 	protected static String STATEMENT_INSERT_USER = null;
@@ -108,16 +103,16 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_INSERT_WIKI_FILE = null;
 	protected static String STATEMENT_INSERT_WIKI_FILE_VERSION = null;
 	protected static String STATEMENT_INSERT_WIKI_USER = null;
+	protected static String STATEMENT_SELECT_AUTHORITIES_AUTHORITY = null;
+	protected static String STATEMENT_SELECT_AUTHORITIES_LOGIN = null;
+	protected static String STATEMENT_SELECT_AUTHORITIES_USER = null;
 	protected static String STATEMENT_SELECT_CATEGORIES = null;
 	protected static String STATEMENT_SELECT_CATEGORY_TOPICS = null;
+	protected static String STATEMENT_SELECT_GROUP_AUTHORITIES = null;
+	protected static String STATEMENT_SELECT_GROUPS_AUTHORITIES = null;
 	protected static String STATEMENT_SELECT_GROUP_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES = null;
 	protected static String STATEMENT_SELECT_RECENT_CHANGES_TOPIC = null;
-	protected static String STATEMENT_SELECT_ROLE_MAP_GROUP = null;
-	protected static String STATEMENT_SELECT_ROLE_MAP_GROUPS = null;
-	protected static String STATEMENT_SELECT_ROLE_MAP_LOGIN = null;
-	protected static String STATEMENT_SELECT_ROLE_MAP_ROLE = null;
-	protected static String STATEMENT_SELECT_ROLE_MAP_USER = null;
 	protected static String STATEMENT_SELECT_ROLES = null;
 	protected static String STATEMENT_SELECT_TOPIC_BY_TYPE = null;
 	protected static String STATEMENT_SELECT_TOPIC_COUNT = null;
@@ -209,7 +204,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_ROLE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_GROUP_AUTHORITIES_TABLE, conn);
-		DatabaseConnection.executeUpdate(STATEMENT_CREATE_ROLE_MAP_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_RECENT_CHANGE_TABLE, conn);
 		DatabaseConnection.executeUpdate(STATEMENT_CREATE_WATCHLIST_TABLE, conn);
 	}
@@ -227,10 +221,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public void deleteRoleMapGroup(int groupId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_ROLE_MAP_GROUP);
-		stmt.setInt(1, groupId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
 		stmt.setInt(1, groupId);
 		stmt.executeUpdate(conn);
 	}
@@ -238,11 +229,8 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void deleteRoleMapUser(String username, int userId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_ROLE_MAP_USER);
-		stmt.setInt(1, userId);
-		stmt.executeUpdate(conn);
-		stmt = new WikiPreparedStatement(STATEMENT_DELETE_AUTHORITIES);
+	public void deleteRoleMapUser(String username, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_AUTHORITIES);
 		stmt.setString(1, username);
 		stmt.executeUpdate(conn);
 	}
@@ -280,9 +268,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_RECENT_CHANGE_TABLE, conn);
-		} catch (Exception e) { logger.severe(e.getMessage()); }
-		try {
-			DatabaseConnection.executeUpdate(STATEMENT_DROP_ROLE_MAP_TABLE, conn);
 		} catch (Exception e) { logger.severe(e.getMessage()); }
 		try {
 			DatabaseConnection.executeUpdate(STATEMENT_DROP_GROUP_AUTHORITIES_TABLE, conn);
@@ -403,7 +388,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		if (StringUtils.isBlank(loginFragment)) {
 			return new WikiResultSet();
 		}
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_LOGIN);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_AUTHORITIES_LOGIN);
 		loginFragment = '%' + loginFragment.toLowerCase() + '%';
 		stmt.setString(1, loginFragment);
 		return stmt.executeQuery();
@@ -412,10 +397,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRoleMapByRole(String roleName) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_ROLE);
-		stmt.setString(1, roleName);
-		stmt.setString(2, roleName);
+	public WikiResultSet getRoleMapByRole(String authority) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_AUTHORITIES_AUTHORITY);
+		stmt.setString(1, authority);
+		stmt.setString(2, authority);
 		return stmt.executeQuery();
 	}
 
@@ -423,7 +408,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public WikiResultSet getRoleMapGroup(String groupName) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_GROUP);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_GROUP_AUTHORITIES);
 		stmt.setString(1, groupName);
 		return stmt.executeQuery();
 	}
@@ -432,14 +417,14 @@ public class AnsiQueryHandler implements QueryHandler {
 	 *
 	 */
 	public WikiResultSet getRoleMapGroups() throws Exception {
-		return DatabaseConnection.executeQuery(STATEMENT_SELECT_ROLE_MAP_GROUPS);
+		return DatabaseConnection.executeQuery(STATEMENT_SELECT_GROUPS_AUTHORITIES);
 	}
 
 	/**
 	 *
 	 */
 	public WikiResultSet getRoleMapUser(String login) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_ROLE_MAP_USER);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_AUTHORITIES_USER);
 		stmt.setString(1, login);
 		return stmt.executeQuery();
 	}
@@ -515,7 +500,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected void init(Properties props) {
 		STATEMENT_CONNECTION_VALIDATION_QUERY    = props.getProperty("STATEMENT_CONNECTION_VALIDATION_QUERY");
 		STATEMENT_CREATE_GROUP_TABLE             = props.getProperty("STATEMENT_CREATE_GROUP_TABLE");
-		STATEMENT_CREATE_ROLE_MAP_TABLE          = props.getProperty("STATEMENT_CREATE_ROLE_MAP_TABLE");
 		STATEMENT_CREATE_ROLE_TABLE              = props.getProperty("STATEMENT_CREATE_ROLE_TABLE");
 		STATEMENT_CREATE_VIRTUAL_WIKI_TABLE      = props.getProperty("STATEMENT_CREATE_VIRTUAL_WIKI_TABLE");
 		STATEMENT_CREATE_WIKI_USER_TABLE         = props.getProperty("STATEMENT_CREATE_WIKI_USER_TABLE");
@@ -536,8 +520,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
-		STATEMENT_DELETE_ROLE_MAP_GROUP          = props.getProperty("STATEMENT_DELETE_ROLE_MAP_GROUP");
-		STATEMENT_DELETE_ROLE_MAP_USER           = props.getProperty("STATEMENT_DELETE_ROLE_MAP_USER");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
 		STATEMENT_DELETE_WATCHLIST_ENTRY         = props.getProperty("STATEMENT_DELETE_WATCHLIST_ENTRY");
 		STATEMENT_DROP_AUTHORITIES_TABLE         = props.getProperty("STATEMENT_DROP_AUTHORITIES_TABLE");
@@ -547,7 +529,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_DROP_GROUP_TABLE               = props.getProperty("STATEMENT_DROP_GROUP_TABLE");
 		STATEMENT_DROP_RECENT_CHANGE_TABLE       = props.getProperty("STATEMENT_DROP_RECENT_CHANGE_TABLE");
 		STATEMENT_DROP_ROLE_TABLE                = props.getProperty("STATEMENT_DROP_ROLE_TABLE");
-		STATEMENT_DROP_ROLE_MAP_TABLE            = props.getProperty("STATEMENT_DROP_ROLE_MAP_TABLE");
 		STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT = props.getProperty("STATEMENT_DROP_TOPIC_CURRENT_VERSION_CONSTRAINT");
 		STATEMENT_DROP_TOPIC_TABLE               = props.getProperty("STATEMENT_DROP_TOPIC_TABLE");
 		STATEMENT_DROP_TOPIC_VERSION_TABLE       = props.getProperty("STATEMENT_DROP_TOPIC_VERSION_TABLE");
@@ -565,7 +546,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_RECENT_CHANGE           = props.getProperty("STATEMENT_INSERT_RECENT_CHANGE");
 		STATEMENT_INSERT_RECENT_CHANGES          = props.getProperty("STATEMENT_INSERT_RECENT_CHANGES");
 		STATEMENT_INSERT_ROLE                    = props.getProperty("STATEMENT_INSERT_ROLE");
-		STATEMENT_INSERT_ROLE_MAP                = props.getProperty("STATEMENT_INSERT_ROLE_MAP");
 		STATEMENT_INSERT_TOPIC                   = props.getProperty("STATEMENT_INSERT_TOPIC");
 		STATEMENT_INSERT_TOPIC_VERSION           = props.getProperty("STATEMENT_INSERT_TOPIC_VERSION");
 		STATEMENT_INSERT_USER                    = props.getProperty("STATEMENT_INSERT_USER");
@@ -574,16 +554,16 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_INSERT_WIKI_FILE               = props.getProperty("STATEMENT_INSERT_WIKI_FILE");
 		STATEMENT_INSERT_WIKI_FILE_VERSION       = props.getProperty("STATEMENT_INSERT_WIKI_FILE_VERSION");
 		STATEMENT_INSERT_WIKI_USER               = props.getProperty("STATEMENT_INSERT_WIKI_USER");
+		STATEMENT_SELECT_AUTHORITIES_AUTHORITY   = props.getProperty("STATEMENT_SELECT_AUTHORITIES_AUTHORITY");
+		STATEMENT_SELECT_AUTHORITIES_LOGIN       = props.getProperty("STATEMENT_SELECT_AUTHORITIES_LOGIN");
+		STATEMENT_SELECT_AUTHORITIES_USER        = props.getProperty("STATEMENT_SELECT_AUTHORITIES_USER");
 		STATEMENT_SELECT_CATEGORIES              = props.getProperty("STATEMENT_SELECT_CATEGORIES");
 		STATEMENT_SELECT_CATEGORY_TOPICS         = props.getProperty("STATEMENT_SELECT_CATEGORY_TOPICS");
+		STATEMENT_SELECT_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_SELECT_GROUP_AUTHORITIES");
+		STATEMENT_SELECT_GROUPS_AUTHORITIES      = props.getProperty("STATEMENT_SELECT_GROUPS_AUTHORITIES");
 		STATEMENT_SELECT_GROUP_SEQUENCE          = props.getProperty("STATEMENT_SELECT_GROUP_SEQUENCE");
 		STATEMENT_SELECT_RECENT_CHANGES          = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES");
 		STATEMENT_SELECT_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_SELECT_RECENT_CHANGES_TOPIC");
-		STATEMENT_SELECT_ROLE_MAP_GROUP          = props.getProperty("STATEMENT_SELECT_ROLE_MAP_GROUP");
-		STATEMENT_SELECT_ROLE_MAP_GROUPS         = props.getProperty("STATEMENT_SELECT_ROLE_MAP_GROUPS");
-		STATEMENT_SELECT_ROLE_MAP_LOGIN          = props.getProperty("STATEMENT_SELECT_ROLE_MAP_LOGIN");
-		STATEMENT_SELECT_ROLE_MAP_ROLE           = props.getProperty("STATEMENT_SELECT_ROLE_MAP_ROLE");
-		STATEMENT_SELECT_ROLE_MAP_USER           = props.getProperty("STATEMENT_SELECT_ROLE_MAP_USER");
 		STATEMENT_SELECT_ROLES                   = props.getProperty("STATEMENT_SELECT_ROLES");
 		STATEMENT_SELECT_TOPIC_BY_TYPE           = props.getProperty("STATEMENT_SELECT_TOPIC_BY_TYPE");
 		STATEMENT_SELECT_TOPIC_COUNT             = props.getProperty("STATEMENT_SELECT_TOPIC_COUNT");
@@ -689,31 +669,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertRoleMap(String username, int userId, int groupId, String role, Connection conn) throws Exception {
-		this.validateRoleMap(role);
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_ROLE_MAP);
-		stmt.setString(1, role);
-		if (userId > 0) {
-			stmt.setInt(2, userId);
-		} else {
-			stmt.setNull(2, Types.INTEGER);
-		}
-		if (groupId > 0) {
-			stmt.setInt(3, groupId);
-		} else {
-			stmt.setNull(3, Types.INTEGER);
-		}
-		stmt.executeUpdate(conn);
+	public void insertRoleMap(String username, int groupId, String authority, Connection conn) throws Exception {
+		this.validateRoleMap(authority);
 		if (username != null) {
-			stmt = new WikiPreparedStatement(STATEMENT_INSERT_AUTHORITY);
+			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_AUTHORITY);
 			stmt.setString(1, username);
-			stmt.setString(2, role);
+			stmt.setString(2, authority);
 			stmt.executeUpdate(conn);
 		}
 		if (groupId != -1) {
-			stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
+			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
 			stmt.setInt(1, groupId);
-			stmt.setString(2, role);
+			stmt.setString(2, authority);
 			stmt.executeUpdate(conn);
 		}
 	}

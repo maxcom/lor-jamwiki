@@ -87,7 +87,16 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_TABLE, conn);
 			messages.add("Added jam_role table");
 			// create jam_role_map table
-			DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_ROLE_MAP_TABLE, conn);
+			String sql = "CREATE TABLE jam_role_map ( "
+			           + "role_name VARCHAR(30) NOT NULL, "
+			           + "wiki_user_id INTEGER, "
+			           + "group_id INTEGER, "
+			           + "CONSTRAINT jam_u_rmap UNIQUE (role_name, wiki_user_id, group_id), "
+			           + "CONSTRAINT jam_f_rmap_role FOREIGN KEY (role_name) REFERENCES jam_role(role_name), "
+			           + "CONSTRAINT jam_f_rmap_wuser FOREIGN KEY (wiki_user_id) REFERENCES jam_wiki_user(wiki_user_id), "
+			           + "CONSTRAINT jam_f_rmap_group FOREIGN KEY (group_id) REFERENCES jam_group(group_id) "
+			           + ") ";
+			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_role_map table");
 			// setup basic roles
 			WikiDatabase.setupRoles(conn);
@@ -96,7 +105,6 @@ public class DatabaseUpgrades {
 			WikiDatabase.setupGroups(conn);
 			messages.add("Added basic wiki groups.");
 			// convert old-style admins to new
-			String sql = null;
 			// assign admins all permissions during upgrades just to be safe.  for
 			// new installs it is sufficient just to give them the basics
 			Role[] adminRoles = {Role.ROLE_ADMIN, Role.ROLE_EDIT_EXISTING, Role.ROLE_EDIT_NEW, Role.ROLE_MOVE, Role.ROLE_SYSADMIN, Role.ROLE_TRANSLATE, Role.ROLE_UPLOAD, Role.ROLE_VIEW};
@@ -137,7 +145,7 @@ public class DatabaseUpgrades {
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			try {
-				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_MAP_TABLE);
+				DatabaseConnection.executeUpdate("drop table jam_role_map");
 			} catch (Exception ex) {}
 			try {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_DROP_ROLE_TABLE);
@@ -329,6 +337,9 @@ public class DatabaseUpgrades {
 				+ "where jam_group.group_id = jam_role_map.group_id ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_group_authorities table");
+			sql = "drop table jam_role_map ";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Dropped the jam_role_map table");
 			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
 			} else {

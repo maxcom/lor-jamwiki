@@ -96,12 +96,11 @@ public interface QueryHandler {
 	 * Delete all role records for a specific user.
 	 *
 	 * @param username The username for which role records are being deleted.
-	 * @param userId The user id for which role records are being deleted.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void deleteRoleMapUser(String username, int userId, Connection conn) throws Exception;
+	void deleteRoleMapUser(String username, Connection conn) throws Exception;
 
 	/**
 	 * Delete all categories associated with a topic.
@@ -241,13 +240,13 @@ public interface QueryHandler {
 	 * Retrieve a WikiResultSet of user ids, group ids and role names for
 	 * all users and groups who have been assigned the specified role.
 	 *
-	 * @param roleName The name of the role being queried against.
+	 * @param authority The name of the role being queried against.
 	 * @return A WikiResultSet of user ids, group ids and role names for all
 	 *  users and groups who have been assigned the specified role, or an
 	 *  empty WikiResultSet if no matches are found.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	WikiResultSet getRoleMapByRole(String roleName) throws Exception;
+	WikiResultSet getRoleMapByRole(String authority) throws Exception;
 
 	/**
 	 * Retrieve a WikiResultSet containing all roles assigned to a given group.
@@ -402,16 +401,14 @@ public interface QueryHandler {
 	 *
 	 * @param username The username for the user being assigned a role, or null
 	 *  if a group is being assigned a role.
-	 * @param userId The user id for the user being assigned a role, or -1 if
-	 *  a group is being assigned a role.
 	 * @param groupId The group id for the group being assigned a role, or -1
 	 *  if a user is being assigned a role.
-	 * @param role The role name for the role being assigned.
+	 * @param authority The role name for the role being assigned.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void insertRoleMap(String username, int userId, int groupId, String role, Connection conn) throws Exception;
+	void insertRoleMap(String username, int groupId, String authority, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic record to the database.  The topic must not already exist

@@ -331,7 +331,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(String username, int userId, List roles, Object transactionObject) throws Exception {
+	public void writeRoleMapUser(String username, List roles, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
