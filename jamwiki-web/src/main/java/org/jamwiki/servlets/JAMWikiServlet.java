@@ -94,17 +94,17 @@ public abstract class JAMWikiServlet extends AbstractController {
 	 */
 	private LinkedHashMap buildTabMenu(HttpServletRequest request, WikiPageInfo pageInfo) {
 		LinkedHashMap links = new LinkedHashMap();
-		WikiUserDetails user = ServletUtil.currentUserDetails();
+		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		String pageName = pageInfo.getTopicName();
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		try {
 			if (pageInfo.getAdmin()) {
-				if (user.hasRole(Role.ROLE_SYSADMIN)) {
+				if (userDetails.hasRole(Role.ROLE_SYSADMIN)) {
 					links.put("Special:Admin", new WikiMessage("tab.admin.configuration"));
 					links.put("Special:Maintenance", new WikiMessage("tab.admin.maintenance"));
 					links.put("Special:Roles", new WikiMessage("tab.admin.roles"));
 				}
-				if (user.hasRole(Role.ROLE_TRANSLATE)) {
+				if (userDetails.hasRole(Role.ROLE_TRANSLATE)) {
 					links.put("Special:Translation", new WikiMessage("tab.admin.translations"));
 				}
 			} else if (pageInfo.getSpecial()) {
@@ -119,7 +119,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				String comments = WikiUtil.extractCommentsLink(pageName);
 				links.put(article, new WikiMessage("tab.common.article"));
 				links.put(comments, new WikiMessage("tab.common.comments"));
-				if (ServletUtil.isEditable(virtualWiki, pageName, user)) {
+				if (ServletUtil.isEditable(virtualWiki, pageName, userDetails)) {
 					String editLink = "Special:Edit?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					if (!StringUtils.isBlank(request.getParameter("topicVersionId"))) {
 						editLink += "&topicVersionId=" + request.getParameter("topicVersionId");
@@ -128,11 +128,11 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				String historyLink = "Special:History?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(historyLink, new WikiMessage("tab.common.history"));
-				if (ServletUtil.isMoveable(virtualWiki, pageName, user)) {
+				if (ServletUtil.isMoveable(virtualWiki, pageName, userDetails)) {
 					String moveLink = "Special:Move?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(moveLink, new WikiMessage("tab.common.move"));
 				}
-				if (user.hasRole(Role.ROLE_USER)) {
+				if (userDetails.hasRole(Role.ROLE_USER)) {
 					Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 					boolean watched = (watchlist.containsTopic(pageName));
 					String watchlistLabel = (watched) ? "tab.common.unwatch" : "tab.common.watch";
@@ -146,7 +146,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 				}
 				String linkToLink = "Special:LinkTo?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 				links.put(linkToLink, new WikiMessage("tab.common.links"));
-				if (user.hasRole(Role.ROLE_ADMIN)) {
+				if (userDetails.hasRole(Role.ROLE_ADMIN)) {
 					String manageLink = "Special:Manage?topic=" + Utilities.encodeAndEscapeTopicName(pageName);
 					links.put(manageLink, new WikiMessage("tab.common.manage"));
 				}
@@ -240,6 +240,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 			next = this.handleJAMWikiRequest(request, response, next, pageInfo);
 			if (next != null && this.layout) {
 				this.loadLayout(request, next, pageInfo);
+				next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 			}
 		} catch (Throwable t) {
 			return this.viewError(request, t);
@@ -285,7 +286,6 @@ public abstract class JAMWikiServlet extends AbstractController {
 		}
 		pageInfo.setUserMenu(this.buildUserMenu(pageInfo));
 		pageInfo.setTabMenu(this.buildTabMenu(request, pageInfo));
-		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 	}
 
 	/**
@@ -315,6 +315,7 @@ public abstract class JAMWikiServlet extends AbstractController {
 		} catch (Exception err) {
 			logger.severe("Unable to load default layout", err);
 		}
+		next.addObject(ServletUtil.PARAMETER_PAGE_INFO, pageInfo);
 		return next;
 	}
 }
