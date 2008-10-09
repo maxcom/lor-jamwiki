@@ -19,16 +19,17 @@ package org.jamwiki.authentication;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiGroup;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 
 /**
  * 
@@ -37,10 +38,6 @@ public class WikiUserDetails implements UserDetails {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetails.class.getName());
 	private static final long serialVersionUID = -2818435399240684581L;
-	/** Default roles for anonymous users */
-	private static Role[] anonymousGroupRoles = null;
-	/** Default roles for logged-in users */
-	private static Role[] defaultGroupRoles = null;
 	private String username = null;
 	private String password = null;
 
@@ -137,8 +134,23 @@ public class WikiUserDetails implements UserDetails {
 		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
 			return;
 		}
-		this.addDefaultGroupRoles();
-		this.addUserRoles();
+		// add roles given to all users
+		if (JAMWikiAuthenticationConfiguration.getDefaultGroupRoles() != null) {
+			this.addRoles(JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+		}
+		// add roles specific to this user
+		Role[] userRoles = new Role[0];
+		if (!StringUtils.isBlank(this.getUsername())) {
+			// FIXME - log error for blank username?  RegisterServlet will trigger that.
+			try {
+				userRoles = WikiBase.getDataHandler().getRoleMapUser(this.getUsername());
+			} catch (Exception e) {
+				// FIXME - without default roles bad things happen, so should this throw the
+				// error to the calling method?
+				logger.severe("Unable to retrieve default roles for " + this.getUsername(), e);
+			}
+		}
+		this.addRoles(userRoles);
 	}
 
 	/**
@@ -218,74 +230,6 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
-	 *
-	 */
-	private void addAnonymousGroupRoles() {
-		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
-			// wiki is not yet setup
-			return;
-		}
-		this.setAuthorities(WikiUserDetails.getAnonymousGroupRoles());
-	}
-
-	/**
-	 *
-	 */
-	private void addDefaultGroupRoles() {
-		if (WikiUserDetails.defaultGroupRoles == null) {
-			try {
-				WikiUserDetails.defaultGroupRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_REGISTERED_USER);
-			} catch (Exception e) {
-				// FIXME - without default roles bad things happen, so should this throw the
-				// error to the calling method?
-				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_REGISTERED_USER, e);
-				return;
-			}
-		}
-		this.addRoles(WikiUserDetails.defaultGroupRoles);
-	}
-
-	/**
-	 *
-	 */
-	private void addUserRoles() {
-		if (StringUtils.isBlank(this.getUsername())) {
-			// FIXME - log error?  RegisterServlet will trigger this.
-			return;
-		}
-		Role[] userRoles = new Role[0];
-		try {
-			userRoles = WikiBase.getDataHandler().getRoleMapUser(this.getUsername());
-		} catch (Exception e) {
-			// FIXME - without default roles bad things happen, so should this throw the
-			// error to the calling method?
-			logger.severe("Unable to retrieve default roles for " + this.getUsername(), e);
-		}
-		this.addRoles(userRoles);
-	}
-
-	/**
-	 *
-	 */
-	public static Role[] getAnonymousGroupRoles() {
-		if (WikiUserDetails.anonymousGroupRoles == null) {
-			try {
-				Role[] tempRoles = WikiBase.getDataHandler().getRoleMapGroup(WikiGroup.GROUP_ANONYMOUS);
-				WikiUserDetails.anonymousGroupRoles = new Role[tempRoles.length + 1];
-				WikiUserDetails.anonymousGroupRoles[0] = Role.ROLE_ANONYMOUS;
-				for (int i = 0; i < tempRoles.length; i++) {
-					WikiUserDetails.anonymousGroupRoles[i + 1] = tempRoles[i];
-				}
-			} catch (Exception e) {
-				// FIXME - without default roles bad things happen, so should this throw the
-				// error to the calling method?
-				logger.severe("Unable to retrieve default roles for " + WikiGroup.GROUP_ANONYMOUS, e);
-			}
-		}
-		return WikiUserDetails.anonymousGroupRoles;
-	}
-
-	/**
 	 * Convenience method for determining if a user has been assigned a role
 	 * without the need to examine an array of Role objects.
 	 *
@@ -300,16 +244,6 @@ public class WikiUserDetails implements UserDetails {
 			return false;
 		}
 		return Arrays.asList(authorities).contains(role);
-	}
-
-	/**
-	 * This method is a (hopefully) temporary workaround for an annoying issue where a user
-	 * can be auto-logged in without a user name.
-	 */
-	public static WikiUserDetails initAnonymousWikiUserDetails() {
-		WikiUserDetails user = new WikiUserDetails();
-		user.addAnonymousGroupRoles();
-		return user;
 	}
 
 	/**
@@ -334,28 +268,13 @@ public class WikiUserDetails implements UserDetails {
 		if (auth == null) {
 			throw new AuthenticationCredentialsNotFoundException("No authentication credential available");
 		}
-		if (auth.getPrincipal() instanceof WikiUserDetails) {
-			// logged-in user
-			return (WikiUserDetails)auth.getPrincipal();
+		if (auth instanceof AnonymousAuthenticationToken || !(auth.getPrincipal() instanceof WikiUserDetails)) {
+			// anonymous user
+			WikiUserDetails user = new WikiUserDetails();
+			user.setAuthorities(auth.getAuthorities());
+			return user;
 		}
-		WikiUserDetails user = new WikiUserDetails();
-		user.setAuthorities(auth.getAuthorities());
-		return user;
-	}
-
-	/**
-	 * Force a reset of the default role object.  This method should be called
-	 * if the roles allowed to anonymous users are changed.
-	 */
-	public static void resetAnonymousGroupRoles() {
-		WikiUserDetails.anonymousGroupRoles = null;
-	}
-
-	/**
-	 * Force a reset of the default logged-in users roles.  This method should
-	 * be called if the roles allowed to logged-in users are changed.
-	 */
-	public static void resetDefaultGroupRoles() {
-		WikiUserDetails.defaultGroupRoles = null;
+		// logged-in (or remembered) user
+		return (WikiUserDetails)auth.getPrincipal();
 	}
 }

@@ -31,6 +31,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.db.WikiDatabase;
 import org.jamwiki.model.Role;
@@ -162,8 +163,8 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				WikiUser user = ServletUtil.currentWikiUser();
 				WikiBase.reset(request.getLocale(), user);
-				WikiUserDetails.resetAnonymousGroupRoles();
-				WikiUserDetails.resetDefaultGroupRoles();
+				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
 			}
 		} catch (Exception e) {
@@ -297,8 +298,8 @@ public class AdminServlet extends JAMWikiServlet {
 				}
 				WikiUser user = ServletUtil.currentWikiUser();
 				WikiBase.reset(request.getLocale(), user);
-				WikiUserDetails.resetAnonymousGroupRoles();
-				WikiUserDetails.resetDefaultGroupRoles();
+				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));
 			}
 		} catch (Exception e) {

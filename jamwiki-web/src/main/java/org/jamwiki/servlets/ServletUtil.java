@@ -62,7 +62,6 @@ import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.context.SecurityContext;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -165,7 +164,7 @@ public class ServletUtil {
 	 * @return The current logged-in <code>WikiUser</code>, or an empty WikiUser if
 	 *  there is no user currently logged in.
 	 */
-	public static WikiUser currentWikiUser() {
+	public static WikiUser currentWikiUser() throws AuthenticationCredentialsNotFoundException {
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		WikiUser user = new WikiUser();
 		String username = userDetails.getUsername();
@@ -174,10 +173,14 @@ public class ServletUtil {
 		}
 		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
 			try {
+				// FIXME - do not lookup the user every time this method is called, that will kill performance
 				user = WikiBase.getDataHandler().lookupWikiUser(username, null);
 				if (user == null) {
+					// invalid user.  someone has either spoofed a cookie or the user account is no longer in
+					// the database.
 					logger.warning("No user exists for principal found in security context authentication: " + username);
-					user = new WikiUser();
+					SecurityContextHolder.clearContext();
+					throw new AuthenticationCredentialsNotFoundException("Invalid user credentials found - username " + username + " does not exist in this wiki installation");
 				}
 			} catch (Exception e) {
 				logger.severe("Failure while retrieving user from database with login: " + username, e);
@@ -199,25 +202,8 @@ public class ServletUtil {
 	 *  credentials are unavailable.
 	 */
 	public static WikiUserDetails currentUserDetails() throws AuthenticationCredentialsNotFoundException {
-		SecurityContext ctx = SecurityContextHolder.getContext();
-		Authentication auth = ctx.getAuthentication();
-		// FIXME - hopefully this workaround is unneeded after Spring Security 2.0 upgrade
-		// this conditional is a workaround for a bug that's proving difficult to track down.
-		// the problem is that the authentication credential returned has the proper
-		// authorities, but a null username.  the steps to reproduce:
-		//   1. login with the remember me cookie set.
-		//   2. restart the app server.
-		//   3. reload a wiki page while the app server is restarting.
-		//   4. once the app server restarts the user name will be null.
-		WikiUserDetails user = null;
-		if (auth != null) {
-			user = WikiUserDetails.initWikiUserDetails(auth);
-		}
-		if (user == null || (user.hasRole(Role.ROLE_USER) && StringUtils.isBlank(user.getUsername()))) {
-			SecurityContextHolder.clearContext();
-			return WikiUserDetails.initAnonymousWikiUserDetails();
-		}
-		return user;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return WikiUserDetails.initWikiUserDetails(auth);
 	}
 
 	/**

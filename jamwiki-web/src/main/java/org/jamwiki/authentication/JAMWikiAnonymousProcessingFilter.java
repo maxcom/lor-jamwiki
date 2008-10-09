@@ -25,15 +25,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 
 /**
- * This class allows anonymous users to be provided default roles from the
- * JAMWiki database.
+ * This filter is called immediately after the Spring Security AnonymousProcessingFilter
+ * and adds all configured anonymous user roles to the user request if the current
+ * user is an anonymous user.
  */
 public class JAMWikiAnonymousProcessingFilter implements Filter, InitializingBean {
 
@@ -62,17 +63,37 @@ public class JAMWikiAnonymousProcessingFilter implements Filter, InitializingBea
 		if (!(request instanceof HttpServletRequest)) {
 			throw new ServletException("HttpServletRequest required");
 		}
-		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
-			// only process authentication if wiki is fully setup
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			if (auth instanceof AnonymousAuthenticationToken) {
-				AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), WikiUserDetails.getAnonymousGroupRoles());
-				jamwikiAuth.setDetails(auth.getDetails());
-				jamwikiAuth.setAuthenticated(auth.isAuthenticated());
-				SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
-			}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth instanceof AnonymousAuthenticationToken) {
+			this.updateAnonymousAuthenticationToken(auth);
 		}
 		chain.doFilter(request, response);
+	}
+
+	/**
+	 *
+	 */
+	private void updateAnonymousAuthenticationToken(Authentication auth) {
+		// get arrays of existing Spring Security roles and JAMWiki anonymous user roles
+		GrantedAuthority[] springSecurityAnonymousAuthorities = auth.getAuthorities();
+		GrantedAuthority[] jamwikiAnonymousAuthorities = JAMWikiAuthenticationConfiguration.getJamwikiAnonymousAuthorities();
+		if (jamwikiAnonymousAuthorities == null) {
+			return;
+		}
+		// add these roles to a single array of authorities
+		int authoritySize = springSecurityAnonymousAuthorities.length + jamwikiAnonymousAuthorities.length;
+		GrantedAuthority[] anonymousAuthorities = new GrantedAuthority[authoritySize];
+		for (int i = 0; i < springSecurityAnonymousAuthorities.length; i++) {
+			anonymousAuthorities[i] = springSecurityAnonymousAuthorities[i];
+		}
+		for (int i = 0; i < jamwikiAnonymousAuthorities.length; i++) {
+			anonymousAuthorities[i + springSecurityAnonymousAuthorities.length] = jamwikiAnonymousAuthorities[i];
+		}
+		// replace the existing anonymous authentication object with the new authentication array
+		AnonymousAuthenticationToken jamwikiAuth = new AnonymousAuthenticationToken(this.getKey(), auth.getPrincipal(), anonymousAuthorities);
+		jamwikiAuth.setDetails(auth.getDetails());
+		jamwikiAuth.setAuthenticated(auth.isAuthenticated());
+		SecurityContextHolder.getContext().setAuthentication(jamwikiAuth);
 	}
 
 	/**

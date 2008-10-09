@@ -28,7 +28,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseUpgrades;
 import org.jamwiki.model.VirtualWiki;
 import org.jamwiki.model.WikiUser;
@@ -183,8 +183,8 @@ public class UpgradeServlet extends JAMWikiServlet {
 			// necessary because the upgrade may have changed underlying data structures.
 			SecurityContextHolder.clearContext();
 			// force group permissions to reset
-			WikiUserDetails.resetDefaultGroupRoles();
-			WikiUserDetails.resetAnonymousGroupRoles();
+			JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
+			JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
 		} else {
 			next.addObject("error", new WikiMessage("upgrade.caption.upgradefailed"));
 			next.addObject("failure", "true");

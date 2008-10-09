@@ -29,10 +29,9 @@ import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.WikiVersion;
-import org.jamwiki.authentication.WikiUserDetails;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.db.DatabaseConnection;
 import org.jamwiki.db.WikiDatabase;
-import org.jamwiki.model.Role;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.Encryption;
 import org.jamwiki.utils.WikiLogger;
@@ -137,8 +136,8 @@ public class SetupServlet extends JAMWikiServlet {
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
 		WikiBase.reset(request.getLocale(), user);
-		WikiUserDetails.resetAnonymousGroupRoles();
-		WikiUserDetails.resetDefaultGroupRoles();
+		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
+		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		Environment.saveProperties();
 		// the setup process does not add new topics to the index (currently)
 		// TODO - remove this once setup uses safe connection handling
