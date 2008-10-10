@@ -22,7 +22,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
-import org.jamwiki.model.WikiGroup;
 import org.jamwiki.utils.WikiLogger;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.Authentication;
