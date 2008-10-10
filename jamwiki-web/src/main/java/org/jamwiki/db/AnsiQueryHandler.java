@@ -211,6 +211,15 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public void deleteGroupAuthorities(int groupId, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
+		stmt.setInt(1, groupId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
 	public void deleteRecentChanges(int topicId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_RECENT_CHANGES_TOPIC);
 		stmt.setInt(1, topicId);
@@ -220,27 +229,18 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void deleteRoleMapGroup(int groupId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
-		stmt.setInt(1, groupId);
-		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
-	public void deleteRoleMapUser(String username, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_AUTHORITIES);
-		stmt.setString(1, username);
-		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
 	public void deleteTopicCategories(int childTopicId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_TOPIC_CATEGORIES);
 		stmt.setInt(1, childTopicId);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void deleteUserAuthorities(String username, Connection conn) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_AUTHORITIES);
+		stmt.setString(1, username);
 		stmt.executeUpdate(conn);
 	}
 
@@ -629,6 +629,17 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
+	public void insertGroupAuthority(int groupId, String authority, Connection conn) throws Exception {
+		this.validateAuthority(authority);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
+		stmt.setInt(1, groupId);
+		stmt.setString(2, authority);
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
 	public void insertRecentChange(RecentChange change, int virtualWikiId, Connection conn) throws Exception {
 		this.validateRecentChange(change);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_RECENT_CHANGE);
@@ -664,25 +675,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(1, role.getAuthority());
 		stmt.setString(2, role.getDescription());
 		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
-	public void insertRoleMap(String username, int groupId, String authority, Connection conn) throws Exception {
-		this.validateRoleMap(authority);
-		if (username != null) {
-			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_AUTHORITY);
-			stmt.setString(1, username);
-			stmt.setString(2, authority);
-			stmt.executeUpdate(conn);
-		}
-		if (groupId != -1) {
-			WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_GROUP_AUTHORITY);
-			stmt.setInt(1, groupId);
-			stmt.setString(2, authority);
-			stmt.executeUpdate(conn);
-		}
 	}
 
 	/**
@@ -746,6 +738,17 @@ public class AnsiQueryHandler implements QueryHandler {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_USER);
 		stmt.setString(1, user.getUsername());
 		stmt.setString(2, user.getPassword());
+		stmt.executeUpdate(conn);
+	}
+
+	/**
+	 *
+	 */
+	public void insertUserAuthority(String username, String authority, Connection conn) throws Exception {
+		this.validateAuthority(authority);
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_AUTHORITY);
+		stmt.setString(1, username);
+		stmt.setString(2, authority);
 		stmt.executeUpdate(conn);
 	}
 
@@ -1195,7 +1198,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected void validateRoleMap(String role) throws WikiException {
+	protected void validateAuthority(String role) throws WikiException {
 		checkLength(role, 30);
 	}
 

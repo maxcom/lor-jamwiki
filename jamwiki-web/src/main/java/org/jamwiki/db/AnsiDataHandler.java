@@ -1288,11 +1288,11 @@ public class AnsiDataHandler implements DataHandler {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().deleteRoleMapGroup(groupId, conn);
+			this.queryHandler().deleteGroupAuthorities(groupId, conn);
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				String role = (String)roleIterator.next();
-				this.queryHandler().insertRoleMap(null, groupId, role, conn);
+				this.queryHandler().insertGroupAuthority(groupId, role, conn);
 			}
 			// refresh the current role requirements
 			JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
@@ -1314,11 +1314,11 @@ public class AnsiDataHandler implements DataHandler {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
-			this.queryHandler().deleteRoleMapUser(username, conn);
+			this.queryHandler().deleteUserAuthorities(username, conn);
 			Iterator roleIterator = roles.iterator();
 			while (roleIterator.hasNext()) {
 				String role = (String)roleIterator.next();
-				this.queryHandler().insertRoleMap(username, -1, role, conn);
+				this.queryHandler().insertUserAuthority(username, role, conn);
 			}
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);

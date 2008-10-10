@@ -73,6 +73,16 @@ public interface QueryHandler {
 	void createTables(Connection conn) throws Exception;
 
 	/**
+	 * Delete all authorities for a specific group.
+	 *
+	 * @param groupId The group id for which authorities are being deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	void deleteGroupAuthorities(int groupId, Connection conn) throws Exception;
+
+	/**
 	 * Delete all records from the recent changes table for a specific topic.
 	 *
 	 * @param topicId The topic id for which recent changes are being deleted.
@@ -81,26 +91,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void deleteRecentChanges(int topicId, Connection conn) throws Exception;
-
-	/**
-	 * Delete all role records for a specific group.
-	 *
-	 * @param groupId The group id for which role records are being deleted.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	void deleteRoleMapGroup(int groupId, Connection conn) throws Exception;
-
-	/**
-	 * Delete all role records for a specific user.
-	 *
-	 * @param username The username for which role records are being deleted.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	void deleteRoleMapUser(String username, Connection conn) throws Exception;
 
 	/**
 	 * Delete all categories associated with a topic.
@@ -112,6 +102,16 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void deleteTopicCategories(int topicId, Connection conn) throws Exception;
+
+	/**
+	 * Delete all authorities for a specific user.
+	 *
+	 * @param username The username for which authorities are being deleted.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	void deleteUserAuthorities(String username, Connection conn) throws Exception;
 
 	/**
 	 * Delete a user's watchlist entry using the topic name to determine which
@@ -373,6 +373,19 @@ public interface QueryHandler {
 	void insertCategory(Category category, int virtualWikiId, Connection conn) throws Exception;
 
 	/**
+	 * Add a new authority for a specified group.  The group must not already have
+	 * this authority or else an error will be thrown.
+	 *
+	 * @param groupId The group id for the group being assigned a role, or -1
+	 *  if a user is being assigned a role.
+	 * @param authority The authority being assigned.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	void insertGroupAuthority(int groupId, String authority, Connection conn) throws Exception;
+
+	/**
 	 * Add a new recent change record to the database.
 	 *
 	 * @param change The RecentChange record that is to be added to the database.
@@ -393,22 +406,6 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void insertRole(Role role, Connection conn) throws Exception;
-
-	/**
-	 * Add a new role mapping for a specific user or group.  The role
-	 * mapping must not already exist in the database or else an error will
-	 * be thrown.
-	 *
-	 * @param username The username for the user being assigned a role, or null
-	 *  if a group is being assigned a role.
-	 * @param groupId The group id for the group being assigned a role, or -1
-	 *  if a user is being assigned a role.
-	 * @param authority The role name for the role being assigned.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	void insertRoleMap(String username, int groupId, String authority, Connection conn) throws Exception;
 
 	/**
 	 * Add a new topic record to the database.  The topic must not already exist
@@ -443,6 +440,19 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	void insertUser(WikiUser user, Connection conn) throws Exception;
+
+	/**
+	 * Add a new authority for a specified user.  The user must not already have
+	 * this authority or else an error will be thrown.
+	 *
+	 * @param username The username for the user being assigned a role, or null
+	 *  if a group is being assigned a role.
+	 * @param authority The authority being assigned.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	void insertUserAuthority(String username, String authority, Connection conn) throws Exception;
 
 	/**
 	 * Add a new virtual wiki record to the database.  The virtual wiki must
