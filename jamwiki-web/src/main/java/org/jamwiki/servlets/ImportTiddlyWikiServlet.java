@@ -70,7 +70,7 @@ public class ImportTiddlyWikiServlet extends JAMWikiServlet {
 		Iterator iterator = ServletUtil.processMultipartRequest(request, Environment.getValue(Environment.PROP_FILE_DIR_FULL_PATH), Environment.getLongValue(Environment.PROP_FILE_MAX_FILE_SIZE));
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		WikiUser user = ServletUtil.currentWikiUser();
-		if (!userDetails.hasRole(Role.ROLE_USER)) {
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			// FIXME - setting the user to null may not be necessary, but it is
 			// consistent with how the code behaved when ServletUtil.currentUserDetails()
 			// returned null for non-logged-in users

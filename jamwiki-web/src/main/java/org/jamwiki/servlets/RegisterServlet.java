@@ -202,7 +202,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	private void view(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		// FIXME - i suspect initializing with a null login is bad
 		WikiUser user = new WikiUser();
-		if (ServletUtil.currentUserDetails().hasRole(Role.ROLE_USER)) {
+		if (!ServletUtil.currentUserDetails().hasRole(Role.ROLE_ANONYMOUS)) {
 			user = ServletUtil.currentWikiUser();
 		}
 		this.loadDefaults(request, next, pageInfo, user);

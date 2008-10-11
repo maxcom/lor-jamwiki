@@ -158,7 +158,7 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
 				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-				if (!userDetails.hasRole(Role.ROLE_USER)) {
+				if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiUser user = ServletUtil.currentWikiUser();
@@ -293,7 +293,7 @@ public class AdminServlet extends JAMWikiServlet {
 				Environment.saveProperties();
 				// re-initialize to reset database settings (if needed)
 				WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-				if (!userDetails.hasRole(Role.ROLE_USER)) {
+				if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiUser user = ServletUtil.currentWikiUser();

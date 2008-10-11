@@ -147,7 +147,7 @@ public class ServletUtil {
 		}
 		String message = "SPAM found in topic " + topicName + " (";
 		WikiUserDetails user = ServletUtil.currentUserDetails();
-		if (user.hasRole(Role.ROLE_USER)) {
+		if (!user.hasRole(Role.ROLE_ANONYMOUS)) {
 			message += user.getUsername() + " / ";
 		}
 		message += ServletUtil.getIpAddress(request) + "): " + result;
@@ -226,7 +226,7 @@ public class ServletUtil {
 		// no watchlist in session, retrieve from database
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		Watchlist watchlist = new Watchlist();
-		if (!userDetails.hasRole(Role.ROLE_USER)) {
+		if (userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			return watchlist;
 		}
 		WikiUser user = ServletUtil.currentWikiUser();

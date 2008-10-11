@@ -318,7 +318,7 @@ public class EditServlet extends JAMWikiServlet {
 		WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
 		// update watchlist
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
-		if (userDetails.hasRole(Role.ROLE_USER)) {
+		if (!userDetails.hasRole(Role.ROLE_ANONYMOUS)) {
 			Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 			boolean watchTopic = (request.getParameter("watchTopic") != null);
 			if (watchlist.containsTopic(topicName) != watchTopic) {

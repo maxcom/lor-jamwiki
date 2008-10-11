@@ -86,7 +86,7 @@ document.writeln("</div>");
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="minorEdit"<c:if test="${minorEdit}"> checked</c:if> id="minorEdit" accesskey="i" />
 <label for="minorEdit"><f:message key="edit.caption.minor" /></label>
-<security:authorize ifAllGranted="ROLE_USER">
+<security:authorize ifNotGranted="ROLE_ANONYMOUS">
 &nbsp;&nbsp;&nbsp;
 <input type="checkbox" value="true" name="watchTopic"<c:if test="${watchTopic}"> checked</c:if> id="watchTopic" accesskey="w" />
 <label for="watchTopic"><f:message key="edit.caption.watch" /></label>

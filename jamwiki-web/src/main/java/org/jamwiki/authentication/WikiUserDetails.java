@@ -39,13 +39,12 @@ public class WikiUserDetails implements UserDetails {
 	private static final long serialVersionUID = -2818435399240684581L;
 	private String username = null;
 	private String password = null;
-
 	/**
 	 * GrantedAuthority is used by Spring Security to support several authorities
-	 * (roles). A logged user always has ROLE_USER and may have other roles,
-	 * e.g. ROLE_ADMIN.
+	 * (roles). Anonymous users are assigned ROLE_ANONYMOUS by the Spring Security
+	 * filters.
 	 */
-	private GrantedAuthority[] authorities = {Role.ROLE_USER};
+	private GrantedAuthority[] authorities = {};
 
 	/**
 	 *
