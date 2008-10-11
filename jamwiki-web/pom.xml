@@ -127,6 +127,7 @@
 					<source>1.4</source>
 					<target>1.4</target>
 					<encoding>ISO-8859-1</encoding>
+					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 			<plugin>
