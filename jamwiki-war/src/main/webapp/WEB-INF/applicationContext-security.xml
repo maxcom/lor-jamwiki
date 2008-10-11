@@ -18,9 +18,18 @@
 	by the JAMWikiAnonymousProcessingFilter.
 	-->
 	<http auto-config="false" entry-point-ref="authenticationEntryPoint">
+		<!--
+		The intercept-url element defines the roles or authentication states that are required
+		to access a URL path.  Roles should be comma-delimited.  To restrict pages by user type
+		instead of user role the following values can be used:
+		  * IS_AUTHENTICATED_ANONYMOUSLY - Allow access to any user.
+		  * IS_AUTHENTICATED_REMEMBERED - Allow access to logged-in users or users with a "remember me" cookie.
+		  * IS_AUTHENTICATED_FULLY - Allow access to logged-in users.
+		To remove all Spring Security processing from a page use the filters="none" attribute.
+		-->
 		<intercept-url pattern="/**/Special:Admin" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Edit" access="ROLE_EDIT_EXISTING,ROLE_EDIT_NEW" />
-		<intercept-url pattern="/**/Special:Login" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:Login" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />
 		<intercept-url pattern="/**/Special:Move" access="ROLE_MOVE" />
