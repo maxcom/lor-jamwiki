@@ -7,7 +7,7 @@
 
 	<target name="test">
 
-		<webtest name="check admin login - login as admin and add email, display name ...">
+		<webtest name="login as admin and add email, display name ...">
 
 			<steps>
 
@@ -28,6 +28,9 @@
 				<clickLink label="${usermenu.account}"/>
 				<verifyText description="Verify that text is contained in the page"
 					text="${common.login}"/>
+				
+				<!-- you need to enter the password to edit or enter firstName! -->
+				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="nimda"/>
 
 				<setInputField htmlId="registerDisplayName" value="pepa"/>
 				<setInputField name="email" value="info@jamwiki.org"/>

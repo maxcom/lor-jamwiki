@@ -29,9 +29,9 @@
 				<verifyText description="Verify that text is contained in the page"
 					text="${common.login}"/>
 
-				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="nimda"/>
-				<setInputField description="Set password field newPassword: admin2" htmlId="registerNewPassword" value="admin2"/>
-				<setInputField description="Set password field confirmPassword: admin2" name="confirmPassword" value="admin2"/>
+				<setInputField description="Set password field oldPassword: nimda" htmlId="registerOldPassword" value="nimda2"/>
+				<setInputField description="Set password field newPassword: admin2" htmlId="registerNewPassword" value="admin"/>
+				<setInputField description="Set password field confirmPassword: admin2" name="confirmPassword" value="admin"/>
 
 				<clickButton label="${common.save}"/>
 				<verifyText description="Verify that text is contained in the page" text="StartingPoints"/>
