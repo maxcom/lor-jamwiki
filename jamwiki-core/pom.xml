@@ -74,9 +74,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<excludes>
-						<exclude>org/jamwiki/servlets/WikiPageInfoTest.java</exclude>
-					</excludes>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 				</configuration>
 			</plugin>
 			<plugin>
