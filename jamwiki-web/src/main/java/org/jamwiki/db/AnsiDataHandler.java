@@ -64,14 +64,14 @@ public class AnsiDataHandler implements DataHandler {
 	private static final String CACHE_TOPICS = "org.jamwiki.db.AnsiDataHandler.CACHE_TOPICS";
 	private static final String CACHE_VIRTUAL_WIKI = "org.jamwiki.db.AnsiDataHandler.CACHE_VIRTUAL_WIKI";
 	private static final WikiLogger logger = WikiLogger.getLogger(AnsiDataHandler.class.getName());
-	
+
 	// some constants
 	public static final String DATA_TOPIC_NAME = "topic_name";
 	public static final String DATA_WIKI_USER_ID = "wiki_user_id" ;
 	public static final String DATA_GROUP_ID = "group_id";
 	public static final String DATA_CATEGORY_NAME = "category_name";
 	public static final String DATA_TOPIC_ID = "topic_id";
-	
+
 	private final QueryHandler queryHandler = new AnsiQueryHandler();
 
 	/**
@@ -80,6 +80,14 @@ public class AnsiDataHandler implements DataHandler {
 	private void addCategory(Category category, Connection conn) throws Exception {
 		int virtualWikiId = this.lookupVirtualWikiId(category.getVirtualWiki());
 		this.queryHandler().insertCategory(category, virtualWikiId, conn);
+	}
+
+	/**
+	 *
+	 */
+	private void addGroupMember(String username, int groupId, Connection conn) throws Exception {
+		int groupMemberId = this.queryHandler().nextGroupMemberId(conn);
+		this.queryHandler().insertGroupMember(groupMemberId, username, groupId, conn);
 	}
 
 	/**
@@ -229,6 +237,13 @@ public class AnsiDataHandler implements DataHandler {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 *
+	 */
+	private void deleteGroupMember(String username, int groupId, Connection conn) throws Exception {
+		this.queryHandler().deleteGroupMember(username, groupId, conn);
 	}
 
 	/**
@@ -735,6 +750,22 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	private WikiGroup initWikiGroup(WikiResultSet rs) {
+		try {
+			WikiGroup wikiGroup = new WikiGroup();
+			wikiGroup.setGroupId(rs.getInt("group_id"));
+			wikiGroup.setName(rs.getString("group_name"));
+			wikiGroup.setDescription(rs.getString("group_description"));
+			return wikiGroup;
+		} catch (Exception e) {
+			logger.severe("Failure while initializing group", e);
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 */
 	private WikiUser initWikiUser(WikiResultSet rs) {
 		try {
 			String username = rs.getString("login");
@@ -875,7 +906,7 @@ public class AnsiDataHandler implements DataHandler {
 			throw err;
 		}
 		DatabaseConnection.commit(status);
-		return result;	
+		return result;
 	}
 
 	/**
@@ -952,6 +983,14 @@ public class AnsiDataHandler implements DataHandler {
 		int virtualWikiId = this.lookupVirtualWikiId(virtualWiki);
 		WikiResultSet rs = this.queryHandler().lookupWikiFileCount(virtualWikiId);
 		return rs.getInt("file_count");
+	}
+
+	/**
+	 *
+	 */
+	public WikiGroup lookupWikiGroup(String groupName) throws Exception {
+		WikiResultSet rs = this.queryHandler().lookupWikiGroup(groupName);
+		return (rs.size() == 0) ? null : initWikiGroup(rs);
 	}
 
 	/**
@@ -1503,6 +1542,8 @@ public class AnsiDataHandler implements DataHandler {
 			if (user.getUserId() <= 0) {
 				this.addUser(user, conn);
 				this.addWikiUser(user, conn);
+				// add all users to the registered user group
+				this.addGroupMember(user.getUsername(), WikiBase.getGroupRegisteredUser().getGroupId(), conn);
 			} else {
 				this.updateUser(user, conn);
 				this.updateWikiUser(user, conn);

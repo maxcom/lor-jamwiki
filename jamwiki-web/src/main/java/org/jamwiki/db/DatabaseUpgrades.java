@@ -18,6 +18,7 @@ package org.jamwiki.db;
 
 import java.sql.Connection;
 import java.util.Vector;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiBase;
@@ -343,6 +344,21 @@ public class DatabaseUpgrades {
 				DatabaseConnection.executeUpdate(MySqlQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
 			} else {
 				DatabaseConnection.executeUpdate(AnsiQueryHandler.STATEMENT_CREATE_GROUP_MEMBERS_TABLE, conn);
+			}
+			sql = "select group_id from jam_group where group_name = '" + WikiGroup.GROUP_REGISTERED_USER + "'";
+			WikiResultSet rs = DatabaseConnection.executeQuery(sql, conn);
+			int groupId = rs.getInt("group_id");
+			sql = "select username from jam_users ";
+			rs = DatabaseConnection.executeQuery(sql, conn);
+			int id = 1;
+			while (rs.next()) {
+				sql = "insert into jam_group_members ( "
+				    +   "id, username, group_id "
+				    + ") values ( "
+				    +   id + ", '" + StringEscapeUtils.escapeSql(rs.getString("username")) + "', " + groupId
+				    + ") ";
+				DatabaseConnection.executeUpdate(sql, conn);
+				id++;
 			}
 			messages.add("Added jam_group_members table");
 			sql = "drop table jam_wiki_user_info";

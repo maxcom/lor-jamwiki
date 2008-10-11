@@ -416,6 +416,16 @@ public interface DataHandler {
 	int lookupWikiFileCount(String virtualWiki) throws Exception;
 
 	/**
+	 * Retrieve a WikiGroup object for a given group name.
+	 *
+	 * @param groupName The group name for the group being queried.
+	 * @return The WikiGroup object for the given group name, or
+	 *  <code>null</code> if no matching group exists.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	WikiGroup lookupWikiGroup(String groupName) throws Exception;
+
+	/**
 	 * Retrieve a WikiUser object matching a given user ID.
 	 *
 	 * @param userId The ID of the WikiUser being retrieved.

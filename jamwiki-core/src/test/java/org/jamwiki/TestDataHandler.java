@@ -240,6 +240,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public WikiGroup lookupWikiGroup(String groupName) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}

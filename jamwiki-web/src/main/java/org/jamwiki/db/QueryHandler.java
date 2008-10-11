@@ -83,6 +83,17 @@ public interface QueryHandler {
 	void deleteGroupAuthorities(int groupId, Connection conn) throws Exception;
 
 	/**
+	 * Remove a user from a group.
+	 *
+	 * @param username The username for the user being removed from the group.
+	 * @param groupId The group id for the group from which the user is being removed.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	public void deleteGroupMember(String username, int groupId, Connection conn) throws Exception;
+
+	/**
 	 * Delete all records from the recent changes table for a specific topic.
 	 *
 	 * @param topicId The topic id for which recent changes are being deleted.
@@ -386,6 +397,18 @@ public interface QueryHandler {
 	void insertGroupAuthority(int groupId, String authority, Connection conn) throws Exception;
 
 	/**
+	 * Add a user to a group.
+	 *
+	 * @param groupMemberId A unique ID for the group membership record.
+	 * @param username The username for the user being added to the group.
+	 * @param groupId The group ID for the group.
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	void insertGroupMember(int groupMemberId, String username, int groupId, Connection conn) throws Exception;
+
+	/**
 	 * Add a new recent change record to the database.
 	 *
 	 * @param change The RecentChange record that is to be added to the database.
@@ -619,6 +642,15 @@ public interface QueryHandler {
 	WikiResultSet lookupWikiFileCount(int virtualWikiId) throws Exception;
 
 	/**
+	 * Retrieve a result set containing group information given the name of the group.
+	 *
+	 * @param groupName The name of the group being retrieved.
+	 * @return A WikiResultSet containing the group information.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	WikiResultSet lookupWikiGroup(String groupName) throws Exception;
+
+	/**
 	 * Retrieve a result set containing all user information for a given WikiUser.
 	 *
 	 * @param userId The id of the user record being retrieved.
@@ -657,6 +689,16 @@ public interface QueryHandler {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception;
+
+	/**
+	 * Retrieve the next available group member id from the group members table.
+	 *
+	 * @param conn A database connection to use when connecting to the database
+	 *  from this method.
+	 * @return The next available group member id from the group members table.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	int nextGroupMemberId(Connection conn) throws Exception;
 
 	/**
 	 * Retrieve the next available topic id from the topic table.

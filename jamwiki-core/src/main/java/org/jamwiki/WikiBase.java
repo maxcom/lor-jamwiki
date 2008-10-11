@@ -17,6 +17,7 @@
 package org.jamwiki;
 
 import java.util.Locale;
+import org.jamwiki.model.WikiGroup;
 import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiUtil;
 import org.jamwiki.utils.WikiCache;
@@ -66,6 +67,10 @@ public class WikiBase {
 	/** Name of the default wiki */
 	// FIXME - make this configurable
 	public static final String DEFAULT_VWIKI = "en";
+	/** Default group for anonymous users. */
+	private static WikiGroup GROUP_ANONYMOUS = null;
+	/** Default group for registered users. */
+	private static WikiGroup GROUP_REGISTERED_USER = null;
 	/** Data stored using an external database */
 	public static final String PERSISTENCE_EXTERNAL = "DATABASE";
 	/** Data stored using an internal copy of the HSQL database */
@@ -117,6 +122,40 @@ public class WikiBase {
 	 */
 	public static DataHandler getDataHandler() {
 		return WikiBase.dataHandler;
+	}
+
+	/**
+	 *
+	 */
+	public static WikiGroup getGroupAnonymous() {
+		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
+			throw new IllegalStateException("Cannot retrieve group information prior to completing setup/upgrade");
+		}
+		if (WikiBase.GROUP_ANONYMOUS == null) {
+			try {
+				WikiBase.GROUP_ANONYMOUS = WikiBase.getDataHandler().lookupWikiGroup(WikiGroup.GROUP_ANONYMOUS);
+			} catch (Exception e) {
+				throw new RuntimeException("Unable to retrieve anonymous users group", e);
+			}
+		}
+		return WikiBase.GROUP_ANONYMOUS;
+	}
+
+	/**
+	 *
+	 */
+	public static WikiGroup getGroupRegisteredUser() {
+		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
+			throw new IllegalStateException("Cannot retrieve group information prior to completing setup/upgrade");
+		}
+		if (WikiBase.GROUP_REGISTERED_USER == null) {
+			try {
+				WikiBase.GROUP_REGISTERED_USER = WikiBase.getDataHandler().lookupWikiGroup(WikiGroup.GROUP_REGISTERED_USER);
+			} catch (Exception e) {
+				throw new RuntimeException("Unable to retrieve registered users group", e);
+			}
+		}
+		return WikiBase.GROUP_REGISTERED_USER;
 	}
 
 	/**
