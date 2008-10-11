@@ -24,17 +24,17 @@
 		<intercept-url pattern="/**/Special:Maintenance" access="ROLE_SYSADMIN" />
 		<intercept-url pattern="/**/Special:Manage" access="ROLE_ADMIN" />
 		<intercept-url pattern="/**/Special:Move" access="ROLE_MOVE" />
-		<intercept-url pattern="/**/Special:RecentChangesFeed" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:RecentChangesFeed" filters="none" />
 		<intercept-url pattern="/**/Special:Roles" access="ROLE_SYSADMIN" />
-		<intercept-url pattern="/**/Special:Setup" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:Setup" filters="none" />
 		<intercept-url pattern="/**/Special:Translation" access="ROLE_TRANSLATE" />
 		<intercept-url pattern="/**/Special:Upload" access="ROLE_UPLOAD" />
-		<intercept-url pattern="/**/Special:Upgrade" access="ROLE_ANONYMOUS,ROLE_USER" />
-		<intercept-url pattern="/**/*.jsp" access="ROLE_ANONYMOUS,ROLE_USER" />
-		<intercept-url pattern="/**/*.css" access="ROLE_ANONYMOUS,ROLE_USER" />
-		<intercept-url pattern="/images/**" access="ROLE_ANONYMOUS,ROLE_USER" />
-		<intercept-url pattern="/js/**" access="ROLE_ANONYMOUS,ROLE_USER" />
-		<intercept-url pattern="/upload/**" access="ROLE_ANONYMOUS,ROLE_USER" />
+		<intercept-url pattern="/**/Special:Upgrade" filters="none" />
+		<intercept-url pattern="/**/*.jsp" filters="none" />
+		<intercept-url pattern="/**/*.css" filters="none" />
+		<intercept-url pattern="/images/**" filters="none" />
+		<intercept-url pattern="/js/**" filters="none" />
+		<intercept-url pattern="/upload/**" filters="none" />
 		<intercept-url pattern="/**" access="ROLE_VIEW" />
 		<remember-me key="jam35Wiki" user-service-ref="jamWikiAuthenticationDao" />
 		<anonymous key="jam35Wiki" />
