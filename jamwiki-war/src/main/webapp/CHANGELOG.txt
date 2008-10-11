@@ -19,6 +19,7 @@ New Features:
   * Login will now always take the user back to the page from which 'login' was
     clicked, as requested by many users and as implemented by Mediawiki.
   * Updated spam filter patterns.
+  * Upgrade to Lucene Search 2.4.0.
   * Upgrade to Spring Framework 2.5.5.
   * Upgrade to Spring Security 2.0.4.
 
