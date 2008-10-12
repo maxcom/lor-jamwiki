@@ -20,10 +20,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.WikiBase;
 import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
-import org.jamwiki.utils.WikiUtil;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.GrantedAuthority;
@@ -45,20 +43,15 @@ public class WikiUserDetails implements UserDetails {
 	 * filters.
 	 */
 	private GrantedAuthority[] authorities = {};
+	private boolean accountNonExpired = true;
+	private boolean accountNonLocked = true;
+	private boolean credentialsNonExpired = true;
+	private boolean enabled = true;
 
 	/**
 	 *
 	 */
 	private WikiUserDetails() {
-	}
-
-	/**
-	 *
-	 */
-	public WikiUserDetails(String username, String password) {
-		this.username = username;
-		this.password = password;
-		this.init();
 	}
 
 	/**
@@ -92,17 +85,15 @@ public class WikiUserDetails implements UserDetails {
 		}
 		this.setUsername(username);
 		this.setPassword(password);
-//		this.enabled = enabled;
-//		this.accountNonExpired = accountNonExpired;
-//		this.credentialsNonExpired = credentialsNonExpired;
-//		this.accountNonLocked = accountNonLocked;
+		this.enabled = enabled;
+		this.accountNonExpired = accountNonExpired;
+		this.credentialsNonExpired = credentialsNonExpired;
+		this.accountNonLocked = accountNonLocked;
 		if (authorities == null) {
 			authorities = new GrantedAuthority[0];
 		}
 		this.addRoles(authorities);
 	}
-
-	// Spring Security: UserDetails contract
 
 	/**
 	 * Returns granted authorites.
@@ -128,59 +119,29 @@ public class WikiUserDetails implements UserDetails {
 	/**
 	 *
 	 */
-	private void init() {
-		if (WikiUtil.isFirstUse() || WikiUtil.isUpgrade()) {
-			return;
-		}
-		// add roles given to all users
-		if (JAMWikiAuthenticationConfiguration.getDefaultGroupRoles() != null) {
-			this.addRoles(JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
-		}
-		// add roles specific to this user
-		Role[] userRoles = new Role[0];
-		if (!StringUtils.isBlank(this.getUsername())) {
-			// FIXME - log error for blank username?  RegisterServlet will trigger that.
-			try {
-				userRoles = WikiBase.getDataHandler().getRoleMapUser(this.getUsername());
-			} catch (Exception e) {
-				// FIXME - without default roles bad things happen, so should this throw the
-				// error to the calling method?
-				logger.severe("Unable to retrieve default roles for " + this.getUsername(), e);
-			}
-		}
-		this.addRoles(userRoles);
-	}
-
-	/**
-	 *
-	 */
 	public boolean isAccountNonExpired() {
-		// TODO Not yet implemented
-		return true;
+		return this.accountNonExpired;
 	}
 
 	/**
 	 *
 	 */
 	public boolean isAccountNonLocked() {
-		// TODO Not yet implemented
-		return true;
+		return this.accountNonLocked;
 	}
 
 	/**
 	 *
 	 */
 	public boolean isCredentialsNonExpired() {
-		// TODO Not yet implemented
-		return true;
+		return this.credentialsNonExpired;
 	}
 
 	/**
 	 *
 	 */
 	public boolean isEnabled() {
-		// TODO Not yet implemented
-		return true;
+		return this.enabled;
 	}
 
 	/**

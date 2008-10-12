@@ -32,6 +32,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiConfiguration;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
 import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Role;
 import org.jamwiki.model.VirtualWiki;
@@ -94,7 +95,7 @@ public class RegisterServlet extends JAMWikiServlet {
 	 *
 	 */
 	private void login(HttpServletRequest request, String username, String password) {
-		WikiUserDetails userDetails = new WikiUserDetails(username, password);
+		WikiUserDetails userDetails = new WikiUserDetails(username, password, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 		authentication.setDetails(new WebAuthenticationDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
