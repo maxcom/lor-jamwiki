@@ -31,6 +31,7 @@ import org.springframework.security.providers.anonymous.AnonymousAuthenticationT
 public class WikiUserDetails implements UserDetails {
 
 	private static final WikiLogger logger = WikiLogger.getLogger(WikiUserDetails.class.getName());
+	public static final String ANONYMOUS_USER_USERNAME = "roleAnonymous";
 	private static final long serialVersionUID = -2818435399240684581L;
 	private String username = null;
 	private String password = null;
@@ -44,12 +45,6 @@ public class WikiUserDetails implements UserDetails {
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
 	private boolean enabled = true;
-
-	/**
-	 *
-	 */
-	private WikiUserDetails() {
-	}
 
 	/**
 	 * Construct the <code>User</code> with the details required by
@@ -80,8 +75,8 @@ public class WikiUserDetails implements UserDetails {
 		if (StringUtils.isBlank(username) || password == null) {
 			throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
 		}
-		this.setUsername(username);
-		this.setPassword(password);
+		this.username = username;
+		this.password = password;
 		this.enabled = enabled;
 		this.accountNonExpired = accountNonExpired;
 		this.credentialsNonExpired = credentialsNonExpired;
@@ -101,6 +96,9 @@ public class WikiUserDetails implements UserDetails {
 		return authorities;
 	}
 
+	/**
+	 *
+	 */
 	protected void setAuthorities(GrantedAuthority[] authorities) {
 		if (authorities == null) {
 			throw new IllegalArgumentException("Cannot pass a null GrantedAuthority array");
@@ -151,22 +149,8 @@ public class WikiUserDetails implements UserDetails {
 	/**
 	 *
 	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
-	 *
-	 */
 	public String getUsername() {
 		return this.username;
-	}
-
-	/**
-	 *
-	 */
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	/**
@@ -210,9 +194,7 @@ public class WikiUserDetails implements UserDetails {
 		}
 		if (auth instanceof AnonymousAuthenticationToken || !(auth.getPrincipal() instanceof WikiUserDetails)) {
 			// anonymous user
-			WikiUserDetails user = new WikiUserDetails();
-			user.setAuthorities(auth.getAuthorities());
-			return user;
+			return new WikiUserDetails(ANONYMOUS_USER_USERNAME, "", true, true, true, true, auth.getAuthorities());
 		}
 		// logged-in (or remembered) user
 		return (WikiUserDetails)auth.getPrincipal();

@@ -168,7 +168,7 @@ public class ServletUtil {
 		WikiUserDetails userDetails = ServletUtil.currentUserDetails();
 		WikiUser user = new WikiUser();
 		String username = userDetails.getUsername();
-		if (StringUtils.isBlank(username)) {
+		if (username.equals(WikiUserDetails.ANONYMOUS_USER_USERNAME)) {
 			return user;
 		}
 		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
