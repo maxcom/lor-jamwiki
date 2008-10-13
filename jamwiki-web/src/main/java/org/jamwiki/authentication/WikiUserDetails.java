@@ -17,10 +17,7 @@
 package org.jamwiki.authentication;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.commons.lang.StringUtils;
-import org.jamwiki.model.Role;
 import org.jamwiki.utils.WikiLogger;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationCredentialsNotFoundException;
@@ -92,7 +89,7 @@ public class WikiUserDetails implements UserDetails {
 		if (authorities == null) {
 			authorities = new GrantedAuthority[0];
 		}
-		this.addRoles(authorities);
+		this.setAuthorities(authorities);
 	}
 
 	/**
@@ -173,36 +170,20 @@ public class WikiUserDetails implements UserDetails {
 	}
 
 	/**
-	 *
-	 */
-	private void addRoles(GrantedAuthority[] roles) {
-		if (this.authorities == null) {
-			this.authorities = new GrantedAuthority[0];
-		}
-		Set authoritiesSet = new HashSet(Arrays.asList(this.authorities));
-		for (int i = 0; i < roles.length; i++) {
-			if (!authoritiesSet.contains(roles[i])) {
-				authoritiesSet.add(roles[i]);
-			}
-		}
-		this.setAuthorities((GrantedAuthority[])authoritiesSet.toArray(authorities));
-	}
-
-	/**
 	 * Convenience method for determining if a user has been assigned a role
 	 * without the need to examine an array of Role objects.
 	 *
-	 * @param role If the user has been assigned this role then the method will
+	 * @param authority If the user has been assigned this role then the method will
 	 *  return <code>true</code>.
 	 * @return <code>true</code> if the user has been assigned the specified
 	 *  role, <code>false</code> otherwise.
 	 */
-	public boolean hasRole(Role role) {
+	public boolean hasRole(GrantedAuthority authority) {
 		if (this.authorities == null) {
 			logger.warning("No roles assigned for user " + this.getUsername());
 			return false;
 		}
-		return Arrays.asList(authorities).contains(role);
+		return Arrays.asList(authorities).contains(authority);
 	}
 
 	/**
