@@ -1160,6 +1160,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setString(1, user.getPassword());
 		stmt.setInt(2, 1);
 		stmt.setString(3, user.getUsername());
+		stmt.executeUpdate(conn);
 	}
 
 	/**
