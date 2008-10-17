@@ -160,8 +160,7 @@ followed by 0.5.3.
               where jam_group.group_id = jam_role_map.group_id;
        n) Drop the obsolete jam_role_map table.
               drop table jam_role_map;
-       o) Add required constraints to jam_wiki_user.
-              alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login);
+       o) Add required constraint to jam_wiki_user.
               alter table jam_wiki_user add constraint jam_u_wuser_users
                     foreign key (login) references jam_users (username)
 

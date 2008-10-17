@@ -292,9 +292,6 @@ public class DatabaseUpgrades {
 			    + ") ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added email column to jam_wiki_user");
-			sql = "alter table jam_wiki_user add constraint jam_u_wuser_login UNIQUE (login)";
-			DatabaseConnection.executeUpdate(sql, conn);
-			messages.add("Added constraint unique (login) to jam_wiki_user");
 			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_USERS_TABLE, conn);
 			} else {
