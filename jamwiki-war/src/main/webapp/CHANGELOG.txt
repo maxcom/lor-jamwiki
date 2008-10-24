@@ -18,6 +18,8 @@ New Features:
     form "#REDIRECT [[:virtual:Topic]].  Requested by tfschueller.
   * Login will now always take the user back to the page from which 'login' was
     clicked, as requested by many users and as implemented by Mediawiki.
+  * Allow updating of account information on Special:Register without entering
+    the old password EXCEPT when changing password.
   * Updated spam filter patterns.
   * Upgrade to Lucene Search 2.4.0.
   * Upgrade to Spring Framework 2.5.5.

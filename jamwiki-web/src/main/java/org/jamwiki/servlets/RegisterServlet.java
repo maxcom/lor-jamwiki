@@ -176,7 +176,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add(e.getWikiMessage());
 		}
 		String oldPassword = request.getParameter("oldPassword");
-		if (user.getUserId() > 0 && !WikiBase.getDataHandler().authenticate(user.getUsername(), oldPassword)) {
+		if (user.getUserId() > 0 && !StringUtils.isBlank(oldPassword) && !WikiBase.getDataHandler().authenticate(user.getUsername(), oldPassword)) {
 			errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
 		}
 		String newPassword = request.getParameter("newPassword");
@@ -185,6 +185,9 @@ public class RegisterServlet extends JAMWikiServlet {
 			errors.add(new WikiMessage("register.error.passwordempty"));
 		}
 		if (!StringUtils.isBlank(newPassword) || !StringUtils.isBlank(confirmPassword)) {
+			if (user.getUserId() > 0 && StringUtils.isBlank(oldPassword)) {
+				errors.add(new WikiMessage("register.error.oldpasswordinvalid"));
+			}
 			try {
 				WikiUtil.validatePassword(newPassword, confirmPassword);
 			} catch (WikiException e) {

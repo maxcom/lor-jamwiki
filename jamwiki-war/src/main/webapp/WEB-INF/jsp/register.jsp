@@ -23,32 +23,21 @@
 <%@ include file="page-init.jsp" %>
 
 <div class="message"><f:message key="register.form.info" /></div>
-
-<fieldset>
-<legend><f:message key="${pageInfo.pageTitle.key}" /></legend>
-
 <form name="form1" method="post" action="<jamwiki:link value="Special:Account" />">
 <input type="hidden" name="userId" value="<c:out value="${newuser.userId}" />" />
 <c:if test="${!empty errors}">
 <div class="message red"><c:forEach items="${errors}" var="message"><f:message key="${message.key}"><f:param value="${message.params[0]}" /></f:message><br /></c:forEach></div>
 </c:if>
+<fieldset>
+<legend><f:message key="register.caption.accountdetails" /></legend>
+
+<%-- new user --%>
+
 <c:if test="${newuser.userId < 1}">
 <div class="formentry">
 	<span class="formcaption"><label for="registerLogin"><f:message key="common.login" /></label>:</span>
 	<span class="formelement"><input type="text" name="login" value="<c:out value="${newuser.username}" />" id="registerLogin" /></span>
 </div>
-</c:if>
-<c:if test="${newuser.userId > 0}">
-<div class="formentry">
-	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
-	<span class="formcaption"><f:message key="common.login" />:</span>
-	<span class="formelement"><c:out value="${newuser.username}" /></span>
-</div>
-<div class="formentry">
-	<span class="formcaption"><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</span>
-	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></span>
-</div>
-</c:if>
 <div class="formentry">
 	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
 	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
@@ -57,6 +46,20 @@
 	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
 	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
 </div>
+</c:if>
+
+<%-- existing user --%>
+
+<c:if test="${newuser.userId > 0}">
+<div class="formentry">
+	<input type="hidden" name="login" value="<c:out value="${newuser.username}" />" />
+	<span class="formcaption"><f:message key="common.login" />:</span>
+	<span class="formelement"><c:out value="${newuser.username}" /></span>
+</div>
+</c:if>
+
+<%-- new or existing user --%>
+
 <div class="formentry">
 	<span class="formcaption"><label for="registerDisplayName"><f:message key="register.caption.displayname" /></label>:</span>
 	<span class="formelement"><input type="text" name="displayName" value="<c:out value="${newuser.displayName}" />" id="registerDisplayName" /></span>
@@ -78,10 +81,29 @@
 	</span>
 	<div class="formhelp"><f:message key="register.help.locale" /></div>
 </div>
+</fieldset>
+
+<%-- existing user --%>
+
+<c:if test="${newuser.userId > 0}">
+<fieldset>
+<legend><f:message key="register.caption.changepassword" /></legend>
+<div class="formentry">
+	<span class="formcaption"><label for="registerOldPassword"><f:message key="register.caption.oldpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="oldPassword" value="<c:out value="${oldPassword}" />" id="registerOldPassword" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerNewPassword"><f:message key="register.caption.newpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="newPassword" value="<c:out value="${newPassword}" />" id="registerNewPassword" /></span>
+</div>
+<div class="formentry">
+	<span class="formcaption"><label for="registerConfirmPassword"><f:message key="register.caption.confirmpassword" /></label>:</span>
+	<span class="formelement"><input type="password" name="confirmPassword" value="<c:out value="${confirmPassword}" />" id="registerConfirmPassword" /></span>
+</div>
+</fieldset>
+</c:if>
 <div class="formentry">
 	<span class="formcaption">&#160;</span>
 	<span class="formelement"><input type="submit" name="function" value="<f:message key="common.save" />"></span>
 </div>
 </form>
-
-</fieldset>
