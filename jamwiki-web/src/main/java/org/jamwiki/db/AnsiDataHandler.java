@@ -31,6 +31,7 @@ import org.jamwiki.WikiBase;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
 import org.jamwiki.authentication.JAMWikiAuthenticationConfiguration;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
@@ -128,8 +129,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void addUser(WikiUser user, Connection conn) throws Exception {
-		this.queryHandler().insertUser(user, conn);
+	private void addUserDetails(WikiUserDetails userDetails, Connection conn) throws Exception {
+		this.queryHandler().insertUserDetails(userDetails, conn);
 	}
 
 	/**
@@ -1238,8 +1239,8 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void updateUser(WikiUser user, Connection conn) throws Exception {
-		this.queryHandler().updateUser(user, conn);
+	private void updateUserDetails(WikiUserDetails userDetails, Connection conn) throws Exception {
+		this.queryHandler().updateUserDetails(userDetails, conn);
 	}
 
 	/**
@@ -1539,13 +1540,14 @@ public class AnsiDataHandler implements DataHandler {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
+			WikiUserDetails userDetails = new WikiUserDetails(user.getUsername(), user.getPassword(), true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 			if (user.getUserId() <= 0) {
-				this.addUser(user, conn);
+				this.addUserDetails(userDetails, conn);
 				this.addWikiUser(user, conn);
 				// add all users to the registered user group
 				this.addGroupMember(user.getUsername(), WikiBase.getGroupRegisteredUser().getGroupId(), conn);
 			} else {
-				this.updateUser(user, conn);
+				this.updateUserDetails(userDetails, conn);
 				this.updateWikiUser(user, conn);
 			}
 		} catch (Exception e) {

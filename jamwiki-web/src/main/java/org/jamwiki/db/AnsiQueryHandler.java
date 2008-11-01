@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jamwiki.Environment;
 import org.jamwiki.WikiException;
 import org.jamwiki.WikiMessage;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
@@ -762,11 +763,11 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void insertUser(WikiUser user, Connection conn) throws Exception {
-		this.validateUser(user);
+	public void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws Exception {
+		this.validateUserDetails(userDetails);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_INSERT_USER);
-		stmt.setString(1, user.getUsername());
-		stmt.setString(2, user.getPassword());
+		stmt.setString(1, userDetails.getUsername());
+		stmt.setString(2, userDetails.getPassword());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1154,12 +1155,12 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	public void updateUser(WikiUser user, Connection conn) throws Exception {
-		this.validateUser(user);
+	public void updateUserDetails(WikiUserDetails userDetails, Connection conn) throws Exception {
+		this.validateUserDetails(userDetails);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_UPDATE_USER);
-		stmt.setString(1, user.getPassword());
+		stmt.setString(1, userDetails.getPassword());
 		stmt.setInt(2, 1);
-		stmt.setString(3, user.getUsername());
+		stmt.setString(3, userDetails.getUsername());
 		stmt.executeUpdate(conn);
 	}
 
@@ -1273,10 +1274,10 @@ public class AnsiQueryHandler implements QueryHandler {
 	/**
 	 *
 	 */
-	protected void validateUser(WikiUser user) throws WikiException {
-		checkLength(user.getUsername(), 100);
+	protected void validateUserDetails(WikiUserDetails userDetails) throws WikiException {
+		checkLength(userDetails.getUsername(), 100);
 		// do not throw exception containing password info
-		if (user.getPassword() != null && user.getPassword().length() > 100) {
+		if (userDetails.getPassword() != null && userDetails.getPassword().length() > 100) {
 			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
 		}
 	}

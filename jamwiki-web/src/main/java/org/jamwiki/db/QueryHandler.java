@@ -17,6 +17,7 @@
 package org.jamwiki.db;
 
 import java.sql.Connection;
+import org.jamwiki.authentication.WikiUserDetails;
 import org.jamwiki.model.Category;
 import org.jamwiki.model.RecentChange;
 import org.jamwiki.model.Role;
@@ -457,12 +458,12 @@ public interface QueryHandler {
 	 * Add a new user authentication credential to the database.  The user authentication
 	 * credential must not already exist in the database or else an error will be thrown.
 	 *
-	 * @param user The user authentication credential that is to be added to the database.
+	 * @param userDetails The user authentication credential that is to be added to the database.
 	 * @param conn A database connection to use when connecting to the database
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void insertUser(WikiUser user, Connection conn) throws Exception;
+	void insertUserDetails(WikiUserDetails userDetails, Connection conn) throws Exception;
 
 	/**
 	 * Add a new authority for a specified user.  The user must not already have
@@ -810,7 +811,7 @@ public interface QueryHandler {
 	 *  from this method.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	public void updateUser(WikiUser user, Connection conn) throws Exception;
+	public void updateUserDetails(WikiUserDetails userDetails, Connection conn) throws Exception;
 
 	/**
 	 * Update a virtual wiki record in the database.
