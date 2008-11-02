@@ -1145,7 +1145,7 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void setup(Locale locale, WikiUser user) throws Exception {
+	public void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
 		WikiDatabase.initialize();
 		// determine if database exists
 		try {
@@ -1154,7 +1154,7 @@ public class AnsiDataHandler implements DataHandler {
 		} catch (Exception e) {
 			// database not yet set up
 		}
-		WikiDatabase.setup(locale, user);
+		WikiDatabase.setup(locale, user, username, encryptedPassword);
 	}
 
 	/**
@@ -1535,19 +1535,22 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeWikiUser(WikiUser user, Object transactionObject) throws Exception {
+	public void writeWikiUser(WikiUser user, String username, String encryptedPassword, Object transactionObject) throws Exception {
 		WikiUtil.validateUserName(user.getUsername());
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
-			WikiUserDetails userDetails = new WikiUserDetails(user.getUsername(), user.getPassword(), true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 			if (user.getUserId() <= 0) {
+				WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
 				this.addUserDetails(userDetails, conn);
 				this.addWikiUser(user, conn);
 				// add all users to the registered user group
 				this.addGroupMember(user.getUsername(), WikiBase.getGroupRegisteredUser().getGroupId(), conn);
 			} else {
-				this.updateUserDetails(userDetails, conn);
+				if (!StringUtils.isBlank(encryptedPassword)) {
+					WikiUserDetails userDetails = new WikiUserDetails(username, encryptedPassword, true, true, true, true, JAMWikiAuthenticationConfiguration.getDefaultGroupRoles());
+					this.updateUserDetails(userDetails, conn);
+				}
 				this.updateWikiUser(user, conn);
 			}
 		} catch (Exception e) {

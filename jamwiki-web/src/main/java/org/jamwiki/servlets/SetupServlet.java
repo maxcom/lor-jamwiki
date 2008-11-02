@@ -135,7 +135,10 @@ public class SetupServlet extends JAMWikiServlet {
 		}
 		Environment.setBooleanValue(Environment.PROP_BASE_INITIALIZED, true);
 		Environment.setValue(Environment.PROP_BASE_WIKI_VERSION, WikiVersion.CURRENT_WIKI_VERSION);
-		WikiBase.reset(request.getLocale(), user);
+		String username = request.getParameter("username");
+		String newPassword = request.getParameter("newPassword");
+		String encryptedPassword = Encryption.encrypt(newPassword);
+		WikiBase.reset(request.getLocale(), user, username, encryptedPassword);
 		JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
 		JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 		Environment.saveProperties();

@@ -508,9 +508,12 @@ public interface DataHandler {
 	 *  for the DataHandler.
 	 * @param user The admin user to use when creating default topics and
 	 *  other DataHandler parameters.
+	 * @param username The admin user's username (login).
+	 * @param encryptedPassword The admin user's encrypted password.  This value
+	 *  is only required when creating a new admin user.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void setup(Locale locale, WikiUser user) throws Exception;
+	void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception;
 
 	/**
 	 * Create the special pages used on the wiki, such as the left menu and
@@ -726,11 +729,14 @@ public interface DataHandler {
 	 * @param user The WikiUser being added or updated.  If the WikiUser does
 	 *  not have a user ID then a new record is created, otherwise an update
 	 *  is performed.
+	 * @param username The user's username (login).
+	 * @param encryptedPassword The user's encrypted password.  Required only when the
+	 *  password is being updated.
 	 * @param transactionObject If this method is being called as part of a
 	 *  transaction then this parameter should contain the transaction object,
 	 *  such as a database connection.  If this method is not part of a
 	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeWikiUser(WikiUser user, Object transactionObject) throws Exception;
+	void writeWikiUser(WikiUser user, String username, String encryptedPassword, Object transactionObject) throws Exception;
 }

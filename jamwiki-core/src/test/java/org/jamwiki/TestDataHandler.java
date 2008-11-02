@@ -289,7 +289,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void setup(Locale locale, WikiUser user) throws Exception {
+	public void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -373,7 +373,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void writeWikiUser(WikiUser user, Object transactionObject) throws Exception {
+	public void writeWikiUser(WikiUser user, String username, String encryptedPassword, Object transactionObject) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

@@ -456,30 +456,25 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	protected static void setup(Locale locale, WikiUser user) throws Exception {
+	protected static void setup(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
 		TransactionStatus status = DatabaseConnection.startTransaction();
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			// set up tables
 			WikiDatabase.queryHandler().createTables(conn);
-
 			WikiDatabase.setupDefaultVirtualWiki(conn);
 			WikiDatabase.setupRoles(conn);
 			WikiDatabase.setupGroups(conn);
-			WikiDatabase.setupAdminUser(user, conn);
+			WikiDatabase.setupAdminUser(user, username, encryptedPassword, conn);
 			WikiDatabase.setupSpecialPages(locale, user, conn);
-
 		} catch (Exception e) {
-
 			DatabaseConnection.rollbackOnException(status, e);
-
 			logger.severe("Unable to set up database tables", e);
 			// clean up anything that might have been created
 			try {
 				Connection conn = DatabaseConnection.getConnection();
 				WikiDatabase.queryHandler().dropTables(conn);
 			} catch (Exception e2) {}
-
 			throw e;
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);
@@ -491,14 +486,14 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupAdminUser(WikiUser user, Connection conn) throws Exception {
+	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword, Connection conn) throws Exception {
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
 		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {
 			logger.warning("Admin user already exists");
 		}
-		WikiBase.getDataHandler().writeWikiUser(user, conn);
+		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword, conn);
 		Vector roles = new Vector();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());

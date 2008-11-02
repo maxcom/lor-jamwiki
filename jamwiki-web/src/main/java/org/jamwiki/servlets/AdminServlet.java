@@ -162,7 +162,7 @@ public class AdminServlet extends JAMWikiServlet {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiUser user = ServletUtil.currentWikiUser();
-				WikiBase.reset(request.getLocale(), user);
+				WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
 				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
 				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.migratedatabase", Environment.getValue(Environment.PROP_DB_URL)));
@@ -188,8 +188,8 @@ public class AdminServlet extends JAMWikiServlet {
 				throw new WikiException(new WikiMessage("admin.password.message.invalidlogin", userLogin));
 			}
 			WikiUtil.validatePassword(newPassword, confirmPassword);
-			user.setPassword(Encryption.encrypt(newPassword));
-			WikiBase.getDataHandler().writeWikiUser(user, null);
+			String encryptedPassword = Encryption.encrypt(newPassword);
+			WikiBase.getDataHandler().writeWikiUser(user, userLogin, encryptedPassword, null);
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
@@ -297,7 +297,7 @@ public class AdminServlet extends JAMWikiServlet {
 					throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 				}
 				WikiUser user = ServletUtil.currentWikiUser();
-				WikiBase.reset(request.getLocale(), user);
+				WikiBase.reset(request.getLocale(), user, user.getUsername(), null);
 				JAMWikiAuthenticationConfiguration.resetJamwikiAnonymousAuthorities();
 				JAMWikiAuthenticationConfiguration.resetDefaultGroupRoles();
 				next.addObject("message", new WikiMessage("admin.message.changessaved"));

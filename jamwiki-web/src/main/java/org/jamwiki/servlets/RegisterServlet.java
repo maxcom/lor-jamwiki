@@ -125,7 +125,10 @@ public class RegisterServlet extends JAMWikiServlet {
 			}
 			this.loadDefaults(request, next, pageInfo, user);
 		} else {
-			WikiBase.getDataHandler().writeWikiUser(user, null);
+			String username = request.getParameter("login");
+			String newPassword = request.getParameter("newPassword");
+			String encryptedPassword = Encryption.encrypt(newPassword);
+			WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword, null);
 			// login the user
 			this.login(request, user.getUsername(), user.getPassword());
 			// update the locale key since the user may have changed default locale

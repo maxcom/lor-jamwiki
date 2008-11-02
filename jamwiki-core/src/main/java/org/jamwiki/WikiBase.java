@@ -184,11 +184,14 @@ public class WikiBase {
 	 *  as a part of the initialization process.
 	 * @param user A sysadmin user to be used in case any system pages need to
 	 *  be created as a part of the initialization process.
+	 * @param username The admin user's username (login).
+	 * @param encryptedPassword The admin user's encrypted password.  This value
+	 *  is only required when creating a new admin user.
 	 * @throws Exception Thrown if an error occurs during re-initialization.
 	 */
-	public static void reset(Locale locale, WikiUser user) throws Exception {
+	public static void reset(Locale locale, WikiUser user, String username, String encryptedPassword) throws Exception {
 		WikiBase.instance = new WikiBase();
 		WikiCache.initialize();
-		WikiBase.dataHandler.setup(locale, user);
+		WikiBase.dataHandler.setup(locale, user, username, encryptedPassword);
 	}
 }
