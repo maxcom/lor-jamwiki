@@ -131,7 +131,7 @@ public class RegisterServlet extends JAMWikiServlet {
 			if (!StringUtils.isBlank(newPassword)) {
 				encryptedPassword = Encryption.encrypt(newPassword);
 			}
-			WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword, null);
+			WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 			if (!StringUtils.isBlank(newPassword)) {
 				// login the user
 				this.login(request, user.getUsername(), newPassword);
@@ -157,7 +157,7 @@ public class RegisterServlet extends JAMWikiServlet {
 		if (!StringUtils.isBlank(userIdString)) {
 			int userId = new Integer(userIdString).intValue();
 			if (userId > 0) {
-				user = WikiBase.getDataHandler().lookupWikiUser(userId, null);
+				user = WikiBase.getDataHandler().lookupWikiUser(userId);
 			}
 		}
 		user.setDisplayName(request.getParameter("displayName"));
@@ -198,7 +198,7 @@ public class RegisterServlet extends JAMWikiServlet {
 				errors.add(e.getWikiMessage());
 			}
 		}
-		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername(), null) != null) {
+		if (user.getUserId() < 1 && WikiBase.getDataHandler().lookupWikiUser(user.getUsername()) != null) {
 			errors.add(new WikiMessage("register.error.logininvalid", user.getUsername()));
 		}
 		return errors;

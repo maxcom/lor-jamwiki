@@ -324,7 +324,7 @@ public class LuceneSearchEngine implements SearchEngine {
 	 * @throws Exception Thrown if any error occurs while re-indexing the Wiki.
 	 */
 	public synchronized void refreshIndex() throws Exception {
-		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
+		Collection allWikis = WikiBase.getDataHandler().getVirtualWikiList();
 		Topic topic;
 		for (Iterator iterator = allWikis.iterator(); iterator.hasNext();) {
 			long start = System.currentTimeMillis();

@@ -462,11 +462,11 @@ public class WikiDatabase {
 			Connection conn = DatabaseConnection.getConnection();
 			// set up tables
 			WikiDatabase.queryHandler().createTables(conn);
-			WikiDatabase.setupDefaultVirtualWiki(conn);
-			WikiDatabase.setupRoles(conn);
-			WikiDatabase.setupGroups(conn);
-			WikiDatabase.setupAdminUser(user, username, encryptedPassword, conn);
-			WikiDatabase.setupSpecialPages(locale, user, conn);
+			WikiDatabase.setupDefaultVirtualWiki();
+			WikiDatabase.setupRoles();
+			WikiDatabase.setupGroups();
+			WikiDatabase.setupAdminUser(user, username, encryptedPassword);
+			WikiDatabase.setupSpecialPages(locale, user);
 		} catch (Exception e) {
 			DatabaseConnection.rollbackOnException(status, e);
 			logger.severe("Unable to set up database tables", e);
@@ -486,19 +486,19 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword, Connection conn) throws Exception {
+	private static void setupAdminUser(WikiUser user, String username, String encryptedPassword) throws Exception {
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null or anonymous WikiUser object to setupAdminUser");
 		}
-		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId(), conn) != null) {
+		if (WikiBase.getDataHandler().lookupWikiUser(user.getUserId()) != null) {
 			logger.warning("Admin user already exists");
 		}
-		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword, conn);
+		WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword);
 		Vector roles = new Vector();
 		roles.add(Role.ROLE_ADMIN.getAuthority());
 		roles.add(Role.ROLE_SYSADMIN.getAuthority());
 		roles.add(Role.ROLE_TRANSLATE.getAuthority());
-		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), roles, conn);
+		WikiBase.getDataHandler().writeRoleMapUser(user.getUsername(), roles);
 	}
 
 	/**
@@ -520,84 +520,84 @@ public class WikiDatabase {
 	/**
 	 *
 	 */
-	private static void setupDefaultVirtualWiki(Connection conn) throws Exception {
+	private static void setupDefaultVirtualWiki() throws Exception {
 		VirtualWiki virtualWiki = new VirtualWiki();
 		virtualWiki.setName(WikiBase.DEFAULT_VWIKI);
 		virtualWiki.setDefaultTopicName(Environment.getValue(Environment.PROP_BASE_DEFAULT_TOPIC));
-		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, conn);
+		WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 	}
 
 	/**
 	 *
 	 */
-	protected static void setupGroups(Connection conn) throws Exception {
+	protected static void setupGroups() throws Exception {
 		WikiGroup group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_ANONYMOUS);
 		// FIXME - use message key
 		group.setDescription("All non-logged in users are automatically assigned to the anonymous group.");
-		WikiBase.getDataHandler().writeWikiGroup(group, conn);
+		WikiBase.getDataHandler().writeWikiGroup(group);
 		List anonymousRoles = new Vector();
 		anonymousRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		anonymousRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		anonymousRoles.add(Role.ROLE_UPLOAD.getAuthority());
 		anonymousRoles.add(Role.ROLE_VIEW.getAuthority());
-		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), anonymousRoles, conn);
+		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), anonymousRoles);
 		group = new WikiGroup();
 		group.setName(WikiGroup.GROUP_REGISTERED_USER);
 		// FIXME - use message key
 		group.setDescription("All logged in users are automatically assigned to the registered user group.");
-		WikiBase.getDataHandler().writeWikiGroup(group, conn);
+		WikiBase.getDataHandler().writeWikiGroup(group);
 		List userRoles = new Vector();
 		userRoles.add(Role.ROLE_EDIT_EXISTING.getAuthority());
 		userRoles.add(Role.ROLE_EDIT_NEW.getAuthority());
 		userRoles.add(Role.ROLE_MOVE.getAuthority());
 		userRoles.add(Role.ROLE_UPLOAD.getAuthority());
 		userRoles.add(Role.ROLE_VIEW.getAuthority());
-		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), userRoles, conn);
+		WikiBase.getDataHandler().writeRoleMapGroup(group.getGroupId(), userRoles);
 	}
 
 	/**
 	 *
 	 */
-	protected static void setupRoles(Connection conn) throws Exception {
+	protected static void setupRoles() throws Exception {
 		Role role = Role.ROLE_ADMIN;
 		// FIXME - use message key
 		role.setDescription("Provides the ability to perform wiki maintenance tasks not available to normal users.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_EDIT_EXISTING;
 		// FIXME - use message key
 		role.setDescription("Allows a user to edit an existing topic.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_EDIT_NEW;
 		// FIXME - use message key
 		role.setDescription("Allows a user to create a new topic.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_MOVE;
 		// FIXME - use message key
 		role.setDescription("Allows a user to move a topic to a different name.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_SYSADMIN;
 		// FIXME - use message key
 		role.setDescription("Allows access to set database parameters, modify parser settings, and set other wiki system settings.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_TRANSLATE;
 		// FIXME - use message key
 		role.setDescription("Allows access to the translation tool used for modifying the values of message keys used to display text on the wiki.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_UPLOAD;
 		// FIXME - use message key
 		role.setDescription("Allows a user to upload a file to the wiki.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 		role = Role.ROLE_VIEW;
 		// FIXME - use message key
 		role.setDescription("Allows a user to view topics on the wiki.");
-		WikiBase.getDataHandler().writeRole(role, conn, false);
+		WikiBase.getDataHandler().writeRole(role, false);
 	}
 
 	/**
 	 *
 	 */
-	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly, Connection conn) throws Exception {
+	protected static void setupSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, boolean adminOnly) throws Exception {
 		logger.info("Setting up special page " + virtualWiki + " / " + topicName);
 		if (user == null) {
 			throw new IllegalArgumentException("Cannot pass null WikiUser object to setupSpecialPage");
@@ -613,22 +613,22 @@ public class WikiDatabase {
 		TopicVersion topicVersion = new TopicVersion(user, user.getLastLoginIpAddress(), "Automatically created by system setup", contents, charactersChanged);
 		// FIXME - it is not connection-safe to parse for metadata since we are already holding a connection
 		// ParserOutput parserOutput = ParserUtil.parserOutput(topic.getTopicContent(), virtualWiki, topicName);
-		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, conn);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, conn);
+		// WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
 	}
 
 	/**
 	 *
 	 */
-	private static void setupSpecialPages(Locale locale, WikiUser user, Connection conn) throws Exception {
-		List all = WikiBase.getDataHandler().getVirtualWikiList(conn);
+	private static void setupSpecialPages(Locale locale, WikiUser user) throws Exception {
+		List all = WikiBase.getDataHandler().getVirtualWikiList();
 		for (Iterator iterator = all.iterator(); iterator.hasNext();) {
 			VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
 			// create the default topics
-			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false, conn);
-			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true, conn);
-			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true, conn);
-			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true, conn);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STARTING_POINTS, user, false);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_LEFT_MENU, user, true);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_BOTTOM_AREA, user, true);
+			setupSpecialPage(locale, virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, true);
 		}
 	}
 }

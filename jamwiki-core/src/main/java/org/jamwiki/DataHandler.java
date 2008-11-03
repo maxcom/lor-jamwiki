@@ -83,13 +83,9 @@ public interface DataHandler {
 	 * @param userVisible Set to <code>true</code> if a recent change should
 	 *  should be created indicating that the topic was deleted,
 	 *  <code>false</code> otherwise.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
+	void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception;
 
 	/**
 	 * Return a List of all Category objects for a given virtual wiki.
@@ -269,15 +265,11 @@ public interface DataHandler {
 	/**
 	 * Return a List of all VirtualWiki objects that exist for the wiki.
 	 *
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @return A List of all VirtualWiki objects that exist for the
 	 *  wiki.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	List getVirtualWikiList(Object transactionObject) throws Exception;
+	List getVirtualWikiList() throws Exception;
 
 	/**
 	 * Retrieve a user's watchlist.
@@ -370,15 +362,11 @@ public interface DataHandler {
 	 * Retrieve a TopicVersion object for a given topic version ID.
 	 *
 	 * @param topicVersionId The ID of the topic version being retrieved.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @return A TopicVersion object matching the given topic version ID,
 	 *  or <code>null</code> if no matching topic version is found.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	TopicVersion lookupTopicVersion(int topicVersionId, Object transactionObject) throws Exception;
+	TopicVersion lookupTopicVersion(int topicVersionId) throws Exception;
 
 	/**
 	 * Given a virtual wiki name, return the corresponding VirtualWiki object.
@@ -429,29 +417,21 @@ public interface DataHandler {
 	 * Retrieve a WikiUser object matching a given user ID.
 	 *
 	 * @param userId The ID of the WikiUser being retrieved.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @return The WikiUser object matching the given user ID, or
 	 *  <code>null</code> if no matching WikiUser exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception;
+	WikiUser lookupWikiUser(int userId) throws Exception;
 
 	/**
 	 * Retrieve a WikiUser object matching a given username.
 	 *
 	 * @param username The username of the WikiUser being retrieved.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @return The WikiUser object matching the given username, or
 	 *  <code>null</code> if no matching WikiUser exists.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception;
+	WikiUser lookupWikiUser(String username) throws Exception;
 
 	/**
 	 * Return a count of all wiki users.
@@ -490,25 +470,17 @@ public interface DataHandler {
 	 * @param fromVersion A TopicVersion object that indicates the move
 	 *  date, author, and other parameters for the topic.
 	 * @param destination The new name for the topic.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception;
+	void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws Exception;
 
 	/**
 	 * Delete all existing recent changes and reload the recent changes based
 	 * on the most recent topic versions.
 	 *
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void reloadRecentChanges(Object transactionObject) throws Exception;
+	void reloadRecentChanges() throws Exception;
 
 	/**
 	 * Perform any required setup steps for the DataHandler instance.
@@ -535,14 +507,10 @@ public interface DataHandler {
 	 * @param user The admin user to use when creating the special pages.
 	 * @param virtualWiki The VirtualWiki for which special pages are being
 	 *  created.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - move this to another location
-	void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception;
+	void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki) throws Exception;
 
 	/**
 	 * Undelete a previously deleted topic by setting its delete date to a
@@ -556,13 +524,9 @@ public interface DataHandler {
 	 * @param userVisible Set to <code>true</code> if a recent change should
 	 *  should be created indicating that the topic was undeleted,
 	 *  <code>false</code> otherwise.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception;
+	void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception;
 
 	/**
 	 * Update a special page used on the wiki, such as the left menu or
@@ -577,14 +541,10 @@ public interface DataHandler {
 	 *  updated.
 	 * @param user The admin user to use when updating the special page.
 	 * @param ipAddress The IP address of the user updating special pages.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - move this to another location
-	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception;
+	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress) throws Exception;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if
@@ -597,13 +557,9 @@ public interface DataHandler {
 	 *  performed.
 	 * @param wikiFileVersion A WikiFileVersion containing the author, date, and
 	 *  other information about the version being added.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception;
+	void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception;
 
 	/**
 	 * Add or update a Role object.  This method will add a new record if
@@ -612,16 +568,12 @@ public interface DataHandler {
 	 * @param role The Role to add or update.  If the Role does not yet
 	 *  exist then a new record is created, otherwise an update is
 	 *  performed.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @param update A boolean value indicating whether this transaction is
 	 *  updating an existing role or not.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - the update flag should not be necessary
-	void writeRole(Role role, Object transactionObject, boolean update) throws Exception;
+	void writeRole(Role role, boolean update) throws Exception;
 
 	/**
 	 * Add a set of group role mappings.  This method will first delete all
@@ -631,13 +583,9 @@ public interface DataHandler {
 	 * @param groupId The group id for whom role mappings are being modified.
 	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this group.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapGroup(int groupId, List roles, Object transactionObject) throws Exception;
+	void writeRoleMapGroup(int groupId, List roles) throws Exception;
 
 	/**
 	 * Add a set of user role mappings.  This method will first delete all
@@ -647,13 +595,9 @@ public interface DataHandler {
 	 * @param username The username for whom role mappings are being modified.
 	 * @param roles A List of String role names for all roles that are
 	 *  to be assigned to this user.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeRoleMapUser(String username, List roles, Object transactionObject) throws Exception;
+	void writeRoleMapUser(String username, List roles) throws Exception;
 
 	/**
 	 * Add or update a Topic object.  This method will add a new record if
@@ -674,13 +618,9 @@ public interface DataHandler {
 	 * @param userVisible Set to <code>false</code> if no recent change record
 	 *  should be created for the topic add/update, <code>true</code>
 	 *  otherwise.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception;
+	void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible) throws Exception;
 
 	/**
 	 * Add or update a VirtualWiki object.  This method will add a new record
@@ -690,13 +630,9 @@ public interface DataHandler {
 	 * @param virtualWiki The VirtualWiki to add or update.  If the
 	 *  VirtualWiki does not have a virtual wiki ID then a new record is
 	 *  created, otherwise an update is performed.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeVirtualWiki(VirtualWiki virtualWiki, Object transactionObject) throws Exception;
+	void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception;
 
 	/**
 	 * Add or delete an item from a user's watchlist.  If the topic is
@@ -708,13 +644,9 @@ public interface DataHandler {
 	 * @param topicName The name of the topic being added or removed from
 	 *  the watchlist.
 	 * @param userId The ID of the user whose watchlist is being updated.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId, Object transactionObject) throws Exception;
+	void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId) throws Exception;
 
 	/**
 	 * Add or update a WikiGroup object.  This method will add a new record if
@@ -723,13 +655,9 @@ public interface DataHandler {
 	 * @param group The WikiGroup to add or update.  If the group does not have
 	 *  a group ID then a new record is created, otherwise an update is
 	 *  performed.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception;
+	void writeWikiGroup(WikiGroup group) throws Exception;
 
 	/**
 	 * Add or update a WikiUser object.  This method will add a new record
@@ -742,11 +670,7 @@ public interface DataHandler {
 	 * @param username The user's username (login).
 	 * @param encryptedPassword The user's encrypted password.  Required only when the
 	 *  password is being updated.
-	 * @param transactionObject If this method is being called as part of a
-	 *  transaction then this parameter should contain the transaction object,
-	 *  such as a database connection.  If this method is not part of a
-	 *  transaction then this value should be <code>null</code>.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
-	void writeWikiUser(WikiUser user, String username, String encryptedPassword, Object transactionObject) throws Exception;
+	void writeWikiUser(WikiUser user, String username, String encryptedPassword) throws Exception;
 }

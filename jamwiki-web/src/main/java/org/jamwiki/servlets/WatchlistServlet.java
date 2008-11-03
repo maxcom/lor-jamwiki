@@ -66,7 +66,7 @@ public class WatchlistServlet extends JAMWikiServlet {
 		String virtualWiki = pageInfo.getVirtualWikiName();
 		Watchlist watchlist = ServletUtil.currentWatchlist(request, virtualWiki);
 		WikiUser user = ServletUtil.currentWikiUser();
-		WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId(), null);
+		WikiBase.getDataHandler().writeWatchlistEntry(watchlist, virtualWiki, topicName, user.getUserId());
 		String article = WikiUtil.extractTopicLink(topicName);
 		if (watchlist.containsTopic(topicName)) {
 			// added to watchlist

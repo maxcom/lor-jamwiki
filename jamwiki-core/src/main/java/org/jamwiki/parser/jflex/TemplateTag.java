@@ -687,7 +687,7 @@ public class TemplateTag {
 			return Utilities.encodeAndEscapeTopicName(WikiUtil.extractTopicLink(parserInput.getTopicName()));
 		}
 		Topic topic = WikiBase.getDataHandler().lookupTopic(parserInput.getVirtualWiki(), parserInput.getTopicName(), false, null);
-		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);
+		TopicVersion topicVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
 		Date revision = topicVersion.getEditDate();
 		formatter.setTimeZone(utc);
 		if (name.equals(MAGIC_REVISION_DAY)) {

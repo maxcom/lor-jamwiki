@@ -111,7 +111,7 @@ public class RolesServlet extends JAMWikiServlet {
 				for (int i = 0; i < candidateGroups.length; i++) {
 					int groupId = Integer.parseInt(candidateGroups[i]);
 					List roles = buildRoleArray(-1, groupId, groupRoles);
-					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles, null);
+					WikiBase.getDataHandler().writeRoleMapGroup(groupId, roles);
 				}
 				next.addObject("message", new WikiMessage("roles.message.grouproleupdate"));
 			}
@@ -128,7 +128,7 @@ public class RolesServlet extends JAMWikiServlet {
 						errors.add(new WikiMessage("roles.message.sysadminremove"));
 						roles.add(Role.ROLE_SYSADMIN.getAuthority());
 					}
-					WikiBase.getDataHandler().writeRoleMapUser(username, roles, null);
+					WikiBase.getDataHandler().writeRoleMapUser(username, roles);
 				}
 				next.addObject("message", new WikiMessage("roles.message.userroleupdate"));
 			}
@@ -159,7 +159,7 @@ public class RolesServlet extends JAMWikiServlet {
 				role = new Role(roleName);
 				role.setDescription(request.getParameter("roleDescription"));
 				WikiUtil.validateRole(role);
-				WikiBase.getDataHandler().writeRole(role, null, update);
+				WikiBase.getDataHandler().writeRole(role, update);
 				if (!StringUtils.isBlank(updateRole) && updateRole.equals(role.getAuthority())) {
 					next.addObject("message", new WikiMessage("roles.message.roleupdated", role.getAuthority()));
 				} else {

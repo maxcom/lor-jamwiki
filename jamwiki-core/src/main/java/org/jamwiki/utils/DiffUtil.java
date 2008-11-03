@@ -157,8 +157,8 @@ public class DiffUtil {
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	public static Collection diffTopicVersions(String topicName, int topicVersionId1, int topicVersionId2) throws Exception {
-		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1, null);
-		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2, null);
+		TopicVersion version1 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId1);
+		TopicVersion version2 = WikiBase.getDataHandler().lookupTopicVersion(topicVersionId2);
 		if (version1 == null && version2 == null) {
 			String msg = "Versions " + topicVersionId1 + " and " + topicVersionId2 + " not found for " + topicName;
 			logger.severe(msg);

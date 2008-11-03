@@ -214,7 +214,7 @@ public class XMLTopicFactory extends DefaultHandler {
 			// Store topic in database
 			try {
 				ParserOutput parserOutput = ParserUtil.parserOutput(pageText, virtualWiki, pageName);
-				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true, null);
+				WikiBase.getDataHandler().writeTopic(topic, topicVersion, parserOutput.getCategories(), parserOutput.getLinks(), true);
 				this.processedTopicName = topic.getName();
 			} catch (Exception e) {
 				throw new SAXException(e);

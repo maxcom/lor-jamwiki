@@ -65,7 +65,7 @@ public class TiddlyWikiParser {
 	 */
 	private WikiBaseFascade wikiBase = new WikiBaseFascade() {
 		public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
-			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
+			WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
 		}
 	};
 

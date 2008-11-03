@@ -183,13 +183,13 @@ public class AdminServlet extends JAMWikiServlet {
 		String newPassword = request.getParameter("passwordPassword");
 		String confirmPassword = request.getParameter("passwordPasswordConfirm");
 		try {
-			WikiUser user = WikiBase.getDataHandler().lookupWikiUser(userLogin, null);
+			WikiUser user = WikiBase.getDataHandler().lookupWikiUser(userLogin);
 			if (user == null) {
 				throw new WikiException(new WikiMessage("admin.password.message.invalidlogin", userLogin));
 			}
 			WikiUtil.validatePassword(newPassword, confirmPassword);
 			String encryptedPassword = Encryption.encrypt(newPassword);
-			WikiBase.getDataHandler().writeWikiUser(user, userLogin, encryptedPassword, null);
+			WikiBase.getDataHandler().writeWikiUser(user, userLogin, encryptedPassword);
 		} catch (WikiException e) {
 			errors.add(e.getWikiMessage());
 		} catch (Exception e) {
@@ -314,7 +314,7 @@ public class AdminServlet extends JAMWikiServlet {
 	 */
 	private void recentChanges(HttpServletRequest request, ModelAndView next, WikiPageInfo pageInfo) throws Exception {
 		try {
-			WikiBase.getDataHandler().reloadRecentChanges(null);
+			WikiBase.getDataHandler().reloadRecentChanges();
 			next.addObject("message", new WikiMessage("admin.message.recentchanges"));
 		} catch (Exception e) {
 			logger.severe("Failure while loading recent changes", e);
@@ -422,7 +422,7 @@ public class AdminServlet extends JAMWikiServlet {
 		pageInfo.setContentJsp(JSP_ADMIN_SYSTEM);
 		pageInfo.setAdmin(true);
 		pageInfo.setPageTitle(new WikiMessage("admin.maintenance.title"));
-		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList(null);
+		Collection virtualWikiList = WikiBase.getDataHandler().getVirtualWikiList();
 		next.addObject("wikis", virtualWikiList);
 		boolean allowExport = Environment.getValue(Environment.PROP_BASE_PERSISTENCE_TYPE).equals(WikiBase.PERSISTENCE_INTERNAL);
 		next.addObject("allowExport", new Boolean(allowExport));
@@ -442,9 +442,9 @@ public class AdminServlet extends JAMWikiServlet {
 			}
 			virtualWiki.setName(request.getParameter("name"));
 			virtualWiki.setDefaultTopicName(Utilities.decodeTopicName(request.getParameter("defaultTopicName"), true));
-			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki, null);
+			WikiBase.getDataHandler().writeVirtualWiki(virtualWiki);
 			if (StringUtils.isBlank(request.getParameter("virtualWikiId"))) {
-				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki, null);
+				WikiBase.getDataHandler().setupSpecialPages(request.getLocale(), user, virtualWiki);
 			}
 			next.addObject("message", new WikiMessage("admin.message.virtualwikiadded"));
 		} catch (Exception e) {

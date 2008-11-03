@@ -119,7 +119,7 @@ public class MoveServlet extends JAMWikiServlet {
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), moveComment, fromTopic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_MOVE);
-		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination, null);
+		WikiBase.getDataHandler().moveTopic(fromTopic, topicVersion, moveDestination);
 		return true;
 	}
 

@@ -201,10 +201,10 @@ public class UpgradeServlet extends JAMWikiServlet {
 	private boolean upgradeStyleSheet(HttpServletRequest request, Vector messages) throws Exception {
 		try {
 			WikiUser user = ServletUtil.currentWikiUser();
-			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList(null);
+			Collection virtualWikis = WikiBase.getDataHandler().getVirtualWikiList();
 			for (Iterator iterator = virtualWikis.iterator(); iterator.hasNext();) {
 				VirtualWiki virtualWiki = (VirtualWiki)iterator.next();
-				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, ServletUtil.getIpAddress(request), null);
+				WikiBase.getDataHandler().updateSpecialPage(request.getLocale(), virtualWiki.getName(), WikiBase.SPECIAL_PAGE_STYLESHEET, user, ServletUtil.getIpAddress(request));
 				messages.add("Updated stylesheet for virtual wiki " + virtualWiki.getName());
 			}
 			return true;

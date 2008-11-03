@@ -89,7 +89,7 @@ public class ManageServlet extends JAMWikiServlet {
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("deleteComment"), contents, charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_DELETE);
-		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true, null);
+		WikiBase.getDataHandler().deleteTopic(topic, topicVersion, true);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class ManageServlet extends JAMWikiServlet {
 		WikiUser user = ServletUtil.currentWikiUser();
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), Utilities.formatMessage("manage.message.permissions", request.getLocale()), topic.getTopicContent(), 0);
 		topicVersion.setEditType(TopicVersion.EDIT_PERMISSION);
-		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true, null);
+		WikiBase.getDataHandler().writeTopic(topic, topicVersion, null, null, true);
 		next.addObject("message", new WikiMessage("manage.message.updated", topicName));
 		view(request, next, pageInfo);
 	}
@@ -144,10 +144,10 @@ public class ManageServlet extends JAMWikiServlet {
 			logger.warning("Attempt to undelete a topic that is not deleted: " + virtualWiki + " / " + topicName);
 			return;
 		}
-		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue(), null);
+		TopicVersion previousVersion = WikiBase.getDataHandler().lookupTopicVersion(topic.getCurrentVersionId().intValue());
 		while (previousVersion != null && previousVersion.getPreviousTopicVersionId() != null && previousVersion.getEditType() == TopicVersion.EDIT_DELETE) {
 			// loop back to find the last non-delete edit
-			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue(), null);
+			previousVersion = WikiBase.getDataHandler().lookupTopicVersion(previousVersion.getPreviousTopicVersionId().intValue());
 		}
 		String contents = previousVersion.getVersionContent();
 		topic.setTopicContent(contents);
@@ -155,7 +155,7 @@ public class ManageServlet extends JAMWikiServlet {
 		int charactersChanged = StringUtils.length(contents);
 		TopicVersion topicVersion = new TopicVersion(user, ServletUtil.getIpAddress(request), request.getParameter("undeleteComment"), contents, charactersChanged);
 		topicVersion.setEditType(TopicVersion.EDIT_UNDELETE);
-		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true, null);
+		WikiBase.getDataHandler().undeleteTopic(topic, topicVersion, true);
 	}
 
 	/**

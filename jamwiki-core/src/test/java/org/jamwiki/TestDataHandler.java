@@ -57,7 +57,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception {
+	public void deleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -155,7 +155,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public List getVirtualWikiList(Object transactionObject) throws Exception {
+	public List getVirtualWikiList() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -212,7 +212,7 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public TopicVersion lookupTopicVersion(int topicVersionId, Object transactionObject) throws Exception {
+	public TopicVersion lookupTopicVersion(int topicVersionId) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -247,14 +247,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(int userId, Object transactionObject) throws Exception {
+	public WikiUser lookupWikiUser(int userId) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public WikiUser lookupWikiUser(String username, Object transactionObject) throws Exception {
+	public WikiUser lookupWikiUser(String username) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -282,14 +282,14 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination, Object transactionObject) throws Exception {
+	public void moveTopic(Topic fromTopic, TopicVersion fromVersion, String destination) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void reloadRecentChanges(Object transactionObject) throws Exception {
+	public void reloadRecentChanges() throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
@@ -303,84 +303,84 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki, Object transactionObject) throws Exception {
+	public void setupSpecialPages(Locale locale, WikiUser user, VirtualWiki virtualWiki) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible, Object transactionObject) throws Exception {
+	public void undeleteTopic(Topic topic, TopicVersion topicVersion, boolean userVisible) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress, Object transactionObject) throws Exception {
+	public void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion, Object transactionObject) throws Exception {
+	public void writeFile(WikiFile wikiFile, WikiFileVersion wikiFileVersion) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeRole(Role role, Object transactionObject, boolean update) throws Exception {
+	public void writeRole(Role role, boolean update) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeRoleMapGroup(int groupId, List roles, Object transactionObject) throws Exception {
+	public void writeRoleMapGroup(int groupId, List roles) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeRoleMapUser(String username, List roles, Object transactionObject) throws Exception {
+	public void writeRoleMapUser(String username, List roles) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible, Object transactionObject) throws Exception {
+	public void writeTopic(Topic topic, TopicVersion topicVersion, LinkedHashMap categories, Vector links, boolean userVisible) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeVirtualWiki(VirtualWiki virtualWiki, Object transactionObject) throws Exception {
+	public void writeVirtualWiki(VirtualWiki virtualWiki) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId, Object transactionObject) throws Exception {
+	public void writeWatchlistEntry(Watchlist watchlist, String virtualWiki, String topicName, int userId) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeWikiGroup(WikiGroup group, Object transactionObject) throws Exception {
+	public void writeWikiGroup(WikiGroup group) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 *
 	 */
-	public void writeWikiUser(WikiUser user, String username, String encryptedPassword, Object transactionObject) throws Exception {
+	public void writeWikiUser(WikiUser user, String username, String encryptedPassword) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 }

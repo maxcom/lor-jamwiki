@@ -174,7 +174,7 @@ public class ServletUtil {
 		if (!WikiUtil.isFirstUse() && !WikiUtil.isUpgrade()) {
 			try {
 				// FIXME - do not lookup the user every time this method is called, that will kill performance
-				user = WikiBase.getDataHandler().lookupWikiUser(username, null);
+				user = WikiBase.getDataHandler().lookupWikiUser(username);
 				if (user == null) {
 					// invalid user.  someone has either spoofed a cookie or the user account is no longer in
 					// the database.

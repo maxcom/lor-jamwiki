@@ -99,10 +99,10 @@ public class DatabaseUpgrades {
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_role_map table");
 			// setup basic roles
-			WikiDatabase.setupRoles(conn);
+			WikiDatabase.setupRoles();
 			messages.add("Added basic wiki roles.");
 			// setup basic groups
-			WikiDatabase.setupGroups(conn);
+			WikiDatabase.setupGroups();
 			messages.add("Added basic wiki groups.");
 			// convert old-style admins to new
 			// assign admins all permissions during upgrades just to be safe.  for
@@ -404,13 +404,13 @@ public class DatabaseUpgrades {
 			// is not required for existing systems.
 			logger.info("Failure while populating characters_changed colum in jam_topic_version.  See UPGRADE.txt for instructions on how to manually complete this optional step.", e);
 			DatabaseConnection.rollbackOnException(status, e);
-			status = null;	// so we do not try to commit
+			status = null; // so we do not try to commit
 		} catch (Error err) {
 			DatabaseConnection.rollbackOnException(status, err);
 			throw err;
 		}
 		DatabaseConnection.commit(status);
-		WikiBase.getDataHandler().reloadRecentChanges(null);
+		WikiBase.getDataHandler().reloadRecentChanges();
 		messages.add("Populated characters_changed column in jam_recent_change");
 		return messages;
 	}
