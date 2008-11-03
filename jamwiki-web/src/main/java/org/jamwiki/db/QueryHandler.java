@@ -84,17 +84,6 @@ public interface QueryHandler {
 	void deleteGroupAuthorities(int groupId, Connection conn) throws Exception;
 
 	/**
-	 * Remove a user from a group.
-	 *
-	 * @param username The username for the user being removed from the group.
-	 * @param groupId The group id for the group from which the user is being removed.
-	 * @param conn A database connection to use when connecting to the database
-	 *  from this method.
-	 * @throws Exception Thrown if any error occurs during method execution.
-	 */
-	public void deleteGroupMember(String username, int groupId, Connection conn) throws Exception;
-
-	/**
 	 * Delete all records from the recent changes table for a specific topic.
 	 *
 	 * @param topicId The topic id for which recent changes are being deleted.

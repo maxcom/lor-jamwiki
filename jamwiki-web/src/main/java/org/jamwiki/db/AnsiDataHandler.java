@@ -243,13 +243,6 @@ public class AnsiDataHandler implements DataHandler {
 	/**
 	 *
 	 */
-	private void deleteGroupMember(String username, int groupId, Connection conn) throws Exception {
-		this.queryHandler().deleteGroupMember(username, groupId, conn);
-	}
-
-	/**
-	 *
-	 */
 	private void deleteRecentChanges(Topic topic, Connection conn) throws Exception {
 		this.queryHandler().deleteRecentChanges(topic.getTopicId(), conn);
 	}

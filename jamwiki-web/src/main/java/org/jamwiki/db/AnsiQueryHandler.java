@@ -68,7 +68,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_CREATE_WIKI_USER_LOGIN_INDEX = null;
 	protected static String STATEMENT_DELETE_AUTHORITIES = null;
 	protected static String STATEMENT_DELETE_GROUP_AUTHORITIES = null;
-	protected static String STATEMENT_DELETE_GROUP_MEMBER = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES = null;
 	protected static String STATEMENT_DELETE_RECENT_CHANGES_TOPIC = null;
 	protected static String STATEMENT_DELETE_TOPIC_CATEGORIES = null;
@@ -220,16 +219,6 @@ public class AnsiQueryHandler implements QueryHandler {
 	public void deleteGroupAuthorities(int groupId, Connection conn) throws Exception {
 		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_AUTHORITIES);
 		stmt.setInt(1, groupId);
-		stmt.executeUpdate(conn);
-	}
-
-	/**
-	 *
-	 */
-	public void deleteGroupMember(String username, int groupId, Connection conn) throws Exception {
-		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_DELETE_GROUP_MEMBER);
-		stmt.setString(1, username);
-		stmt.setInt(2, groupId);
 		stmt.executeUpdate(conn);
 	}
 
@@ -534,7 +523,6 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_CREATE_WATCHLIST_TABLE         = props.getProperty("STATEMENT_CREATE_WATCHLIST_TABLE");
 		STATEMENT_DELETE_AUTHORITIES             = props.getProperty("STATEMENT_DELETE_AUTHORITIES");
 		STATEMENT_DELETE_GROUP_AUTHORITIES       = props.getProperty("STATEMENT_DELETE_GROUP_AUTHORITIES");
-		STATEMENT_DELETE_GROUP_MEMBER            = props.getProperty("STATEMENT_DELETE_GROUP_MEMBER");
 		STATEMENT_DELETE_RECENT_CHANGES          = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES");
 		STATEMENT_DELETE_RECENT_CHANGES_TOPIC    = props.getProperty("STATEMENT_DELETE_RECENT_CHANGES_TOPIC");
 		STATEMENT_DELETE_TOPIC_CATEGORIES        = props.getProperty("STATEMENT_DELETE_TOPIC_CATEGORIES");
