@@ -35,7 +35,6 @@ public class WikiUser {
 	private String lastLoginIpAddress = "0.0.0.0";
 	private String username = null;
 	private int userId = -1;
-	private String password = null;
 
 	/**
 	 *
@@ -160,20 +159,6 @@ public class WikiUser {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
-	}
-
-	/**
-	 *
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 *
-	 */
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	/**

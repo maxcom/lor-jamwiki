@@ -681,6 +681,16 @@ public interface QueryHandler {
 	WikiResultSet lookupWikiUserCount() throws Exception;
 
 	/**
+	 * Retrieve a result set containing the encrypted password for a user given
+	 * the username.
+	 *
+	 * @param userame The name of the user whose enrypted password is being retrieved.
+	 * @return A WikiResultSet containing the encrypted password.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	WikiResultSet lookupWikiUserEncryptedPassword(String username) throws Exception;
+
+	/**
 	 * Retrieve a result set of all logins for every wiki user.
 	 *
 	 * @param pagination A Pagination object that specifies the number of results

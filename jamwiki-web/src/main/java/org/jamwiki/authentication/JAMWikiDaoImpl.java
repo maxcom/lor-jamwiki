@@ -19,7 +19,6 @@ package org.jamwiki.authentication;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.WikiBase;
-import org.jamwiki.model.WikiUser;
 import org.jamwiki.utils.WikiUtil;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -46,23 +45,17 @@ public class JAMWikiDaoImpl implements UserDetailsService {
 		if (StringUtils.isBlank(username)) {
 			throw new UsernameNotFoundException("Cannot retrieve user without a valid username");
 		}
-		WikiUser user = this.retrieveUser(username);
-		if (user == null) {
-			throw new UsernameNotFoundException("Failure retrieving user information for " + username);
-		}
-		GrantedAuthority[] authorities = this.retrieveUserAuthorities(username);
-		return new WikiUserDetails(username, user.getPassword(), true, true, true, true, authorities);
-	}
-
-	/**
-	 *
-	 */
-	private WikiUser retrieveUser(String username) throws DataAccessException {
+		String encryptedPassword = null;
 		try {
-			return WikiBase.getDataHandler().lookupWikiUser(username, null);
+			encryptedPassword = WikiBase.getDataHandler().lookupWikiUserEncryptedPassword(username);
 		} catch (Exception e) {
 			throw new DataAccessResourceFailureException("Unable to retrieve authorities for user: " + username, e);
 		}
+		if (encryptedPassword == null) {
+			throw new UsernameNotFoundException("Failure retrieving user information for " + username);
+		}
+		GrantedAuthority[] authorities = this.retrieveUserAuthorities(username);
+		return new WikiUserDetails(username, encryptedPassword, true, true, true, true, authorities);
 	}
 
 	/**

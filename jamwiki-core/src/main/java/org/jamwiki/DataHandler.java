@@ -462,6 +462,16 @@ public interface DataHandler {
 	int lookupWikiUserCount() throws Exception;
 
 	/**
+	 * Retrieve a WikiUser object matching a given username.
+	 *
+	 * @param username The username of the WikiUser being retrieved.
+	 * @return The encrypted password for the given user name, or
+	 *  <code>null</code> if no matching WikiUser exists.
+	 * @throws Exception Thrown if any error occurs during method execution.
+	 */
+	String lookupWikiUserEncryptedPassword(String username) throws Exception;
+
+	/**
 	 * Return a List of user logins for all wiki users.
 	 *
 	 * @param pagination A Pagination object indicating the total number of

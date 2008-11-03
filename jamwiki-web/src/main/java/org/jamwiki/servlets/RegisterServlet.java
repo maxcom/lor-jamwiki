@@ -127,10 +127,15 @@ public class RegisterServlet extends JAMWikiServlet {
 		} else {
 			String username = request.getParameter("login");
 			String newPassword = request.getParameter("newPassword");
-			String encryptedPassword = Encryption.encrypt(newPassword);
+			String encryptedPassword = null;
+			if (!StringUtils.isBlank(newPassword)) {
+				encryptedPassword = Encryption.encrypt(newPassword);
+			}
 			WikiBase.getDataHandler().writeWikiUser(user, username, encryptedPassword, null);
-			// login the user
-			this.login(request, user.getUsername(), user.getPassword());
+			if (!StringUtils.isBlank(newPassword)) {
+				// login the user
+				this.login(request, user.getUsername(), newPassword);
+			}
 			// update the locale key since the user may have changed default locale
 			if (!StringUtils.isBlank(user.getDefaultLocale())) {
 				Locale locale = LocaleUtils.toLocale(user.getDefaultLocale());
@@ -156,10 +161,6 @@ public class RegisterServlet extends JAMWikiServlet {
 			}
 		}
 		user.setDisplayName(request.getParameter("displayName"));
-		String newPassword = request.getParameter("newPassword");
-		if (!StringUtils.isBlank(newPassword)) {
-			user.setPassword(Encryption.encrypt(newPassword));
-		}
 		user.setDefaultLocale(request.getParameter("defaultLocale"));
 		user.setEmail(request.getParameter("email"));
 		// FIXME - need to distinguish between add & update

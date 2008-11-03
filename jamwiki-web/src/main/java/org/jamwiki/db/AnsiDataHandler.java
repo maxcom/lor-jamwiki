@@ -777,7 +777,6 @@ public class AnsiDataHandler implements DataHandler {
 			user.setLastLoginDate(rs.getTimestamp("last_login_date"));
 			user.setCreateIpAddress(rs.getString("create_ip_address"));
 			user.setLastLoginIpAddress(rs.getString("last_login_ip_address"));
-			user.setPassword(rs.getString("remember_key"));
 			user.setDefaultLocale(rs.getString("default_locale"));
 			user.setEmail(rs.getString("email"));
 			return user;
@@ -1048,6 +1047,14 @@ public class AnsiDataHandler implements DataHandler {
 		// FIXME - handle LDAP
 		WikiResultSet rs = this.queryHandler().lookupWikiUserCount();
 		return rs.getInt("user_count");
+	}
+
+	/**
+	 *
+	 */
+	public String lookupWikiUserEncryptedPassword(String username) throws Exception {
+		WikiResultSet rs = this.queryHandler().lookupWikiUserEncryptedPassword(username);
+		return (rs.size() == 0) ? null : rs.getString("password");
 	}
 
 	/**

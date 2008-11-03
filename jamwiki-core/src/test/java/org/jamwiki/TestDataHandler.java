@@ -268,6 +268,13 @@ public class TestDataHandler implements DataHandler {
 	/**
 	 *
 	 */
+	public String lookupWikiUserEncryptedPassword(String username) throws Exception {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 *
+	 */
 	public List lookupWikiUsers(Pagination pagination) throws Exception {
 		throw new UnsupportedOperationException();
 	}

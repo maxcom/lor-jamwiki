@@ -304,6 +304,9 @@ public class DatabaseUpgrades {
 				+ "from jam_wiki_user_info ";
 			DatabaseConnection.executeUpdate(sql, conn);
 			messages.add("Added jam_users table");
+			sql = "alter table jam_wiki_user drop column remember_key";
+			DatabaseConnection.executeUpdate(sql, conn);
+			messages.add("Dropped the remember_key column from jam_wiki_user");
 			if (dbType.equals(WikiBase.DATA_HANDLER_HSQL)) {
 				DatabaseConnection.executeUpdate(HSqlQueryHandler.STATEMENT_CREATE_AUTHORITIES_TABLE, conn);
 			} else if (dbType.equals(WikiBase.DATA_HANDLER_MYSQL)) {

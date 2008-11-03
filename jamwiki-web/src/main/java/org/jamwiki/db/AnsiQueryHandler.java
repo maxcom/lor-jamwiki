@@ -142,6 +142,7 @@ public class AnsiQueryHandler implements QueryHandler {
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_COUNT = null;
+	protected static String STATEMENT_SELECT_WIKI_USER_DETAILS_PASSWORD = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_LOGIN = null;
 	protected static String STATEMENT_SELECT_WIKI_USER_SEQUENCE = null;
 	protected static String STATEMENT_SELECT_WIKI_USERS = null;
@@ -607,6 +608,7 @@ public class AnsiQueryHandler implements QueryHandler {
 		STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS");
 		STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN = props.getProperty("STATEMENT_SELECT_WIKI_USER_CHANGES_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_COUNT         = props.getProperty("STATEMENT_SELECT_WIKI_USER_COUNT");
+		STATEMENT_SELECT_WIKI_USER_DETAILS_PASSWORD = props.getProperty("STATEMENT_SELECT_WIKI_USER_DETAILS_PASSWORD");
 		STATEMENT_SELECT_WIKI_USER_LOGIN         = props.getProperty("STATEMENT_SELECT_WIKI_USER_LOGIN");
 		STATEMENT_SELECT_WIKI_USER_SEQUENCE      = props.getProperty("STATEMENT_SELECT_WIKI_USER_SEQUENCE");
 		STATEMENT_SELECT_WIKI_USERS              = props.getProperty("STATEMENT_SELECT_WIKI_USERS");
@@ -872,9 +874,8 @@ public class AnsiQueryHandler implements QueryHandler {
 		stmt.setTimestamp(5, user.getLastLoginDate());
 		stmt.setString(6, user.getCreateIpAddress());
 		stmt.setString(7, user.getLastLoginIpAddress());
-		stmt.setString(8, user.getPassword());
-		stmt.setString(9, user.getDefaultLocale());
-		stmt.setString(10, user.getEmail());
+		stmt.setString(8, user.getDefaultLocale());
+		stmt.setString(9, user.getEmail());
 		stmt.executeUpdate(conn);
 	}
 
@@ -995,6 +996,15 @@ public class AnsiQueryHandler implements QueryHandler {
 	 */
 	public WikiResultSet lookupWikiUserCount() throws Exception {
 		return DatabaseConnection.executeQuery(STATEMENT_SELECT_WIKI_USER_COUNT);
+	}
+
+	/**
+	 *
+	 */
+	public WikiResultSet lookupWikiUserEncryptedPassword(String username) throws Exception {
+		WikiPreparedStatement stmt = new WikiPreparedStatement(STATEMENT_SELECT_WIKI_USER_DETAILS_PASSWORD);
+		stmt.setString(1, username);
+		return stmt.executeQuery();
 	}
 
 	/**
@@ -1334,9 +1344,5 @@ public class AnsiQueryHandler implements QueryHandler {
 		checkLength(user.getLastLoginIpAddress(), 39);
 		checkLength(user.getDefaultLocale(), 8);
 		checkLength(user.getEmail(), 100);
-		// do not throw exception containing password info
-		if (user.getPassword() != null && user.getPassword().length() > 100) {
-			throw new WikiException(new WikiMessage("error.fieldlength", "-", "100"));
-		}
 	}
 }
