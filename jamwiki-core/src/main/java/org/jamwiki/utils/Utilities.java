@@ -18,6 +18,7 @@ package org.jamwiki.utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -52,7 +54,7 @@ public class Utilities {
 		try {
 			VALID_IPV4_PATTERN = Pattern.compile(ipv4Pattern, Pattern.CASE_INSENSITIVE);
 			VALID_IPV6_PATTERN = Pattern.compile(ipv6Pattern, Pattern.CASE_INSENSITIVE);
-		} catch (Exception e) {
+		} catch (PatternSyntaxException e) {
 			logger.severe("Unable to compile pattern", e);
 		}
 	}
@@ -85,7 +87,7 @@ public class Utilities {
 		}
 		try {
 			text = new String(text.getBytes(fromEncoding), toEncoding);
-		} catch (Exception e) {
+		} catch (UnsupportedEncodingException e) {
 			// bad encoding
 			logger.warning("Unable to convert value " + text + " from " + fromEncoding + " to " + toEncoding, e);
 		}
@@ -264,7 +266,7 @@ public class Utilities {
 		ClassLoader loader = null;
 		try {
 			loader = Thread.currentThread().getContextClassLoader();
-		} catch (Exception e) {
+		} catch (SecurityException e) {
 			logger.fine("Unable to retrieve thread class loader, trying default");
 		}
 		if (loader == null) {
@@ -280,10 +282,10 @@ public class Utilities {
 	 * @param filename The name of the file (relative to the classpath) that is
 	 *  to be retrieved.
 	 * @return A file object representing the requested filename
-	 * @throws Exception Thrown if the classloader can not be found or if
+	 * @throws FileNotFoundException Thrown if the classloader can not be found or if
 	 *  the file can not be found in the classpath.
 	 */
-	public static File getClassLoaderFile(String filename) throws Exception {
+	public static File getClassLoaderFile(String filename) throws FileNotFoundException {
 		// note that this method is used when initializing logging, so it must
 		// not attempt to log anything.
 		File file = null;
@@ -293,11 +295,11 @@ public class Utilities {
 			url = ClassLoader.getSystemResource(filename);
 		}
 		if (url == null) {
-			throw new Exception("Unable to find " + filename);
+			throw new FileNotFoundException("Unable to find " + filename);
 		}
 		file = FileUtils.toFile(url);
 		if (file == null || !file.exists()) {
-			throw new Exception("Found invalid root class loader for file " + filename);
+			throw new FileNotFoundException("Found invalid root class loader for file " + filename);
 		}
 		return file;
 	}
@@ -308,13 +310,13 @@ public class Utilities {
 	 * and then returning its parent directory.
 	 *
 	 * @return Returns a file indicating the directory of the class loader.
-	 * @throws Exception Thrown if the class loader can not be found.
+	 * @throws FileNotFoundException Thrown if the class loader can not be found.
 	 */
-	public static File getClassLoaderRoot() throws Exception {
+	public static File getClassLoaderRoot() throws FileNotFoundException {
 		// The file hard-coded here MUST be in the class loader directory.
 		File file = Utilities.getClassLoaderFile("ApplicationResources.properties");
 		if (!file.exists()) {
-			throw new Exception("Unable to find class loader root");
+			throw new FileNotFoundException("Unable to find class loader root");
 		}
 		return file.getParentFile();
 	}
@@ -326,7 +328,7 @@ public class Utilities {
 	 */
 	// FIXME - there HAS to be a utility method available in Spring or some other
 	// common library that offers this functionality.
-	public static File getWebappRoot() throws Exception {
+	public static File getWebappRoot() throws FileNotFoundException {
 		// webapp root is two levels above /WEB-INF/classes/
 		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
 	}
@@ -393,10 +395,10 @@ public class Utilities {
 	 * @param filename The name of the file to be read, either as an absolute file
 	 *  path or relative to the classpath.
 	 * @return A string representation of the file contents.
-	 * @throws Exception Thrown if the file cannot be found or if an I/O exception
+	 * @throws FileNotFoundException Thrown if the file cannot be found or if an I/O exception
 	 *  occurs.
 	 */
-	public static String readFile(String filename) throws Exception {
+	public static String readFile(String filename) throws IOException {
 		File file = new File(filename);
 		if (file.exists()) {
 			// file passed in as full path

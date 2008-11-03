@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.lang.math.NumberUtils;
 // FIXME - remove this import
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.jamwiki.utils.SortedProperties;
@@ -123,14 +124,10 @@ public class Environment {
 	 * The constructor loads property values from the property file.
 	 */
 	private Environment() {
-		try {
-			initDefaultProperties();
-			logger.fine("Default properties initialized: " + defaults.toString());
-			props = loadProperties(PROPERTY_FILE_NAME, defaults);
-			logger.fine("JAMWiki properties initialized: " + props.toString());
-		} catch (Exception e) {
-			logger.severe("Failure while initializing property values", e);
-		}
+		initDefaultProperties();
+		logger.fine("Default properties initialized: " + defaults.toString());
+		props = loadProperties(PROPERTY_FILE_NAME, defaults);
+		logger.fine("JAMWiki properties initialized: " + props.toString());
 	}
 
 	/**
@@ -240,14 +237,7 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static boolean getBooleanValue(String name) {
-		String value = getValue(name);
-		try {
-			return Boolean.valueOf(value).booleanValue(); //NOPMD there is already a FIX ME
-		} catch (Exception e) {
-			logger.severe("Invalid boolean property " + name + " with value " + value);
-		}
-		// FIXME - should this otherwise indicate an invalid property?
-		return false;
+		return Boolean.valueOf(getValue(name)).booleanValue();
 	}
 
 	/**
@@ -267,14 +257,12 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static int getIntValue(String name) {
-		String value = getValue(name);
-		try {
-			 return Integer.parseInt(value); //NOPMD
-		} catch (Exception e) {
+		int value = NumberUtils.toInt(getValue(name), -1);
+		if (value == -1) {
 			logger.warning("Invalid integer property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
-		return -1;
+		return value;
 	}
 
 	/**
@@ -284,14 +272,12 @@ public class Environment {
 	 * @return The value of the property.
 	 */
 	public static long getLongValue(String name) {
-		String value = getValue(name);
-		try {
-			 return Long.parseLong(value); //NOPMD
-		} catch (Exception e) {
+		long value = NumberUtils.toLong(getValue(name), -1);
+		if (value == -1) {
 			logger.warning("Invalid long property " + name + " with value " + value);
 		}
 		// FIXME - should this otherwise indicate an invalid property?
-		return -1;
+		return value;
 	}
 
 	/**
@@ -341,7 +327,7 @@ public class Environment {
 				fis = new FileInputStream(file);
 				properties.load(fis);
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			logger.severe("Failure while trying to load properties file " + file.getPath(), e);
 		} finally {
 			if (fis != null) {
@@ -363,7 +349,7 @@ public class Environment {
 	private static String retrieveDefaultRelativeUploadDirectory() {
 		try {
 			return "/" + Utilities.getWebappRoot().getName() + "/upload/";
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			logger.severe("Failure while trying to retrieve default file upload directory", e);
 		}
 		return "";
@@ -377,7 +363,7 @@ public class Environment {
 	private static String retrieveDefaultUploadDirectory() {
 		try {
 			return new File(Utilities.getWebappRoot(), "upload").getPath();
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 			logger.severe("Failure while trying to retrieve default file upload directory", e);
 		}
 		return "";
@@ -397,14 +383,14 @@ public class Environment {
 		File file = null;
 		try {
 			file = Utilities.getClassLoaderFile(filename);
-			return file; //NOPMD
-		} catch (Exception e) {
+			return file;
+		} catch (FileNotFoundException e) {
 			// NOPMD file might not exist
 		}
 		try {
 			file = new File(Utilities.getClassLoaderRoot(), filename);
-			return file; //NOPMD
-		} catch (Exception e) {
+			return file;
+		} catch (FileNotFoundException e) {
 			logger.severe("Error while searching for resource " + filename, e);
 		}
 		return null;
@@ -439,7 +425,7 @@ public class Environment {
 			if (out != null) {
 				try {
 					out.close();
-				} catch (Exception e) {
+				} catch (IOException e) {
 					// NOPMD ignore, unimportant if a close fails
 				}
 			}
@@ -475,7 +461,7 @@ public class Environment {
 	public static void setValue(String name, String value) {
 		// it is invalid to set a property value null, so convert to empty string
 		if (value == null) {
-			value = ""; //NOPMD
+			value = "";
 		}
 		props.setProperty(name, value);
 	}
