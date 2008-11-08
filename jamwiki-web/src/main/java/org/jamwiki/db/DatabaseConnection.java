@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
@@ -72,7 +73,7 @@ public class DatabaseConnection {
 		if (rs != null) {
 			try {
 				rs.close();
-			} catch (Exception e) {}
+			} catch (SQLException e) {}
 		}
 		DatabaseConnection.closeConnection(conn, stmt);
 	}
@@ -91,7 +92,7 @@ public class DatabaseConnection {
 		if (stmt != null) {
 			try {
 				stmt.close();
-			} catch (Exception e) {}
+			} catch (SQLException e) {}
 		}
 		DatabaseConnection.closeConnection(conn);
 	}
@@ -109,11 +110,7 @@ public class DatabaseConnection {
 		if (conn == null) {
 			return;
 		}
-		try {
-			DataSourceUtils.releaseConnection(conn, dataSource);
-		} catch (Exception e) {
-			logger.severe("Failure while closing connection", e);
-		}
+		DataSourceUtils.releaseConnection(conn, dataSource);
 	}
 
 	/**
@@ -145,7 +142,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	protected static WikiResultSet executeQuery(String sql) throws Exception {
+	protected static WikiResultSet executeQuery(String sql) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -160,7 +157,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	protected static WikiResultSet executeQuery(String sql, Connection conn) throws Exception {
+	protected static WikiResultSet executeQuery(String sql, Connection conn) throws SQLException {
 		Statement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -173,18 +170,19 @@ public class DatabaseConnection {
 			}
 			logger.fine("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return new WikiResultSet(rs);
-		} catch (Exception e) {
-			throw new Exception("Failure while executing " + sql, e);
+		} catch (SQLException e) {
+			logger.severe("Failure while executing " + sql, e);
+			throw e;
 		} finally {
 			if (rs != null) {
 				try {
 					rs.close();
-				} catch (Exception e) {}
+				} catch (SQLException e) {}
 			}
 			if (stmt != null) {
 				try {
 					stmt.close();
-				} catch (Exception e) {}
+				} catch (SQLException e) {}
 			}
 		}
 	}
@@ -192,7 +190,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	protected static void executeUpdate(String sql) throws Exception {
+	protected static void executeUpdate(String sql) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
@@ -207,7 +205,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	protected static int executeUpdate(String sql, Connection conn) throws Exception {
+	protected static int executeUpdate(String sql, Connection conn) throws SQLException {
 		Statement stmt = null;
 		try {
 			long start = System.currentTimeMillis();
@@ -220,13 +218,14 @@ public class DatabaseConnection {
 			}
 			logger.fine("Executed " + sql + " (" + (execution / 1000.000) + " s.)");
 			return result;
-		} catch (Exception e) {
-			throw new Exception("Failure while executing " + sql, e);
+		} catch (SQLException e) {
+			logger.severe("Failure while executing " + sql, e);
+			throw e;
 		} finally {
 			if (stmt != null) {
 				try {
 					stmt.close();
-				} catch (Exception e) {}
+				} catch (SQLException e) {}
 			}
 		}
 	}
@@ -234,7 +233,7 @@ public class DatabaseConnection {
 	/**
 	 *
 	 */
-	protected static Connection getConnection() throws Exception {
+	protected static Connection getConnection() throws SQLException {
 		if (dataSource == null) {
 			// DataSource has not yet been created, obtain it now
 			configDataSource();
@@ -245,21 +244,30 @@ public class DatabaseConnection {
 	/**
 	 * Static method that will configure a DataSource based on the Environment setup.
 	 */
-	private synchronized static void configDataSource() throws Exception {
+	private synchronized static void configDataSource() throws SQLException {
 		if (dataSource != null) {
 			closeConnectionPool(); // DataSource has already been created so remove it
 		}
 		String url = Environment.getValue(Environment.PROP_DB_URL);
-
 		DataSource targetDataSource = null;
 		if (url.startsWith("jdbc:")) {
-			// Use an internal "LocalDataSource" configured from the Environment
-			targetDataSource = new LocalDataSource();
+			try {
+				// Use an internal "LocalDataSource" configured from the Environment
+				targetDataSource = new LocalDataSource();
+			} catch (ClassNotFoundException e) {
+				logger.severe("Failure while configuring local data source", e);
+				throw new SQLException("Failure while configuring local data source: " + e.toString());
+			}
 		} else {
-			// Use a container DataSource obtained via JNDI lookup
-			// TODO: Should try prefix java:comp/env/ if not already part of the JNDI name?
-			Context ctx = new InitialContext();
-			targetDataSource = (DataSource) ctx.lookup(url);
+			try {
+				// Use a container DataSource obtained via JNDI lookup
+				// TODO: Should try prefix java:comp/env/ if not already part of the JNDI name?
+				Context ctx = new InitialContext();
+				targetDataSource = (DataSource)ctx.lookup(url);
+			} catch (NamingException e) {
+				logger.severe("Failure while configuring JNDI data source with URL: " + url, e);
+				throw new SQLException("Unable to configure JNDI data source with URL " + url + ": " + e.toString());
+			}
 		}
 		dataSource = new LazyConnectionDataSourceProxy(targetDataSource);
 		transactionManager = new DataSourceTransactionManager(targetDataSource);
@@ -268,14 +276,14 @@ public class DatabaseConnection {
 	/**
 	 * Test whether the database identified by the given parameters can be connected to.
 	 *
-	 * @param driver
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @param existence
-	 * @throws Exception
+	 * @param driver A String indicating the full path for the database driver class.
+	 * @param url The JDBC driver URL.
+	 * @param user The database user.
+	 * @param password The database user password.
+	 * @param existence Set to <code>true</code> if a test query should be executed.
+	 * @throws SQLException Thrown if any failure occurs while creating a test connection.
 	 */
-	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws Exception {
+	public static void testDatabase(String driver, String url, String user, String password, boolean existence) throws SQLException, ClassNotFoundException {
 		Connection conn = null;
 		try {
 			conn = getTestConnection(driver, url, user, password);
@@ -296,24 +304,33 @@ public class DatabaseConnection {
 	 * Return a connection to the database with the specified parameters.
 	 * The caller <b>must</b> close this connection when finished!
 	 *
-	 * @param driver
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @throws Exception
+	 * @param driver A String indicating the full path for the database driver class.
+	 * @param url The JDBC driver URL.
+	 * @param user The database user.
+	 * @param password The database user password.
+	 * @throws SQLException Thrown if any failure occurs while getting the test connection.
 	 */
-	protected static Connection getTestConnection(String driver, String url, String user, String password) throws Exception {
+	protected static Connection getTestConnection(String driver, String url, String user, String password) throws SQLException {
 		if (url.startsWith("jdbc:")) {
 			if (!StringUtils.isBlank(driver)) {
-				// ensure that the Driver class has been loaded
-				Utilities.forName(driver);
+				try {
+					// ensure that the Driver class has been loaded
+					Utilities.forName(driver);
+				} catch (ClassNotFoundException e) {
+					throw new SQLException("Unable to instantiate class with name: " + driver);
+				}
 			}
 			return DriverManager.getConnection(url, user, password);
 		} else {
-			Context ctx = new InitialContext();
 			DataSource testDataSource = null;
-			// TODO: Try appending "java:comp/env/" to the JNDI Name if it is missing?
-			testDataSource = (DataSource) ctx.lookup(url);
+			try {
+				Context ctx = new InitialContext();
+				// TODO: Try appending "java:comp/env/" to the JNDI Name if it is missing?
+				testDataSource = (DataSource) ctx.lookup(url);
+			} catch (NamingException e) {
+				logger.severe("Failure while configuring JNDI data source with URL: " + url, e);
+				throw new SQLException("Unable to configure JNDI data source with URL " + url + ": " + e.toString());
+			}
 			return testDataSource.getConnection();
 		}
 	}
@@ -322,9 +339,9 @@ public class DatabaseConnection {
 	 * Starts a transaction using the default settings.
 	 *
 	 * @return TransactionStatus representing the status of the Transaction
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	public static TransactionStatus startTransaction() throws Exception {
+	public static TransactionStatus startTransaction() throws SQLException {
 		return startTransaction(new DefaultTransactionDefinition());
 	}
 
@@ -333,9 +350,9 @@ public class DatabaseConnection {
 	 *
 	 * @param definition TransactionDefinition
 	 * @return TransactionStatus
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	protected static TransactionStatus startTransaction(TransactionDefinition definition) throws Exception {
+	protected static TransactionStatus startTransaction(TransactionDefinition definition) throws SQLException {
 		if (transactionManager == null || dataSource == null) {
 			configDataSource(); // this will create both the DataSource and a TransactionManager
 		}
@@ -352,17 +369,14 @@ public class DatabaseConnection {
 		logger.fine("Initiating transaction rollback on application exception", ex);
 		try {
 			transactionManager.rollback(status);
-		}
-		catch (TransactionSystemException ex2) {
+		} catch (TransactionSystemException ex2) {
 			logger.severe("Application exception overridden by rollback exception", ex);
 			ex2.initApplicationException(ex);
 			throw ex2;
-		}
-		catch (RuntimeException ex2) {
+		} catch (RuntimeException ex2) {
 			logger.severe("Application exception overridden by rollback exception", ex);
 			throw ex2;
-		}
-		catch (Error err) {
+		} catch (Error err) {
 			logger.severe("Application exception overridden by rollback error", ex);
 			throw err;
 		}

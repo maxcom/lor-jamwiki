@@ -55,7 +55,7 @@ public class WikiResultSet {
 	 * @see ResultSet
 	 * @param rs The ResultSet used to populate this WikiResultSet.
 	 */
-	protected WikiResultSet(ResultSet rs) throws Exception {
+	protected WikiResultSet(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int size = rsmd.getColumnCount();
 		int type;
@@ -156,15 +156,15 @@ public class WikiResultSet {
 	 *
 	 * @param rs The SQLResult that is being copied.  Only the current row will
 	 *  be copied into the new WikiResultSet object.
-	 * @throws Exception Thrown if the row pointer of the WikiResultSet being
+	 * @throws IndexOutOfBoundsException Thrown if the row pointer of the WikiResultSet being
 	 *  copied has passed the end of the WikiResultSet.
 	 */
-	public void addRow(WikiResultSet rs) throws Exception {
+	public void addRow(WikiResultSet rs) {
 		if (rs.rowPointer == -1) {
 			rs.rowPointer++;
 		}
 		if (rs.rowPointer >= rs.totalRows) {
-			throw new Exception("Attempt to access beyond final row of WikiResultSet");
+			throw new IndexOutOfBoundsException("Attempt to access beyond final row of WikiResultSet");
 		}
 		this.rows.add(rs.rows.elementAt(rs.rowPointer));
 		this.totalRows = this.rows.size();
@@ -230,7 +230,7 @@ public class WikiResultSet {
 		Character value = null;
 		try {
 			value = (Character)this.currentRow.get(columnName.toLowerCase());
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			// ignore, probably null
 		}
 		return (value == null) ? '0' : value.charValue();
