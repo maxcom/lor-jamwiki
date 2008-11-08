@@ -16,6 +16,7 @@
  */
 package org.jamwiki.db;
 
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Properties;
 import org.jamwiki.Environment;
@@ -68,7 +69,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws Exception {
+	public WikiResultSet getCategories(int virtualWikiId, Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_CATEGORIES, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
@@ -78,7 +79,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws Exception {
+	public WikiResultSet getRecentChanges(String virtualWiki, Pagination pagination, boolean descending) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setString(1, virtualWiki);
@@ -89,7 +90,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws Exception {
+	public WikiResultSet getRecentChanges(int topicId, Pagination pagination, boolean descending) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_RECENT_CHANGES_TOPIC, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, topicId);
@@ -100,7 +101,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws Exception {
+	public WikiResultSet getTopicsAdmin(int virtualWikiId, Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_TOPICS_ADMIN, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
@@ -110,7 +111,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws Exception {
+	public WikiResultSet getUserContributions(String virtualWiki, String userString, Pagination pagination, boolean descending) throws SQLException {
 		String sql = null;
 		if (Utilities.isIpAddress(userString)) {
 			sql = formatStatement(STATEMENT_SELECT_WIKI_USER_CHANGES_ANONYMOUS, pagination);
@@ -127,7 +128,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws Exception {
+	public WikiResultSet getWatchlist(int virtualWikiId, int userId, Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_WATCHLIST_CHANGES, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
@@ -138,7 +139,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws Exception {
+	public WikiResultSet lookupTopicByType(int virtualWikiId, int topicType, Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_TOPIC_BY_TYPE, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		stmt.setInt(1, virtualWikiId);
@@ -149,7 +150,7 @@ public class DB2400QueryHandler extends AnsiQueryHandler {
 	/**
 	 *
 	 */
-	public WikiResultSet lookupWikiUsers(Pagination pagination) throws Exception {
+	public WikiResultSet lookupWikiUsers(Pagination pagination) throws SQLException {
 		String sql = formatStatement(STATEMENT_SELECT_WIKI_USERS, pagination);
 		WikiPreparedStatement stmt = new WikiPreparedStatement(sql);
 		return stmt.executeQuery();
