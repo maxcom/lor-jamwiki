@@ -115,9 +115,9 @@ public class WikiUtilTest extends TestCase {
 	public void testExtractCommentsLinkThrowsException() throws Throwable {
 		try {
 			WikiUtil.extractCommentsLink("");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Empty topic name ", ex.getMessage());
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			assertEquals("ex.getMessage()", "Topic name must not be empty in extractCommentsLink", ex.getMessage());
 		}
 	}
 
@@ -127,9 +127,9 @@ public class WikiUtilTest extends TestCase {
 	public void testExtractTopicLinkThrowsException() throws Throwable {
 		try {
 			WikiUtil.extractTopicLink("");
-			fail("Expected Exception to be thrown");
-		} catch (Exception ex) {
-			assertEquals("ex.getMessage()", "Empty topic name ", ex.getMessage());
+			fail("Expected IllegalArgumentException to be thrown");
+		} catch (IllegalArgumentException ex) {
+			assertEquals("ex.getMessage()", "Topic name must not be empty in extractTopicLink", ex.getMessage());
 		}
 	}
 

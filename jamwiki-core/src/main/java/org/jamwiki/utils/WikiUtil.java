@@ -19,16 +19,15 @@ package org.jamwiki.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jamwiki.DataHandler;
 import org.jamwiki.Environment;
@@ -61,7 +60,7 @@ public class WikiUtil {
 			INVALID_ROLE_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_ROLE_NAME));
 			INVALID_TOPIC_NAME_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_INVALID_TOPIC_NAME));
 			VALID_USER_LOGIN_PATTERN = Pattern.compile(Environment.getValue(Environment.PROP_PATTERN_VALID_USER_LOGIN));
-		} catch (Exception e) {
+		} catch (PatternSyntaxException e) {
 			logger.severe("Unable to compile pattern", e);
 		}
 	}
@@ -80,16 +79,16 @@ public class WikiUtil {
 		int num = Environment.getIntValue(Environment.PROP_RECENT_CHANGES_NUM);
 		if (request.getParameter("num") != null) {
 			try {
-				num = new Integer(request.getParameter("num")).intValue();
-			} catch (Exception e) {
+				num = Integer.parseInt(request.getParameter("num"));
+			} catch (NumberFormatException e) {
 				// invalid number
 			}
 		}
 		int offset = 0;
 		if (request.getParameter("offset") != null) {
 			try {
-				offset = new Integer(request.getParameter("offset")).intValue();
-			} catch (Exception e) {
+				offset = Integer.parseInt(request.getParameter("offset"));
+			} catch (NumberFormatException e) {
 				// invalid number
 			}
 		}
@@ -103,7 +102,7 @@ public class WikiUtil {
 	 * @throws Exception Thrown if a data handler instance can not be
 	 *  instantiated.
 	 */
-	public static DataHandler dataHandlerInstance() throws Exception {
+	public static DataHandler dataHandlerInstance() throws IOException {
 		// FIXME - remove this conditional after the ability to upgrade to
 		// 0.5.0 is removed.
 		if (Environment.getValue(Environment.PROP_DB_TYPE) == null) {
@@ -137,12 +136,11 @@ public class WikiUtil {
 		    Environment.setValue(Environment.PROP_DB_TYPE, WikiBase.DATA_HANDLER_ASA);
 		}
 		String dataHandlerClass = Environment.getValue(Environment.PROP_DB_TYPE);
-		logger.fine("Using data handler: " + dataHandlerClass);
-		Class clazz = ClassUtils.getClass(dataHandlerClass);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (DataHandler)constructor.newInstance(initArgs);
+		try {
+			return (DataHandler)Utilities.instantiateClass(dataHandlerClass);
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("Data handler specified in jamwiki.properties does not implement org.jamwiki.DataHandler: " + dataHandlerClass);
+		}
 	}
 
 	/**
@@ -178,9 +176,9 @@ public class WikiUtil {
 	 *  be constructed.
 	 * @return The comments article name for the article name.
 	 */
-	public static String extractCommentsLink(String name) throws Exception {
+	public static String extractCommentsLink(String name) {
 		if (StringUtils.isBlank(name)) {
-			throw new Exception("Empty topic name " + name);
+			throw new IllegalArgumentException("Topic name must not be empty in extractCommentsLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (StringUtils.isBlank(wikiLink.getNamespace())) {
@@ -200,9 +198,9 @@ public class WikiUtil {
 	 *  constructed.
 	 * @return The topic article name for the article name.
 	 */
-	public static String extractTopicLink(String name) throws Exception {
+	public static String extractTopicLink(String name) {
 		if (StringUtils.isBlank(name)) {
-			throw new Exception("Empty topic name " + name);
+			throw new IllegalArgumentException("Topic name must not be empty in extractTopicLink");
 		}
 		WikiLink wikiLink = LinkUtil.parseWikiLink(name);
 		if (StringUtils.isBlank(wikiLink.getNamespace())) {
@@ -279,7 +277,7 @@ public class WikiUtil {
 	 *  be automatically converted to spaces.
 	 * @return The decoded parameter value retrieved from the request.
 	 */
-	public static String getParameterFromRequest(HttpServletRequest request, String name, boolean decodeUnderlines) throws Exception {
+	public static String getParameterFromRequest(HttpServletRequest request, String name, boolean decodeUnderlines) {
 		String value = null;
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			// parameters passed via the URL are URL encoded, so request.getParameter may
@@ -318,7 +316,7 @@ public class WikiUtil {
 	 * @param request The servlet request object.
 	 * @return The decoded topic name retrieved from the request.
 	 */
-	public static String getTopicFromRequest(HttpServletRequest request) throws Exception {
+	public static String getTopicFromRequest(HttpServletRequest request) {
 		return WikiUtil.getParameterFromRequest(request, WikiUtil.PARAMETER_TOPIC, true);
 	}
 
@@ -461,7 +459,7 @@ public class WikiUtil {
 	 * @param locale The locale for the user viewing the special page.
 	 * @param pageName The name of the special page being retrieved.
 	 */
-	public static String readSpecialPage(Locale locale, String pageName) throws Exception {
+	public static String readSpecialPage(Locale locale, String pageName) throws IOException {
 		String contents = null;
 		String filename = null;
 		String language = null;
@@ -476,7 +474,7 @@ public class WikiUtil {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language + "_" + country).getPath();
 				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.info("File " + filename + " does not exist");
 			}
 		}
@@ -485,7 +483,7 @@ public class WikiUtil {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR, language).getPath();
 				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.info("File " + filename + " does not exist");
 			}
 		}
@@ -494,7 +492,7 @@ public class WikiUtil {
 				subdirectory = new File(WikiBase.SPECIAL_PAGE_DIR).getPath();
 				filename = new File(subdirectory, WikiUtil.encodeForFilename(pageName) + ".txt").getPath();
 				contents = Utilities.readFile(filename);
-			} catch (Exception e) {
+			} catch (IOException e) {
 				logger.warning("File " + filename + " could not be read", e);
 				throw e;
 			}
@@ -571,17 +569,14 @@ public class WikiUtil {
 	 * Utility method to retrieve an instance of the current search engine.
 	 *
 	 * @return An instance of the current search engine.
-	 * @throws Exception Thrown if a user handler instance can not be
-	 *  instantiated.
 	 */
-	public static SearchEngine searchEngineInstance() throws Exception {
+	public static SearchEngine searchEngineInstance() {
 		String searchEngineClass = Environment.getValue(Environment.PROP_BASE_SEARCH_ENGINE);
-		logger.fine("Search engine: " + searchEngineClass);
-		Class clazz = ClassUtils.getClass(searchEngineClass);
-		Class[] parameterTypes = new Class[0];
-		Constructor constructor = clazz.getConstructor(parameterTypes);
-		Object[] initArgs = new Object[0];
-		return (SearchEngine)constructor.newInstance(initArgs);
+		try {
+			return (SearchEngine)Utilities.instantiateClass(searchEngineClass);
+		} catch (ClassCastException e) {
+			throw new IllegalStateException("Search engine specified in jamwiki.properties does not implement org.jamwiki.SearchEngine: " + searchEngineClass);
+		}
 	}
 
 	/**
@@ -603,7 +598,7 @@ public class WikiUtil {
 		try {
 			// attempt to write a temp file to the directory
 			FileUtils.writeStringToFile(file, text, "UTF-8");
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return new WikiMessage("error.directorywrite", name, e.getMessage());
 		}
 		try {
@@ -612,13 +607,13 @@ public class WikiUtil {
 			if (read == null || !text.equals(read)) {
 				throw new IOException();
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return new WikiMessage("error.directoryread", name, e.getMessage());
 		}
 		try {
 			// attempt to delete the file
 			FileUtils.forceDelete(file);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			return new WikiMessage("error.directorydelete", name, e.getMessage());
 		}
 		return null;

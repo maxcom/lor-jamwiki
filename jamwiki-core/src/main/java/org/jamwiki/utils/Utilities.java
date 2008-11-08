@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -33,6 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -331,6 +334,38 @@ public class Utilities {
 	public static File getWebappRoot() throws FileNotFoundException {
 		// webapp root is two levels above /WEB-INF/classes/
 		return Utilities.getClassLoaderRoot().getParentFile().getParentFile();
+	}
+
+	/**
+	 * Given a String representation of a class name (for example, org.jamwiki.db.AnsiDataHandler)
+	 * return an instance of the class.  The constructor for the class being instantiated must
+	 * not take any arguments.
+	 *
+	 * @param className The name of the class being instantiated.
+	 * @return A Java Object representing an instance of the specified class.
+	 */
+	public static Object instantiateClass(String className) {
+		if (StringUtils.isBlank(className)) {
+			throw new IllegalArgumentException("Cannot call instantiateClass with an empty class name");
+		}
+		logger.fine("Instantiating class: " + className);
+		try {
+			Class clazz = ClassUtils.getClass(className);
+			Class[] parameterTypes = new Class[0];
+			Constructor constructor = clazz.getConstructor(parameterTypes);
+			Object[] initArgs = new Object[0];
+			return constructor.newInstance(initArgs);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException("Invalid class name specified: " + className);
+		} catch (NoSuchMethodException e) {
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+		} catch (InvocationTargetException e) {
+			throw new IllegalStateException("Specified class does not have a valid constructor: " + className);
+		} catch (InstantiationException e) {
+			throw new IllegalStateException("Specified class could not be instantiated: " + className);
+		}
 	}
 
 	/**
