@@ -539,12 +539,11 @@ public interface DataHandler {
 	 *  updated.
 	 * @param topicName The name of the special page topic that is being
 	 *  updated.
-	 * @param user The admin user to use when updating the special page.
 	 * @param ipAddress The IP address of the user updating special pages.
 	 * @throws Exception Thrown if any error occurs during method execution.
 	 */
 	// FIXME - move this to another location
-	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, WikiUser user, String ipAddress) throws Exception;
+	void updateSpecialPage(Locale locale, String virtualWiki, String topicName, String ipAddress) throws Exception;
 
 	/**
 	 * Add or update a WikiFile object.  This method will add a new record if
